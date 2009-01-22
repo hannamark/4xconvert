@@ -409,7 +409,7 @@ public class BatchCreateProtocols {
                 if (batchDto.getOrgCTEPId() != null && batchDto.getOrgCTEPId().length() > 0) {
                     IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
                     identifiedOrganizationDTO.setAssignedId(
-                            IiConverter.converToIdentifiedEntityIi(batchDto.getOrgCTEPId()));
+                            IiConverter.converToIdentifiedOrgEntityIi(batchDto.getOrgCTEPId()));
                     List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
                             .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
                     if (identifiedOrgs != null && identifiedOrgs.size() > 0) {
@@ -584,7 +584,7 @@ public class BatchCreateProtocols {
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
             if (ctep != null && ctep.length() > 0) {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-                identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedEntityIi(ctep));
+                identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedPersonEntityIi(ctep));
                 List<IdentifiedPersonDTO> retResultList = 
                                   RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
                 if (retResultList != null && retResultList.size() > 0) {
