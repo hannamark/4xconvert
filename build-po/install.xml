@@ -547,7 +547,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		install:jboss:po-ear:configure,
 		install:jboss:start
 		" />
-
+		
+	<target name="upgrade:re-install:db" description="Deploys an updated version of application and runs full database install (erases all db data)"
+	depends="
+    	upgrade:init,
+    	install:validation:pre-install,
+    	install:jboss:stop,
+    	install:init,
+    	install:database,
+    	upgrade:jboss,
+    	install:validation:post-install
+    	"/> 
+	
 	<!-- Wrapper target to upgrade all container. Does not install or configure binaries -->
 	<target name="upgrade" description="Deploys application and runs incremental database build" 
 		depends="
