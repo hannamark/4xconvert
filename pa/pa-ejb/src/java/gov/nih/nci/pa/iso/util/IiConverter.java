@@ -199,6 +199,18 @@ public class IiConverter {
      */
     public static final String QUALIFIED_ENTITY_ROOT = "UID.for.nci.role.qualifiedentity";
     
+    /**
+     * The CTEP Person ii root value.
+     */
+    public static final String CTEP_PERSON_IDENTIFIER_ROOT = 
+                                    "Cancer Therapy Evaluation Program Person Other Identifier";
+    
+    /**
+     * The CTEP Organization ii root value.
+     */
+    public static final String CTEP_ORG_IDENTIFIER_ROOT = 
+                                    "Cancer Therapy Evaluation Program Organization Identifier";
+    
 
     /**
      * 
@@ -307,7 +319,7 @@ public class IiConverter {
      */
     public static Ii converToIdentifiedOrgEntityIi(String id) {
         Ii ii = convertToIi(id);
-        ii.setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        ii.setRoot(CTEP_ORG_IDENTIFIER_ROOT);
         return ii;
     }
     
@@ -318,7 +330,7 @@ public class IiConverter {
      */
     public static Ii converToIdentifiedPersonEntityIi(String id) {
         Ii ii = convertToIi(id);
-        ii.setRoot("Cancer Therapy Evaluation Program Person Other Identifier");
+        ii.setRoot(CTEP_PERSON_IDENTIFIER_ROOT);
         return ii;
     }
     
