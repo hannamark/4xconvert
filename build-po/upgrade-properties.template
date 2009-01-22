@@ -59,8 +59,10 @@ jboss.server.name=
 jboss.server.port=
 # The JBoss MQ Port that our custom JBossMQ-related mbeans must bind to (JBossMQ using the Unified Invocation Layer. All communication uses one socket connection)
 jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort=
-jboss.web.user=The account name to log into the JBoss web consoles.  Example: admin
-jboss.web.password=The password to the access the jboss web console and jmx console. Example: blueprint123!. The user is admin. 
+# The account name to log into the JBoss web consoles.  Example: admin
+jboss.web.user=
+# The password to the access the jboss web console and jmx console. Example: blueprint123!. The user is admin.
+jboss.web.password= 
 ##############
 ###  LDAP  ###
 ##############
