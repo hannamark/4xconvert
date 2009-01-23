@@ -400,8 +400,12 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         String outputFile = new String(sb2.append(File.separator).append(TSR).append(
             spDTO.getNciIdentifier().toString() + HTML));
         
-        File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
-        File[] attachments = {new File(inputFile), htmlFile};
+        //File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
+        String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(studyProtocolIi);
+        OutputStreamWriter oosHtml = new OutputStreamWriter(new FileOutputStream(outputFile));
+        oosHtml.write(htmlData);
+        oosHtml.close();
+        File[] attachments = {new File(inputFile), new File(outputFile)};
 
         // attachments        
         for (File attachment : attachments) {
