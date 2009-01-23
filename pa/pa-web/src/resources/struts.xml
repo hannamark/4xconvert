@@ -79,7 +79,6 @@
         <action name="ajaxCTGov*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
             <result name="displayXML">/WEB-INF/jsp/nodecorate/displayReportingXML.jsp</result>
         </action>
-
 		<action name="trialFunding*" class="gov.nih.nci.pa.action.TrialFundingAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />			
 			<result>/WEB-INF/jsp/trialFundingAdd.jsp</result>

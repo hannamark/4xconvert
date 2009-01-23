@@ -59,5 +59,19 @@ public class PADisplayTagDecorator extends TableDecorator {
         }
     }
     
-
+    /**
+     * 
+     * @return formated String
+     */
+    public String getViewTSR() {
+        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
+                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
+        if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED)) {
+            return "";
+        } else if (dwfs.equals(DocumentWorkflowStatusCode.REJECTED)) {
+            return "";
+        } else  {
+            return "View TSR";
+        }
+    }
 }

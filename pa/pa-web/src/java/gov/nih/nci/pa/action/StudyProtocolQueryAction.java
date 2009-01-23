@@ -5,13 +5,19 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -21,14 +27,14 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * @author Harsha
  * 
  */
-@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField",
-        "PMD.SingularField" })
+@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 @Validation
-public class StudyProtocolQueryAction extends ActionSupport {
+public class StudyProtocolQueryAction extends ActionSupport implements ServletResponseAware {
     private List<StudyProtocolQueryDTO> records = null;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
-
+    private static final String VIEW_TSR = "viewTSR";
+    private HttpServletResponse servletResponse;
     /**
      * @return res
      */
@@ -123,6 +129,42 @@ public class StudyProtocolQueryAction extends ActionSupport {
             return ERROR;
         }
     }
+    
+    /**
+     * @return res
+     */
+    public String viewTSR() {
+        
+        try {
+            String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+            PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                    Long.valueOf(pId));
+                
+            String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(
+                    IiConverter.convertToIi(pId));
+
+            final int i = 1000;
+            Random randomGenerator = new Random();
+            int randomInt = randomGenerator.nextInt(i);
+
+            String fileName = "TSR" + randomInt  + ".html";
+            servletResponse.setContentType("application/octet-stream");
+            servletResponse.setContentLength(htmlData.length());
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
+            servletResponse.setHeader("Pragma", "public");
+            servletResponse.setHeader("Cache-Control", "max-age=0");
+
+            ServletOutputStream servletout = servletResponse.getOutputStream();
+              servletout.write(htmlData.getBytes());
+            servletout.flush();
+            servletout.close();
+            
+          } catch (Exception e) {
+            return SUCCESS;
+          }
+          return NONE;
+    }
+    
 
     private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
         String action = "";
@@ -136,4 +178,18 @@ public class StudyProtocolQueryAction extends ActionSupport {
         return action;
     }
 
+    /**
+     * @return the servletResponse
+     */
+    public HttpServletResponse getServletResponse() {
+        return servletResponse;
+    }
+
+    /**
+     * @param response
+     *            servletResponse
+     */
+    public void setServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
+    }    
 }

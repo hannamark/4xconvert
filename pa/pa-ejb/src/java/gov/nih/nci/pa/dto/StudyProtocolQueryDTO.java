@@ -38,7 +38,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private PhaseCode phaseCode; 
     private String studyProtocolType;
     private String action;
-    private String generateXml;
+    private String viewTSR;
     private String primaryPurpose;
     private String primaryPurposeOtherText;
     private String userLastCreated; 
@@ -273,17 +273,17 @@ public class StudyProtocolQueryDTO implements Serializable {
     
     /**
      * 
-     * @return String generate xml
+     * @return tsr
      */
-    public String getGenerateXml() {
-        return generateXml;
+    public String getViewTSR() {
+        return viewTSR;
     }
     /**
      * 
-     * @param generateXml xml
+     * @param viewTSR tsr
      */
-    public void setGenerateXml(String generateXml) {
-        this.generateXml = generateXml;
+    public void setViewTSR(String viewTSR) {
+        this.viewTSR = viewTSR;
     }
     /**
      * @return the primaryPurpose

@@ -84,6 +84,8 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
+
 public class StudyContactConverter {
     /**
      * 
@@ -166,9 +168,13 @@ public class StudyContactConverter {
         List retList = null;
         if (dto.getTelecomAddresses() != null) {
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");
-            bo.setEmail(retList.get(0).toString());
+            if (retList != null && !retList.isEmpty()) {
+                bo.setEmail(retList.get(0).toString());
+            }
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
-            bo.setPhone(retList.get(0).toString());
+            if (retList != null && !retList.isEmpty()) {
+                bo.setPhone(retList.get(0).toString());
+            }
         }        
         return bo;
     }

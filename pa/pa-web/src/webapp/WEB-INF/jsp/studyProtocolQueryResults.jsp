@@ -16,4 +16,8 @@
         href="studyProtocolview.action" property="action"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>
+    <display:column titleKey="studyProtocol.viewTSR"  
+    	href="studyProtocolviewTSR.action" property="viewTSR"
+        paramId="studyProtocolId" paramProperty="studyProtocolId"/>
 </display:table>
+

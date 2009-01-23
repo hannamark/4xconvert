@@ -127,7 +127,6 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     private HttpServletResponse servletResponse;
     private static final String TSR = "TSR_";
     private static final String HTML = ".html";
-    
 
 
     /**
