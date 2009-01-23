@@ -1,14 +1,19 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<table>
+<tr>
+<td>
+<s:textfield name="gtdDTO.centralContactName" size="30"  readonly="true"/></td><td> 
+                  <ul style="margin-top:-1px;">             
+                        <li style="padding-left:0"><a href="#" class="btn" onclick="lookupCentralContact();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
+                  </ul><s:hidden name="gtdDTO.centralContactIdentifier" />
+            </td>
+      </tr>
+</table>
 
-<s:textfield name="gtdDTO.centralContactName" size="30"  readonly="true"/>
 
-<input type="button" value="Look Up" onclick="lookupCentralContact();"/>
+<%--<input type="button" value="Look Up" onclick="lookupCentralContact();"/>--%>
 <span class="formErrorMsg"> 
 <s:fielderror>
 <s:param>gtdDTO.centralContactName</s:param>
 </s:fielderror>                            
 </span>
-
-<s:hidden name="gtdDTO.centralContactIdentifier" />
-
