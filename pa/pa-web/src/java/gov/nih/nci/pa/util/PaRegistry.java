@@ -86,6 +86,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
@@ -441,6 +442,13 @@ public final class PaRegistry {
     public static StudyMilestoneServiceRemote getStudyMilestoneService() {
         return getInstance().getServiceLocator().getStudyMilestoneService();
     }
+    
+    /**
+     * @return StudyMilestoneService
+     */
+    public static RegistryUserServiceRemote getRegisterUserService() {
+        return getInstance().getServiceLocator().getRegisterUserService();
+    }    
      
     /**
      * 
