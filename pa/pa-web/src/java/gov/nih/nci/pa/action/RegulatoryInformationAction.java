@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -45,8 +46,12 @@ public class RegulatoryInformationAction extends ActionSupport {
      * @return String success or failure
      */
     public String update() {
+        validateForm();
         String orgName;
         try {
+            if (hasFieldErrors()) {
+                return query();
+            }            
             orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(selectedRegAuth),
                     "RegulatoryAuthority");
             String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
@@ -112,7 +117,12 @@ public class RegulatoryInformationAction extends ActionSupport {
                     Constants.STUDY_PROTOCOL_II);
             StudyRegulatoryAuthorityDTO authorityDTO = PaRegistry.getStudyRegulatoryAuthorityService()
                     .getByStudyProtocol(studyProtocolIi);
-            //
+            //on error page if country and reg auth are chosen
+            if (getSelectedRegAuth() != null) {
+                regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
+                        Long.valueOf(getLst()));                
+                setSelectedRegAuth(getSelectedRegAuth());
+            }
             countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
             if (authorityDTO != null) { // load values from database
                 StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
@@ -149,6 +159,20 @@ public class RegulatoryInformationAction extends ActionSupport {
         return SUCCESS;
     }
 
+    private void validateForm() {
+        if (!PAUtil.isNotNullOrNotEmpty(getLst())) {
+            addFieldError("lst", "Country is required field");
+        }
+        if (!PAUtil.isNotNullOrNotEmpty(getSelectedRegAuth())) {            
+            addFieldError("selectedRegAuth", "Oversight Authority is required field");
+        }
+        
+        if (!PAUtil.isNotNullOrNotEmpty(webDTO.getFdaRegulatedInterventionIndicator())) {
+            addFieldError("webDTO.fdaRegulatedInterventionIndicator", 
+                    "FDA Regulated Intervention Indicator is required field");
+        }
+    }
+    
     /**
      * @return String success or failure
      */

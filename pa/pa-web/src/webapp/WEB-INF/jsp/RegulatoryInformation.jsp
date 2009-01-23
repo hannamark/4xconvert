@@ -66,6 +66,7 @@
 				document.getElementById('sec801id').value ='';
 				document.getElementById('delpostindid').value ='';
 				hideRow(document.getElementById('sec801row'));
+				hideRow(document.getElementById('delpostindid'));
 			} else {
 				document.getElementById('fdaindid').value = 'true';
 			}
@@ -162,7 +163,12 @@
                      list="countryList"  
                      listKey="id" listValue="name"                    
                      onchange="loadDiv();"                
-                     />	
+                     />
+                   <span class="formErrorMsg"> 
+                      <s:fielderror>
+                      <s:param>lst</s:param>
+                     </s:fielderror>                            
+                   </span>
          </td>      
 	</tr>
 	<!--  Trial Oversignt Authority Organization Name -->
@@ -171,29 +177,37 @@
 					<td class="value">
 						<div id="loadAuthField">
 						<%@ include file="/WEB-INF/jsp/nodecorate/authorityname.jsp" %>
-						</div>		
+						</div>
+														
 					</td>
 	</tr>	
 	<!--   FDA Regulated Intervention Indicator-->
 	<tr>
 		<td scope="row"  class="label"><label><fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span> </td>
-		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkFDADropDown();"/></td>
+		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkFDADropDown();"/>
+		<span class="formErrorMsg"><s:fielderror><s:param>webDTO.fdaRegulatedInterventionIndicator</s:param></s:fielderror></span>
+		</td>
 	</tr>
 	<!--   Section 801 Indicator-->
 	<tr id="sec801row">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.section801.ind"/><span class="required">*</span></td>
-		<td class="value"><s:select id="sec801id" name="webDTO.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkSection108DropDown();"/></td>
+		<td class="value"><s:select id="sec801id" name="webDTO.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkSection108DropDown();"/>
+		<span class="formErrorMsg"><s:fielderror><s:param>webDTO.section801Indicator</s:param></s:fielderror></span>
+		</td>
 	</tr>
 	
 	<!--   Delayed Posting Indicator-->
 	<tr id="delpostindrow">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></td>
-		<td class="value"><s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" /></td>		
+		<td class="value"><s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" />
+		<span class="formErrorMsg"><s:fielderror><s:param>webDTO.delayedPostingIndicator</s:param></s:fielderror></span>
+		</td>		
 	</tr>
 	<!--   Data Monitoring Committee Appointed Indicator -->
 	<tr id="datamonrow">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
-		<td class="value"><s:select id="datamonid" name="webDTO.dataMonitoringIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}"/></td>		
+		<td class="value"><s:select id="datamonid" name="webDTO.dataMonitoringIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}"/>		
+		</td>		
 	</tr>
 	<tr>
 		<td colspan="2" class="pad10">
