@@ -22,6 +22,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
+
 /**
  * 
  * @author Harsha
@@ -33,7 +34,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private List<StudyProtocolQueryDTO> records = null;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
-    private static final String VIEW_TSR = "viewTSR";
     private HttpServletResponse servletResponse;
     /**
      * @return res
@@ -55,8 +55,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     public String query() {
         try {
             records = new ArrayList<StudyProtocolQueryDTO>();
-            records = PaRegistry.getProtocolQueryService()
-                    .getStudyProtocolByCriteria(criteria);
+            records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -160,7 +159,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             servletout.close();
             
           } catch (Exception e) {
-            return SUCCESS;
+              LOG.error("Error while generating TSR Summary report " , e);
+              return NONE;
           }
           return NONE;
     }
