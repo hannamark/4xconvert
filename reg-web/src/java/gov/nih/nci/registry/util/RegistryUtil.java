@@ -95,11 +95,13 @@ public class RegistryUtil {
     */
    public static boolean isValidPhoneNumber(String phoneNumber) {
         boolean isValidPhoneNumber = false;
-        Pattern numberPattern = Pattern.compile("^([\\w\\s\\-\\.\\+\\(\\)])*$");
-        Matcher fit = numberPattern.matcher(phoneNumber);
-        if (fit.matches()) {
-            isValidPhoneNumber = true;
-        }       
+        if (phoneNumber != null && phoneNumber.trim().length() >= Constants.MIN_PHONE_NUM_LENGTH) {
+            Pattern numberPattern = Pattern.compile("^([\\w\\s\\-\\.\\+\\(\\)])*$");
+            Matcher fit = numberPattern.matcher(phoneNumber);
+            if (fit.matches()) {
+                isValidPhoneNumber = true;
+            }
+        }
         return isValidPhoneNumber;
    }
    
