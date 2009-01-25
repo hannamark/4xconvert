@@ -86,6 +86,8 @@ public class Constants {
     public static final String RESP_PARTY_PHONE = "respPartyPhone";
     /** Responsible Email Address . */
     public static final String RESP_PARTY_EMAIL = "respPartyEmailAddr";
+    /** minimum phone number length. */
+    public static final int MIN_PHONE_NUM_LENGTH = 7;
     
     
 }
