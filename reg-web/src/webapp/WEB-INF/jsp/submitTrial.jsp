@@ -338,8 +338,7 @@ function toggledisplay2 (it) {
 				<tr>
 				<td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
 				<td>
-				<input type="radio" name="respparty" value="pi" checked="checked" onclick="manageRespPartyLookUp();"> PI 
-				<input type="radio" name="respparty" value="sponsor" onclick="manageRespPartyLookUp();"> Sponsor
+				<s:radio name="respparty" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
 				</td>
 				</tr>				
 				<tr id="rpcid" style="display:none">
