@@ -66,7 +66,7 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
 //            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
 //            LOG.error("Exception occured while getting organization contact : " + e);
 //            return "display_org_contacts";
-        } catch (PAException e) {
+        } catch (Exception e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while getting organization contact : " + e);
