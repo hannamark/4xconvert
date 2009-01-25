@@ -95,8 +95,9 @@ public class RegistryUtil {
     */
    public static boolean isValidPhoneNumber(String phoneNumber) {
         boolean isValidPhoneNumber = false;
-        String numPattern = "(\\d-)?(\\d{3}-)?\\d{3}-\\d{4}";
-        if (phoneNumber.matches(numPattern)) {
+        Pattern numberPattern = Pattern.compile("^([\\w\\s\\-\\.\\+\\(\\)])*$");
+        Matcher fit = numberPattern.matcher(phoneNumber);
+        if (fit.matches()) {
             isValidPhoneNumber = true;
         }       
         return isValidPhoneNumber;
