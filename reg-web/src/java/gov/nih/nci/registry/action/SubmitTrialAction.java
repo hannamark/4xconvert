@@ -117,7 +117,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private String informedConsentDocumentFileName = null;
     private File otherDocument = null;
     private String otherDocumentFileName = null;
-    private String respparty = null;
+    private String respparty = "pi";
     private String contactEmail = null;
     private String contactPhone = null;
     private String summary4FundingCategory = null;
@@ -565,6 +565,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         } catch (Exception e) {
             return "display_selected_sponsor";
         }
+        ServletActionContext.getRequest().getSession().setAttribute("Sponsorselected", selectedSponsor);
         return "display_selected_sponsor";
     }
 
@@ -666,7 +667,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(protocolWebDTO.getCompletionDateType())) {
             addFieldError("protocolWebDTO.completionDateType", getText("error.submit.dateType"));
         }
-
         if (PAUtil.isEmpty(protocolDocFileName)) {
             addFieldError("trialDocumentWebDTO.protocolDocFileName", getText("error.submit.protocolDocument"));
         }
@@ -729,13 +729,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(contactPhone)) {
             addFieldError("contactPhone", getText("error.submit.contactPhone"));
         }
-        // check if the contact e-mail address is valid
-        if (PAUtil.isNotEmpty(contactEmail)) {
-            if (!RegistryUtil.isValidEmailAddress(contactEmail)) {
-                addFieldError("contactEmail",
-                        getText("error.submit.invalidContactEmailAddress"));               
-            }            
-        }
         // LeadOrgNotSelected;check the session;
         selectedLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoLeadOrg");
         if (selectedLeadOrg == null) {
@@ -747,8 +740,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             addFieldError("LeadPINotSelected", getText("error.submit.leadPrincipalInvestigator"));
         }
         selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession()
-                    .getAttribute("PoSummary4Sponsor");
-        
+                    .getAttribute("PoSummary4Sponsor");        
         selectedSponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoSponsor");
         if (selectedSponsor == null) {
             addFieldError("SponsorNotSelected", getText("error.submit.sponsor"));
@@ -774,6 +766,10 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                         getText("error.submit.otherPurposeText"));
             }            
         }
+        // check if the contact email address is valid
+        validateEmailAddress();
+        // check if the contact phone number is valid
+        validatePhoneNumber();
         // validate the date formats
         validateDateFormat();
         // validate trial status reason
@@ -782,6 +778,32 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         validateTrialDates();
     }
     
+    /**
+     * validate Phone number.
+     */
+    private void validatePhoneNumber() {
+        // check if the contact phone number is valid
+        if (PAUtil.isNotEmpty(contactPhone)) {
+            if (!RegistryUtil.isValidPhoneNumber(contactPhone)) {
+                addFieldError("contactPhone",
+                        getText("error.register.invalidPhoneNumber"));               
+            }            
+        }
+        
+    }
+    /**
+     * validate Email Address.
+     */
+    private void validateEmailAddress() {
+        // check if the contact e-mail address is valid
+        if (PAUtil.isNotEmpty(contactEmail)) {
+            if (!RegistryUtil.isValidEmailAddress(contactEmail)) {
+                addFieldError("contactEmail",
+                        getText("error.submit.invalidContactEmailAddress"));               
+            }            
+        }        
+    }
+
     /**
      * validate trial status reason.
      */
