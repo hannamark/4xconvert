@@ -100,6 +100,16 @@
             <role-name>Abstractor</role-name>
         </auth-constraint>
     </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>report</web-resource-name>
+            <url-pattern>/report/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>Abstractor</role-name>
+            <role-name>ReportViewer</role-name>
+        </auth-constraint>
+    </security-constraint>
 
     <login-config>
         <auth-method>FORM</auth-method>

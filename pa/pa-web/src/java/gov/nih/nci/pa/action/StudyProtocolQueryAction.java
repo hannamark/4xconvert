@@ -44,9 +44,19 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
 
     /**
      * @return res
+     * @throws PAException exception
      */
-    public String showCriteria() {
-        return "criteria";
+    public String showCriteria() throws PAException {
+        if (ServletActionContext.getRequest().isUserInRole("Abstractor")) {
+            ServletActionContext.getRequest().getSession().setAttribute("namespace", "protected");
+            return "criteriaProtected";
+        }
+        if (ServletActionContext.getRequest().isUserInRole("ReportViewer")) {
+            ServletActionContext.getRequest().getSession().setAttribute("namespace", "report");
+            return "criteriaReport";
+        }
+        throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
+                + "for this application.");
     }
 
     /**

@@ -1,2 +1,1 @@
-
-<% response.sendRedirect("/pa/protected/studyProtocolshowCriteria.action"); %>
+<% response.sendRedirect(request.getContextPath() + "/report/studyProtocolshowCriteria.action"); %>

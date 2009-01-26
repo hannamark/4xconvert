@@ -17,7 +17,31 @@
 			<result>/WEB-INF/jsp/login.jsp</result>
 		</action>	   
     </package>
-	<package name="protected" namespace="/protected" extends="default">      
+    
+    <package name="report" namespace="/report" extends="default">
+        <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
+            <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
+            <result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
+            <result name="criteriaReport">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
+            <result name="criteriaProtected" type="redirect-action">
+                <param name="namespace">../protected</param>
+                <param name="actionName">studyProtocolshowCriteria</param>
+            </result>
+            <result name="design">/WEB-INF/jsp/designDetails.jsp</result>
+        </action>       
+    </package>
+
+	<package name="protected" namespace="/protected" extends="report">
+        <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
+            <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
+            <result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
+            <result name="criteriaReport" type="redirect-action">
+                <param name="namespace">../report</param>
+                <param name="actionName">studyProtocolshowCriteria</param>
+            </result>
+            <result name="criteriaProtected">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
+            <result name="design">/WEB-INF/jsp/designDetails.jsp</result>
+        </action>       
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
             <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
@@ -69,12 +93,6 @@
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/WEB-INF/jsp/nodecorate/authorityname.jsp</result>
 		</action>	
-		<action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
-			<result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>			
-			<result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
-			<result name="criteria">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
-			<result name="design">/WEB-INF/jsp/designDetails.jsp</result>
-		</action>		
         <action name="ajaxCTGov*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
             <result name="displayXML">/WEB-INF/jsp/nodecorate/displayReportingXML.jsp</result>
         </action>
