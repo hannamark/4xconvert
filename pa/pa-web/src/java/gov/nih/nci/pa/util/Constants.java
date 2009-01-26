@@ -62,4 +62,13 @@ public class Constants {
     
     /** work flow status used for menu. **/
     public static final String DOC_WFS_MENU = "docWFSMenu";
+    
+    /** Session bean used to hold the role. **/
+    public static final String USER_ROLE = "role";
+    
+    /** CSM Group used to define reporting role. **/
+    public static final String REPORT_VIEWER = "ReportViewer";
+    
+    /** CSM Group used to define abstractor role. **/
+    public static final String ABSTRACTOR = "Abstractor";
 }
