@@ -584,7 +584,7 @@ public class BatchCreateProtocols {
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
             if (ctep != null && ctep.length() > 0) {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-                identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedPersonEntityIi(ctep));
+                identifiedPersonDTO.setAssignedId(IiConverter.converToIdentifiedPersonEntityIi(ctep));
                 List<IdentifiedPersonDTO> retResultList = 
                                   RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
                 if (retResultList != null && retResultList.size() > 0) {
@@ -611,7 +611,7 @@ public class BatchCreateProtocols {
                 log.info("Person found ");
             }
             
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             log.error("lookUpPersons exception " + e.getMessage());
             throw new PAException("lookUpPersons exception " + e.getMessage());
         }
