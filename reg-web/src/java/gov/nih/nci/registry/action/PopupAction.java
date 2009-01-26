@@ -136,7 +136,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
             if (ctep != null && ctep.length() > 0) {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-                identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedPersonEntityIi(ctep));
+                identifiedPersonDTO.setAssignedId(IiConverter.converToIdentifiedPersonEntityIi(ctep));
                 List<IdentifiedPersonDTO> retResultList = 
                                   RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
                 if (retResultList != null && retResultList.size() > 0) {
@@ -151,8 +151,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             for (gov.nih.nci.services.person.PersonDTO poPersonDTO : poPersonList) {
                 persons.add(EnPnConverter.convertToPaPersonDTO(poPersonDTO));
             }
-        } catch (URISyntaxException e) {
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+        } catch (Exception e) {
+            persons = null;
+            //ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            LOG.error("Error occured while searching PO Persons " + e.getMessage(), e);
             return pagination ? "persons" : SUCCESS;
         }
         return pagination ? "persons" : SUCCESS;
@@ -200,21 +202,27 @@ public class PopupAction extends ActionSupport implements Preparable {
                 identifiedOrganizationDTO.setAssignedId(IiConverter.converToIdentifiedOrgEntityIi(ctepId));
                 List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
                         .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
-                criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+                if (identifiedOrgs != null && identifiedOrgs.size() > 0) {
+                    criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+                }
             } else {
                 criteria.setName(EnOnConverter.convertToEnOn(orgName));
-                criteria
-                        .setPostalAddress(AddressConverterUtil.create(null, null, cityName, null, 
-                                                                                            zipCode, countryName));
+                criteria.setPostalAddress(AddressConverterUtil.create(
+                        null, null, cityName, null, zipCode, countryName));
             }
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
-            callConvert = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria);
+            if (criteria.getIdentifier() != null 
+                    || criteria.getName() != null
+                    || criteria.getPostalAddress() != null) {
+                callConvert = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria);
+            }
             convertPoOrganizationDTO(callConvert);
             return pagination ? "orgs" : SUCCESS;
         } catch (Exception e) {
             orgs = null;
-            addActionError(e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            //addActionError(e.getMessage());
+            //ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            LOG.error("Error occured while searching PO Organizations " + e.getMessage(), e);
             return pagination ? "orgs" : SUCCESS;
         }
     }
