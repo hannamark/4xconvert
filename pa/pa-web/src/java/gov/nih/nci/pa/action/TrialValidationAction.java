@@ -788,10 +788,9 @@ public class TrialValidationAction extends ActionSupport {
      */
     public String getOrganizationContacts() {
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
+        Ii contactIi = IiConverter.converToPoOrganizationIi(orgContactIdentifier);
         OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-        contactDTO.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
-        contactDTO.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
-        contactDTO.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
+        contactDTO.setScoperIdentifier(contactIi);
         try {
             List<OrganizationalContactDTO> list = PaRegistry.getPoOrganizationalContactCorrelationService()
                     .search(contactDTO);
