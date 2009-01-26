@@ -1,5 +1,6 @@
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -43,9 +44,7 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
 //        contactDTO.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
 //        contactDTO.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
 //        contactDTO.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
-        contactDTO.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
-        contactDTO.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
-        contactDTO.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
+        contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactIdentifier));
         try {
             List<OrganizationalContactDTO> list = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .search(contactDTO);
