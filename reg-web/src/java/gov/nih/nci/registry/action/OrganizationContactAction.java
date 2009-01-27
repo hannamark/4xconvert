@@ -40,9 +40,12 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
      */
     public String getOrganizationContacts() {
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
-        OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-        contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactIdentifier));
         try {
+            if (orgContactIdentifier != null && orgContactIdentifier.equals("undefined")) {
+                return "display_org_contacts";
+            }
+            OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
+            contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactIdentifier));
             List<OrganizationalContactDTO> list = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .search(contactDTO);
             for (OrganizationalContactDTO organizationalContactDTO : list) {
