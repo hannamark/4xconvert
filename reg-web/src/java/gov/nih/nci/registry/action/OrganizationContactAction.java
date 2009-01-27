@@ -41,9 +41,6 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
     public String getOrganizationContacts() {
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
         OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-//        contactDTO.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
-//        contactDTO.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
-//        contactDTO.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
         contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactIdentifier));
         try {
             List<OrganizationalContactDTO> list = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
@@ -51,23 +48,17 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
             for (OrganizationalContactDTO organizationalContactDTO : list) {
                 try {
                     persons.add(RegistryServiceLocator.getPoPersonEntityService().getPerson(
-//                            organizationalContactDTO.getPersonIdentifier()));
                             organizationalContactDTO.getPlayerIdentifier()));
                 } catch (NullifiedEntityException e) {
                     addActionError(e.getMessage());
                     ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
-                    LOG.error("Exception occured while getting organization contact : " + e);
+                    LOG.error("NullifiedEntityException occured while getting organization contact : " + e);
                     return "display_org_contacts";
                 }
             }
-//        } catch (NullifiedRoleException e) {
-//            addActionError(e.getMessage());
-//            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
-//            LOG.error("Exception occured while getting organization contact : " + e);
-//            return "display_org_contacts";
         } catch (Exception e) {
-            addActionError(e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            //addActionError(e.getMessage());
+            //ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while getting organization contact : " + e);
             return "display_org_contacts";
         }
