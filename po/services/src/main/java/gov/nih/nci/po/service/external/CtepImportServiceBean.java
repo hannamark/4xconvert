@@ -96,7 +96,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
@@ -109,7 +108,7 @@ import javax.naming.NamingException;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedFormalParameter", "PMD.AvoidThrowingRawExceptionTypes" })
 public class CtepImportServiceBean implements CtepImportService {
     private static Properties config;
-    private static InitialContext ctepContext;
+    private static Context ctepContext;
     private CtepOrganizationImporter orgImporter;
     private CtepPersonImporter personImporter;
 
@@ -171,14 +170,16 @@ public class CtepImportServiceBean implements CtepImportService {
      * @throws NamingException when initial context cannot be created.
      */
     @SuppressWarnings("PMD.ReplaceHashtableWithMap")
-    public static InitialContext createCtepInitialContext() throws NamingException {
+    public static Context createCtepInitialContext() throws NamingException {
         Properties props = getConfig();
         Hashtable<Object, Object> env = new Hashtable<Object, Object>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
         env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
         env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
         env.put(Context.PROVIDER_URL, props.get("ctep.url"));
-        return new InitialContext(env);
+        
+        oracle.j2ee.rmi.RMIInitialContextFactory contextFactory = new oracle.j2ee.rmi.RMIInitialContextFactory();
+        return contextFactory.getInitialContext(env);
     }
 
     /**

@@ -85,7 +85,7 @@ package gov.nih.nci.po.service.external;
 import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.coppa.services.PersonService;
 
-import javax.naming.InitialContext;
+import javax.naming.Context;
 import javax.naming.NamingException;
 
 /**
@@ -102,7 +102,7 @@ public class CtepEntityImporter {
      * @param ctepContext the context providing access to the ctep services.
      */
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public CtepEntityImporter(InitialContext ctepContext) {
+    public CtepEntityImporter(Context ctepContext) {
         initCtepServices(ctepContext);
     }
 
@@ -110,7 +110,7 @@ public class CtepEntityImporter {
      * @param ctepContext the context
      */
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    protected void initCtepServices(InitialContext ctepContext) {
+    protected void initCtepServices(Context ctepContext) {
         try {
             setCtepOrgService((OrganizationService) ctepContext.lookup("OrganizationService"));
             setCtepPersonService((PersonService) ctepContext.lookup("PersonService"));

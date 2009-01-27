@@ -49,6 +49,9 @@
 				<ctep.username>%%ctep.username%%</ctep.username>
 				<ctep.password>%%ctep.password%%</ctep.password>
 				<ctep.url>%%ctep.url%%</ctep.url>
+                <ctep.jms.subscription.name>%%ctep.jms.subscription.name%%</ctep.jms.subscription.name>
+                <ctep.jms.topic.connection.factory.name>%%ctep.jms.topic.connection.factory.name%%</ctep.jms.topic.connection.factory.name>
+                <ctep.jms.topic.name>%%ctep.jms.topic.name%%</ctep.jms.topic.name>
 			</properties>
 		</profile>
 	    <profile>

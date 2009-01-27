@@ -78,6 +78,9 @@ mail.smtp.server=mailfwd.nih.gov
 ctep.username=
 ctep.password=
 ctep.url=
+ctep.jms.subscription.name=JMSSUBSCRIBER
+ctep.jms.topic.connection.factory.name=
+ctep.jms.topic.name=
 
 ###################################
 #  PRE-POST VALIDATION PROPERTIES #

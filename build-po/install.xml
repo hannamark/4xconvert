@@ -213,6 +213,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<filter token="ctep.url" value="${ctep.url}"/>
 		<filter token="ctep.username" value="${ctep.username}"/>
 		<filter token="ctep.password" value="${ctep.password}"/>
+        <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
+        <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
+        <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
 	</filterset>
 	
 
@@ -508,6 +511,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 						<filter token="ctep.url" value="${ctep.url}"/>
 						<filter token="ctep.username" value="${ctep.username}"/>
 						<filter token="ctep.password" value="${ctep.password}"/>
+                        <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
+                        <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
+                        <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
 					</filterset>
 				</copy>
 				<copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>

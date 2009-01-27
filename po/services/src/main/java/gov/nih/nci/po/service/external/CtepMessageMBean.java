@@ -89,7 +89,7 @@ import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
-import javax.naming.InitialContext;
+import javax.naming.Context;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.annotation.ejb.Service;
@@ -105,12 +105,13 @@ import org.jboss.annotation.ejb.Service;
 public class CtepMessageMBean extends CtepMessageBean implements CtepMessageManagement, Runnable {
 
     private static final Logger LOG = Logger.getLogger(CtepMessageMBean.class);
-    private InitialContext initialContext;
+    private Context initialContext;
     private TopicConnection topicConnection;
     private TopicSession topicSession;
     private TopicSubscriber topicSubscriber;
-    private String topicConnectionFactoryName = "jms/CTISTopicConnectionFactory";
-    private String topicName = "jms/CTISTopic";
+    private String topicConnectionFactoryName = 
+            CtepImportServiceBean.getConfig().getProperty("ctep.jms.topic.connection.factory.name");
+    private String topicName = CtepImportServiceBean.getConfig().getProperty("ctep.jms.topic.name");;
     private String subscriptionName = CtepImportServiceBean.getConfig().getProperty("ctep.jms.subscription.name");
     private boolean busy = false;
     private String statusMessage;

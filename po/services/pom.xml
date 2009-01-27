@@ -33,7 +33,9 @@
         <ctep.username>coppaUser</ctep.username>
         <ctep.password>coppa1</ctep.password>
         <ctep.url>ormi://156.40.130.87:12401/CES</ctep.url>
-        <ctep.jms.subscription.name>po-subscriber</ctep.jms.subscription.name>
+        <ctep.jms.subscription.name>JMSSUBSCRIBER</ctep.jms.subscription.name>
+        <ctep.jms.topic.connection.factory.name>java:comp/resource/BETAJMSRP/TopicConnectionFactories/TCF</ctep.jms.topic.connection.factory.name>
+        <ctep.jms.topic.name>java:comp/resource/BETAJMSRP/Topics/CES_OUT_TOPIC</ctep.jms.topic.name>
     </properties>
     
     <dependencies>
@@ -154,6 +156,50 @@
             <version>1.8</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>oracle.dms</groupId>
+            <artifactId>dms</artifactId>
+            <version>3.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>oracle.oc4j-internal</groupId>
+            <artifactId>oc4j-internal</artifactId>
+            <version>10.1.3.4.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>adminclient</artifactId>
+            <groupId>oracle.oc4j</groupId>
+            <version>10.1.3.1.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>jazncore</artifactId>
+            <groupId>oracle.jazn</groupId>
+            <version>10.0.0.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>ojdbc14dms</artifactId>
+            <groupId>oracle.ojdbc14dms</groupId>
+            <version>10.1.0.5.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>pcl</artifactId>
+            <groupId>oracle.oc4j</groupId>
+            <version>10.1.3.1.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <artifactId>aqapi</artifactId>
+            <groupId>oracle.aqapi</groupId>
+            <version>oc4j-10.1.3.1.0</version>
+            <scope>runtime</scope>
+        </dependency>
+
         
         <!-- Testing only jars -->
         <dependency>

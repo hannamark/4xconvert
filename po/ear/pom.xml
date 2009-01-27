@@ -127,6 +127,42 @@
                             <groupId>oracle.oc4j</groupId>
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
+                        <jarModule>
+                            <artifactId>dms</artifactId>
+                            <groupId>oracle.dms</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <artifactId>oc4j-internal</artifactId>
+                            <groupId>oracle.oc4j-internal</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <artifactId>adminclient</artifactId>
+                            <groupId>oracle.oc4j</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <artifactId>jazncore</artifactId>
+                            <groupId>oracle.jazn</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <artifactId>ojdbc14dms</artifactId>
+                            <groupId>oracle.ojdbc14dms</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <artifactId>pcl</artifactId>
+                            <groupId>oracle.oc4j</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <artifactId>aqapi</artifactId>
+                            <groupId>oracle.aqapi</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+
                         
                         <ejbModule>
                             <groupId>${pom.parent.groupId}</groupId>

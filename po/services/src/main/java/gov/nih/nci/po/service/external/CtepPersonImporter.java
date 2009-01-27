@@ -114,7 +114,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jms.JMSException;
-import javax.naming.InitialContext;
+import javax.naming.Context;
 
 import org.apache.log4j.Logger;
 
@@ -151,7 +151,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
      * @param ctepContext the initial context providing access to ctep services.
      * @param orgImporter the org importer.
      */
-    public CtepPersonImporter(InitialContext ctepContext, CtepOrganizationImporter orgImporter) {
+    public CtepPersonImporter(Context ctepContext, CtepOrganizationImporter orgImporter) {
         super(ctepContext);
         this.orgImporter = orgImporter;
     }
