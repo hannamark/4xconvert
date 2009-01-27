@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <h2>Search Persons</h2>
 <p align="center" class="info">
-    Type-in one/several initial characters in any text field on the upper frame
-    or one/several initial characters in CTEP Identifier field on the lower frame.
+    Type a single initial character or string of initial characters in any of the 
+    text fields in the upper frame or in CTEP Identifier field in the lower frame.
     <br>
-    (example: first name Mary should come as M or Ma or Mary, etc.).
-    Please do not use wildcard characters.
+    (Example: to search for the person with the first name Mary, type M, Ma, etc).
+     Please do not use wildcard characters.
 </p>
 <table  class="form">  
    	<tr> 	
