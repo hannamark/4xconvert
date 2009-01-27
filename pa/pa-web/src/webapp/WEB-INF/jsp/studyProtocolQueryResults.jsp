@@ -6,7 +6,7 @@
         href="studyProtocolview.action"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>
-    <display:column titleKey="studyProtocol.officialTitle" property="officialTitle" sortable="true" headerClass="sortable"/>
+    <display:column titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.studyStatus" property="studyStatusCode.code" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.studyStatusDate" property="studyStatusDate" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
@@ -16,8 +16,10 @@
         href="studyProtocolview.action" property="action"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>
-    <display:column titleKey="studyProtocol.viewTSR"  
-    	href="studyProtocolviewTSR.action" property="viewTSR"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"/>
+    <c:if test="${(sessionScope.role == 'Abstractor')}">
+        <display:column titleKey="studyProtocol.viewTSR"  
+        	href="studyProtocolviewTSR.action" property="viewTSR"
+            paramId="studyProtocolId" paramProperty="studyProtocolId"/>
+    </c:if>    
 </display:table>
 

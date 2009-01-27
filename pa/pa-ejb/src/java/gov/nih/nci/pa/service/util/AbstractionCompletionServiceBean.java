@@ -76,6 +76,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
@@ -118,7 +119,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     enforceRegulatoryInfo(studyProtocolIi, abstractionList);
     
-    enforceTrialINDIDE(studyProtocolIi, abstractionList);
+    enforceTrialINDIDE(studyProtocolDTO, abstractionList);
     
     enforceTrialStatus(studyProtocolIi, studyProtocolDTO, abstractionList);    
     
@@ -256,10 +257,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
 
   @SuppressWarnings({"PMD" })
-  private void enforceTrialINDIDE(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
+  private void enforceTrialINDIDE(StudyProtocolDTO studyProtocolDto, List<AbstractionCompletionDTO> abstractionList) 
   throws PAException {    
     List<StudyIndldeDTO> siList = PoPaServiceBeanLookup.getStudyIndldeService().
-    getByStudyProtocol(studyProtocolIi);
+        getByStudyProtocol(studyProtocolDto.getIdentifier());
     if (!(siList.isEmpty())) { 
       for (int i = 0; i < siList.size(); i++) {
         int j = 0;
@@ -278,11 +279,15 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             } else {
               j++;
             }
-          }
-        }
+          } // if
+        } // if
+      } // for
+      if (!BlConverter.covertToBool(studyProtocolDto.getFdaRegulatedIndicator())) {
+          abstractionList.add(createError("Error", "Select Regulatory Information from Administrative Data menu.", 
+                  "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records."));
       }
-    }
-  }
+    } // if
+  } // method
 
 
   private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
@@ -556,7 +561,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           abstractionList.add(
           createError("Error", 
                   "Select Eligibilty Criteria from specific Interventional/Observational under Scientific Data menu.", 
-              " does not have any Eligibilty Criteria"));
+              " Does not have any Eligibilty Criteria"));
           return;
       }
       boolean otherCriteriaExist = false;

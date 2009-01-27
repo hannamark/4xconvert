@@ -284,4 +284,20 @@ public class PAUtil {
        return  m.matches();
     }
 
+    /**
+     * util method to trim a length.
+     * @param data String data
+     * @param len length to trim
+     * @return trimmed data
+     */
+    public static String trim(String data , int len) {
+        if (data == null) {
+            return null;
+        }
+        if (data.length() > len) {
+            return (data.substring(0, len - 1) + "...");
+        } else {
+            return data;
+        }
+    }
 }

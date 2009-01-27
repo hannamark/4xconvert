@@ -50,6 +50,24 @@ public class BlConverter {
     
     /**
      * 
+     * @param bl bl
+     * @return Boolean Boolean
+     */
+    public static boolean covertToBool(Bl bl) {
+        if (bl == null) {
+            return false;
+        }
+        if (bl.getValue() == null) {
+            return false;
+        }
+        if (bl.getNullFlavor() != null && bl.getNullFlavor().equals(NullFlavor.NI)) {
+            return false;
+        }
+        return bl.getValue().booleanValue();
+    }
+
+    /**
+     * 
      * @param bl to be converted
      * @return String as return value
      */

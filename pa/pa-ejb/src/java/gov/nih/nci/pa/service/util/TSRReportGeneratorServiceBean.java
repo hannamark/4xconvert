@@ -893,6 +893,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       return st.getValue();
   }
+  private String getData(Cd cd , boolean appendNoData) {
+      String data = CdConverter.convertCdToString(cd);
+      if (data != null) {
+          return data; 
+      } else if (appendNoData) {
+          return NO_DATA;
+      } else {
+          return null;
+      }
+  }
+
   private String appendBoldData(String data) {
       return BLD_B + data + BLD_E;
   }
@@ -905,12 +916,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private void appendTitle(StringBuffer html , String title) {
       html.append(BR).append(BR).append(title);          
   }
-  private String getData(Cd cd , boolean appendNoData) {
-    if (cd.getCode() == null || cd.getCode().equalsIgnoreCase("")  && appendNoData) {
-        return NO_DATA;
-    }
-    return cd.getCode();
-}  
   private static String convertBLToString(Bl bl , boolean appendNoData) {
       if (bl == null && appendNoData) {
           return NO_DATA;

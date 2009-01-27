@@ -7,6 +7,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -125,6 +127,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                     .getProtocolQueryService()
                     .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
+            studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(), 
+                    PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE)); 
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().getSession().setAttribute(

@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.SearchPersonResultDisplay;
@@ -349,6 +350,9 @@ public class TrialValidationAction extends ActionSupport {
           PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
               Long.valueOf(studyProtocolIi.getExtension()));
         // put an entry in the session and store StudyProtocolQueryDTO 
+        studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(), 
+                PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE)); 
+
         ServletActionContext.getRequest().getSession().setAttribute(
             Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
         ServletActionContext.getRequest().getSession().setAttribute(
