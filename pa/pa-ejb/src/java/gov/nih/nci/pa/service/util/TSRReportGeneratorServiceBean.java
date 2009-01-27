@@ -535,7 +535,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     html.append(appendData("Funding Category", getData(studyResourcingDTO.getTypeCode(), true), true , false));
     }
     Organization org = null;
-    if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null) {
+    if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null 
+            && studyResourcingDTO.getOrganizationIdentifier().getExtension() != null) {
       Organization o = new Organization();
       o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
       org = PoPaServiceBeanLookup.getPAOrganizationService().getOrganizationByIndetifers(o);

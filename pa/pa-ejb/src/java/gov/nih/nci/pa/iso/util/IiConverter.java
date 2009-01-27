@@ -69,6 +69,14 @@ import gov.nih.nci.coppa.iso.NullFlavor;
  */
 @SuppressWarnings({ "PMD.TooManyMethods" })
 public class IiConverter {
+    
+    /*** Protocol Root. **/
+    public static final String PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
+    /**
+     * Protocol Identifier.
+     */
+    public static final String PROTOCOL_IDENTIFIER_NAME = "NCI protocol activity identifier";
+    
     /**
      * The identifier name for org ii's.
      */
@@ -275,6 +283,19 @@ public class IiConverter {
         }
         return ii.getExtension();
     }
+    
+    /**
+     * converts to Protocol Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToProtocolIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(PROTOCOL_IDENTIFIER_NAME);
+        ii.setRoot(PROTOCOL_ROOT);
+        return ii;
+    }
+
     
     /**
      * converts to Po Person Ii.
