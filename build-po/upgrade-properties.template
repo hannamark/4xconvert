@@ -75,11 +75,17 @@ jboss.web.password=
 # The SMTP Mail gateway, requires anonymous access
 mail.smtp.server=mailfwd.nih.gov
 
+##############################
+###  CTEP INTEGRATION      ###
+##############################
 ctep.username=
 ctep.password=
 ctep.url=
+# Default CTEP JMS subscription name
 ctep.jms.subscription.name=JMSSUBSCRIBER
+# Default CTEP Connection Factory Name for JMS
 ctep.jms.topic.connection.factory.name=
+# Default CTEP JMS Topic Name 
 ctep.jms.topic.name=
 
 ###################################
