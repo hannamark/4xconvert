@@ -11,10 +11,10 @@
 
 <script>
 	function displaySubmitter(){
-	    showPopWin('ajaxdisplaypersoninfoquery.action', 400, 200, '', 'Submitter Information');
+	    showPopWin('ajaxdisplaypersoninfoquery.action', 600, 300, '', 'Trial Submitter Information');
 	}	
 	function displayPi(){
-	    showPopWin('ajaxdisplaypersoninfoqueryPiInfo.action', 400, 200, '', 'Person Information');
+	    showPopWin('ajaxdisplaypersoninfoqueryPiInfo.action', 600, 300, '', 'Principal Investigator Information');
 	}	
 </script>
 

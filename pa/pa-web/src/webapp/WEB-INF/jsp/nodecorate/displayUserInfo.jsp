@@ -33,4 +33,10 @@
 	    <td scope="row" class="label" style="width:250px" align="right"><b>Email:</b></td>
 	    <td class="value" colspan="2"><c:out value="${webDTO.email}"/></td>	        
 	</tr>	
+	<c:if test="${webDTO.telephone != null}">	
+	<tr>
+	    <td scope="row" class="label" style="width:250px" align="right"><b>Phone:</b></td>
+	    <td class="value" colspan="2"><c:out value="${webDTO.telephone}"/></td>	        
+	</tr>	
+	</c:if>	
 </table>

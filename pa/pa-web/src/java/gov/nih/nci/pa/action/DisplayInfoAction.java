@@ -47,6 +47,7 @@ public class DisplayInfoAction extends ActionSupport {
             webDTO.setState(userInfo.getState());
             webDTO.setCountry(userInfo.getCountry());
             webDTO.setZip(userInfo.getPostalCode());
+            webDTO.setTelephone(userInfo.getPhone());
             return SUCCESS;
         } catch (PAException pax) {
             return ERROR;
@@ -74,6 +75,7 @@ public class DisplayInfoAction extends ActionSupport {
             webDTO.setState((paPerson.getState() != null) ? paPerson.getState() : "-");
             webDTO.setCountry((paPerson.getCountry() != null) ? paPerson.getCountry() : "-");
             webDTO.setZip((paPerson.getZip() != null) ? paPerson.getZip() : "-");
+            webDTO.setTelephone(null);
             return SUCCESS;
         } catch (PAException e) {
             return ERROR;
