@@ -58,6 +58,7 @@ import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.TelEmail;
@@ -134,7 +135,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private static final String LI_E = "</LI>";
   private static final String BLD_B = "<B>";
   private static final String BLD_E = "</B>";
-  private static final String NO_DATA = "No Data Available";
+  private static final String NO_DATA = " <I> No Data Available </I>";
   private static final String EMPTY = "";
   private static final String YES = "Yes";
   private static final String DL_B = "<DL>";
@@ -204,13 +205,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
          html.append(appendData("Location" , orgBo.getCity() + "," + orgBo.getState() 
              + " " + orgBo.getPostalCode() +  " " + orgBo.getCountryName() , true , false));
          if (ssasList != null && (!ssasList.isEmpty())) {
-           html.append(appendData("Site Recruitment Status" , ssasList.get(0).getStatusCode().getCode() 
+           html.append(appendData("Site Recruitment Status" , getData(ssasList.get(0).getStatusCode() , true)
                + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                    ssasList.get(0).getStatusDate()).toString()) , true , false));
          }
-         if (sp.getTargetAccrualNumber().getValue() != null) {
-         html.append(appendData("Target Accrual" , sp.getTargetAccrualNumber().getValue().toString() , true , false));
-         }
+         //if (sp.getTargetAccrualNumber().getValue() != null) {
+         html.append(appendData("Target Accrual" , getData(sp.getTargetAccrualNumber(), true) , true , false));
+        // }
          List<StudyParticipationContactDTO> spcDTOs = PoPaServiceBeanLookup.
              getStudyParticipationContactService().getByStudyParticipation(sp.getIdentifier());
          createInvestigators(html, spcDTOs);
@@ -245,7 +246,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       Person p = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
           Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
       html.append(TR_B);
-      appendTDAndData(html, spcDTO.getRoleCode().getCode());
+      appendTDAndData(html, getData(spcDTO.getRoleCode(), true));
       appendTDAndData(html, p.getFirstName());
       appendTDAndData(html, p.getLastName());
       html.append(TR_E);
@@ -310,7 +311,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     boolean first = true;
     for (ArmDTO armDTO : arms) {     
       html.append(appendBoldData(appendData("Label", getData(armDTO.getName(), true), true , false)));
-      html.append(appendData("Type", armDTO.getTypeCode().getCode(), true , false));
+      html.append(appendData("Type", getData(armDTO.getTypeCode(), true), true , false));
       html.append(appendData("Description", getData(armDTO.getDescriptionText(), true), true , false));
       html.append(BR + "Intervention(s)");
       StringBuffer intBuff = new StringBuffer();
@@ -333,7 +334,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           }
           intBuff.append(StConverter.convertToString(inter.getName()));
           html.append(TR_B);
-          appendTDAndData(html, inter.getTypeCode().getCode());
+          appendTDAndData(html, getData(inter.getTypeCode(), true));
           appendTDAndData(html, intBuff.toString());
           appendTDAndData(html, getData(inter.getDescriptionText(), true));
           html.append(TR_E);
@@ -368,7 +369,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       pq = paEC.getValue();
       if (criterionName != null && criterionName.equalsIgnoreCase("GENDER") 
               && paEC.getEligibleGenderCode() != null) {
-          html.append(appendData("Gender", paEC.getEligibleGenderCode().getCode(), true , false));
+          html.append(appendData("Gender", getData(paEC.getEligibleGenderCode(), true), true , false));
       } else if (criterionName != null && criterionName.equalsIgnoreCase("MINIMUM-AGE")) {
           html.append(appendData("Minimum Age", pq.getValue()  + " " + pq.getUnit(), true , false));
       } else if (criterionName != null && criterionName.equalsIgnoreCase("MAXIMUM-AGE")) {
@@ -429,12 +430,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     appendTitle(html, appendBoldData("Trial Design"));
     InterventionalStudyProtocolDTO ispDTO = 
       PoPaServiceBeanLookup.getStudyProtocolService().getInterventionalStudyProtocol(spDTO.getIdentifier());
-    html.append(appendData("Primary Purpose", ispDTO.getPrimaryPurposeCode().getCode(), true , false));
-    html.append(appendData("Phase", ispDTO.getPhaseCode().getCode(), true , false));
-    html.append(appendData("Intervention Model", ispDTO.getDesignConfigurationCode().getCode(), true , false));
-    html.append(appendData("Number of Arms", ispDTO.getNumberOfInterventionGroups().getValue()
-        .toString(), true , false));
-    html.append(appendData("Masking", ispDTO.getBlindingSchemaCode().getCode(), true , false));
+    html.append(appendData("Primary Purpose", getData(ispDTO.getPrimaryPurposeCode(), true), true , false));
+    html.append(appendData("Phase", getData(ispDTO.getPhaseCode(), true), true , false));
+    html.append(appendData("Intervention Model", getData(ispDTO.getDesignConfigurationCode(), true), true , false));
+    html.append(appendData("Number of Arms", getData(ispDTO.getNumberOfInterventionGroups(), true), true , false));
+    html.append(appendData("Masking", getData(ispDTO.getBlindingSchemaCode(), true), true , false));
     String maskedRoles = "";
     String subject = NO;
     String investigator = NO;
@@ -455,14 +455,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           }
         } // for
       } // if 
-      maskedRoles = "Subject: " + subject + " Investigator: " + investigator + " Caregiver: "
-      + caregiver + " Outcomes Assessor: " + outcomesAssessor;
+      maskedRoles = "Subject: " + subject + "; Investigator: " + investigator + "; Caregiver: "
+      + caregiver + "; Outcomes Assessor: " + outcomesAssessor;
       html.append(appendData("Masked Roles", maskedRoles, true , false));
     } // if  
-    html.append(appendData("Allocation", ispDTO.getAllocationCode().getCode(), true , false));
+    html.append(appendData("Allocation", getData(ispDTO.getAllocationCode(), true), true , false));
     html.append(appendData("Study Classification", getData(ispDTO.getStudyClassificationCode(), true), true , false));
-    html.append(appendData("Target Enrollment", ispDTO.getMaximumTargetAccrualNumber().getValue()
-        .toString(), true , false));
+    html.append(appendData("Target Enrollment", getData(ispDTO.getMaximumTargetAccrualNumber(), true), true , false));
   }
 
   private void appendDisease(Ii studyProtocolIi, StringBuffer html)
@@ -521,7 +520,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       html.append(TR_B);
       appendTDAndData(html, orgBo.getName());
-      appendTDAndData(html, sp.getFunctionalCode().getCode());
+      appendTDAndData(html, getData(sp.getFunctionalCode(), true));
       html.append(TR_E);
     }
     html.append(TBL_E);
@@ -532,7 +531,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     appendTitle(html, appendBoldData("Summary 4"));
     StudyResourcingDTO studyResourcingDTO = PoPaServiceBeanLookup.getStudyResourcingService()
     .getsummary4ReportedResource(studyProtocolIi);
-    html.append(appendData("Funding Category", studyResourcingDTO.getTypeCode().getCode(), true , false));
+    if (studyResourcingDTO != null) {
+    html.append(appendData("Funding Category", getData(studyResourcingDTO.getTypeCode(), true), true , false));
+    }
     Organization org = null;
     if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null) {
       Organization o = new Organization();
@@ -562,11 +563,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               html.append(TR_E);
           }
           html.append(TR_B);
-          appendTDAndData(html, fund.getFundingMechanismCode().getCode());
-          appendTDAndData(html, fund.getNihInstitutionCode().getCode());
-          appendTDAndData(html, fund.getSerialNumber().getValue().toString());
-          appendTDAndData(html, fund.getNciDivisionProgramCode().getCode());
-          appendTDAndData(html, fund.getFundingTypeCode().getCode());
+          appendTDAndData(html, getData(fund.getFundingMechanismCode(), true));
+          appendTDAndData(html, getData(fund.getNihInstitutionCode(), true));
+          appendTDAndData(html, getData(fund.getSerialNumber(), true));
+          appendTDAndData(html, getData(fund.getNciDivisionProgramCode(), true));
+          appendTDAndData(html, getData(fund.getFundingTypeCode(), true));
           appendTDAndData(html, getData(fund.getSuffixGrantYear(), true));
           appendTDAndData(html, getData(fund.getSuffixOther(), true));
           html.append(TR_E);
@@ -593,20 +594,20 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               html.append(TR_E);
           }
           html.append(TR_B);
-          appendTDAndData(html, indDto.getIndldeTypeCode().getCode());
-          appendTDAndData(html, indDto.getGrantorCode().getCode());
+          appendTDAndData(html, getData(indDto.getIndldeTypeCode(), true));
+          appendTDAndData(html, getData(indDto.getGrantorCode(), true));
           appendTDAndData(html, getData(indDto.getIndldeNumber() , true));
           if (HolderTypeCode.ORGANIZATION.getCode().equals(indDto.getHolderTypeCode().getCode())) {
               appendTDAndData(html, "Lead Organization");
           } else if (HolderTypeCode.INVESTIGATOR.getCode().equals(indDto.getHolderTypeCode().getCode())) {
               appendTDAndData(html, "Principal Investigator");
           } else if (HolderTypeCode.NIH.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html , indDto.getNihInstHolderCode().getCode());
+              appendTDAndData(html , getData(indDto.getNihInstHolderCode(), true));
           } else if (HolderTypeCode.NCI.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html , indDto.getNciDivProgHolderCode().getCode());
+              appendTDAndData(html , getData(indDto.getNciDivProgHolderCode(), true));
           }
           appendTDAndData(html, convertBLToString(indDto.getExpandedAccessIndicator() , false));
-          appendTDAndData(html , indDto.getExpandedAccessStatusCode().getCode());
+          appendTDAndData(html , getData(indDto.getExpandedAccessStatusCode(), true));
           html.append(TR_E);
       }
       html.append(TBL_E);
@@ -623,8 +624,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
                           part.getReviewBoardApprovalStatusCode().getCode())) {
 
-                  html.append(appendData("Board Approval Status" , part.getReviewBoardApprovalStatusCode().getCode(), 
-                          true , false));
+                  html.append(appendData("Board Approval Status" , getData(part.getReviewBoardApprovalStatusCode(), 
+                      true),  true , false));
                   html.append(appendData("Board Approval Number" , 
                           getData(part.getReviewBoardApprovalNumber() , true) ,    true , false));
                   Organization paOrg = correlationUtils.getPAOrganizationByPAOversightCommitteeId(
@@ -637,7 +638,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                       } catch (NullifiedEntityException e) {
                           throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                       }
-                      html.append(appendData("Name" , paOrg.getName(), true , false));
+                      html.append(appendData("Board" , paOrg.getName(), true , false));
 
                       Organization affOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
                               IiConverter.convertToLong(part.getHealthcareFacilityIi()));      
@@ -670,7 +671,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private void appendRegulatoryInformation(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
     html.append(BR);  
     html.append(appendData("Reporting Dataset Method", 
-              spDto.getAccrualReportingMethodCode().getCode(), true , false));
+        getData(spDto.getAccrualReportingMethodCode(), true), true , false));
       appendTitle(html, appendBoldData("Regulatory Information"));
       StudyRegulatoryAuthorityDTO sraDTO = PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService().
               getByStudyProtocol(spDto.getIdentifier());
@@ -717,6 +718,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       appendTDColumnAndData(html , "NCI Identifier" , studyProtocolDto.getAssignedIdentifier().getExtension() , true);
       appendTDColumnAndData(html , appendTRBold("Secondary Identifiers") , "" , true);
       //CorrelationUtils  cUtils = new CorrelationUtils();
+      if (!sParts.isEmpty()) {
       for (StudyParticipationDTO spart : sParts) {
           Organization o = correlationUtils.getPAOrganizationByPAResearchOrganizationId(
                   Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
@@ -732,8 +734,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   getData(spart.getLocalStudyProtocolIdentifier() , true) , true);
           break;
       }
-      html.append("</TABLE>");
-      
+      }
+      html.append("</TABLE>");      
   }
 
   private void appendTitles(StringBuffer html , StudyProtocolDTO studyProtocolDto) {
@@ -741,10 +743,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           append(getData(studyProtocolDto.getOfficialTitle(), true));
       html.append(BR).append(BLD_B).append("Brief Title : ").append(BLD_E).
           append(getData(studyProtocolDto.getPublicTitle(), true));
-      html.append(BR).append(BLD_B).append("Brief Summary : ").append(BLD_E).
-      append(getData(studyProtocolDto.getPublicDescription(), true));
       html.append(BR).append(BLD_B).append("Acronym : ").append(BLD_E).
       append(getData(studyProtocolDto.getAcronym(), true));
+      html.append(BR).append(BR).append(BLD_B).append("Brief Summary : ").append(BLD_E).
+      append(getData(studyProtocolDto.getPublicDescription(), true));
       html.append(BR).append(BLD_B).append("Detailed Description : ").append(BLD_E).
       append(getData(studyProtocolDto.getScientificDescription(), true));
   html.append(BR).append(BLD_B).append("Keywords : ").append(BLD_E).
@@ -855,7 +857,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       html.append(TBL_B);
       for (StudyOverallStatusDTO sostatus : sostatuses) {
           html.append(TR_B);
-          appendTDAndData(html, sostatus.getStatusCode().getCode());
+          appendTDAndData(html, getData(sostatus.getStatusCode(), true));
           appendTDAndData(html, PAUtil.normalizeDateString(
                   TsConverter.convertToTimestamp(sostatus.getStatusDate()).toString()));
           appendTDAndData(html, sostatus.getReasonText().getValue() == null ? "" 
@@ -866,11 +868,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       
       html.append(appendData("Trial Start Date" , PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
               spDto.getStartDate()).toString()) , true , false)).append(" , ").
-              append(spDto.getStartDateTypeCode().getCode());
+              append(getData(spDto.getStartDateTypeCode(), true));
       
       html.append(appendData("Primary Completion Date" , PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
               spDto.getPrimaryCompletionDate()).toString()) , true , false)).append(' ').
-              append(spDto.getPrimaryCompletionDateTypeCode().getCode());
+              append(getData(spDto.getPrimaryCompletionDateTypeCode(), true));
       
   }
   private void appendTDColumnAndData(StringBuffer html , String column , String data , boolean appendTR) {
@@ -893,6 +895,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       return st.getValue();
   }
+  private String getData(Int i , boolean appendNoData) {
+    if (i.getValue() == null && appendNoData) {
+        return NO_DATA;
+    }
+    return i.getValue().toString();
+}
   private String getData(Cd cd , boolean appendNoData) {
       String data = CdConverter.convertCdToString(cd);
       if (data != null) {
