@@ -2,7 +2,7 @@
 <h2>Search Organizations</h2>
 <p align="center" class="info">
 	Type-in one/several initial characters in any text field on the upper frame
-	or one/several initial characters in CTEP number field on the lower frame.
+	or one/several initial characters in CTEP Identifier field on the lower frame.
 	<br>
 	(example: city Rockville should come as R, Rock, Rockville etc.).
 	Please do not use wildcard characters.  
