@@ -68,7 +68,10 @@
             <result name="facilityUpdate">//WEB-INF/jsp/collaborators.jsp</result>
             <result>/WEB-INF/jsp/collaborators.jsp</result>
          </action> 
-
+        <action name="ajaxdisplaypersoninfo*" class="gov.nih.nci.pa.action.DisplayInfoAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/displayUserInfo.jsp</result>
+            <result name="error">/WEB-INF/jsp/nodecorate/displayUserInfo.jsp</result>    
+        </action>  
         <action name="ajaxptpDisease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>  
         </action>
