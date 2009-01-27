@@ -125,6 +125,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Set<Correlation> getAssociatedRoles(Organization o, Session s) {
         Set<Correlation> l = new HashSet<Correlation>();
         // played roles

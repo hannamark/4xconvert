@@ -10,8 +10,8 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractIdentifiedEntity;
 import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -47,14 +47,14 @@ public class IdentifiedPersonActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getPerson());
     }
-    
+
     @Test
     public void testPrepareNoRole() {
         action.setRole(null);
         action.prepare();
         assertNotNull(action.getRole());
     }
-    
+
     @Test
     public void testPrepareWithRoleId() {
         Correlation role = action.getRole();
@@ -63,7 +63,7 @@ public class IdentifiedPersonActionTest extends AbstractPoTest {
         assertNotSame(role, action.getRole());
         assertEquals(1L, action.getRole().getId().longValue());
     }
-    
+
     @Test
     public void testPrepare() throws Exception {
         action.setRole(null);
@@ -194,10 +194,10 @@ public class IdentifiedPersonActionTest extends AbstractPoTest {
                         return results;
                     }
 
-                    private IdentifiedPerson create(Long playerId, Long id) {
+                    private IdentifiedPerson create(Long pId, Long id) {
                         IdentifiedPerson ro = new IdentifiedPerson();
                         ro.setPlayer(new Person());
-                        ro.getPlayer().setId(playerId);
+                        ro.getPlayer().setId(pId);
                         ro.setId(id);
                         return ro;
                     }
@@ -216,10 +216,10 @@ public class IdentifiedPersonActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
     }
 
     @Test

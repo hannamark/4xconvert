@@ -122,7 +122,7 @@ public class NullifiedEntityInterceptor {
         // make the call to the underlying method. This method (checkForNullified) wraps the intended method.
         Object returnValue = invContext.proceed();
         if (returnValue instanceof Collection) {
-            handleCollection(invContext, (Collection) returnValue);
+            handleCollection(invContext, (Collection<?>) returnValue);
         } else if (returnValue instanceof PersonDTO) {
             handlePersonDTO(invContext, (PersonDTO) returnValue);
         } else if (returnValue instanceof OrganizationDTO) {
@@ -132,7 +132,8 @@ public class NullifiedEntityInterceptor {
         return returnValue;
     }
 
-    private void handleCollection(InvocationContext invContext, Collection collection) throws NullifiedEntityException {
+    private void handleCollection(InvocationContext invContext,
+                                  Collection<?> collection) throws NullifiedEntityException {
         if (collection == null) {
             return;
         }

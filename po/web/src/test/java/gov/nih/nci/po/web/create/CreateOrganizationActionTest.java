@@ -57,7 +57,7 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
     public void testStart() {
         assertNull(action.getOrganization().getPostalAddress());
         action.getOrganization().setStatusCode(EntityStatus.ACTIVE);
-        assertEquals(CreateOrganizationAction.INPUT, action.start());
+        assertEquals(Action.INPUT, action.start());
         assertEquals(EntityStatus.PENDING, action.getOrganization().getStatusCode());
         assertNotNull(action.getOrganization().getPostalAddress());
         assertNotNull(action.getOrganization().getPostalAddress().getCountry());

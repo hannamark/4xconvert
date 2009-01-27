@@ -49,8 +49,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     protected AbstractPersonRole getExampleTestClass() {
         OrganizationalContact hcp = new OrganizationalContact();
         fillInExamplePersonRoleFields(hcp);
-        Set<OrganizationalContactType> types = getTypes();
-        hcp.setTypes(types);
+        hcp.setTypes(getTypes());
 
         return hcp;
     }

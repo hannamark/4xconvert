@@ -120,7 +120,7 @@ public class RoleStatusChangeValidator
         boolean scoperOk = !(value instanceof ScopedRole)
                 || isValidScoper((ScopedRole) value);
         boolean playerOk = !(value instanceof PlayedRole)
-                || isValidPlayer((PlayedRole) value);
+                || isValidPlayer((PlayedRole<?>) value);
         return scoperOk && playerOk;
     }
 
@@ -128,15 +128,15 @@ public class RoleStatusChangeValidator
         if (role.getScoper() == null) {
             return true;
         }
-        RoleStatus roleStatus = ((CuratableRole) role).getStatus();
+        RoleStatus roleStatus = ((CuratableRole<?, ?>) role).getStatus();
         return isValid(role.getScoper().getStatusCode(), roleStatus);
     }
 
-    private boolean isValidPlayer(PlayedRole role) {
+    private boolean isValidPlayer(PlayedRole<?> role) {
         if (role.getPlayer() == null) {
             return true;
         }
-        RoleStatus roleStatus = ((CuratableRole) role).getStatus();
+        RoleStatus roleStatus = ((CuratableRole<?, ?>) role).getStatus();
         return isValid(role.getPlayer().getStatusCode(), roleStatus);
     }
 

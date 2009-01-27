@@ -46,14 +46,14 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getOrganization());
     }
-    
+
     @Test
     public void testPrepareNoRole() {
         action.setRole(null);
         action.prepare();
         assertNotNull(action.getRole());
     }
-    
+
     @Test
     public void testPrepareWithRoleId() {
         Correlation role = action.getRole();
@@ -62,7 +62,7 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         assertNotSame(role, action.getRole());
         assertEquals(1L, action.getRole().getId().longValue());
     }
-    
+
     @Test
     public void testPrepare() throws Exception {
         action.setRole(null);
@@ -193,10 +193,10 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
                         return results;
                     }
 
-                    private IdentifiedOrganization create(Long playerId, Long id) {
+                    private IdentifiedOrganization create(Long pId, Long id) {
                         IdentifiedOrganization ro = new IdentifiedOrganization();
                         ro.setPlayer(new Organization());
-                        ro.getPlayer().setId(playerId);
+                        ro.getPlayer().setId(pId);
                         ro.setId(id);
                         return ro;
                     }
@@ -215,10 +215,10 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
     }
 
     @Test

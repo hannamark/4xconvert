@@ -3,31 +3,35 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.CGLIBUtils;
 import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
 import java.util.List;
 import java.util.Set;
+
 import javax.jms.JMSException;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 
+import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+
 /**
  * @param <T> Entity type.
- * 
+ *
  * @author gax
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEntity>
+public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEntity<?, ?>>
         extends AbstractCuratableServiceBean<T> {
 
     /**
      * property used in query.
      */
     protected static final String PLAYER_ID = "player.id";
-    
+
     /**
      * property used in query.
      */
@@ -51,7 +55,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
                     for (Correlation x : getAssociatedRoles(e, s)) {
                         x.setStatus(RoleStatus.NULLIFIED);
                         GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
-                        service.curate((Correlation) x);
+                        service.curate(x);
                     }
                     break;
                 case INACTIVE:
@@ -91,7 +95,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
     @SuppressWarnings("unchecked")
     protected <C extends Correlation> List<C> getAssociatedRoles(
             Long entityId, Class<C> type, String property, Session s) {
-        
+
         Criteria c = s.createCriteria(type);
         LogicalExpression and = Restrictions.and(
                 Restrictions.eq(property, entityId),

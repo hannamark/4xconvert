@@ -101,7 +101,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -248,8 +247,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         assertEquals(RoleStatus.PENDING, cr.getStatus());
     }
 
-    protected void testNullifiedRoleNotFoundInSearch(Ii id2,
-            T searchCriteria, Class clazz) throws NullifiedRoleException {
+    protected void testNullifiedRoleNotFoundInSearch(Ii id2, T searchCriteria, Class<?> clazz) {
         searchCriteria.setIdentifier(id2);
         List<T> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());

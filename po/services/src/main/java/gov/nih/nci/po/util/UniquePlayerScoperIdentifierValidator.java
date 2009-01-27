@@ -14,9 +14,11 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.Validator;
 
+import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+
 /**
  * Used to validate that the scoper is unique for the given player, ignoring NULLIFIED records.
- * 
+ *
  * @author smatyas
  */
 @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
@@ -51,7 +53,7 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
-            AbstractIdentifiedEntity ie = (AbstractIdentifiedEntity) value;
+            AbstractIdentifiedEntity<?> ie = (AbstractIdentifiedEntity<?>) value;
             Criteria c = null;
             try {
                 c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(ie.getClass()));
@@ -67,7 +69,7 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
                     and,
                     Restrictions.eq("assignedIdentifier.root", ie.getAssignedIdentifier().getRoot()));
             c.add(Restrictions.and(Restrictions.ne("status", RoleStatus.NULLIFIED), and));
-            AbstractIdentifiedEntity other = (AbstractIdentifiedEntity) c.uniqueResult();
+            AbstractIdentifiedEntity<?> other = (AbstractIdentifiedEntity<?>) c.uniqueResult();
             return (other == null || other.getId().equals(ie.getId()));
         } finally {
             if (s != null) {

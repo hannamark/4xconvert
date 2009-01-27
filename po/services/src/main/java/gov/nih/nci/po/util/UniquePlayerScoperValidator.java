@@ -12,9 +12,11 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.Validator;
 
+import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+
 /**
  * Used to validate that the scoper is unique for the given player, ignoring NULLIFIED records.
- * 
+ *
  * @author smatyas
  */
 @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })

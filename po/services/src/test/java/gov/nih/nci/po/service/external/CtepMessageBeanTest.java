@@ -4,12 +4,15 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.external.CtepMessageBean.RecordType;
 import gov.nih.nci.po.service.external.CtepMessageBean.TransactionType;
 import gov.nih.nci.po.util.EmailLogger;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Enumeration;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
 import org.apache.log4j.WriterAppender;
 import org.junit.After;
 import org.junit.Assert;
@@ -60,9 +63,9 @@ public class CtepMessageBeanTest {
         checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.ORGANIZATION, "03013", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_ADDRESS, "42", idx++);
-        checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_CONTACT, "42", idx++);        
-        checkers[idx] = new Checker(true, TransactionType.UPDATE, RecordType.PERSON, "42", idx++);        
-        checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.PERSON_ADDRESS, "42", idx++);        
+        checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_CONTACT, "42", idx++);
+        checkers[idx] = new Checker(true, TransactionType.UPDATE, RecordType.PERSON, "42", idx++);
+        checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.PERSON_ADDRESS, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_ADDRESS, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.PERSON_CONTACT, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_CONTACT, "42", idx++);
@@ -118,11 +121,11 @@ public class CtepMessageBeanTest {
             this.errors = errors;
         }
 
-        void check(TransactionType trxType, RecordType msgType, Ii id) {
+        void check(TransactionType tType, RecordType mType, Ii ii) {
             called = true;
-            this.trxType = trxType;
-            this.msgType = msgType;
-            this.id = id;
+            this.trxType = tType;
+            this.msgType = mType;
+            this.id = ii;
         }
 
         public void assertCall() {
@@ -146,8 +149,8 @@ public class CtepMessageBeanTest {
     }
 
     private class MockTextMessage implements TextMessage {
-        private String text;
-        private int id;
+        private final String text;
+        private final int id;
         MockTextMessage(int id) throws IOException {
             byte[] b = new byte[512];
             int c = CtepMessageBeanTest.class.getResourceAsStream("msg"+id+".xml").read(b);
@@ -295,7 +298,7 @@ public class CtepMessageBeanTest {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public Enumeration getPropertyNames() throws JMSException {
+        public Enumeration<?> getPropertyNames() throws JMSException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

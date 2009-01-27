@@ -386,7 +386,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * {@inheritDoc}
      */
     @Formula("status")
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "PMD.EmptyMethodInAbstractClassShouldBeAbstract" })
     private String getPriorAsString() {
         return null;
     }

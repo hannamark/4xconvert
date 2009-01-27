@@ -102,13 +102,13 @@ import gov.nih.nci.po.data.convert.IdConverter.OrganizationalContactIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ResearchOrganizationIdConverter;
-import gov.nih.nci.po.util.CGLIBUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
 
 /**
  * IdConverter registry.

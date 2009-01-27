@@ -9,7 +9,7 @@ import org.hibernate.validator.Validator;
 
 /**
  * Validates that the State Or Province of an Address type is valid for the specified Country.
- * 
+ *
  * @author smatyas
  *
  */
@@ -35,9 +35,9 @@ public class ValidStateCountryValidator implements Validator<ValidStateCountry>,
             return false;
         }
         Address address = (Address) value;
-        boolean isValid = (address == null || address.getCountry() == null);
+        boolean isValid = address.getCountry() == null;
         isValid = isValid || (address.getCountry() != null && address.getCountry().getStates().isEmpty());
-        isValid = isValid || (address.getCountry() != null && !address.getCountry().getStates().isEmpty() 
+        isValid = isValid || (address.getCountry() != null && !address.getCountry().getStates().isEmpty()
                 && address.getStateOrProvince() != null && isStateOrProvinceMemberOfCountry(address));
         return isValid;
     }

@@ -109,7 +109,7 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
     @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
         if (entity instanceof Curatable) {
-            Curatable c = (Curatable) entity;
+            Curatable<?, ?> c = (Curatable<?, ?>) entity;
             if (c.getStatusDate() == null) {
                 setStatusDate(propertyNames, state);
                 return true;

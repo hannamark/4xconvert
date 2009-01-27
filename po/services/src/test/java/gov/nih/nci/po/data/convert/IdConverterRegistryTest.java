@@ -125,7 +125,7 @@ public class IdConverterRegistryTest {
     }
 
     private static final String PACKAGENAME = "gov.nih.nci.po.data.convert";
-    private static final Class THIS_CLZ = IdConverterRegistryTest.class;
+    private static final Class<IdConverterRegistryTest> THIS_CLZ = IdConverterRegistryTest.class;
 
     @Test
     public void ensureAllSubclassesOfIdConverterAreInRegistry() throws ClassNotFoundException {

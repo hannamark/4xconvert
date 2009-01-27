@@ -149,23 +149,23 @@ public class CtepImportAction extends ActionSupport {
         new ImportHelper(getFile()).process(new PersonImporter());
         return SUCCESS;
     }
-    
+
     /**
      *  Callback interface to generalize behavior.
      */
     interface Importer {
         /**
          * @param value CTEP identifier to lookup and import
-         * @return COPPA-PO Object saved, otherwise null 
+         * @return COPPA-PO Object saved, otherwise null
          * @throws JMSException the JMS related exception encountered
          */
         Object invoke(Ii value) throws JMSException;
-        
+
         /**
          * @return the friendly name
          */
         String getType();
-        
+
         /**
          * generate an ii.
          * @param id the id to use
@@ -173,7 +173,7 @@ public class CtepImportAction extends ActionSupport {
          */
         Ii generateIi(String id);
     }
-    
+
     /**
      * Callback implementation to import Person.
      */
@@ -192,7 +192,7 @@ public class CtepImportAction extends ActionSupport {
         public String getType() {
             return Person.class.getSimpleName();
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -202,9 +202,9 @@ public class CtepImportAction extends ActionSupport {
             ii.setRoot(CtepPersonImporter.CTEP_PERSON_DB_ROOT);
             return ii;
         }
-        
+
     }
-    
+
     /**
      * Callback implementation to import Organization.
      */
@@ -233,15 +233,15 @@ public class CtepImportAction extends ActionSupport {
             return ii;
         }
     }
-    
+
     /**
      * Generic implementation to import Organization or Person types.
      */
     class ImportHelper {
-        private final File file;
+        private final File importFile;
 
         public ImportHelper(File file) {
-            this.file = file;
+            this.importFile = file;
         }
         void process(Importer callback) throws IOException {
             BufferedReader reader = getFileReader();
@@ -272,14 +272,14 @@ public class CtepImportAction extends ActionSupport {
                         + "processing halted", e);
                 ActionHelper.saveMessage("An unexpected error occurred while processing the uploaded "
                         + "CTEP Import file. Processing was halted prematurely on the line containing '" + line
-                        + "'. Below are the results for processing up to this fatal error:"); 
+                        + "'. Below are the results for processing up to this fatal error:");
             } finally  {
                 addMessages(passedRecords, skippedRecords, erroredRecords);
             }
         }
 
         private BufferedReader getFileReader() throws FileNotFoundException {
-            FileReader fileReader = new FileReader(this.file);
+            FileReader fileReader = new FileReader(this.importFile);
             return new BufferedReader(fileReader);
         }
 
@@ -298,7 +298,7 @@ public class CtepImportAction extends ActionSupport {
                 ActionHelper.saveMessage(msg.toString());
             }
         }
-        
+
     }
 
     /**

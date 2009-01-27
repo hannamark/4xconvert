@@ -262,14 +262,14 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         }
         final Key dummyKey = new Key();
         final Value dummyValue = new Value();
-        class KeySet implements Set {
+        class KeySet implements Set<Object> {
 
             public boolean add(Object o) {
                 // TODO Auto-generated method stub
                 return false;
             }
 
-            public boolean addAll(Collection c) {
+            public boolean addAll(Collection<?> c) {
                 // TODO Auto-generated method stub
                 return false;
             }
@@ -284,7 +284,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
                 return false;
             }
 
-            public boolean containsAll(Collection c) {
+            public boolean containsAll(Collection<?> c) {
                 // TODO Auto-generated method stub
                 return false;
             }
@@ -294,8 +294,8 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
                 return false;
             }
 
-            public Iterator<Key> iterator() {
-                return new Iterator<Key>() {
+            public Iterator<Object> iterator() {
+                return new Iterator<Object>() {
                     int iteration = 0;
                     public boolean hasNext() { return true; }
                     public Key next() { iteration++; return dummyKey; }
@@ -308,12 +308,12 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
                 return false;
             }
 
-            public boolean removeAll(Collection c) {
+            public boolean removeAll(Collection<?> c) {
                 // TODO Auto-generated method stub
                 return false;
             }
 
-            public boolean retainAll(Collection c) {
+            public boolean retainAll(Collection<?> c) {
                 // TODO Auto-generated method stub
                 return false;
             }
@@ -340,7 +340,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
             private static final long serialVersionUID = 1L;
             @Override
             @SuppressWarnings("unchecked")
-            public Set<Key> keySet() {
+            public Set keySet() {
                 return dummyKeySet;
             }
             @Override

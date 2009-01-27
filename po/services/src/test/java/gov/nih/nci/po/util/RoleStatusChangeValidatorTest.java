@@ -106,13 +106,13 @@ public class RoleStatusChangeValidatorTest {
             }
             public RoleStatus getStatus() {
                 return rs;
-            }            
+            }
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
         boolean expected = (rs == null) ? true : values.get(es).get(rs).booleanValue();
         assertEquals(expected, v.isValid(new Scoped()));
     }
-    
+
     @Test
     public void testPlayerNull() {
         class Played extends Base implements PlayedRole {
@@ -127,7 +127,7 @@ public class RoleStatusChangeValidatorTest {
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
         assertEquals(true, v.isValid(new Played()));
     }
-    
+
     @Test
     public void testScoperNull() {
         class Scoped extends Base implements ScopedRole {
@@ -169,7 +169,7 @@ public class RoleStatusChangeValidatorTest {
         public Long getId() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-        
+
         public void setStatus(RoleStatus status) {
             throw new UnsupportedOperationException("Not supported yet.");
         }

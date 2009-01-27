@@ -19,8 +19,6 @@ import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 
-import java.net.URISyntaxException;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
 
@@ -167,7 +165,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
     /**
      * {@inheritDoc}
      */
-    protected IdentifiedPersonDTO getExampleTestClassDTO(Long scoperId, Long playerId) throws URISyntaxException {
+    protected IdentifiedPersonDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
         IdentifiedPersonDTO dto = new IdentifiedPersonDTO();
         dto.setScoperIdentifier(getScoperIi(scoperId));
         dto.setPlayerIdentifier(getPlayerIi(playerId));

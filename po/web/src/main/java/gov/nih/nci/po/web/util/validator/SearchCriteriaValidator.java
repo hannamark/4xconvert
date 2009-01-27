@@ -23,7 +23,7 @@ public class SearchCriteriaValidator extends FieldValidatorSupport {
         Object value = getFieldValue(fieldName, object);
         stack.push(object);
         if (value instanceof SearchCriteria) {
-            SearchCriteria sc = (SearchCriteria) value;
+            SearchCriteria<?> sc = (SearchCriteria<?>) value;
             try {
                 sc.isValid();
             } catch (OneCriterionRequiredException e) {

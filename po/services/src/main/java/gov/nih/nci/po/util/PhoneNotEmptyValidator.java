@@ -8,19 +8,19 @@ import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 
 import java.io.Serializable;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.List;
+
 import org.hibernate.validator.Validator;
 import org.hibernate.validator.ValidatorClass;
 
 /**
  * Validates that the phone list is not empty when status changes.
- * 
+ *
  * @author gax
  *
  */
@@ -62,7 +62,7 @@ public class PhoneNotEmptyValidator
                 || value instanceof OrganizationalContact)) {
             return false;
         }
-        CuratableRole ro = (CuratableRole) value;
+        CuratableRole<?, ?> ro = (CuratableRole<?, ?>) value;
         if (ro.getStatus() == null) {
             return true;
         }

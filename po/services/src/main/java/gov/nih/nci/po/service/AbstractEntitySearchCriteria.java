@@ -85,8 +85,9 @@ package gov.nih.nci.po.service;
 
 
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import org.hibernate.Query;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 
 /**
@@ -94,10 +95,12 @@ import org.hibernate.Query;
  * @param <T> entity type to search for.
  */
 public abstract class AbstractEntitySearchCriteria<T extends PersistentObject> extends AbstractSearchCriteria<T> {
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     public boolean hasOneCriterionSpecified() {
         return true;
     }

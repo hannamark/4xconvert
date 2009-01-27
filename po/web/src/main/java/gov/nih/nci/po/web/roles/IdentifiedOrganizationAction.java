@@ -110,7 +110,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author smatyas
  */
 public class IdentifiedOrganizationAction
-    extends AbstractOrganizationRoleAction<IdentifiedOrganization, IdentifiedOrganizationCR, 
+    extends AbstractOrganizationRoleAction<IdentifiedOrganization, IdentifiedOrganizationCR,
         IdentifiedOrganizationServiceLocal>
     implements Preparable {
 
@@ -121,6 +121,7 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public void prepare() {
         super.prepare();
         if (getRole() == null) {

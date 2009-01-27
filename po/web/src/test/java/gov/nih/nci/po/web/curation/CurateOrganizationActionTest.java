@@ -88,7 +88,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.Map;
@@ -146,7 +145,7 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testCurate() throws EntityValidationException, JMSException {
+    public void testCurate() throws JMSException {
         assertEquals(Action.SUCCESS, action.curate());
     }
 
@@ -171,7 +170,7 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
         action.setOrganization(null);
         assertNull(action.getOrganization());
     }
-    
+
     @Test
     public void testGetSelectChangeRequests() {
         action.getOrganization().setId(1L);

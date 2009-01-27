@@ -191,21 +191,21 @@ public class NullifiedEntityInterceptorTest {
     @Test
     public void checkForNullifiedUsingCollectionContainingNonSupportedTypes() throws Exception {
         HibernateUtil.getHibernateHelper().beginTransaction();
-        TestInvocationContext testContext = new TestInvocationContext();
+        TestInvocationContext testCxt = new TestInvocationContext();
         ArrayList<String> list = new ArrayList<String>();
         list.add("notused");
-        testContext.returnValue = list;
-        assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
+        testCxt.returnValue = list;
+        assertEquals(testCxt.returnValue, interceptor.checkForNullified(testCxt));
     }
 
     @Test
     public void checkForNullifiedUsingCollectionContainingSupportedTypePersonDTO() throws Exception {
         HibernateUtil.getHibernateHelper().beginTransaction();
-        TestInvocationContext testContext = new TestInvocationContext();
+        TestInvocationContext testCxt = new TestInvocationContext();
         PersonEntityServiceBean oesb = new PersonEntityServiceBean();
         PSvcBean svcLocal = new PSvcBean();
         oesb.setPersonServiceBean(svcLocal);
-        testContext.target = oesb;
+        testCxt.target = oesb;
 
 
         Person p1 = new Person();
@@ -213,8 +213,8 @@ public class NullifiedEntityInterceptorTest {
         p1.setStatusCode(EntityStatus.PENDING);
         ArrayList<PersonDTO> list = new ArrayList<PersonDTO>();
         list.add((PersonDTO) PoXsnapshotHelper.createSnapshot(p1));
-        testContext.returnValue = list;
-        assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
+        testCxt.returnValue = list;
+        assertEquals(testCxt.returnValue, interceptor.checkForNullified(testCxt));
 
 
         Person p2 = new Person();
@@ -224,10 +224,10 @@ public class NullifiedEntityInterceptorTest {
         list = new ArrayList<PersonDTO>();
         PersonDTO p2dto = (PersonDTO) PoXsnapshotHelper.createSnapshot(p2);
         list.add(p2dto);
-        testContext.returnValue = list;
+        testCxt.returnValue = list;
         try {
             svcLocal.getById = p2;
-            interceptor.checkForNullified(testContext);
+            interceptor.checkForNullified(testCxt);
             fail("Expected NullifiedEntityException");
         } catch (NullifiedEntityException e) {
             assertTrue(e.getNullifiedEntities().containsKey(p2dto.getIdentifier()));
@@ -310,7 +310,7 @@ public class NullifiedEntityInterceptorTest {
         }
 
         public void curate(Person curatedPerson) throws JMSException {
-            
+
         }
     }
 

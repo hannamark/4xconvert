@@ -56,7 +56,7 @@ public class PrivateAccessor {
         return null;
     }
     
-    public static Object invokePrivateMethod(Object o, Class clz, String methodName, Object[] params) {
+    public static Object invokePrivateMethod(Object o, Class<?> clz, String methodName, Object[] params) {
         // Check we have valid arguments...
         Assert.assertNotNull(o);
         Assert.assertNotNull(methodName);

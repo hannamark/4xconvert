@@ -52,7 +52,7 @@ public class OversightCommitteeActionTest extends AbstractPoTest {
         action.prepare();
         assertNotNull(action.getRole());
     }
-    
+
     @Test
     public void testPrepareWithRoleId() {
         Correlation role = action.getRole();
@@ -61,7 +61,7 @@ public class OversightCommitteeActionTest extends AbstractPoTest {
         assertNotSame(role, action.getRole());
         assertEquals(1L, action.getRole().getId().longValue());
     }
-    
+
     @Test
     public void testPrepareNoOrgId() throws Exception {
         action.setRole(null);
@@ -179,10 +179,10 @@ public class OversightCommitteeActionTest extends AbstractPoTest {
                         return results;
                     }
 
-                    private OversightCommittee create(Long playerId, Long id) {
+                    private OversightCommittee create(Long pId, Long id) {
                         OversightCommittee ro = new OversightCommittee();
                         ro.setPlayer(new Organization());
-                        ro.getPlayer().setId(playerId);
+                        ro.getPlayer().setId(pId);
                         ro.setId(id);
                         return ro;
                     }
@@ -201,11 +201,11 @@ public class OversightCommitteeActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(OversightCommitteeAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(OversightCommitteeAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
     }
 

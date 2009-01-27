@@ -188,10 +188,10 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
                         return results;
                     }
 
-                    private ClinicalResearchStaff create(Long playerId, Long id) {
+                    private ClinicalResearchStaff create(Long pId, Long id) {
                         ClinicalResearchStaff ro = new ClinicalResearchStaff();
                         ro.setPlayer(new Person());
-                        ro.getPlayer().setId(playerId);
+                        ro.getPlayer().setId(pId);
                         ro.setId(id);
                         return ro;
                     }
@@ -210,11 +210,11 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(ClinicalResearchStaffAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(ClinicalResearchStaffAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
     }
 

@@ -243,7 +243,7 @@ public class ObjectMessageStub implements ObjectMessage {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Enumeration getPropertyNames() throws JMSException {
+    public Enumeration<?> getPropertyNames() throws JMSException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

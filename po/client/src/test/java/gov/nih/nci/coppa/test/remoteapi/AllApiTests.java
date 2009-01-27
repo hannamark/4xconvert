@@ -40,16 +40,16 @@ public class AllApiTests {
             assertTrue("@SuiteClasses is missing a *Test.class", suiteClassesList.containsAll(classPathClassesList));
         }
 
-        public static Class[] getClasses() {
+        public static Class<?>[] getClasses() {
             List<Class<?>> result = getClassesList();
-            Class[] clzz = new Class[result.size()];
+            Class<?>[] clzz = new Class[result.size()];
             return result.toArray(clzz);
         }
 
         private static List<Class<?>> getClassesList() {
-            Class[] classes = org.openqa.jtc.junit.Locator.findClasses(AllApiTests.class, Object.class, AllApiTests.class
+            Class<?>[] classes = org.openqa.jtc.junit.Locator.findClasses(AllApiTests.class, Object.class, AllApiTests.class
                     .getPackage().getName()
-                    + ".", (Set) null);
+                    + ".", (Set<?>) null);
             List<Class<?>> result = new ArrayList<Class<?>>();
 
             for (Class<?> clz : classes) {

@@ -22,10 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class CuratePersonTest extends AbstractPoWebTest {
-    private static final String DEFAULT_URL = "http://default.example.com";
-
-    private static final String DEFAULT_EMAIL = "default@example.com";
-
     private static final int DEFAULT_TEXT_COL_LENGTH = 50;
 
     private final Map<Ii, PersonDTO> catalogPersons = new HashMap<Ii, PersonDTO>();
@@ -264,7 +260,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
     private PersonDTO create(String firstName, String middleName, String lastName, String prefix, String suffix, Ad postalAddress) throws URISyntaxException {
         PersonDTO person = new PersonDTO();
         person.setName(RemoteApiUtils.convertToEnPn(firstName, middleName, lastName, prefix, suffix));
-        
+
         person.setPostalAddress(postalAddress);
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());

@@ -7,8 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
-import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
@@ -79,7 +79,7 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         action.prepare();
         assertSame(o, action.getRole());
     }
-    
+
     @Test
     public void testStart() {
         assertEquals(Action.SUCCESS, action.start());
@@ -98,7 +98,7 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         assertNotNull(action.getRole());
         action.setRole(null);
         assertNull(action.getRole());
-        
+
         action.setBaseRole(new HealthCareProvider());
         assertSame(action.getRole(), action.getBaseRole());
     }
@@ -188,10 +188,10 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
                         return results;
                     }
 
-                    private HealthCareProvider create(Long playerId, Long id) {
+                    private HealthCareProvider create(Long pId, Long id) {
                         HealthCareProvider ro = new HealthCareProvider();
                         ro.setPlayer(new Person());
-                        ro.getPlayer().setId(playerId);
+                        ro.getPlayer().setId(pId);
                         ro.setId(id);
                         return ro;
                     }
@@ -210,11 +210,11 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(HealthCareProviderAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(HealthCareProviderAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
     }
 
@@ -224,7 +224,7 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         action.setCr(null);
         assertNull(action.getCr());
-        
+
         action.setBaseCr(new HealthCareProviderCR());
         assertSame(action.getCr(), action.getBaseCr());
     }
@@ -247,12 +247,12 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
             i++;
         }
     }
-    
+
     @Test
     public void testRootKeyProperty() {
         assertNull(action.getRootKey());
         action.setRootKey("abc");
         assertNotNull(action.getRootKey());
     }
-    
+
 }

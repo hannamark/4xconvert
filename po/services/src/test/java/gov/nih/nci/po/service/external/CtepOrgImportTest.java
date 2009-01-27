@@ -134,7 +134,7 @@ public class CtepOrgImportTest extends AbstractBeanTest {
         assertEquals(10, getCountOfClass(ResearchOrganization.class).longValue());
     }
 
-    private Long getCountOfClass(Class c) {
+    private Long getCountOfClass(Class<?> c) {
         String hql = " select count(*) from " + c.getName();
         return (Long) PoHibernateUtil.getCurrentSession().createQuery(hql).uniqueResult();
     }

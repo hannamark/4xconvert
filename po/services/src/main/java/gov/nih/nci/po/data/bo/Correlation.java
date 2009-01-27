@@ -1,7 +1,8 @@
 package gov.nih.nci.po.data.bo;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.audit.Auditable;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  *

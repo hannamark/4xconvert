@@ -171,7 +171,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param model the target.
      * @param modelClassForHelper the model class to search for the right helper by.
      */
-    public static void copyIntoAbstractModel(PoDto snapshot, PersistentObject model, Class modelClassForHelper) {
+    public static void copyIntoAbstractModel(PoDto snapshot, PersistentObject model, Class<?> modelClassForHelper) {
         SnapshotHelper helper = REGISTRY.getHelperForModelClass(
                 modelClassForHelper,
                 DEFAULT_ISO_SNAPSHOT_NAME);

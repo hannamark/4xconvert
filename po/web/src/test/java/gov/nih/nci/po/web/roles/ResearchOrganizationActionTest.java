@@ -46,14 +46,14 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getOrganization());
     }
-    
+
     @Test
     public void testPrepareNoRole() {
         action.setRole(null);
         action.prepare();
         assertNotNull(action.getRole());
     }
-    
+
     @Test
     public void testPrepareWithRoleId() {
         Correlation role = action.getRole();
@@ -62,7 +62,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertNotSame(role, action.getRole());
         assertEquals(1L, action.getRole().getId().longValue());
     }
-    
+
     @Test
     @SuppressWarnings("deprecation")
     public void testPrepareNoOrgId() throws Exception {
@@ -183,10 +183,10 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
                         return results;
                     }
 
-                    private ResearchOrganization create(Long playerId, Long id) {
+                    private ResearchOrganization create(Long pId, Long id) {
                         ResearchOrganization ro = new ResearchOrganization();
                         ro.setPlayer(new Organization());
-                        ro.getPlayer().setId(playerId);
+                        ro.getPlayer().setId(pId);
                         ro.setId(id);
                         return ro;
                     }
@@ -205,11 +205,11 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
     }
 

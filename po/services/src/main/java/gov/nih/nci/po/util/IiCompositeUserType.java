@@ -354,7 +354,7 @@ public class IiCompositeUserType implements CompositeUserType {
     /**
      * {@inheritDoc}
      */
-    public Class returnedClass() {
+    public Class<Ii> returnedClass() {
         return Ii.class;
     }
 

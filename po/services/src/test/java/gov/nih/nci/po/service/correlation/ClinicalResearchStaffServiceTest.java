@@ -82,15 +82,16 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
-
 import gov.nih.nci.po.util.PoHibernateUtil;
+
+import java.util.Map;
+
 import org.junit.Test;
 /**
  * @author Scott Miller
@@ -100,7 +101,7 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
 
     /**
      * {@inheritDoc}
-     * @throws EntityValidationException 
+     * @throws EntityValidationException
      */
     @Override
     ClinicalResearchStaff getSampleStructuralRole() throws EntityValidationException {
@@ -126,8 +127,9 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         int c = s.getHotRoleCount(hcf.getPlayer());
         assertEquals(1, c);
     }
-    
 
+
+    @Override
     @Test(expected = EntityValidationException.class)
     public void testUniqueConstraint() throws Exception {
         ClinicalResearchStaff obj = getSampleStructuralRole();
@@ -136,7 +138,7 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         obj.setPlayer(obj2.getPlayer());
         //ensure scoper is same
         obj2.setScoper(obj.getScoper());
-        getService().create(obj);        
+        getService().create(obj);
         getService().create(obj2);
     }
 

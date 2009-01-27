@@ -112,7 +112,7 @@ import org.junit.Test;
  */
 public class MessageProducerTest extends AbstractHibernateTestCase {
 
-    public static <T extends Curatable> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service)
+    public static <T extends Curatable<?, ?>> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service)
             throws JMSException {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         assertEquals(1, topic.messages.size());
@@ -123,12 +123,12 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         assertEquals(id.getId(), IiConverter.convertToLong(((SubscriberUpdateMessage) om.getObject()).getId()));
     }
 
-    public static <T extends Curatable> void assertNoMessageCreated(T id, AbstractBaseServiceBean<T> service) {
+    public static <T extends Curatable<?, ?>> void assertNoMessageCreated(T id, AbstractBaseServiceBean<T> service) {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         assertEquals(0, topic.messages.size());
     }
 
-    public static <T extends Curatable> void clearMessages(AbstractBaseServiceBean<T> service) {
+    public static <T extends Curatable<?, ?>> void clearMessages(AbstractBaseServiceBean<T> service) {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         topic.messages.clear();
     }

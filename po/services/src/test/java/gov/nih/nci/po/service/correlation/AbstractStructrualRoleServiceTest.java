@@ -224,7 +224,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         T structuralRole = getSampleStructuralRole();
 
         if (structuralRole instanceof CuratableRole) {
-            CuratableRole c = (CuratableRole) structuralRole;
+            CuratableRole<?, ?> c = (CuratableRole<?, ?>) structuralRole;
             assertNull(c.getStatusDate());
         }
 
@@ -239,7 +239,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         verifyStructuralRole(structuralRole, retrievedRole);
 
         if (retrievedRole instanceof CuratableRole) {
-            CuratableRole c = (CuratableRole) retrievedRole;
+            CuratableRole<?, ?> c = (CuratableRole<?, ?>) retrievedRole;
             assertNotNull(c.getStatusDate());
         }
     }
@@ -287,7 +287,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         if (PlayedRole.class.isAssignableFrom(myType)) {
             CuratableRole r = (CuratableRole) createSample();
             assertEquals(RoleStatus.PENDING, r.getStatus());
-            CuratableEntity entity = ((PlayedRole)r).getPlayer();
+            CuratableEntity entity = ((PlayedRole<?>)r).getPlayer();
             assertEquals(EntityStatus.PENDING, entity.getStatusCode());
             entity.setStatusCode(EntityStatus.NULLIFIED);
             if (entity instanceof Organization){
@@ -322,8 +322,8 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (PlayedRole.class.isAssignableFrom(myType)) {
             // make everything ACTIVE
-            CuratableRole r = (CuratableRole) createSample();
-            CuratableEntity player = ((PlayedRole)r).getPlayer();
+            CuratableRole<?, ?> r = (CuratableRole<?, ?>) createSample();
+            CuratableEntity<?, ?> player = ((PlayedRole<?>)r).getPlayer();
             player.setStatusCode(EntityStatus.ACTIVE);
             PoHibernateUtil.getCurrentSession().update(player);
             basicOrganization.setStatusCode(EntityStatus.ACTIVE);
@@ -333,8 +333,8 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
             r.setStatus(RoleStatus.ACTIVE);
             PoHibernateUtil.getCurrentSession().update(r);
             PoHibernateUtil.getCurrentSession().flush();
-            
-            CuratableEntity entity = ((PlayedRole)r).getPlayer();
+
+            CuratableEntity entity = ((PlayedRole<?>)r).getPlayer();
             entity.setStatusCode(EntityStatus.INACTIVE);
             if (entity instanceof Organization){
                 locator.getOrganizationService().curate((Organization)entity);
@@ -350,21 +350,21 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (ScopedRole.class.isAssignableFrom(myType)) {
-            CuratableRole r = (CuratableRole) createSample();
+            CuratableRole<?, ?> r = (CuratableRole<?, ?>) createSample();
             assertEquals(RoleStatus.PENDING, r.getStatus());
             basicOrganization.setStatusCode(EntityStatus.NULLIFIED);
             locator.getOrganizationService().curate(basicOrganization);
             assertEquals(RoleStatus.NULLIFIED, r.getStatus());
         }
     }
-    
+
     @Test
     public void cascadeScoperStatusChange_Inactive() throws Exception {
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (ScopedRole.class.isAssignableFrom(myType)) {
             // make everything ACTIVE
-            CuratableRole r = (CuratableRole) createSample();
+            CuratableRole<?, ?> r = (CuratableRole<?, ?>) createSample();
             basicOrganization.setStatusCode(EntityStatus.ACTIVE);
             PoHibernateUtil.getCurrentSession().update(basicOrganization);
             basicPerson.setStatusCode(EntityStatus.ACTIVE);
@@ -378,7 +378,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
             assertEquals(RoleStatus.SUSPENDED, r.getStatus());
         }
     }
-    
+
     protected void createAndGetOrganization() throws EntityValidationException {
         OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
         orgTest.setDefaultCountry(getDefaultCountry());

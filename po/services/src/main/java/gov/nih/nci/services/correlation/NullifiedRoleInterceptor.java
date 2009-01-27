@@ -117,13 +117,13 @@ public class NullifiedRoleInterceptor {
         if (returnValue instanceof CorrelationDto) {
             handleDTO((CorrelationDto) returnValue);
         } else if (returnValue instanceof Collection) {
-            handleCollection((Collection) returnValue);
+            handleCollection((Collection<?>) returnValue);
         }
 
         return returnValue;
     }
 
-    private void handleCollection(Collection collection)
+    private void handleCollection(Collection<?> collection)
             throws NullifiedRoleException {
         if (collection == null) {
             return;
