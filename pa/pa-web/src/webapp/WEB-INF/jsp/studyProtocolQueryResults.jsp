@@ -11,15 +11,15 @@
     <display:column titleKey="studyProtocol.studyStatusDate" property="studyStatusDate" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" sortable="true" headerClass="sortable"/>
-    <display:column class="title" 
-        titleKey="studyProtocol.action" 
-        href="studyProtocolview.action" property="action"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"
-        sortable="true" headerClass="sortable"/>
     <c:if test="${(sessionScope.role == 'Abstractor')}">
-        <display:column titleKey="studyProtocol.viewTSR"  
-        	href="studyProtocolviewTSR.action" property="viewTSR"
-            paramId="studyProtocolId" paramProperty="studyProtocolId"/>
+        <display:column class="title" 
+            titleKey="studyProtocol.action" 
+            href="studyProtocolview.action" property="action"
+            paramId="studyProtocolId" paramProperty="studyProtocolId"
+            sortable="true" headerClass="sortable"/>
     </c:if>    
+    <display:column titleKey="studyProtocol.viewTSR"  
+        href="studyProtocolviewTSR.action" property="viewTSR"
+        paramId="studyProtocolId" paramProperty="studyProtocolId"/>
 </display:table>
 
