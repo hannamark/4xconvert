@@ -5,7 +5,7 @@
 	<display:column class="title" title="NCI Trial Identifier" sortable="true">
             <s:a href="#" onclick="viewProtocol('${row.studyProtocolId}','${row.userLastCreated}');">${row.nciIdentifier}</s:a>
       </display:column>
-	<display:column titleKey="search.trial.officialTitle" property="officialTitle"    sortable="true" headerClass="sortable"/>
+	<display:column titleKey="search.trial.officialTitle" property="officialTitle" maxLength= "200" sortable="true" headerClass="sortable"/>
 	<display:column titleKey="search.trial.studyStatusCode" property="studyStatusCode.code"   sortable="true" headerClass="sortable"/>
 	<display:column titleKey="search.trial.leadOrganizationName" property="leadOrganizationName"    sortable="true" headerClass="sortable"/>
 	<display:column titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"    sortable="true" headerClass="sortable"/>
