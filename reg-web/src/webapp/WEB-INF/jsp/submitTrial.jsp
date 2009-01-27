@@ -335,34 +335,39 @@ function toggledisplay2 (it) {
 						</div>		
 					</td>
 		</tr>   
-				<tr>
+		<tr>
 				<td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
 				<td>
 				<s:radio name="respparty" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
 				</td>
-				</tr>
-				<c:if test="${respparty == 'sponsor' }">
-				<tr id="rpcid">
-	                <td scope="row" class="label">
-	                    <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
-	                </td>               
-	                <td class="value">
-	                    <div id="loadResponsibleContactField">
-	                        <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
-	                    </div>                                    
-	                </td>
-                </tr>
-				</c:if>
-				<tr id="rpcid" style="display:none">
-                    <td scope="row" class="label">
-                        <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
-                    </td>               
-                    <td class="value">
-                        <div id="loadResponsibleContactField">
-                            <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
-                        </div>                                    
-                    </td>
-                </tr>				
+		</tr>
+        <c:choose>
+         <c:when test="${respparty == 'sponsor'}">
+             <tr id="rpcid" >
+              <td scope="row" class="label">
+                          <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+              </td>                                        
+              <td class="value">
+              <div id="loadResponsibleContactField">
+                   <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+              </div>                                                                                             
+              </td>
+             </tr>
+         </c:when>
+         <c:otherwise>
+            <tr id="rpcid" style="display:none">
+                     <td scope="row" class="label">
+                                 <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+                     </td>                                        
+                     <td class="value">
+                               <div id="loadResponsibleContactField">
+                                    <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+                               </div>                                                                                             
+                     </td>
+            </tr>
+         </c:otherwise>
+        </c:choose>                                          
+				
 
           <tr>
                 <td scope="row" class="label">
