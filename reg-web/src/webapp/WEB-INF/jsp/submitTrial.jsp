@@ -340,17 +340,30 @@ function toggledisplay2 (it) {
 				<td>
 				<s:radio name="respparty" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
 				</td>
-				</tr>				
-				<tr id="rpcid" style="display:none">
-				<td scope="row" class="label">
-					<label for="responsiblepartycontact"> Responsible Party Contact :</label> 
-				</td>				
-				<td class="value">
-					<div id="loadResponsibleContactField">
-						<%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
-					</div>								      
-				</td>
 				</tr>
+				<c:if test="${respparty == 'sponsor' }">
+				<tr id="rpcid">
+	                <td scope="row" class="label">
+	                    <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+	                </td>               
+	                <td class="value">
+	                    <div id="loadResponsibleContactField">
+	                        <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+	                    </div>                                    
+	                </td>
+                </tr>
+				</c:if>
+				<tr id="rpcid" style="display:none">
+                    <td scope="row" class="label">
+                        <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+                    </td>               
+                    <td class="value">
+                        <div id="loadResponsibleContactField">
+                            <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+                        </div>                                    
+                    </td>
+                </tr>				
+
           <tr>
                 <td scope="row" class="label">
                    Email Address:<span class="required">*</span>
