@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <!-- MOTW-DISABLED saved from url=(0014)about:internet -->
+    <title>Abstracting Scientific Data</title>
+    <link rel="StyleSheet" href="css/protocolAbstraction.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="css/webworks.css" type="text/css" media="all" />
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/context.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/towwhdir.js"></script>
+    <script type="text/javascript" language="JavaScript1.2" src="wwhdata/common/wwhpagef.js"></script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        var  WebWorksRootPath = "";
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        // Set reference to top level help frame
+        //
+        var  WWHFrame = WWHGetWWHFrame("", true);
+      // -->
+    </script>
+    <script type="text/javascript" language="JavaScript1.2" src="scripts/expand.js"></script>
+  </head>
+  <body style="" onLoad="WWHUpdate();" onUnload="WWHUnload();" onKeyDown="WWHHandleKeyDown((document.all||document.getElementById||document.layers)?event:null);" onKeyPress="WWHHandleKeyPress((document.all||document.getElementById||document.layers)?event:null);" onKeyUp="WWHHandleKeyUp((document.all||document.getElementById||document.layers)?event:null);">
+    <br />
+    <div class="WebWorks_Breadcrumbs" style="text-align: left;">
+      <a class="WebWorks_Breadcrumb_Link" href="protocolAbstraction.3.1.html#1093911">Abstracting and Managing Protocols</a> &gt; Abstracting Scientific Data</div>
+    <hr align="left" />
+    <blockquote>
+      <div class="Heading1"><a name="1093911">A</a><span style="font-weight: normal;">bstracting Scientific Data</span></div>
+      <div class="Body_Text"><a name="1117209">Arms, Groups and Interventions</a></div>
+      <div class="Body_Text"><a name="1117210">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117211">      For interventional studies specify the arms:</a></div>
+      <div class="Body_Text"><a name="1117212">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117213">            Arm Label * (FDAAA) - the short name used to identify the arm.</a></div>
+      <div class="Body_Text"><a name="1117214">            Examples:</a></div>
+      <div class="Body_Text"><a name="1117215">                + Metformin</a></div>
+      <div class="Body_Text"><a name="1117216">                + Lifestyle counseling</a></div>
+      <div class="Body_Text"><a name="1117217">                + Sugar pill</a></div>
+      <div class="Body_Text"><a name="1117218">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117219">            Arm Type * (FDAAA) - select one</a></div>
+      <div class="Body_Text"><a name="1117220">                + Experimental</a></div>
+      <div class="Body_Text"><a name="1117221">                + Active Comparator</a></div>
+      <div class="Body_Text"><a name="1117222">                + Placebo Comparator</a></div>
+      <div class="Body_Text"><a name="1117223">                + Sham Comparator</a></div>
+      <div class="Body_Text"><a name="1117224">                + No intervention</a></div>
+      <div class="Body_Text"><a name="1117225">                + Other</a></div>
+      <div class="Body_Text"><a name="1117226">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117227">            Arm Description (FDAAA) - brief description of the arm. This element may not be </a>necessary if the associated intervention descriptions contain sufficient information to describe the arm.</div>
+      <div class="Body_Text"><a name="1117228">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117229">      For observational studies specify the predefined participant groups (cohorts) to be </a>studied. Do not use this section to specify strata (Detailed Design can be used for that purpose, if desired).</div>
+      <div class="Body_Text"><a name="1117230">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117231">            Group/Cohort Label * - the short name used to identify the group.</a></div>
+      <div class="Body_Text"><a name="1117232">            Examples:</a></div>
+      <div class="Body_Text"><a name="1117233">                + Statin dose titration</a></div>
+      <div class="Body_Text"><a name="1117234">                + Chronic kidney disease, no anemia</a></div>
+      <div class="Body_Text"><a name="1117235">                + No treatment</a></div>
+      <div class="Body_Text"><a name="1117236">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117237">            Group/Cohort Description Definition: Explanation of the nature of the study </a>group (e.g., those with a condition and those without a condition; those with an exposure and those without an exposure). Note that the overall study population should be described under Eligibility.</div>
+      <div class="Body_Text"><a name="1117238">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117239">      For all studies, and for expanded access records, specify the associated </a>intervention(s).</div>
+      <div class="Body_Text"><a name="1117240">            Intervention Type * FDAAA - select one per intervention</a></div>
+      <div class="Body_Text"><a name="1117241">                + Drug (including placebo)</a></div>
+      <div class="Body_Text"><a name="1117242">                + Device (including sham)</a></div>
+      <div class="Body_Text"><a name="1117243">                + Biological/Vaccine</a></div>
+      <div class="Body_Text"><a name="1117244">                + Procedure/Surgery</a></div>
+      <div class="Body_Text"><a name="1117245">                + Radiation</a></div>
+      <div class="Body_Text"><a name="1117246">                + Behavioral (e.g., Psychotherapy, Lifestyle Counseling)</a></div>
+      <div class="Body_Text"><a name="1117247">                + Genetic (including gene transfer, stem cell and recombinant DNA)</a></div>
+      <div class="Body_Text"><a name="1117248">                + Dietary Supplement (e.g., vitamins, minerals)</a></div>
+      <div class="Body_Text"><a name="1117249">                + Other </a></div>
+      <div class="Body_Text"><a name="1117250">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117251">            Intervention Name * FDAAA - for drugs use generic name; for other types of </a>interventions provide a brief descriptive name.</div>
+      <div class="Body_Text"><a name="1117252">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117253">            For investigational new drugs that do not yet have a generic name, a chemical </a>name, company code or serial number may be used on a temporary basis. As soon as the generic name has been established, update the associated protocol records accordingly.</div>
+      <div class="Body_Text"><a name="1117254">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117255">            For non-drug intervention types, provide an intervention name with sufficient </a>detail so that it can be distinguished from other similar interventions.</div>
+      <div class="Body_Text"><a name="1117256">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117257">            Intervention Description (FDAAA) - cover key details of the intervention. Must be </a>sufficiently detailed to distinguish between arms of a study (e.g., comparison of different dosages of drug) and/or among similar interventions (e.g., comparison of multiple implantable cardiac defibrillators). For example, interventions involving drugs may include dosage form, dosage, frequency and duration.</div>
+      <div class="Body_Text"><a name="1117258">            Example:</a></div>
+      <div class="Body_Text"><a name="1117259">                 50 mg/m2, IV (in the vein) on day 5 of each 28 day cycle. Number</a></div>
+      <div class="Body_Text"><a name="1117260">                 of Cycles: until progression or unacceptable toxicity develops.</a></div>
+      <div class="Body_Text"><a name="1117261">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117262">            Arms/Groups * (FDAAA) - if arms or groups have been specified for the protocol, </a>select the ones for which the intervention is to be administered. For interventional studies with arms specified, all arms must have at least one intervention (unless arm type is "No Intervention") and each intervention must be assigned to at least one arm. For observational studies with groups specified, each intervention (if any) must be assigned to at least one group.</div>
+      <div class="Body_Text"><a name="1117263">&nbsp;</a></div>
+      <div class="Body_Text"><a name="1117264">            Other Names - list other names used to identify the intervention, past or present </a>(e.g., brand name for a drug). These names will be used to improve search results in ClinicalTrials.gov.</div>
+      <div class="Body_Text"><a name="1117201">&nbsp;</a></div>
+      <script type="text/javascript" language="JavaScript1.2">
+        <!--
+          // Clear related topics
+          //
+          WWHClearRelatedTopics();
+
+          document.writeln(WWHRelatedTopicsInlineHTML());
+        // -->
+      </script>
+    </blockquote>
+    <script type="text/javascript" language="JavaScript1.2">
+      <!--
+        document.write(WWHRelatedTopicsDivTag() + WWHPopupDivTag() + WWHALinksDivTag());
+      // -->
+    </script>
+  </body>
+</html>
