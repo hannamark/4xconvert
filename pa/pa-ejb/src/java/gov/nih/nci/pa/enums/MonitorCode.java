@@ -17,35 +17,35 @@ public enum MonitorCode implements CodedEnum<String> {
 
 
     /** CCR-Center for Cancer Research. */
-    CCR("CCR-Center for Cancer Research"),
-    /** CTEP-Cancer Therapy Evaluation Program. */
-    CTEP("CTEP-Cancer Therapy Evaluation Program"),
-    /** DCB-Division of Cancer Biology. */
-    DCB("DCB-Division of Cancer Biology"),
-    /** DCCPS-Division of Cancer Control and Population Sciences. */
-    DCCPS("DCCPS-Division of Cancer Control and Population Sciences"),
-    /** DCEG-Division of Cancer Epidemiology and Genetics. */
-    DCEG("DCEG-Division of Cancer Epidemiology and Genetics"),
-    /** DTP-Developmental Therapeutics Program. */
-    DTP("DTP-Developmental Therapeutics Program"),
-    /** DCP-Division of Cancer Prevention. */
-    DCP("DCP-Division of Cancer Prevention"),
-    /** DEA-Division of Extramural Activities. */
-    DEA("DEA-Division of Extramural Activities"),
-    /** OD-Office of the Director, NCI, NIH. */
-    OD("OD-Office of the Director, NCI, NIH"),
-    /** OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs). */
-    OSB_SPOREs("OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs)"),
+    CCR("CCR"), 
     /** CIP-Cancer Imaging Program. */
-    CIP("CIP-Cancer Imaging Program"),
+    CIP("CIP") ,
     /** CDP-Cancer Diagnosis Program. */
-    CDP("CDP-Cancer Diagnosis Program"),
+    CDP("CDP") ,
+    /** CTEP-Cancer Therapy Evaluation Program. */
+    CTEP("CTEP") , 
+    /** DCB-Division of Cancer Biology. */
+    DCB("DCB") ,
+    /** DCCPS-Division of Cancer Control and Population Sciences. */
+    DCCPS("DCCPS") , 
+    /** DCEG-Division of Cancer Epidemiology and Genetics. */
+    DCEG("DCEG") ,
+    /** DCP-Division of Cancer Prevention. */
+    DCP("DCP") ,
+    /** DEA-Division of Extramural Activities. */
+    DEA("DEA"),
+    /** DTP-Developmental Therapeutics Program. */
+    DTP("DTP") ,
+    /** OD-Office of the Director, NCI, NIH. */
+    OD("OD") ,
+    /** OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs). */
+    OSB_SPOREs("OSB/SPOREs") ,
     /** TRP-Translational Research Program. */
-    TRP("TRP-Translational Research Program"),
+    TRP("TRP") ,
     /** RRP-Radiation Research Program. */
-    RRP("RRP-Radiation Research Program"),
-    /** Not applicable. */
-    NA("Not applicable");    
+    RRP("RRP") ,     
+    /*** . */
+    NA("N/A");
 
      private String code;
 
