@@ -419,10 +419,13 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                     }
                     appendElement(irbInfo , createElement("name" ,  paOrg.getName() , doc));
-                    Organization affOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(
-                            IiConverter.convertToLong(spart.getHealthcareFacilityIi()));      
-                    if (affOrg != null) {
+                    if (spart.getHealthcareFacilityIi() != null 
+                        && spart.getHealthcareFacilityIi().getExtension() != null) {
+                      Organization affOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(
+                          IiConverter.convertToLong(spart.getHealthcareFacilityIi()));      
+                      if (affOrg != null) {
                         appendElement(irbInfo , createElement("affiliation" ,  affOrg.getName() , doc));
+                      }
                     }
                     Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
                     for (Object tel : telList) {

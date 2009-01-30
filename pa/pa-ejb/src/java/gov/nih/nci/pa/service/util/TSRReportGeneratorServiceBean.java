@@ -640,11 +640,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                           throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                       }
                       html.append(appendData("Board" , paOrg.getName(), true , false));
-
-                      Organization affOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
-                              IiConverter.convertToLong(part.getHealthcareFacilityIi()));      
-                      if (affOrg != null) {
+                      if (part.getHealthcareFacilityIi() != null
+                           && part.getHealthcareFacilityIi().getExtension() != null) {
+                        Organization affOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
+                            IiConverter.convertToLong(part.getHealthcareFacilityIi()));      
+                        if (affOrg != null) {
                           html.append(appendData(" affiliated with " , affOrg.getName(), false , false));
+                        }
                       }
                       html.append(appendData("Full Address" , AddressConverterUtil.convertToAddress(
                               poOrg.getPostalAddress()), true , false));
