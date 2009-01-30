@@ -168,6 +168,7 @@
 	</script>
 	<s:set name="phaseCodeValuesNIH" value="@gov.nih.nci.pa.enums.ProgramCodesForNIH@getDisplayNames()" />
 	<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.ProgramCodesForNCI@getDisplayNames()" />
+	<s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
 
 	<table class="data2">	
 
@@ -215,7 +216,7 @@
 				</td>
 				<td>
 					<s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true" onblur="enableAddButton();"
-					list="#{'Available':'Available','No longer available':'No longer available','No longer available':'No longer available','Approved for marketing':'Approved for marketing'}"/>
+					list="#expandedAccessStatusCodeValues"/>
 					
 				</td>
 				<td>
