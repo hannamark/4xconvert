@@ -39,8 +39,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private HttpServletResponse servletResponse;
     /**
      * @return res
+     * @throws PAException exception
      */
-    public String execute() {
+    public String execute() throws PAException {
+        if (!userRoleInSession()) {
+            return showCriteria();
+        }
         return SUCCESS;
     }
 
@@ -63,8 +67,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
 
     /**
      * @return res
+     * @throws PAException exception
      */
-    public String query() {
+    public String query() throws PAException {
+        if (!userRoleInSession()) {
+            return showCriteria();
+        }
         try {
             records = new ArrayList<StudyProtocolQueryDTO>();
             records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
@@ -120,8 +128,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
 
     /**
      * @return res
+     * @throws PAException exception
      */
-    public String view() {
+    public String view() throws PAException {
+        if (!userRoleInSession()) {
+            return showCriteria();
+        }
         try {
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
                     .getProtocolQueryService()
@@ -145,9 +157,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     
     /**
      * @return res
+     * @throws PAException exception
      */
-    public String viewTSR() {
-        
+    public String viewTSR() throws PAException {
+        if (!userRoleInSession()) {
+            return showCriteria();
+        }
         try {
             String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
             PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
@@ -206,4 +221,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
     }    
+    
+    private boolean userRoleInSession() {
+        return (null != ServletActionContext.getRequest().getSession().getAttribute(Constants.USER_ROLE));
+    }
 }
