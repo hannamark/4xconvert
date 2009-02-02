@@ -80,151 +80,20 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import java.util.List;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.junit.Test;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
 
 /**
- * Exercises the Searchable annotation and AbstractSearchCriteria class that uses it.
+ * Extension to the standard sort criterion.
+ *
+ * @param <T> the type of persistent class for which this defines sort criteria
  */
-@SuppressWarnings({"unused", "serial" })
-public class SearchableTest {
-
-    @Test
-    public void testBaseCases() throws Exception {
-        // null isn't searchable
-        assertFalse(SearchableUtils.hasSearchableCriterion(null));
-
-        // no searchable methods
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object()));
-
-        // searchable method has void return
-        try {
-            SearchableUtils.hasSearchableCriterion(new Object() {
-                @Searchable
-                public void test() {}
-            });
-            fail();
-        } catch (RuntimeException re) {
-            // expected
-        }
-
-        // cases for method invocation problems
-        try {
-            SearchableUtils.hasSearchableCriterion(new Object() {
-                @Searchable
-                public Object test(Object o) {
-                    return new Object();
-                }
-            });
-            fail();
-        } catch (RuntimeException e) {
-            // expected
-        }
-    }
-
-    public void testObjectCases() throws Exception {
-        // searchable method with object return returns null
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test() {
-                return null;
-            }
-        }));
-
-        // another test with no searchable methods
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            public Object test() {
-                return new Object();
-            }
-        }));
-
-        // the simple object case
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test() {
-                return new Object();
-            }
-        }));
-
-        // one of two searchable methods has data
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test1() {
-                return new Object();
-            }
-
-            @Searchable
-            public Object test2() {
-                return null;
-            }
-        }));
-
-        // neither of two searchable methods has data
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test1() {
-                return null;
-            }
-
-            @Searchable
-            public Object test2() {
-                return null;
-            }
-        }));
-    }
-
-    public void testPersistentObjectCases() throws Exception {
-        // PersistentObject with no id
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public PersistentObject test() {
-                return new PersistentObject() {
-                    public Long getId() {
-                        return null;
-                    }
-                };
-            }
-        }));
-
-        // PersistentObject with id
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public PersistentObject test() {
-                return new PersistentObject() {
-                    public Long getId() {
-                        return 1L;
-                    }
-                };
-            }
-        }));
-    }
-
-    public void testCollectionCases() throws Exception {
-        // empty collection
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Collection<?> test() {
-                return new ArrayList<Object>();
-            }
-        }));
-
-        // non empty collection
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Collection<?> test() {
-                return Arrays.asList(new Object());
-            }
-        }));
-    }
+public interface PoSortCriterion<T> extends SortCriterion<T> {
+    /**
+     * @return list of criterion to sort by.
+     */
+    List<? extends PoSortCriterion<T>> getOrderByList();
 }

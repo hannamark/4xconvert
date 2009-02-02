@@ -102,7 +102,6 @@ import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -117,6 +116,8 @@ import javax.jms.JMSException;
 import javax.naming.Context;
 
 import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Scott Miller
@@ -203,12 +204,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
             for (Enxp xp : perDto.getName().getPart()) {
                 LOG.debug("\t" + xp.getType() + LOG_SEP + xp.getValue());
             }
-    
+
             LOG.debug("Person address:");
             for (Adxp axp : perDto.getPostalAddress().getPart()) {
                 LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
             }
-    
+
             LOG.debug("Telecom Addresses:");
             for (Tel obj : perDto.getTelecomAddress().getItem()) {
                 LOG.debug("\t" + obj.getValue());
@@ -268,7 +269,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
         return ctepPerson;
     }
-    
+
     private IdentifiedPersonDTO getOtherId(Ii assignedId) {
         try {
             return getCtepPersonService().getIdentifiedPersonById(assignedId);
@@ -293,14 +294,14 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.identifiedPersonService.curate(identifiedPerson);
     }
 
-    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii unPrefixedIi) 
+    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii unPrefixedIi)
             throws JMSException {
         Person p = identifiedPerson.getPlayer();
 
         // copy updated data in to the local person
         copyCtepPersonToExistingPerson(ctepPerson, p);
         this.personService.curate(p);
-        
+
         // update the other identiers
         IdentifiedPersonDTO newIdentifier = getOtherId(unPrefixedIi);
         if (newIdentifier != null) {
@@ -333,9 +334,9 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 persistedCrs.setStatus(RoleStatus.NULLIFIED);
                 LOG.warn("Nullifying clinical research staff role during import, curator must of added new data.");
             } else {
-                // update the CRS by taking the dto from ctep, converting it to our data model, then copying 
+                // update the CRS by taking the dto from ctep, converting it to our data model, then copying
                 // in the values by hand
-                
+
                 // store ii's we will need
                 Ii scoperIi = crsDto.getScoperIdentifier();
 
@@ -380,9 +381,9 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 persistedHcp.setStatus(RoleStatus.NULLIFIED);
                 LOG.warn("Nullifying health care provider role during import, curator must of added new data.");
             } else {
-                // update the HCP by taking the dto from ctep, converting it to our data model, then copying 
+                // update the HCP by taking the dto from ctep, converting it to our data model, then copying
                 // in the values by hand
-                
+
                 // store ii's we will need
                 Ii scoperIi = hcpDto.getScoperIdentifier();
 
@@ -431,7 +432,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             throws JMSException {
         boolean found = false;
         for (IdentifiedPerson ip : ctepPerson.getIdentifiedPersons()) {
-            if (ip.getScoper().getId().equals(getCtepOrganization().getId()) 
+            if (ip.getScoper().getId().equals(getCtepOrganization().getId())
                     && ip != identifiedPerson) {
                 // if the scopers match, the current record is either the person's
                 // db id in CTEP or the user friendly CTEP-ID.  So check if this
@@ -453,15 +454,15 @@ public class CtepPersonImporter extends CtepEntityImporter {
         Ii currentId = ip.getAssignedIdentifier();
         if (!currentId.getExtension().equals(newId.getExtension())
                 || !currentId.getRoot().equals(newId.getRoot())
-                || !RoleStatus.ACTIVE.equals(ip.getStatus())) { 
+                || !RoleStatus.ACTIVE.equals(ip.getStatus())) {
             // if the extension, root, or status changed we need to update
             ip.setStatus(RoleStatus.ACTIVE);
             ip.setAssignedIdentifier(newId);
             this.identifiedPersonService.curate(ip);
         }
     }
-    
-    
+
+
     private void copyCtepPersonToExistingPerson(Person ctepPerson, Person p) {
         // doing this here instead of a 'copy' method in the person itself because all
         // of the relationships are not copied (change requests, roles, etc)  The person

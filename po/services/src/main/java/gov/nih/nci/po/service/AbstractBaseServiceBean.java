@@ -94,11 +94,8 @@ import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
@@ -108,12 +105,10 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
+public abstract class AbstractBaseServiceBean<T extends PersistentObject>
+    extends com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean<T> {
+
     private static final String UNCHECKED = "unchecked";
-    /**
-     * Maximum number of ids in an IN clause.
-     */
-    public static final int MAX_IN_CLAUSE_SIZE = 500;
     private final Class<T> typeArgument;
 
     /**
@@ -202,117 +197,6 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
         s.flush();
         ensureValid(obj);
         return ((Long) s.save(obj)).longValue();
-    }
-
-    /**
-     * @param sc criteria object to validate
-     */
-    protected void validateSearchCriteria(SearchCriteria<T> sc) {
-        if (sc == null) {
-            throw new OneCriterionRequiredException();
-        }
-        sc.isValid();
-    }
-
-    /**
-     * @param c Hibernate criteria to set pagination options
-     * @param pageSortParams bean containing the options
-     */
-    protected void setPagination(Criteria c, PageSortParams<?> pageSortParams) {
-        if (pageSortParams != null) {
-            if (pageSortParams.getPageSize() > 0) {
-                c.setMaxResults(pageSortParams.getPageSize());
-            }
-            if (pageSortParams.getIndex() > 0) {
-                c.setFirstResult(pageSortParams.getIndex());
-            }
-        }
-    }
-
-    /**
-     * @param c Hibernate criteria to set order by clause
-     * @param pageSortParams bean containing the options
-     */
-    @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
-    protected void addOrderBy(Criteria c, PageSortParams<T> pageSortParams) {
-        if (pageSortParams != null && pageSortParams.getSortCriterion() != null) {
-
-            StringBuffer orderBy = new StringBuffer("");
-            if (CollectionUtils.isNotEmpty(pageSortParams.getSortCriterion())) {
-                orderBy.append(" ORDER BY ");
-                boolean first = true;
-                for (SortCriterion<T> sc : pageSortParams.getSortCriterion()) {
-                    if (!first) {
-                        orderBy.append(", ");
-                    }
-                    orderBy.append(sc.getOrderField());
-                    orderBy.append((pageSortParams.isDesc() ? " DESC" : " ASC"));
-                    first = false;
-                }
-            }
-
-            String orderByField = orderBy.toString();
-            if (pageSortParams.isDesc()) {
-                c.addOrder(Order.desc(orderByField));
-            } else {
-                c.addOrder(Order.asc(orderByField));
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<T> search(SearchCriteria<T> criteria) {
-        return search(criteria, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings(UNCHECKED)
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<T> search(SearchCriteria<T> criteria,
-            PageSortParams<T> pageSortParams) {
-        validateSearchCriteria(criteria);
-        StringBuffer orderBy = new StringBuffer("");
-        if (pageSortParams != null && CollectionUtils.isNotEmpty(pageSortParams.getSortCriterion())) {
-
-            orderBy.append(" ORDER BY ");
-            boolean first = true;
-            for (SortCriterion<T> sc : pageSortParams.getSortCriterion()) {
-                if (!first) {
-                    orderBy.append(", ");
-                }
-                orderBy.append(criteria.getRootAlias());
-                orderBy.append('.');
-                orderBy.append(sc.getOrderField());
-                orderBy.append((pageSortParams.isDesc() ? " DESC" : " ASC"));
-
-                first = false;
-            }
-        }
-        Query q = criteria.getQuery(orderBy.toString(), false);
-
-        if (pageSortParams != null) {
-            q.setMaxResults(pageSortParams.getPageSize());
-            if (pageSortParams.getIndex() > 0) {
-                q.setFirstResult(pageSortParams.getIndex());
-            }
-        }
-
-        return q.list();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int count(SearchCriteria<T> criteria) {
-        validateSearchCriteria(criteria);
-        Query q = criteria.getQuery("", true);
-        return ((Number) q.uniqueResult()).intValue();
     }
 
      /**

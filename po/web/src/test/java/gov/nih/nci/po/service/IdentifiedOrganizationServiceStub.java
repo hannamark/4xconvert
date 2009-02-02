@@ -8,6 +8,9 @@ import java.util.Map;
 
 import javax.jms.JMSException;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 public class IdentifiedOrganizationServiceStub implements IdentifiedOrganizationServiceLocal {
 
     public long create(IdentifiedOrganization structuralRole) throws EntityValidationException {
@@ -46,7 +49,7 @@ public class IdentifiedOrganizationServiceStub implements IdentifiedOrganization
     }
 
     public void curate(IdentifiedOrganization correlation) throws JMSException {
-        
+
     }
 
     public int getHotRoleCount(Organization org) {

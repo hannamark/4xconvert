@@ -89,7 +89,6 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffSortCriterion;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -100,6 +99,7 @@ import javax.servlet.http.HttpSession;
 
 import org.displaytag.properties.SortOrderEnum;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -120,7 +120,7 @@ public class ClinicalResearchStaffAction extends
 
     /**
      * {@inheritDoc}
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public void prepare() {
@@ -154,7 +154,7 @@ public class ClinicalResearchStaffAction extends
         setRootKey(PoHttpSessionUtil.addAttribute(getRole()));
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -166,7 +166,7 @@ public class ClinicalResearchStaffAction extends
     }
 
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -174,7 +174,7 @@ public class ClinicalResearchStaffAction extends
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
@@ -239,7 +239,7 @@ public class ClinicalResearchStaffAction extends
     @Override
     protected SearchCriteria<ClinicalResearchStaff> getDuplicateCriteria() {
         ClinicalResearchStaff dupOfBOCrit = new ClinicalResearchStaff();
-        AnnotatedBeanSearchCriteria<ClinicalResearchStaff> duplicateOfCriteria 
+        AnnotatedBeanSearchCriteria<ClinicalResearchStaff> duplicateOfCriteria
         = new AnnotatedBeanSearchCriteria<ClinicalResearchStaff>(
                 dupOfBOCrit);
         dupOfBOCrit.setPlayer(getPerson());
@@ -268,7 +268,7 @@ public class ClinicalResearchStaffAction extends
     @Override
     protected SearchCriteria<ClinicalResearchStaff> getSearchCriteria() {
         ClinicalResearchStaff boCrit = new ClinicalResearchStaff();
-        AnnotatedBeanSearchCriteria<ClinicalResearchStaff> criteria 
+        AnnotatedBeanSearchCriteria<ClinicalResearchStaff> criteria
             = new AnnotatedBeanSearchCriteria<ClinicalResearchStaff>(boCrit);
         Person player = new Person();
         player.setId(getPerson().getId());
@@ -299,7 +299,7 @@ public class ClinicalResearchStaffAction extends
     public void setBaseRole(ClinicalResearchStaff obj) {
         setRole(obj);
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -16,7 +16,6 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceStub;
 import gov.nih.nci.po.service.OversightCommitteeSortCriterion;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.util.PrivateAccessor;
@@ -33,6 +32,7 @@ import org.displaytag.properties.SortOrderEnum;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.opensymphony.xwork2.Action;
 
 public class OversightCommitteeActionTest extends AbstractPoTest {

@@ -87,6 +87,9 @@ import gov.nih.nci.po.data.bo.Person;
 import java.util.List;
 import java.util.Map;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 /**
  *
  */

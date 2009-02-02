@@ -18,6 +18,8 @@ import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+
 public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest extends PersonServiceBeanTest {
     AnnotatedBeanSearchCriteria<Person> sc;
     private Person personSc;
@@ -302,7 +304,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         personSc.getPostalAddress().setPostalCode("987");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
-        
+
         try {
             personSc.getPostalAddress().setPostalCode("");
             assertEquals(3, getPersonServiceBean().count(sc));

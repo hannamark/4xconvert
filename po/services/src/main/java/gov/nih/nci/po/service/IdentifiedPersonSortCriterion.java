@@ -8,44 +8,44 @@ import java.util.List;
 /**
  * Enum of possible sort criterion for IdentifiedPerson.
  */
-public enum IdentifiedPersonSortCriterion implements SortCriterion<IdentifiedPerson> {
+public enum IdentifiedPersonSortCriterion implements PoSortCriterion<IdentifiedPerson> {
 
 
     /**
      * Sort by Identified Person's id.
      */
     ID("id"),
-    
+
     /**
      * Sort by Identified Person's status.
      */
     ROLE_STATUS("status"),
-    
+
     /**
      * Sort by Identified Person's type description.
      */
     TYPE_DESC("typeCode.description"),
-    
+
     /**
      * Sort by Identified Person's type code.
      */
     TYPE_CODE("typeCode.code"),
-    
+
     /**
      * Sort by Identified Person's scoper's name.
      */
     SCOPER_NAME("scoper.name"),
-    
+
     /**
      * Sort by Identified Person's scoper's name.
      */
     SCOPER_ID("scoper.id"),
-    
+
     /**
      * Sort by Identified Person's status date.
      */
     STATUS_DATE("statusDate");
-    
+
     private final String orderField;
     private final List<IdentifiedPersonSortCriterion> fields;
 

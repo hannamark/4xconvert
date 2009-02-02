@@ -93,8 +93,10 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
+import com.fiveamsolutions.nci.commons.search.AbstractSearchCriteria;
+
 /**
- * Criteria class to search for people. 
+ * Criteria class to search for people.
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> implements
@@ -282,5 +284,5 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
         }
         return query;
     }
-   
+
 }

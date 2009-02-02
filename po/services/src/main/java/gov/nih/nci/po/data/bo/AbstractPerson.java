@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -112,6 +111,7 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 
 /**

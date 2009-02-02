@@ -99,12 +99,13 @@ import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 
 import java.util.List;
+
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
 /**
  * Remote service test.

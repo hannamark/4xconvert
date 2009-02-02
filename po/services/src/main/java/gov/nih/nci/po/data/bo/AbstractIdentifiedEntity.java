@@ -86,7 +86,6 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.ValidIi;
 
 import java.util.Date;
@@ -108,6 +107,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author Scott Miller

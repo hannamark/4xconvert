@@ -50,7 +50,8 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     Deploy and run your integration tests to an already running container
     mvn -Pci-nostart integration-test
     
-    Run your integration tests against an already running container
+    Run your integration tests against an already running container.
+    cd client
     mvn -Pci-nostart integration-test
     OR 
     mvn -Pci-nostart integration-test -Dtest=<testclass>  

@@ -100,6 +100,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**

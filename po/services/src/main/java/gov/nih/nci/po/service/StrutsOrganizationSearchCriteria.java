@@ -92,7 +92,7 @@ import gov.nih.nci.po.data.bo.URL;
 import java.io.Serializable;
 
 /**
- * Criteria class to search for organizations. 
+ * Criteria class to search for organizations.
  */
 public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteria<Organization> implements
         Serializable {
@@ -132,7 +132,7 @@ public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteri
     }
 
     /**
-     * @return email entry 
+     * @return email entry
      */
     public Email getEmailEntry() {
         return emailEntry;

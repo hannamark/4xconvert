@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
-import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -104,6 +103,8 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Persons.
@@ -126,7 +127,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
-    
+
     private String comments;
 
      /**
@@ -343,7 +344,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     }
 
     /**
-     * @return comments 
+     * @return comments
      */
     @Lob
     public String getComments() {

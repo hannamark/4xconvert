@@ -91,34 +91,34 @@ import java.util.List;
 /**
  * Enum of possible sort criterion for OrganizationalContact.
  */
-public enum OrganizationalContactSortCriterion implements SortCriterion<OrganizationalContact> {
+public enum OrganizationalContactSortCriterion implements PoSortCriterion<OrganizationalContact> {
 
 
     /**
      * Sort by OrganizationalContact's id.
      */
     ID("id"),
-    
+
     /**
      * Sort by OrganizationalContact's status.
      */
     ROLE_STATUS("status"),
-    
+
     /**
      * Sort by OrganizationalContact's scoper's name.
      */
     SCOPER_NAME("scoper.name"),
-    
+
     /**
      * Sort by OrganizationalContact's scoper's name.
      */
     SCOPER_ID("scoper.id"),
-    
+
     /**
      * Sort by OrganizationalContact's status date.
      */
     STATUS_DATE("statusDate");
-    
+
     private final String orderField;
     private final List<OrganizationalContactSortCriterion> fields;
 

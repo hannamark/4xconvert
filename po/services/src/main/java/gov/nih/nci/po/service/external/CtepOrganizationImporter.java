@@ -100,7 +100,6 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -114,6 +113,8 @@ import javax.jms.JMSException;
 import javax.naming.Context;
 
 import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Scott Miller
@@ -136,7 +137,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         getServiceLocator().getHealthCareFacilityService();
     private final ResearchOrganizationServiceLocal roService = PoRegistry.getInstance().
         getServiceLocator().getResearchOrganizationService();
-    
+
     private Organization persistedCtepOrg;
 
     /**
@@ -281,7 +282,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ro.setStatus(RoleStatus.ACTIVE);
             this.roService.curate(ro);
         }
-        
+
         return ctepOrg;
     }
 

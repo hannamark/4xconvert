@@ -89,7 +89,6 @@ import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.ArrayList;
@@ -98,6 +97,7 @@ import javax.jms.JMSException;
 
 import org.displaytag.properties.SortOrderEnum;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -185,7 +185,7 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override 
+    @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() {
         super.prepare();

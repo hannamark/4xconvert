@@ -8,39 +8,39 @@ import java.util.List;
 /**
  * Enum of possible sort criterion for ResearchOrganization.
  */
-public enum ResearchOrganizationSortCriterion implements SortCriterion<ResearchOrganization> {
+public enum ResearchOrganizationSortCriterion implements PoSortCriterion<ResearchOrganization> {
 
 
     /**
      * Sort by Research Organization's id.
      */
     ID("id"),
-    
+
     /**
      * Sort by Research Organization's status.
      */
     ROLE_STATUS("status"),
-    
+
     /**
      * Sort by Research Organization's type description.
      */
     TYPE_DESC("typeCode.description"),
-    
+
     /**
      * Sort by Research Organization's type code.
      */
     TYPE_CODE("typeCode.code"),
-    
+
     /**
      * Sort by Research Organization's funding mechanism code.
      */
     FUNDING("fundingMechanism.code"),
-    
+
     /**
      * Sort by Research Organization's status date.
      */
     STATUS_DATE("statusDate");
-    
+
     private final String orderField;
     private final List<ResearchOrganizationSortCriterion> fields;
 

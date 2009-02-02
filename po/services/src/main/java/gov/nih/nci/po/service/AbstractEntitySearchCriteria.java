@@ -88,6 +88,7 @@ package gov.nih.nci.po.service;
 import org.hibernate.Query;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.AbstractSearchCriteria;
 
 
 /**

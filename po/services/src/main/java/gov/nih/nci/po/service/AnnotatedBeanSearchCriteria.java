@@ -82,26 +82,36 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.util.SearchableUtils;
+import gov.nih.nci.po.data.bo.CuratableEntity;
+import gov.nih.nci.po.data.bo.CuratableRole;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.SearchableUtils;
 
 /**
  * @author Scott Miller
  * @param <T> the type.
  */
-public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends AbstractSearchCriteria <T> {
-    private final T criteria;
-    private boolean disallowNullified = true;
+public class AnnotatedBeanSearchCriteria<T extends PersistentObject>
+    extends com.fiveamsolutions.nci.commons.search.AbstractAnnotatedBeanSearchCriteria<T> {
+
+    private boolean disallowNullified;
 
     /**
      * default constructor.
      * @param o the example.
      */
     public AnnotatedBeanSearchCriteria(T o) {
-        this.criteria = o;
+        this(o, true);
     }
 
     /**
@@ -110,37 +120,75 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends Abs
      * @param disallowNullified should we disallow nullified
      */
     public AnnotatedBeanSearchCriteria(T o, boolean disallowNullified) {
-        this.criteria = o;
+        super(o);
         this.disallowNullified = disallowNullified;
     }
 
     /**
-     * {@inheritDoc}
+     * Adds the correct helper and calls super.
+     * @param orderByProperty order by
+     * @param isCountOnly perform count query
+     * @return hibernate query
      */
     @Override
-    public boolean hasOneCriterionSpecified() {
-        return criteria != null && SearchableUtils.hasSearchableCriterion(criteria);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        return SearchableUtils.getQueryBySearchableFields(criteria, isCountOnly, disallowNullified, orderByProperty);
+        return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
+                                                          getSession(), new NullifiedHelper(disallowNullified));
     }
 
-    /**
-     * @return criteria used to build query based on @Searchable annotation.
-     */
-    protected T getCriteria() {
-        return criteria;
-    }
-    
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getRootAlias() {
-        return SearchableUtils.ROOT_OBJ_ALIAS;
+    public Session getSession() {
+        return PoHibernateUtil.getCurrentSession();
     }
+
+    /**
+     * @return the disallowNullified
+     */
+    public final boolean isDisallowNullified() {
+        return disallowNullified;
+    }
+
+    /**
+     * Helper that adds nullified checks to searches.
+     */
+    private static class NullifiedHelper implements SearchableUtils.AfterIterationHelper {
+        private static final String NULLIFIED_STATUS_PARAM = "nullifiedStatusParam";
+        private final boolean disallowNullified;
+
+        public NullifiedHelper(boolean disallowNullified) {
+            this.disallowNullified = disallowNullified;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void afterIteration(Object obj, boolean isCountOnly,
+                                   StringBuffer whereClause, Map<String, Object> params) {
+            String operator = determineOperator(whereClause);
+            if (disallowNullified && obj instanceof CuratableEntity) {
+                whereClause.append(String.format("%s %s.statusCode != :%s", operator, SearchableUtils.ROOT_OBJ_ALIAS,
+                        NULLIFIED_STATUS_PARAM));
+                params.put(NULLIFIED_STATUS_PARAM, EntityStatus.NULLIFIED);
+            } else if (disallowNullified && obj instanceof CuratableRole) {
+                whereClause.append(String.format("%s %s.status != :%s", operator,
+                                                 SearchableUtils.ROOT_OBJ_ALIAS, NULLIFIED_STATUS_PARAM));
+                params.put(NULLIFIED_STATUS_PARAM, RoleStatus.NULLIFIED);
+            }
+        }
+
+        private static String determineOperator(final StringBuffer whereClause) {
+            String operator = "";
+            if (StringUtils.isBlank(whereClause.toString())) {
+                operator = SearchableUtils.WHERE;
+            } else if (!SearchableUtils.WHERE.equals(whereClause.toString())) {
+                //handle case when no criterion are provided.
+                operator = SearchableUtils.AND;
+            }
+            return operator;
+        }
+    }
+
 }

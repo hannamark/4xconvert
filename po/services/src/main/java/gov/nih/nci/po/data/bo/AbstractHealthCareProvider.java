@@ -84,12 +84,13 @@ package gov.nih.nci.po.data.bo;
 
 
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 
 /**

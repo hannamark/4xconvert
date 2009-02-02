@@ -5,6 +5,8 @@ import gov.nih.nci.po.audit.AuditLogRecord;
 
 import javax.ejb.Local;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 /**
  * Local interface for searching audit log records.
  */

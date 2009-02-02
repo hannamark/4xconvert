@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.util.PoHibernateUtil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -93,12 +92,14 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
-import gov.nih.nci.po.service.SearchCriteria;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
 
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * Service tests.
@@ -129,7 +130,7 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
 
         HealthCareFacility hcf = getSampleStructuralRole();
         svc.create(hcf);
-        
+
 
         SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(null);
 
@@ -157,14 +158,14 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
 
         HealthCareFacility hcf2 = getSampleStructuralRole();
         svc.create(hcf2);
-        
+
         // WTF? looks like hcf is getting evicted when hcf2 is created (since the fix for PO-628)
         hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().load(HealthCareFacility.class, hcf.getId());
 
         testSearchParams(hcf2, hcf2.getId(), null, null, 1);
         testSearchParams(hcf, null, null, hcf.getStatus(), 2);
         testSearchParams(hcf2, null, null, hcf.getStatus(), 2);
-        
+
     }
 
     private void testSearchParams(HealthCareFacility hcf, Long id, Long playerId, RoleStatus rs,
@@ -190,7 +191,7 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
         HealthCareFacility hcf = getSampleStructuralRole();
         HealthCareFacility hcf2 = getSampleStructuralRole();
         hcf.setPlayer(hcf2.getPlayer());
-        getService().create(hcf);        
+        getService().create(hcf);
         getService().create(hcf2);
     }
 

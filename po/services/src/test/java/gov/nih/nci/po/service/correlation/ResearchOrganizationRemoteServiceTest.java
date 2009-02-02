@@ -100,12 +100,13 @@ import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import java.util.List;
+
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
 /**
  * Remote service test.
@@ -139,7 +140,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
 
         // re-gen a player org for next sample for uniqueness
         createAndSetOrganization();
-        
+
         return dto;
     }
 
@@ -159,12 +160,12 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         other.getFundingMechanisms().add(fundingMechanismAlt);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         PoHibernateUtil.getCurrentSession().flush();
-        
+
 
         Cd type = new Cd();
         type.setCode("Foo");
         dto.setTypeCode(type);
-        
+
         Cd fm = new Cd();
         fm.setCode("B10");
         dto.setFundingMechanism(fm);
@@ -201,7 +202,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setPlayerIdentifier(ii);
-        
+
         FundingMechanism otherFM = new FundingMechanism("BXX","???","Block Grants",FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(otherFM);
         Cd fm = new Cd();

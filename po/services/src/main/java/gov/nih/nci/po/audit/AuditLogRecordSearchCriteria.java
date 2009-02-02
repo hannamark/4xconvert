@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.audit;
 
-import gov.nih.nci.po.service.AbstractSearchCriteria;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Set;
@@ -90,6 +89,8 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.search.AbstractSearchCriteria;
 
 /**
  * Class used to store search criteria for finding audit records.

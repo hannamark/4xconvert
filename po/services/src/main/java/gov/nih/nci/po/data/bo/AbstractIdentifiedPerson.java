@@ -83,7 +83,6 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -94,6 +93,8 @@ import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author Scott Miller

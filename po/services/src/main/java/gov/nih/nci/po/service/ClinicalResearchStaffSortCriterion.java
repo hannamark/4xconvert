@@ -91,34 +91,34 @@ import java.util.List;
 /**
  * Enum of possible sort criterion for ClinicalResearchStaff.
  */
-public enum ClinicalResearchStaffSortCriterion implements SortCriterion<ClinicalResearchStaff> {
+public enum ClinicalResearchStaffSortCriterion implements PoSortCriterion<ClinicalResearchStaff> {
 
 
     /**
      * Sort by ClinicalResearchStaff's id.
      */
     ID("id"),
-    
+
     /**
      * Sort by ClinicalResearchStaff's status.
      */
     ROLE_STATUS("status"),
-    
+
     /**
      * Sort by ClinicalResearchStaff's scoper's name.
      */
     SCOPER_NAME("scoper.name"),
-    
+
     /**
      * Sort by ClinicalResearchStaff's scoper's name.
      */
     SCOPER_ID("scoper.id"),
-    
+
     /**
      * Sort by ClinicalResearchStaff's status date.
      */
     STATUS_DATE("statusDate");
-    
+
     private final String orderField;
     private final List<ClinicalResearchStaffSortCriterion> fields;
 

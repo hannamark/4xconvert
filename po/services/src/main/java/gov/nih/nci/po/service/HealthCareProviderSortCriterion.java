@@ -91,34 +91,34 @@ import java.util.List;
 /**
  * Enum of possible sort criterion for HealthCareProvider.
  */
-public enum HealthCareProviderSortCriterion implements SortCriterion<HealthCareProvider> {
+public enum HealthCareProviderSortCriterion implements PoSortCriterion<HealthCareProvider> {
 
 
     /**
      * Sort by HealthCareProvider's id.
      */
     ID("id"),
-    
+
     /**
      * Sort by HealthCareProvider's status.
      */
     ROLE_STATUS("status"),
-    
+
     /**
      * Sort by HealthCareProvider's scoper's name.
      */
     SCOPER_NAME("scoper.name"),
-    
+
     /**
      * Sort by HealthCareProvider's scoper's name.
      */
     SCOPER_ID("scoper.id"),
-    
+
     /**
      * Sort by HealthCareProvider's status date.
      */
     STATUS_DATE("statusDate");
-    
+
     private final String orderField;
     private final List<HealthCareProviderSortCriterion> fields;
 

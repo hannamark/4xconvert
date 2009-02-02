@@ -87,8 +87,6 @@ import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
-import gov.nih.nci.po.service.SortCriterion;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
 
 import java.util.ArrayList;
@@ -104,20 +102,22 @@ import javax.jms.JMSException;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 /**
  * @author smatyas
- * 
+ *
  * @param <ROLE>
  * @param <ROLECR>
  * @param <ROLESERVICE>
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public abstract class AbstractRoleAction<ROLE extends Correlation, 
-    ROLECR extends CorrelationChangeRequest<ROLE>, 
+public abstract class AbstractRoleAction<ROLE extends Correlation,
+    ROLECR extends CorrelationChangeRequest<ROLE>,
     ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
         extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
@@ -139,7 +139,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * Implement to provide default constructor initialization.
      */
     protected abstract void defaultConstructorInit();
-    
+
     /**
      * {@inheritDoc}
      */
@@ -148,7 +148,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
             setBaseRole(getRoleService().getById(getBaseRole().getId()));
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -231,28 +231,28 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
 
     /**
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     * 
+     *
      * @return to add/edit/remove
      */
     public abstract ROLE getBaseRole();
 
     /**
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     * 
+     *
      * @param role to add/edit/remove
      */
     public abstract void setBaseRole(ROLE role);
 
     /**
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     * 
+     *
      * @return active change request
      */
     public abstract ROLECR getBaseCr();
 
     /**
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     * 
+     *
      * @param cr active change request
      */
     public abstract void setBaseCr(ROLECR cr);
@@ -326,7 +326,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
 
     /**
      * Remove matching PersistentObject(s) from the list.
-     * 
+     *
      * @param duplicateOfList list to search
      * @param id to find
      */

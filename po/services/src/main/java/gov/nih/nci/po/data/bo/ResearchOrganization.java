@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.ResearchOrganizationTypeCodeValidator;
 import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.UniqueResearchOrganization;
 import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
 
@@ -102,6 +101,8 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 
 /**

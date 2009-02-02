@@ -82,14 +82,13 @@
  */
 package gov.nih.nci.po.web.roles;
 
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
-import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactSortCriterion;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -100,6 +99,7 @@ import javax.servlet.http.HttpSession;
 
 import org.displaytag.properties.SortOrderEnum;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -120,7 +120,7 @@ public class OrganizationalContactAction extends
 
     /**
      * {@inheritDoc}
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public void prepare() {
@@ -152,7 +152,7 @@ public class OrganizationalContactAction extends
                 new ArrayList<OrganizationalContact>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
                 OrganizationalContactSortCriterion.ID.name(), SortOrderEnum.ASCENDING));
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -166,7 +166,7 @@ public class OrganizationalContactAction extends
     }
 
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -174,7 +174,7 @@ public class OrganizationalContactAction extends
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
@@ -239,7 +239,7 @@ public class OrganizationalContactAction extends
     @Override
     protected SearchCriteria<OrganizationalContact> getDuplicateCriteria() {
         OrganizationalContact dupOfBOCrit = new OrganizationalContact();
-        AnnotatedBeanSearchCriteria<OrganizationalContact> duplicateOfCriteria 
+        AnnotatedBeanSearchCriteria<OrganizationalContact> duplicateOfCriteria
         = new AnnotatedBeanSearchCriteria<OrganizationalContact>(
                 dupOfBOCrit);
         dupOfBOCrit.setPlayer(getPerson());
@@ -268,7 +268,7 @@ public class OrganizationalContactAction extends
     @Override
     protected SearchCriteria<OrganizationalContact> getSearchCriteria() {
         OrganizationalContact boCrit = new OrganizationalContact();
-        AnnotatedBeanSearchCriteria<OrganizationalContact> criteria 
+        AnnotatedBeanSearchCriteria<OrganizationalContact> criteria
             = new AnnotatedBeanSearchCriteria<OrganizationalContact>(boCrit);
         Person player = new Person();
         player.setId(getPerson().getId());
@@ -299,7 +299,7 @@ public class OrganizationalContactAction extends
     public void setBaseRole(OrganizationalContact obj) {
         setRole(obj);
     }
-    
+
     /**
      * {@inheritDoc}
      */

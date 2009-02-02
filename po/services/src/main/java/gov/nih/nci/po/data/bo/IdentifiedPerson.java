@@ -84,9 +84,8 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.Searchable;
-
 import gov.nih.nci.po.util.UniquePlayerScoperIdentifier;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -102,6 +101,8 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 import org.hibernate.annotations.Where;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author Scott Miller

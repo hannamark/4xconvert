@@ -83,7 +83,6 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -91,6 +90,8 @@ import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Oversight committee role class.

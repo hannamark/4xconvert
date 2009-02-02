@@ -10,8 +10,8 @@ import org.junit.Test;
 
 
 public class SortCriterionTest {
-    
-    private void verifySortCriterion(String expectedName, SortCriterion<?> criterion) {
+
+    private void verifySortCriterion(String expectedName, PoSortCriterion<?> criterion) {
         assertEquals(expectedName, criterion.getOrderField());
         assertEquals(Collections.singletonList(criterion), criterion.getOrderByList());
     }
@@ -24,7 +24,7 @@ public class SortCriterionTest {
         verifySortCriterion("scoper.id", ClinicalResearchStaffSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", ClinicalResearchStaffSortCriterion.SCOPER_NAME);
     }
-    
+
     @Test
     public void HealthCareProviderSortCriterion_getOrderField() {
         verifySortCriterion("id", HealthCareProviderSortCriterion.ID);
@@ -33,7 +33,7 @@ public class SortCriterionTest {
         verifySortCriterion("scoper.id", HealthCareProviderSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", HealthCareProviderSortCriterion.SCOPER_NAME);
     }
-    
+
     @Test
     public void OrganizationalContactSortCriterion_getOrderField() {
         verifySortCriterion("id", OrganizationalContactSortCriterion.ID);
@@ -42,7 +42,7 @@ public class SortCriterionTest {
         verifySortCriterion("scoper.id", OrganizationalContactSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", OrganizationalContactSortCriterion.SCOPER_NAME);
     }
-    
+
     @Test
     public void ResearchOrganizationSortCriterion_getOrderField() {
         verifySortCriterion("id", ResearchOrganizationSortCriterion.ID);
@@ -52,7 +52,7 @@ public class SortCriterionTest {
         verifySortCriterion("statusDate", ResearchOrganizationSortCriterion.STATUS_DATE);
         verifySortCriterion("fundingMechanism.code", ResearchOrganizationSortCriterion.FUNDING);
     }
-    
+
     @Test
     public void OversightCommitteeSortCriterion_getOrderField() {
         verifySortCriterion("id", OversightCommitteeSortCriterion.ID);
@@ -61,7 +61,7 @@ public class SortCriterionTest {
         verifySortCriterion("typeCode.description", OversightCommitteeSortCriterion.TYPE_DESC);
         verifySortCriterion("statusDate", OversightCommitteeSortCriterion.STATUS_DATE);
     }
-    
+
     @Test
     public void IdentifiedOrganizationSortCriterion_getOrderField() {
         verifySortCriterion("id", IdentifiedOrganizationSortCriterion.ID);
@@ -72,7 +72,7 @@ public class SortCriterionTest {
         verifySortCriterion("scoper.id", IdentifiedOrganizationSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", IdentifiedOrganizationSortCriterion.SCOPER_NAME);
     }
-    
+
     @Test
     public void IdentifiedPersonSortCriterion_getOrderField() {
         verifySortCriterion("id", IdentifiedPersonSortCriterion.ID);
@@ -83,7 +83,7 @@ public class SortCriterionTest {
         verifySortCriterion("scoper.id", IdentifiedPersonSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", IdentifiedPersonSortCriterion.SCOPER_NAME);
     }
-    
+
     @Test
     public void PersonSortCriterion_getOrderField() {
         verifySortCriterion("firstName", PersonSortCriterion.PERSON_FIRSTNAME);
@@ -101,7 +101,7 @@ public class SortCriterionTest {
         verifySortCriterion("statusCode", PersonSortCriterion.PERSON_STATUS);
         verifySortCriterion("suffix", PersonSortCriterion.PERSON_SUFFIX);
     }
-    
+
     @Test
     public void OrganizationSortCriterion_getOrderField() {
         verifySortCriterion("id", OrganizationSortCriterion.ORGANIZATION_ID);

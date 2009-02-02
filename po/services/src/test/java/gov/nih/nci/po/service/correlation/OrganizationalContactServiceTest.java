@@ -82,14 +82,12 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.service.EntityValidationException;
-import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
@@ -98,26 +96,29 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author smatyas
  */
 public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceTest<OrganizationalContact> {
 
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-    
+    private final Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+
     private Set<OrganizationalContactType> getTypes() {
         return types;
     }
@@ -144,7 +145,7 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
     @Override
     void verifyStructuralRole(OrganizationalContact expected, OrganizationalContact actual) {
         verifyPersonRole(expected, actual);
-        
+
         List<String> expectedValues = OrganizationalContactDTOTest.getCodeValues(expected.getTypes());
         List<String> actualValues = OrganizationalContactDTOTest.getCodeValues(actual.getTypes());
         assertEquals(expectedValues.size(), actualValues.size());

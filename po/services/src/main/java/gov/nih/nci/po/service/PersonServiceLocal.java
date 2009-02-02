@@ -90,6 +90,8 @@ import java.util.Map;
 import javax.ejb.Local;
 import javax.jms.JMSException;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 /**
  *
  * @author lpower

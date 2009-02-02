@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PhoneNotEmptyValidator;
 import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.UniquePlayerScoper;
 
 import java.util.HashSet;
@@ -106,6 +105,8 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 
 /**

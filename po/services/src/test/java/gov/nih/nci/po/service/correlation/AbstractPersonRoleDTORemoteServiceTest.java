@@ -105,7 +105,6 @@ import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -115,13 +114,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+
 /**
  * @author Scott Miller
  *
  */
 public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractPersonRoleDTO,
     CR extends CorrelationChangeRequest<?>> extends  AbstractStructrualRoleRemoteServiceTest<T, CR> {
-    
+
     @SuppressWarnings("unchecked")
     protected void fillInPersonRoleDate(AbstractPersonRoleDTO pr) throws Exception {
         Ii ii = new Ii();
@@ -171,7 +172,7 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
         pr.setPostalAddress(new DSet<Ad>());
         pr.getPostalAddress().setItem(Collections.singleton(ad));
     }
-    
+
     @SuppressWarnings("unchecked")
     protected void setUpCorrelation2Address(AbstractPersonRoleDTO correlation1, AbstractPersonRoleDTO correlation2) {
         Ad ad = (Ad) correlation1.getPostalAddress().getItem().iterator().next();

@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.audit;
 
-import gov.nih.nci.po.service.SortCriterion;
+import gov.nih.nci.po.service.PoSortCriterion;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -91,7 +91,7 @@ import java.util.List;
 /**
  * Criteria for audit log records.
  */
-public enum AuditLogRecordSortCriterion implements SortCriterion<AuditLogRecord> {
+public enum AuditLogRecordSortCriterion implements PoSortCriterion<AuditLogRecord> {
 
     /** Sorty by record id. */
     AUDIT_ID("id"),
@@ -110,12 +110,12 @@ public enum AuditLogRecordSortCriterion implements SortCriterion<AuditLogRecord>
 
     private final String orderField;
     private final List<AuditLogRecordSortCriterion> fields;
-    
+
     private AuditLogRecordSortCriterion(String orderField) {
         this.orderField = orderField;
         this.fields = null;
     }
-    
+
     private AuditLogRecordSortCriterion(AuditLogRecordSortCriterion... fields) {
         this.orderField = null;
         this.fields = Arrays.asList(fields);

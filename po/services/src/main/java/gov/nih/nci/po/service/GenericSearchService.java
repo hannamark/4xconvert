@@ -3,6 +3,8 @@ package gov.nih.nci.po.service;
 import java.util.List;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 /**
  * @author Todd Parnell
  * @param <T> type

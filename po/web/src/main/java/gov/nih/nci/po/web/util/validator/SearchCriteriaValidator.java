@@ -1,8 +1,7 @@
 package gov.nih.nci.po.web.util.validator;
 
-import gov.nih.nci.po.service.OneCriterionRequiredException;
-import gov.nih.nci.po.service.SearchCriteria;
-
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 import com.opensymphony.xwork2.validator.ValidationException;

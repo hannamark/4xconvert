@@ -93,7 +93,6 @@ import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.CorrelationDto;
 
@@ -105,6 +104,8 @@ import java.util.Set;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 
 /**

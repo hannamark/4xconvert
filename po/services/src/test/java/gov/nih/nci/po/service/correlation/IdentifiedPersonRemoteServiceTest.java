@@ -98,12 +98,13 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 
 import java.util.List;
+
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
 /**
  * @author Scott Miller

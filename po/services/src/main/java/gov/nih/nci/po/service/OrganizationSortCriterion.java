@@ -91,7 +91,7 @@ import java.util.List;
 /**
  * Enum of possible sort criterion for Organization.
  */
-public enum OrganizationSortCriterion implements SortCriterion<Organization> {
+public enum OrganizationSortCriterion implements PoSortCriterion<Organization> {
 
     /**
      * Sort by organization's id.

@@ -93,8 +93,8 @@ import java.util.List;
 /**
  * Enum of possible sort criterion for Person.
  */
-public enum PersonSortCriterion implements SortCriterion<Person> {
-    
+public enum PersonSortCriterion implements PoSortCriterion<Person> {
+
     /**
      * Sort by person's id.
      */
@@ -117,7 +117,7 @@ public enum PersonSortCriterion implements SortCriterion<Person> {
     PERSON_LASTNAME("lastName"),
     /**
      * Sort by person's full name.
-     */        
+     */
     PERSON_FULLNAME(PERSON_LASTNAME, PERSON_FIRSTNAME, PERSON_MIDDLENAME),
     /**
      * Sort by person's suffix.
@@ -127,7 +127,7 @@ public enum PersonSortCriterion implements SortCriterion<Person> {
      * Sort by person's prefix.
      */
     PERSON_PREFIX("prefix");
-    
+
 
     private final String orderField;
     private final List<PersonSortCriterion> fields;
@@ -148,14 +148,14 @@ public enum PersonSortCriterion implements SortCriterion<Person> {
     public String getOrderField() {
         return this.orderField;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<PersonSortCriterion> getOrderByList() {
         if (orderField != null) {
             return Collections.singletonList(this);
-        } 
+        }
         return fields;
     }
 }

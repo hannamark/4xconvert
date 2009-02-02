@@ -88,7 +88,6 @@ import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeSortCriterion;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.ArrayList;
@@ -97,6 +96,7 @@ import javax.jms.JMSException;
 
 import org.displaytag.properties.SortOrderEnum;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -109,20 +109,20 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author smatyas
  */
 public class OversightCommitteeAction extends
-        AbstractOrganizationRoleAction<OversightCommittee, OversightCommitteeCR, OversightCommitteeServiceLocal> 
+        AbstractOrganizationRoleAction<OversightCommittee, OversightCommitteeCR, OversightCommitteeServiceLocal>
         implements Preparable {
 
     private static final long serialVersionUID = 1L;
     private OversightCommittee role = new OversightCommittee();
     private OversightCommitteeCR cr = new OversightCommitteeCR();
-    
+
     /**
      * default constructor.
      */
     public OversightCommitteeAction() {
         super();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -186,7 +186,7 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
-    @Override    
+    @Override
     public void prepare() {
         super.prepare();
         if (getRole() == null) {

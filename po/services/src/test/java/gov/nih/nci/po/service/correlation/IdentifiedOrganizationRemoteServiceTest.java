@@ -97,12 +97,13 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 
 import java.util.List;
+
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
 /**
  * @author Scott Miller

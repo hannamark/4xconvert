@@ -90,7 +90,6 @@ import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ClinicalResearchStaffSortCriterion;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderSortCriterion;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -101,6 +100,7 @@ import javax.servlet.http.HttpSession;
 
 import org.displaytag.properties.SortOrderEnum;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -121,9 +121,9 @@ public class HealthCareProviderAction extends
 
     /**
      * {@inheritDoc}
-     * @throws Exception 
+     * @throws Exception
      */
-    @Override    
+    @Override
     public void prepare() {
         super.prepare();
         if (getRootKey() != null) {
@@ -151,11 +151,11 @@ public class HealthCareProviderAction extends
         setRootKey(PoHttpSessionUtil.addAttribute(getRole()));
         return result;
     }
-    
+
     private HttpSession getSession() {
         return PoHttpSessionUtil.getSession();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -167,7 +167,7 @@ public class HealthCareProviderAction extends
     }
 
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -175,7 +175,7 @@ public class HealthCareProviderAction extends
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
@@ -240,7 +240,7 @@ public class HealthCareProviderAction extends
     @Override
     protected SearchCriteria<HealthCareProvider> getDuplicateCriteria() {
         HealthCareProvider dupOfBOCrit = new HealthCareProvider();
-        AnnotatedBeanSearchCriteria<HealthCareProvider> duplicateOfCriteria 
+        AnnotatedBeanSearchCriteria<HealthCareProvider> duplicateOfCriteria
         = new AnnotatedBeanSearchCriteria<HealthCareProvider>(
                 dupOfBOCrit);
         dupOfBOCrit.setPlayer(getPerson());
@@ -269,7 +269,7 @@ public class HealthCareProviderAction extends
     @Override
     protected SearchCriteria<HealthCareProvider> getSearchCriteria() {
         HealthCareProvider boCrit = new HealthCareProvider();
-        AnnotatedBeanSearchCriteria<HealthCareProvider> criteria 
+        AnnotatedBeanSearchCriteria<HealthCareProvider> criteria
             = new AnnotatedBeanSearchCriteria<HealthCareProvider>(boCrit);
         Person player = new Person();
         player.setId(getPerson().getId());
@@ -300,7 +300,7 @@ public class HealthCareProviderAction extends
     public void setBaseRole(HealthCareProvider obj) {
         setRole(obj);
     }
-    
+
     /**
      * {@inheritDoc}
      */

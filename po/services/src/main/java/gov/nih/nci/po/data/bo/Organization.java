@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
-import gov.nih.nci.po.util.Searchable;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -107,6 +106,8 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Organizations.
@@ -133,7 +134,7 @@ public class Organization extends AbstractOrganization
     private Set<IdentifiedOrganization> identifiedOrganizations = new HashSet<IdentifiedOrganization>();
 
     private String comments;
-    
+
     /**
      * Create a new, empty org.
      */
@@ -364,7 +365,7 @@ public class Organization extends AbstractOrganization
     }
 
     /**
-     * @return comments 
+     * @return comments
      */
     @Lob
     public String getComments() {
