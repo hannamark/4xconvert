@@ -106,13 +106,6 @@ public class StudyParticipationContactServiceTest {
         healthCareProviderIi = IiConverter.convertToIi(healthCareProviderId);
     }
     @Test
-    public void getPersons() throws Exception {
-        //List a = paRemote.getPersonsByStudyParticpationId(participationId);
-        assertEquals("", "");
-
-    }
-   
-    @Test
     public void get() throws Exception {
         StudyParticipationContactDTO spcDto = remoteEjb.get(contactIi);
         StudyParticipationContact spcBo = StudyParticipationContactConverter.convertFromDtoToDomain(spcDto);
@@ -145,5 +138,10 @@ public class StudyParticipationContactServiceTest {
         } catch(PAException e) {
             // expected behavior
         }
+    }
+    @Test 
+    public void iiRootTest() throws Exception {
+        StudyParticipationContactDTO dto = remoteEjb.get(contactIi);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

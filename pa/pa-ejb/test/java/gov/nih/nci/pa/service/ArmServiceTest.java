@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.Collection;
@@ -146,5 +147,12 @@ public class ArmServiceTest {
         
         dtoList = remoteEjb.getByPlannedActivity(paIi);
         assertEquals(1, dtoList.size());
+    }
+    @Test 
+    public void iiRootTest() throws Exception {
+        ArmDTO dto = remoteEjb.get(ii);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.ARM_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

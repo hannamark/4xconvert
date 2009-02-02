@@ -29,7 +29,7 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         dwsDTO.setIdentifier(IiConverter.convertToIi(dws.getId()));
         dwsDTO.setCommentText(StConverter.convertToSt(dws.getCommentText()));
         dwsDTO.setStatusCode(CdConverter.convertToCd(dws.getStatusCode()));
-        dwsDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dws.getStudyProtocol().getId()));
+        dwsDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(dws.getStudyProtocol().getId()));
         dwsDTO.setStatusDateRange(TsConverter.convertToTs(dws.getStatusDateRangeLow()));
         return dwsDTO;
     }

@@ -50,13 +50,13 @@ public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
      */
     public static PlannedActivityDTO convertFromDomainToDTO(PlannedActivity bo, PlannedActivityDTO dto) {
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToActivityIi(bo.getId()));
         if (bo.getIntervention() != null) {
             dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
         }
         dto.setLeadProductIndicator(BlConverter.convertToBl(bo.getLeadProductIndicator()));
         if (bo.getStudyProtocol() != null) {
-            dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+            dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         }
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));

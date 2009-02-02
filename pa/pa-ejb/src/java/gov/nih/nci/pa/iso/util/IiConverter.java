@@ -70,12 +70,42 @@ import gov.nih.nci.coppa.iso.NullFlavor;
 @SuppressWarnings({ "PMD.TooManyMethods" })
 public class IiConverter {
     
-    /*** Protocol Root. **/
-    public static final String PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
-    /**
-     * Protocol Identifier.
-     */
-    public static final String PROTOCOL_IDENTIFIER_NAME = "NCI protocol activity identifier";
+    /** Study Protocol Root. **/
+    public static final String STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
+    /** Study Protocol Identifier. */
+    public static final String STUDY_PROTOCOL_IDENTIFIER_NAME = "NCI study protocol entity identifier";
+    /** Study Outcome Measure Root. **/
+    public static final String STUDY_OUTCOME_MEASURE_ROOT = "2.16.840.1.113883.3.26.4.3.1";
+    /** Study Outcome Measure Identifier. */
+    public static final String STUDY_OUTCOME_MEASURE_IDENTIFIER_NAME = "NCI study outcome measure entity identifier";
+    /** Study Ind Ide Root. **/
+    public static final String STUDY_IND_IDE_ROOT = "2.16.840.1.113883.3.26.4.3.2";
+    /** Study Ind Ide Identifier. */
+    public static final String STUDY_IND_IDE_IDENTIFIER_NAME = "NCI study ind ide entity identifier";
+    /** Arm Root. **/
+    public static final String ARM_ROOT = "2.16.840.1.113883.3.26.4.3.3";
+    /** Arm Identifier. */
+    public static final String ARM_IDENTIFIER_NAME = "NCI arm entity identifier";
+    /** Stratum Group Root. **/
+    public static final String STRATUM_GROUP_ROOT = "2.16.840.1.113883.3.26.4.3.4";
+    /** Stratum Group Identifier. */
+    public static final String STRATUM_GROUP_IDENTIFIER_NAME = "NCI stratum group entity identifier";
+    /** Study Overall Status Root. **/
+    public static final String STUDY_OVERALL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.3.5";
+    /** Study Overall Status Identifier. */
+    public static final String STUDY_OVERALL_STATUS_IDENTIFIER_NAME = "NCI study overall status entity identifier";
+    /** Activity Root. **/
+    public static final String ACTIVITY_ROOT = "2.16.840.1.113883.3.26.4.3.6";
+    /** Activity Identifier. */
+    public static final String ACTIVITY_IDENTIFIER_NAME = "NCI activity entity identifier";
+    /** Study Resourcing Root. **/
+    public static final String STUDY_RESOURCING_ROOT = "2.16.840.1.113883.3.26.4.3.7";
+    /** Study Resourcing Identifier. */
+    public static final String STUDY_RESOURCING_IDENTIFIER_NAME = "NCI study resourcing entity identifier";
+    /** Document Root. **/
+    public static final String DOCUMENT_ROOT = "2.16.840.1.113883.3.26.4.3.8";
+    /** Document Identifier. */
+    public static final String DOCUMENT_IDENTIFIER_NAME = "NCI xxx entity identifier";
     
     /**
      * The identifier name for org ii's.
@@ -285,18 +315,113 @@ public class IiConverter {
     }
     
     /**
-     * converts to Protocol Ii.
+     * converts to StudyProtocol Ii.
      * @param id id
      * @return Ii
      */
-    public static Ii converToProtocolIi(Long id) {
+    public static Ii converToStudyProtocolIi(Long id) {
         Ii ii = convertToIi(id);
-        ii.setIdentifierName(PROTOCOL_IDENTIFIER_NAME);
-        ii.setRoot(PROTOCOL_ROOT);
+        ii.setIdentifierName(STUDY_PROTOCOL_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_PROTOCOL_ROOT);
         return ii;
     }
 
-    
+    /**
+     * converts to StudyOutcomeMeasure Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToStudyOutcomeMeasureIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_OUTCOME_MEASURE_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_OUTCOME_MEASURE_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to StudyIndIde Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToStudyIndIdeIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_IND_IDE_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_IND_IDE_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Arm Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToArmIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(ARM_IDENTIFIER_NAME);
+        ii.setRoot(ARM_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to StratumGroup Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToStratumGroupIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STRATUM_GROUP_IDENTIFIER_NAME);
+        ii.setRoot(STRATUM_GROUP_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to StudyOverallStatus Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToStudyOverallStatusIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_OVERALL_STATUS_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_OVERALL_STATUS_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Activity Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToActivityIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(ACTIVITY_IDENTIFIER_NAME);
+        ii.setRoot(ACTIVITY_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to StudyResourcing Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToStudyResourcingIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_RESOURCING_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_RESOURCING_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Document Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToDocumentIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(DOCUMENT_IDENTIFIER_NAME);
+        ii.setRoot(DOCUMENT_ROOT);
+        return ii;
+    }
+
     /**
      * converts to Po Person Ii.
      * @param id id

@@ -32,8 +32,8 @@ public class StudyIndldeConverter {
      */
     public static StudyIndldeDTO convertFromDomainToDTO(StudyIndlde si) {
         StudyIndldeDTO siDTO = new StudyIndldeDTO();
-        siDTO.setIdentifier(IiConverter.convertToIi(si.getId()));
-        siDTO.setStudyProtocolIi(IiConverter.convertToIi(si.getStudyProtocol().getId()));
+        siDTO.setIdentifier(IiConverter.converToStudyIndIdeIi(si.getId()));
+        siDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(si.getStudyProtocol().getId()));
         siDTO.setExpandedAccessStatusCode(CdConverter.convertToCd(si.getExpandedAccessStatusCode()));
         siDTO.setExpandedAccessIndicator(BlConverter.convertToBl(si.getExpandedAccessIndicator()));
         siDTO.setGrantorCode(CdConverter.convertToCd(si.getGrantorCode()));

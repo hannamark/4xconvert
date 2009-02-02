@@ -19,6 +19,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.math.BigDecimal;
@@ -163,5 +164,11 @@ public class PlannedActivityServiceTest {
         assertTrue(ActivitySubcategoryCode.DEVICE.equals(
                 ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(resultDto.getSubcategoryCode()))));
     }
-
+    @Test 
+    public void iiRootTest() throws Exception {
+        PlannedActivityDTO dto = remoteEjb.get(ii);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.ACTIVITY_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

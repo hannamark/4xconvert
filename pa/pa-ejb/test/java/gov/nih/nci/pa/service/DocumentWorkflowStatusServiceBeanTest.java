@@ -55,6 +55,7 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -114,5 +115,13 @@ public class DocumentWorkflowStatusServiceBeanTest {
       dto2 = new DocumentWorkflowStatusDTO();
       dto2 = remoteEjb.create(dto);
       assertEquals(dto.getStudyProtocolIdentifier() , pid);
+  }
+  
+  @Test 
+  public void iiRootTest() throws Exception {
+      List<DocumentWorkflowStatusDTO> statusList = remoteEjb.getByStudyProtocol(pid);
+      assertTrue(statusList.size() > 0);
+      DocumentWorkflowStatusDTO dto = statusList.get(0);
+      assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
   }
 }

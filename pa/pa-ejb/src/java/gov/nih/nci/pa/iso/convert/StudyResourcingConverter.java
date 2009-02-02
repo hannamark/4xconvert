@@ -30,7 +30,7 @@ public class StudyResourcingConverter {
      */
     public static StudyResourcingDTO convertFromDomainToDTO(StudyResourcing studyResourcing) {
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
-        srDTO.setIdentifier(IiConverter.convertToIi(studyResourcing.getId()));
+        srDTO.setIdentifier(IiConverter.converToStudyResourcingIi(studyResourcing.getId()));
         srDTO.setOrganizationIdentifier(IiConverter.convertToIi(studyResourcing.getOrganizationIdentifier()));
         srDTO.setResourceProviderIdentifier(IiConverter.convertToIi(studyResourcing.getResourceProviderIdentifier()));
         srDTO.setSummary4ReportedResourceIndicator(
@@ -43,7 +43,7 @@ public class StudyResourcingConverter {
         srDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcing.getSuffixGrantYear()));
         srDTO.setSuffixOther(StConverter.convertToSt(studyResourcing.getSuffixOther()));
         srDTO.setSerialNumber(IntConverter.convertToInt(studyResourcing.getSerialNumber()));
-        srDTO.setStudyProtocolIi(IiConverter.convertToIi(studyResourcing.getStudyProtocol().getId()));
+        srDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(studyResourcing.getStudyProtocol().getId()));
         //@tdo: date range
         return srDTO;
     }

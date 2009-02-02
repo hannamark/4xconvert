@@ -39,7 +39,7 @@ public class StudyRecruitmentStatusConverter {
        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
        dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-       dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+       dto.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
        return dto;
    }
 

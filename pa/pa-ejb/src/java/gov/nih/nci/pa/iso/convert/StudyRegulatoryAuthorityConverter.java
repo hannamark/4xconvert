@@ -24,7 +24,7 @@ public class StudyRegulatoryAuthorityConverter {
      */
     public static StudyRegulatoryAuthorityDTO convertFromDomainToDTO(StudyRegulatoryAuthority sra) {
         StudyRegulatoryAuthorityDTO sriDTO = new StudyRegulatoryAuthorityDTO();
-        sriDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(sra.getStudyProtocol().getId()));
+        sriDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sra.getStudyProtocol().getId()));
         sriDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(sra.getRegulatoryAuthority().getId()));
         sriDTO.setIdentifier(IiConverter.convertToIi(sra.getId()));
         return sriDTO;

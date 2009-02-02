@@ -239,4 +239,9 @@ public class StudyParticipationServiceTest {
         assertFalse(PAUtil.isIiNull(sp.getIdentifier()));
         assertFalse(participationId.equals(IiConverter.convertToLong(sp.getIdentifier())));
     }
+    @Test 
+    public void iiRootTest() throws Exception {
+        StudyParticipationDTO dto = remoteEjb.get(participationIi);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

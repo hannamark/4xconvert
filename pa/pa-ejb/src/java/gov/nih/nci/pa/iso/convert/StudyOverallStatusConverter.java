@@ -40,11 +40,11 @@ public class StudyOverallStatusConverter {
     public static StudyOverallStatusDTO convertFromDomainToDTO(
             StudyOverallStatus bo) throws PAException {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToStudyOverallStatusIi(bo.getId()));
         dto.setReasonText(StConverter.convertToSt(bo.getCommentText()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 

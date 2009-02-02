@@ -157,5 +157,11 @@ public class StudyMilestoneServiceTest {
             //expected behavior
         }
     }
-
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        assertTrue(dtoList.size() > 0);
+        StudyMilestoneDTO dto = dtoList.get(0);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

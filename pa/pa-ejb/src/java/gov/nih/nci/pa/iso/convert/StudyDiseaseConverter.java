@@ -28,7 +28,7 @@ public class StudyDiseaseConverter extends AbstractConverter<StudyDiseaseDTO, St
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease().getId()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setLeadDiseaseIndicator(BlConverter.convertToBl(bo.getLeadDiseaseIndicator()));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 

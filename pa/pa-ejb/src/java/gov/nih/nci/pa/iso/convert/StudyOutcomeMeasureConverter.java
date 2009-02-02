@@ -26,10 +26,10 @@ public class StudyOutcomeMeasureConverter {
      */
     public static StudyOutcomeMeasureDTO convertFromDomainToDTO(StudyOutcomeMeasure som) {
         StudyOutcomeMeasureDTO somDTO = new StudyOutcomeMeasureDTO();
-        somDTO.setIdentifier(IiConverter.convertToIi(som.getId()));
+        somDTO.setIdentifier(IiConverter.converToStudyOutcomeMeasureIi(som.getId()));
         somDTO.setName(StConverter.convertToSt(som.getName()));
         somDTO.setTimeFrame(StConverter.convertToSt(som.getTimeFrame()));
-        somDTO.setStudyProtocolIi(IiConverter.convertToIi(som.getStudyProtocol().getId()));
+        somDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(som.getStudyProtocol().getId()));
         somDTO.setPrimaryIndicator(BlConverter.convertToBl(som.getPrimaryIndicator()));
         somDTO.setSafetyIndicator(BlConverter.convertToBl(som.getSafetyIndicator()));
         

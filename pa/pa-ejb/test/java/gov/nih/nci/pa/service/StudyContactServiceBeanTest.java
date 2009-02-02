@@ -1,11 +1,11 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -57,5 +57,12 @@ public class StudyContactServiceBeanTest {
     dto2 = remoteEjb.create(dto);
     assertEquals(dto.getStudyProtocolIi()
         , pid);
+  }
+  @Test 
+  public void iiRootTest() throws Exception {
+      List<StudyContactDTO> statusList = remoteEjb.getByStudyProtocol(pid);
+      assertTrue(statusList.size() > 0);
+      StudyContactDTO dto = statusList.get(0);
+      assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
   }
 }

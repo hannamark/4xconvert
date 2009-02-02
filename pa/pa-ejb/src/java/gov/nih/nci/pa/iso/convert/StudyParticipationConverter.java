@@ -57,7 +57,7 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         dto.setTargetAccrualNumber(IntConverter.convertToInt(bo.getTargetAccrualNumber()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 

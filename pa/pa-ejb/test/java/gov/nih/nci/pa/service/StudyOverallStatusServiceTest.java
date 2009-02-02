@@ -138,5 +138,13 @@ public class StudyOverallStatusServiceTest {
         dto = remoteEjb.create(dto);
         assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
     }
- 
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StudyOverallStatusDTO> dtoList = remoteEjb.getByStudyProtocol(pid);
+        assertTrue(dtoList.size() > 0);
+        StudyOverallStatusDTO dto = dtoList.get(0);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OVERALL_STATUS_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

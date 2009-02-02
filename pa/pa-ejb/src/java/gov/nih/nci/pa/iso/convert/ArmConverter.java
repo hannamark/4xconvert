@@ -39,17 +39,17 @@ public class ArmConverter extends AbstractConverter<ArmDTO, Arm> {
     public ArmDTO convertFromDomainToDto(Arm bo) throws PAException {
         ArmDTO dto = new ArmDTO();
         dto.setDescriptionText(StConverter.convertToSt(bo.getDescriptionText()));
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToArmIi(bo.getId()));
         Set<Ii> intSet = new HashSet<Ii>();
         for (PlannedActivity pa : bo.getInterventions()) {
-            intSet.add(IiConverter.convertToIi(pa.getId()));
+            intSet.add(IiConverter.converToActivityIi(pa.getId()));
         }
         DSet<Ii> interventions = new DSet<Ii>();
         interventions.setItem(intSet);
         dto.setInterventions(interventions);
         dto.setName(StConverter.convertToSt(bo.getName()));
         if (bo.getStudyProtocol() != null) {
-            dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+            dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         }
         dto.setTypeCode(CdConverter.convertToCd(bo.getTypeCode()));
         return dto;

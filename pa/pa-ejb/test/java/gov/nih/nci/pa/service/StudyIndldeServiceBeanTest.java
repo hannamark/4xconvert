@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
@@ -64,5 +65,14 @@ public class StudyIndldeServiceBeanTest {
         dto2 = remoteEjb.create(dto);
         assertFalse(PAUtil.isIiNull(dto2.getIdentifier()));
         assertEquals(dto.getExpandedAccessStatusCode().getCode(), dto2.getExpandedAccessStatusCode().getCode());
+    }
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StudyIndldeDTO> dtoList = remoteEjb.getByStudyProtocol(pid);
+        assertTrue(dtoList.size() > 0);
+        StudyIndldeDTO dto = dtoList.get(0);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_IND_IDE_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

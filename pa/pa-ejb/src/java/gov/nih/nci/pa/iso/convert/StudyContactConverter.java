@@ -111,7 +111,7 @@ public class StudyContactConverter {
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         // handle phone and email
         DSet<Tel> telAddresses = new DSet<Tel>();
         ArrayList<String> emailList = new ArrayList<String>();

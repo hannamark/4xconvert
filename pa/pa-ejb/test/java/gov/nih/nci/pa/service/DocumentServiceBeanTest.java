@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -8,6 +9,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -68,4 +70,13 @@ public class DocumentServiceBeanTest {
         }
     }
 
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<DocumentDTO> statusList = remoteEjb.getDocumentsByStudyProtocol(pid);
+        assertTrue(statusList.size() > 0);
+        DocumentDTO dto = statusList.get(0);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.DOCUMENT_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

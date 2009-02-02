@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -61,6 +62,13 @@ public class StudyOutcomeMeasureServiceBeanTest {
         assertFalse(PAUtil.isIiNull(dto2.getIdentifier()));
         assertEquals(dto.getName().getValue(), dto2.getName().getValue());
     }
-
-
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StudyOutcomeMeasureDTO> dtoList = remoteEjb.getByStudyProtocol(pid);
+        assertTrue(dtoList.size() > 0);
+        StudyOutcomeMeasureDTO dto = dtoList.get(0);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OUTCOME_MEASURE_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

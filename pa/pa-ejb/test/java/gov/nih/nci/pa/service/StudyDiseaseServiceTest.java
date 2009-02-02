@@ -95,5 +95,11 @@ public class StudyDiseaseServiceTest {
         dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize - 1, dtoList.size());
     }
-
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
+        assertTrue(dtoList.size() > 0);
+        StudyDiseaseDTO dto = dtoList.get(0);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }
