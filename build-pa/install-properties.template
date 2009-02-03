@@ -1,7 +1,8 @@
 ##############################
 ###  APPLICATION SETTINGS  ###
 ##############################
-application.base.path=
+application.base.path.linux=
+application.base.path.windows=
 authentication.type=
 application.url=
 
@@ -19,7 +20,7 @@ database.url=
 ########################
 ###  JBOSS SETTINGS  ###
 ########################
-jboss.home=
+jboss.relative.path=
 jboss.server.hostname=
 jboss.server.name=
 

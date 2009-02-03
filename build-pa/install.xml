@@ -20,6 +20,33 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
     <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
     <property file="${properties.file}" />
+    <!-- Set application.base.path based on platform -->
+    <condition property="application.base.path" value="${application.base.path.linux}">
+	    <or>
+		    <os family="unix" />
+		    <os family="mac" />
+	    </or>
+    </condition>
+
+    <condition property="application.base.path" value="${application.base.path.windows}">
+	    <os family="windows" />
+    </condition>
+    <echo message="application.base.path=${application.base.path}"/>
+    <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
+    <property name="tomcat.home" value="${application.base.path}/${tomcat.relative.path}"/>
+
+    <!--OS Temp dir --> 
+    <condition property="os.temp.dir" value="/tmp">
+	    <or>
+		    <os family="unix" />
+		    <os family="mac" />
+	    </or>
+    </condition>
+
+    <condition property="os.temp.dir" value="c:/temp">
+	    <os family="windows" />
+    </condition>
+
     
     <!-- Generic properties -->
     <property name="log.dir" value="${basedir}/logs" />
@@ -38,6 +65,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="db.dir.dest" value="${working.dir}/${db.dist.relative.dir}" />
     <property name="db-install.dir.dest" value="${working.dir}/${db-install.dist.relative.dir}" />
     <property name="db-upgrade.dir.dest" value="${working.dir}/${db-upgrade.dist.relative.dir}" />
+    <property name="jboss-conf.dir.src" value="${basedir}/${jboss-conf.dist.relative.dir}" />
 
     <!-- Jboss configurtion related properties -->
     <property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
@@ -76,6 +104,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         </classpath>
     </taskdef>
     <taskdef resource="liquibasetasks.properties" classpathref="bda-utils.classpath"/>
+    <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath"/>
 
     <!-- Conditionals -->
     <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
@@ -92,6 +121,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <fail message="Invalid database type ${database.type}"/>
         </default>
     </switch>
+
+    <path id="jdbc.driver.classpath">
+	    <pathelement location="${database.driver.file}"/>
+    </path>
+
+    <!-- Added to convert location to file and path -->
+    <basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
+    <dirname file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.dir"/>
+    <basename file="${tomcat.ssl.keystore.location}" property="tomcat.ssl.keystore.file"/>
+    <dirname file="${tomcat.ssl.keystore.location}" property="tomcat.ssl.keystore.dir"/>
+    <basename file="${grid.secure.cert.location}" property="grid.secure.cert.file"/>
+    <dirname file="${grid.secure.cert.location}" property="grid.secure.dir"/>
+    <basename file="${grid.secure.key.location}" property="grid.secure.key.file"/>
+
 
     <!-- figure out whether to use install-properties.template or upgrade-proprties.template based on the name of the properties file -->
     <propertyregex property="properties.file.type"
@@ -166,10 +209,33 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
 
     <!-- Clean up destination directory -->
-    <target name="install:clean" description="Removes all files from the local filesystem">
-        <sleep seconds="5" />
-        <delete dir="${jboss.home}" quiet="false" />
-        <delete dir="${tomcat.home}" quiet="false" />
+    <target name="install:clean" description="Removes all files from the local filesystem" depends="install:clean:jboss">
+    </target>
+
+    <target name="install:clean:jboss" unless="exclude.jboss">
+	    <sleep seconds="5" />
+	    <property name="backup.count" value="5"/>
+
+	    <if>
+		    <not>
+			    <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+		    </not>
+		    <then>
+			    <!-- Jboss backup, do not compress until install is finished -->
+			    <property name="backup.jboss.base.dir" location="${application.base.path}/backup/jboss"/>
+
+			    <!-- So these directories won't be included in the backup, they are not needed to use jboss --> 
+			    <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
+			    <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+
+			    <backup-dir
+				    src.dir="${jboss.home}"
+				    backup.base.dir="${backup.jboss.base.dir}"
+				    backup.count="${backup.count}"
+				    />
+		    </then>
+	    </if>
+	    <delete dir="${jboss.home}"/>
     </target>
 
     <!-- Does directory management and copy some files with filtering to ensure token expansion -->
@@ -182,42 +248,35 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <mkdir dir="${working.dir}" />
         <mkdir dir="${resource.dir.temp}"/>
         <!-- Copy files to ensure values containing variables are expanded, such properties are stored in filterset.pre and then copy with filter files -->
-        <copy todir="${resource.dir.temp}" filtering="true">
+        <copy todir="${common.dir.dest}" filtering="true">
             <fileset dir="${common.dir.src}">
                 <include name="**/*"/>
             </fileset>
             <filterset refid="filterset.pre"/>
-        </copy> 
-        <copy todir="${common.dir.dest}" filtering="true">
-            <fileset dir="${resource.dir.temp}">
-                <include name="**/*"/>
-            </fileset>
             <filterset>
                 <filtersfile file="${properties.file}"/>
                 <filtersfile file="project.properties"/>
             </filterset>
         </copy> 
-        <delete dir="${resource.dir.temp}"/>
+	<property name="db.prop.list" value="database.url,database.user,database.password,database.name"/>
+	<echo  message="Checking if database properties exist: ${db.prop.list}"/>
+	<properties-exist properties.list="${db.prop.list}"/>
+	<math result="jboss.ssl.port" operand1="${jboss.server.port}" operation="+" operand2="363" datatype="int"/>
     </target>
 
     <target name="install:database:prep" description="Copies db files with filtering" unless="exclude.database" depends="install:init">
         <property name="db.dir.temp" value="${working.dir}/tmp"/>
         <mkdir dir="${db.dir.temp}"/>
-        <copy todir="${db.dir.temp}" filtering="true">
+        <copy todir="${db.dir.dest}" filtering="true">
             <fileset dir="${db.dir.src}">
                 <include name="**/*"/>
             </fileset>
             <filterset refid="filterset.pre"/>
-        </copy> 
-        <copy todir="${db.dir.dest}" filtering="true">
-            <fileset dir="${db.dir.temp}">
-                <include name="**/*"/>
-            </fileset>
             <filterset>
                 <filtersfile file="${properties.file}"/>
                 <filtersfile file="project.properties"/>
             </filterset>
-        </copy>
+        </copy> 
         <if>
             <and>
                 <equals arg1="${database.re-create}" arg2="true"/>
@@ -227,6 +286,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <fail message="You cannot set both database.re-create and database.drop-schema at the same time.  database.re-create is used in local installs.  database.drop-schema is used in remote installs.  Either one can be set for external (Cancer Center) installs."/>
             </then>
         </if>
+	<mkdir dir="${os.temp.dir}/${project.name}"/>
+	<copy todir="${os.temp.dir}/${project.name}" filtering="true" flatten="true" overwrite="true">
+		<fileset dir="${db.dir.dest}">
+			<include name="**/db-upgrade.xml"/>
+		</fileset>
+	</copy>
     </target>
 
     <target name="install:database" description="Runs datbase creation scripts then calls uprade database." unless="exclude.database"
@@ -253,16 +318,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
 
     <target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
-        <java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
-            <arg line="-installGroup ejb3 installpath=${jboss.home}"/>
-        </java>
-        <if>    
-            <os family="unix"/>
-            <then>  
-                <chmod dir="${jboss.home}/bin" perm="ugo+rx" 
-                    includes="**/*.sh"/>
-            </then>
-        </if>
+	     <jboss-install-binaries
+		     />
     </target>
 
     <target name="install:jboss:pa-ear" description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries" unless="exclude.jboss">
@@ -287,72 +344,78 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
     </target>
 
+    <target name="install:jboss:configure:log4j" description="Configure custom entries in system wide log4j" unless="exclude.jboss" >
+	    <echo message="Configuring Log4J"/>
+	    <copy file="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml" tofile="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml.pre"/>
+
+	    <replaceregexp file="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml"
+		    byline="true"
+		    match="^(&lt;!DOCTYPE.*)"
+		    replace="&lt;!-- \1 --&gt;"
+		    />
+	    <!--<copy file="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml" tofile="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml.1"/>-->
+	    <xmltask source="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml"
+		    dest="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml">
+		    <xmlcatalog refid="installer.catalog"/>
+		    <remove path="/log4j:configuration/appender[@name='TestAppender']"/>
+		    <insert path="/log4j:configuration">
+			    <![CDATA[
+			    <appender name="TestAppender" class="org.jboss.logging.appender.RollingFileAppender">
+				    <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+				    <param name="File" value="${jboss.server.log.dir}/testAppender.log"/>
+				    <param name="Append" value="false"/>
+				    <param name="MaxFileSize" value="${log4j.maxFileSize}"/>
+				    <!--<param name="MaxBackupIndex" value="${log4j.maxDays}"/>-->
+
+				    <layout class="org.apache.log4j.PatternLayout">
+					    <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+				    </layout>
+			    </appender>
+			    ]]>
+		    </insert>
+		    <remove path="/log4j:configuration/category[@name='org.nih.nci']"/>
+		    <insert path="/log4j:configuration">
+			    <![CDATA[
+			    <category name="org.nih.nci">
+				    <priority value="${log4j.level}"/>
+			    </category>
+			    ]]>
+		    </insert>
+	    </xmltask>
+	    <validate-log4j
+		    />
+
+	    <replaceregexp file="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml"
+		    byline="true"
+		    match="^&lt;!-- (&lt;!DOCTYPE.*) --&gt;"
+		    replace="\1"
+		    />
+    </target>
+
     <!-- Wrapper target to configure jboss container, not deployed application -->
     <target name="install:jboss:configure" description="Configure pa-ear" unless="exclude.jboss"
-        depends="install:jboss:binaries,
-        -install:jboss:configure:ports,
-        -install:jboss:configure:login-conf,
-        -install:jboss:configure:log4j,
-        -install:jboss:configure:update-shutdown
-        "/>
-
-    <!-- Configure ports used by JBOSS (either bindings or editing jboss config.files) -->
-    <target name="-install:jboss:configure:ports" description="Configure pa-ear" unless="exclude.jboss">
-        <jboss-bindings
-            jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name}/conf/bindings.xml"
-            jboss.server.binding.template.location="${jboss.binding.template.location}"
-            jboss.server.service.template.location="${jboss.service.template.location}"
-            />
-    </target>
-
-    <!-- Add custom login-config.xml content from snippet from pa-ear/software/resources/deploy/login-config.${auth.type}-block.xml -->
-    <target name="-install:jboss:configure:login-conf" unless="exclude.jboss">
-        <if>    
-            <equals arg1="${authentication.type}" arg2="ldap"/>
-            <then>  
-                <property name="login-config.block.file" value="${jboss-conf.dir.dest}/login-config.ldap-block.xml"/>
-            </then> 
-            <else>  
-                <if>    
-                    <equals arg1="${authentication.type}" arg2="db"/>
-                    <then>  
-                        <property name="login-config.block.file" value="${jboss-conf.dir.dest}/login-config.db-block.xml"/>
-                    </then> 
-                    <else>  
-                        <fail message="${authentication.type} is not a valid authentiation type, please change to db or ldap and re-run the build."/>
-                    </else> 
-                </if>   
-            </else> 
-        </if>   
-        <echo message="Inserting ${login-config.block.file} into ${jboss.home}/server/${jboss.server.name}/conf/login-config.xml"/>
-        <xmlconfig in="${jboss.home}/server/${jboss.server.name}/conf/login-config.xml" verbose="false">
-            <insertbranch path="//policy" srcxmlfile="${login-config.block.file}" srcpath="//application-policy" />
-        </xmlconfig>
-    </target>
-
-    <!-- Configure MQ settings based on contents of ncia/software/resrouces/deploy/jbossmq-destinations-service.block.xml -->
-    <target name="-install:jboss:configure:jbossmq-dest" unless="exclude.jboss">
-        <property name="jboss-mq.block.file" value="${resource.dir.target}/jbossmq-destinations-service.block.xml"/>
-        <xmlconfig in="${jboss.home}/server/${jboss.server.name}/deploy/jms/jbossmq-destinations-service.xml" verbose="false">
-            <insertbranch path="//server" srcxmlfile="${jboss-mq.block.file}" srcpath="//mbean[1]" />
-            <insertbranch path="//server" srcxmlfile="${jboss-mq.block.file}" srcpath="//mbean[2]" />
-        </xmlconfig>
-    </target>
-
-
-    <!-- Configure log4j settings based on contents of pa-ear/software/resrouces/deploy/log4j.block.xml -->
-    <target name="-install:jboss:configure:log4j" unless="exclude.jboss">
-        <!--
-        <property name="log4j.block.file" value="${resource.dir.target}/log4j.block.xml"/>
-        <loadfile 
-            property="xml.content"
-            srcFile="${log4j.block.file}"/>
-
-        <replaceregexp file="${jboss.home}/server/default/conf/log4j.xml" byline="true"
-            match="(^.*\/log4j:configuration.)"
-            replace="${xml.content}${line.separator}\1"/>
-        -->
-    </target>
+        depends="
+		install:jboss:configure:log4j 
+        ">
+		<!-- Calls the following macros
+		jboss-bindings - configures ports for jboss
+		jboss-login-config - sets up authentication
+		secure-jboss-console - adds password to jboss console apps
+		jboss-update-shutdown - updates shutdown.jar with correct jndi port so no args need to used 4 shutdown 
+		appserver-ssl-configure -  enables ssl
+		appserver-configure-external-hostname - configures jboss for use through a reverse proxy 
+		grid-secure-configure-connector - configures secure grid
+		-->
+		<!-- Use below if you are defining all the ports in your install.xml not the NCICB port configuraitons-->
+		<jboss-configure
+			jboss.server.ports.name="bda-ports"
+			jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding.xml"
+				/>
+		<!-- Default values for all attributes if you are using standard NCICB port configurations
+		<jboss-configure
+			/>
+		-->
+	</target>
 
     <!-- Calls to bda macros for basic functionality -->
     <target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
@@ -397,24 +460,23 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Wrapper target to deploy JBOSS container -->
     <target name="install:jboss" unless="exclude.jboss"
         depends="
-        install:check,
         install:validation:pre-install,
         install:jboss:stop,
         install:validation:pre-install:ports,
-        install:clean,
+        install:clean:jboss,
         install:init,
         install:jboss:binaries,
         install:jboss:pa-ear:re-configure,
         install:jboss:pa-ear,
         install:jboss:pa-ear:configure,
         install:jboss:configure,
+	install:post,
         install:jboss:start
         " />
 
     <!-- Wrapper target to deploy all containers to one server -->
     <target name="install" description="Installs and configures JBOSS, creates database, and deploys application" 
         depends="
-        install:check,
         install:validation:pre-install,
         install:jboss:stop,
         install:validation:pre-install:ports,
@@ -422,13 +484,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:init,
         install:database,
         install:jboss,
+	install:post,
         install:jboss:start,
         install:validation:post-install
         "/>
 
     <!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
     <target name="install:jboss:pa-ear:re-configure" unless="exclude.jboss">
-        
         <mkdir dir="${temp.dir}/pa-ear"/>
         <delete dir="${temp.dir}/pa-ear"/>
         <mkdir dir="${temp.dir}/pa-ear"/>
@@ -469,7 +531,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Wrapper target to upgrade jboss container. Does not install or configure binaries -->
     <target name="upgrade:jboss" unless="exclude.jboss"
         depends="
-        upgrade:check,
         install:validation:pre-install,
         install:jboss:stop,
         install:init,
@@ -482,7 +543,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Wrapper target to upgrade all container. Does not install or configure binaries -->
     <target name="upgrade" description="Deploys application and runs incremental database build" 
         depends="
-        upgrade:check,
         upgrade:init,
         install:validation:pre-install,
         install:jboss:stop,
@@ -504,29 +564,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
 
     <target name="upgrade:init">
-        <echo  message="Checking if database properties exist.  If they do not on an upgrade install then ${jboss.home}/server/${jboss.server.name}/deploy/${pa-ear.ds.file} may not exist."/>
-        <property name="db.prop.list" value="database.url,database.user,database.password,database.name"/>
-        <properties-exist properties.list="${db.prop.list}"/>
-    </target>
-    <target name="install:check">
-        <if>
-            <not>   
-                <contains string="${properties.file}" substring="install"/>
-            </not>  
-            <then>  
-                <fail message="When calling install targets the properties.file property, '${properties.file}', must contain 'install' in the name."/>
-            </then> 
-        </if>   
-    </target>
-    <target name="upgrade:check">
-        <if>
-            <not>   
-                <contains string="${properties.file}" substring="upgrade"/>
-            </not>  
-            <then>  
-                <fail message="When calling install targets the properties.file property, '${properties.file}', must contain 'upgrade' in the name."/>
-            </then> 
-        </if>   
+	    <jboss-read-dbconfig
+		    jboss.ds-xml.file="${bda-blueprints-webapp.ds.file}"
+		    />
+	    <jboss-read-ldapconfig
+		    />
     </target>
     
     <target name="upgrade:database:tag" description="Tags current state of database with a tag to allow for rollback of database to previous versions." unless="exclude.database"
@@ -546,5 +588,41 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             ">
         <database-rollback/>
     </target>
+
+    <target name="install:post" depends="install:post:jboss">
+    </target>
+
+    <target name="install:post:jboss" unless="exclude.jboss">
+	    <if>
+		    <not>
+			    <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+		    </not>
+		    <then>
+			    <property name="changelogFile" location="${install-logs.dir}/chagneLog-${install.time}.txt"/>
+			    <property name="compare1.dir" location="${backup.jboss.base.dir}/backup/${jboss.relative.path}"/>
+			    <property name="compare2.dir" location="${jboss.home}"/>
+			    <report-dir-diff
+				    dir1="${compare1.dir}"
+				    dir2="${compare2.dir}"
+				    reportFile="${changelogFile}"
+				    />
+			    <!-- Copy app server logs -->
+			    <mkdir dir="${jboss.home}/server/${jboss.server.name}/log"/>
+			    <mkdir dir="${backup.jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log"/>
+			    <!-- so the logs wont be included in the zip --> 
+			    <move todir="${jboss.home}/server/${jboss.server.name}/log">
+				    <fileset dir="${backup.jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log">
+					    <include name="*"/>
+				    </fileset>
+			    </move>
+
+			    <!-- Compress backup and cleanup -->
+			    <mkdir dir="${backup.jboss.base.dir}/backup1"/>
+			    <zip destfile="${backup.jboss.base.dir}/backup1/${jboss.relative.path}.zip" basedir="${backup.jboss.base.dir}/backup" />
+			    <delete dir="${backup.jboss.base.dir}/backup"/>
+		    </then>
+	    </if>
+    </target>
+
 
 </project>
