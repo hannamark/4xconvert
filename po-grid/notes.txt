@@ -1,0 +1,2 @@
+To start the globus container
+globus-start-container -nosec -p 9090

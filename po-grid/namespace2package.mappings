@@ -1,0 +1,14 @@
+http\://grid.po.coppa.nci.nih.gov/CoppaPO=gov.nih.nci.coppa.po.grid.stubs
+http\://grid.po.coppa.nci.nih.gov/CoppaPO/bindings=gov.nih.nci.coppa.po.grid.stubs.bindings
+http\://grid.po.coppa.nci.nih.gov/CoppaPO/service=gov.nih.nci.coppa.po.grid.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
+uri\:iso.org\:21090=org.iso._21090
+http\://grid.po.coppa.nci.nih.gov/CoppaPO/types=gov.nih.nci.coppa.po.grid.stubs.types
+http\://po.coppa.nci.nih.gov=gov.nih.nci.coppa.po
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
+
+
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
