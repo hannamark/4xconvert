@@ -34,6 +34,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <echo message="application.base.path=${application.base.path}"/>
     <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
     <property name="tomcat.home" value="${application.base.path}/${tomcat.relative.path}"/>
+    <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
 
     <!--OS Temp dir --> 
     <condition property="os.temp.dir" value="/tmp">
