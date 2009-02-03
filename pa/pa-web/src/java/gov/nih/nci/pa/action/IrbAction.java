@@ -437,19 +437,19 @@ public class IrbAction extends ActionSupport implements Preparable {
         List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
         candidateBoardList = new HashMap<String, String>();
         for (StudyParticipationDTO sp : spList) {
-            if (CdConverter.convertCdToString(sp.getFunctionalCode()).equals(
-                    StudyParticipationFunctionalCode.TREATING_SITE.getCode())
-                || CdConverter.convertCdToString(sp.getFunctionalCode()).equals(
-                    StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode())) {
-                Long id = IiConverter.convertToLong(sp.getHealthcareFacilityIi());
-                if (id != null) {
-                    Organization org = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(id);
-                    candidateBoardList.put(org.getIdentifier(), org.getName());
-                }
-            }
             Long id = IiConverter.convertToLong(sp.getOversightCommitteeIi());
             if (id != null) {
                 Organization org = correlationUtils.getPAOrganizationByPAOversightCommitteeId(id);
+                candidateBoardList.put(org.getIdentifier(), org.getName());
+            }
+            id = IiConverter.convertToLong(sp.getResearchOrganizationIi());
+            if (id != null) {
+                Organization org = correlationUtils.getPAOrganizationByPAResearchOrganizationId(id);
+                candidateBoardList.put(org.getIdentifier(), org.getName());
+            }
+            id = IiConverter.convertToLong(sp.getHealthcareFacilityIi());
+            if (id != null) {
+                Organization org = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(id);
                 candidateBoardList.put(org.getIdentifier(), org.getName());
             }
         }
@@ -503,11 +503,15 @@ public class IrbAction extends ActionSupport implements Preparable {
                   setApprovalNumber(StConverter.convertToString(part.getReviewBoardApprovalNumber()));
                   setSiteRelated(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode().
                           equals(CdConverter.convertCdToString(part.getFunctionalCode())) ? NO : YES);
-                  Organization paOrg = correlationUtils.getPAOrganizationByPAOversightCommitteeId(
-                          IiConverter.convertToLong(part.getOversightCommitteeIi()));
-                  loadOrg(paOrg.getIdentifier());
+                  if (PAUtil.isIiNull(part.getOversightCommitteeIi())) {
+                      loadOrg(null);
+                  } else {
+                      Organization paOrg = correlationUtils.getPAOrganizationByPAOversightCommitteeId(
+                              IiConverter.convertToLong(part.getOversightCommitteeIi()));
+                      loadOrg(paOrg.getIdentifier());
+                  }
                   if (getSiteRelated().equals(YES)) {
-                      paOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
+                      Organization paOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
                               IiConverter.convertToLong(part.getHealthcareFacilityIi()));
                       setContactAffiliation(paOrg.getIdentifier());
                   } else {
