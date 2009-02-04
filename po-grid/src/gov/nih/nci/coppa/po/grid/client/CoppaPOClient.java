@@ -14,10 +14,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
+import org.iso._21090.DSET_TEL;
 import org.iso._21090.II;
 import org.iso._21090.IdentifierReliability;
 import org.iso._21090.IdentifierScope;
 import org.iso._21090.NullFlavor;
+import org.iso._21090.TEL;
+import org.iso._21090.TELEmail;
+import org.iso._21090.TelecommunicationAddressUse;
 import org.iso._21090.UpdateMode;
 
 /**
@@ -80,11 +84,12 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
                     CoppaPOClient client = new CoppaPOClient(args[1]);
                     // place client calls here if you want to use this main as a
                     // test....
-                    echoOrg(client);
-                    getOrg(client);
-                    getPerson(client);
+//                    echoOrg(client);
+                    echoPerson(client);
+//                    getOrg(client);
+//                    getPerson(client);
                     
-                    searchPersons(client);
+//                    searchPersons(client);
 
                 } else {
                     usage();
@@ -123,6 +128,43 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
         System.out.println(ToStringBuilder.reflectionToString(request.getIdentifier(),
                 ToStringStyle.MULTI_LINE_STYLE));
         Organization response = client.echoOrganization(request);
+        System.out.println("Response:");
+        System.out.println("=========");
+        System.out.println(ToStringBuilder.reflectionToString(response, ToStringStyle.MULTI_LINE_STYLE));
+        System.out.println(ToStringBuilder.reflectionToString(response.getIdentifier(),
+                ToStringStyle.MULTI_LINE_STYLE));
+    }
+
+    private static void echoPerson(CoppaPOClient client) throws RemoteException {
+        Person request = new Person();
+        II id = new II();
+        id.setControlActExtension("controlActExtension");
+        id.setControlActRoot("controlActRoot");
+        id.setDisplayable(Boolean.TRUE);
+        id.setExtension("extension");
+        id.setFlavorId("flavorId");
+        id.setIdentifierName("identifierName");
+        id.setNullFlavor(NullFlavor.OTH);
+        id.setReliability(IdentifierReliability.USE);
+        id.setRoot("root");
+        id.setScope(IdentifierScope.VER);
+        id.setUpdateMode(UpdateMode.D);
+        id.setValidTimeHigh("validTimeHigh");
+        id.setValidTimeLow("validTimeLow");
+        request.setIdentifier(id);
+        TELEmail email = new TELEmail();
+        email.setControlActExtension("controlExtention");
+        email.setControlActRoot("controleActRoot");
+        email.setFlavorId("flavorId");
+        email.setUpdateMode(UpdateMode.A);
+        email.setUse(new TelecommunicationAddressUse[]{ TelecommunicationAddressUse.AS, TelecommunicationAddressUse.H });
+        request.setTelecomAddress(new DSET_TEL(new TEL[]{ email }));
+        System.out.println("Request:");
+        System.out.println("=========");
+        System.out.println(ToStringBuilder.reflectionToString(request, ToStringStyle.MULTI_LINE_STYLE));
+        System.out.println(ToStringBuilder.reflectionToString(request.getIdentifier(),
+                ToStringStyle.MULTI_LINE_STYLE));
+        Person response = client.echoPerson(request);
         System.out.println("Response:");
         System.out.println("=========");
         System.out.println(ToStringBuilder.reflectionToString(response, ToStringStyle.MULTI_LINE_STYLE));
