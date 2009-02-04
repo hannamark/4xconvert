@@ -7,6 +7,14 @@
 		
 	<display-name>PA</display-name>
 
+
+    <!-- Abstraction session-timeout-->
+    <session-config>
+        <session-timeout>
+            240
+        </session-timeout>
+    </session-config>   
+
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
