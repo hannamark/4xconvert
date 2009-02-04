@@ -40,7 +40,7 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     Install Eclipse maven plugin: http://m2eclipse.sonatype.org/update/
     Need to add other plugins here as well
 
-1.3 CI build
+1.3 CI build (Maven 2.0.9)
     mvn -Plocal,nuke-db sql:execute
     mvn -Plocal clean install sql:execute
     mvn -Pci,local integration-test
