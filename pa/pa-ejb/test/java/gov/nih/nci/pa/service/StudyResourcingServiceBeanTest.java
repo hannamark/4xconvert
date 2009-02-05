@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
@@ -88,6 +89,7 @@ import gov.nih.nci.pa.domain.StudyResourcingTest;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -176,4 +178,19 @@ public class StudyResourcingServiceBeanTest {
         List<StudyResourcingDTO> statusList =remoteEjb.getstudyResourceByStudyProtocol(pid);        
     }
 
+    @Test 
+    public void iiRootTest() throws Exception {
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
+        
+        StudyResourcing sr =  StudyResourcingTest.createStudyResourcingObj(sp);
+        TestSchema.addUpdObject(sr);
+        assertNotNull(sr.getId());
+
+        StudyResourcingDTO dto = remoteEjb.getStudyResourceByID(IiConverter.converToStudyResourcingIi(sr.getId()));
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_RESOURCING_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

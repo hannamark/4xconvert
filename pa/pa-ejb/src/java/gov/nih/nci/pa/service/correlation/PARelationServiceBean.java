@@ -130,7 +130,7 @@ public class PARelationServiceBean {
             throw new PAException("Local StudyProtocol Identifer is null");
         }
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.convertToIi(studyProtocolId));
+                IiConverter.converToStudyProtocolIi(studyProtocolId));
         if (spDTO == null) {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }
@@ -161,7 +161,7 @@ public class PARelationServiceBean {
             throw new PAException("Study Protocol Identifer is null");
         }
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.convertToIi(studyProtocolId));
+                IiConverter.converToStudyProtocolIi(studyProtocolId));
         if (spDTO == null) {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }
@@ -199,7 +199,7 @@ public class PARelationServiceBean {
             throw new PAException(" Study Protocol type is null");
         }
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.convertToIi(studyProtocolId));
+                IiConverter.converToStudyProtocolIi(studyProtocolId));
         if (spDTO == null) {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }
@@ -240,7 +240,7 @@ public class PARelationServiceBean {
             throw new PAException("Study Protocol Identifer is null");
         }
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.convertToIi(studyProtocolId));
+                IiConverter.converToStudyProtocolIi(studyProtocolId));
         if (spDTO == null) {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }
@@ -285,7 +285,7 @@ public class PARelationServiceBean {
             throw new PAException("Study Protocol Identifer is null");
         }
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.convertToIi(studyProtocolId));
+                IiConverter.converToStudyProtocolIi(studyProtocolId));
         if (spDTO == null) {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }
@@ -343,7 +343,7 @@ public class PARelationServiceBean {
             throw new PAException("Study Protocol Identifer is null");
         }
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.convertToIi(studyProtocolId));
+                IiConverter.converToStudyProtocolIi(studyProtocolId));
         if (spDTO == null) {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }

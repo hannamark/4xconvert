@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 //import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -265,5 +266,13 @@ public class StudyProtocolServiceBeanTest {
         } catch (PAException e) {
             // expected behavior
         }
+    }
+    @Test 
+    public void iiRootTest() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        assertEquals(ii.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertTrue(PAUtil.isNotEmpty(ii.getIdentifierName()));
     }
 }

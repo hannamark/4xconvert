@@ -392,7 +392,7 @@ import org.hibernate.Session;
         }
         createDocumentWorkFlowStatus(isp);
         LOG.debug("Leaving createInterventionalStudyProtocol");
-        return IiConverter.convertToIi(isp.getId());
+        return IiConverter.converToStudyProtocolIi(isp.getId());
 
     }
 
@@ -529,7 +529,7 @@ import org.hibernate.Session;
         createDocumentWorkFlowStatus(osp);
         
         LOG.debug("Leaving createInterventionalStudyProtocol");
-        return IiConverter.convertToIi(osp.getId());
+        return IiConverter.converToStudyProtocolIi(osp.getId());
 
     }
 

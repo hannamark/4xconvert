@@ -136,4 +136,10 @@ public class StudyRegulatoryAuthorityServiceBeanTest {
     assertEquals(dto.getStudyProtocolIdentifier()
         , pid);
   }
+  
+  @Test 
+  public void iiRootTest() throws Exception {
+      StudyRegulatoryAuthorityDTO dto = remoteEjb.getByStudyProtocol(pid);
+      assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+  }
 }

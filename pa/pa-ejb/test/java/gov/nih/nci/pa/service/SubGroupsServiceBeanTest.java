@@ -79,10 +79,12 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -135,5 +137,13 @@ public class SubGroupsServiceBeanTest {
                 , pid);
     }
 
-
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StratumGroupDTO> dtoList = remoteEjb.getByStudyProtocol(pid);
+        assertTrue(dtoList.size() > 0);
+        StratumGroupDTO dto = dtoList.get(0);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STRATUM_GROUP_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }
