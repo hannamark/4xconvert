@@ -329,7 +329,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                </filterset>
         </copy>			
 		<maven
-			maven.profile.list="-P ${po.maven.profile.list}"
+			maven.profile.list="-P ${po.maven.profile.list} -Dskip-liquibase"
 			maven.goal.list="${po.maven.goal.list}"
 			maven.dir="${po.base.dir}"
 			/>
