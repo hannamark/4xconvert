@@ -51,9 +51,15 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<span class="small"><a title="To Create an Account Or Reset Password." href="/registry/registerUser.action?resetPassword=true">(Forgot Your Password?)</a></span> 
+					<span class="small"><a title="To Reset Password" href="/registry/registerUser.action?resetPassword=true">(Forgot Your Password?)</a></span> 
 				</td>
-			</tr>   
+			</tr>
+			<tr>
+                <td>&nbsp;</td>
+                <td>
+                    <span class="small"><a title="To Create an Account" href="/registry/registerUser.action">(Create an Account)</a></span> 
+                </td>
+            </tr>   
 </table>
 
            <div class="actionsrow">
