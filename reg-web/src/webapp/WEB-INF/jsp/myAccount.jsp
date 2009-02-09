@@ -118,6 +118,19 @@ function handleAction(){
                   </tr>
                   <tr>
                         <td scope="row" class="label">
+                            <label for="middleInitial"> <fmt:message key="register.user.middleInitial"/></label>
+                        </td>
+                        <td>
+                            <s:textfield name="registryUserWebDTO.middleName"  maxlength="5" size="5"  cssStyle="width:200px" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.middleName</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr> 
+                  <tr>
+                        <td scope="row" class="label">
                             <label for="lastName"> <fmt:message key="register.user.lastName"/><span class="required">*</span></label>
                         </td>
                         <td>
@@ -129,19 +142,7 @@ function handleAction(){
                              </span>
                         </td>                
                   </tr>
-                  <tr>
-                        <td scope="row" class="label">
-                            <label for="middleInitial"> <fmt:message key="register.user.middleInitial"/></label>
-                        </td>
-                        <td>
-                            <s:textfield name="registryUserWebDTO.middleName"  maxlength="5" size="5"  cssStyle="width:200px" />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>registryUserWebDTO.middleName</s:param>
-                               </s:fielderror>                            
-                             </span>
-                        </td>                
-                  </tr>                  
+                 
                   <tr>
                         <td scope="row" class="label">
                             <label for="streetAddress"> <fmt:message key="register.user.streetAddress"/></label>
@@ -186,7 +187,20 @@ function handleAction(){
                                </s:fielderror>                            
                              </span>
                         </td>                
-                  </tr>                  
+                  </tr>
+                  <tr>
+                        <td scope="row" class="label">
+                            <label for="zipCode"> <fmt:message key="register.user.zipCode"/></label>
+                        </td>
+                        <td>
+                            <s:textfield name="registryUserWebDTO.postalCode"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.postalCode</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr>                   
                   <tr>
                         <td scope="row" class="label">
                             <label for="country"> <fmt:message key="register.user.country"/><span class="required">*</span></label>
@@ -210,19 +224,7 @@ function handleAction(){
                              </span>
                         </td>                
                   </tr>
-                  <tr>
-                        <td scope="row" class="label">
-                            <label for="zipCode"> <fmt:message key="register.user.zipCode"/></label>
-                        </td>
-                        <td>
-                            <s:textfield name="registryUserWebDTO.postalCode"  maxlength="200" size="100"  cssStyle="width:200px" />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>registryUserWebDTO.postalCode</s:param>
-                               </s:fielderror>                            
-                             </span>
-                        </td>                
-                  </tr> 
+
                   <tr>
                         <td scope="row" class="label">
                             <label for="phone"> <fmt:message key="register.user.phone"/><span class="required">*</span></label>
