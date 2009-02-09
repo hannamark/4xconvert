@@ -8,14 +8,8 @@
 	<preConditions>            
 		<dbms type="postgresql" />                     
 	</preConditions>                                       
-	<changeSet id="1" author="ssaksa">        
-		<comment>Need to have at least one changeset to allow tagging to work.</comment>
-		<sql>select now()</sql>
-	</changeSet>
-	<!-- 
-     -->
-	<changeSet id="2" author="smiller">
-	   <comment>Upgrade for PO-787</comment>
-	   <sqlFile path="@db-upgrade.run.dir@/postgresql/1.1/ctepOids.sql"/>
+	<changeSet id="PO-787" author="smiller">
+	   <comment>Upgrade for PO-787 - ctep oids</comment>
+	   <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1/ctepOids.sql"/>
     </changeSet>
 </databaseChangeLog>

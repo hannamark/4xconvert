@@ -36,6 +36,7 @@
         <ctep.jms.subscription.name>JMSSUBSCRIBER</ctep.jms.subscription.name>
         <ctep.jms.topic.connection.factory.name>java:comp/resource/BETAJMSRP/TopicConnectionFactories/TCF</ctep.jms.topic.connection.factory.name>
         <ctep.jms.topic.name>java:comp/resource/BETAJMSRP/Topics/CES_OUT_TOPIC</ctep.jms.topic.name>
+        <db-upgrade.run.dir>${pom.basedir}/src/main/db/db-upgrade</db-upgrade.run.dir>
     </properties>
     
     <dependencies>
@@ -320,6 +321,7 @@
                         <clientExclude>gov/nih/nci/services/**/*Bean*</clientExclude>
                         <clientExclude>gov/nih/nci/services/**/*Interceptor*</clientExclude>
                         <clientExclude>**hibernate.cfg.xml</clientExclude>
+                        <clientExclude>**db-*.xml</clientExclude>
                     </clientExcludes>
                 </configuration>
             </plugin>
@@ -327,14 +329,6 @@
                 <groupId>com.fiveamsolutions</groupId>
                 <artifactId>nci-commons-maven-plugin</artifactId>
                 <version>${nci-commons.version}</version>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>hbm2ddl</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <autoNameIndexes>true</autoNameIndexes>
                     <components>
@@ -425,11 +419,44 @@
                     </execution>
                 </executions>
             </plugin>
+                <plugin>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>update</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <changeLogFile>src/main/db/db-changelog.xml</changeLogFile>
+                        <driver>${jdbc.driverClassName}</driver>
+                        <url>${jdbc.url}</url>
+                        <username>${jdbc.username}</username>
+                        <password>${jdbc.password}</password>
+                    </configuration>
+                </plugin>
         </plugins>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/db/db-install</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>db-install.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/db/db-upgrade</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>db-upgrade.xml</include>
+                </includes>
             </resource>
         </resources>
         <testResources>
@@ -441,7 +468,7 @@
     </build>
     <profiles>
         <profile>
-            <id>nuke-db</id>
+            <id>init-db</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -467,39 +494,5 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>init-db</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>sql-maven-plugin</artifactId>
-                        <configuration>
-                            <onError>continue</onError>
-                            <srcFiles>
-                                <srcFile>src/main/db/db-install/postgresql/extraDropSchema.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/csmDropSchema.sql</srcFile>
-                                <srcFile>target/hibernate3/sql/${schema.file}</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/csmCreateSchema.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/countries.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/oversightcommitteetypes.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/researchorganizationtypes.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/fundingmechanisms.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/rot_fundingmech_mapping.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/organizationalcontacttypes.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/csmBootstrapData.sql</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/${csm.users.file}</srcFile>
-                                <srcFile>src/main/db/db-install/postgresql/extraCreateSchema.sql</srcFile>
-                            </srcFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
-
-
 </project>

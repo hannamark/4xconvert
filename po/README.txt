@@ -41,12 +41,23 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     Need to add other plugins here as well
 
 1.3 CI build (Maven 2.0.9)
-    mvn -Plocal,nuke-db sql:execute
-    mvn -Plocal clean install sql:execute
+    mvn -Plocal,init-db sql:execute
+    mvn -Plocal clean install
     mvn -Pci,local integration-test
     mvn -Plocal site verify 
+    
+1.4 Usefule, non standard mvn targets
 
-1.4 Power-Maven Usage
+	mvn nci-commons:jboss-undeploy  - removes the deployable from jboss.
+	mvn nci-commons:hbm2ddl - generates the hibernate scheam.sql - usefull when writing migration scripts.
+	mvn cargo:deploy - deploys to jboss
+	mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating.
+	mvn liquibase:update run the liquibase update process, thus creating the schema (if needed) and bring the app in to line with the latest.
+		** Note this is run as part of nearly every build cycle, so there is no need to run it unless
+			you are trying to recreate the db without running the full build.  Also, it will ONLY work in the
+			services sub directory.
+
+1.5 Power-Maven Usage
     Deploy and run your integration tests to an already running container
     mvn -Pci-nostart integration-test
     
@@ -58,6 +69,9 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     
     Run just the Selenium tests
      - Start and deploy to JBoss
-    mvn sql:execute
+     cd services
+    mvn -Pinit-db sql:execute
+    mvn liguibase:update
+    cd ..
     mvn -Pci-nostart-nodeploy integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
     

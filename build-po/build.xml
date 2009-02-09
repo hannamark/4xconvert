@@ -752,7 +752,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			<fileset dir="${db.src.dir}">
 				<include name="**/db-upgrade/**/*"/>
 			</fileset>
-			<filterset>
+			<filterset begintoken="${" endtoken="}">
 				<filtersfile file="${properties.file}"/>
 				<filtersfile file="project.properties"/>
 				<filter token="db-upgrade.run.dir" value="${working.dir}/db-upgrade/${database.type}"/>
