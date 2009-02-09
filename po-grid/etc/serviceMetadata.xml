@@ -14,39 +14,31 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getPerson">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns5:II" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifier" xmlns:ns5="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns5:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifier" xmlns:ns5="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns6:Person" dimensionality="1" isArray="false" xmlns:ns6="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="NullifiedEntityFault"/>
-       </ns2:faultCollection>
+       <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getOrganization">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns7:II" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifier" xmlns:ns7="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns7:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifier" xmlns:ns7="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns8:Organization" dimensionality="1" isArray="false" xmlns:ns8="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="NullifiedEntityFault"/>
-       </ns2:faultCollection>
+       <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="searchOrganizations">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns9:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns9="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns10:Organization" dimensionality="1" isArray="true" xmlns:ns10="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="NullifiedEntityFault"/>
-       </ns2:faultCollection>
+       <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="searchPersons">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns11:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns11="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns12:Person" dimensionality="1" isArray="true" xmlns:ns12="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="NullifiedEntityFault"/>
-       </ns2:faultCollection>
+       <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="echoPerson">
        <ns2:inputParameterCollection>

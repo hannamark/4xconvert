@@ -8,7 +8,7 @@ public class CompressionTransformer implements
     public gov.nih.nci.coppa.iso.Compression transform(org.iso._21090.Compression input) throws DtoTransformException {
         if (input == null)
             return null;
-        gov.nih.nci.coppa.iso.Compression compression = gov.nih.nci.coppa.iso.Compression.valueOf(input.getValue());
+        gov.nih.nci.coppa.iso.Compression compression = gov.nih.nci.coppa.iso.Compression.valueOf(input.value());
 
         return compression;
     }
@@ -17,7 +17,7 @@ public class CompressionTransformer implements
             gov.nih.nci.coppa.iso.Compression res) throws DtoTransformException {
         if (input == null)
             return null;
-        res = gov.nih.nci.coppa.iso.Compression.valueOf(input.getValue());
+        res = gov.nih.nci.coppa.iso.Compression.valueOf(input.value());
 
         return res;
     }
@@ -25,7 +25,7 @@ public class CompressionTransformer implements
     public org.iso._21090.Compression transform(gov.nih.nci.coppa.iso.Compression input) throws DtoTransformException {
         if (input == null)
             return null;
-        org.iso._21090.Compression compression = org.iso._21090.Compression.fromString(input.toString());
+        org.iso._21090.Compression compression = org.iso._21090.Compression.fromValue(input.name());
 
         return compression;
     }
@@ -34,7 +34,7 @@ public class CompressionTransformer implements
             throws DtoTransformException {
         if (input == null)
             return null;
-        res = org.iso._21090.Compression.fromString(input.toString());
+        res = org.iso._21090.Compression.fromValue(input.name());
 
         return res;
     }

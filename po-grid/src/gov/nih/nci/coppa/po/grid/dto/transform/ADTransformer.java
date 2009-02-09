@@ -16,7 +16,7 @@ public class ADTransformer implements Transformer<org.iso._21090.AD, Ad> {
         res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
         if (input.getPart() != null) {
             ADXPTransformer transformer = new ADXPTransformer();
-            res.setPart(transformer.transform(input.getPart()));
+            transformer.transformADXP(input.getPart(), res.getPart());
         }
         return res;
     }
@@ -34,7 +34,7 @@ public class ADTransformer implements Transformer<org.iso._21090.AD, Ad> {
         res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
         if (input.getPart() != null) {
             ADXPTransformer transformer = new ADXPTransformer();
-            res.setPart(transformer.transform(input.getPart()));
+            transformer.transform(input.getPart(), res.getPart());
         }
         return res;
     }

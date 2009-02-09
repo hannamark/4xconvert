@@ -18,13 +18,13 @@ public class IITransformer implements Transformer<org.iso._21090.II,Ii> {
 		if (input == null) return null;
         Ii ii = res;
         ii.setExtension(input.getExtension());
-        ii.setDisplayable(input.getDisplayable());
+        ii.setDisplayable(input.isDisplayable());
         ii.setIdentifierName(input.getIdentifierName());
         if (input.getReliability()!=null){
-           ii.setReliability(IdentifierReliability.valueOf(input.getReliability().getValue()));
+           ii.setReliability(IdentifierReliability.valueOf(input.getReliability().value()));
         }
         if (input.getScope()!=null){
-           ii.setScope(IdentifierScope.valueOf(input.getScope().getValue()));
+           ii.setScope(IdentifierScope.valueOf(input.getScope().value()));
         }
         ii.setRoot(input.getRoot());
         ii.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));

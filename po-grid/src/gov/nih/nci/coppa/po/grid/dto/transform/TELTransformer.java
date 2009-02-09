@@ -68,12 +68,10 @@ public class TELTransformer implements Transformer<org.iso._21090.TEL, gov.nih.n
             return null;
         res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
         if (input.getValue() != null) {
-            try {
-                org.apache.axis.types.URI uri = new org.apache.axis.types.URI(input.getValue().toString());
-                res.setValue(uri);
-            } catch (org.apache.axis.types.URI.MalformedURIException se) {
-                throw new DtoTransformException(se);
-            }
+            
+                
+                res.setValue(input.getValue().toString());
+            
         }
 
         return res;

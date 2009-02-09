@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
+import java.util.List;
 import org.iso._21090.EntityNamePartQualifier;
 
 import java.util.HashSet;
@@ -11,7 +12,7 @@ public class EntityNamePartQualifierTransformer implements Transformer<EntityNam
 	public gov.nih.nci.coppa.iso.EntityNamePartQualifier transform(
 			EntityNamePartQualifier input) throws DtoTransformException {
 		if (input==null) return null;
- 		return gov.nih.nci.coppa.iso.EntityNamePartQualifier.valueOf(input.getValue());
+ 		return gov.nih.nci.coppa.iso.EntityNamePartQualifier.valueOf(input.value());
 	}
 
 	
@@ -21,7 +22,7 @@ public class EntityNamePartQualifierTransformer implements Transformer<EntityNam
 			throws DtoTransformException {
 		// TODO Auto-generated method stub
 		if (input==null) return null;
-		return gov.nih.nci.coppa.iso.EntityNamePartQualifier.valueOf(input.getValue());
+		return gov.nih.nci.coppa.iso.EntityNamePartQualifier.valueOf(input.value());
 	}
 	
 	public Set<gov.nih.nci.coppa.iso.EntityNamePartQualifier> transform(EntityNamePartQualifier[] input) throws DtoTransformException {
@@ -39,6 +40,15 @@ public class EntityNamePartQualifierTransformer implements Transformer<EntityNam
 		}
 		return null;
 
+	}
+
+    public void transform(List<EntityNamePartQualifier> input, Set<gov.nih.nci.coppa.iso.EntityNamePartQualifier> res) throws DtoTransformException {
+		if (input==null)return;
+
+        for(EntityNamePartQualifier el: input) {
+            gov.nih.nci.coppa.iso.EntityNamePartQualifier enpq_iso = transform(el);
+            res.add(enpq_iso);
+        }
 	}
 	
 	public org.iso._21090.EntityNamePartQualifier transform(
@@ -71,6 +81,14 @@ public class EntityNamePartQualifierTransformer implements Transformer<EntityNam
 		}
 		return null;
 
+	}
+
+    public void transform(Set<gov.nih.nci.coppa.iso.EntityNamePartQualifier> input, List<EntityNamePartQualifier> res) throws DtoTransformException {
+		if (input==null)return;		
+
+        for(gov.nih.nci.coppa.iso.EntityNamePartQualifier el:input){
+            res.add(transform(el));
+        }
 	}
 
 }

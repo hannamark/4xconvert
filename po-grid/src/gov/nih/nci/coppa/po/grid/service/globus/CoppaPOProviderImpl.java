@@ -26,25 +26,25 @@ public class CoppaPOProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse getPerson(gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params) throws RemoteException, gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
+    public gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse getPerson(gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params) throws RemoteException {
     gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse();
-    boxedResult.setPerson(impl.getPerson(params.getIdentifier().getII()));
+    boxedResult.setPerson(impl.getPerson(params.getIdentifier().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse getOrganization(gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequest params) throws RemoteException, gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
+    public gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse getOrganization(gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequest params) throws RemoteException {
     gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse();
-    boxedResult.setOrganization(impl.getOrganization(params.getIdentifier().getII()));
+    boxedResult.setOrganization(impl.getOrganization(params.getIdentifier().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsResponse searchOrganizations(gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequest params) throws RemoteException, gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
+    public gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsResponse searchOrganizations(gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequest params) throws RemoteException {
     gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsResponse();
     boxedResult.setOrganization(impl.searchOrganizations(params.getOrganization().getOrganization()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.po.grid.stubs.SearchPersonsResponse searchPersons(gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequest params) throws RemoteException, gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
+    public gov.nih.nci.coppa.po.grid.stubs.SearchPersonsResponse searchPersons(gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequest params) throws RemoteException {
     gov.nih.nci.coppa.po.grid.stubs.SearchPersonsResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.SearchPersonsResponse();
     boxedResult.setPerson(impl.searchPersons(params.getPerson().getPerson()));
     return boxedResult;

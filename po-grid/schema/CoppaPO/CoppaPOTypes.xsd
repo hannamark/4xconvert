@@ -17,14 +17,7 @@
       </sequence>
     </complexType>
   </element>
-<!-- 
-  <element name="NullifiedEntityFault" type="tns:NullifiedEntityFault" />
-  <complexType name="NullifiedEntityFault">
-    <complexContent>
-      <extension base="wsrbf:BaseFaultType" />
-    </complexContent>
-  </complexType>
- -->
+
     <element name="CoppaPersonServiceFault" type="tns:CoppaPersonServiceFault"/>
     <complexType name="CoppaPersonServiceFault">
         <complexContent>

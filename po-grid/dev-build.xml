@@ -54,14 +54,29 @@
 	<!-- Pre Stubs Target                                               -->
 	<!-- ============================================================== -->
 	<target name="preStubs">
-
+        
 	</target>
 
 	<!-- ============================================================== -->
 	<!-- Post Stubs Build Target                                        -->
 	<!-- ============================================================== -->
 	<target name="postStubs">
-
+        <java classname="com.sun.tools.xjc.XJCFacade" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${basedir}/tools/lib/jaxb-xjc.jar"/>
+                <pathelement location="${basedir}/lib/jaxb-api.jar"/>
+                <pathelement location="${basedir}/lib/jaxb-impl.jar"/>
+                <pathelement location="${basedir}/lib/activation.jar"/>
+                <pathelement location="${basedir}/lib/jsr173_api.jar"/>
+            </classpath>
+            <arg value="-xmlschema"/><arg file="${basedir}/schema/CoppaPO/CoppaPOTypes.xsd"/>
+            <!--arg value="-wsdl"/><arg file="${basedir}/schema/CoppaPO/CoppaPO.wsdl"/-->
+            <arg value="-d"/><arg file="${stubs.src}"/>
+            <arg value="-b"/><arg file="${basedir}/schema/CoppaPO/jaxb-config.xjb"/>
+            <!--arg value="-p"/><arg value="gov.nih.nci.coppa.po"/-->
+            <arg value="-nv"/>
+        </java>
+        
 	</target>
 
 	<!-- ============================================================== -->

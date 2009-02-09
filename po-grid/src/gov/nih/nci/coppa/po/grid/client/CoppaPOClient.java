@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.po.grid.client;
 
+import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.grid.common.CoppaPOI;
-import gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault;
 
 import java.rmi.RemoteException;
 
@@ -14,12 +14,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
-import org.iso._21090.DSET_TEL;
+import org.iso._21090.DSETTEL;
 import org.iso._21090.II;
 import org.iso._21090.IdentifierReliability;
 import org.iso._21090.IdentifierScope;
 import org.iso._21090.NullFlavor;
-import org.iso._21090.TEL;
 import org.iso._21090.TELEmail;
 import org.iso._21090.TelecommunicationAddressUse;
 import org.iso._21090.UpdateMode;
@@ -157,8 +156,10 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
         email.setControlActRoot("controleActRoot");
         email.setFlavorId("flavorId");
         email.setUpdateMode(UpdateMode.A);
-        email.setUse(new TelecommunicationAddressUse[]{ TelecommunicationAddressUse.AS, TelecommunicationAddressUse.H });
-        request.setTelecomAddress(new DSET_TEL(new TEL[]{ email }));
+        email.getUse().add(TelecommunicationAddressUse.AS);
+        email.getUse().add(TelecommunicationAddressUse.H);
+        request.setTelecomAddress(new DSETTEL());
+        request.getTelecomAddress().getItem().add(email);
         System.out.println("Request:");
         System.out.println("=========");
         System.out.println(ToStringBuilder.reflectionToString(request, ToStringStyle.MULTI_LINE_STYLE));
@@ -172,7 +173,7 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
                 ToStringStyle.MULTI_LINE_STYLE));
     }
 
-    private static void searchPersons(CoppaPOClient client) throws RemoteException, NullifiedEntityFault {
+    private static void searchPersons(CoppaPOClient client) throws RemoteException {
         Person criteria = new Person();
         CD statusCode = new CD();
         statusCode.setCode("active");
@@ -184,8 +185,8 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
         }
     }
 
-    private static void getPerson(CoppaPOClient client) throws RemoteException, NullifiedEntityFault {
-        II id = new II();
+    private static void getPerson(CoppaPOClient client) throws RemoteException {
+        Id id = new Id();
         id.setRoot(PERSON_ROOT);
         id.setIdentifierName(PERSON_IDENTIFIER_NAME);
         id.setExtension("499");
@@ -193,8 +194,8 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
     
-    private static void getOrg(CoppaPOClient client) throws RemoteException, NullifiedEntityFault {
-        II id = new II();
+    private static void getOrg(CoppaPOClient client) throws RemoteException {
+        Id id = new Id();
         id.setRoot(ORG_ROOT);
         id.setIdentifierName(ORG_IDENTIFIER_NAME);
         id.setExtension("537");
@@ -210,82 +211,76 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
         System.out.println(ToStringBuilder.reflectionToString(identifier));
     }
 
-    public gov.nih.nci.coppa.po.Person getPerson(org.iso._21090.II identifier) throws RemoteException,
-            gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getPerson");
-            gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest();
-            gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier();
-            identifierContainer.setII(identifier);
-            params.setIdentifier(identifierContainer);
-            gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse boxedResult = portType.getPerson(params);
-            return boxedResult.getPerson();
-        }
+  public gov.nih.nci.coppa.po.Person getPerson(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getPerson");
+    gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest();
+    gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier();
+    identifierContainer.setId(identifier);
+    params.setIdentifier(identifierContainer);
+    gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse boxedResult = portType.getPerson(params);
+    return boxedResult.getPerson();
     }
+  }
 
-    public gov.nih.nci.coppa.po.Organization getOrganization(org.iso._21090.II identifier) throws RemoteException,
-            gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getOrganization");
-            gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequest();
-            gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequestIdentifier();
-            identifierContainer.setII(identifier);
-            params.setIdentifier(identifierContainer);
-            gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse boxedResult = portType.getOrganization(params);
-            return boxedResult.getOrganization();
-        }
+  public gov.nih.nci.coppa.po.Organization getOrganization(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getOrganization");
+    gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequest();
+    gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequestIdentifier();
+    identifierContainer.setId(identifier);
+    params.setIdentifier(identifierContainer);
+    gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse boxedResult = portType.getOrganization(params);
+    return boxedResult.getOrganization();
     }
+  }
 
-    public gov.nih.nci.coppa.po.Organization[] searchOrganizations(gov.nih.nci.coppa.po.Organization organization)
-            throws RemoteException, gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "searchOrganizations");
-            gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequest params = new gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequest();
-            gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequestOrganization organizationContainer = new gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequestOrganization();
-            organizationContainer.setOrganization(organization);
-            params.setOrganization(organizationContainer);
-            gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsResponse boxedResult = portType
-                    .searchOrganizations(params);
-            return boxedResult.getOrganization();
-        }
+  public gov.nih.nci.coppa.po.Organization[] searchOrganizations(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"searchOrganizations");
+    gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequest params = new gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequest();
+    gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequestOrganization organizationContainer = new gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsRequestOrganization();
+    organizationContainer.setOrganization(organization);
+    params.setOrganization(organizationContainer);
+    gov.nih.nci.coppa.po.grid.stubs.SearchOrganizationsResponse boxedResult = portType.searchOrganizations(params);
+    return boxedResult.getOrganization();
     }
+  }
 
-    public gov.nih.nci.coppa.po.Person[] searchPersons(gov.nih.nci.coppa.po.Person person) throws RemoteException,
-            gov.nih.nci.coppa.po.grid.stubs.types.NullifiedEntityFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "searchPersons");
-            gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequest params = new gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequest();
-            gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequestPerson personContainer = new gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequestPerson();
-            personContainer.setPerson(person);
-            params.setPerson(personContainer);
-            gov.nih.nci.coppa.po.grid.stubs.SearchPersonsResponse boxedResult = portType.searchPersons(params);
-            return boxedResult.getPerson();
-        }
+  public gov.nih.nci.coppa.po.Person[] searchPersons(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"searchPersons");
+    gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequest params = new gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequest();
+    gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequestPerson personContainer = new gov.nih.nci.coppa.po.grid.stubs.SearchPersonsRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.po.grid.stubs.SearchPersonsResponse boxedResult = portType.searchPersons(params);
+    return boxedResult.getPerson();
     }
+  }
 
-    public gov.nih.nci.coppa.po.Person echoPerson(gov.nih.nci.coppa.po.Person person) throws RemoteException {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "echoPerson");
-            gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest();
-            gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson personContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson();
-            personContainer.setPerson(person);
-            params.setPerson(personContainer);
-            gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse boxedResult = portType.echoPerson(params);
-            return boxedResult.getPerson();
-        }
+  public gov.nih.nci.coppa.po.Person echoPerson(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"echoPerson");
+    gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest();
+    gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson personContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse boxedResult = portType.echoPerson(params);
+    return boxedResult.getPerson();
     }
+  }
 
-    public gov.nih.nci.coppa.po.Organization echoOrganization(gov.nih.nci.coppa.po.Organization organization)
-            throws RemoteException {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "echoOrganization");
-            gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest();
-            gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization organizationContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization();
-            organizationContainer.setOrganization(organization);
-            params.setOrganization(organizationContainer);
-            gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse boxedResult = portType.echoOrganization(params);
-            return boxedResult.getOrganization();
-        }
+  public gov.nih.nci.coppa.po.Organization echoOrganization(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"echoOrganization");
+    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest();
+    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization organizationContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization();
+    organizationContainer.setOrganization(organization);
+    params.setOrganization(organizationContainer);
+    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse boxedResult = portType.echoOrganization(params);
+    return boxedResult.getOrganization();
     }
+  }
 
 }

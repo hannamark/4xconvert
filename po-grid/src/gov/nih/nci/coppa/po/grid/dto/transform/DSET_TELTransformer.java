@@ -13,7 +13,7 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class DSET_TELTransformer<G extends Tel> implements Transformer<org.iso._21090.DSET_TEL, DSet<G>> {
+public class DSET_TELTransformer<G extends Tel> implements Transformer<org.iso._21090.DSETTEL, DSet<G>> {
     protected static Logger logger = LogManager.getLogger(DSET_TELTransformer.class);
     static final QName telQName = new QName("http://isodatatypes.coppa.nci.nih.gov", "TEL");
     static final QName telEmailQName = new QName("http://isodatatypes.coppa.nci.nih.gov", "TELEmail");
@@ -29,13 +29,13 @@ public class DSET_TELTransformer<G extends Tel> implements Transformer<org.iso._
         telQNameSet.add(telUrlQName);
     }
 
-    public DSet<G> transform(org.iso._21090.DSET_TEL input) throws DtoTransformException {
+    public DSet<G> transform(org.iso._21090.DSETTEL input) throws DtoTransformException {
         DSet<G> res = new DSet<G>();
         res = transform(input, res);
         return res;
     }
 
-    public DSet<G> transform(org.iso._21090.DSET_TEL input, DSet<G> res) throws DtoTransformException {
+    public DSet<G> transform(org.iso._21090.DSETTEL input, DSet<G> res) throws DtoTransformException {
         if (input == null) {
             return null;
         }
@@ -52,21 +52,19 @@ public class DSET_TELTransformer<G extends Tel> implements Transformer<org.iso._
         }
     }
 
-    public org.iso._21090.DSET_TEL transform(DSet<G> input) throws DtoTransformException {
-        org.iso._21090.DSET_TEL res = new org.iso._21090.DSET_TEL();
+    public org.iso._21090.DSETTEL transform(DSet<G> input) throws DtoTransformException {
+        org.iso._21090.DSETTEL res = new org.iso._21090.DSETTEL();
         res = transform(input, res);
         return res;
     }
 
-    public org.iso._21090.DSET_TEL transform(DSet<G> input, org.iso._21090.DSET_TEL res) throws DtoTransformException {
+    public org.iso._21090.DSETTEL transform(DSet<G> input, org.iso._21090.DSETTEL res) throws DtoTransformException {
         if (input == null)
             return null;
         try {
-            List<org.iso._21090.TEL> itemsList = new ArrayList<org.iso._21090.TEL>();
             for (Tel element : input.getItem()) {
-                itemsList.add(new TELTransformer().transform(element));
+                res.getItem().add(new TELTransformer().transform(element));
             }
-            res.setItem(itemsList.toArray(new org.iso._21090.TEL[itemsList.size()]));
             return res;
         } catch (Exception e) {
             logger.error("Error transforming DSet", e);

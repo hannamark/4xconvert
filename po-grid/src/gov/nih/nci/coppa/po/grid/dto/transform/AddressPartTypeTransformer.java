@@ -7,7 +7,7 @@ public class AddressPartTypeTransformer implements Transformer<org.iso._21090.Ad
     public AddressPartType transform(org.iso._21090.AddressPartType input) throws DtoTransformException {
         if (input == null)
             return null;
-        AddressPartType res = AddressPartType.valueOf(input.getValue());
+        AddressPartType res = AddressPartType.valueOf(input.value());
         return res;
     }
 
@@ -15,7 +15,7 @@ public class AddressPartTypeTransformer implements Transformer<org.iso._21090.Ad
             throws DtoTransformException {
         if (input == null)
             return null;
-        res = AddressPartType.valueOf(input.getValue());
+        res = AddressPartType.valueOf(input.value());
         return res;
     }
 
@@ -23,7 +23,7 @@ public class AddressPartTypeTransformer implements Transformer<org.iso._21090.Ad
             throws DtoTransformException {
         if (input == null)
             return null;
-        org.iso._21090.AddressPartType res = org.iso._21090.AddressPartType.fromString(input.name());
+        org.iso._21090.AddressPartType res = org.iso._21090.AddressPartType.fromValue(input.name());
         return res;
     }
 
@@ -31,7 +31,7 @@ public class AddressPartTypeTransformer implements Transformer<org.iso._21090.Ad
             org.iso._21090.AddressPartType res) throws DtoTransformException {
         if (input == null)
             return null;
-        res = org.iso._21090.AddressPartType.fromString(input.name());
+        res = org.iso._21090.AddressPartType.fromValue(input.name());
         return res;
     }
 

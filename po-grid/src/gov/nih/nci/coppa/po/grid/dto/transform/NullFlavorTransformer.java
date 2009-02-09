@@ -7,7 +7,7 @@ public class NullFlavorTransformer implements Transformer<org.iso._21090.NullFla
 	
 	public NullFlavor transform(org.iso._21090.NullFlavor input) throws DtoTransformException {
 		if (input == null) return null;
-		  NullFlavor nullFlavor = NullFlavor.valueOf(input.getValue());
+		  NullFlavor nullFlavor = NullFlavor.valueOf(input.value());
  		return nullFlavor;
 	}
 
@@ -15,7 +15,7 @@ public class NullFlavorTransformer implements Transformer<org.iso._21090.NullFla
 	public NullFlavor transform(org.iso._21090.NullFlavor input,
 			NullFlavor res) throws DtoTransformException {
 		if (input == null) return null;
-		  res = NullFlavor.valueOf(input.getValue());
+		  res = NullFlavor.valueOf(input.value());
 		return res;
 	}
 

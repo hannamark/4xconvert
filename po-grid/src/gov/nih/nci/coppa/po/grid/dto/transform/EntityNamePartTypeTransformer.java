@@ -9,7 +9,7 @@ public class EntityNamePartTypeTransformer implements Transformer<EntityNamePart
 			EntityNamePartType input) throws DtoTransformException {
 		// TODO Auto-generated method stub
 		if (input==null) return null;
- 		return gov.nih.nci.coppa.iso.EntityNamePartType.valueOf(input.getValue());
+ 		return gov.nih.nci.coppa.iso.EntityNamePartType.valueOf(input.value());
 	}
 
 	
@@ -18,7 +18,7 @@ public class EntityNamePartTypeTransformer implements Transformer<EntityNamePart
 			gov.nih.nci.coppa.iso.EntityNamePartType res)
 			throws DtoTransformException {
 		if (input==null) return null;
- 		return gov.nih.nci.coppa.iso.EntityNamePartType.valueOf(input.getValue());
+ 		return gov.nih.nci.coppa.iso.EntityNamePartType.valueOf(input.value());
 	}
 
 	public EntityNamePartType transform(

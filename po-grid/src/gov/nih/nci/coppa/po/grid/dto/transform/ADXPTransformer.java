@@ -46,6 +46,15 @@ public class ADXPTransformer implements Transformer<Adxp, org.iso._21090.ADXP> {
         return adxps_iso;
     }
 
+    public void transformADXP(List<org.iso._21090.ADXP> input, List<Adxp> res) throws DtoTransformException {
+        if (input == null)
+            return;
+        for (org.iso._21090.ADXP adxp : input) {
+            Adxp adxp_iso = transform(adxp);
+            res.add(adxp_iso);
+        }
+    }
+
     public org.iso._21090.ADXP transform(Adxp input) throws DtoTransformException {
         org.iso._21090.ADXP res = new org.iso._21090.ADXP();
         res = transform(input, res);
@@ -78,5 +87,14 @@ public class ADXPTransformer implements Transformer<Adxp, org.iso._21090.ADXP> {
             part[i++] = adxp;
         }
         return part;
+    }
+
+    public void transform(List<Adxp> input, List<org.iso._21090.ADXP> res) throws DtoTransformException {
+        if (input == null)
+            return;
+        for (gov.nih.nci.coppa.iso.Adxp adxp_iso : input) {
+            org.iso._21090.ADXP adxp = transform(adxp_iso);
+            res.add(adxp);
+        }
     }
 }

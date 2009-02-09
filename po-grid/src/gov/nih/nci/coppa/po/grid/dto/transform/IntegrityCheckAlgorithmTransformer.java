@@ -7,7 +7,7 @@ public class IntegrityCheckAlgorithmTransformer implements Transformer<Integrity
 	
 	public gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm transform(IntegrityCheckAlgorithm input) throws DtoTransformException {
 		if (input == null) return null;
-		gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm ica = gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm.valueOf(input.getValue());
+		gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm ica = gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm.valueOf(input.value());
 		return ica;
 	}
 
@@ -17,13 +17,13 @@ public class IntegrityCheckAlgorithmTransformer implements Transformer<Integrity
 			gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm res)
 			throws DtoTransformException {
 		if (input == null) return null;
-		res = gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm.valueOf(input.getValue());
+		res = gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm.valueOf(input.value());
 		return res;
 	}
 	
 	public IntegrityCheckAlgorithm transform(gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm input) throws DtoTransformException {
 		if (input == null) return null;
-		IntegrityCheckAlgorithm ica = IntegrityCheckAlgorithm.fromString(input.toString());
+		IntegrityCheckAlgorithm ica = IntegrityCheckAlgorithm.fromValue(input.name());
 		return ica;
 	}
 
@@ -33,7 +33,7 @@ public class IntegrityCheckAlgorithmTransformer implements Transformer<Integrity
 			IntegrityCheckAlgorithm res)
 			throws DtoTransformException {
 		if (input == null) return null;
-		IntegrityCheckAlgorithm ica = IntegrityCheckAlgorithm.fromString(input.toString());
+		IntegrityCheckAlgorithm ica = IntegrityCheckAlgorithm.fromValue(input.name());
 		return res;
 	}	
 

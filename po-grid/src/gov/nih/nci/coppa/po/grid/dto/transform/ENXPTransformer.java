@@ -30,7 +30,7 @@ public class ENXPTransformer implements Transformer<org.iso._21090.ENXP,gov.nih.
 		res.setCodeSystem(input.getCodeSystem());
 		res.setCodeSystemVersion(input.getCodeSystemVersion());
         EntityNamePartQualifierTransformer enpqt = new  EntityNamePartQualifierTransformer();
-        res.setQualifier(enpqt.transform(input.getQualifier()));
+        enpqt.transform(input.getQualifier(), res.getQualifier());
         res.setValue(escape(input.getValue()));
 		return res;
 	}
@@ -49,7 +49,7 @@ public class ENXPTransformer implements Transformer<org.iso._21090.ENXP,gov.nih.
 		res.setCodeSystem(input.getCodeSystem());
 		res.setCodeSystemVersion(input.getCodeSystemVersion());
         EntityNamePartQualifierTransformer enpqt = new  EntityNamePartQualifierTransformer();
-        res.setQualifier(enpqt.transform(input.getQualifier()));
+        enpqt.transform(input.getQualifier(), res.getQualifier());
         res.setType(new EntityNamePartTypeTransformer().transform(input.getType()));
         res.setValue(input.getValue());
 		return res;

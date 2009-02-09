@@ -10,12 +10,21 @@ import java.util.Set;
 
 public class EntityValidationExceptionTransformer implements Transformer< EntityValidationException,EntityValidationFault> {
 
+    public EntityValidationFault transform(EntityValidationException input) throws DtoTransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public EntityValidationFault transform(EntityValidationException input, EntityValidationFault res) throws DtoTransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+/*
 	public EntityValidationFault transform(EntityValidationException input)
 			throws DtoTransformException {
 		EntityValidationFault res = new EntityValidationFault();
 		res = transform(input,res);
 		return res;
 	}
+
 
 	public EntityValidationFault transform(EntityValidationException input,
 			EntityValidationFault res) throws DtoTransformException {
@@ -37,7 +46,7 @@ public class EntityValidationExceptionTransformer implements Transformer< Entity
 		res.setErrors(map_iso);
 		return res;
 	}
-
+*/
 
 
 

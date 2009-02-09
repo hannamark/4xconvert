@@ -6,7 +6,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.iso._21090.DSET_TEL;
+import org.iso._21090.DSETTEL;
 
 public class OrganizationTransformer implements Transformer<Organization, OrganizationDTO> {
     protected static Logger logger = LogManager.getLogger(OrganizationTransformer.class);
@@ -43,7 +43,7 @@ public class OrganizationTransformer implements Transformer<Organization, Organi
         res.setName(new ENONTransformer().transform(input.getName()));
         res.setPostalAddress(new ADTransformer().transform(input.getPostalAddress()));
         res.setStatusCode(new CDTransformer().transform(input.getStatusCode()));
-        DSET_TEL telAddress = new DSET_TELTransformer<Tel>().transform(input.getTelecomAddress());
+        DSETTEL telAddress = new DSET_TELTransformer<Tel>().transform(input.getTelecomAddress());
         res.setTelecomAddress(telAddress);
         return res;
     }

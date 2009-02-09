@@ -21,13 +21,10 @@ public class ENTransformer implements Transformer<org.iso._21090.EN,gov.nih.nci.
 	public En transform(org.iso._21090.EN input, En res) throws DtoTransformException {
 		if (input == null) return null;
 		res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-		org.iso._21090.ENXP[] part = input.getPart();
-		if (part==null)return res;
-    	List<Enxp> part_iso = res.getPart();
 		ENXPTransformer transformer = new ENXPTransformer();
-		for (org.iso._21090.ENXP enxp : part) {
+		for (org.iso._21090.ENXP enxp : input.getPart()) {
 			Enxp enxp_iso = transformer.transform(enxp);
-			if (enxp_iso!=null)part_iso.add(enxp_iso);
+			res.getPart().add(enxp_iso);
         }
 		return res;
 	}
@@ -46,14 +43,12 @@ public class ENTransformer implements Transformer<org.iso._21090.EN,gov.nih.nci.
 
 		List<Enxp> part_iso = input.getPart();
 		if (part_iso==null) return res;
-        res.setPart(new org.iso._21090.ENXP[part_iso.size()]);
 		ENXPTransformer transformer = new ENXPTransformer();
-		int i = 0;
-		for (gov.nih.nci.coppa.iso.Enxp enxp_iso : part_iso) {
+		for (gov.nih.nci.coppa.iso.Enxp enxp_iso : input.getPart()) {
 			logger.debug("Found part");
 			org.iso._21090.ENXP enxp = transformer
 					.transform(enxp_iso);
-			res.setPart(i++, enxp);
+			res.getPart().add(enxp);
 		}
    		return res;
 	}

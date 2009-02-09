@@ -6,7 +6,7 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.iso._21090.DSET_TEL;
+import org.iso._21090.DSETTEL;
 
 public class PersonTransformer implements Transformer<Person, PersonDTO> {
     protected static Logger logger = LogManager.getLogger(PersonTransformer.class);
@@ -45,7 +45,7 @@ public class PersonTransformer implements Transformer<Person, PersonDTO> {
         res.setPostalAddress(new ADTransformer().transform(input.getPostalAddress()));
         // res.setSexCode(new CDTransformer().transform(input.getSexCode()));
         res.setStatusCode(new CDTransformer().transform(input.getStatusCode()));
-        DSET_TEL telAddress = new DSET_TELTransformer<Tel>().transform(input.getTelecomAddress());
+        DSETTEL telAddress = new DSET_TELTransformer<Tel>().transform(input.getTelecomAddress());
         res.setTelecomAddress(telAddress);
         return res;
     }
