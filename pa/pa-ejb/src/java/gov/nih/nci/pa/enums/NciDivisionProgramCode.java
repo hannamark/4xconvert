@@ -76,92 +76,101 @@
 * 
 * 
 */
-package gov.nih.nci.pa.domain;
+package gov.nih.nci.pa.enums;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
-import gov.nih.nci.pa.enums.GrantorCode;
-import gov.nih.nci.pa.enums.HolderTypeCode;
-import gov.nih.nci.pa.enums.IndldeTypeCode;
-import gov.nih.nci.pa.enums.NihInstituteCode;
-import gov.nih.nci.pa.util.TestSchema;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
-import java.io.Serializable;
+/**
+* 
+* @author Kalpana Guthikonda
+* @since 2/05/2009
+* copyright NCI 2009.  All rights reserved.
+* This code may not be used without the express written permission of the
+* copyright holder, NCI. 
+*/
+public enum NciDivisionProgramCode implements CodedEnum<String> {
+  /** CCR-Center for Cancer Research. */
+  CCR("CCR"), 
+  /** CIP-Cancer Imaging Program. */
+  CIP("CIP") ,
+  /** CDP-Cancer Diagnosis Program. */
+  CDP("CDP") ,
+  /** CTEP-Cancer Therapy Evaluation Program. */
+  CTEP("CTEP") , 
+  /** DCB-Division of Cancer Biology. */
+  DCB("DCB") ,
+  /** DCCPS-Division of Cancer Control and Population Sciences. */
+  DCCPS("DCCPS") , 
+  /** DCEG-Division of Cancer Epidemiology and Genetics. */
+  DCEG("DCEG") ,
+  /** DCP-Division of Cancer Prevention. */
+  DCP("DCP") ,
+  /** DEA-Division of Extramural Activities. */
+  DEA("DEA"),
+  /** DTP-Developmental Therapeutics Program. */
+  DTP("DTP") ,
+  /** OD-Office of the Director, NCI, NIH. */
+  OD("OD") ,
+  /** OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs). */
+  OSB_SPOREs("OSB/SPOREs") ,
+  /** TRP-Translational Research Program. */
+  TRP("TRP") ,
+  /** RRP-Radiation Research Program. */
+  RRP("RRP") ,     
+  /*** . */
+  NA("N/A");
 
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+ private String code;
+ /**
+  * 
+  * @param code
+  */
+ private NciDivisionProgramCode(String code) {
+     this.code = code;
+     register(this);
+ }
+ /**
+  * @return code code
+  */
+ public String getCode() {
+     return code;
+ }
 
-public class StudyIndldeTest {
-    /**
-     * 
-     * @throws Exception e
-     */
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-    }
-    /**
-     * 
-     */
-    @Test
-    public void createStudyIndldeTest() {
+ /**
+  *@return String DisplayName 
+  */
+ public String getDisplayName() {
+     return sentenceCasedName(this);
+ }
 
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
-        StudyIndlde create = createStudyIndldeobj(sp);
-        Session session  = TestSchema.getSession();
-        
-        TestSchema.addUpdObject(sp);
-        assertNotNull(sp);
-        Serializable spid = sp.getId();
-        StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
-        assertNotNull(spid);
+ /**
+  * 
+  * @return String name
+  */
+ public String getName() {
+     return name();
+ }
 
-        TestSchema.addUpdObject(create);
-        Serializable id = create.getId();
-        assertNotNull(create);
-        
-        StudyIndlde saved = new StudyIndlde();
-        saved = (StudyIndlde) session.load(StudyIndlde.class, id);
-        
-        assertEquals("ExpandedAccessStatusCode does not match " , create.getExpandedAccessStatusCode() , 
-                saved.getExpandedAccessStatusCode());
-        assertEquals("ExpandedAccessIndicator does not match " , create.getExpandedAccessIndicator() , 
-                saved.getExpandedAccessIndicator());
-        assertEquals("HolderTypeCode does not match " , create.getHolderTypeCode() , 
-                saved.getHolderTypeCode());
-        assertEquals("NihInstHolderCode does not match " , create.getNihInstHolderCode() , 
-                saved.getNihInstHolderCode());
-        assertEquals("User Last updated does not match " , 
-                create.getUserLastUpdated() , saved.getUserLastUpdated());
-        assertEquals("Date Last updated does not match " , 
-                create.getDateLastUpdated() , saved.getDateLastUpdated());
-        assertEquals(" IndldeType does not match " ,
-            create.getIndldeTypeCode() , saved.getIndldeTypeCode());
-        assertEquals(" Grantor does not match" ,
-            create.getGrantorCode() , saved.getGrantorCode());
-        assertEquals("IndldeNumber does not match" ,
-            create.getIndldeNumber() , saved.getIndldeNumber());
-    }
-    /**
-     * 
-     * @param sp StudyProtocol
-     * @return StudyIndlde
-     */
-    public static StudyIndlde createStudyIndldeobj(StudyProtocol sp) {
-        StudyIndlde create = new StudyIndlde();
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        create.setExpandedAccessStatusCode(ExpandedAccessStatusCode.AVAILABLE);
-        create.setStudyProtocol(sp);
-        create.setIndldeTypeCode(IndldeTypeCode.IND);
-        create.setGrantorCode(GrantorCode.CDER);
-        create.setIndldeNumber("1234");
-        create.setExpandedAccessIndicator(Boolean.TRUE);
-        create.setHolderTypeCode(HolderTypeCode.NIH);
-        create.setNihInstHolderCode(NihInstituteCode.NCMHD);
-        create.setUserLastUpdated("Abstractor");
-        create.setDateLastUpdated(now);
-        return create;
-    }
+ /**
+  * 
+  * @param code code
+  * @return NciDivisionProgramCode 
+  */
+ public static NciDivisionProgramCode getByCode(String code) {
+     return getByClassAndCode(NciDivisionProgramCode.class, code);
+ }
+
+ /**
+  * @return String[] display names of enums
+  */
+ public static String[]  getDisplayNames() {
+   NciDivisionProgramCode[] l = NciDivisionProgramCode.values();
+     String[] a = new String[l.length];
+     for (int i = 0; i < l.length; i++) {
+         a[i] = l[i].getCode();
+     }
+     return a;
+ }
 }

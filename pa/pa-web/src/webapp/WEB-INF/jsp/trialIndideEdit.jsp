@@ -10,7 +10,132 @@
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
-
+window.onload=checkAll;
+function checkAll(){
+		if (document.getElementById('group4').value == 'Yes'){
+			showRow(document.getElementById('expandedStatus'));
+		} else {
+			hideRow(document.getElementById('expandedStatus'));
+		}
+		if (document.getElementById('group3').value == 'IND'){
+			addOption(document.getElementById('SubCat'),"CDER", "CDER");
+			addOption(document.getElementById('SubCat'),"CBER", "CBER");
+			showRow(document.getElementById('SubCat'));
+		} else {
+			addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
+			showRow(document.getElementById('SubCat'));
+		}
+		if (document.getElementById('holderType').value == 'NIH'){
+			showRow(document.getElementById('programcodenihid'));
+			hideRow(document.getElementById('programcodenciid'));
+		}
+		if (document.getElementById('holderType').value == 'NCI'){
+			hideRow(document.getElementById('programcodenihid'));
+			showRow(document.getElementById('programcodenciid'));
+		} 
+		else {
+			showRow(document.getElementById('programcodeid'));
+		}
+}
+function hideRow(row){			
+		row.style.display = 'none';	
+}
+function showRow(row){
+		row.style.display = '';
+}
+function checkIndicator() {
+	if (document.getElementById('group4').value == 'Yes'){
+		showRow(document.getElementById('expandedStatus'));
+	} else {
+		hideRow(document.getElementById('expandedStatus'));
+	}
+}
+function checkCode() {
+var input="studyIndldeWebDTO.nihInstHolder";
+var inputElement = document.forms[0].elements[input];
+	
+if (inputElement.options[inputElement.selectedIndex].value == "NCI-National Cancer Institute")
+	{
+ 		document.getElementById('programcodenciid').style.display = '';
+ 		document.getElementById('programcodenihid').style.display = 'none';
+   	}else
+   	{
+   		document.getElementById('programcodenciid').style.display = 'none';
+ 		document.getElementById('programcodenihid').style.display = '';
+   	}
+}
+function getIndIdeRadioValue(size){
+		for(var i=0; i<size; i++) {
+			if(document.forms[0].group3[i].checked==true) 
+				return(document.forms[0].group3[i].value);
+		}
+}
+function getExpandedAccessRadioValue(size){
+	for(var i=0; i<size; i++) {
+		if(document.forms[0].group4[i].checked==true) 
+			return(document.forms[0].group4[i].value);
+	}
+}
+function setProgramCodes(ref){	
+		if (ref.value == 'NCI') {
+			document.getElementById('programcodenciid').style.display = '';
+			document.getElementById('programcodenihid').style.display = 'none';
+			document.getElementById('programcodeid').style.display = 'none';
+		} else if (ref.value == 'NIH') {
+			document.getElementById('programcodenciid').style.display = 'none';
+			document.getElementById('programcodenihid').style.display = '';
+			document.getElementById('programcodeid').style.display = 'none';
+		} else {
+			document.getElementById('programcodenihid').style.display = 'none';
+			document.getElementById('programcodenciid').style.display = 'none';
+			document.getElementById('programcodeid').style.display = '';
+		}
+}
+	
+function resetValues(){
+		document.getElementById('indidenumber').value='';
+		clearRadios('group3');
+    	removeAllOptions(document.getElementById('SubCat'));
+    	addOption(document.getElementById('SubCat'), "", "--Select--", "");	
+    	document.getElementById('holderType').value='';    	
+		document.getElementById('programcodenihselectedvalue').value='';	
+		document.getElementById('programcodenciselectedvalue').value='';
+		document.getElementById('programcodenihid').style.display = 'none';
+		document.getElementById('programcodenciid').style.display = 'none';
+		document.getElementById('programcodeid').style.display = '';
+		document.forms[0].group4[0].checked = false;
+		document.forms[0].group4[1].checked = true;
+		document.getElementById('expandedStatus').value='';
+		document.getElementById('expandedStatus').disabled=true;
+		document.getElementById('addbtn').disabled=true;
+}
+function clearRadios( radioname ){
+	   for( i = 0; i < document.forms[0][radioname].length; i++ )
+	      document.forms[0][radioname][i].checked = false;
+}
+function removeAllOptions(selectbox){
+		var i;
+		for(i=selectbox.options.length-1;i>=0;i--){
+			selectbox.remove(i);
+		}
+}
+function addOption(selectbox, value, text ){
+		var optn = document.createElement("OPTION");
+		optn.text = text;
+		optn.value = value;
+		selectbox.options.add(optn);
+}	
+function SelectSubCat(i){
+		removeAllOptions(document.getElementById('SubCat'));
+		addOption(document.getElementById('SubCat'), "", "-Select-", "");	
+		if(i.value == 'IND'){
+			addOption(document.getElementById('SubCat'),"CDER", "CDER");
+			addOption(document.getElementById('SubCat'),"CBER", "CBER");
+		}
+		if(i.value == 'IDE'){
+			addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
+		}
+}
 function handleAction(){
  var page;
 page=document.forms[0].page.value;
@@ -25,7 +150,7 @@ if (page == "Edit"){
 function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
-	}
+}
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
@@ -33,18 +158,119 @@ function tooltip() {
  <h1><fmt:message key="trialIndide.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
-    <s:form>
+    <pa:sucessMessage/>
+   <pa:failureMessage/>
+    <s:form><s:actionerror/>
     <h2><fmt:message key="trialIndide.edittitle" /></h2>
     	<input type="hidden" name="page" value="${page}" />
     	<input type="hidden" name="cbValue" value="${cbValue}" />
+    	<s:set name="phaseCodeValuesNIH" value="@gov.nih.nci.pa.enums.NihInstituteCode@getDisplayNames()" />
+		<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
+		<s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
     <table class="form">   
   		<tr>
-  			<td colspan="2" class="space">&nbsp;</td>
-    	</tr>
-    	<tr><td colspan="2" class="space">
-			<%@ include file="/WEB-INF/jsp/nodecorate/indideEdit.jsp" %>
-			</td>
-		</tr>
+						<td scope="row"  class="label"><label>
+							<fmt:message key="trialIndide.indldeType"/>:<span class="required">*</span></label>
+						</td>
+						<td class="value">		
+						<s:select id="group3" name="studyIndldeWebDTO.indldeType" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCat(this);" />	
+						<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.indldeType</s:param>
+                               </s:fielderror>                            
+                         </span>
+						</td>
+					</tr>
+					<tr>
+						<td scope="row"  class="label"><label>
+							<fmt:message key="trialIndide.indideNumber"/>:<span class="required">*</span></label>
+						</td>
+						<td class="value">
+							<s:textfield  name="studyIndldeWebDTO.indldeNumber" maxlength="10" cssStyle="width:150px"/>
+							<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.indldeNumber</s:param>
+                               </s:fielderror>                            
+                         </span>
+						</td>
+					</tr>
+					<tr>
+						<td scope="row"  class="label"><label>
+							<fmt:message key="trialIndide.grantor"/>:<span class="required">*</span></label>
+						</td>
+						<td class="value">
+							<s:if test="%{studyIndldeWebDTO.grantor == 'IND'}">
+								<SELECT id="SubCat" name="studyIndldeWebDTO.grantor" list="#{'CDER':'CDER', 'CBER':'CBER'}" cssStyle="width:150px"></SELECT>
+							</s:if><s:else>
+								<SELECT id="SubCat" name="studyIndldeWebDTO.grantor" list="#{'CDRH':'CDRH'}" cssStyle="width:150px"></SELECT>
+							</s:else>
+							<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.grantor</s:param>
+                               </s:fielderror>                            
+                         </span>
+						</td>	
+					</tr>
+					<tr>
+						<td scope="row"  class="label"><label>
+							<fmt:message key="trialIndide.holderType"/>:<span class="required">*</span><label>
+						</td>
+						<td class="value">
+							<s:select id="holderType" name="studyIndldeWebDTO.holderType" headerKey="" headerValue="-Select-" cssStyle="width:150px" onclick="setProgramCodes(this);"
+							list="#{'Investigator':'Investigator','Organization':'Organization','Industry':'Industry','NIH':'NIH','NCI':'NCI'}"/>
+							<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.holderType</s:param>
+                               </s:fielderror>                            
+                         </span>
+						</td>
+					</tr>
+					<tr>
+						<td scope="row"  class="label"><label>
+							<fmt:message key="trialIndide.nihnciDivProgHolderCode"/>:<span class="required">*</span></label>
+						</td>
+						<td class="value">
+						<div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="studyIndldeWebDTO.nihInstHolder" list="#phaseCodeValuesNIH" onclick="checkCode();" /></div>
+						<div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="studyIndldeWebDTO.nciDivProgHolder" list="#phaseCodeValuesNCI" /></div>
+						<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.nihInstHolder</s:param>
+                               </s:fielderror>                            
+                         </span>
+                         <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.nciDivProgHolder</s:param>
+                               </s:fielderror>                            
+                         </span>
+						</td>
+					</tr>
+					<tr>
+						<td scope="row"  class="label"><label>
+							<fmt:message key="trialIndide.expandedAccessIndicator"/>:<span class="required">*</span></label>
+						</td>
+						<td class="value">
+							<s:select id="group4" name="studyIndldeWebDTO.expandedAccessIndicator" list="#{'No':'No', 'Yes':'Yes'}" onclick="checkIndicator();" />
+							<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.expandedAccessIndicator</s:param>
+                               </s:fielderror>                            
+                         </span>
+						</td>
+					</tr>
+					<tr>
+						<td scope="row"  class="label"><label>
+							<fmt:message key="trialIndide.expandedAccessStatusCode"/>:<span class="required">*</span></label>
+						</td>
+						<td class="value">
+							<s:select id="expandedStatus" headerKey="" headerValue="-Select-" name="studyIndldeWebDTO.expandedAccessStatus"  
+							list="#expandedAccessStatusCodeValues"/>
+							<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyIndldeWebDTO.expandedAccessStatus</s:param>
+                               </s:fielderror>                            
+                         </span>
+						</td>
+					</tr>
     </table>
         <div class="actionsrow">
             <del class="btnwrapper">

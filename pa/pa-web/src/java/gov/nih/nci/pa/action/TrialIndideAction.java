@@ -80,14 +80,16 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyIndldeWebDTO;
+import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,20 +98,18 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 /**
  * @author Hong Gao
- *
+ * @author Kalpana Guthikonda
  */
-@Validation
-@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength",
+  "PMD.NPathComplexity" })
 public class TrialIndideAction extends ActionSupport {
     private static final String QUERY_RESULT = "query";
     private static final String EDIT_RESULT = "edit";
     private static final Logger LOG  = Logger.getLogger(TrialIndideAction.class);
     private StudyIndldeWebDTO studyIndldeWebDTO = new StudyIndldeWebDTO();
     private List<StudyIndldeWebDTO> studyIndideList;
-    private IndIdeHolder holder = new IndIdeHolder();
     private Long cbValue;
     private String page;
     
@@ -141,7 +141,7 @@ public class TrialIndideAction extends ActionSupport {
             return QUERY_RESULT;    
 
         } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
+          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return QUERY_RESULT;
         }
     }
@@ -152,40 +152,44 @@ public class TrialIndideAction extends ActionSupport {
     public String create()  {
         
         LOG.info("Entering create");
+        enforceBusinessRules();
         if (hasFieldErrors()) {
-            return ERROR;
+            return "add";
         }
         try {            
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
-           /* if (holder.getGroup4().equalsIgnoreCase("Yes")) {
-              holder.setGroup4("true");
-            } else {
-              holder.setGroup4("false");
-            }*/
-            studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(holder.getGroup4())));
-            studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(holder.getExpandedStatus()));
-            studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(holder.getSubCat()));
-            studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(holder.getHolderType()));
-            studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(holder.getIndidenumber()));
-            if (holder.getHolderType().equalsIgnoreCase("NIH")) {
-                studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
-                        holder.getProgramcodenihselectedvalue()));
-             }
-            if (holder.getHolderType().equalsIgnoreCase("NCI")) {
+            studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
+                studyIndldeWebDTO.getExpandedAccessIndicator())));
+            studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
+                studyIndldeWebDTO.getExpandedAccessStatus()));
+            studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getGrantor()));
+            studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getHolderType()));
+            studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(studyIndldeWebDTO.getIndldeNumber()));
+            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
+              if (studyIndldeWebDTO.getNihInstHolder().equalsIgnoreCase(NihInstituteCode.NCI.getCode().toString())) {
+                studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd("NCI"));
                 studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
-                        holder.getProgramcodenciselectedvalue()));
+                    studyIndldeWebDTO.getNciDivProgHolder()));
+              } else {
+                studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
+                    studyIndldeWebDTO.getNihInstHolder()));
+              }
             }
-            studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(holder.getGroup3()));      
+            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
+                studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
+                    studyIndldeWebDTO.getNciDivProgHolder()));
+            }
+            studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getIndldeType()));      
             PaRegistry.getStudyIndldeService().create(studyIndldeDTO);
             query();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
             return QUERY_RESULT;
         } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
+          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return "add";
         }
     }
     /**
@@ -194,8 +198,9 @@ public class TrialIndideAction extends ActionSupport {
     public String update()  {
         
         LOG.info("Entering update");
+        enforceBusinessRules();
         if (hasFieldErrors()) {
-            return ERROR;
+            return EDIT_RESULT;
         }
         try { 
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
@@ -203,33 +208,42 @@ public class TrialIndideAction extends ActionSupport {
             StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();            
             studyIndldeDTO = PaRegistry.getStudyIndldeService().get(IiConverter.convertToIi(cbValue)); 
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
-            if (holder.getGroup4().equalsIgnoreCase("Yes")) {
-              holder.setGroup4("true");
+            if (studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
+              studyIndldeWebDTO.setExpandedAccessIndicator("true");
             } else {
-              holder.setGroup4("false");
+              studyIndldeWebDTO.setExpandedAccessIndicator("false");
+              studyIndldeWebDTO.setExpandedAccessStatus(null);
             }
-            studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(holder.getGroup4())));
-            studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(holder.getExpandedStatus()));
-            studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(holder.getSubCat()));
-            studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(holder.getHolderType()));
-            studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(holder.getIndidenumber()));
-            if (holder.getHolderType().equalsIgnoreCase("NIH")) {
-                studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
-                        holder.getProgramcodenihselectedvalue()));
-             }
-            if (holder.getHolderType().equalsIgnoreCase("NCI")) {
+            studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
+                studyIndldeWebDTO.getExpandedAccessIndicator())));
+            studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
+                studyIndldeWebDTO.getExpandedAccessStatus()));
+            studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getGrantor()));
+            studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getHolderType()));
+            studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(studyIndldeWebDTO.getIndldeNumber()));
+            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
+              if (studyIndldeWebDTO.getNihInstHolder().equalsIgnoreCase(NihInstituteCode.NCI.getCode().toString())) {
+                studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd("NCI"));
                 studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
-                        holder.getProgramcodenciselectedvalue()));
+                    studyIndldeWebDTO.getNciDivProgHolder()));
+              } else {
+                studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
+                    studyIndldeWebDTO.getNihInstHolder()));
+              }
+             }
+            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
+                studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
+                    studyIndldeWebDTO.getNciDivProgHolder()));
             }
-            studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(holder.getGroup3()));  
+            studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getIndldeType()));  
             PaRegistry.getStudyIndldeService().update(studyIndldeDTO);
             query();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             return QUERY_RESULT;    
 
         } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
+          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return EDIT_RESULT;
         }
     }
     
@@ -247,7 +261,7 @@ public class TrialIndideAction extends ActionSupport {
 
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-            return SUCCESS;
+            return QUERY_RESULT;
         }
     }
 
@@ -258,15 +272,56 @@ public class TrialIndideAction extends ActionSupport {
         LOG.info("Entering editValues");
         try {
             StudyIndldeDTO studyIndlde = PaRegistry.getStudyIndldeService().get(IiConverter.convertToIi(cbValue)); 
-            holder = new IndIdeHolder(studyIndlde);
-            return EDIT_RESULT;    
+            studyIndldeWebDTO = new StudyIndldeWebDTO(studyIndlde);              
         } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
+          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
+        return EDIT_RESULT;  
     }
 
+    private void enforceBusinessRules() {      
 
+      if (PAUtil.isEmpty(studyIndldeWebDTO.getExpandedAccessIndicator())) {
+        addFieldError("studyIndldeWebDTO.expandedAccessIndicator",
+            getText("error.trialIndide.expandedAccessIndicator"));
+      }
+      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getExpandedAccessIndicator()) 
+          &&  studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("true")
+          && PAUtil.isEmpty(studyIndldeWebDTO.getExpandedAccessStatus())) {
+        addFieldError("studyIndldeWebDTO.expandedAccessStatus", getText("error.trialIndide.expandedAccessStatus"));
+      }      
+      if (PAUtil.isEmpty(studyIndldeWebDTO.getGrantor())) {
+        addFieldError("studyIndldeWebDTO.grantor",
+            getText("error.trialIndide..grantor"));
+      }
+      if (PAUtil.isEmpty(studyIndldeWebDTO.getHolderType())) {
+        addFieldError("studyIndldeWebDTO.holderType", getText("error.trialIndide.holderType"));
+      }
+      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getHolderType()) 
+          && studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString()) 
+          && PAUtil.isEmpty(studyIndldeWebDTO.getNihInstHolder())) {
+        addFieldError("studyIndldeWebDTO.nihInstHolder", getText("error.trialIndide.nihInstHolder"));
+      }
+      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getHolderType()) 
+          && studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString()) 
+          && PAUtil.isEmpty(studyIndldeWebDTO.getNciDivProgHolder())) {
+        addFieldError("studyIndldeWebDTO.nciDivProgHolder", getText("error.trialIndide.nciDivProgHolder"));
+      }
+      if (PAUtil.isEmpty(studyIndldeWebDTO.getIndldeNumber())) {
+        addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.trialIndide.indldeNumber"));
+      }
+      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getIndldeNumber())) {
+        try {
+          Long.parseLong(studyIndldeWebDTO.getIndldeNumber());
+        } catch (NumberFormatException e) {
+          addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.numeric"));
+        }
+      }
+      if (PAUtil.isEmpty(studyIndldeWebDTO.getIndldeType())) {
+        addFieldError("studyIndldeWebDTO.indldeType",
+            getText("error.trialIndide.indldeType"));
+      }
+    }
     /**
      * @return cbValue
      */
@@ -321,19 +376,5 @@ public class TrialIndideAction extends ActionSupport {
      */
     public void setStudyIndideList(List<StudyIndldeWebDTO> studyIndideList) {
         this.studyIndideList = studyIndideList;
-    }
-
-    /**
-     * @return the holder
-     */
-    public IndIdeHolder getHolder() {
-        return holder;
-    }
-
-    /**
-     * @param holder the holder to set
-     */
-    public void setHolder(IndIdeHolder holder) {
-        this.holder = holder;
     }
 }

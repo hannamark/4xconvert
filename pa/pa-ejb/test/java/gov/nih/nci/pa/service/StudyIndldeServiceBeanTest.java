@@ -81,14 +81,19 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
+import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.NihInstHolderCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -125,6 +130,15 @@ public class StudyIndldeServiceBeanTest {
             dto2 = remoteEjb.update(dto);
             assertEquals(IiConverter.convertToLong(dto.getIdentifier())
                     , (IiConverter.convertToLong(dto2.getIdentifier())));
+            
+            dto2.setIdentifier(null);
+            try {
+              remoteEjb.create(dto2);
+              fail("Trying to assign the same grantor,number and type "
+                      + "twice which should throw PADuplicateException.");
+          } catch (PADuplicateException e) {
+              // expected behavior
+          }
 
          remoteEjb.delete(dto.getIdentifier());
     }
@@ -138,11 +152,15 @@ public class StudyIndldeServiceBeanTest {
         dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
         dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstHolderCode.NCRR));
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
         StudyIndldeDTO dto2 = null;
         dto2 = new StudyIndldeDTO();
         dto2 = remoteEjb.create(dto);
         assertFalse(PAUtil.isIiNull(dto2.getIdentifier()));
-        assertEquals(dto.getExpandedAccessStatusCode().getCode(), dto2.getExpandedAccessStatusCode().getCode());
+        assertEquals(dto.getExpandedAccessStatusCode().getCode(), dto2.getExpandedAccessStatusCode().getCode());      
+        
     }
     @Test 
     public void iiRootTest() throws Exception {

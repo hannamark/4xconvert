@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.iso.convert.StudyIndldeConverter;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -157,6 +158,7 @@ implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {
         }
         StudyIndldeDTO resultDto = null;
         Session session = null;
+        enforceNoDuplicate(dto);
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
@@ -181,7 +183,7 @@ implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {
         if (dto == null) {
             serviceError("StudyIndldeDTO should not be null ");
         }
-
+        enforceNoDuplicate(dto);
         Session session = null;
         StudyIndldeDTO resultDto = null;
         List<StudyIndlde> queryList = new ArrayList<StudyIndlde>();
@@ -293,4 +295,23 @@ implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {
         LOG.info("Leaving getByStudyProtocol");
         return resultList;
     }
+    
+    @SuppressWarnings({"PMD" })
+    private void enforceNoDuplicate(StudyIndldeDTO dto) throws PAException {
+      String newType = dto.getIndldeTypeCode().getCode();
+      String newNumber = dto.getIndldeNumber().getValue();
+      String newGrantor = dto.getGrantorCode().getCode();
+      List<StudyIndldeDTO> spList = getByStudyProtocol(dto.getStudyProtocolIi());
+      for (StudyIndldeDTO sp : spList) {         
+          boolean sameType = newType.equals(sp.getIndldeTypeCode().getCode());
+          boolean sameNumber = newNumber.equals(sp.getIndldeNumber().getValue());
+          boolean sameGrantor = newGrantor.equals(sp.getGrantorCode().getCode());
+          if (sameType && sameNumber && sameGrantor) {
+              if (dto.getIdentifier() == null 
+                  || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension()))) {               
+                throw new PADuplicateException("Duplicates are not allowed.");   
+              }  
+          }      
+      }
+  }
 }

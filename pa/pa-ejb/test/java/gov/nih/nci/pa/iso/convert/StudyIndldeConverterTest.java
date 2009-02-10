@@ -82,12 +82,15 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
+import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
-import gov.nih.nci.pa.enums.NihInstHolderCode;
+import gov.nih.nci.pa.enums.IndldeTypeCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -114,7 +117,10 @@ public class StudyIndldeConverterTest {
         bo.setStudyProtocol(sp);
         bo.setExpandedAccessIndicator(Boolean.TRUE);
         bo.setHolderTypeCode(HolderTypeCode.NIH);
-        //bo.setNihInstHolderCode(NihInstHolderCode.NCRR);
+        bo.setNihInstHolderCode(NihInstituteCode.NCMHD);
+        bo.setIndldeTypeCode(IndldeTypeCode.IND);
+        bo.setGrantorCode(GrantorCode.CDER);
+        bo.setIndldeNumber("1234");
 
         StudyIndldeDTO dto = StudyIndldeConverter.convertFromDomainToDTO(bo);
         assertStudyIndlde(bo, dto);
@@ -125,8 +131,11 @@ public class StudyIndldeConverterTest {
         assertEquals(bo.getExpandedAccessStatusCode().getCode() , dto.getExpandedAccessStatusCode().getCode());
         assertEquals(bo.getExpandedAccessIndicator() ,  dto.getExpandedAccessIndicator().getValue());
         assertEquals(bo.getHolderTypeCode().getCode() ,  dto.getHolderTypeCode().getCode());
-//        assertEquals(bo.getNihInstHolderCode().getCode() ,  dto.getNihInstHolderCode().getCode());
+        assertEquals(bo.getNihInstHolderCode().getCode() ,  dto.getNihInstHolderCode().getCode());
         assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getIndldeTypeCode().getCode() , dto.getIndldeTypeCode().getCode());
+        assertEquals(bo.getGrantorCode().getCode() , dto.getGrantorCode().getCode());
+        assertEquals(bo.getIndldeNumber() , dto.getIndldeNumber().getValue());
     }
 
     @Test
@@ -136,12 +145,14 @@ public class StudyIndldeConverterTest {
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
         dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
-        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstHolderCode.NCRR));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCMHD));
         dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
-
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
+        dto.setIndldeNumber(StConverter.convertToSt("1234"));
         StudyIndlde bo = StudyIndldeConverter.convertFromDTOToDomain(dto);
         assertEquals("","");
-        //assertStudyIndlde(bo, dto);
+        assertStudyIndlde(bo, dto);
     }
 }

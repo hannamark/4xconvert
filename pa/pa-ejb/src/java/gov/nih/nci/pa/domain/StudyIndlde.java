@@ -1,4 +1,4 @@
-/**
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -82,8 +82,8 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
-import gov.nih.nci.pa.enums.ProgramCodesForNCI;
-import gov.nih.nci.pa.enums.ProgramCodesForNIH;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -108,8 +108,8 @@ public class StudyIndlde extends AbstractEntity {
     private ExpandedAccessStatusCode expandedAccessStatusCode;
     private Boolean expandedAccessIndicator;
     private GrantorCode grantorCode;
-    private ProgramCodesForNIH nihInstHolderCode;
-    private ProgramCodesForNCI nciDivProgHolderCode;
+    private NihInstituteCode nihInstHolderCode;
+    private NciDivisionProgramCode nciDivProgHolderCode;
     private HolderTypeCode holderTypeCode;
     private String indldeNumber;
     private IndldeTypeCode indldeTypeCode;
@@ -178,13 +178,13 @@ public class StudyIndlde extends AbstractEntity {
      */
     @Column(name = "NIH_INST_HOLDER_CODE")
     @Enumerated(EnumType.STRING)
-    public ProgramCodesForNIH getNihInstHolderCode() {
+    public NihInstituteCode getNihInstHolderCode() {
         return nihInstHolderCode;
     }
     /**
      * @param nihInstHolderCode nihInstHolderCode
      */
-    public void setNihInstHolderCode(ProgramCodesForNIH nihInstHolderCode) {
+    public void setNihInstHolderCode(NihInstituteCode nihInstHolderCode) {
         this.nihInstHolderCode = nihInstHolderCode;
     }
     /**
@@ -192,13 +192,13 @@ public class StudyIndlde extends AbstractEntity {
      */
     @Column(name = "NCI_DIV_PROG_HOLDER_CODE")
     @Enumerated(EnumType.STRING)
-    public ProgramCodesForNCI getNciDivProgHolderCode() {
+    public NciDivisionProgramCode getNciDivProgHolderCode() {
         return nciDivProgHolderCode;
     }
     /**
      * @param nciDivProgHolderCode nciDivProgHolderCode
      */
-    public void setNciDivProgHolderCode(ProgramCodesForNCI nciDivProgHolderCode) {
+    public void setNciDivProgHolderCode(NciDivisionProgramCode nciDivProgHolderCode) {
         this.nciDivProgHolderCode = nciDivProgHolderCode;
     }
     /**

@@ -76,92 +76,184 @@
 * 
 * 
 */
-package gov.nih.nci.pa.domain;
+package gov.nih.nci.pa.enums;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
-import gov.nih.nci.pa.enums.GrantorCode;
-import gov.nih.nci.pa.enums.HolderTypeCode;
-import gov.nih.nci.pa.enums.IndldeTypeCode;
-import gov.nih.nci.pa.enums.NihInstituteCode;
-import gov.nih.nci.pa.util.TestSchema;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
-import java.io.Serializable;
+/**
+* 
+* @author Kalpana Guthikonda
+* @since 2/05/2009
+* copyright NCI 2009.  All rights reserved.
+* This code may not be used without the express written permission of the
+* copyright holder, NCI. 
+*/
+public enum NihInstituteCode implements CodedEnum<String> {
+  /**
+   * National Cancer Institute.
+   */
+  NCI("NCI-National Cancer Institute"),
+  /**
+   * National Eye Institute.
+   */
+  NEI("NEI-National Eye Institute"),
+  /**
+   * National Heart, Lung, and Blood Institute.
+   */
+  NHLBI("NHLBI-National Heart, Lung, and Blood Institute"),
+  /**
+   * National Human Genome Research Institute.
+   */
+  NHGRI("NHGRI-National Human Genome Research Institute"),
+  /**
+   * National Institute on Aging.
+   */
+  NIA("NIA-National Institute on Aging"),
+  /**
+   * National Institute on Alcohol Abuse and Alcoholism.
+   */
+  NIAAA("NIAA-National Institute on Alcohol Abuse and Alcoholism"),
+  /**
+   * National Institute of Allergy and Infectious Diseases.
+   */
+  NIAID("NIAID-National Institute of Allergy and Infectious Diseases"),
+  /**
+   * National Institute of Arthritis and Musculoskeletal and Skin Diseases.
+   */
+  NIAMS("NIAMS-National Institute of Arthritis and Musculoskeletal and Skin Diseases"),
+  /**
+   * National Institute of Biomedical Imaging and Bioengineering.
+   */
+  NIBIB("NIBIB-National Institute of Biomedical Imaging and Bioengineering"),
+  /**
+   * Eunice Kennedy Shriver National Institute of Child Health and Human Development.
+   */
+  NICHD("NICHD-NICHD-Eunice Kennedy Shriver National Institute of Child Health and Human Development"),
+  /**
+   * National Institute on Deafness and Other Communication Disorders.
+   */
+  NIDCD("NIDCD-National Institute on Deafness and Other Communication Disorders"),
+  /**
+   * National Institute of Dental and Craniofacial Research.
+   */
+  NIDCR("NIDCR-National Institute of Dental and Craniofacial Research"),
+  /**
+   * National Institute of Diabetes and Digestive and Kidney Diseases.
+   */
+  NIDDK("NIDDK-National Institute of Diabetes and Digestive and Kidney Diseases"),
+  /**
+   * National Institute on Drug Abuse.
+   */
+  NIDA("NIDA-National Institute on Drug Abuse"),
+  /**
+   * National Institute of Environmental Health Sciences.
+   */
+  NIEHS("NIEHS-National Institute of Environmental Health Sciences"),
+  /**
+   * National Institute of General Medical Sciences.
+   */
+  NIGMS("NIGMS-National Institute of General Medical Sciences"),
+  /**
+   * National Institute of Mental Health.
+   */
+  NIMH("NIMH-National Institute of Mental Health"),
+  /**
+   * National Institute of Neurological Disorders and Stroke.
+   */
+  NINDS("NINDS-National Institute of Neurological Disorders and Stroke"),
+  /**
+   * National Institute of Nursing Research.
+   */
+  NINR("NINR-National Institute of Nursing Research"),
+  /**
+   * National Library of Medicine.
+   */
+  NLM("NLM-National Library of Medicine"),
+  /**
+   * Center for Information Technology.
+   */
+  CIT("CIT-Center for Information Technology"),
+  /**
+   * Center for Scientific Review.
+   */
+  CSR("CSR-Center for Scientific Review"),
+  /**
+   * John E. Fogarty International Center for Advanced Study in the Health Sciences.
+   */
+  FIC("FIC-John E. Fogarty International Center for Advanced Study in the Health Sciences"),
+  /**
+   * National Center for Complementary and Alternative Medicine.
+   */
+  NCCAM("NCCAM-National Center for Complementary and Alternative Medicine"),
+  /**
+   * National Center on Minority Health and Health Disparities.
+   */
+  NCMHD("NCMHD-National Center on Minority Health and Health Disparities"),
+  /**
+   * National Center for Research Resources (NCRR).
+   */
+  NCRR("NCRR-National Center for Research Resources (NCRR)"),
+  /**
+   * NIH Clinical Center.
+   */
+  CC("CC-NIH Clinical Center"),
+  /**
+   * Office of the Director.
+   */
+  OD("OD-Office of the Director");
 
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
 
-public class StudyIndldeTest {
-    /**
-     * 
-     * @throws Exception e
-     */
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-    }
-    /**
-     * 
-     */
-    @Test
-    public void createStudyIndldeTest() {
+  private String code;
+  /**
+   * 
+   * @param code
+   */
+  private NihInstituteCode(String code) {
+      this.code = code;
+      register(this);
+  }
+  /**
+   * @return code code
+   */
+  public String getCode() {
+      return code;
+  }
 
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
-        StudyIndlde create = createStudyIndldeobj(sp);
-        Session session  = TestSchema.getSession();
-        
-        TestSchema.addUpdObject(sp);
-        assertNotNull(sp);
-        Serializable spid = sp.getId();
-        StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
-        assertNotNull(spid);
+  /**
+   *@return String DisplayName 
+   */
+  public String getDisplayName() {
+      return sentenceCasedName(this);
+  }
 
-        TestSchema.addUpdObject(create);
-        Serializable id = create.getId();
-        assertNotNull(create);
-        
-        StudyIndlde saved = new StudyIndlde();
-        saved = (StudyIndlde) session.load(StudyIndlde.class, id);
-        
-        assertEquals("ExpandedAccessStatusCode does not match " , create.getExpandedAccessStatusCode() , 
-                saved.getExpandedAccessStatusCode());
-        assertEquals("ExpandedAccessIndicator does not match " , create.getExpandedAccessIndicator() , 
-                saved.getExpandedAccessIndicator());
-        assertEquals("HolderTypeCode does not match " , create.getHolderTypeCode() , 
-                saved.getHolderTypeCode());
-        assertEquals("NihInstHolderCode does not match " , create.getNihInstHolderCode() , 
-                saved.getNihInstHolderCode());
-        assertEquals("User Last updated does not match " , 
-                create.getUserLastUpdated() , saved.getUserLastUpdated());
-        assertEquals("Date Last updated does not match " , 
-                create.getDateLastUpdated() , saved.getDateLastUpdated());
-        assertEquals(" IndldeType does not match " ,
-            create.getIndldeTypeCode() , saved.getIndldeTypeCode());
-        assertEquals(" Grantor does not match" ,
-            create.getGrantorCode() , saved.getGrantorCode());
-        assertEquals("IndldeNumber does not match" ,
-            create.getIndldeNumber() , saved.getIndldeNumber());
-    }
-    /**
-     * 
-     * @param sp StudyProtocol
-     * @return StudyIndlde
-     */
-    public static StudyIndlde createStudyIndldeobj(StudyProtocol sp) {
-        StudyIndlde create = new StudyIndlde();
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        create.setExpandedAccessStatusCode(ExpandedAccessStatusCode.AVAILABLE);
-        create.setStudyProtocol(sp);
-        create.setIndldeTypeCode(IndldeTypeCode.IND);
-        create.setGrantorCode(GrantorCode.CDER);
-        create.setIndldeNumber("1234");
-        create.setExpandedAccessIndicator(Boolean.TRUE);
-        create.setHolderTypeCode(HolderTypeCode.NIH);
-        create.setNihInstHolderCode(NihInstituteCode.NCMHD);
-        create.setUserLastUpdated("Abstractor");
-        create.setDateLastUpdated(now);
-        return create;
-    }
+  /**
+   * 
+   * @return String name
+   */
+  public String getName() {
+      return name();
+  }
+
+  /**
+   * 
+   * @param code code
+   * @return NihInstituteCode 
+   */
+  public static NihInstituteCode getByCode(String code) {
+      return getByClassAndCode(NihInstituteCode.class, code);
+  }
+
+  /**
+   * @return String[] display names of enums
+   */
+  public static String[]  getDisplayNames() {
+    NihInstituteCode[] l = NihInstituteCode.values();
+      String[] a = new String[l.length];
+      for (int i = 0; i < l.length; i++) {
+          a[i] = l[i].getCode();
+      }
+      return a;
+  }
 }

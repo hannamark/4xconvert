@@ -127,6 +127,7 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -138,13 +139,16 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.UnitsCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -518,11 +522,14 @@ public class TestSchema {
             addUpdObject(som); 
             
             StudyIndlde si = new StudyIndlde();
+            si.setIndldeTypeCode(IndldeTypeCode.IND);
+            si.setGrantorCode(GrantorCode.CDER);
+            si.setIndldeNumber("1234");
             si.setExpandedAccessStatusCode(ExpandedAccessStatusCode.AVAILABLE);
             si.setStudyProtocol(sp);
             si.setExpandedAccessIndicator(Boolean.TRUE);
             si.setHolderTypeCode(HolderTypeCode.NIH);
-            //si.setNihInstHolderCode(NihInstHolderCode.NCRR);
+            si.setNihInstHolderCode(NihInstituteCode.NCMHD);
             addUpdObject(si); 
             
             Arm arm = new Arm();
