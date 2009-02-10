@@ -334,11 +334,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			maven.dir="${po.base.dir}"
 			/>
 		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
-		<copy todir="${db-install.dist.dir}/${database.type}" overwrite="true">
-			<fileset dir="${db-install-dynamic.src.dir}">
-				<include name="**/*"/>
-			</fileset>
-		</copy> 
 	</target>
 	<target name="build:iso-datatypes" depends="init">
 		<maven
