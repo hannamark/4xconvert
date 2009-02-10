@@ -179,7 +179,7 @@
                             <deployable>
                                 <type>ear</type>
                                 <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
-                                <pingTimeout>30000</pingTimeout>
+                                <pingTimeout>45000</pingTimeout>
                                 <location>${pom.basedir}/../ear/target/po.ear</location>
                             </deployable>
                         </deployables>
