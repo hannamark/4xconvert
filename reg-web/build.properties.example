@@ -1,7 +1,0 @@
-reg-web.directory=D:/projects/coppa/code/reg-web
-jboss.deploy.directory=D:/dev/app_servers/jboss-4.0.5.GA/server/default/deploy
-hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-db.username=pauser
-db.password=pauser
-jdbc.driver=org.postgresql.Driver
-jdbc.url=jdbc:postgresql://localhost:5432/ctods_pa

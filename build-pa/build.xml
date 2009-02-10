@@ -26,14 +26,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property file="${properties.file}" />
     <!-- Set application.base.path based on platform -->
     <condition property="application.base.path" value="${application.base.path.linux}">
-	    <or>            
-		    <os family="unix" />    
-		    <os family="mac" />     
-	    </or>           
+        <or>            
+            <os family="unix" />    
+            <os family="mac" />     
+        </or>           
     </condition>
 
     <condition property="application.base.path" value="${application.base.path.windows}">
-	    <os family="windows" />
+        <os family="windows" />
     </condition>
     <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
     <property name="tomcat.home" value="${application.base.path}/${tomcat.relative.path}"/>
@@ -201,7 +201,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </switch>
 
     <path id="jdbc.driver.classpath">
-	    <pathelement location="${database.driver.file}"/>
+        <pathelement location="${database.driver.file}"/>
     </path>
 
     <!-- Targets -->
@@ -301,18 +301,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.driver" value="${jdbc.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
-            <property name="mail.smtp.host" value="${mail.smtp.host}"/>
-            <property name="mail.from.address" value="${mail.from.address}"/>
-            <property name="register.mail.subject" value="${register.mail.subject}"/>
-            <property name="register.mail.body" value="${register.mail.body}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
-            <property name="submission.mail.subject" value="${submission.mail.subject}"/>
-            <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
-            <property name="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
-            <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
-            <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
-            <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
-            <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
             <property name="po.server.name" value="${po.server.name}"/>
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
@@ -342,18 +331,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.driver" value="${jdbc.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
-            <property name="mail.smtp.host" value="${mail.smtp.host}"/>
-            <property name="mail.from.address" value="${mail.from.address}"/>
-            <property name="register.mail.subject" value="${register.mail.subject}"/>
-            <property name="register.mail.body" value="${register.mail.body}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
-            <property name="submission.mail.subject" value="${submission.mail.subject}"/>
-            <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
-            <property name="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
-            <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
-            <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
-            <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
-            <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
             <property name="po.server.name" value="${po.server.name}"/>
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
@@ -383,18 +361,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.driver" value="${jdbc.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
-            <property name="mail.smtp.host" value="${mail.smtp.host}"/>
-            <property name="mail.from.address" value="${mail.from.address}"/>
-            <property name="register.mail.subject" value="${register.mail.subject}"/>
-            <property name="register.mail.body" value="${register.mail.body}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
-            <property name="submission.mail.subject" value="${submission.mail.subject}"/>
-            <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
-            <property name="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
-            <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
-            <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
-            <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
-            <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
             <property name="po.server.name" value="${po.server.name}"/>
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
@@ -424,18 +391,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.driver" value="${jdbc.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
-            <property name="mail.smtp.host" value="${mail.smtp.host}"/>
-            <property name="mail.from.address" value="${mail.from.address}"/>
-            <property name="register.mail.subject" value="${register.mail.subject}"/>
-            <property name="register.mail.body" value="${register.mail.body}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
-            <property name="submission.mail.subject" value="${submission.mail.subject}"/>
-            <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
-            <property name="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
-            <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
-            <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
-            <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
-            <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
             <property name="po.server.name" value="${po.server.name}"/>
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
@@ -454,8 +410,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="validate:pre:build">
-	    <validate-pre-build
-		    />
+        <validate-pre-build
+            />
     </target>
 
 
@@ -465,9 +421,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         build:all,
         dist:installer,
         dist:upgrader,
-	dist:src,
-	dist:gui-installer
-	" />
+    dist:src,
+    dist:gui-installer
+    " />
 
     <target name="dist:src">
         <!-- Add tasks here to zip up src into a distribution, may require some additoinal properties for distribution name" -->
@@ -498,20 +454,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </if>
     </target>
     <target name="dist:gui-installer" description="Makes Gui-Installer distribution">
-	    <delete>
-		    <fileset dir="${dist.dir}">
-			    <include name="*.jar"/>
-		    </fileset>
-	    </delete>
-	    <gui-installer-prep
-		    />
-	    <ant inheritAll="false" inheritRefs="false" 
-		    antfile="install.xml"
-		    target="build:installer"
-		    dir="${build.dir}/gui-installer"
-		    >
-		    <property name="compile.jar.dir" value="${target.dir}/izpack-4.0.1"/>
-	    </ant>
+        <delete>
+            <fileset dir="${dist.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </delete>
+        <gui-installer-prep
+            />
+        <ant inheritAll="false" inheritRefs="false" 
+            antfile="install.xml"
+            target="build:installer"
+            dir="${build.dir}/gui-installer"
+            >
+            <property name="compile.jar.dir" value="${target.dir}/izpack-4.0.1"/>
+        </ant>
     </target>
 
     <!-- Copies install time resources into distribution tree -->
@@ -534,7 +490,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </fileset>
         </copy> 
 
-	<dist-prep />
+    <dist-prep />
 
         <!-- This copies container jars which for deployment to the <server>/lib directory -->
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
@@ -545,14 +501,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Creates the installer distribution used by automated or manual remote installations -->
     <target name="dist:installer" depends="dist:installer:prep">
         <delete file="${dist.dir}/${pa-ear.install.zip.file}"/>
-	<!-- Set environment name to external -->
-	<replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-	<obfuscate-properties-file
-		properties.file="${dist.exploded.dir}/install.properties"
-		required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-		optional.property.list="ldap.url,ldap.basedn"
-		delete.property.list="exclude.jboss.backup"
-		/>
+    <!-- Set environment name to external -->
+    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+    <obfuscate-properties-file
+        properties.file="${dist.exploded.dir}/install.properties"
+        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+        optional.property.list="ldap.url,ldap.basedn"
+        delete.property.list="exclude.jboss.backup"
+        />
         <zip destfile="${dist.dir}/${pa-ear.install.zip.file}" basedir="${dist.exploded.dir}"/>
     </target>
 
@@ -573,10 +529,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </fileset>
         </copy> 
 
-	<dist-prep
-		copy.tools.flag="N"
-		default.target="upgrade"
-		/>
+    <dist-prep
+        copy.tools.flag="N"
+        default.target="upgrade"
+        />
         
         <!-- This copies container jars which for deployment to the <server>/lib directory -->
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
@@ -587,51 +543,51 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Creates upgrader distribution -->
     <target name="dist:upgrader" depends="dist:upgrader:prep">
         <delete file="${dist.dir}/${pa-ear.upgrade.zip.file}"/>
-	<!-- Set environment name to external -->
-	<replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+    <!-- Set environment name to external -->
+    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
 
-	<obfuscate-properties-file
-		properties.file="${dist.exploded.dir}/install.properties"
-		required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-		optional.property.list="ldap.url,ldap.basedn"
-		delete.property.list="exclude.jboss.backup"
-		/>
-	<copy todir="${dist.exploded.dir}" overwrite="true">
-		<fileset dir="${build.dir}">
-			<include name="upgrade.properties" />
-		</fileset>
-	</copy>
-	<replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
+    <obfuscate-properties-file
+        properties.file="${dist.exploded.dir}/install.properties"
+        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+        optional.property.list="ldap.url,ldap.basedn"
+        delete.property.list="exclude.jboss.backup"
+        />
+    <copy todir="${dist.exploded.dir}" overwrite="true">
+        <fileset dir="${build.dir}">
+            <include name="upgrade.properties" />
+        </fileset>
+    </copy>
+    <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
         <zip destfile="${dist.dir}/${pa-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}"/>
     </target>
 
 
     <target name="deploy:local:install" depends="build:all,dist:installer:prep" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
-	    <!--
-	    * Requires a database installation.
-	    * Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
-	    * If you want properties to be used at install time they must be included in a proeprties file.
-	    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
-	    * This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
-	    * It only supports using those properties files for now, so if you want to change install time properites edit these files.
-	    -->
-	    <deploy-local
-		    target.name="${install.target}"
-		    />
+        <!--
+        * Requires a database installation.
+        * Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
+        * If you want properties to be used at install time they must be included in a proeprties file.
+        * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
+        * This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
+        * It only supports using those properties files for now, so if you want to change install time properites edit these files.
+        -->
+        <deploy-local
+            target.name="${install.target}"
+            />
 
     </target>
 
     <target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
-	    <!--
-	    * Requires a database installation.
-	    * Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
-	    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
-	    * This target will use differnt properties based on linux (linux-upgrade.properties) or windows (windows-upgrade.properties) installs.
-	    * It only supports using those properties files for now, so if you want to change install time properites edit these files.
-	    -->
-	    <deploy-local
-		    target.name="${upgrade.target}"
-		    />
+        <!--
+        * Requires a database installation.
+        * Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
+        * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
+        * This target will use differnt properties based on linux (linux-upgrade.properties) or windows (windows-upgrade.properties) installs.
+        * It only supports using those properties files for now, so if you want to change install time properites edit these files.
+        -->
+        <deploy-local
+            target.name="${upgrade.target}"
+            />
     </target>
 
     <target name="deploy:remote:install"
@@ -639,15 +595,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         build:all,
         dist:installer
         ">
-	<!--
-	* Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
-	* Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into.
-	* Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
-	-->
-	<!-- Call macro to deploy files on desired server -->
-	<deploy-files dist.file="${pa-ear.install.zip.file}" />
-	<!-- SSH to machine ant run ant command line to install application --> 
-	<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
+    <!--
+    * Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
+    * Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into.
+    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
+    -->
+    <!-- Call macro to deploy files on desired server -->
+    <deploy-files dist.file="${pa-ear.install.zip.file}" />
+    <!-- SSH to machine ant run ant command line to install application --> 
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
     </target>
 
     <target name="deploy:remote:upgrade"
@@ -655,15 +611,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         build:all,
         dist:upgrader
         ">
-	<!--
-	* Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).
-	* Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into.
-	* Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
-	-->
-	<!-- Call macro to deploy files on desired server -->
-	<deploy-files dist.file="${pa-ear.upgrade.zip.file}" />
-	<!-- SSH to machine ant run ant command line to install application --> 
-	<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${upgrade.target}" />
+    <!--
+    * Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).
+    * Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into.
+    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
+    -->
+    <!-- Call macro to deploy files on desired server -->
+    <deploy-files dist.file="${pa-ear.upgrade.zip.file}" />
+    <!-- SSH to machine ant run ant command line to install application --> 
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${upgrade.target}" />
 
     </target>
 
@@ -944,79 +900,79 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </sequential>
         </for>
     </target>
-	<target name="ivy:module:add2repo">
-		<!-- you would want to use this value instead and you can get rid of the mkdir below 
-		<property name="ivy-repo.base.dir" location="${software.dir}/../../ivy-repo"/>
-		-->
-		<mkdir dir="${user.home}/tmp"/>
-		<ivy-module-add2repo
-			ivy-repo.base.dir="${user.home}/tmp/ivy-repo"
-			ivy.add.org="ncicb"
-			ivy.add.module="ssaksa-test-module3"
-			ivy.add.version="0.1.0"
-			ivy.add.module.src.dir="${build.dir}"
-			ivy.add.module.src.file.list="build.xml"
-			ivy.add.xml.src.location="${build.dir}/install.xml"
-			/>
-	</target>
+    <target name="ivy:module:add2repo">
+        <!-- you would want to use this value instead and you can get rid of the mkdir below 
+        <property name="ivy-repo.base.dir" location="${software.dir}/../../ivy-repo"/>
+        -->
+        <mkdir dir="${user.home}/tmp"/>
+        <ivy-module-add2repo
+            ivy-repo.base.dir="${user.home}/tmp/ivy-repo"
+            ivy.add.org="ncicb"
+            ivy.add.module="ssaksa-test-module3"
+            ivy.add.version="0.1.0"
+            ivy.add.module.src.dir="${build.dir}"
+            ivy.add.module.src.file.list="build.xml"
+            ivy.add.xml.src.location="${build.dir}/install.xml"
+            />
+    </target>
 
-	<target name="database:prep" description="Copies db files with filtering">
-		<echoproperties prefix="database"/>
-		<copy todir="${working.dir}/" filtering="true"  overwrite="true">
-			<fileset dir="${db.src.dir}">
-				<include name="**/db-upgrade/**/*"/>
-			</fileset>
-			<filterset>
-				<filtersfile file="${properties.file}"/>
-				<filtersfile file="project.properties"/>
-				<filter token="db-upgrade.run.dir" value="${working.dir}/db-upgrade/${database.type}"/>
-			</filterset>
-		</copy>
-	</target>
-	<target name="database:gencl" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
-		depends="
-		database:prep
-		">
-		<database-genchangelog
-			database.changelog.file="${target.dir}/generated-change-log.xml"
-			/>
-	</target>
-	<target name="database:diff" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
-		depends="
-		database:prep
-		">
-		<database-diff
-			output.file.txt="${target.dir}/generated-diff-log.txt"
-			output.file.xml="${target.dir}/generated-diff-log.xml"
-			/>
-	</target>
-	<target name="database:doc" description="Generates database documentation." unless="exclude.database"
-		depends="
-		database:prep
-		">
-		<mkdir dir="${reports.dir}/db"/>
-		<database-doc
-			output.dir="${reports.dir}/db"
-			database.changelog.file="${working.dir}/db-upgrade/db-upgrade.xml"
-			/>
-	</target>
-	<target name="report:erd">
-		<generate-erd   
-			schemaspy.jar="schemaspy-3.1.1.jar"
-			database.driver.jar="mysql-connector-java-5.0.5.jar"
-			/>
-	</target>
-	<target name="report:uml">
-		<property name="uml.dir" value="${reports.dir}/uml"/>
-		<path id="bda-blueprints.classpath.ref">
-			<fileset dir="${lib.dir}/runtime">
-				<include name="**/*.jar" />
-			</fileset>
-		</path>
-		<generate-uml   
-			uml.dir="${uml.dir}"    
-			src.java.dir="${bda-blueprints-webapp.base.dir}/src/java"
-			uml.source.path="bda-blueprints.classpath.ref"
-			/>
-	</target>
+    <target name="database:prep" description="Copies db files with filtering">
+        <echoproperties prefix="database"/>
+        <copy todir="${working.dir}/" filtering="true"  overwrite="true">
+            <fileset dir="${db.src.dir}">
+                <include name="**/db-upgrade/**/*"/>
+            </fileset>
+            <filterset>
+                <filtersfile file="${properties.file}"/>
+                <filtersfile file="project.properties"/>
+                <filter token="db-upgrade.run.dir" value="${working.dir}/db-upgrade/${database.type}"/>
+            </filterset>
+        </copy>
+    </target>
+    <target name="database:gencl" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
+        depends="
+        database:prep
+        ">
+        <database-genchangelog
+            database.changelog.file="${target.dir}/generated-change-log.xml"
+            />
+    </target>
+    <target name="database:diff" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
+        depends="
+        database:prep
+        ">
+        <database-diff
+            output.file.txt="${target.dir}/generated-diff-log.txt"
+            output.file.xml="${target.dir}/generated-diff-log.xml"
+            />
+    </target>
+    <target name="database:doc" description="Generates database documentation." unless="exclude.database"
+        depends="
+        database:prep
+        ">
+        <mkdir dir="${reports.dir}/db"/>
+        <database-doc
+            output.dir="${reports.dir}/db"
+            database.changelog.file="${working.dir}/db-upgrade/db-upgrade.xml"
+            />
+    </target>
+    <target name="report:erd">
+        <generate-erd   
+            schemaspy.jar="schemaspy-3.1.1.jar"
+            database.driver.jar="mysql-connector-java-5.0.5.jar"
+            />
+    </target>
+    <target name="report:uml">
+        <property name="uml.dir" value="${reports.dir}/uml"/>
+        <path id="bda-blueprints.classpath.ref">
+            <fileset dir="${lib.dir}/runtime">
+                <include name="**/*.jar" />
+            </fileset>
+        </path>
+        <generate-uml   
+            uml.dir="${uml.dir}"    
+            src.java.dir="${bda-blueprints-webapp.base.dir}/src/java"
+            uml.source.path="bda-blueprints.classpath.ref"
+            />
+    </target>
 </project>

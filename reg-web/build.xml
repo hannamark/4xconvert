@@ -10,7 +10,7 @@
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
     <property name="pa.ear.file" value="${software.dir}/pa/pa-ear/target/pa.ear"/>
     
-    <property file="${basedir}/build.properties"/>
+    <property file="${pa.dir}/build.properties"/>
     <property name="pa.resourceDir" value="${basedir}/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paRegPmd.xml"/>
@@ -41,7 +41,7 @@
     <property name="ivy.def.file" location="ivy-reg-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
-	<property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
+    <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
@@ -120,7 +120,7 @@
             <include name="**/*.jar" />
         </fileset>
     </path>
-	<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
     
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -169,31 +169,11 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Configure tests                                                        -->
-    <!-- ====================================================================== -->
-    
-    <target name="create-artifacts">
-        <filter token="reg-web.directory" value="${reg-web.directory}"/>
-        <filter token="jdbc.driver" value="${jdbc.driver}"/>
-        <filter token="jdbc.url" value="${jdbc.url}"/> 
-        <filter token="db.username" value="${db.username}"/>
-        <filter token="db.password" value="${db.password}"/>                                            
-
-        <echo message="creating test.properties"/>
-        <copy file="${pa.resourceDir}/test.properties" todir="${reg-web.build.testResourceDir.0}" filtering="true" /> 
-        
-        <echo message="creating login.config"/>
-        <copy file="${pa.resourceDir}/login.config" todir="${reg-web.build.testResourceDir.0}" filtering="true" />                             
-    </target>
-    
-
-    
-    <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="compile,create-artifacts" 
+      depends="compile" 
       description="Compile the test code"> 
         <mkdir dir="${reg-web.build.testOutputDir}"/>
         <javac destdir="${reg-web.build.testOutputDir}" 
@@ -228,12 +208,12 @@
     <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" 
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-    		 
+             
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
                 <path refid="jboss.classpath"/>  
                 <path refid="jboss.client.classpath"/>  
-            	<path refid="ejb.package.classpath"/> 
+                <path refid="ejb.package.classpath"/> 
 
             </classpath>
             <fileset dir="src" includes="**/*.java" />
@@ -484,13 +464,13 @@
               <sequential>
                   <copy todir="@{toDir}">
                       <fileset dir="${basedir}/src/webapp">                         
-							<include name="WEB-INF/jsp/*.jsp"/>
-							<include name="WEB-INF/jsp/nodecorate/*.jsp"/>
-							<include name="WEB-INF/jsp/common/*.jsp"/>
-							<include name="WEB-INF/tags/*.tag"/>	
-							<include name="styles/*.css"/>
-							<include name="scripts/js/*.js"/>     
-							<include name="scripts/ajax/*.js"/>   
+                            <include name="WEB-INF/jsp/*.jsp"/>
+                            <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                            <include name="WEB-INF/jsp/common/*.jsp"/>
+                            <include name="WEB-INF/tags/*.tag"/>    
+                            <include name="styles/*.css"/>
+                            <include name="scripts/js/*.js"/>     
+                            <include name="scripts/ajax/*.js"/>   
                       </fileset>
                   </copy>
               </sequential>
