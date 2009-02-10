@@ -300,6 +300,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			<fileset dir="${db.dir.dest}">
 				<include name="**/db-upgrade.xml"/>
 			</fileset>
+		    <filterset begintoken="${" endtoken="}">
+                <filtersfile file="${properties.file}"/>
+                <filtersfile file="project.properties"/>
+                <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
+            </filterset>
 		</copy>
 	</target>
 	
