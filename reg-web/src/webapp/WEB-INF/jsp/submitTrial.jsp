@@ -497,7 +497,7 @@ function toggledisplay2 (it) {
 	                                </s:fielderror>                            
 	                            </span>
                             </td>
-							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
+							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 							<td>                                             
 							    <s:select headerKey="" headerValue="--Select--" name="trialFundingWebDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 		                        <span class="formErrorMsg"> 
