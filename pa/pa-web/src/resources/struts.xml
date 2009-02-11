@@ -9,7 +9,29 @@
 	<package name="default" extends="struts-default">
 		<interceptors>
 		    <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
-		</interceptors>		
+		    <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+		    <interceptor name="servletConfig" class="org.apache.struts2.interceptor.ServletConfigInterceptor"/>
+		    
+            <interceptor-stack name="basicStack">
+                <interceptor-ref name="exception"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="conversionError"/>
+            </interceptor-stack>
+		    
+		    <interceptor-stack name="paDefaultInterceptor">
+                <interceptor-ref name="basicStack" />
+                <interceptor-ref name="fileUpload" />
+                <interceptor-ref name="nci-commonsParams"/>
+                <interceptor-ref name="parameterTrim">
+                    <param name="trimToNull">true</param>
+                    <param name="trimFromFront">true</param>
+                </interceptor-ref>
+		    </interceptor-stack>
+		</interceptors>	
+		<default-interceptor-ref name="paDefaultInterceptor" />
+			
 		<action name="logout" class="gov.nih.nci.pa.action.Logout" method="logout">
 		 	<result>/index.jsp</result>
 		</action>
@@ -79,7 +101,7 @@
             <result>/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>  
         </action>
          
-        <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">        	
+        <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">    
         	<result name="edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
         	<result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
         	<result name="displayJsp">/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp</result>  
@@ -93,14 +115,12 @@
          </action>       		
   		<!-- needs to be refactored -->
 		<action name="ajaxgetAuthOrgs*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/WEB-INF/jsp/nodecorate/authorityname.jsp</result>
 		</action>	
         <action name="ajaxCTGov*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
             <result name="displayXML">/WEB-INF/jsp/nodecorate/displayReportingXML.jsp</result>
         </action>
 		<action name="trialFunding*" class="gov.nih.nci.pa.action.TrialFundingAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />			
 			<result>/WEB-INF/jsp/trialFundingAdd.jsp</result>
 			<result name="add">/WEB-INF/jsp/trialFundingAdd.jsp</result>
 			<result name="query">/WEB-INF/jsp/trialFunding.jsp</result>
@@ -108,7 +128,6 @@
 			<result name="delete">/WEB-INF/jsp/trialFundingDelete.jsp</result>
 		</action>				
         <action name="regulatoryInfo*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
-            <interceptor-ref name="nci-commonsParams" />                         
             <result>/WEB-INF/jsp/RegulatoryInformation.jsp</result>
             <result name="view_page">/WEB-INF/jsp/regulatoryinformationview.jsp</result>
         </action>           
@@ -116,7 +135,6 @@
             <result>/WEB-INF/jsp/irb.jsp</result>
         </action>           
 		<action name="nciSpecificInformation*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />			
 			<result>/WEB-INF/jsp/nciSpecificInformation.jsp</result>
 			<result name="error">/WEB-INF/jsp/nciSpecificInformation.jsp</result>
 		</action>
@@ -156,17 +174,14 @@
  		</action>
 	 		
 		<action name="interventionalStudyDesign*" class="gov.nih.nci.pa.action.InterventionalStudyDesignAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />
 			<result name="details">/WEB-INF/jsp/isdesignDetails.jsp</result>
 			<result name="outcome">/WEB-INF/jsp/outcomeMeasure.jsp</result>
 			<result name="outcomeAdd">/WEB-INF/jsp/outcomeMeasureAdd.jsp</result>
 		</action>
 		<action name="observationalStudyDesign*" class="gov.nih.nci.pa.action.ObservationalStudyDesignAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />
 			<result name="details">/WEB-INF/jsp/osdesignDetails.jsp</result>
 		</action>
         <action name="generalTrialDesign*" class="gov.nih.nci.pa.action.GeneralTrialDesignAction" method="{1}">
-            <interceptor-ref name="nci-commonsParams" />
             <result name="edit">/WEB-INF/jsp/generalTrialDesignEdit.jsp</result>
         </action>
         <action name="trialInterventions*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
@@ -179,12 +194,10 @@
             <result name="list">/WEB-INF/jsp/trialArms.jsp</result>  
         </action>
 		<action name="eligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />
 			<result name="eligibility">/WEB-INF/jsp/isEligibilityCriteria.jsp</result>
 			<result name="eligibilityAdd">/WEB-INF/jsp/isEligibilityCriteriaAdd.jsp</result>
 		</action>
 		<action name="trialIndide*" class="gov.nih.nci.pa.action.TrialIndideAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />			
 			<result>/WEB-INF/jsp/trialIndideAdd.jsp</result>
 			<result name="add">/WEB-INF/jsp/trialIndideAdd.jsp</result>
 			<result name="edit">/WEB-INF/jsp/trialIndideEdit.jsp</result>
