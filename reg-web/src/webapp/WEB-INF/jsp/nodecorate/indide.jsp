@@ -167,7 +167,7 @@
 	}
 	</script>
 	<s:set name="phaseCodeValuesNIH" value="@gov.nih.nci.pa.enums.ProgramCodesForNIH@getDisplayNames()" />
-	<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.ProgramCodesForNCI@getDisplayNames()" />
+	<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 	<s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
 
 	<table class="data2">	
