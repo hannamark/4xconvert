@@ -102,7 +102,12 @@
         <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
         </fileset>
-    </path> 
+    </path>	
+	<path id="ejb.package.runtime.classpath">       
+	        <fileset dir="${software.dir}/target/pa/lib/pa-ear/runtime">
+	            <include name="*.jar"/>
+	        </fileset>
+	  </path>	
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}" />
@@ -290,6 +295,7 @@
                 <path refid="jboss.classpath"/>  
                 <path refid="jboss.client.classpath"/>
             	<path refid="ejb.package.classpath"/> 
+            	<path refid="ejb.package.runtime.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>

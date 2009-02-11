@@ -129,14 +129,14 @@ public class Constants {
     /** Participating Organization Tab Data. */
     public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
     
-    /** Principal investigator.*/
-    public static final String STUDY_PRINCIPAL_INVESTIGATOR = "Study Principal Investigator";
-
     /** Sub investigator.*/
-    public static final String STUDY_SUB_INVESTIGATOR = "Study Sub Investigator";
+    public static final String STUDY_SUB_INVESTIGATOR = "STUDY_SUB_INVESTIGATOR";
     
     /** Study primary contact .*/
-    public static final String STUDY_PRIMARY_CONTACT = "Study Primary Contact";
+    public static final String STUDY_PRIMARY_CONTACT_CD = "Study Primary Contact";
+
+    /** Study primary contact .*/
+    public static final String STUDY_PRIMARY_CONTACT = "STUDY_PRIMARY_CONTACT";
     
     /** work flow status used for menu. **/
     public static final String DOC_WFS_MENU = "docWFSMenu";
@@ -149,4 +149,7 @@ public class Constants {
     
     /** CSM Group used to define abstractor role. **/
     public static final String ABSTRACTOR = "Abstractor";
+    
+    /** Study principal investigator. **/
+    public static final String STUDY_PRINCIPAL_INVESTIGATOR = "STUDY_PRINCIPAL_INVESTIGATOR";
 }
