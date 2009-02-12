@@ -78,79 +78,61 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
- * @author Hugh Reinhart
- * @since 11/06/2008
- * 
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Kalpana Guthikonda
+ * @since 02/11/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
-    private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
+public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, StudyOnhold> {
+  /**
+   * @param bo domain object
+   * @return dto
+   * @throws PAException exception
+   */
+  @Override
+  public StudyOnholdDTO convertFromDomainToDto(StudyOnhold bo)
+          throws PAException {
+      StudyOnholdDTO dto = new StudyOnholdDTO();
+      dto.setOnholdReasonText(StConverter.convertToSt(bo.getOnholdReasonText()));
+      dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+      dto.setOnholdReasonCode(CdConverter.convertToCd(bo.getOnholdReasonCode()));
+      dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+      Ivl<Ts> ivl = new Ivl<Ts>();
+      ivl.setLow(TsConverter.convertToTs(bo.getOnholdDate()));
+      ivl.setHigh(TsConverter.convertToTs(bo.getOffholdDate()));
+      dto.setOnholdDate(ivl);
+      return dto;
+  }
 
-    /**
-     * @param clazz class
-     * @return converter
-     * @throws PAException exception
-     */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        if (clazz.equals(StudyOnholdConverter.class)) {
-          return studyOnholdConverter;
-      }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
-    }
+  /**
+   * @param dto dto
+   * @return domain object
+   * @throws PAException exception
+   */
+  @Override
+  public StudyOnhold convertFromDtoToDomain(StudyOnholdDTO dto)
+          throws PAException {
+      StudyProtocol spBo = new StudyProtocol();
+      spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+      
+      StudyOnhold bo = new StudyOnhold();
+      bo.setOnholdReasonText(StConverter.convertToString(dto.getOnholdReasonText()));
+      bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+      bo.setOnholdReasonCode(OnholdReasonCode.getByCode(CdConverter.convertCdToString(dto.getOnholdReasonCode())));
+      bo.setOffholdDate(TsConverter.convertToTimestamp((Ts) dto.getOnholdDate().getHigh()));
+      bo.setOnholdDate(TsConverter.convertToTimestamp((Ts) dto.getOnholdDate().getLow()));
+      bo.setStudyProtocol(spBo);
+      return bo;
+  }
 }

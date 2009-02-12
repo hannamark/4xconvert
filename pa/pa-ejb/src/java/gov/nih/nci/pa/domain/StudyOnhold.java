@@ -76,81 +76,84 @@
 * 
 * 
 */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
+
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
- * @author Hugh Reinhart
- * @since 11/06/2008
- * 
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Kalpana Guthikonda
+ * @since 02/11/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
-    private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
+@Entity
+@Table(name = "STUDY_ONHOLD")
+public class StudyOnhold extends AbstractStudyEntity {
+  private static final long serialVersionUID = 1234509870L;
 
-    /**
-     * @param clazz class
-     * @return converter
-     * @throws PAException exception
-     */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        if (clazz.equals(StudyOnholdConverter.class)) {
-          return studyOnholdConverter;
-      }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
-    }
+  private String onholdReasonText;
+  private OnholdReasonCode onholdReasonCode;
+  private Timestamp onholdDate;
+  private Timestamp offholdDate;
+  
+  
+  /**
+   * @return onholdReasonText
+   */
+  @Column(name = "ONHOLD_REASON_TEXT")
+  public String getOnholdReasonText() {
+    return onholdReasonText;
+  }
+  /**
+   * @param onholdReasonText onholdReasonText
+   */
+  public void setOnholdReasonText(String onholdReasonText) {
+    this.onholdReasonText = onholdReasonText;
+  }
+  /**
+   * @return onholdReasonCode
+   */
+  @Column(name = "ONHOLD_REASON_CODE")
+  @Enumerated(EnumType.STRING)
+  public OnholdReasonCode getOnholdReasonCode() {
+    return onholdReasonCode;
+  }
+  /**
+   * @param onholdReasonCode onholdReasonCode
+   */
+  public void setOnholdReasonCode(OnholdReasonCode onholdReasonCode) {
+    this.onholdReasonCode = onholdReasonCode;
+  } 
+  /**
+   * @return onholdDate
+   */
+  @Column(name = "ONHOLD_DATE")
+  public Timestamp getOnholdDate() {
+    return onholdDate;
+  }
+  /**
+   * @param onholdDate onholdDate
+   */
+  public void setOnholdDate(Timestamp onholdDate) {
+    this.onholdDate = onholdDate;
+  }
+  /**
+   * @return offholdDate
+   */
+  @Column(name = "OFFHOLD_DATE")
+  public Timestamp getOffholdDate() {
+    return offholdDate;
+  }
+  /**
+   * @param offholdDate offholdDate
+   */
+  public void setOffholdDate(Timestamp offholdDate) {
+    this.offholdDate = offholdDate;
+  }  
 }

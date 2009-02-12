@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
+import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -482,6 +483,13 @@ public final class PaRegistry {
     public static TSRReportGeneratorServiceRemote getTSRReportGeneratorService() 
         throws PAException {
         return getInstance().getServiceLocator().getTSRReportGeneratorService();
+    }
+    
+    /**
+     * @return StudyMilestoneService
+     */
+    public static StudyOnholdServiceRemote getStudyOnholdService() {
+        return getInstance().getServiceLocator().getStudyOnholdService();
     }
 }
 

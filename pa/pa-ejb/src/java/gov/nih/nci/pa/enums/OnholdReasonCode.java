@@ -76,81 +76,91 @@
 * 
 * 
 */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.enums;
 
-import gov.nih.nci.pa.service.PAException;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
- * @author Hugh Reinhart
- * @since 11/06/2008
- * 
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Kalpana Guthikonda
+ * @since 02/11/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
-    private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
+public enum OnholdReasonCode implements CodedEnum<String> {
+  /**
+   * Submission_Incomplete.
+   */
+  Submission_Incomplete("Submission_Incomplete"),
+  /**
+   * Invalid_Grant.
+   */
+  Invalid_Grant("Invalid_Grant"),
+  /**
+   * Pending_Disease_Curation.
+   */
+  Pending_Disease_Curation("Pending_Disease_Curation"),
+  /**
+   * Pending_Person_Curation.
+   */
+  Pending_Person_Curation("Pending_Person_Curation"),
+  /**
+   * Pending_Organization_Curation.
+   */
+  Pending_Organization_Curation("Pending_Organization_Curation"),
+  /**
+   * Other.
+   */
+  Other("Other");
 
-    /**
-     * @param clazz class
-     * @return converter
-     * @throws PAException exception
-     */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        if (clazz.equals(StudyOnholdConverter.class)) {
-          return studyOnholdConverter;
+  private String code;
+  /**
+   * 
+   * @param code
+   */
+  private OnholdReasonCode(String code) {
+      this.code = code;
+      register(this);
+  }
+  /**
+   * @return code code
+   */
+  public String getCode() {
+      return code;
+  }
+
+  /**
+   *@return String DisplayName 
+   */
+  public String getDisplayName() {
+      return sentenceCasedName(this);
+  }
+
+  /**
+   * 
+   * @return String name
+   */
+  public String getName() {
+      return name();
+  }
+
+  /**
+   * 
+   * @param code code
+   * @return OnholdReasonCode 
+   */
+  public static OnholdReasonCode getByCode(String code) {
+      return getByClassAndCode(OnholdReasonCode.class, code);
+  }
+
+  /**
+   * @return String[] display names of enums
+   */
+  public static String[]  getDisplayNames() {
+    OnholdReasonCode[] l = OnholdReasonCode.values();
+      String[] a = new String[l.length];
+      for (int i = 0; i < l.length; i++) {
+          a[i] = l[i].getCode();
       }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
-    }
+      return a;
+  }
 }

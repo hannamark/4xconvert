@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
+import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -410,5 +411,10 @@ public class MockServiceLocator implements ServiceLocator {
     public RegistryUserServiceRemote getRegisterUserService() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public StudyOnholdServiceRemote getStudyOnholdService() {
+      // TODO Auto-generated method stub
+      return null;
     }
 }

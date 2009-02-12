@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
+import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -434,5 +435,11 @@ public class JndiServiceLocator implements ServiceLocator {
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
         throws PAException {
       return (TSRReportGeneratorServiceRemote) JNDIUtil.lookup("/pa/TSRReportGeneratorServiceBean/remote");
+    }
+    /**
+     * @return StudyOnholdService
+     */
+    public StudyOnholdServiceRemote getStudyOnholdService() {
+        return (StudyOnholdServiceRemote) JNDIUtil.lookup("/pa/StudyOnholdServiceBean/remote");
     }
 }
