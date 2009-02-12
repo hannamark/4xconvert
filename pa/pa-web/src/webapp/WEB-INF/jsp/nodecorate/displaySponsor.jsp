@@ -2,8 +2,7 @@
 <table>
 <tr>
 <td>
-<s:textfield label="First Name" name="gtdDTO.sponsorName" size="30"  readonly="true" cssStyle="width:200px"/>
-<%--<input type="button" value="Look Up" onclick="lookup4sponsor();"/>--%>
+<s:textfield label="First Name" name="gtdDTO.sponsorName" size="30"  cssStyle="width:200px" readonly="true" cssClass="readonly"/>
 </td><td> 
                   <ul style="margin-top:-1px;">             
                         <li style="padding-left:0"><a href="#" class="btn" onclick="lookup4sponsor();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>

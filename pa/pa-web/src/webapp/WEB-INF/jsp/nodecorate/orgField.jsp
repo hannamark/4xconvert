@@ -2,8 +2,7 @@
 <table>
 <tr>
 <td>
-<s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30"  readonly="true"/>
-<%--<input type="button" value="Look Up" onclick="lookup();"/>--%>
+<s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30"  readonly="true" cssClass="readonly"/>
 </td><td> 
                   <ul style="margin-top:-1px;">             
                         <li style="padding-left:0"><a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>

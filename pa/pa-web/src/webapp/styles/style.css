@@ -66,6 +66,8 @@ LEGEND
 :lang(en) LEGEND
 { margin-bottom:1px }
 
+INPUT.readonly
+{ background:#dcdcdc; border:1px solid #ccc; height:17px }
 
 /* Template */
 

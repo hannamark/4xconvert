@@ -6,7 +6,7 @@
 		    
 		    </td>
 			<td class="value" style="width:250px">
-				<s:textfield name="orgFromPO.orgName" maxlength="80" size="80" cssStyle="width: 300px" disabled="disabled" readonly="true"/>
+				<s:textfield name="orgFromPO.orgName" maxlength="80" size="80" cssStyle="width: 300px" readonly="true" cssClass="readonly"/>
 				<s:if test="%{currentAction == 'create'}">
 				<span class="info">Click <strong>Look Up</strong> to choose an organization.</span>
 				<span class="formErrorMsg"></span>
@@ -29,20 +29,20 @@
 		    <td scope="row" class="label"><s:label for="editOrg.city">City:</s:label><span class="required">*</span></td>
 		    <td class="value" colspan="2">
 		        <s:textfield name="orgFromPO.orgCity" maxlength="200" size="200" 
-		        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
+		         cssStyle="width: 200px" readonly="true" cssClass="readonly"/>
 		    </td>
 		</tr>
 		<tr>
 		    <td scope="row" class="label"><s:label for="editOrg.countryName">Country:</s:label><span class="required">*</span></td>
 		    <td class="value" colspan="2">
 		        <s:textfield name="orgFromPO.orgCountry" maxlength="200" size="200" 
-		        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
+		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
 		</tr>
 		<tr>
 		    <td scope="row" class="label"><s:label for="editOrg.postalCode">Zip/Postal Code(*US/Canada):</s:label></td>
 		    <td class="value" colspan="2">
 		        <s:textfield name="orgFromPO.orgZip" maxlength="200" size="200" 
-		        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
+		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
 		    </td>
 		</tr>
 

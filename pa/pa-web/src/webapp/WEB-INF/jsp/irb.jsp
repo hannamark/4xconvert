@@ -146,31 +146,37 @@ function loadDiv(orgid){
         </tr>
         <tr>
             <td class="label">Board Contact Mailing Address:</td>
-            <td class="value" colspan="2"><s:textfield id="address" name="ct.address" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2">
+            <s:textfield id="address" name="ct.address" cssStyle="width:280px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact City:</td>
-            <td class="value" colspan="2"><s:textfield id="city" name="ct.city" readonly="true" cssStyle="width:140px;float:left"/></td>
+            <td class="value" colspan="2">
+            <s:textfield id="city" name="ct.city" cssStyle="width:140px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact State/Province:</td>
-            <td class="value" colspan="2"><s:textfield id="state" name="ct.state" readonly="true" cssStyle="width:100px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="state" name="ct.state" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact Zip/Postal Code:</td>
-            <td class="value" colspan="2"><s:textfield id="zip" name="ct.zip" readonly="true" cssStyle="width:100px;float:left"/></td>
+            <td class="value" colspan="2">
+            <s:textfield id="zip" name="ct.zip" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact Country:</td>
-            <td class="value" colspan="2"><s:textfield id="country" name="ct.country" readonly="true" cssStyle="width:100px;float:left"/></td>
+            <td class="value" colspan="2">
+            <s:textfield id="country" name="ct.country" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
         <tr>
             <td class="label">Board Contact Phone:</td>
-            <td class="value" colspan="2"><s:textfield id="phone" name="ct.phone" readonly="true" cssStyle="width:100px;float:left"/></td>
+            <td class="value" colspan="2">
+            <s:textfield id="phone" name="ct.phone" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
         <tr>
             <td class="label">Board Contact Email Address:</td>
-            <td class="value" colspan="2"><s:textfield id="email" name="ct.email" readonly="true" cssStyle="width:140px;float:left"/></td>
+            <td class="value" colspan="2">
+            <s:textfield id="email" name="ct.email" cssStyle="width:140px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
         <tr>
             <td class="label">Board Affiliation:</td>
