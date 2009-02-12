@@ -104,8 +104,8 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.SignatureDeclareThrowsException" })
-public class DiseaseAction extends AbstractListEditAction implements Preparable {
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public final class DiseaseAction extends AbstractListEditAction implements Preparable {
     private static final long serialVersionUID = 1234584746L;
     
     private DiseaseWebDTO disease;
@@ -113,10 +113,10 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
 
     /**
      * @return action result
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    public String edit() throws Exception {
+    public String edit() throws PAException {
         StudyDiseaseDTO sd = studyDisesaeSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         disease = new DiseaseWebDTO();
         disease.setDiseaseIdentifier(IiConverter.convertToString(sd.getDiseaseIdentifier()));
@@ -128,20 +128,20 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
     
     /**
      * @return action result
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    public String delete() throws Exception {
+    public String delete() throws PAException {
         studyDisesaeSvc.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
         return super.delete();
     }
     
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    public String add() throws Exception {
+    public String add() throws PAException {
         enforceBusinessRules();
         if (!hasActionErrors()) {
             StudyDiseaseDTO sdDto = new StudyDiseaseDTO();
@@ -168,9 +168,9 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
     
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String update() throws Exception {
+    public String update() throws PAException {
         enforceBusinessRules();
         if (!hasActionErrors()) {
             StudyDiseaseDTO pa = studyDisesaeSvc.get(IiConverter.convertToIi(disease.getStudyDiseaseIdentifier()));
@@ -195,16 +195,16 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
     /**
      * Method called from pop-up.  Loads selected disease.
      * @return result
-     * @throws Exception on error.
+     * @throws PAException on error.
      */
-    public String display() throws Exception {
+    public String display() throws PAException {
         setDisease(new DiseaseWebDTO());
         getDisease().setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
         return super.create();
     }
     
     @SuppressWarnings("PMD.NPathComplexity")
-    private void enforceBusinessRules() throws Exception {
+    private void enforceBusinessRules() throws PAException {
         if (PAUtil.isEmpty(disease.getDiseaseIdentifier())) {
             addActionError("Please select a Disease/Condition to add to the trial.  ");
             return;
@@ -247,7 +247,7 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
         }
     }
     
-    private String buildParentPreferredName(String diseaseId) throws Exception {
+    private String buildParentPreferredName(String diseaseId) throws PAException {
         List<DiseaseParentDTO> parentList = diseaseParentSvc.getByChildDisease(IiConverter.convertToIi(diseaseId));
         StringBuffer ppBuff = new StringBuffer();
         for (DiseaseParentDTO parent : parentList) {
@@ -261,10 +261,10 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
     }
     
     /**
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    protected void loadListForm() throws Exception {
+    protected void loadListForm() throws PAException {
         List<DiseaseWebDTO> nl = new ArrayList<DiseaseWebDTO>();
         List<StudyDiseaseDTO> sdList = studyDisesaeSvc.getByStudyProtocol(spIi);
         for (StudyDiseaseDTO sd : sdList) {
@@ -290,10 +290,10 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
     /**
      * Uses data from disease.diseaseIdentifier, disease.lead, and disease.studyDiseaseIdentifier.
      * Reads remainder from database.
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    protected void loadEditForm() throws Exception {
+    protected void loadEditForm() throws PAException {
         if ((disease == null) || PAUtil.isEmpty(disease.getDiseaseIdentifier())) {
             disease = new DiseaseWebDTO();
         } else {

@@ -63,13 +63,13 @@ function handleCreate(){
                     titleKey="interventions.leadIndicator"
                     headerClass="sortable"  />
                 <display:column titleKey="interventions.edit" headerClass="centered" class="action">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                    <s:a href="#" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
                 </display:column>
                 <display:column titleKey="interventions.delete" headerClass="centered" class="action">
-                    <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
+                    <s:a href="#" onclick="handleDelete(%{#attr.row.plannedActivityIdentifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
                             alt="Delete" width="16" height="16" />
                     </s:a>

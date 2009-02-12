@@ -350,7 +350,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
                  && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
                 InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
                 InterventionWebDTO intWebDto = new InterventionWebDTO();
-                intWebDto.setDescription(StConverter.convertToString(intDto.getDescriptionText()));
+                intWebDto.setDescription(StConverter.convertToString(pla.getTextDescription()));
                 intWebDto.setIdentifier(IiConverter.convertToString(pla.getIdentifier()));
                 intWebDto.setName(StConverter.convertToString(intDto.getName()));
                 intWebDto.setArmAssignment(cInterventions.contains(IiConverter.convertToLong(pla.getIdentifier())));
@@ -371,7 +371,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
                  && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
                 InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
                 InterventionWebDTO intWebDto = new InterventionWebDTO();
-                intWebDto.setDescription(StConverter.convertToString(intDto.getDescriptionText()));
+                intWebDto.setDescription(StConverter.convertToString(pla.getTextDescription()));
                 intWebDto.setIdentifier(IiConverter.convertToString(pla.getIdentifier()));
                 intWebDto.setName(StConverter.convertToString(intDto.getName()));
                 intWebDto.setArmAssignment(getAssociatedIds().contains(

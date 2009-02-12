@@ -83,6 +83,10 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -100,7 +104,6 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 12/6/2008
  */
-@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public abstract class AbstractListEditAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1234573645L;
 
@@ -126,16 +129,25 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     protected StudyMilestoneServiceRemote studyMilestoneSvc;
     /** ProtocolQueryService. */
     protected ProtocolQueryServiceLocal protocolQuerySvc;
+    /** PlannedActivityService. */
+    protected PlannedActivityServiceRemote plannedActivitySvc;
+    /** InterventionService. */
+    protected InterventionServiceRemote interventionSvc;
+    /** InterventionAlternateNameService. */
+    protected InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
 
     /**
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public void prepare() throws Exception {
+    public void prepare() throws PAException {
         studyDisesaeSvc = PaRegistry.getStudyDiseaseService();
         diseaseSvc = PaRegistry.getDiseaseService();
         diseaseParentSvc = PaRegistry.getDiseaseParentService();
         studyMilestoneSvc = PaRegistry.getStudyMilestoneService();
         protocolQuerySvc = PaRegistry.getProtocolQueryService();
+        plannedActivitySvc = PaRegistry.getPlannedActivityService();
+        interventionSvc = PaRegistry.getInterventionService();
+        interventionAlternateNameSvc = PaRegistry.getInterventionAlternateNameService();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
@@ -144,10 +156,11 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * Call initial list jsp.
      * @return action result
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    public String execute() throws Exception {
+    public String execute() throws PAException {
+        selectedRowIdentifier = null;
         loadListForm();
         return AR_LIST;
     }
@@ -155,9 +168,9 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * Call the edit jsp in "create" mode.
      * @return action result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String create() throws Exception {
+    public String create() throws PAException {
         loadEditForm();
         setCurrentAction("create");
         return AR_EDIT;
@@ -165,9 +178,9 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * Call the edit jsp in "edit" mode.
      * @return action result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String edit() throws Exception {
+    public String edit() throws PAException {
         loadEditForm();
         setCurrentAction("edit");
         return AR_EDIT;
@@ -176,9 +189,9 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * Add a new record to database (needs to be overridden).  Returns to list jsp.
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String add() throws Exception {
+    public String add() throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         return execute();
     }
@@ -186,9 +199,9 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * Update a record in the database (needs to be overridden).  Returns to list jsp.
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String update() throws Exception {
+    public String update() throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return execute();
     }
@@ -196,22 +209,22 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * Delete a record from database (needs to be overridden). Returns to list jsp.
      * @return action result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String delete() throws Exception {
+    public String delete() throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         return execute();
     }
 
     /**
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    protected abstract void loadListForm() throws Exception;
+    protected abstract void loadListForm() throws PAException;
 
     /**
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    protected abstract void loadEditForm() throws Exception;
+    protected abstract void loadEditForm() throws PAException;
 
     /**
      * @return the currentAction

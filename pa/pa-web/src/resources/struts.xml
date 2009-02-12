@@ -98,7 +98,7 @@
             <result name="edit">/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>  
         </action>
         <action name="ajaxptpIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>  
+            <result name="edit">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>  
         </action>
          
         <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">    
@@ -187,7 +187,7 @@
         <action name="trialInterventions*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result name="displayDetails">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>              
             <result name="edit">/WEB-INF/jsp/trialInterventionsedit.jsp</result>  
-            <result>/WEB-INF/jsp/trialInterventions.jsp</result>
+            <result name="list">/WEB-INF/jsp/trialInterventions.jsp</result>
         </action>
         <action name="trialArms*" class="gov.nih.nci.pa.action.TrialArmsAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/trialArmsedit.jsp</result>              

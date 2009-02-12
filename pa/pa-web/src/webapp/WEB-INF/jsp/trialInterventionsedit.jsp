@@ -25,22 +25,24 @@
 
 <script type="text/javascript">
     function interventionAdd(){
-        document.intervention.action="trialInterventionsadd.action";
-        document.intervention.submit();     
+        document.interventionForm.action="trialInterventionsadd.action";
+        document.interventionForm.submit();     
     }
     function interventionUpdate(){
         input_box=confirm("Click OK to save changes.  Cancel to Abort.");
         if (input_box==true){
-            document.intervention.action="trialInterventionsupdate.action";
-            document.intervention.submit();
+            document.interventionForm.action="trialInterventionsupdate.action";
+            document.interventionForm.submit();
         }
     }
     function statusChange() {
-        newType=document.intervention.interventionType.value;
+        newType=document.interventionForm.interventionType.value;
         if(newType=="Drug"){
-          document.intervention.leadIndicator.disabled=false;
+          document.interventionForm.interventionLeadIndicator.disabled=false;
+          document.interventionForm.leadIndicatorLabel.disabled=false;
         } else {
-          document.intervention.leadIndicator.disabled=true;
+          document.interventionForm.interventionLeadIndicator.disabled=true;
+          document.interventionForm.leadIndicatorLabel.disabled=true;
         }
     }
     function lookup(){
@@ -57,6 +59,10 @@
          });
          return false;
     }   
+    function cancel(){
+        document.interventionForm.action="trialInterventions.action";
+        document.interventionForm.submit();
+    }
 </script>
 
 </head>
@@ -80,12 +86,12 @@
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <td colspan="2">
-        <s:form name="intervention">
+        <s:form name="interventionForm">
 
             <table class="form">
                 <tr>
                 <td class="label">
-                    <s:label for="interventionType">Intervention Type:
+                    <s:label>Intervention Type:
                     </s:label><span class="required">*</span>
                 </td>
                 <s:set name="interventionTypeValues"
@@ -98,11 +104,11 @@
                 <tr><td/>
                     <td class="value">
                         <s:if test="%{interventionType == 'Drug'}">
-                            <s:checkbox name="leadIndicator"/>
-                            <s:label name="leadIndicatorLabel" for="leadIndicator">Lead Product (Drug interventions only)</s:label>
+                            <s:checkbox name="interventionLeadIndicator"/>
+                            <s:label name="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
                         </s:if><s:else>
-                            <s:checkbox disabled="true" name="leadIndicator"/>
-                            <s:label disabled="true" name="leadIndicatorLabel" for="leadIndicator">Lead Product (Drug interventions only)</s:label>
+                            <s:checkbox disabled="true" name="interventionLeadIndicator"/>
+                            <s:label disabled="true" name="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
                         </s:else>
                     </td>
                 </tr>
@@ -123,6 +129,11 @@
                     <span class="btn_img"> <span class="save">Save</span></span>
                 </s:a>
             </s:else></li>
+            <li>
+                <s:a href="#" cssClass="btn" onclick="cancel();">
+                    <span class="btn_img"><span class="cancel">Cancel</span></span>
+                </s:a>
+            </li>
         </ul>
         </del></div>
         </td>

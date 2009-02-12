@@ -89,6 +89,7 @@ package gov.nih.nci.pa.dto;
  */
 public class InterventionWebDTO {
     private String identifier;
+    private String plannedActivityIdentifier;
     private String name;
     private String description;
     private String otherNames;
@@ -106,6 +107,18 @@ public class InterventionWebDTO {
      */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+    /**
+     * @return the plannedActivityIdentifier
+     */
+    public String getPlannedActivityIdentifier() {
+        return plannedActivityIdentifier;
+    }
+    /**
+     * @param plannedActivityIdentifier the plannedActivityIdentifier to set
+     */
+    public void setPlannedActivityIdentifier(String plannedActivityIdentifier) {
+        this.plannedActivityIdentifier = plannedActivityIdentifier;
     }
     /**
      * @return the name

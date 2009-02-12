@@ -100,26 +100,25 @@ import org.apache.struts2.ServletActionContext;
 * @author Hugh Reinhart
 * @since 1/16/2009
 */
-@SuppressWarnings("PMD.SignatureDeclareThrowsException")
-public class MilestoneAction extends AbstractListEditAction {
+public final class MilestoneAction extends AbstractListEditAction {
     private static final long serialVersionUID = 1234533333L;
 
     private MilestoneWebDTO milestone;
     private List<MilestoneWebDTO> milestoneList;
 
     /**
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    protected void loadEditForm() throws Exception {
+    protected void loadEditForm() throws PAException {
         milestone = new MilestoneWebDTO();
     }
 
     /**
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    protected void loadListForm() throws Exception {
+    protected void loadListForm() throws PAException {
         List<StudyMilestoneDTO> smList = studyMilestoneSvc.getByStudyProtocol(spIi);
         milestoneList = new ArrayList<MilestoneWebDTO>();
         for (StudyMilestoneDTO sm : smList) {
@@ -129,10 +128,10 @@ public class MilestoneAction extends AbstractListEditAction {
 
     /**
      * @return action result
-     * @throws Exception exception
+     * @throws PAException exception
      */
     @Override
-    public String add() throws Exception {
+    public String add() throws PAException {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
         dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
