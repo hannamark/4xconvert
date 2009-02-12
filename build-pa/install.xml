@@ -421,7 +421,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     
     <!-- Temporary patch -->
     <target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
-        <jboss-stop-jboss jboss />
+        <jboss-stop-jboss/>
     </target>
     <!-- Version below should be used once bda macros have been fixed -->
     <!--target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
