@@ -20,7 +20,8 @@
         </div>
      </c:when>
      <c:otherwise>
-           <p style="margin:0; padding:0">Please log in to search, view and register clinical trial details. </p>
+           <p style="margin:0; padding:0">Please log in to search, view and register clinical trial details. 
+             If you do not have an account, you may <a title="To Create an Account" href="/registry/registerUser.action">create an account</a>. </p>
      </c:otherwise>
  </c:choose>
 <form action="j_security_check" method="post" id="loginForm">   
@@ -39,7 +40,7 @@
                 <label for="j_username">Email Address:</label>
                 </td>
 				<td class="value">
-					<input name="j_username" maxlength="100" size="15" type="text">
+					<input name="j_username" maxlength="100" size="25" type="text">
 				</td>
 			</tr>
 			<tr>
