@@ -166,7 +166,7 @@
 		document.getElementById('programcodenciselectedvalue').title = document.getElementById('programcodenciselectedvalue').value;
 	}
 	</script>
-	<s:set name="phaseCodeValuesNIH" value="@gov.nih.nci.pa.enums.ProgramCodesForNIH@getDisplayNames()" />
+	<s:set name="phaseCodeValuesNIH" value="@gov.nih.nci.pa.enums.NihInstituteCode@getDisplayNames()" />
 	<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 	<s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
 
