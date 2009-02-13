@@ -12,16 +12,12 @@
 		    <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
 		    <interceptor name="servletConfig" class="org.apache.struts2.interceptor.ServletConfigInterceptor"/>
 		    
-            <interceptor-stack name="basicStack">
+		    <interceptor-stack name="paDefaultInterceptor">
                 <interceptor-ref name="exception"/>
                 <interceptor-ref name="servletConfig"/>
                 <interceptor-ref name="prepare"/>
                 <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="conversionError"/>
-            </interceptor-stack>
-		    
-		    <interceptor-stack name="paDefaultInterceptor">
-                <interceptor-ref name="basicStack" />
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="nci-commonsParams"/>
                 <interceptor-ref name="parameterTrim">
