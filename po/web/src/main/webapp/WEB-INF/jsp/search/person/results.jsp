@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-
 <c:url value="/protected/ajax/search/person/results/search.action" var="sortUrl"/>
 <s:set name="ctepRoot" value="@gov.nih.nci.po.service.external.CtepOrganizationImporter@CTEP_ROOT"/>
 <ajax:displayTag id="personSearchResults" ajaxFlag="true" tableClass="data">
@@ -9,7 +8,7 @@
         <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
 
-        <display:column titleKey="person.id" property="id" sortable="true" sortProperty="PERSON_ID" />
+        <display:column titleKey="search.person.id" property="id" sortable="true" sortProperty="PERSON_ID"/>
         <display:column title="CTEP ID" sortable="false">
             <ul>
                 <c:forEach items="${row.identifiedPersons}" var="e">
