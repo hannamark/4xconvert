@@ -11,7 +11,6 @@
 </table>
 
 
-<%--<input type="button" value="Look Up" onclick="lookupCentralContact();"/>--%>
 <span class="formErrorMsg"> 
 <s:fielderror>
 <s:param>gtdDTO.centralContactName</s:param>

@@ -8,8 +8,8 @@
         <td scope="row" class="label"><s:label>Intervention Name:</s:label><span
             class="required">*</span></td>
         <td class="value" style="width: 250px">
-            <s:textfield disabled="true" name="interventionName" maxlength="160" size="160" 
-                    cssStyle="width:280px;float:left"/> 
+            <s:textfield readonly="true" name="interventionName" maxlength="160" size="160" 
+                    cssStyle="width:280px;float:left" cssClass="readonly"/> 
         </td>
         <td class="value">
             <s:if test="%{currentAction != 'edit'}">
@@ -30,7 +30,7 @@
     <tr>
         <td class="label"><s:label>Other Names:</s:label></td>
         <td class="value" colspan="2">
-            <s:textarea disabled="true" name="interventionOtherNames" rows="3" cssStyle="width:280px;float:left"/>
+            <s:textarea readonly="true" name="interventionOtherNames" rows="3" cssStyle="width:280px;float:left" cssClass="readonly"/>
         </td>
     </tr>
 </table>
