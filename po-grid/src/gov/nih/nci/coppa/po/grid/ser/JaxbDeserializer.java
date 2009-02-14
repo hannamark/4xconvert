@@ -2,7 +2,6 @@
 package gov.nih.nci.coppa.po.grid.ser;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import org.apache.axis.encoding.DeserializationContext;
@@ -46,6 +45,5 @@ public class JaxbDeserializer
         } catch (Exception e) {
             throw new SAXException(e);
         }
-
     }
 }

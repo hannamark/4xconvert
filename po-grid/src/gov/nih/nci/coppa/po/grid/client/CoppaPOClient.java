@@ -83,12 +83,12 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
                     CoppaPOClient client = new CoppaPOClient(args[1]);
                     // place client calls here if you want to use this main as a
                     // test....
-//                    echoOrg(client);
+                    echoOrg(client);
                     echoPerson(client);
-//                    getOrg(client);
-//                    getPerson(client);
+                    getOrg(client);
+                    getPerson(client);
                     
-//                    searchPersons(client);
+                    searchPersons(client);
 
                 } else {
                     usage();

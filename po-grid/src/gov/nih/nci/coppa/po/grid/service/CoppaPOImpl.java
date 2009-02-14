@@ -75,12 +75,12 @@ public class CoppaPOImpl extends CoppaPOImplBase {
 
   public gov.nih.nci.coppa.po.Person[] searchPersons(gov.nih.nci.coppa.po.Person person) throws RemoteException {
         try {
-            if (logger.isDebugEnabled()) {
-                StringWriter sw = new StringWriter();
-                Utils.serializeObject(person, new javax.xml.namespace.QName("http://gov.nih.nci.coppa.po", "Person"),
-                        sw);
-                logger.debug("Search person invoked with :" + sw);
-            }
+//            if (logger.isDebugEnabled()) {
+//                StringWriter sw = new StringWriter();
+//                Utils.serializeObject(person, new javax.xml.namespace.QName("http://gov.nih.nci.coppa.po", "Person"),
+//                        sw);
+//                logger.debug("Search person invoked with :" + sw);
+//            }
             PersonDTO person_iso = new PersonTransformer().transform(person);
             List<PersonDTO> results = personService.search(person_iso);
             if (results == null)
@@ -95,8 +95,11 @@ public class CoppaPOImpl extends CoppaPOImplBase {
             }
             return returnResults;
         } catch (Exception e) {
+            RemoteException re = new RemoteException();
+            re.initCause(e);
+            //e.printStackTrace();
             logger.error("Error in searching persons.", e);
-            throw new RemoteException(e.getMessage());
+            throw re;//new RemoteException(e.getMessage());
         }
     }
 

@@ -36,20 +36,13 @@ public class JaxbSerializer implements Serializer {
                           SerializationContext context)
             throws IOException {
         try {
-            AxisContentHandler hand = new AxisContentHandler(context);
             JAXBContext jaxbContext = JAXBContext.newInstance(value.getClass().getPackage().getName());
             Marshaller marshaller = jaxbContext.createMarshaller();
             
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            if (value.getClass().getAnnotation(XmlRootElement.class) == null) {
-                marshaller.marshal( new JAXBElement(name, value.getClass(), value ), hand);
-            } else {
-                marshaller.marshal(value, hand);
-            }
-
-//            
+//            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.marshal(value, new Filter(context));
             
-
         } catch (Exception e) {
             e.printStackTrace();
             throw new IOException(e.getMessage());
