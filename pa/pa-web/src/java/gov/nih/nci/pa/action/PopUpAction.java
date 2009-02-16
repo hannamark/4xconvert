@@ -282,7 +282,7 @@ public class PopUpAction extends ActionSupport {
             List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();
             personsList = PaRegistry.getPoOrganizationEntityService().search(criteria);
             for (OrganizationDTO dto : personsList) {
-                orgs.add(EnOnConverter.convertPoOrganizationDTO(personsList, countryList));
+                orgs.add(EnOnConverter.convertPoOrganizationDTO(dto, countryList));
             }
             return retvalue;
         } catch (Exception e) {
@@ -303,9 +303,9 @@ public class PopUpAction extends ActionSupport {
         PersonDTO p = new PersonDTO();       
         p.setName(EnPnConverter.convertToEnPn(firstName, null, lastName, null, null));
         try {
-            List<PersonDTO> orgsList = new ArrayList<PersonDTO>();
-            orgsList = PaRegistry.getPoPersonEntityService().search(p);
-            for (PersonDTO dto : orgsList) {
+            List<PersonDTO> persList = new ArrayList<PersonDTO>();
+            persList = PaRegistry.getPoPersonEntityService().search(p);
+            for (PersonDTO dto : persList) {
                 persons.add(EnPnConverter.convertToPaPersonDTO(dto));
             }
         } catch (PAException e) {

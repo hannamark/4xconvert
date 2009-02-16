@@ -76,7 +76,6 @@
 * 
 * 
 */
-
 package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.AddressPartType;
@@ -99,7 +98,6 @@ import java.util.List;
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class EnOnConverter {
-    
     /**
     *
     * @param value to be converted
@@ -151,35 +149,33 @@ public class EnOnConverter {
 
     /**
      * @return OrganizationWebDTO for display.
-     * @param poOrgDtos OrganizationDTO List
+     * @param poOrgDto OrganizationDTO
      * @param countryList CountryList
      * @throws PAException on error
      */
-    public static OrganizationWebDTO convertPoOrganizationDTO(List<OrganizationDTO> poOrgDtos, List countryList) 
-                                                                                              throws PAException {
+    public static OrganizationWebDTO convertPoOrganizationDTO(OrganizationDTO poOrgDto, List countryList)
+            throws PAException {
         OrganizationWebDTO displayElement = null;
-        for (int i = 0; i < poOrgDtos.size(); i++) {
-            displayElement = new OrganizationWebDTO();
-            displayElement.setId(poOrgDtos.get(i).getIdentifier().getExtension().toString());
-            displayElement.setName(poOrgDtos.get(i).getName().getPart().get(0).getValue());
-            //
-            int partSize = poOrgDtos.get(i).getPostalAddress().getPart().size();
-            AddressPartType type = null;
-            for (int k = 0; k < partSize; k++) {
-                type = poOrgDtos.get(i).getPostalAddress().getPart().get(k).getType();
-                if (type.name().equals("CNT")) {
-                    displayElement.setCountry(getCountryNameUsingCode(poOrgDtos.get(i).getPostalAddress().getPart()
-                            .get(k).getCode(), countryList));
-                }
-                if (type.name().equals("ZIP")) {
-                    displayElement.setZip(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
-                }
-                if (type.name().equals("CTY")) {
-                    displayElement.setCity(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
-                }
-                if (type.name().equals("STA")) {
-                    displayElement.setState(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
-                }
+        displayElement = new OrganizationWebDTO();
+        displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
+        displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
+        //
+        int partSize = poOrgDto.getPostalAddress().getPart().size();
+        AddressPartType type = null;
+        for (int k = 0; k < partSize; k++) {
+            type = poOrgDto.getPostalAddress().getPart().get(k).getType();
+            if (type.name().equals("CNT")) {
+                displayElement.setCountry(getCountryNameUsingCode(poOrgDto.getPostalAddress().getPart().get(k)
+                        .getCode(), countryList));
+            }
+            if (type.name().equals("ZIP")) {
+                displayElement.setZip(poOrgDto.getPostalAddress().getPart().get(k).getValue());
+            }
+            if (type.name().equals("CTY")) {
+                displayElement.setCity(poOrgDto.getPostalAddress().getPart().get(k).getValue());
+            }
+            if (type.name().equals("STA")) {
+                displayElement.setState(poOrgDto.getPostalAddress().getPart().get(k).getValue());
             }
         }
         return displayElement;
