@@ -140,6 +140,7 @@
                       <fileset dir="${basedir}/pa-web/src/webapp">                         
                           <include name="WEB-INF/jsp/*.jsp"/>
                           <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                      	  <include name="WEB-INF/decorators/*.jsp"/>                      	  
                       </fileset>
                   </copy>
               </sequential>

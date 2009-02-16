@@ -94,6 +94,12 @@ public class OrganizationWebDTO {
     private String recruitmentStatusDate;
     private String functionalRole;
     private String targetAccrualNumber;
+    //
+    private String city;
+    private String state;
+    private String country;
+    private String zip;
+        
     /**
      * @return the id
      */
@@ -177,5 +183,53 @@ public class OrganizationWebDTO {
      */
     public void setTargetAccrualNumber(String targetAccrualNumber) {
         this.targetAccrualNumber = targetAccrualNumber;
+    }
+    /**
+     * @return the city
+     */
+    public String getCity() {
+        return city;
+    }
+    /**
+     * @param city the city to set
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+    /**
+     * @return the state
+     */
+    public String getState() {
+        return state;
+    }
+    /**
+     * @param state the state to set
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
+    /**
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
+    /**
+     * @param country the country to set
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+    /**
+     * @return the zip
+     */
+    public String getZip() {
+        return zip;
+    }
+    /**
+     * @param zip the zip to set
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 }

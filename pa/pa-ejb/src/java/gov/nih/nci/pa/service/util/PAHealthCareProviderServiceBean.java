@@ -83,7 +83,7 @@ import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.dto.PAHealthCareProviderDTO;
-import gov.nih.nci.pa.iso.dto.PersonWebDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -230,7 +230,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
      * @return List of personWebDTO
      * @throws PAException on error
      */
-    public List<PersonWebDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException {
+    public List<PaPersonDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException {
         LOG.debug("Entering  getPersonsByStudyParticpationId");
         Session session = null;
         try {
@@ -251,16 +251,16 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
         }
     }
 
-    private List<PersonWebDTO> createPersonWebDTO(List<Object> queryList) {
-        List<PersonWebDTO> retList = new ArrayList();
-        PersonWebDTO personWebDTO;
+    private List<PaPersonDTO> createPersonWebDTO(List<Object> queryList) {
+        List<PaPersonDTO> retList = new ArrayList();
+        PaPersonDTO personWebDTO;
         Object[] searchResult = null;
         for (int i = 0; i < queryList.size(); i++) {
             searchResult = (Object[]) queryList.get(i);
             if (searchResult == null) {
                 break;
             }
-            personWebDTO = new PersonWebDTO();
+            personWebDTO = new PaPersonDTO();
             personWebDTO.setFirstName(((Person) searchResult[THREE]).getFirstName());
             personWebDTO.setLastName(((Person) searchResult[THREE]).getLastName());
             personWebDTO.setMiddleName(((Person) searchResult[THREE]).getMiddleName());
@@ -282,12 +282,12 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
      * @return PersonWebDTO
      * @throws PAException on error
      */
-    public PersonWebDTO getIdentifierBySPCId(Long id) throws PAException {
+    public PaPersonDTO getIdentifierBySPCId(Long id) throws PAException {
         LOG.debug("Entering  getIdentifierBySPCId");
         Session session = null;
         //HealthCareProvider
         ClinicalResearchStaff careProvider = null;
-        PersonWebDTO personWebDTO = new PersonWebDTO();
+        PaPersonDTO personWebDTO = new PaPersonDTO();
         try {
             session = HibernateUtil.getCurrentSession();           
             List<Object> queryList = new ArrayList<Object>();

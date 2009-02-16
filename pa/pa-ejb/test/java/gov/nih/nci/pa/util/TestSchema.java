@@ -301,13 +301,13 @@ public class TestSchema {
                     statement.close();
                 } catch (HibernateException e) {
                     connection.rollback();
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 } catch (SQLException e) {
                     connection.rollback();
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
             } finally {
                 session.close();
             }

@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.pa.dto.PersonDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -102,7 +102,7 @@ public interface PAPersonServiceRemote  {
      * @return list PersonDTO   
      * @throws PAException on error 
      */
-   List<PersonDTO> getAllPrincipalInvestigators() throws PAException;
+   List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException;
     
 
 

@@ -81,7 +81,7 @@ package gov.nih.nci.pa.service.util;
 
 
 import gov.nih.nci.pa.dto.PAHealthCareProviderDTO;
-import gov.nih.nci.pa.iso.dto.PersonWebDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -124,7 +124,7 @@ public interface PAHealthCareProviderRemote {
      * @return List of personWebDTO
      * @throws PAException on error
      */
-    List<PersonWebDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException;
+    List<PaPersonDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException;
     
     /**
      * 
@@ -140,6 +140,6 @@ public interface PAHealthCareProviderRemote {
      * @return PersonWebDTO
      * @throws PAException on error
      */
-    PersonWebDTO getIdentifierBySPCId(Long id) throws PAException; 
+    PaPersonDTO getIdentifierBySPCId(Long id) throws PAException; 
     
 }

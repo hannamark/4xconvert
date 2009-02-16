@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.dto.PersonDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -115,7 +115,7 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
      * @throws PAException on error 
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PersonDTO> getAllPrincipalInvestigators() throws PAException {
+    public List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException {
        LOG.info("Entering getAllPrincipalInvestigators");
        List<Person> persons = generateDistinctPersonResults();
        LOG.info("Leaving getAllPrincipalInvestigators");
@@ -162,13 +162,13 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
         return sortedPersons;
     }
     
-    private List<PersonDTO> createPersonDTO(List<Person> persons) {
+    private List<PaPersonDTO> createPersonDTO(List<Person> persons) {
         LOG.debug("Entereing persons");
         
-        List<PersonDTO> personDTOs = new ArrayList<PersonDTO>();
-        PersonDTO personDTO = null;
+        List<PaPersonDTO> personDTOs = new ArrayList<PaPersonDTO>();
+        PaPersonDTO personDTO = null;
         for (int i = 0; i < persons.size(); i++) {
-            personDTO = new PersonDTO();
+            personDTO = new PaPersonDTO();
             personDTO.setId(((Person) persons.get(i)).getId());
             personDTO.setFirstName(((Person) persons.get(i)).getFirstName());
             personDTO.setLastName(((Person) persons.get(i)).getLastName());
