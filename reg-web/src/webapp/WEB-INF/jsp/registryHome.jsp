@@ -31,8 +31,6 @@
 
                     <!--ADD CONTENT HERE-->
 
-                    <h1>Welcome to NCI&#39;s Clinical Trials Reporting Program</h1>
-
                     <p class="intro">
                         This Portal enables you to  register a trial with NCI&#39;s Clinical Trials Reporting Program. You can
                     </p>
