@@ -82,11 +82,17 @@ LEGEND
 #logo
 { padding:5px 0 0 8px; float:left; width:442px; }
 #userarea
-{ background:url("../images/bg_user.jpg") no-repeat left 0; height:30px; width:27.5em; margin-top:14px; padding:8px 0 0 12px; float:right; color:#bfd5d5; font-size:92%; font-weight:bold; }
+{ background:url("../images/bg_user.jpg") no-repeat left 0; height:30px; width:35em; margin-top:14px; margin-left:15px; padding:8px 0 0 12px; float:right; color:#bfd5d5; font-size:11px; font-weight:bold; }
 #userarea A
 { text-decoration:underline; color:#fff; font-weight:normal; padding:0 3px }
+#userarea A.btn_login
+{ background:url("../images/bg_btn_login_logout.gif") no-repeat; padding:3px 12px; font-weight:bold; color:#475b82; text-decoration:none }
+#userarea A.btn_logout
+{ background:url("../images/bg_btn_login_logout.gif") no-repeat; padding:3px 7px; font-weight:bold; color:#475b82; text-decoration:none }
+#userarea A.btn_createacct
+{ background:url("../images/bg_btn_createacct.gif") no-repeat; padding:3px 12px; font-weight:bold; color:#475b82; text-decoration:none }
 #main
-{ float:left; width:100%; height:1%; min-width:770px; max-width:1200px;  }
+{ float:left; width:100%; height:1%; min-width:770px; max-width:1400px;  }
 #leftnav
 { float:left; width:190px; margin:0 0 10px -100%; font-size:92%;  }
 #contentwrapper
@@ -95,6 +101,14 @@ LEGEND
 { margin-left:190px; margin-right:10px; padding:0; min-height:200px; height:1%; border:1px solid #cacaca; border-top:0; }
 #contenthome
 { margin-left:190px; min-height:330px; border-left:1px solid #fff; border-top:0; padding:0; padding-bottom:40px  }
+
+
+/* Help Area */
+
+A.helpbutton
+{ float:right; display:block; cursor:pointer; width:10em; background:url("../images/ico_help.gif") no-repeat 0 2px; margin-top:.4em; line-height:1.5em; height:1.5em; font-weight:bold; padding-left:17px; font-size:120%; color:#fff !important; }
+A.helpbutton:hover
+{ color:#fff }
 
 
 /* Navigation */
@@ -218,20 +232,21 @@ LEGEND
 .info
 { font-style:italic; color:#808080 }
 
+
 /* Homepage Content */
 
 .homepage
 { padding-bottom:40px; }
 .homebanner
-{ margin:0; width:599px; border-bottom:1px solid #cacaca;  }
-.homepage H1
-{ font-size:120%; background:#b3b9c6; font-weight:bold; padding:3px 12px; color:#5c5c5c; border-top:0; border-bottom:2px solid #dcdcdc}
+{ margin:0; width:600px; border-bottom:1px solid #cacaca;  }
+.homepage H2
+{ font-size:110% !important; background:#b3b9c6; font-weight:bold; padding:6px 12px; color:#5c5c5c; border-top:0; border-bottom:2px solid #dcdcdc}
 .homepage A
 { color:#386ebf; text-decoration:underline }
 .homepage A:hover
 { color:#1c4685; text-decoration:underline }
 .homepage P.intro
-{ margin:12px 12px 0 12px; padding-bottom:0 }
+{ margin:12px; padding-bottom:5px }
 .homepage UL
 { margin:12px 12px 0 10px }
 
@@ -274,41 +289,11 @@ LEGEND
 
 /* Filters */
 
-.filter_checkbox
-{ font-size:92%; width:15em; float:left; margin-left:17em; margin-top:-2.0em; }
-.filter_checkbox LABEL
-{ color:#fff; float:left; margin:-19px 0 0 20px; cursor:pointer; }
-.filter_checkbox LABEL:hover
-{ text-decoration:underline }
-.filter_wrapper
-{ background:#d9e3ec; }
-.filter
-{ width:99%; margin:auto; }
-.filterrow
-{ padding:5px; float:left; width:30%; }
-.filter LABEL
-{ display:block; }
-.filterbtn
-{ margin:auto; width:7em; display:block }
+
 #filters
 { padding:5px 15px 0 15px }
 
 
-
-/* Help Area */
-
-.helpbutton
-{ float:right; display:block; cursor:pointer; width:10em; background:url("../images/ico_help.gif") no-repeat 0 1px; margin-top:.8em; line-height:1.5em; height:1.5em; font-weight:bold; padding-left:17px; font-size:92%; color:#fff; text-decoration:underline }
-.helpbutton:hover
-{ text-decoration:none; color:#f7f9ea }
-.help
-{ background:#e6e6e2; }
-#helpwrapperouter
-{ padding:15px; border-bottom:1px solid #cacaca }
-#helpwrapper
-{ background:#fff3ad; border:1px solid #d89723; padding:15px; }
-.hidehelp
-{ cursor:pointer; display:block; width:5em; font-size:92%; background:url("../images/ico_hidehelp.gif") no-repeat 0 14px; color:#333; padding-top:15px; padding-left:20px; line-height:1.5em; height:1.5em; text-decoration:underline }
 
 
 /* Login/Account Pages */
