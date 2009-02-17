@@ -8,6 +8,9 @@
     <title><fmt:message key="search.trial.page.title"/></title>   
     <s:head/>
 </head>
+<style type="text/css">
+   BODY { width:1221px }
+</style>
 <SCRIPT LANGUAGE="JavaScript">
 
 function resetValues(){
@@ -39,7 +42,9 @@ function handleMyAction(){
 <!-- main content begins-->
     <h1><fmt:message key="search.trial.page.header"/></h1>
     <c:set var="topic" scope="request" value="search_trials"/>
-    <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
+    <c:if test="${records != null}">    
+        <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
+    </c:if>
     <div class="box" id="filters">
     <s:form>
     <input type="hidden" name="criteria.myTrialsOnly" id="myTrialsOnly" value="false"/>
