@@ -1,5 +1,5 @@
 function toggledisplay (it, box) {
-  var vis = (box.checked) ? "block" : "none";
+  var vis = (box.checked) ? "none" : "block";
   document.getElementById(it).style.display = vis;
 }
 function toggledisplay2 (it) {
