@@ -102,7 +102,7 @@ import org.apache.struts2.ServletActionContext;
 */
 public final class TrialInterventionsAction extends AbstractListEditAction {
     private static final long serialVersionUID = 1876567890L;
-    private static final String LEAD_TEXT = "Yes";
+    static final String LEAD_TEXT = "Yes";
 
     private List<InterventionWebDTO> interventionsList;
     private String interventionIdentifier;
@@ -161,12 +161,12 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @throws PAException on error.
      */
     public String display() throws PAException {
-        interventionIdentifier = ServletActionContext.getRequest().getParameter("interventionId");
-        if (PAUtil.isNotEmpty(interventionIdentifier)) {
+        setInterventionIdentifier(ServletActionContext.getRequest().getParameter("interventionId"));
+        if (PAUtil.isNotEmpty(getInterventionIdentifier())) {
             InterventionDTO iDto = interventionSvc.get(IiConverter.convertToIi(interventionIdentifier));
-            interventionName = StConverter.convertToString(iDto.getName());
-            interventionDescription = StConverter.convertToString(iDto.getDescriptionText());
-            interventionOtherNames = otherNamesCSV(iDto.getIdentifier());
+            setInterventionName(StConverter.convertToString(iDto.getName()));
+            setInterventionDescription(StConverter.convertToString(iDto.getDescriptionText()));
+            setInterventionOtherNames(otherNamesCSV(iDto.getIdentifier()));
         }
         return AR_EDIT;
     }
@@ -175,7 +175,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @throws PAException exception
      */
     protected void loadListForm() throws PAException {
-        interventionsList = new ArrayList<InterventionWebDTO>();
+        setInterventionsList(new ArrayList<InterventionWebDTO>());
         List<PlannedActivityDTO> paList = plannedActivitySvc.getByStudyProtocol(spIi);
         for (PlannedActivityDTO pa : paList) {
             if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
@@ -192,12 +192,12 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         if (PAUtil.isNotEmpty(selectedRowIdentifier)) {
             PlannedActivityDTO paDto = plannedActivitySvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
             InterventionWebDTO i = generateWebDto(paDto);
-            interventionIdentifier = i.getIdentifier();
-            interventionLeadIndicator = LEAD_TEXT.equals(i.getLeadIndicator());
-            interventionType = i.getType();
-            interventionName = i.getName();
-            interventionDescription = i.getDescription();
-            interventionOtherNames = i.getOtherNames();
+            setInterventionIdentifier(i.getIdentifier());
+            setInterventionLeadIndicator(LEAD_TEXT.equals(i.getLeadIndicator()));
+            setInterventionType(i.getType());
+            setInterventionName(i.getName());
+            setInterventionDescription(i.getDescription());
+            setInterventionOtherNames(i.getOtherNames());
         }
     }
     
@@ -304,10 +304,10 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         paDto.setIdentifier(null);
         paDto.setStudyProtocolIdentifier(spIi);
         paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
-        paDto.setInterventionIdentifier(IiConverter.convertToIi(interventionIdentifier));
-        paDto.setTextDescription(StConverter.convertToSt(interventionDescription));
-        paDto.setSubcategoryCode(CdConverter.convertStringToCd(interventionType));
-        paDto.setLeadProductIndicator(BlConverter.convertToBl(interventionLeadIndicator));
+        paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
+        paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
+        paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
+        paDto.setLeadProductIndicator(BlConverter.convertToBl(getInterventionLeadIndicator()));
         return paDto;
     }
 

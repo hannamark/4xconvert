@@ -86,7 +86,6 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.OrganizationWebDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.service.MockCorrelationUtils;
@@ -105,8 +104,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
     private static ParticipatingOrganizationsAction act;
-    private static OrganizationCorrelationServiceRemote ocs;
-    
+
     @Before
     public void prepare() throws Exception {
         act = new ParticipatingOrganizationsAction();

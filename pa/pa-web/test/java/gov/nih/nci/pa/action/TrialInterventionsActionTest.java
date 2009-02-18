@@ -76,129 +76,132 @@
 * 
 * 
 */
-package gov.nih.nci.service;
+package gov.nih.nci.pa.action;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.PAException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.service.MockInterventionService;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author hreinhart
  *
  */
-public class MockStudyParticipationService implements gov.nih.nci.pa.service.StudyParticipationServiceRemote {
-
-    static List<StudyParticipation> list;
-    static StudyParticipationConverter converter = new StudyParticipationConverter();
-    private static Long seq = 1L;
+public class TrialInterventionsActionTest extends AbstractPaActionTest {
+    private static TrialInterventionsAction act;
     
-    static {
-        list = new ArrayList<StudyParticipation>();
-        StudyParticipation sp = new StudyParticipation();
-        sp.setId(seq++);
-        sp.setStudyProtocol(MockStudyProtocolService.list.get(0));
-        sp.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
-        sp.setLocalStudyProtocolIdentifier("LSPID 001");
+    @Before
+    public void prepare() throws Exception {
+        act = new TrialInterventionsAction();
+        act.prepare();
     }
 
-    /**
-     * @param studyProtocolIi
-     * @param spDTOList
-     * @return
-     * @throws PAException
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi,
-            List<StudyParticipationDTO> spDTOList) throws PAException {
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : list) {
-            if (sp.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolIi))) {
-                for (StudyParticipationDTO criteria : spDTOList) {
-                    if (criteria.getFunctionalCode().getCode().equals(sp.getFunctionalCode().getCode())) {
-                        resultList.add(converter.convertFromDomainToDto(sp));
-                        break;
-                    }
-                }
-            }
+    @Test
+    public void listTest() throws Exception {
+        // select from menu
+        assertEquals(AbstractListEditAction.AR_LIST, act.execute());
+    }
+    
+    @Test
+    public void updateTest() throws Exception {
+        // select from menu
+        String ar = act.execute();
+        assertEquals(AbstractListEditAction.AR_LIST, ar);
+        assertFalse(act.getInterventionsList().isEmpty());
+
+        // click edit
+        act.setSelectedRowIdentifier(act.getInterventionsList().get(0).getPlannedActivityIdentifier());
+        assertEquals(AbstractListEditAction.AR_EDIT, act.edit());
+        assertEquals("edit", act.getCurrentAction());
+
+        String frmDesc = act.getInterventionDescription();
+        Boolean frmLead = act.getInterventionLeadIndicator();
+        String newDesc = "New Description";
+        assertFalse(newDesc.equals(frmDesc));
+        Boolean newLead = !frmLead;
+
+        // handle service exception during update
+        act.setSelectedRowIdentifier(null);
+        assertEquals(AbstractListEditAction.AR_EDIT, act.update());
+        assertTrue(act.hasErrors());
+        act.clearErrorsAndMessages();
+
+        // enter a description and change lead indicator
+        act.setSelectedRowIdentifier(act.getInterventionsList().get(0).getPlannedActivityIdentifier());
+        act.setInterventionDescription(newDesc);
+        act.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
+        act.setInterventionLeadIndicator(newLead);
+        assertEquals(AbstractListEditAction.AR_LIST, act.update());
+        assertEquals(newDesc, act.getInterventionsList().get(0).getDescription());
+        if (newLead) {
+            assertTrue(TrialInterventionsAction.LEAD_TEXT.equals(act.getInterventionsList().get(0).getLeadIndicator()));
+        } else {
+            assertNull(act.getInterventionsList().get(0).getLeadIndicator());
         }
-        return resultList;
+        assertFalse(act.hasErrors());
+        String message = (String)ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE);
+        assertEquals(Constants.UPDATE_MESSAGE, message);
     }
 
-    /**
-     * @param studyProtocolIi
-     * @param spDTO
-     * @return
-     * @throws PAException
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi,
-            StudyParticipationDTO spDTO) throws PAException {
-        List<StudyParticipationDTO> criteria = new ArrayList<StudyParticipationDTO>();
-        criteria.add(spDTO);
-        return getByStudyProtocol(studyProtocolIi, criteria);
-    }
+    @Test
+    public void deleteTest() throws Exception {
+        // select from menu
+        String ar = act.execute();
+        assertEquals(AbstractListEditAction.AR_LIST, ar);
+        assertFalse(act.getInterventionsList().isEmpty());
+        int initialSize = act.getInterventionsList().size();
+        
+        // handle service exception during delete
+        act.setSelectedRowIdentifier(null);
+        assertEquals(AbstractListEditAction.AR_LIST, act.delete());
+        assertTrue(act.hasErrors());
+        assertEquals(initialSize, act.getInterventionsList().size());
+        act.clearErrorsAndMessages();
 
-    /**
-     * @param ii
-     * @return
-     * @throws PAException
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii ii)
-            throws PAException {        
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : list) {
-            if (sp.getId() == IiConverter.convertToLong(ii)) {
-                resultList.add(converter.convertFromDomainToDto(sp));
-            }
-        }
-        return resultList;
-    }
-
-    /**
-     * @param dto
-     * @return
-     * @throws PAException
-     */
-    public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
-        StudyParticipation bo = converter.convertFromDtoToDomain(dto);
-        bo.setId(seq++);
-        list.add(bo);
-        return converter.convertFromDomainToDto(bo);
-    }
-
-    /**
-     * @param ii
-     * @throws PAException
-     */
-    public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
+        // delete intervention
+        act.setSelectedRowIdentifier(act.getInterventionsList().get(0).getPlannedActivityIdentifier());
+        assertEquals(AbstractListEditAction.AR_LIST, act.delete());
+        assertFalse(act.hasErrors());
+        String message = (String)ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE);
+        assertEquals(Constants.DELETE_MESSAGE, message);
+        assertEquals(initialSize - 1, act.getInterventionsList().size());
         
     }
 
-    /**
-     * @param ii
-     * @return
-     * @throws PAException
-     */
-    public StudyParticipationDTO get(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    @Test
+    public void addTest() throws Exception {
+        // select from menu
+        String ar = act.execute();
+        assertEquals(AbstractListEditAction.AR_LIST, ar);
+        int initialCount = act.getInterventionsList().size();
 
-    /**
-     * @param dto
-     * @return
-     * @throws PAException
-     */
-    public StudyParticipationDTO update(StudyParticipationDTO dto)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        // click add
+        assertEquals(AbstractListEditAction.AR_EDIT, act.create());
+        assertEquals("create", act.getCurrentAction());
 
+        // save w/o entering data
+        assertEquals(AbstractListEditAction.AR_EDIT, act.add());
+        assertTrue(act.hasErrors());
+        act.clearErrorsAndMessages();
+        
+        // select an intervention
+        assertEquals(AbstractListEditAction.AR_EDIT, act.display());
+        act.setInterventionIdentifier(MockInterventionService.list.get(0).getId().toString());
+
+        // enter data and save
+        act.setInterventionDescription("desc");
+        act.setInterventionType(ActivitySubcategoryCode.COSMETIC.getCode());
+        assertEquals(AbstractListEditAction.AR_LIST, act.add());
+        assertEquals(initialCount + 1, act.getInterventionsList().size());
+        assertFalse(act.hasErrors());
+        String message = (String)ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE);
+        assertEquals(Constants.CREATE_MESSAGE, message);
+    }
 }

@@ -79,12 +79,18 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,54 +99,46 @@ import java.util.List;
  * @author hreinhart
  *
  */
-public class MockStudyParticipationService implements gov.nih.nci.pa.service.StudyParticipationServiceRemote {
+public class MockPlannedActivityService implements PlannedActivityServiceRemote {
 
-    static List<StudyParticipation> list;
-    static StudyParticipationConverter converter = new StudyParticipationConverter();
+    public static List<PlannedActivity> list;
+    static PlannedActivityConverter converter = new PlannedActivityConverter();
     private static Long seq = 1L;
     
     static {
-        list = new ArrayList<StudyParticipation>();
-        StudyParticipation sp = new StudyParticipation();
-        sp.setId(seq++);
-        sp.setStudyProtocol(MockStudyProtocolService.list.get(0));
-        sp.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
-        sp.setLocalStudyProtocolIdentifier("LSPID 001");
+        list = new ArrayList<PlannedActivity>();
+        PlannedActivity pa = new PlannedActivity();
+        pa.setId(seq++);
+        pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
+        pa.setIntervention(MockInterventionService.list.get(0));
+        pa.setLeadProductIndicator(true);
+        pa.setStudyProtocol(MockStudyProtocolService.list.get(0));
+        list.add(pa);
+        pa = new PlannedActivity();
+        pa.setId(seq++);
+        pa.setCategoryCode(ActivityCategoryCode.ELIGIBILITY_CRITERION);
+        pa.setStudyProtocol(MockStudyProtocolService.list.get(0));
+        list.add(pa);
     }
 
     /**
-     * @param studyProtocolIi
-     * @param spDTOList
+     * @param dto
      * @return
      * @throws PAException
      */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi,
-            List<StudyParticipationDTO> spDTOList) throws PAException {
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : list) {
-            if (sp.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolIi))) {
-                for (StudyParticipationDTO criteria : spDTOList) {
-                    if (criteria.getFunctionalCode().getCode().equals(sp.getFunctionalCode().getCode())) {
-                        resultList.add(converter.convertFromDomainToDto(sp));
-                        break;
-                    }
-                }
-            }
-        }
-        return resultList;
+    public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(
+            PlannedEligibilityCriterionDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
-     * @param studyProtocolIi
-     * @param spDTO
-     * @return
+     * @param ii
      * @throws PAException
      */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi,
-            StudyParticipationDTO spDTO) throws PAException {
-        List<StudyParticipationDTO> criteria = new ArrayList<StudyParticipationDTO>();
-        criteria.add(spDTO);
-        return getByStudyProtocol(studyProtocolIi, criteria);
+    public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+
     }
 
     /**
@@ -148,12 +146,54 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
      * @return
      * @throws PAException
      */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii ii)
-            throws PAException {        
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : list) {
-            if (sp.getId() == IiConverter.convertToLong(ii)) {
-                resultList.add(converter.convertFromDomainToDto(sp));
+    public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @param ii
+     * @return
+     * @throws PAException
+     */
+    public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @param ii
+     * @return
+     * @throws PAException
+     */
+    public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(
+            Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @param dto
+     * @return
+     * @throws PAException
+     */
+    public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(
+            PlannedEligibilityCriterionDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @param ii
+     * @return
+     * @throws PAException
+     */
+    public List<PlannedActivityDTO> getByStudyProtocol(Ii ii) throws PAException {
+        List<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
+        for (PlannedActivity item : list) {
+            if (item.getStudyProtocol().getId().equals(IiConverter.convertToLong(ii))) {
+                resultList.add(converter.convertFromDomainToDto(item));
             }
         }
         return resultList;
@@ -164,8 +204,12 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
      * @return
      * @throws PAException
      */
-    public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
-        StudyParticipation bo = converter.convertFromDtoToDomain(dto);
+    public PlannedActivityDTO create(PlannedActivityDTO dto) throws PAException {
+        PlannedActivity bo = converter.convertFromDtoToDomain(dto);
+        if (bo.getCategoryCode().getCode().equals(ActivityCategoryCode.INTERVENTION.getCode())
+                && bo.getIntervention() == null) {
+            throw new PAException("Intervention type planned activities should have an associate intervention.");
+        }
         bo.setId(seq++);
         list.add(bo);
         return converter.convertFromDomainToDto(bo);
@@ -176,8 +220,13 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
      * @throws PAException
      */
     public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        
+        for (PlannedActivity item : list) {
+            if (item.getId().equals(IiConverter.convertToLong(ii))) {
+                list.remove(item);
+                return;
+            }
+        }
+        throw new PAException("Planned activity not found in mock service for id = " + IiConverter.convertToString(ii));
     }
 
     /**
@@ -185,20 +234,30 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
      * @return
      * @throws PAException
      */
-    public StudyParticipationDTO get(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public PlannedActivityDTO get(Ii ii) throws PAException {
+        for (PlannedActivity item : list) {
+            if (item.getId().equals(IiConverter.convertToLong(ii))) {
+                return converter.convertFromDomainToDto(item);
+            }
+        }
+        throw new PAException("Planned activity not found in mock service for id = " + IiConverter.convertToString(ii));
+     }
 
     /**
      * @param dto
      * @return
      * @throws PAException
      */
-    public StudyParticipationDTO update(StudyParticipationDTO dto)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+    public PlannedActivityDTO update(PlannedActivityDTO dto) throws PAException {
+        for (PlannedActivity item : list) {
+            if (item.getId().equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+                item.setLeadProductIndicator(BlConverter.covertToBoolean(dto.getLeadProductIndicator()));
+                item.setSubcategoryCode(ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
+                item.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
+                return converter.convertFromDomainToDto(item);
+            }
+        }
+        throw new PAException("Planned activity not found in mock service for id = " + IiConverter.convertToString(dto.getIdentifier()));
     }
 
 }

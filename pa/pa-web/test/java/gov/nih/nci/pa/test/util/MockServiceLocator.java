@@ -115,6 +115,9 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.service.MockInterventionAlternateNameService;
+import gov.nih.nci.service.MockInterventionService;
+import gov.nih.nci.service.MockPlannedActivityService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyParticipationService;
 import gov.nih.nci.service.MockStudyProtocolService;
@@ -138,6 +141,9 @@ public class MockServiceLocator implements ServiceLocator {
     private final StudyOverallStatusServiceRemote studyOverallStatusService = new MockStudyOverallStatusService();
     private final StudyParticipationServiceRemote studyParticipationService = new MockStudyParticipationService();
     private final StudySiteAccrualStatusServiceRemote studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
+    private final InterventionServiceRemote interventionService = new MockInterventionService();
+    private final InterventionAlternateNameServiceRemote interventionAlternateNameService = new MockInterventionAlternateNameService();
+    private final PlannedActivityServiceRemote plannedActivityService = new MockPlannedActivityService();
     
     /**
      * @return mock service
@@ -165,6 +171,27 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
         return studySiteAccrualStatusService;
+    }
+
+    /**
+     * @return InterventionServiceRemote
+     */
+    public InterventionServiceRemote getInterventionService() {
+        return interventionService;
+    }
+
+    /**
+     * @return PlannedActivityServiceRemote
+     */
+    public PlannedActivityServiceRemote getPlannedActivityService() {
+        return plannedActivityService;
+    }
+
+    /**
+     * @return InterventionAlternateNameServiceRemote
+     */
+    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+        return interventionAlternateNameService;
     }
 
     /**
@@ -283,30 +310,6 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getPAResearchOrganizationService()
      */
     public PAResearchOrganizationServiceRemote getPAResearchOrganizationService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getInterventionAlternateNameService()
-     */
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getInterventionService()
-     */
-    public InterventionServiceRemote getInterventionService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getPlannedActivityService()
-     */
-    public PlannedActivityServiceRemote getPlannedActivityService() {
         // TODO Auto-generated method stub
         return null;
     }

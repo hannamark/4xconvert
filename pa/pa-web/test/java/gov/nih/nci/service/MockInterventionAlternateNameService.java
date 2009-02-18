@@ -79,11 +79,11 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.domain.InterventionAlternateName;
+import gov.nih.nci.pa.iso.convert.InterventionAlternateNameConverter;
+import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
@@ -93,99 +93,52 @@ import java.util.List;
  * @author hreinhart
  *
  */
-public class MockStudyParticipationService implements gov.nih.nci.pa.service.StudyParticipationServiceRemote {
-
-    static List<StudyParticipation> list;
-    static StudyParticipationConverter converter = new StudyParticipationConverter();
+public class MockInterventionAlternateNameService implements
+        InterventionAlternateNameServiceRemote {
+    
+    public static List<InterventionAlternateName> list;
+    static InterventionAlternateNameConverter converter = new InterventionAlternateNameConverter();
     private static Long seq = 1L;
     
     static {
-        list = new ArrayList<StudyParticipation>();
-        StudyParticipation sp = new StudyParticipation();
-        sp.setId(seq++);
-        sp.setStudyProtocol(MockStudyProtocolService.list.get(0));
-        sp.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
-        sp.setLocalStudyProtocolIdentifier("LSPID 001");
-    }
-
-    /**
-     * @param studyProtocolIi
-     * @param spDTOList
-     * @return
-     * @throws PAException
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi,
-            List<StudyParticipationDTO> spDTOList) throws PAException {
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : list) {
-            if (sp.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolIi))) {
-                for (StudyParticipationDTO criteria : spDTOList) {
-                    if (criteria.getFunctionalCode().getCode().equals(sp.getFunctionalCode().getCode())) {
-                        resultList.add(converter.convertFromDomainToDto(sp));
-                        break;
-                    }
-                }
-            }
-        }
-        return resultList;
-    }
-
-    /**
-     * @param studyProtocolIi
-     * @param spDTO
-     * @return
-     * @throws PAException
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi,
-            StudyParticipationDTO spDTO) throws PAException {
-        List<StudyParticipationDTO> criteria = new ArrayList<StudyParticipationDTO>();
-        criteria.add(spDTO);
-        return getByStudyProtocol(studyProtocolIi, criteria);
-    }
-
-    /**
-     * @param ii
-     * @return
-     * @throws PAException
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii ii)
-            throws PAException {        
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : list) {
-            if (sp.getId() == IiConverter.convertToLong(ii)) {
-                resultList.add(converter.convertFromDomainToDto(sp));
-            }
-        }
-        return resultList;
-    }
-
-    /**
-     * @param dto
-     * @return
-     * @throws PAException
-     */
-    public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
-        StudyParticipation bo = converter.convertFromDtoToDomain(dto);
-        bo.setId(seq++);
-        list.add(bo);
-        return converter.convertFromDomainToDto(bo);
-    }
-
-    /**
-     * @param ii
-     * @throws PAException
-     */
-    public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
+        list = new ArrayList<InterventionAlternateName>();
+        InterventionAlternateName ian = new InterventionAlternateName();
+        ian.setId(seq++);
+        ian.setIntervention(MockInterventionService.list.get(0));
+        ian.setName("altername 1");
+        list.add(ian);
         
+        ian = new InterventionAlternateName();
+        ian.setId(seq++);
+        ian.setIntervention(MockInterventionService.list.get(0));
+        ian.setName("altername 2");
+        list.add(ian);
     }
 
+
     /**
-     * @param ii
+     * @param interventionIi
      * @return
      * @throws PAException
      */
-    public StudyParticipationDTO get(Ii ii) throws PAException {
+    public List<InterventionAlternateNameDTO> getByIntervention(
+            Ii interventionIi) throws PAException {
+        List<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
+        for (InterventionAlternateName item : list) {
+            if (item.getIntervention().getId().equals(IiConverter.convertToLong(interventionIi))) {
+                resultList.add(converter.convertFromDomainToDto(item));
+            }
+        }
+        return resultList;
+     }
+
+    /**
+     * @param interventionsIi
+     * @return
+     * @throws PAException
+     */
+    public List<InterventionAlternateNameDTO> getByIntervention(
+            Ii[] interventionsIi) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -195,7 +148,36 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
      * @return
      * @throws PAException
      */
-    public StudyParticipationDTO update(StudyParticipationDTO dto)
+    public InterventionAlternateNameDTO create(InterventionAlternateNameDTO dto)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @param ii
+     * @throws PAException
+     */
+    public void delete(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @param ii
+     * @return
+     * @throws PAException
+     */
+    public InterventionAlternateNameDTO get(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @param dto
+     * @return
+     * @throws PAException
+     */
+    public InterventionAlternateNameDTO update(InterventionAlternateNameDTO dto)
             throws PAException {
         // TODO Auto-generated method stub
         return null;
