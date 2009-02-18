@@ -10,6 +10,9 @@
     <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
     <decorator:head/>
 </head>
+<style type="text/css">
+   BODY { width:1221px }
+</style>
 <body> 
 <div id="wrapper">
     	<jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
