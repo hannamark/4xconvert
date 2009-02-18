@@ -15,9 +15,6 @@
 	}
 	</SCRIPT>
 </head>
-<style type="text/css">
-   BODY { width:1221px }
-</style>
 
 <body onload="setFocusToFirstControl();">
 <div id="contentwide"> 

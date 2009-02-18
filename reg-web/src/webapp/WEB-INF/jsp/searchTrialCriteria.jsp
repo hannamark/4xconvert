@@ -8,9 +8,6 @@
     <title><fmt:message key="search.trial.page.title"/></title>   
     <s:head/>
 </head>
-<style type="text/css">
-   BODY { width:1221px }
-</style>
 <SCRIPT LANGUAGE="JavaScript">
 
 function resetValues(){
