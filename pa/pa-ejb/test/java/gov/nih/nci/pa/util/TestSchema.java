@@ -118,6 +118,7 @@ import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyMilestoneTest;
+import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
@@ -127,7 +128,6 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
-import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -137,7 +137,9 @@ import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
+import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -146,9 +148,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.UnitsCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -224,6 +224,7 @@ public class TestSchema {
             addAnnotatedClass(DiseaseParent.class).
             addAnnotatedClass(StudyDisease.class).
             addAnnotatedClass(StudyMilestone.class).
+            addAnnotatedClass(StudyOnhold.class).
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
             setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
@@ -262,6 +263,7 @@ public class TestSchema {
                 Connection connection = session.connection();
                 try {
                     Statement statement = connection.createStatement();
+                    statement.executeUpdate("delete from STUDY_ONHOLD");
                     statement.executeUpdate("delete from STUDY_MILESTONE");
                     statement.executeUpdate("delete from STUDY_CONTACT");
                     statement.executeUpdate("delete from STUDY_REGULATORY_AUTHORITY");

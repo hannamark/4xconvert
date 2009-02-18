@@ -61,5 +61,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.PAProperties" />
         <mapping class="gov.nih.nci.pa.domain.MessageLog" />
         <mapping class="gov.nih.nci.pa.domain.StudyMilestone" />
+        <mapping class="gov.nih.nci.pa.domain.StudyOnhold" />
     </session-factory>
 </hibernate-configuration>

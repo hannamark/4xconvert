@@ -156,6 +156,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<Arm> arms = new ArrayList<Arm>();
     private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
     private List<StudyMilestone> studyMilestones = new ArrayList<StudyMilestone>();
+    private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
 
     /** 
      * @return accrualReportingMethodCode
@@ -705,6 +706,20 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setStudyMilestones(List<StudyMilestone> studyMilestones) {
         this.studyMilestones = studyMilestones;
+    }
+    /**
+     * @return the studyOnholds
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<StudyOnhold> getStudyOnholds() {
+        return studyOnholds;
+    }
+    /**
+     * @param studyOnholds the studyOnholds to set
+     */
+    public void setStudyOnholds(List<StudyOnhold> studyOnholds) {
+        this.studyOnholds = studyOnholds;
     }
 }
 
