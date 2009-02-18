@@ -20,7 +20,7 @@ function handleEdit(studyResourcingId){
     document.collaboratorsForm.submit(); 
 }
 function handleDelete(studyResourcingId){
-    input_box=confirm("Click OK to un-link the collaborator from the Study.  Cancel to Abort.");
+    input_box=confirm("Click OK to delete the the organization as a collaborator in the study.  Cancel to abort.");
     if (input_box==true){
 	    document.collaboratorsForm.cbValue.value = studyResourcingId;
 	    document.collaboratorsForm.action="collaboratorsdelete.action";
@@ -65,7 +65,7 @@ function handleCreate(){
 				<display:column titleKey="participatingOrganizations.unlink"
 					headerClass="centered" class="action">
 					<s:a href="#" onclick="handleDelete(%{#attr.row.id})">
-						<img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
+						<img src="<%=request.getContextPath()%>/images/ico_delete.gif"
 							alt="Un-link" width="16" height="16" />
 					</s:a>
 				</display:column>

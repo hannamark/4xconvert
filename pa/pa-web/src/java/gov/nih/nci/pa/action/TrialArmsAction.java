@@ -382,7 +382,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     }
     
     private Set<Long> getAssociatedIds() {
-        String clicks = getCheckBoxEntry();
+        String clicks = (getCheckBoxEntry() == null) ? "" : getCheckBoxEntry();
         Set<Long> tSet = new HashSet<Long>();
         while (clicks.indexOf(',') > 1) {
             Long lid = Long.valueOf(clicks.substring(0, clicks.indexOf(',')));

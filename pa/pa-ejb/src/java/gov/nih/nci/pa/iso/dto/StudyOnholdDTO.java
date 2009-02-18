@@ -81,6 +81,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 
 /**
  * @author Kalpana Guthikonda
@@ -89,7 +90,7 @@ import gov.nih.nci.coppa.iso.St;
 public class StudyOnholdDTO  extends StudyDTO {
   private St onholdReasonText;
   private Cd onholdReasonCode;
-  private Ivl onholdDate;  
+  private Ivl<Ts> onholdDate;  
   
   /**
    * @return onholdReasonText
@@ -118,13 +119,13 @@ public class StudyOnholdDTO  extends StudyDTO {
   /**
    * @return onholdDate
    */
-  public Ivl getOnholdDate() {
+  public Ivl<Ts> getOnholdDate() {
     return onholdDate;
   }
   /**
    * @param onholdDate onholdDate
    */
-  public void setOnholdDate(Ivl onholdDate) {
+  public void setOnholdDate(Ivl<Ts> onholdDate) {
     this.onholdDate = onholdDate;
   }
   

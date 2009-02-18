@@ -83,7 +83,7 @@ function handleCreate(){
                 </display:column>
                 <display:column titleKey="disease.delete" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleDelete(%{#attr.row.studyDiseaseIdentifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
+                        <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
                             alt="Delete" width="16" height="16" />
                     </s:a>
                 </display:column>

@@ -215,7 +215,6 @@ public class CollaboratorsAction extends ActionSupport
             setCurrentAction(ACT_CREATE);
             return ACT_CREATE;
         }
-        ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
         return ACT_FACILITY_SAVE;
@@ -248,7 +247,6 @@ public class CollaboratorsAction extends ActionSupport
             addActionError(e.getMessage());
             return SUCCESS;
         }
-        ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         loadForm();
         return ACT_FACILITY_SAVE;
@@ -316,7 +314,7 @@ public class CollaboratorsAction extends ActionSupport
             orgWebDTO.setFunctionalRole(sp.getFunctionalCode().getCode());
             organizationList.add(orgWebDTO);
         }
-
+        ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
     }
 
     /**

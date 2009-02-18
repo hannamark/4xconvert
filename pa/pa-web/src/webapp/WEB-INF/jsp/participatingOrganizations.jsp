@@ -24,7 +24,7 @@ function handleEdit(studyResourcingId){
     document.partOrgs.submit(); 
 }
 function handleDelete(studyResourcingId){
-    input_box=confirm("Click OK to un-link the Participating Organization from the Study.  Cancel to Abort.");
+    input_box=confirm("Click OK to delete the organization as a participant in the study.  Cancel to abort.");
     if (input_box==true){
         document.partOrgs.cbValue.value = studyResourcingId;
         document.partOrgs.action="participatingOrganizationsdelete.action";
@@ -58,7 +58,7 @@ function handleDelete(studyResourcingId){
         <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
         </display:column>
         <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action" >
-        <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_cancel.gif" alt="Un-link" width="16" height="16"/></s:a>
+        <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Un-link" width="16" height="16"/></s:a>
         </display:column>
     </display:table>
     </td></tr>

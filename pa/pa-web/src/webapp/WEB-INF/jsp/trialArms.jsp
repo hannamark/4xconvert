@@ -22,7 +22,7 @@ function handleEditGroup(rowId){
     document.armForm.submit(); 
 }
 function handleDelete(rowId){
-    input_box=confirm("Click OK to remove the arm from the Study.  Cancel to Abort.");
+    input_box=confirm("Click OK to remove the arm from the study.  Cancel to abort.");
     if (input_box==true){
         document.armForm.selectedArmIdentifier.value = rowId;
         document.armForm.action="trialArmsdelete.action";
@@ -84,7 +84,7 @@ function handleCreateGroup(){
                 </display:column>
                 <display:column titleKey="arms.delete" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
+                        <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
                             alt="Delete" width="16" height="16" />
                     </s:a>
                 </display:column>

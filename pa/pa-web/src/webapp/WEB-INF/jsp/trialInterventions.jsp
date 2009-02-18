@@ -20,7 +20,7 @@ function handleEdit(rowId){
     document.interventionForm.submit(); 
 }
 function handleDelete(rowId){
-    input_box=confirm("Click OK to remove the intervention from the Study.  Cancel to Abort.");
+    input_box=confirm("Click OK to remove the intervention from the study.  Cancel to abort.");
     if (input_box==true){
         document.interventionForm.selectedRowIdentifier.value = rowId;
         document.interventionForm.action="trialInterventionsdelete.action";
@@ -70,7 +70,7 @@ function handleCreate(){
                 </display:column>
                 <display:column titleKey="interventions.delete" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleDelete(%{#attr.row.plannedActivityIdentifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
+                        <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
                             alt="Delete" width="16" height="16" />
                     </s:a>
                 </display:column>

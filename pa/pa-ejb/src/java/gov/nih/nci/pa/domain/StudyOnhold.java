@@ -88,6 +88,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
+import org.hibernate.validator.Past;
+
 /**
  * @author Kalpana Guthikonda
  * @since 02/11/2009
@@ -107,6 +111,7 @@ public class StudyOnhold extends AbstractStudyEntity {
    * @return onholdReasonText
    */
   @Column(name = "ONHOLD_REASON_TEXT")
+  @Length(max = LONG_TEXT_LENGTH)
   public String getOnholdReasonText() {
     return onholdReasonText;
   }
@@ -121,6 +126,7 @@ public class StudyOnhold extends AbstractStudyEntity {
    */
   @Column(name = "ONHOLD_REASON_CODE")
   @Enumerated(EnumType.STRING)
+  @NotNull
   public OnholdReasonCode getOnholdReasonCode() {
     return onholdReasonCode;
   }
@@ -134,6 +140,8 @@ public class StudyOnhold extends AbstractStudyEntity {
    * @return onholdDate
    */
   @Column(name = "ONHOLD_DATE")
+  @NotNull
+  @Past
   public Timestamp getOnholdDate() {
     return onholdDate;
   }
@@ -147,6 +155,7 @@ public class StudyOnhold extends AbstractStudyEntity {
    * @return offholdDate
    */
   @Column(name = "OFFHOLD_DATE")
+  @Past
   public Timestamp getOffholdDate() {
     return offholdDate;
   }

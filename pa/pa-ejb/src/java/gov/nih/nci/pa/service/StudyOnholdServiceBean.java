@@ -89,7 +89,6 @@ import javax.ejb.Stateless;
  * @since 02/11/2009
  */
 @Stateless
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyOnholdServiceBean 
 extends AbstractStudyIsoService<StudyOnholdDTO, StudyOnhold, StudyOnholdConverter> 
 implements StudyOnholdServiceRemote {

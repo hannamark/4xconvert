@@ -128,7 +128,7 @@ public class IiConverter {
     /** Document Root. **/
     public static final String DOCUMENT_ROOT = "2.16.840.1.113883.3.26.4.3.8";
     /** Document Identifier. */
-    public static final String DOCUMENT_IDENTIFIER_NAME = "NCI xxx entity identifier";
+    public static final String DOCUMENT_IDENTIFIER_NAME = "NCI document entity identifier";
     
     /**
      * The identifier name for org ii's.
