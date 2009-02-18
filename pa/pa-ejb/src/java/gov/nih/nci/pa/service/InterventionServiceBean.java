@@ -112,10 +112,10 @@ public class InterventionServiceBean
      */
     public List<InterventionDTO> search(InterventionDTO searchCriteria) throws PAException {
         if (searchCriteria == null) {
-            serviceError("Must pass in search criteria when calling search().");
+            throw new PAException("Must pass in search criteria when calling search().");
         }
         if (searchCriteria.getName() == null) {
-            serviceError("Must pass in a name when calling search().");
+            throw new PAException("Must pass in a name when calling search().");
         }
         getLogger().info("Entering search().  ");
         List<Intervention> queryList = new ArrayList<Intervention>();
@@ -140,7 +140,7 @@ public class InterventionServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in search.().  ", hbe);
+            throw new PAException("Hibernate exception in search.().  ", hbe);
         }
         ArrayList<InterventionDTO> resultList = new ArrayList<InterventionDTO>();
         for (Intervention bo : queryList) {

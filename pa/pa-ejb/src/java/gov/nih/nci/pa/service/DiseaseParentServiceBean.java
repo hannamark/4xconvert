@@ -109,7 +109,7 @@ public class DiseaseParentServiceBean
 
     private List<DiseaseParentDTO> getByDisease(Ii ii, String assoc) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            serviceError("Check the Ii value; null found.  ");
+            throw new PAException("Check the Ii value; null found.  ");
         }
         getLogger().info("Entering getByDisease for " + assoc + ".  ");
 
@@ -135,7 +135,7 @@ public class DiseaseParentServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getByDisease.  ", hbe);
+            throw new PAException("Hibernate exception in getByDisease.  ", hbe);
         }
         ArrayList<DiseaseParentDTO> resultList = new ArrayList<DiseaseParentDTO>();
         for (DiseaseParent bo : queryList) {

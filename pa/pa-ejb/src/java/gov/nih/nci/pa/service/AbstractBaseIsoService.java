@@ -272,27 +272,4 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         }
         return createOrUpdate(dto);
     }
-
-    /**
-     * Instead of using this method throw exception directly (logging is now done in PAException).
-     * @param errMsg error string
-     * @throws PAException exception
-     */
-    @Deprecated
-    protected void serviceError(String errMsg) throws PAException {
-        logger.debug(errMsg);
-        throw new PAException(errMsg);
-    }
-    
-    /**
-     * Instead of using this method throw exception directly (logging is now done in PAException).
-     * @param errMsg error string
-     * @param t throwable error
-     * @throws PAException exception
-     */
-    @Deprecated
-    protected void serviceError(String errMsg, Throwable t) throws PAException {
-        logger.debug(errMsg, t);
-        throw new PAException(errMsg, t);
-    }    
 }

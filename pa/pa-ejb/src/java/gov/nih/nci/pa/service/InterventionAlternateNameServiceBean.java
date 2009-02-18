@@ -115,7 +115,7 @@ public class InterventionAlternateNameServiceBean
     public List<InterventionAlternateNameDTO> getByIntervention(
             Ii interventionIi) throws PAException {
         if (PAUtil.isIiNull(interventionIi)) {
-            serviceError(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
         }
         getLogger().info("Entering getByIntervention.  ");
 
@@ -140,7 +140,7 @@ public class InterventionAlternateNameServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getIntervention.  ", hbe);
+            throw new PAException("Hibernate exception in getIntervention.  ", hbe);
         }
         ArrayList<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
         for (InterventionAlternateName bo : queryList) {

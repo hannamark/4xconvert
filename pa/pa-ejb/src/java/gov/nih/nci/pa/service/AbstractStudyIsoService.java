@@ -119,7 +119,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
     @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            serviceError("Check the Ii value; null found.  ");
+            throw new PAException("Check the Ii value; null found.  ");
         }
         getLogger().info("Entering getByStudyProtocol.  ");
 
@@ -144,7 +144,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getByStudyProtocol.  ", hbe);
+            throw new PAException("Hibernate exception in getByStudyProtocol.  ", hbe);
         }
         ArrayList<DTO> resultList = new ArrayList<DTO>();
         for (BO bo : queryList) {

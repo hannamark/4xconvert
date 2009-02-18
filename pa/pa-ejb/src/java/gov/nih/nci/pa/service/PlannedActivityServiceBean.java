@@ -119,10 +119,10 @@ public class PlannedActivityServiceBean
 
     private void businessRules(PlannedActivityDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            serviceError("PlannedActivity.studyProtocol must be set.");
+            throw new PAException("PlannedActivity.studyProtocol must be set.");
         }
         if (PAUtil.isCdNull(dto.getCategoryCode())) {
-            serviceError("PlannedActivity.categoryCode must be set.");
+            throw new PAException("PlannedActivity.categoryCode must be set.");
         }
         ActivityCategoryCode cc = ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode()));
         if (ActivityCategoryCode.INTERVENTION.equals(cc)) {
@@ -130,10 +130,10 @@ public class PlannedActivityServiceBean
                     .equals(CdConverter.convertCdToString(dto.getSubcategoryCode()));
 
             if (PAUtil.isCdNull(dto.getSubcategoryCode())) {
-                serviceError("Intervention type must be set.");
+                throw new PAException("Intervention type must be set.");
             }
             if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
-                serviceError("An Intervention must be selected.");
+                throw new PAException("An Intervention must be selected.");
             }
             if (!isDrug && (dto.getLeadProductIndicator() != null)) {
                 getLogger().info("Setting lead product indicator to null for non-drug PlannedActivity.");
@@ -163,7 +163,7 @@ public class PlannedActivityServiceBean
                         && (dtoIsNew || !dtoId.equals(IiConverter.convertToLong(pa.getIdentifier())))
                         && paIsLead) {
                     getLogger().warn("It should throw error");
-                    serviceError("Only one drug may be marked as lead for a given study.");
+                    throw new PAException("Only one drug may be marked as lead for a given study.");
                 }
             }
         }
@@ -198,7 +198,7 @@ public class PlannedActivityServiceBean
      */
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            serviceError("Check the Ii value; null found.  ");
+            throw new PAException("Check the Ii value; null found.  ");
         }
         getLogger().info("Entering getByArm.  ");
 
@@ -223,7 +223,7 @@ public class PlannedActivityServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getByArm.  ", hbe);
+            throw new PAException("Hibernate exception in getByArm.  ", hbe);
         }
         ArrayList<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
         for (PlannedActivity bo : queryList) {
@@ -241,7 +241,7 @@ public class PlannedActivityServiceBean
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii)
             throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            serviceError("Check the Ii value; found null.  ");
+            throw new PAException("Check the Ii value; found null.  ");
         }
         
         Session session = null;
@@ -264,7 +264,7 @@ public class PlannedActivityServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getByStudyProtocol.  ", hbe);
+            throw new PAException("Hibernate exception in getByStudyProtocol.  ", hbe);
         }
         ArrayList<PlannedEligibilityCriterionDTO> resultList = new ArrayList<PlannedEligibilityCriterionDTO>();
         for (PlannedEligibilityCriterion bo : queryList) {
@@ -280,7 +280,7 @@ public class PlannedActivityServiceBean
      */
     public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii) throws PAException {
         if ((ii == null) || PAUtil.isIiNull(ii)) {
-            serviceError("Check the Ii value; found null.  ");
+            throw new PAException("Check the Ii value; found null.  ");
         }
         PlannedEligibilityCriterionDTO resultDto = null;
         Session session = null;
@@ -289,12 +289,12 @@ public class PlannedActivityServiceBean
             PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class
                     , IiConverter.convertToLong(ii));
             if (bo == null) {
-                serviceError("Object not found using get() for id = "
+                throw new PAException("Object not found using get() for id = "
                         + IiConverter.convertToString(ii) + ".  ");
             }
             resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in get().", hbe);
+            throw new PAException("Hibernate exception in get().", hbe);
         }
         return resultDto;
     }
@@ -306,10 +306,10 @@ public class PlannedActivityServiceBean
     public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(
             PlannedEligibilityCriterionDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            serviceError("Update method should be used to modify existing.  ");
+            throw new PAException("Update method should be used to modify existing.  ");
         }
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            serviceError("StudyProtocol must be set.  ");
+            throw new PAException("StudyProtocol must be set.  ");
         }
         return createOrUpdatePlannedEligibilityCriterion(dto);
     }
@@ -322,7 +322,7 @@ public class PlannedActivityServiceBean
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(
             PlannedEligibilityCriterionDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            serviceError("Create method should be used to modify existing.  ");
+            throw new PAException("Create method should be used to modify existing.  ");
         }
         return createOrUpdatePlannedEligibilityCriterion(dto);
     }
@@ -333,7 +333,7 @@ public class PlannedActivityServiceBean
      */
     public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
         if ((ii == null) || PAUtil.isIiNull(ii)) {
-            serviceError("Check the Ii value; null found.  ");
+            throw new PAException("Check the Ii value; null found.  ");
         }
         Session session = null;
         try {
@@ -344,7 +344,7 @@ public class PlannedActivityServiceBean
             session.delete(bo);
             session.flush();
         }  catch (HibernateException hbe) {
-            serviceError(" Hibernate exception while deleting ii = "
+            throw new PAException(" Hibernate exception while deleting ii = "
                 + IiConverter.convertToString(ii) + ".  ", hbe);
         }
     }
@@ -378,7 +378,7 @@ public class PlannedActivityServiceBean
             session.flush();
             resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in createOrUpdate().  ", hbe);
+            throw new PAException("Hibernate exception in createOrUpdate().  ", hbe);
         }
         return resultDto;
     }

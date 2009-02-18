@@ -111,10 +111,10 @@ public class DiseaseServiceBean
      */
     public List<DiseaseDTO> search(DiseaseDTO searchCriteria) throws PAException {
         if (searchCriteria == null) {
-            serviceError("Must pass in search criteria when calling search().");
+            throw new PAException("Must pass in search criteria when calling search().");
         }
         if (searchCriteria.getPreferredName() == null) {
-            serviceError("Must pass in a name when calling search().");
+            throw new PAException("Must pass in a name when calling search().");
         }
         getLogger().info("Entering search().  ");
         List<Disease> queryList = new ArrayList<Disease>();
@@ -139,7 +139,7 @@ public class DiseaseServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in search.().  ", hbe);
+            throw new PAException("Hibernate exception in search.().  ", hbe);
         }
         ArrayList<DiseaseDTO> resultList = new ArrayList<DiseaseDTO>();
         for (Disease bo : queryList) {

@@ -114,7 +114,7 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
      */
     public List<ArmDTO> getByPlannedActivity(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            serviceError("Check the Ii value; null found.  ");
+            throw new PAException("Check the Ii value; null found.  ");
         }
         getLogger().info("Entering getByPlannedActivity.  ");
 
@@ -139,7 +139,7 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getByArm.  ", hbe);
+            throw new PAException("Hibernate exception in getByArm.  ", hbe);
         }
         ArrayList<ArmDTO> resultList = new ArrayList<ArmDTO>();
         for (Arm bo : queryList) {
@@ -154,10 +154,10 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
             return;
         }
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getName()))) {
-            serviceError("The arm/group label (name) must be set.  ");
+            throw new PAException("The arm/group label (name) must be set.  ");
         }
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getDescriptionText()))) {
-            serviceError("The arm/group description must be set.  ");
+            throw new PAException("The arm/group description must be set.  ");
         }
     }
 
