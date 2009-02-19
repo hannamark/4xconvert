@@ -45,7 +45,22 @@
 	<!-- Pre Init Target                                                -->
 	<!-- ============================================================== -->
 	<target name="preInit">
-
+		<patternset id="dependent.schema.folders.ps">
+            <include name="core/**"/>
+            <include name="pkgdata/**"/>
+            <include name="ws/**"/>
+            <include name="wsrf/**"/>			
+		</patternset>
+		<delete> 
+			<fileset dir="${schema.dir}">
+				<patternset refid="dependent.schema.folders.ps"/>
+			</fileset>
+		</delete>
+	    <copy todir="${schema.dir}" overwrite="true">
+	    	<fileset dir="${ext.globus.dir}/schema">
+				<patternset refid="dependent.schema.folders.ps"/>
+	    	</fileset>
+		</copy>
 	</target>
 
 	<!-- ============================================================== -->

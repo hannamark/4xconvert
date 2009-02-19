@@ -415,7 +415,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	
 	<target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
 		<jboss-install-binaries2 
-			jboss.installGroup.option="tomcat"
+			jboss.installGroup.option="default"
 			jboss.server.name="${jboss.server.name.grid}"
             />
 		<jboss-install-binaries2 
@@ -592,6 +592,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	            grid.secure.cert.file="${grid.secure.cert.file}" 
 	            jboss.java.opts="${jboss.java.opts}"            
 	            />		
+
 	</target>
 
 
