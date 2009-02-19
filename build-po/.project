@@ -14,16 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>bda-utils</name>
-			<type>2</type>
-			<location>C:/ncicb_cvs/coppa/code/target/po/bda-utils</location>
-		</link>
-		<link>
-			<name>src</name>
-			<type>2</type>
-			<location>C:/ncicb_cvs/coppa/code/target/po/bda-utils</location>
-		</link>
-	</linkedResources>
 </projectDescription>
