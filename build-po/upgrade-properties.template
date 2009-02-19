@@ -62,7 +62,9 @@ jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort=
 # The account name to log into the JBoss web consoles.  Example: admin
 jboss.web.user=
 # The password to the access the jboss web console and jmx console. Example: blueprint123!. The user is admin.
-jboss.web.password= 
+jboss.web.password=
+# The JBoss Server instance name for the CoppaPO Grid Services ( JBOSS_HOME/server/<SERVERINSTANCE>/ )
+jboss.server.name.grid=
 ##############
 ###  LDAP  ###
 ##############

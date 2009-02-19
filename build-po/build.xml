@@ -82,7 +82,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<!-- Properties that relate to how to call build targets from sub-projects-->
 	<!-- Working directory passed to Ant tasks -->
 	<property name="po.base.dir" location="${software.dir}/po"/>
-    <property name="po-client.base.dir" location="${software.dir}/po/client"/>
+	<property name="po-client.base.dir" location="${software.dir}/po/client"/>
 	<property name="po-ear.base.dir" location="${software.dir}/po/ear"/>
 	<property name="po-services.base.dir" location="${software.dir}/po/services"/>
 	<property name="po-web.base.dir" location="${software.dir}/po/web"/>
@@ -104,7 +104,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
 	<property name="jboss-conf.dist.dir" value="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
 
+	<property name="po-grid.base.dir" location="${software.dir}/po-grid"/>
+	<property name="po-grid.build.file" location="${po-grid.base.dir}/build.xml"/>
+    <property name="po-grid.dir.target" value="wsrf.war" />
+    <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+    <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+	<property name="po-grid.build.target" value="deployJBoss"/>
+	<property name="po-grid.artifact.dir" value="${po-grid.base.dir}/target" />
+	<property name="po-grid.dist.dir" value="${dist.exploded.dir}/${po-grid.dist.relative.dir}"/>
 
+	
 	<!-- Selenium settings -->
 	<property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
 	<property name="selenium.browser" value="*firefox"/>
@@ -206,6 +215,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<target name="clean">
 		<delete dir="${dist.dir}"/>
 		<delete dir="${temp.dir}"/>
+		<delete dir="${po-grid.artifact.dir}"/>
 	</target>
 
 	<target name="init" >
@@ -224,6 +234,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<mkdir dir="${temp.dir}"/>
 		<mkdir dir="${download.dir}"/>
 		<mkdir dir="${pt.dir}"/>
+		<mkdir dir="${po-grid.artifact.dir}"/>
+		<mkdir dir="${po-grid.dist.dir}"/>
 		<available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
 		<!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
@@ -334,14 +346,62 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			maven.dir="${po.base.dir}"
 			/>
 		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
+
+	    <antcall target="build:po-grid"/>
 	</target>
 	<target name="build:iso-datatypes" depends="init">
+        <copy todir="${iso-datatypes.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+        </copy> 		
 		<maven
 			maven.profile.list=""
 			maven.goal.list="${iso-datatypes.maven.goal.list}"
 			maven.dir="${iso-datatypes.base.dir}"
 			/>
 	</target>
+
+	<!-- Build po-grid sub-project produces project level artifact -->
+	<target name="build:po-grid" depends="init">
+		<fail unless="jboss.server.hostname"/>
+		<fail unless="jboss.server.port"/>
+
+		<echo message="Copying po-grid dependencies from po-services and iso-datatypes"/>
+		<copy todir="${po-grid.base.dir}/lib" file="${po-services.base.dir}/target/${po-services-client.jar.name}" overwrite="true"/>
+		<copy todir="${po-grid.base.dir}/lib" file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" overwrite="true"/>
+
+        <ant inheritAll="false" inheritRefs="false" antfile="${po-grid.build.file}"
+            target="${po-grid.build.target}"
+            dir="${po-grid.base.dir}" >
+            <property name="project.name" value="${project.name}"/>
+            <property name="jboss.dir" value="target"/>
+            <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
+            <property name="java.naming.provider.url.host" value="localhost"/>
+            <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
+            <property name="java.naming.security.principal" value="%%pogrid.jndi.principal%%"/>
+            <property name="java.naming.security.credentials" value="%%pogrid.jndi.credentials%%"/>
+        </ant>
+
+		<zip update="false" destfile="${po-grid.dist.dir}/${po-grid.artifact.file}">
+			<zipfileset dir="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/" />
+		</zip>
+		<!--
+		<unzip dest="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/lib" src="${grid.dist.relative.dir}/${resource.file.jboss-globus-lib}" />
+		<unzip dest="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" src="${grid.dist.relative.dir}/${resource.file.jboss-globus-war}" />
+
+		<replace dir="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" token="localhost:8080" value="${jboss.server.hostname}:${jboss.server.port}">
+			<include name="**/*.wsdl" />
+		</replace>
+		<replace file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/globus_resolution_service/jndi-config.xml" token="localhost:8080" value="${jboss.server.hostname}:${jboss.server.port}" />
+		<replace file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/cagrid_CoppaPO/jndi-config.xml" token="localhost:8080" value="${jboss.server.hostname}:${jboss.server.port}" />
+
+		<replace file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/web.xml" token="8080" value="${jboss.server.port}" />
+		<replaceregexp file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/cagrid_CoppaPO/CoppaPO_registration.xml" match="(\s+.wsa:Address.).*(.\/wsa:Address.)" replace="\1${grid.index.url}\2" flags="g" />
+        -->
+		<!--replaceregexp file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/cagrid_CoppaPO/jndi-config.xml" match="..appservice.url." replace="http://${jboss.server.hostname}:${jboss.server.port}/po-api/http/remoteService" flags="g" /-->
+
+		<delete dir="${po-grid.artifact.dir}/server" />
+	</target>
+
+
 	<macrodef name="maven">
 		<attribute name="maven.profile.list"/>
 		<attribute name="maven.goal.list"/>
@@ -361,7 +421,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			</exec>
 		</sequential>
 	</macrodef>
-		
+
 	<!-- Produces all distributions: installer, upgrader and source -->
 	<target name="dist" description="Makes all distributions: installer, upgrader and source"
 		depends="
@@ -505,7 +565,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 
 	<!-- Installs the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-	<target name="deploy:local:install" depends="build:all,dist:installer:prep" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
+	<target name="deploy:local:install" depends="build:all,local:install" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
+	</target>
+	
+	<target name="local:install" depends="dist:installer:prep">
 		<!--
 		* Requires a database installation.
 		* Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
@@ -514,10 +577,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		* This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
 		* It only supports using those properties files for now, so if you want to change install time properites edit these files.
 		-->
-		<deploy-local
-			target.name="${install.target}"
-			/>
+	      <deploy-local
+	            target.name="${install.target}"
+	            />
 	</target>
+	
 
 	<!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
 	<target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >

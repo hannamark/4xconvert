@@ -51,7 +51,8 @@ jboss.relative.path=This is the part of the path after application.base.path whi
 jboss.server.hostname=The server name where jboss will be running. Example: localhost
 jboss.server.name=The jboss server instance name, $JBOSS_HOME/server/${jboss.server.name}. Example: default
 jboss.web.user=The account name to log into the JBoss web consoles.  Example: admin
-jboss.web.password=The password to the access the jboss web console and jmx console. Example: blueprint123!. The user is admin. 
+jboss.web.password=The password to the access the jboss web console and jmx console. Example: blueprint123!. The user is admin.
+ 
 #jboss.port.config=This is the NCICB port configuration scheme used by this application server.  If this is set the other ports except for jboss.server.port and jboss.server.jndi.port are igored (those are used by the install process). Having this set also causes pre and post installation validation to not check ports.
 # Ports used by JBoss. Must not conflict with other LSD applications. Check with BDA or Systems teams.
 #jboss.cobraorb.port=
@@ -83,6 +84,25 @@ jboss.web.password=The password to the access the jboss web console and jmx cons
 #jboss.external.ssl.host=Set this if you are using external hostnames for ssl, see https://wiki.nci.nih.gov/x/8hWy
 #jboss.external.ssl.port=Set this if you are using a different port with the external hostname above for ssl
 #jboss.java.opts=java options for starting jboss
+
+jboss.server.name.grid=The JBoss Server instance name for the CoppaPO Grid Services ( JBOSS_HOME/server/<SERVERINSTANCE>/ )
+#jboss.server.grid.jndi.port=11499
+#jboss.server.grid.port=19480
+#jboss.grid.cobraorb.port=13928
+#jboss.grid.ejbinvoker.port=19473
+#jboss.grid.hajndi.port=11500
+#jboss.grid.hajrmi.port=11501
+#jboss.grid.jms.port=18493
+#jboss.grid.jmx-rmi.port=29401
+#jboss.grid.messaging.port=19457
+#jboss.grid.pooledha.port=19446
+#jboss.grid.remoting.port=18484
+#jboss.grid.server.bind.port=0
+#jboss.grid.server.rmi.port=11498
+#jboss.grid.service.rmiobject.port=14844
+#jboss.grid.snmp.port=11561
+#jboss.grid.snmp-trapd.port=11562
+#jboss.grid.web.service.port=18483
 
 ##############
 ###  LDAP  ###
