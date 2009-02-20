@@ -212,7 +212,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       }
       if (!leadExist) {
           abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu", 
-                  "There should be minimum one disease for a StudyProtocol"));
+                  "Trial must include at least one LEAD disease"));
       }
       
   }
@@ -397,10 +397,18 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   private void enforceOutcomeMeasure(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
   throws PAException {
     List<StudyOutcomeMeasureDTO> somList = PoPaServiceBeanLookup.getStudyOutcomeMeasureService().
-    getByStudyProtocol(studyProtocolIi);
-    if (somList.isEmpty()) { 
-      abstractionList.add(createError("Error", "Select Outcome Measure from specific " 
-          + "Interventional/Observational under Scientific Data menu.", "No OutcomeMeasures exists for the trial."));
+            getByStudyProtocol(studyProtocolIi);
+    boolean isPrimayFound = false;
+    for (StudyOutcomeMeasureDTO somDto : somList) {
+        if (BlConverter.covertToBool(somDto.getPrimaryIndicator())) {
+            isPrimayFound = true;
+            break;
+        }
+    }
+    if (!isPrimayFound) { 
+      abstractionList.add(createError("Error", "Select Outcome Measure from  " 
+          + "Interventional/Observational under Scientific Data menu.", 
+          "Trial must include at least one PRIMARY outcome measure."));
     }
   }
   

@@ -78,10 +78,10 @@ BubbleTips.activateTipOn("dfn");
     <table class="form">
     <tr>
 					<td scope="row"  class="label"><label>
-						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/><span class="required">*</span></label>
+						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/></label>
 					</td>
 					<td class="value">
-						<s:select name="webDTO.inclusionIndicator" list="#{' ':' ', 'No':'Exclusion', 'Yes':'Inclusion'}" cssStyle="width:106px"/>
+						<s:select name="webDTO.inclusionIndicator" list="#{' ':' ', 'Exclusion':'Exclusion', 'Inclusion':'Inclusion'}" cssStyle="width:106px"/>
 						<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.inclusionIndicator</s:param>

@@ -107,7 +107,7 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
                PlannedActivityConverter.convertFromDomainToDTO(
                        (PlannedActivity) pec, (PlannedActivityDTO) new PlannedEligibilityCriterionDTO());
        pecDTO.setCriterionName(StConverter.convertToSt(pec.getCriterionName()));
-       pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.valueOf(pec.getInclusionIndicator())));
+       pecDTO.setInclusionIndicator(BlConverter.convertToBl(pec.getInclusionIndicator()));
        pecDTO.setOperator(StConverter.convertToSt(pec.getOperator()));
        pecDTO.setEligibleGenderCode(CdConverter.convertToCd(pec.getEligibleGenderCode()));
        Pq pq = new Pq();       

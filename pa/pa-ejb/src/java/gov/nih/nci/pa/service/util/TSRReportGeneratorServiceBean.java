@@ -169,6 +169,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private static final String DD_B = "<DD>";
   private static final String DD_E = "</DD>";
   private static final String NO = "No";
+  private static final int ERROR_COUNT = 5;
   private static final Logger LOG  = Logger.getLogger(TSRReportGenerator.class);
   private final CorrelationUtils correlationUtils = new CorrelationUtils();
   /**
@@ -185,25 +186,47 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       StringBuffer htmldata = new StringBuffer();
       htmldata.append("<CENTER>").append(appendBoldData("Trial Summary Report")).append("</CENTER>");
       StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-      appendSecondaryIdentifiers(htmldata , spDTO); 
-      appendTitles(htmldata , spDTO);
-      appendOrgsAndPersons(htmldata , spDTO.getIdentifier());
-      apppendTrialStatus(htmldata , spDTO);
-      appendRegulatoryInformation(htmldata , spDTO);
-      appendHumanSubjectSafety(htmldata , spDTO);
-      appendIdeIde(htmldata , spDTO);
-      appendNihGrants(htmldata , spDTO);
-      appendSummary4(studyProtocolIi, htmldata);      
-      appendCollaborators(studyProtocolIi, htmldata);      
-      appendDisease(studyProtocolIi, htmldata);
-      appendTrialDesign(htmldata, spDTO);
-      appendEligibilityCriteria(htmldata, spDTO);
-      appendArm(htmldata, spDTO);
-      List<StudyOutcomeMeasureDTO> somDtos = 
-        PoPaServiceBeanLookup.getStudyOutcomeMeasureService().getByStudyProtocol(spDTO.getIdentifier());
-     createPrimaryOutcome(htmldata, somDtos);
-     createSecondaryOutcome(htmldata, somDtos);     
-     appendParticipatingSites(htmldata, spDTO);
+      try {
+          appendSecondaryIdentifiers(htmldata , spDTO); 
+          appendTitles(htmldata , spDTO);
+          appendOrgsAndPersons(htmldata , spDTO.getIdentifier());
+          apppendTrialStatus(htmldata , spDTO);
+          appendRegulatoryInformation(htmldata , spDTO);
+          appendHumanSubjectSafety(htmldata , spDTO);
+          appendIdeIde(htmldata , spDTO);
+          appendNihGrants(htmldata , spDTO);
+          appendSummary4(studyProtocolIi, htmldata);      
+          appendCollaborators(studyProtocolIi, htmldata);      
+          appendDisease(studyProtocolIi, htmldata);
+          appendTrialDesign(htmldata, spDTO);
+          appendEligibilityCriteria(htmldata, spDTO);
+          appendArm(htmldata, spDTO);
+          List<StudyOutcomeMeasureDTO> somDtos = 
+            PoPaServiceBeanLookup.getStudyOutcomeMeasureService().getByStudyProtocol(spDTO.getIdentifier());
+         createPrimaryOutcome(htmldata, somDtos);
+         createSecondaryOutcome(htmldata, somDtos);     
+         appendParticipatingSites(htmldata, spDTO);
+      } catch (Exception e) {
+          htmldata = new StringBuffer();
+          htmldata.append("<CENTER>").append(appendBoldData("Trial Summary Report")).append("</CENTER>");
+          htmldata.append(BR);
+          htmldata.append(appendBoldData("Unable to generate  Trial Summary Report")).append(BR);
+          htmldata.append(" for ").append(appendBoldData(spDTO.getAssignedIdentifier().getExtension())).append(BR);
+          htmldata.append("Study Title ").append(spDTO.getOfficialTitle().getValue()).append(BR);
+          htmldata.append("Please contact CTRP staff").append(BR);
+          htmldata.append("error_type ").append(appendBoldData(e.toString())).append(BR);
+          StackTraceElement[] st =  e.getStackTrace();
+          int x = 1;
+          for (StackTraceElement se : st) {
+              htmldata.append("Error Reason : ").append(appendBoldData(se.toString())).append(BR);
+              x++;
+              if (x > ERROR_COUNT) {
+                  break;
+              }
+          }
+          
+          
+      }
       return htmldata.toString();
   }
 
@@ -346,6 +369,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         //first = false;
         html.append(TR_B);
         appendTDAndData(html, appendTRBold("Type"));
+        appendTDAndData(html, appendTRBold("Lead"));
         appendTDAndData(html, appendTRBold("Name"));
         appendTDAndData(html, appendTRBold("Description"));
         html.append(TR_E);
@@ -359,8 +383,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           intBuff.append(StConverter.convertToString(inter.getName()));
           html.append(TR_B);
           appendTDAndData(html, getData(inter.getTypeCode(), true));
+          appendTDAndData(html, BlConverter.covertToBool(pa.getLeadProductIndicator()) ? "Yes" : "No");
           appendTDAndData(html, intBuff.toString());
-          appendTDAndData(html, getData(inter.getDescriptionText(), true));
+          appendTDAndData(html, getData(pa.getTextDescription(), true));
           html.append(TR_E);
       } 
       html.append(TBL_E);
@@ -373,80 +398,89 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     List<PlannedEligibilityCriterionDTO> paECs = 
       PoPaServiceBeanLookup.getPlannedActivityService().
           getPlannedEligibilityCriterionByStudyProtocol(spDTO.getIdentifier());
-  if (paECs == null || paECs.isEmpty()) {
-      return;
-  }
-  boolean incfirst = true; 
-  boolean excfirst = true; 
-  String criterionName = null;
-  String descriptionText = null;
-  Pq pq = null;
-  StringBuffer incCrit = new StringBuffer();
-  StringBuffer exCrit = new StringBuffer();
-  Boolean incIndicator = null;
-  html.append(appendData("Accepts Healthy Volunteers?", 
-      convertBLToString(spDTO.getAcceptHealthyVolunteersIndicator(), false), true , false));
-  for (PlannedEligibilityCriterionDTO paEC : paECs) {
-      criterionName = StConverter.convertToString(paEC.getCriterionName());
-      descriptionText  = StConverter.convertToString(paEC.getTextDescription());
-      incIndicator = paEC.getInclusionIndicator().getValue();
-      pq = paEC.getValue();
-      if (criterionName != null && criterionName.equalsIgnoreCase("GENDER") 
-              && paEC.getEligibleGenderCode() != null) {
-          html.append(appendData("Gender", getData(paEC.getEligibleGenderCode(), true), true , false));
-      } else if (criterionName != null && criterionName.equalsIgnoreCase("MINIMUM-AGE")) {
-          html.append(appendData("Minimum Age", pq.getValue()  + " " + pq.getUnit(), true , false));
-      } else if (criterionName != null && criterionName.equalsIgnoreCase("MAXIMUM-AGE")) {
-          html.append(appendData("Maximum Age", pq.getValue()  + " " + pq.getUnit(), true , false));
-      } else if (descriptionText != null && (!(descriptionText.equals("")))) {
-        incCrit.append(UL_B);
-        exCrit.append(UL_B);
-          if (incIndicator) { 
-            incCrit.append(LI_B);
-            incCrit.append(descriptionText);
-            incCrit.append(LI_E);
-          } else {
-            exCrit.append(LI_B);
-            exCrit.append(descriptionText);
-            exCrit.append(LI_E);
-          }
-          incCrit.append(UL_E);
-          exCrit.append(UL_E);
-      } else {
-        incCrit.append(UL_B);
-        exCrit.append(UL_B);
-          if (incIndicator) {
-            incCrit.append(LI_B);
-            incCrit.append(getData(paEC.getCriterionName(), true) + "   " 
-                + getData(paEC.getOperator(), true) + "  "
-                + pq.getValue() + "  " + pq.getUnit()); 
-            incCrit.append(LI_E);
-          } else {
-            exCrit.append(LI_B);
-            exCrit.append(getData(paEC.getCriterionName(), true) + "   " 
-                + getData(paEC.getOperator(), true) + "  "
-                + pq.getValue() + "  " + pq.getUnit()); 
-            exCrit.append(LI_E);
-          }
-          incCrit.append(UL_E);
-          exCrit.append(UL_E);
-      }              
-  } // for loop 
-  html.append(BR);
-  if (incCrit != null) {
-  if (incfirst) {
-    incfirst = false;
-    html.append("Inclusion Criteria");
-  }
-  html.append(incCrit.toString());
-  }
-  if (exCrit != null) {
-  if (excfirst) {
-    excfirst = false;
-    html.append("Exclusion Criteria");
-  }
-  html.append(exCrit.toString());
-  }
+      if (paECs == null || paECs.isEmpty()) {
+          return;
+      }
+      String criterionName = null;
+      String descriptionText = null;
+      Pq pq = null;
+      StringBuffer incCrit = new StringBuffer();
+      StringBuffer exCrit = new StringBuffer();
+      StringBuffer nullCrit = new StringBuffer();
+    
+      Boolean incIndicator = null;
+      html.append(appendData("Accepts Healthy Volunteers?", 
+          convertBLToString(spDTO.getAcceptHealthyVolunteersIndicator(), false), true , false));
+      for (PlannedEligibilityCriterionDTO paEC : paECs) {
+          criterionName = StConverter.convertToString(paEC.getCriterionName());
+          descriptionText  = StConverter.convertToString(paEC.getTextDescription());
+          incIndicator = paEC.getInclusionIndicator() != null ? paEC.getInclusionIndicator().getValue() : null;
+          pq = paEC.getValue();
+          if (criterionName != null && criterionName.equalsIgnoreCase("GENDER") 
+                  && paEC.getEligibleGenderCode() != null) {
+              html.append(appendData("Gender", getData(paEC.getEligibleGenderCode(), true), true , false));
+          } else if (criterionName != null && criterionName.equalsIgnoreCase("MINIMUM-AGE")) {
+              html.append(appendData("Minimum Age", pq.getValue()  + " " + pq.getUnit(), true , false));
+          } else if (criterionName != null && criterionName.equalsIgnoreCase("MAXIMUM-AGE")) {
+              html.append(appendData("Maximum Age", pq.getValue()  + " " + pq.getUnit(), true , false));
+          } else if (descriptionText != null && (!(descriptionText.equals("")))) {
+            incCrit.append(UL_B);
+            exCrit.append(UL_B);
+            nullCrit.append(UL_B);
+            if (incIndicator == null) {
+                nullCrit.append(LI_B);
+                nullCrit.append(descriptionText);
+                nullCrit.append(LI_E);
+            } else if (incIndicator) { 
+                incCrit.append(LI_B);
+                incCrit.append(descriptionText);
+                incCrit.append(LI_E);
+              } else {
+                exCrit.append(LI_B);
+                exCrit.append(descriptionText);
+                exCrit.append(LI_E);
+              }
+              incCrit.append(UL_E);
+              exCrit.append(UL_E);
+              nullCrit.append(UL_E);
+            } else {
+            incCrit.append(UL_B);
+            exCrit.append(UL_B);
+            nullCrit.append(UL_B);
+            if (incIndicator == null) {
+                nullCrit.append(LI_B);
+                nullCrit.append(getData(paEC.getCriterionName(), true) + "   " 
+                    + getData(paEC.getOperator(), true) + "  "
+                    + pq.getValue() + "  " + pq.getUnit()); 
+                nullCrit.append(LI_E);
+            } else if (incIndicator) {
+                incCrit.append(LI_B);
+                incCrit.append(getData(paEC.getCriterionName(), true) + "   " 
+                    + getData(paEC.getOperator(), true) + "  "
+                    + pq.getValue() + "  " + pq.getUnit()); 
+                incCrit.append(LI_E);
+              } else {
+                exCrit.append(LI_B);
+                exCrit.append(getData(paEC.getCriterionName(), true) + "   " 
+                    + getData(paEC.getOperator(), true) + "  "
+                    + pq.getValue() + "  " + pq.getUnit()); 
+                exCrit.append(LI_E);
+              }
+              nullCrit.append(UL_E);  
+              incCrit.append(UL_E);
+              exCrit.append(UL_E);
+          }              
+      } // for loop 
+      html.append(BR);
+      if (nullCrit != null && nullCrit.length() > 0) {
+          html.append(appendBoldData("No Creteria Specified")).append(nullCrit);
+      }
+      if (incCrit != null && incCrit.length() > 0) {
+            html.append(appendBoldData("Inclusion Criteria")).append(incCrit);
+      }
+      if (exCrit != null && exCrit.length() > 0) {
+            html.append(appendBoldData("Exclusion Criteria")).append(exCrit);
+      }
   }
   
   private void appendTrialDesign(StringBuffer html, StudyProtocolDTO spDTO)

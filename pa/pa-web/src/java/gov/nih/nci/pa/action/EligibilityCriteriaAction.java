@@ -308,13 +308,14 @@ import com.opensymphony.xwork2.ActionSupport;
         pq.setUnit(webDTO.getUnit());
       }
       pecDTO.setValue(pq);
-      if (webDTO.getInclusionIndicator().equalsIgnoreCase("Yes")) {
-        webDTO.setInclusionIndicator("true");
+      if (webDTO.getInclusionIndicator() == null) {
+          pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
+      } else  if (webDTO.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
+          pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
       } else {
-        webDTO.setInclusionIndicator("false");
+           pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.FALSE));
       }
       pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
-      pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getInclusionIndicator())));
       pecDTO.setTextDescription(StConverter.convertToSt(webDTO.getTextDescription()));
       pecDTO.setOperator(StConverter.convertToSt(webDTO.getOperator()));
       PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
@@ -365,13 +366,14 @@ import com.opensymphony.xwork2.ActionSupport;
         pq.setUnit(webDTO.getUnit());
       }
       pecDTO.setValue(pq);
-      if (webDTO.getInclusionIndicator().equalsIgnoreCase("Yes")) {
-        webDTO.setInclusionIndicator("true");
+      if (webDTO.getInclusionIndicator() == null) {
+          pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
+      } else  if (webDTO.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
+          pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
       } else {
-        webDTO.setInclusionIndicator("false");
+           pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.FALSE));
       }
       pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
-      pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getInclusionIndicator())));
       pecDTO.setTextDescription(StConverter.convertToSt(webDTO.getTextDescription()));
       pecDTO.setOperator(StConverter.convertToSt(webDTO.getOperator()));
       PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
@@ -422,11 +424,10 @@ import com.opensymphony.xwork2.ActionSupport;
         webdto.setCriterionName(dto.getCriterionName().getValue());
       }
       if (dto.getInclusionIndicator().getValue() != null) {
-        //webdto.setInclusionIndicator(dto.getInclusionIndicator().getValue().toString());
-        if (dto.getInclusionIndicator().getValue().toString().equalsIgnoreCase("true")) {
-          webdto.setInclusionIndicator(("Yes"));
+        if (BlConverter.covertToBool(dto.getInclusionIndicator())) {
+          webdto.setInclusionIndicator(("Inclusion"));
         } else {
-          webdto.setInclusionIndicator("No");
+          webdto.setInclusionIndicator("Exclusion");
         } 
       }
       if (dto.getIdentifier() != null) {
@@ -455,13 +456,11 @@ import com.opensymphony.xwork2.ActionSupport;
     .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
     if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
       if (PAUtil.isEmpty(studyPopulationDescription)) {
-        addFieldError("studyPopulationDescription",
-            getText("error.trialPopulationDescription"));
+        addFieldError("studyPopulationDescription", getText("error.trialPopulationDescription"));
       }
       if (PAUtil.isNotEmpty(studyPopulationDescription)
           && studyPopulationDescription.length() > MAXIMUM_CHAR_POPULATION) {
-        addFieldError("studyPopulationDescription",
-            getText("error.spType.population.maximumChar"));        
+        addFieldError("studyPopulationDescription", getText("error.spType.population.maximumChar"));        
       }
       if (PAUtil.isEmpty(samplingMethodCode)) {
         addFieldError("samplingMethodCode", getText("error.samplingMethod"));
@@ -469,12 +468,10 @@ import com.opensymphony.xwork2.ActionSupport;
     }
 
     if (PAUtil.isEmpty(acceptHealthyVolunteersIndicator)) {
-      addFieldError("acceptHealthyVolunteersIndicator",
-          getText("error.acceptHealthyVolunteersIndicator"));
+      addFieldError("acceptHealthyVolunteersIndicator", getText("error.acceptHealthyVolunteersIndicator"));
     }
     if (PAUtil.isEmpty(eligibleGenderCode)) {
-      addFieldError("eligibleGenderCode",
-          getText("error.eligibleGenderCode"));
+      addFieldError("eligibleGenderCode", getText("error.eligibleGenderCode"));
     }
     if (PAUtil.isEmpty(this.maximumUnit)) {
       addFieldError("maximumUnit", getText("error.maximumUnit"));
@@ -505,14 +502,12 @@ import com.opensymphony.xwork2.ActionSupport;
   }
   
   private void enforceEligibilityBusinessRules() {
-    if (PAUtil.isEmpty(webDTO.getInclusionIndicator())) {
-      addFieldError("webDTO.inclusionIndicator",
-          getText("error.inclusionIndicator"));
-    }
+//    if (PAUtil.isEmpty(webDTO.getInclusionIndicator())) {
+//      addFieldError("webDTO.inclusionIndicator", getText("error.inclusionIndicator"));
+//    }
     if (PAUtil.isNotEmpty(webDTO.getTextDescription())
         && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
-      addFieldError("webDTO.TextDescription",
-          getText("error.spType.description.maximumChar"));        
+      addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));        
     }
     if (PAUtil.isEmpty(webDTO.getTextDescription())) {
       if (PAUtil.isEmpty(webDTO.getCriterionName())  
@@ -520,16 +515,14 @@ import com.opensymphony.xwork2.ActionSupport;
           && PAUtil.isEmpty(webDTO.getValue())
           && PAUtil.isEmpty(webDTO.getUnit())) {
 
-        addFieldError("webDTO.mandatory",
-            getText("error.mandatory"));
+        addFieldError("webDTO.mandatory",  getText("error.mandatory"));
         return;
       } else if (PAUtil.isEmpty(webDTO.getCriterionName())
           || PAUtil.isEmpty(webDTO.getOperator())
           || PAUtil.isEmpty(webDTO.getValue())
           || PAUtil.isEmpty(webDTO.getUnit()))  {
 
-        addFieldError("webDTO.buldcriterion",
-            getText("error.buldcriterion"));
+        addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
 
       }
     }
@@ -773,6 +766,7 @@ import com.opensymphony.xwork2.ActionSupport;
   public void setList(List<ISDesignDetailsWebDTO> list) {
     this.list = list;
   }
+
 
 
 }

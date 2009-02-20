@@ -192,6 +192,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final int HOURS = 24;
     private static final int MINUTES = 60;
     private static final int MAX_AGE = 999;
+    private static final int ERROR_COUNT = 5;
     private static final String FIRST_NAME = "first_name";
     private static final String LAST_NAME = "last_name";
     private static final String PHONE = "phone";
@@ -210,9 +211,10 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         createCtGovValues();
         LOG.debug("Entering generateCTGovXml");
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        StudyProtocolDTO spDTO = null;
         try {
             
-            StudyProtocolDTO spDTO = getStudyProtocol(studyProtocolIi);
+            spDTO = getStudyProtocol(studyProtocolIi);
             
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
@@ -277,10 +279,46 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             return writer.toString();
         } catch (Exception e) {
             LOG.error("Error while generating CT.GOV.xml "  , e);
-            throw new PAException("Error while generating CT.GOV.xml "  , e);
+            return createErrorXml(spDTO , e);
         }
     }
+    
+    private static String createErrorXml(StudyProtocolDTO spDTO , Exception e)  {
+        StringWriter writer = new StringWriter();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            Element root = createElement("error" , doc);
+            doc.appendChild(root);
+            createElement("error_description" , "Unable to generate the XML" , doc , root);
+            createElement("study_identifier" , spDTO.getAssignedIdentifier().getExtension() , doc , root);
+            createElement("study_title" , spDTO.getOfficialTitle().getValue() , doc , root);
+            createElement("contact_info" , "Please contact CTRP staff" , doc , root);
+            createElement("error_type" , e.toString() , doc , root);
+            StackTraceElement[] st =  e.getStackTrace();
+            Element errorMessages = doc.createElement("error_messages");
+            int x = 1;
+            for (StackTraceElement se : st) {
+                appendElement(errorMessages , createElement("error_message" , se.toString() , doc));
+                x++;
+                if (x > ERROR_COUNT) {
+                    break;
+                }
+            }
+            appendElement(root, errorMessages);
+            DOMSource domSource = new DOMSource(doc);
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.transform(domSource, result);
+        } catch (Exception e1) {
+            LOG.error("Error while generating CT.GOV.xml "  , e1);
+        }
+        return writer.toString();
+    }
 
+        
     private static void createOverallStatus(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<StudyOverallStatusDTO> soDTOs = PoPaServiceBeanLookup.getStudyOverallStatusService().
             getCurrentByStudyProtocol(spDTO.getIdentifier());
@@ -540,6 +578,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         BigDecimal maxAge = null;
         String maxUnit = null;
         StringBuffer incCrit = new StringBuffer();
+        StringBuffer nullCrit = new StringBuffer();
         StringBuffer exCrit = new StringBuffer();
         Pq pq = null;
         BigDecimal value;
@@ -548,7 +587,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         for (PlannedEligibilityCriterionDTO paEC : paECs) {
             criterionName = StConverter.convertToString(paEC.getCriterionName());
             descriptionText  = StConverter.convertToString(paEC.getTextDescription());
-            incIndicator = paEC.getInclusionIndicator().getValue();
+            incIndicator = paEC.getInclusionIndicator() != null ? paEC.getInclusionIndicator().getValue() : null;
             pq = paEC.getValue();
             if (criterionName != null && criterionName.equalsIgnoreCase("GENDER") 
                     && paEC.getEligibleGenderCode() != null) {
@@ -560,7 +599,10 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 maxAge = pq.getValue();
                 maxUnit = pq.getUnit();
             } else if (descriptionText != null) {
-                if (incIndicator) {
+                if (incIndicator == null) {
+                    nullCrit.append(descriptionText);
+                    nullCrit.append('\n');
+                } else if (incIndicator) {
                     incCrit.append(descriptionText);
                     incCrit.append('\n');
                 } else {
@@ -570,7 +612,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             } else {
                 value = pq.getValue();
                 unit = pq.getUnit();
-                if (incIndicator) {
+                if (incIndicator == null) {
+                    nullCrit.append(criterionName).append(' ').append(value).append(' ').append(unit).append('\n');
+                } else if (incIndicator) {
                     incCrit.append(criterionName).append(' ').append(value).append(' ').append(unit).append('\n');
                 } else {
                     exCrit.append(criterionName).append(' ').append(value).append(' ').append(unit).append('\n');
@@ -578,9 +622,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
                     
         } // for loop
-        incCrit.append(exCrit);            
-        if (incCrit.length() > 1) {
-            createTextBlock("criteria", StConverter.convertToSt(incCrit.toString()), doc, eligibility);
+        nullCrit.append(incCrit).append(exCrit);            
+        if (nullCrit.length() > 1) {
+            createTextBlock("criteria", StConverter.convertToSt(nullCrit.toString()), doc, eligibility);
         }
         appendElement(eligibility, 
                 createElement("healthy_volunteers", spDTO.getAcceptHealthyVolunteersIndicator(), doc));
@@ -638,7 +682,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 InterventionDTO i = PoPaServiceBeanLookup.getInterventionService().get(pa.getInterventionIdentifier());
                 appendElement(intervention, createElement("intervention_type" , i.getTypeCode() , doc));
                 appendElement(intervention, createElement("intervention_name" , i.getName() , doc));
-                createTextBlock("intervention_description", i.getDescriptionText(), doc, intervention);
+                createTextBlock("intervention_description", pa.getTextDescription(), doc, intervention);
                 List<InterventionAlternateNameDTO> ianList = PoPaServiceBeanLookup
                         .getInterventionAlternateNameService().getByIntervention(i.getIdentifier());
                 StringBuffer onBuff = new StringBuffer("");

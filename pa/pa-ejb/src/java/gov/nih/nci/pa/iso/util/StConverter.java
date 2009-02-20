@@ -121,8 +121,7 @@ public class StConverter {
             return str;
         }
         if (st.getValue() == null) {
-            // @todo : throw pa exception
-            st.setNullFlavor(NullFlavor.NI);
+            return str;
         }
         return st.getValue();
          

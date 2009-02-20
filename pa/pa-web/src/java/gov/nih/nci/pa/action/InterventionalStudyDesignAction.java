@@ -119,6 +119,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class InterventionalStudyDesignAction extends ActionSupport {
 
     private static final String OUTCOME = "outcome";
+    private static final String FALSE = "false";
     private static final String OUTCOMEADD = "outcomeAdd";
     private static final int MAXIMUM_CHAR = 200;
     private static final int MAXIMUM_CHAR_OUTCOME = 254; 
@@ -158,44 +159,46 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         try {  
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            InterventionalStudyProtocolDTO ispFromDatabaseDTO = PaRegistry.getStudyProtocolService()
+            InterventionalStudyProtocolDTO ispDTO = PaRegistry.getStudyProtocolService()
             .getInterventionalStudyProtocol(studyProtocolIi);
-            ispFromDatabaseDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(webDTO.getPhaseCode()))); 
-            ispFromDatabaseDTO.setPrimaryPurposeCode(
+            ispDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(webDTO.getPhaseCode()))); 
+            ispDTO.setPrimaryPurposeCode(
                     CdConverter.convertToCd(PrimaryPurposeCode.getByCode(webDTO.getPrimaryPurposeCode()))); 
-            ispFromDatabaseDTO.setBlindingSchemaCode(
+            ispDTO.setBlindingSchemaCode(
                     CdConverter.convertToCd(BlindingSchemaCode.getByCode(webDTO.getBlindingSchemaCode()))); 
-            ispFromDatabaseDTO.setDesignConfigurationCode(
+            ispDTO.setDesignConfigurationCode(
                     CdConverter.convertToCd(DesignConfigurationCode.getByCode(webDTO.getDesignConfigurationCode()))); 
-            ispFromDatabaseDTO.setNumberOfInterventionGroups(
+            ispDTO.setNumberOfInterventionGroups(
                     IntConverter.convertToInt(webDTO.getNumberOfInterventionGroups()));
-            ispFromDatabaseDTO.setAllocationCode(
+            ispDTO.setAllocationCode(
                     CdConverter.convertToCd(AllocationCode.getByCode(webDTO.getAllocationCode()))); 
-            ispFromDatabaseDTO.setPrimaryPurposeOtherText(
+            ispDTO.setPrimaryPurposeOtherText(
                     StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
-            ispFromDatabaseDTO.setPhaseOtherText(
+            ispDTO.setPhaseOtherText(
                     StConverter.convertToSt(webDTO.getPhaseOtherText()));
-            ispFromDatabaseDTO.setMaximumTargetAccrualNumber(
+            ispDTO.setMaximumTargetAccrualNumber(
                     IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
-            ispFromDatabaseDTO.setStudyClassificationCode(
+            ispDTO.setStudyClassificationCode(
                     CdConverter.convertToCd(StudyClassificationCode.getByCode(webDTO.getStudyClassificationCode())));
 
-            List<Cd> cds = new ArrayList();
-            if (caregiver != null) {
-                cds.add(CdConverter.convertStringToCd(caregiver));
+            List<Cd> cds = new ArrayList<Cd>();
+            if (webDTO.getBlindingSchemaCode() != null && !webDTO.getBlindingSchemaCode().equalsIgnoreCase("open")) {
+                if (caregiver != null && !caregiver.equalsIgnoreCase(FALSE)) {
+                    cds.add(CdConverter.convertStringToCd(caregiver));
+                }
+                if (investigator != null && !investigator.equalsIgnoreCase(FALSE)) {
+                    cds.add(CdConverter.convertStringToCd(investigator));
+                }
+                if (outcomesassessor != null && !outcomesassessor.equalsIgnoreCase(FALSE)) {
+                    cds.add(CdConverter.convertStringToCd(outcomesassessor));
+                }
+                if (subject != null && !subject.equalsIgnoreCase(FALSE)) {
+                    cds.add(CdConverter.convertStringToCd(subject));
+                }
             }
-            if (investigator != null) {
-                cds.add(CdConverter.convertStringToCd(investigator));
-            }
-            if (outcomesassessor != null) {
-                cds.add(CdConverter.convertStringToCd(outcomesassessor));
-            }
-            if (subject != null) {
-                cds.add(CdConverter.convertStringToCd(subject));
-            }
-            ispFromDatabaseDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
+            ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
 
-            PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispFromDatabaseDTO);
+            PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispDTO);
             detailsQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         } catch (Exception e) {
@@ -206,63 +209,48 @@ public class InterventionalStudyDesignAction extends ActionSupport {
 
     private void enforceBusinessRules() {
         if (PAUtil.isEmpty(webDTO.getPrimaryPurposeCode())) {
-            addFieldError("webDTO.primaryPurposeCode",
-                    getText("error.primary"));
+            addFieldError("webDTO.primaryPurposeCode", getText("error.primary"));
         }
         if (webDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other") 
                 && PAUtil.isEmpty(webDTO.getPrimaryPurposeOtherText())) {          
-            addFieldError("webDTO.primaryPurposeOtherText",
-                    getText("error.comment"));
+            addFieldError("webDTO.primaryPurposeOtherText", getText("error.comment"));
         }
         
         if (PAUtil.isNotEmpty(webDTO.getPrimaryPurposeOtherText())
             && webDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
-          addFieldError("webDTO.primaryPurposeOtherText",
-              getText("error.spType.other.maximumChar"));        
+          addFieldError("webDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));        
         }
 
         if (PAUtil.isEmpty(webDTO.getPhaseCode())) {
-            addFieldError("webDTO.phaseCode",
-                    getText("error.phase"));
+            addFieldError("webDTO.phaseCode", getText("error.phase"));
         }
         if (PAUtil.isEmpty(webDTO.getDesignConfigurationCode())) {
-            addFieldError("webDTO.designConfigurationCode",
-                    getText("error.intervention"));
+            addFieldError("webDTO.designConfigurationCode", getText("error.intervention"));
         }
         if (PAUtil.isEmpty(webDTO.getNumberOfInterventionGroups())) {
-            addFieldError("webDTO.numberOfInterventionGroups",
-                    getText("error.arms"));
+            addFieldError("webDTO.numberOfInterventionGroups", getText("error.arms"));
         }
         if (PAUtil.isNotEmpty(webDTO.getNumberOfInterventionGroups())) {
             try {
                 Integer.valueOf(webDTO.getNumberOfInterventionGroups());
             } catch (NumberFormatException e) {
-                addFieldError("webDTO.numberOfInterventionGroups",
-                        getText("error.numeric"));
+                addFieldError("webDTO.numberOfInterventionGroups", getText("error.numeric"));
             }
         }
         if (PAUtil.isEmpty(webDTO.getBlindingSchemaCode())) {
-            addFieldError("webDTO.blindingSchemaCode",
-                    getText("error.masking"));
+            addFieldError("webDTO.blindingSchemaCode", getText("error.masking"));
         }
         if (PAUtil.isEmpty(webDTO.getAllocationCode())) {
-            addFieldError("webDTO.allocationCode",
-                    getText("error.allocation"));
+            addFieldError("webDTO.allocationCode", getText("error.allocation"));
         }
-        /*if (PAUtil.isEmpty(webDTO.getStudyClassificationCode())) {
-            addFieldError("webDTO.studyClassificationCode",
-                    getText("error.studyclassification"));
-        }*/
         if (PAUtil.isEmpty(webDTO.getMaximumTargetAccrualNumber())) {
-            addFieldError("webDTO.maximumTargetAccrualNumber",
-                    getText("error.target.enrollment"));
+            addFieldError("webDTO.maximumTargetAccrualNumber", getText("error.target.enrollment"));
         }
         if (PAUtil.isNotEmpty(webDTO.getMaximumTargetAccrualNumber())) {
             try {
                 Integer.valueOf(webDTO.getMaximumTargetAccrualNumber());
             } catch (NumberFormatException e) {
-                addFieldError("webDTO.maximumTargetAccrualNumber",
-                        getText("error.numeric"));
+                addFieldError("webDTO.maximumTargetAccrualNumber", getText("error.numeric"));
             }
         }
     }
@@ -440,12 +428,12 @@ public class InterventionalStudyDesignAction extends ActionSupport {
       if (webDTO.getPrimaryIndicator().equalsIgnoreCase("Yes")) {
         webDTO.setPrimaryIndicator("true");
       } else {
-        webDTO.setPrimaryIndicator("false");
+        webDTO.setPrimaryIndicator(FALSE);
       }
       if (webDTO.getSafetyIndicator().equalsIgnoreCase("Yes")) {
         webDTO.setSafetyIndicator("true");
       } else {
-        webDTO.setSafetyIndicator("false");
+        webDTO.setSafetyIndicator(FALSE);
       }
     }
 
