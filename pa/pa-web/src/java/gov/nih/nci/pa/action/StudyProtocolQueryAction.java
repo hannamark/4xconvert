@@ -156,8 +156,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
             return SUCCESS;
         } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            return SUCCESS;
         }
     }
 

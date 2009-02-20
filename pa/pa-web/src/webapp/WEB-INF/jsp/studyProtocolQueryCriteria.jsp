@@ -31,7 +31,8 @@ function generateReport(pid) {
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <div class="box" id="filters">
-    <s:form><s:actionerror/>
+    <s:form>
+    <pa:failureMessage/>
         <table class="form">    
             <tr>
                 <td scope="row" class="label">
