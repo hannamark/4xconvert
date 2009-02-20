@@ -306,7 +306,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
 
         pr.setTelecomAddress(tels);
 
-        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry.getAlpha3());
+        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry.getAlpha3(), defaultCountry.getName());
         pr.setPostalAddress(new DSet<Ad>());
         pr.getPostalAddress().setItem(Collections.singleton(ad));
 

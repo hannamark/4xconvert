@@ -130,7 +130,7 @@ public final class AddressConverter {
             } else {
                 return AddressConverterUtil.create(a.getStreetAddressLine(), a.getDeliveryAddressLine(), a
                         .getCityOrMunicipality(), a.getStateOrProvince(), a.getPostalCode(),
-                        a.getCountry().getAlpha3());
+                        a.getCountry().getAlpha3(), a.getCountry().getName());
             }
         }
     }

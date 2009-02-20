@@ -168,7 +168,7 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
         pr.setTelecomAddress(tels);
 
         Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-                "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3());
+                "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(), getDefaultCountry().getName());
         pr.setPostalAddress(new DSet<Ad>());
         pr.getPostalAddress().setItem(Collections.singleton(ad));
     }

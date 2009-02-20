@@ -30,11 +30,12 @@ public class AddressConverterUtil {
      * @param stateOrProvince state or province
      * @param postalCode postal code
      * @param countryAlpha3 ISO-3316 3-letter country code
+     * @param countryName full country name
      * @return simply ISO address
      */
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static Ad create(String streetAddressLine, String deliveryAddressLine, String cityOrMunicipality,
-            String stateOrProvince, String postalCode, String countryAlpha3) {
+            String stateOrProvince, String postalCode, String countryAlpha3, String countryName) {
         Ad iso = new Ad();
         List<Adxp> l = new ArrayList<Adxp>();
         iso.setPart(l);
@@ -48,7 +49,7 @@ public class AddressConverterUtil {
 
         Adxp x;
         x = Adxp.createAddressPart(AddressPartType.CNT);
-        x.setValue("adxp.value is required");
+        x.setValue(countryName);
         x.setCode(countryAlpha3);
         l.add(x);
         return iso;

@@ -152,14 +152,16 @@ public class AdConverter {
             Adxp stateProvince = null;
 
             for (Adxp part : iso.getPart()) {
-                if (part.getType() == null) {
+                AddressPartType type = part.getType();
+                if (type == null) {
                     verify(part);
                     street.append(sdelimitor).append(part.getValue());
                 } else {
-                    if (!AddressPartType.DEL.equals(part.getType())) {
+                    if (type != AddressPartType.CNT && type != AddressPartType.DEL) {
                         verify(part);
                     }
-                    switch (part.getType()) {
+                    
+                    switch (type) {
                         case CAR:
                             ddelimitor += "c/o ";
                         case DAL:

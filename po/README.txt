@@ -69,11 +69,17 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     
     Run just the Selenium tests
      - Start and deploy to JBoss
-     cd services
+
+    cd services
     mvn -Pinit-db sql:execute
-    mvn liguibase:update
+    mvn liquibase:update
     cd ..
+
+    or on unix,
+    pushd services/; mvn -Pinit-db sql:execute && mvn liquibase:update; popd
+
     mvn -Pci-nostart-nodeploy integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
+
 1.5 Peer Review 
     Package up your differences by running 'svn diff -x -bw --no-diff-deleted -x --ignore-eol-style > diff.diff' and send it to another developer for review prior to committing to SVN.
 

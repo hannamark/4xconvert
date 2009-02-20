@@ -84,7 +84,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     public void createOrg() throws EntityValidationException, URISyntaxException {
         OrganizationDTO dto = new OrganizationDTO();
         dto.setName(StringConverter.convertToEnOn("some name"));
-        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
+        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(), getDefaultCountry().getName()));
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         Tel t = new Tel();
@@ -117,7 +117,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setName(StringConverter.convertToEnOn("some name"));
-            dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
+            dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(), getDefaultCountry().getName()));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);
@@ -241,61 +241,61 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         sc.setName(null);
 
         // search by ad
-        sc.setPostalAddress(AddressConverterUtil.create("1 hAp", null, null, null, null, null));
+        sc.setPostalAddress(AddressConverterUtil.create("1 hAp", null, null, null, null, null, null));
         results = remote.search(sc);
         assertEquals(1, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create("%pp", null, null, null, null, null));
+        sc.setPostalAddress(AddressConverterUtil.create("%pp", null, null, null, null, null, null));
         results = remote.search(sc);
         assertEquals(3, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, "apt ", null, null, null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, "apt ", null, null, null, null, null));
         results = remote.search(sc);
         assertEquals(3, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, "%3", null, null, null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, "%3", null, null, null, null, null));
         results = remote.search(sc);
         assertEquals(1, results.size());
 
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happy", null, null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happy", null, null, null, null));
         results = remote.search(sc);
         assertEquals(3, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb", null, null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb", null, null, null, null));
         results = remote.search(sc);
         assertEquals(1, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb invalid", null, null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb invalid", null, null, null, null));
         results = remote.search(sc);
         assertEquals(0, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happy", null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happy", null, null, null));
         results = remote.search(sc);
         assertEquals(3, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happyville", null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happyville", null, null, null));
         results = remote.search(sc);
         assertEquals(1, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "noresults", null, null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "noresults", null, null, null));
         results = remote.search(sc);
         assertEquals(0, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "111", null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "111", null, null));
         results = remote.search(sc);
         assertEquals(3, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "11112", null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "11112", null, null));
         results = remote.search(sc);
         assertEquals(1, results.size());
 
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "2", null));
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "2", null, null));
         results = remote.search(sc);
         assertEquals(0, results.size());
 
         sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, null,
-                getDefaultCountry().getAlpha3()));
+                getDefaultCountry().getAlpha3(), getDefaultCountry().getName()));
         results = remote.search(sc);
         assertEquals(3, results.size());
 

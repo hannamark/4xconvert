@@ -60,7 +60,7 @@ public class AdConverterTest extends AbstractHibernateTestCase {
     @Test
     public void testAdxpValueIsRequired() {
         for (AddressPartType type : AddressPartType.values()) {
-            if (type.equals(AddressPartType.DEL)) {
+            if (type == AddressPartType.DEL || type == AddressPartType.CNT) {
                 continue;
             }
             Ad iso = new Ad();
