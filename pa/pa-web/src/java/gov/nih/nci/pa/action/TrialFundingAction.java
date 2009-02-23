@@ -80,7 +80,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.TrialFundingWebDTO;
-import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -171,7 +171,7 @@ public class TrialFundingAction extends ActionSupport {
       studyResoureDTO.setFundingTypeCode(
           CdConverter.convertStringToCd(trialFundingWebDTO.getFundingTypeCode()));
       studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
-          MonitorCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
+              NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
       studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getNihInstitutionCode()));
       studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
@@ -211,7 +211,7 @@ public class TrialFundingAction extends ActionSupport {
       studyResoureDTO.setFundingTypeCode(
           CdConverter.convertStringToCd(trialFundingWebDTO.getFundingTypeCode()));
       studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
-          MonitorCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
+              NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
       studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getNihInstitutionCode()));
       studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));

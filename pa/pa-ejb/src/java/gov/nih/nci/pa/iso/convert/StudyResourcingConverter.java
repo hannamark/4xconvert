@@ -80,7 +80,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
-import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -160,7 +160,7 @@ public class StudyResourcingConverter {
         }
         if (studyResourcingDTO.getNciDivisionProgramCode() != null) {
             studyResourcing.setNciDivisionProgramCode(
-                    MonitorCode.getByCode(studyResourcingDTO.getNciDivisionProgramCode().getCode()));
+                    NciDivisionProgramCode.getByCode(studyResourcingDTO.getNciDivisionProgramCode().getCode()));
         }
         if (studyResourcingDTO.getNihInstitutionCode() != null) {
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());

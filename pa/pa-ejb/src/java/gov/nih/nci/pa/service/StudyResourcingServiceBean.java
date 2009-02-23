@@ -81,7 +81,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
-import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -236,7 +236,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                     studyResourcingDTO.getFundingMechanismCode()));
             studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode().getCode());
-            studyResourcing.setNciDivisionProgramCode(MonitorCode.getByCode(
+            studyResourcing.setNciDivisionProgramCode(NciDivisionProgramCode.getByCode(
                         studyResourcingDTO.getNciDivisionProgramCode().getCode()));
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
             studyResourcing.setSuffixGrantYear(StConverter.convertToString(studyResourcingDTO.getSuffixGrantYear()));

@@ -104,7 +104,7 @@ function tooltip() {
                             <fmt:message key="studyProtocol.monitorCode"/>:<span class="required">*</span>
                      </label>
                     </td>
-                    <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
+                    <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
                       <td class="value">
                         <s:select headerKey="" headerValue="" 
                            name="trialFundingWebDTO.nciDivisionProgramCode" 
