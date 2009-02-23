@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 import javax.persistence.Column;
@@ -112,7 +112,7 @@ public class StudyResourcing extends AbstractEntity {
     private String fundingMechanismCode;
     private String nihInstituteCode;
     private String fundingTypeCode;
-    private MonitorCode nciDivisionProgramCode;
+    private NciDivisionProgramCode nciDivisionProgramCode;
     private String suffixGrantYear;
     private String suffixOther;
     private Integer serialNumber;
@@ -258,14 +258,14 @@ public class StudyResourcing extends AbstractEntity {
      */
     @Column(name = "NCI_DIVISION_PROGRAM_CODE")
     @Enumerated(EnumType.STRING)
-    public MonitorCode getNciDivisionProgramCode() {
+    public NciDivisionProgramCode getNciDivisionProgramCode() {
         return nciDivisionProgramCode;
     }
     /**
      *
      * @param nciDivisionProgramCode nciDivisionProgramCode
      */
-    public void setNciDivisionProgramCode(MonitorCode nciDivisionProgramCode) {
+    public void setNciDivisionProgramCode(NciDivisionProgramCode nciDivisionProgramCode) {
         this.nciDivisionProgramCode = nciDivisionProgramCode;
     }
     /**
