@@ -89,6 +89,7 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
                     getPerson(client);
                     
                     searchPersons(client);
+                    searchOrganizations(client);
 
                 } else {
                     usage();
@@ -185,6 +186,19 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
         }
     }
 
+    private static void searchOrganizations(CoppaPOClient client) throws RemoteException {
+        Organization criteria = new Organization();
+        CD statusCode = new CD();
+        statusCode.setCode("active");
+        criteria.setStatusCode(statusCode);
+        Organization[] searchOrgs = client.searchOrganizations(criteria);
+        System.out.println("Search Orgs Results Found: " + searchOrgs.length);
+        for (Organization org : searchOrgs) {
+            print(org);
+        }
+    }
+
+
     private static void getPerson(CoppaPOClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(PERSON_ROOT);
@@ -205,6 +219,10 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
 
     private static void print(Person person) {
         print(person.getIdentifier());
+    }
+
+    private static void print(Organization org) {
+        print(org.getIdentifier());
     }
 
     private static void print(II identifier) {

@@ -45,22 +45,22 @@
 	<!-- Pre Init Target                                                -->
 	<!-- ============================================================== -->
 	<target name="preInit">
-		<patternset id="dependent.schema.folders.ps">
-            <include name="core/**"/>
-            <include name="pkgdata/**"/>
-            <include name="ws/**"/>
-            <include name="wsrf/**"/>			
-		</patternset>
-		<delete> 
-			<fileset dir="${schema.dir}">
-				<patternset refid="dependent.schema.folders.ps"/>
-			</fileset>
-		</delete>
+            <patternset id="dependent.schema.folders.ps">
+                <include name="core/**"/>
+                <include name="pkgdata/**"/>
+                <include name="ws/**"/>
+                <include name="wsrf/**"/>
+            </patternset>
+            <delete>
+		<fileset dir="${schema.dir}">
+                    <patternset refid="dependent.schema.folders.ps"/>
+                </fileset>
+            </delete>
 	    <copy todir="${schema.dir}" overwrite="true">
 	    	<fileset dir="${ext.globus.dir}/schema">
-				<patternset refid="dependent.schema.folders.ps"/>
+                    <patternset refid="dependent.schema.folders.ps"/>
 	    	</fileset>
-		</copy>
+            </copy>
 	</target>
 
 	<!-- ============================================================== -->
@@ -96,6 +96,7 @@
             <arg value="-b"/><arg file="${basedir}/schema/CoppaPO/jaxb-config.xjb"/>
             <!--arg value="-p"/><arg value="gov.nih.nci.coppa.po"/-->
             <arg value="-nv"/>
+            <arg value="-verbose"/>
         </java>
         
 	</target>
@@ -216,7 +217,7 @@
 	<!-- ============================================================== -->
 	<!-- Call any tests.                                                -->
 	<!-- ============================================================== -->
-	<target name="test" depends="checkGlobus" description="Runs the service's tests.">
+	<target name="test" depends="checkGlobus, compileTests" description="Runs the service's tests.">
 		<echo message="Test results dir: ${junit.results.dir}" />
 		<mkdir dir="${junit.results.dir}" />
 		<junit dir="${basedir}" printsummary="yes" showoutput="true">
@@ -225,6 +226,7 @@
 			<batchtest fork="yes" todir="${junit.results.dir}">
 				<fileset dir="${test.src.dir}">
 					<include name="**/Test*.java" />
+                                        <include name="**/*Test.java" />
 					<include name="**/*TestCase.java" />
 				</fileset>
 			</batchtest>

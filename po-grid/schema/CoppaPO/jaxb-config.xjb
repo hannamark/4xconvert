@@ -20,9 +20,5 @@
         </jxb:schemaBindings>
     </jxb:bindings>
 
-    <jxb:bindings schemaLocation="xsd/cagrid/types/service/servicemodel.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.cagrid.metadata"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
+    
 </jxb:bindings>

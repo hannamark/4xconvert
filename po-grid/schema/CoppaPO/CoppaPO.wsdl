@@ -196,22 +196,18 @@
     <operation name="getPerson">
       <input message="tns:GetPersonRequest" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/GetPersonRequest" />
       <output message="tns:GetPersonResponse" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/GetPersonResponse" />
-      <fault name="NullifiedEntityFault" message="tns:NullifiedEntityFaultFaultMessage" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/NullifiedEntityFaultFaultMessage" />
     </operation>
     <operation name="getOrganization">
       <input message="tns:GetOrganizationRequest" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/GetOrganizationRequest" />
       <output message="tns:GetOrganizationResponse" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/GetOrganizationResponse" />
-      <fault name="NullifiedEntityFault" message="tns:NullifiedEntityFaultFaultMessage" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/NullifiedEntityFaultFaultMessage" />
     </operation>
     <operation name="searchOrganizations">
       <input message="tns:SearchOrganizationsRequest" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/SearchOrganizationsRequest" />
       <output message="tns:SearchOrganizationsResponse" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/SearchOrganizationsResponse" />
-      <fault name="NullifiedEntityFault" message="tns:NullifiedEntityFaultFaultMessage" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/NullifiedEntityFaultFaultMessage" />
     </operation>
     <operation name="searchPersons">
       <input message="tns:SearchPersonsRequest" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/SearchPersonsRequest" />
       <output message="tns:SearchPersonsResponse" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/SearchPersonsResponse" />
-      <fault name="NullifiedEntityFault" message="tns:NullifiedEntityFaultFaultMessage" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/NullifiedEntityFaultFaultMessage" />
     </operation>
     <operation name="echoPerson">
       <input message="tns:EchoPersonRequest" wsa:Action="http://grid.po.coppa.nci.nih.gov/CoppaPO/EchoPersonRequest" />
