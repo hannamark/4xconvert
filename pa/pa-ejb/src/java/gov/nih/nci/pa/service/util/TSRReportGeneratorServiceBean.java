@@ -170,7 +170,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private static final String DD_E = "</DD>";
   private static final String NO = "No";
   private static final int ERROR_COUNT = 5;
-  private static final Logger LOG  = Logger.getLogger(TSRReportGenerator.class);
+  private static final Logger LOG  = Logger.getLogger(TSRReportGeneratorServiceBean.class);
   private final CorrelationUtils correlationUtils = new CorrelationUtils();
   /**
    * @param studyProtocolIi ii of studyprotocol

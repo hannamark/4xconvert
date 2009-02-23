@@ -105,11 +105,9 @@ import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
-import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -209,18 +207,7 @@ public class JndiServiceLocator implements ServiceLocator {
         return (ProtocolQueryServiceLocal) JNDIUtil.lookup("pa/ProtocolQueryServiceBean/local");
     }
 
-    /**
-     * @return HealthCareFacilityService
-     */
-    public PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
-        return (PAHealthCareFacilityServiceRemote) JNDIUtil.lookup("pa/PAHealthCareFacilityServiceBean/remote");
-    }
-    /**
-     * @return ResearchOrganizationService
-     */
-    public PAResearchOrganizationServiceRemote getPAResearchOrganizationService() {
-        return (PAResearchOrganizationServiceRemote) JNDIUtil.lookup("pa/PAResearchOrganizationServiceBean/remote");
-    }
+
     /**
      * @return StudyParticipationService
      */

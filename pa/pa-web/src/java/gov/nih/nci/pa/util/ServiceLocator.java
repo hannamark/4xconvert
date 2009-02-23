@@ -105,11 +105,9 @@ import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
-import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -204,14 +202,6 @@ public interface ServiceLocator {
      */
     StudyParticipationServiceRemote getStudyParticipationService();
     
-    /**
-     * @return PAHealthCareFacilityServiceRemote
-     */
-    PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService();
-    /**
-     * @return PAHealthCareProviderRemote
-     */    
-    PAResearchOrganizationServiceRemote getPAResearchOrganizationService();
 
     /**
      * @return StudySiteAccrualStatusServiceRemote
@@ -228,11 +218,7 @@ public interface ServiceLocator {
     * @throws PAException on error  
     */
     HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() throws PAException;
-//    /**
-//    *
-//    * @return HealthCareFacilityCorrelationServiceRemote
-//    */
-//    ResearchOrganizationCorrelationServiceRemote getPoResearchOrganizationService();
+
     /**
      * 
      * @return SubGroupsServiceRemote

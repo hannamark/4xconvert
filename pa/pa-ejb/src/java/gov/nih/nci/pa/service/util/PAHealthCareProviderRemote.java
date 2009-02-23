@@ -80,7 +80,6 @@ package gov.nih.nci.pa.service.util;
 
 
 
-import gov.nih.nci.pa.dto.PAHealthCareProviderDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
 
@@ -97,25 +96,7 @@ import javax.ejb.Remote;
 @Remote 
 public interface PAHealthCareProviderRemote {
     
-    /**
-     * Gets the person primary key (PA World) using the PO id (PO World).
-     * 
-     * @param poIdentifier for search
-     * @param roleCode for the role code   
-     * @param spId as Study Participation Id
-     * @return Long the primary key identifier
-     * @throws PAException on error
-     */
-    Long getStudyParticationContactByPersonAndSPId(Long poIdentifier, Long spId, String roleCode) 
-        throws PAException;
     
-    /**
-     * 
-     * @param dto to be saved
-     * @return Long id of the Health care provider
-     * @throws PAException on error.
-     */    
-    Long createPAHealthCareProvider(PAHealthCareProviderDTO dto) throws PAException;
     
     /**
      * 
@@ -126,14 +107,7 @@ public interface PAHealthCareProviderRemote {
      */
     List<PaPersonDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException;
     
-    /**
-     * 
-     * @param identifier to search
-     * @return Long id
-     * @throws PAException on error.
-     */
-    Long findHcpByIdentifier(Long identifier) throws PAException;
-    
+   
     /**
      *  
      * @param id the study participation id

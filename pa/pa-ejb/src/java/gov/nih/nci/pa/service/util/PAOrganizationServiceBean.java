@@ -192,37 +192,6 @@ public class PAOrganizationServiceBean implements
     }
     
 
-    /**
-     * 
-     * @param organization Organization
-     * @return Organization
-     * @throws PAException PAException
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Organization createOrganization(Organization organization) throws PAException {
-        if (organization == null) {
-            LOG.error(" organization should not be null ");
-            throw new PAException(" organization should not be null ");
-        }     
-        LOG.debug("Entering createOrganization ");
-        Session session = null;
-        
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.save(organization);
-        } catch (HibernateException hbe) {
-            
-            LOG.error(" Hibernate exception while createOrganization " , hbe);
-            throw new PAException(" Hibernate exception while createOrganization " , hbe);
-        } finally {
-            session.flush();
-        }
-        
-        LOG.debug("Leaving createStudyResourcing ");
-        return organization;
-        
-    }
-    
     
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private List<Organization> generateDistinctOrganizationQuery()  

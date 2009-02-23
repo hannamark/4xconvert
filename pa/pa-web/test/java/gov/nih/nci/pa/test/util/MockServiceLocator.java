@@ -105,11 +105,9 @@ import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
-import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -255,13 +253,6 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getHealthCareFacilityService()
-     */
-    public PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     /** 
      * return DocumentServiceRemote
@@ -306,13 +297,6 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getPAResearchOrganizationService()
-     */
-    public PAResearchOrganizationServiceRemote getPAResearchOrganizationService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
         return null;

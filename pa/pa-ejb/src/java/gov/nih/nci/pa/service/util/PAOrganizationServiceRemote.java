@@ -114,12 +114,5 @@ public interface PAOrganizationServiceRemote  {
      */
     Organization getOrganizationByIndetifers(Organization organization) throws PAException;
     
-    /**
-     * 
-     * @param organization Organization
-     * @return Organization
-     * @throws PAException PAException
-     */
-    Organization createOrganization(Organization organization) throws PAException;    
 
 }
