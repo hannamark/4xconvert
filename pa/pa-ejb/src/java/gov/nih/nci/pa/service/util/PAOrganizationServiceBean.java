@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.OrganizationDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -121,11 +121,11 @@ public class PAOrganizationServiceBean implements
      * @throws PAException pa exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<OrganizationDTO> getOrganizationsAssociatedWithStudyProtocol() 
+    public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol() 
     throws PAException {
         LOG.debug("Entereing getOrganizationsAssociatedWithStudyProtocol");
         List<Organization> organizations = generateDistinctOrganizationQuery();
-        List<OrganizationDTO> organizationDTOs = createOrganizationDTO(organizations);
+        List<PaOrganizationDTO> organizationDTOs = createOrganizationDTO(organizations);
         LOG.debug("Leaving getOrganizationsAssociatedWithStudyProtocol");
         return organizationDTOs;  
             
@@ -233,14 +233,14 @@ public class PAOrganizationServiceBean implements
         return sortedOrganizations;
     }
     
-    private List<OrganizationDTO> createOrganizationDTO(List<Organization> organizations) {
+    private List<PaOrganizationDTO> createOrganizationDTO(List<Organization> organizations) {
         LOG.debug("Entereing createOrganizationDTO");
         
-        List<OrganizationDTO> organizationDTOs = new ArrayList<OrganizationDTO>();
-        OrganizationDTO oganizationDTO = null;
+        List<PaOrganizationDTO> organizationDTOs = new ArrayList<PaOrganizationDTO>();
+        PaOrganizationDTO oganizationDTO = null;
         for (int i = 0; i < organizations.size(); i++) {
-            oganizationDTO = new OrganizationDTO();
-            oganizationDTO.setId(((Organization) organizations.get(i)).getId());
+            oganizationDTO = new PaOrganizationDTO();
+            oganizationDTO.setId(((Organization) organizations.get(i)).getId().toString());
             oganizationDTO.setName(((Organization) organizations.get(i)).getName());
             organizationDTOs.add(oganizationDTO);
         }

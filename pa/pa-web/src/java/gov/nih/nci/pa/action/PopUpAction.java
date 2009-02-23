@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.dto.OrganizationWebDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -106,7 +106,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class PopUpAction extends ActionSupport {
     private List<Country> countryList = new ArrayList<Country>();
-    private List<OrganizationWebDTO> orgs = new ArrayList<OrganizationWebDTO>();
+    private List<PaOrganizationDTO> orgs = new ArrayList<PaOrganizationDTO>();
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private OrgSearchCriteria orgSearchCriteria = new OrgSearchCriteria();
 
@@ -230,14 +230,14 @@ public class PopUpAction extends ActionSupport {
     /**
      * @return the orgs
      */
-    public List<OrganizationWebDTO> getOrgs() {
+    public List<PaOrganizationDTO> getOrgs() {
         return orgs;
     }
 
     /**
      * @param orgs the orgs to set
      */
-    public void setOrgs(List<OrganizationWebDTO> orgs) {
+    public void setOrgs(List<PaOrganizationDTO> orgs) {
         this.orgs = orgs;
     }
 

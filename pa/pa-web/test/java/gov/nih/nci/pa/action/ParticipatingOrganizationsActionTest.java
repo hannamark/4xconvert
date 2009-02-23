@@ -83,7 +83,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.OrganizationWebDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.util.Constants;
@@ -173,7 +173,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         
         // confirm that list contains new org.
         boolean found = false;
-        for (OrganizationWebDTO webDto : act.organizationList) {
+        for (PaOrganizationDTO webDto : act.organizationList) {
             if(MockOrganizationCorrelationService.getOrgNameFromPoIdentifier(poIdentifier).equals(webDto.getName())) {
                 found = true;
             }

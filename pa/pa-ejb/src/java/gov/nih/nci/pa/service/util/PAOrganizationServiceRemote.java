@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.OrganizationDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -103,7 +103,7 @@ public interface PAOrganizationServiceRemote  {
      * @return OrganizationDTO
      * @throws PAException PAException
      */
-    List<OrganizationDTO> getOrganizationsAssociatedWithStudyProtocol()
+    List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol()
     throws PAException;
 
     /**

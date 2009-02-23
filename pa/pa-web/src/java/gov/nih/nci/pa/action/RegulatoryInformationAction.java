@@ -105,11 +105,11 @@ import com.opensymphony.xwork2.ActionSupport;
  *        holder, NCI.
  * 
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity" })
 public class RegulatoryInformationAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
-    private static final String VIEW_PAGE = "view_page";
-    private StudyProtocolDTO ispDTO = new StudyProtocolDTO();
+    // private static final String VIEW_PAGE = "view_page";
+   // private StudyProtocolDTO ispDTO = new StudyProtocolDTO();
     private List countryList = new ArrayList();
     private String lst = null;
     //private String selectedAuthOrg = null;
@@ -135,30 +135,29 @@ public class RegulatoryInformationAction extends ActionSupport {
             String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
                     Long.valueOf(getLst()), "Country");
             webDTO.setTrialOversgtAuthOrgName(orgName);
-            webDTO.setTrialOversgtAuthCountry(countryName);
-            String user = ServletActionContext.getRequest().getRemoteUser();
+            webDTO.setTrialOversgtAuthCountry(countryName);            
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
             // Update InterventionalSP
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            if (webDTO.getSection801Indicator().equals("")) {
+            if (webDTO.getSection801Indicator() == null) {
                 spDTO.setSection801Indicator(BlConverter.convertToBl(null));
             } else {
                 spDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSection801Indicator())));
             }
-            if (webDTO.getFdaRegulatedInterventionIndicator().equals("")) {
+            if (webDTO.getFdaRegulatedInterventionIndicator() == null) {
                 spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
             } else {
                 spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                         .getFdaRegulatedInterventionIndicator())));
             }
-            if (webDTO.getDelayedPostingIndicator().equals("")) {
+            if (webDTO.getDelayedPostingIndicator() == null) {
                 spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(null));
             } else {
                 spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                         .getDelayedPostingIndicator())));
             }
-            if (webDTO.getDataMonitoringIndicator().equals("")) {
+            if (webDTO.getDataMonitoringIndicator() == null) {
                 spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
             } else {
                 spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
@@ -228,7 +227,7 @@ public class RegulatoryInformationAction extends ActionSupport {
                         Long.valueOf(regInfo.get(1).toString()));
                 setSelectedRegAuth(regInfo.get(0).toString());
             } 
-            ispDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            //ispDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -257,7 +256,7 @@ public class RegulatoryInformationAction extends ActionSupport {
     public String getRegAuthoritiesList() {
         try {
             String countryId = ServletActionContext.getRequest().getParameter("countryid");
-            if (!countryId.equals("")) {
+            if (!("".equals(countryId))) {
                 regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
                     Long.valueOf(countryId));
             } else {

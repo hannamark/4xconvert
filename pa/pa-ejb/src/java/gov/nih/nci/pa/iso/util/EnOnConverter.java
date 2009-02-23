@@ -79,16 +79,18 @@
 package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.pa.dto.OrganizationWebDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -153,29 +155,32 @@ public class EnOnConverter {
      * @param countryList CountryList
      * @throws PAException on error
      */
-    public static OrganizationWebDTO convertPoOrganizationDTO(OrganizationDTO poOrgDto, List countryList)
+    public static PaOrganizationDTO convertPoOrganizationDTO(OrganizationDTO poOrgDto, List countryList)
             throws PAException {
-        OrganizationWebDTO displayElement = null;
-        displayElement = new OrganizationWebDTO();
+        PaOrganizationDTO displayElement = null;
+        displayElement = new PaOrganizationDTO();
         displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
         displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
         //
-        int partSize = poOrgDto.getPostalAddress().getPart().size();
-        AddressPartType type = null;
-        for (int k = 0; k < partSize; k++) {
-            type = poOrgDto.getPostalAddress().getPart().get(k).getType();
-            if (type.name().equals("CNT")) {
-                displayElement.setCountry(getCountryNameUsingCode(poOrgDto.getPostalAddress().getPart().get(k)
-                        .getCode(), countryList));
+        List addressList = poOrgDto.getPostalAddress().getPart();
+        Iterator addressIte = addressList.iterator();
+        while (addressIte.hasNext()) {
+            Adxp part = (Adxp) addressIte.next();
+            if (AddressPartType.STA == part.getType()) {
+                displayElement.setState(part.getValue());
             }
-            if (type.name().equals("ZIP")) {
-                displayElement.setZip(poOrgDto.getPostalAddress().getPart().get(k).getValue());
+            if (AddressPartType.CTY == part.getType()) {
+                displayElement.setCity(part.getValue());
             }
-            if (type.name().equals("CTY")) {
-                displayElement.setCity(poOrgDto.getPostalAddress().getPart().get(k).getValue());
+            if (AddressPartType.CNT == part.getType()) {
+                if (countryList != null) {
+                    displayElement.setCountry(getCountryNameUsingCode(part.getCode(), countryList));
+                } else {
+                    displayElement.setCountry(part.getCode());
+                }                
             }
-            if (type.name().equals("STA")) {
-                displayElement.setState(poOrgDto.getPostalAddress().getPart().get(k).getValue());
+            if (AddressPartType.ZIP == part.getType()) {
+                displayElement.setZip(part.getValue());
             }
         }
         return displayElement;

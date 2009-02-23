@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.iso.util;
 
 import static gov.nih.nci.coppa.iso.EntityNamePartType.SFX;
+import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -99,7 +101,7 @@ import org.apache.commons.lang.StringUtils;
  * 
  * @author Harsha
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class EnPnConverter {
     private static final int EMAIL_IDX = 7;
 
@@ -135,10 +137,10 @@ public class EnPnConverter {
     public static PaPersonDTO convertToPaPersonDTO(PersonDTO poPerson) {
         gov.nih.nci.pa.dto.PaPersonDTO personDTO = new gov.nih.nci.pa.dto.PaPersonDTO();
         personDTO.setId(Long.valueOf(poPerson.getIdentifier().getExtension()));
-        List<Enxp> list = poPerson.getName().getPart();
-        Iterator ite = list.iterator();
-        while (ite.hasNext()) {
-            Enxp part = (Enxp) ite.next();
+        List<Enxp> nameList = poPerson.getName().getPart();
+        Iterator nameIte = nameList.iterator();
+        while (nameIte.hasNext()) {
+            Enxp part = (Enxp) nameIte.next();
             if (EntityNamePartType.FAM == part.getType()) {
                 personDTO.setLastName(part.getValue());
             } else if (EntityNamePartType.GIV == part.getType()) {
@@ -148,7 +150,7 @@ public class EnPnConverter {
                     personDTO.setMiddleName(part.getValue());
                 }
             }
-        }    
+        }
         //TelEmail; I need only EMAIL, So I am not using the DSETCONVERTER Class
         DSet<Tel> telList = poPerson.getTelecomAddress();
         Set<Tel> set = telList.getItem();
@@ -157,6 +159,24 @@ public class EnPnConverter {
             Object obj = iter.next();
             if (obj instanceof TelEmail) {
                 personDTO.setEmail(((TelEmail) obj).getValue().toString().substring(EMAIL_IDX));
+            }
+        }
+        //Populate the address information now!        
+        List addressList = poPerson.getPostalAddress().getPart();
+        Iterator addressIte = addressList.iterator();
+        while (addressIte.hasNext()) {
+            Adxp part = (Adxp) addressIte.next();
+            if (AddressPartType.STA == part.getType()) {
+                personDTO.setState(part.getValue());
+            }
+            if (AddressPartType.CTY == part.getType()) {
+                personDTO.setCity(part.getValue());
+            }
+            if (AddressPartType.CNT == part.getType()) {
+                personDTO.setCountry(part.getCode());
+            }
+            if (AddressPartType.ZIP == part.getType()) {
+                personDTO.setZip(part.getValue());
             }
         }
         return personDTO;

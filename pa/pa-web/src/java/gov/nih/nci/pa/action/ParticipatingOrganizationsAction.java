@@ -82,14 +82,14 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.OrganizationWebDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -112,7 +112,6 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.ISOOrgDisplayConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -152,7 +151,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     OrganizationCorrelationServiceRemote oCService;
     CorrelationUtilsRemote cUtils;
     private Ii spIi;
-    List<OrganizationWebDTO> organizationList = null;
+    List<PaOrganizationDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
     private Organization editOrg;
     private Long cbValue;
@@ -377,7 +376,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     private void loadForm() throws PAException {
-        organizationList = new ArrayList<OrganizationWebDTO>();
+        organizationList = new ArrayList<PaOrganizationDTO>();
         StudyParticipationDTO srDTO = new StudyParticipationDTO();
         srDTO
                 .setFunctionalCode(CdConverter.convertStringToCd(StudyParticipationFunctionalCode.TREATING_SITE
@@ -388,7 +387,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
             Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(sp
                     .getHealthcareFacilityIi()));
-            OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
+            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
@@ -414,14 +413,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * @throws PAException on error.
      */
     public String displayOrg() throws PAException {
-        gov.nih.nci.pa.dto.OrganizationDTO paOrgDTO = new gov.nih.nci.pa.dto.OrganizationDTO();
+        //gov.nih.nci.pa.dto.OrganizationDTO paOrgDTO = new gov.nih.nci.pa.dto.OrganizationDTO();
+        PaOrganizationDTO paOrgDTO = new PaOrganizationDTO();
         clearErrorsAndMessages();
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
-        // convert the PO DTO to the pa domain
-        paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
+        // convert the PO DTO to the pa domain        
+        paOrgDTO = EnOnConverter.convertPoOrganizationDTO(selectedOrgDTO, null);
+        //paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
         // store selection
         Organization org = new Organization();
         org.setCity(paOrgDTO.getCity());
@@ -546,36 +547,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         // If a primary contact also exists delete that as well
         List returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), "STUDY_PRIMARY_CONTACT");
-        if (returnlist.isEmpty()) {
+        if (!returnlist.isEmpty()) {
             StudyParticipationContactDTO contactDTODB = sPartContactService.get(IiConverter
                     .convertToIi(((PaPersonDTO) returnlist.get(0)).getId()));
             Long identifierDB = IiConverter.convertToLong(contactDTODB.getClinicalResearchStaffIi());
-            if (identifier.equals(identifierDB)) {
-                sPartContactService.delete(IiConverter.convertToIi(((PaPersonDTO) returnlist.get(0)).getId()));
-            }
-        }
-        return returnDisplaySPContacts(orgsTabWebDTO);
-    }
-
-    /**
-     * @return the result
-     * @throws PAException  on error
-     */
-    public String deleteStudyPartContact1() throws PAException {
-        clearErrorsAndMessages();
-        String invId = ServletActionContext.getRequest().getParameter("persid");
-        StudyParticipationContactDTO contactDTO = sPartContactService.get(IiConverter.convertToIi(invId));
-        Long identifier = IiConverter.convertToLong(contactDTO.getHealthCareProviderIi());
-        ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        sPartContactService.delete(IiConverter.convertToIi(invId));
-        // If a primary contact also exists delete that as well
-        List returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
-                orgsTabWebDTO.getStudyParticipationId(), Constants.STUDY_PRIMARY_CONTACT);
-        if (returnlist.isEmpty()) {
-            StudyParticipationContactDTO contactDTODB = sPartContactService.get(IiConverter
-                    .convertToIi(((PaPersonDTO) returnlist.get(0)).getId()));
-            Long identifierDB = IiConverter.convertToLong(contactDTODB.getHealthCareProviderIi());
             if (identifier.equals(identifierDB)) {
                 sPartContactService.delete(IiConverter.convertToIi(((PaPersonDTO) returnlist.get(0)).getId()));
             }
@@ -671,7 +646,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         // check if primary contact already exists; if it exists delete it
         List returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), Constants.STUDY_PRIMARY_CONTACT);
-        if (returnlist.isEmpty()) {
+        if (!returnlist.isEmpty()) {
             sPartContactService.delete(IiConverter.convertToIi(((PaPersonDTO) returnlist.get(0)).getId()));
         }
         boolean validationError = createStudyParticationContactRecord(orgsTabWebDTO, true,
@@ -765,7 +740,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         List<PaPersonDTO> resultsList = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), Constants.STUDY_PRIMARY_CONTACT);
-        if (resultsList != null && resultsList.isEmpty()) {
+        if (resultsList != null && !resultsList.isEmpty()) {
             personContactWebDTO = resultsList.get(0);
         }
         return DISPLAY_PRIM_CONTACTS;
@@ -830,14 +805,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     /**
      * @return the organizationList
      */
-    public List<OrganizationWebDTO> getOrganizationList() {
+    public List<PaOrganizationDTO> getOrganizationList() {
         return organizationList;
     }
 
     /**
      * @param organizationList the organizationList to set
      */
-    public void setOrganizationList(List<OrganizationWebDTO> organizationList) {
+    public void setOrganizationList(List<PaOrganizationDTO> organizationList) {
         this.organizationList = organizationList;
     }
 

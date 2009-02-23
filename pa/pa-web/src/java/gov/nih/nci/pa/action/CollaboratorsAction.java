@@ -81,7 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
-import gov.nih.nci.pa.dto.OrganizationWebDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StatusCode;
@@ -134,7 +134,7 @@ public class CollaboratorsAction extends ActionSupport
     private CorrelationUtils cUtils;
     private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
-    private List<OrganizationWebDTO> organizationList = null;
+    private List<PaOrganizationDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
     private static final String DISPLAYJSP = "displayJsp";
     private Long cbValue;
@@ -302,12 +302,12 @@ public class CollaboratorsAction extends ActionSupport
                 criteriaList.add(searchCode);
             }
         }
-        organizationList = new ArrayList<OrganizationWebDTO>();
+        organizationList = new ArrayList<PaOrganizationDTO>();
         List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi, criteriaList);
         for (StudyParticipationDTO sp : spList) {
             Organization orgBo = cUtils.getPAOrganizationByPAResearchOrganizationId(
                     IiConverter.convertToLong(sp.getResearchOrganizationIi()));
-            OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
+            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
@@ -345,14 +345,14 @@ public class CollaboratorsAction extends ActionSupport
     /**
      * @return the organizationList
      */
-    public List<OrganizationWebDTO> getOrganizationList() {
+    public List<PaOrganizationDTO> getOrganizationList() {
         return organizationList;
     }
 
     /**
      * @param organizationList the organizationList to set
      */
-    public void setOrganizationList(List<OrganizationWebDTO> organizationList) {
+    public void setOrganizationList(List<PaOrganizationDTO> organizationList) {
         this.organizationList = organizationList;
     }
 
