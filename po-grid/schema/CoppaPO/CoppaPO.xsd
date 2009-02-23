@@ -16,7 +16,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:element name="Id" type="ISO:II">
+    <xs:element name="Id">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="ISO:II"/>
