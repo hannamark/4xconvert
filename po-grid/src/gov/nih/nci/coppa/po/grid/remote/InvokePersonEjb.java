@@ -20,7 +20,7 @@ public class InvokePersonEjb {
 			return persons;
 		}catch(Exception exception) {
 			logger.error("Error searching persons.",exception);
-			throw new InvokeCoppaServiceException("Error searching persons.",exception);
+			throw new InvokeCoppaServiceException(exception.toString(), exception);
 		}
 	}
 	
@@ -33,7 +33,7 @@ public class InvokePersonEjb {
 			throw nee;
 		}catch(Exception exception) {
 			logger.error("Error getting persons.",exception);
-			throw new InvokeCoppaServiceException("Error getting persons.",exception);
+			throw new InvokeCoppaServiceException(exception.toString(), exception);
 		}
 	}	
 	

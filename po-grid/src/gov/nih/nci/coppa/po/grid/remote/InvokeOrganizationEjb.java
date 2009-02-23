@@ -19,7 +19,7 @@ public class InvokeOrganizationEjb {
             return orgs;
         } catch (Exception exception) {
             logger.error("Error searching organizations.", exception);
-            throw new InvokeCoppaServiceException("Error searching organizations.", exception);
+            throw new InvokeCoppaServiceException(exception.toString(), exception);
         }
     }
 
@@ -32,7 +32,7 @@ public class InvokeOrganizationEjb {
             throw nee;
         } catch (Exception exception) {
             logger.error("Error getting organizations.", exception);
-            throw new InvokeCoppaServiceException("Error getting organizations.", exception);
+            throw new InvokeCoppaServiceException(exception.toString(), exception);
         }
     }
 }

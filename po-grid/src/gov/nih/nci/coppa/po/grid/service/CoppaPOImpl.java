@@ -110,9 +110,7 @@ public class CoppaPOImpl extends CoppaPOImplBase {
         if (t instanceof RemoteException) {
             throw (RemoteException)t;
         }
-        RemoteException re = new RemoteException(t.getMessage());
-        re.initCause(t);
-        //e.printStackTrace();
-        throw re;//new RemoteException(e.getMessage());
+        RemoteException re = new RemoteException(t.toString(), t);
+        throw re;
     }
 }
