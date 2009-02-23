@@ -11,14 +11,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><decorator:title default="Protocol Abstraction (PA)"/></title>     
-    <link href="<s:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
-    <link href="<s:url value='/styles/displayStyles.css'/>" rel="stylesheet" type="text/css" media="all"/>
-    <link href="<s:url value='/struts/niftycorners/niftyCorners.css'/>" rel="stylesheet" type="text/css"/>
-    <link href="<s:url value='/struts/niftycorners/niftyPrint.css'/>" rel="stylesheet" type="text/css" media="print"/>
+    <link href="<%=request.getContextPath()%>/styles/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="<%=request.getContextPath()%>/styles/displayStyles.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="<%=request.getContextPath()%>/struts/niftycorners/niftyCorners.css" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/struts/niftycorners/niftyPrint.css" rel="stylesheet" type="text/css" media="print"/>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_controls.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_parser.js"/>"></script>
-    <script language="JavaScript" type="text/javascript" src="<s:url value='/struts/niftycorners/nifty.js'/>"></script>
     <script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>        
     
     <link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
