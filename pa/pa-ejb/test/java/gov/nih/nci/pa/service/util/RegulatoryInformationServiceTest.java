@@ -78,147 +78,85 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.List;
 
-import javax.ejb.Stateless;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.CountryTest;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.domain.RegulatoryAuthorityTest;
+import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
+import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.util.TestSchema;
 
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.UserProvisioningManager;
-import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.exceptions.CSException;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * 
- * @author Bala Nair
- * 
+ * @author NAmiruddin
+ *
  */
-@Stateless
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
-public class RegistryUserServiceBean implements RegistryUserServiceRemote {
+public class RegulatoryInformationServiceTest {
 
-    private static final Logger LOG = Logger
-            .getLogger(RegistryUserServiceBean.class);
+    private RegulatoryInformationBean bean = new RegulatoryInformationBean();
+    private RegulatoryInformationServiceRemote remoteEjb = bean;
 
-    /**
-     * Create a new Registry User.
-     * 
-     * @param user user
-     * @return user
-     * @throws PAException PAException
-     */
-    public RegistryUser createUser(RegistryUser user) 
-                    throws PAException {
-
-        Session session = null;
-        try {
-            // first create the Registry user
-            session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
-            session.saveOrUpdate(user);
-            session.flush();
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while " + "creating registry user ",
-                                                            hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "creating registry user ", hbe);
-        }
-
-        return user;
-
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset(); 
+        Country c = CountryTest.createCountryObj();
+        RegulatoryAuthority ra = RegulatoryAuthorityTest.createRegulatoryObj(c);
+        TestSchema.addUpdObject(c);
+        TestSchema.addUpdObject(ra);
+    }
+    
+    @Test
+    public void getDistinctCountryNamesTest() throws Exception {
+        List<CountryRegAuthorityDTO> data = remoteEjb.getDistinctCountryNames();
+        assertNotNull(data);
+        assertEquals("Size does not match  " , data.size(), 1);
+        assertEquals("Alpha 2 does not match  " , data.get(0).getAlpha2(), "CA");
+        assertEquals("Alpha 3 does not match  " , data.get(0).getAlpha3(), "CAM");
+        assertEquals("Name does not match  " , data.get(0).getName(), "Cayman Islands");
     }
 
-    /**
-     * Update an existing Registry User.
-     * 
-     * @param user  user
-     * @return user
-     * @throws PAException PAException
-     */
-    public RegistryUser updateUser(RegistryUser user) 
-                    throws PAException {
-
-        Session session = null;
-        try {
-            // first create the Registry user
-            session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
-            session.saveOrUpdate(user);
-            session.flush();
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while updating registry user ",
-                                                    hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "updating registry user ", hbe);
-        }
-
-        return user;
-
+    @Test
+    public void getRegulatoryAuthorityNameIdTest() throws Exception {
+        List lst = remoteEjb.getRegulatoryAuthorityNameId(Long.valueOf(1));
+        assertNotNull(lst);
+        RegulatoryAuthOrgDTO data = (RegulatoryAuthOrgDTO) lst.get(0);
+        assertEquals("Name does not match  " , data.getName(), "BWI reg body");
+    }
+    
+    @Test 
+    public void getRegulatoryAuthorityInfoTest() throws Exception {
+        List<Long> data = remoteEjb.getRegulatoryAuthorityInfo(Long.valueOf(1));
+        assertNotNull(data);
+        assertEquals("Size does not match  " , data.size(), 2);
+        assertEquals("Id does not match  " , data.get(0).longValue(), 1);
+    }
+    
+    @Test
+    public void getCountryOrOrgNameTest() throws Exception {
+        String name = remoteEjb.getCountryOrOrgName(Long.valueOf(1), "Country");
+        assertNotNull(name);
+        assertEquals("Name does not match  " , name, "Cayman Islands");
     }
 
-    /**
-     * Retrieves user by login name.
-     * 
-     * @param loginName loginName
-     * @return user
-     * @throws PAException PAException
-     */
-    public RegistryUser getUser(String loginName) 
-                            throws PAException {
-        RegistryUser registryUser = null;
-        Session session = null;
-        List<RegistryUser> queryList = new ArrayList<RegistryUser>();
-        try {
-            // /first get the CSM user
-            UserProvisioningManager upManager = SecurityServiceProvider
-                    .getUserProvisioningManager("pa");
-            User csmUser = upManager.getUser(loginName);
-
-            // if csm user exists retrieve the registry user
-            if (csmUser != null) {
-                LOG.info(" CSM User ID = " + csmUser.getUserId());
-                session = HibernateUtil.getCurrentSession();
-
-                Query query = null;
-                // HQL query
-                String hql = "select reguser " 
-                              + "from RegistryUser reguser "
-                              + "where reguser.csmUserId = :csmuserId ";
-                LOG.info(" query RegistryUser = " + hql);
-
-                // construct query object
-                query = session.createQuery(hql);
-                query.setParameter("csmuserId", csmUser.getUserId());
-                queryList = query.list();
-                // there should only one user with the login name
-                if (queryList != null) {
-                    registryUser = queryList.get(0);
-                }
-            }
-
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while retrieving user : " 
-                                        + loginName, hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "retrieving registry user :" + loginName, hbe);
-        } catch (CSException cse) {
-            LOG.error(" CSM Exception while retrieving  user : " 
-                                        + loginName, cse);
-            throw new PAException(" CSM exception while "
-                    + "retrieving  user :" + loginName, cse);
-        }
-
-        return registryUser;
-
+    @Test
+    public void getTest() throws Exception {
+        RegulatoryAuthority ra = remoteEjb.get(Long.valueOf(1));
+        assertNotNull(ra);
+        assertEquals("Name does not match  " , ra.getAuthorityName(), "BWI reg body");
     }
-
+    
+    @Test
+    public void getRegulatoryAuthorityCountry() throws Exception {
+        Country c = remoteEjb.getRegulatoryAuthorityCountry(Long.valueOf(1));
+        assertNotNull(c);
+        assertEquals("Name does not match  " , c.getName(), "Cayman Islands");
+    }
 }

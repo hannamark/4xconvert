@@ -109,6 +109,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
@@ -229,6 +230,7 @@ public class TestSchema {
             addAnnotatedClass(StudyOnhold.class).
             addAnnotatedClass(NIHinstitute.class).
             addAnnotatedClass(PAProperties.class).
+            addAnnotatedClass(RegistryUser.class).
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
             setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
