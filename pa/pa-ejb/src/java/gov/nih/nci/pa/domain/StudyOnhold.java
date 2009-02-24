@@ -126,7 +126,6 @@ public class StudyOnhold extends AbstractStudyEntity {
    */
   @Column(name = "ONHOLD_REASON_CODE")
   @Enumerated(EnumType.STRING)
-  @NotNull
   public OnholdReasonCode getOnholdReasonCode() {
     return onholdReasonCode;
   }

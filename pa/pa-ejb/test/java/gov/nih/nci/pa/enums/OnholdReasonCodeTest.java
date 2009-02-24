@@ -76,59 +76,25 @@
 * 
 * 
 */
-package gov.nih.nci.pa.iso.util;
+package gov.nih.nci.pa.enums;
 
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.util.PAUtil;
+import static org.junit.Assert.assertEquals;
 
-import java.sql.Timestamp;
+import org.junit.Test;
 
 /**
- * utility method for converting Ts and Timestamp.
+ * @author hreinhart
  *
- * @author Naveen Amiruddin
- * @since 08/26/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
-public class TsConverter {
-    
-    /**
-     * 
-     * @param timeStamp timestamp
-     * @return Ts 
-     */
-    public static Ts convertToTs(Timestamp timeStamp) {
-        Ts ts = new Ts();
-        if (timeStamp == null) {
-            ts.setNullFlavor(NullFlavor.NI);
-            return ts;
-        }
-        ts.setValue(timeStamp);
-        return ts;
+public class OnholdReasonCodeTest {
+    @Test
+    public void getDisplayNamesTest() {
+        String[] x = OnholdReasonCode.getDisplayNames();
+        assertEquals(OnholdReasonCode.values().length, x.length);
     }
     
-    /**
-     * @param tsIso iso Ts
-     * @return java Timestamp
-     */
-    public static Timestamp convertToTimestamp(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
-        }
-        return new Timestamp(tsIso.getValue().getTime());
-    }
-
-    /**
-     * @param tsIso iso Ts
-     * @return java String
-     */
-    public static String convertToString(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
-        }
-        return PAUtil.normalizeDateString(convertToTimestamp(tsIso).toString());
+    @Test
+    public void getNameTest() {
+        assertEquals("OTHER", OnholdReasonCode.OTHER.getName());
     }
 }

@@ -76,59 +76,32 @@
 * 
 * 
 */
-package gov.nih.nci.pa.iso.util;
+package gov.nih.nci.pa.service.exception;
 
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.util.PAUtil;
-
-import java.sql.Timestamp;
+import gov.nih.nci.pa.service.PAException;
 
 /**
- * utility method for converting Ts and Timestamp.
- *
- * @author Naveen Amiruddin
- * @since 08/26/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Hugh Reinhart
+ * @since 02/23/2009
  */
-public class TsConverter {
-    
+public class PAFieldException extends PAException {
+    static final long serialVersionUID = 1234595867L;
+
+    private final int fieldNumber;
+
     /**
-     * 
-     * @param timeStamp timestamp
-     * @return Ts 
+     * @param fieldNumber serial number identifying field
+     * @param message message
      */
-    public static Ts convertToTs(Timestamp timeStamp) {
-        Ts ts = new Ts();
-        if (timeStamp == null) {
-            ts.setNullFlavor(NullFlavor.NI);
-            return ts;
-        }
-        ts.setValue(timeStamp);
-        return ts;
-    }
-    
-    /**
-     * @param tsIso iso Ts
-     * @return java Timestamp
-     */
-    public static Timestamp convertToTimestamp(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
-        }
-        return new Timestamp(tsIso.getValue().getTime());
+    public PAFieldException(int fieldNumber, String message) {
+        super(message);
+        this.fieldNumber = fieldNumber;
     }
 
     /**
-     * @param tsIso iso Ts
-     * @return java String
+     * @return the fieldNumber
      */
-    public static String convertToString(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
-        }
-        return PAUtil.normalizeDateString(convertToTimestamp(tsIso).toString());
+    public int getFieldNumber() {
+        return fieldNumber;
     }
 }

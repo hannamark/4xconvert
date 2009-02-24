@@ -78,57 +78,36 @@
 */
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.coppa.iso.NullFlavor;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.sql.Timestamp;
+import org.junit.Test;
 
 /**
- * utility method for converting Ts and Timestamp.
+ * @author hreinhart
  *
- * @author Naveen Amiruddin
- * @since 08/26/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
-public class TsConverter {
-    
-    /**
-     * 
-     * @param timeStamp timestamp
-     * @return Ts 
-     */
-    public static Ts convertToTs(Timestamp timeStamp) {
-        Ts ts = new Ts();
-        if (timeStamp == null) {
-            ts.setNullFlavor(NullFlavor.NI);
-            return ts;
-        }
-        ts.setValue(timeStamp);
-        return ts;
+public class IvlConverterTest {
+    @Test
+    public void unsupportedClassTest() {
+        IvlConverter<Qty, Object> x = new IvlConverter<Qty, Object>(Qty.class);
+        assertNull(x.convertToIvl(null, null));
+        assertNull(x.convertHigh(null));
+        assertNull(x.convertLow(null));
+        assertNull(x.convertHighToString(null));
+        assertNull(x.convertLowToString(null));
     }
     
-    /**
-     * @param tsIso iso Ts
-     * @return java Timestamp
-     */
-    public static Timestamp convertToTimestamp(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
-        }
-        return new Timestamp(tsIso.getValue().getTime());
-    }
-
-    /**
-     * @param tsIso iso Ts
-     * @return java String
-     */
-    public static String convertToString(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
-        }
-        return PAUtil.normalizeDateString(convertToTimestamp(tsIso).toString());
+    @Test
+    public void convertToStringTest() {
+        String date1 = PAUtil.normalizeDateString("1/1/2000");
+        String date2 = null;
+        Ivl<Ts> x = IvlConverter.convertTs().convertToIvl(date1, date2);
+        assertEquals(date1, IvlConverter.convertTs().convertLowToString(x));
+        assertEquals(date2, IvlConverter.convertTs().convertHighToString(x));
     }
 }

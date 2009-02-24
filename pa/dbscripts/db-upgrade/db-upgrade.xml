@@ -21,7 +21,7 @@
         <sqlFile path="@db-upgrade.run.dir@/studyMilestone.sql"/>
     </changeSet>
     <changeSet id="3" author="hugh">
-        <comment>execute interventionDescription.sql</comment>
-        <sqlFile path="@db-upgrade.run.dir@/interventionDescription.sql"/>
+        <comment>execute studyOnhold.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/studyOnhold.sql"/>
     </changeSet>
 </databaseChangeLog>

@@ -78,57 +78,104 @@
 */
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 
 /**
- * utility method for converting Ts and Timestamp.
- *
- * @author Naveen Amiruddin
- * @since 08/26/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Hugh Reinhart
+ * @since 2/19/2009
+ * @param <Iso> iso type which is aggregated in Ivl
+ * @param <T> standard java class corresponding to aggregated iso type
  */
-public class TsConverter {
-    
+@SuppressWarnings("unchecked")
+public class IvlConverter<Iso extends Qty, T> {
+    private static IvlConverter<Ts, Timestamp> tsInstance = new IvlConverter<Ts, Timestamp>(Ts.class);
+
+    private final Class<Iso> aggregatedType;
+
     /**
-     * 
-     * @param timeStamp timestamp
-     * @return Ts 
+     * @param clazz the iso type aggregated in Ivl
      */
-    public static Ts convertToTs(Timestamp timeStamp) {
-        Ts ts = new Ts();
-        if (timeStamp == null) {
-            ts.setNullFlavor(NullFlavor.NI);
-            return ts;
-        }
-        ts.setValue(timeStamp);
-        return ts;
-    }
-    
-    /**
-     * @param tsIso iso Ts
-     * @return java Timestamp
-     */
-    public static Timestamp convertToTimestamp(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
-        }
-        return new Timestamp(tsIso.getValue().getTime());
+    public IvlConverter(Class clazz) {
+        aggregatedType = clazz;
     }
 
     /**
-     * @param tsIso iso Ts
-     * @return java String
+     * @return the converter for Ts type Ivl's
      */
-    public static String convertToString(Ts tsIso) {
-        if ((tsIso == null) || (tsIso.getValue() == null)) {
-            return null;
+    public static IvlConverter<Ts, Timestamp> convertTs() {
+        return tsInstance;
+    }
+    
+    /**
+     * @param low the low value
+     * @param high the high value
+     * @return the resulting Ivl
+     */
+    public Ivl<Iso> convertToIvl(Object low, Object high) {
+        Ivl<Iso> result = null;
+        if (aggregatedType.equals(Ts.class)) {
+            Ivl<Ts> wrk = new Ivl<Ts>();
+            wrk.setLow(low instanceof String 
+                    ? TsConverter.convertToTs(PAUtil.dateStringToTimestamp((String) low)) 
+                    : TsConverter.convertToTs((Timestamp) low));
+            wrk.setHigh(high instanceof String 
+                    ? TsConverter.convertToTs(PAUtil.dateStringToTimestamp((String) high)) 
+                    : TsConverter.convertToTs((Timestamp) high));
+            result = (Ivl<Iso>) wrk;
         }
-        return PAUtil.normalizeDateString(convertToTimestamp(tsIso).toString());
+        return result;
+    }
+    
+    /**
+     * @param ivl the Ivl
+     * @return the low value
+     */
+    public T convertLow(Ivl ivl) {
+        T result = null;
+        if (aggregatedType.equals(Ts.class)) {
+            result = (T) TsConverter.convertToTimestamp((Ts) ivl.getLow());
+        }
+        return result;
+    }
+    
+    /**
+     * @param ivl the Ivl
+     * @return the high value
+     */
+    public T convertHigh(Ivl ivl) {
+        T result = null;
+        if (aggregatedType.equals(Ts.class)) {
+            result = (T) TsConverter.convertToTimestamp((Ts) ivl.getHigh());
+        }
+        return result;
+    }
+    
+    /**
+     * @param ivl the Ivl
+     * @return the low value as a string
+     */
+    public String convertLowToString(Ivl ivl) {
+        String result = null;
+        if (aggregatedType.equals(Ts.class)) {
+            result = TsConverter.convertToString((Ts) ivl.getLow());
+        }
+        return result;
+    }
+    
+    /**
+     * @param ivl the Ivl
+     * @return the high value as a string
+     */
+    public String convertHighToString(Ivl ivl) {
+        String result = null;
+        if (aggregatedType.equals(Ts.class)) {
+            result = TsConverter.convertToString((Ts) ivl.getHigh());
+        }
+        return result;
     }
 }

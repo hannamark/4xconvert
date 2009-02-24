@@ -88,29 +88,29 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum OnholdReasonCode implements CodedEnum<String> {
   /**
-   * Submission_Incomplete.
+   * SUBMISSION_INCOM.
    */
-  Submission_Incomplete("Submission_Incomplete"),
+  SUBMISSION_INCOM("Submission Incomplete"),
   /**
-   * Invalid_Grant.
+   * INVALID_GRANT.
    */
-  Invalid_Grant("Invalid_Grant"),
+  INVALID_GRANT("Invalid Grant"),
   /**
-   * Pending_Disease_Curation.
+   * PENDING_DISEASE_CUR.
    */
-  Pending_Disease_Curation("Pending_Disease_Curation"),
+  PENDING_DISEASE_CUR("Pending Disease Curation"),
   /**
-   * Pending_Person_Curation.
+   * PENDING_PERSON_CUR.
    */
-  Pending_Person_Curation("Pending_Person_Curation"),
+  PENDING_PERSON_CUR("Pending Person Curation"),
   /**
-   * Pending_Organization_Curation.
+   * PPENDING_ORG_CUR.
    */
-  Pending_Organization_Curation("Pending_Organization_Curation"),
+  PENDING_ORG_CUR("Pending Organization Curation"),
   /**
-   * Other.
+   * OTHER.
    */
-  Other("Other");
+  OTHER("Other");
 
   private String code;
   /**
@@ -156,7 +156,7 @@ public enum OnholdReasonCode implements CodedEnum<String> {
    * @return String[] display names of enums
    */
   public static String[]  getDisplayNames() {
-    OnholdReasonCode[] l = OnholdReasonCode.values();
+      OnholdReasonCode[] l = OnholdReasonCode.values();
       String[] a = new String[l.length];
       for (int i = 0; i < l.length; i++) {
           a[i] = l[i].getCode();

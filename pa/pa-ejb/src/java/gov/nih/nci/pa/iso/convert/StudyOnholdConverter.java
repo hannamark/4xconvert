@@ -78,16 +78,14 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
 /**
@@ -108,10 +106,7 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
       dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
       dto.setOnholdReasonCode(CdConverter.convertToCd(bo.getOnholdReasonCode()));
       dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
-      Ivl<Ts> ivl = new Ivl<Ts>();
-      ivl.setLow(TsConverter.convertToTs(bo.getOnholdDate()));
-      ivl.setHigh(TsConverter.convertToTs(bo.getOffholdDate()));
-      dto.setOnholdDate(ivl);
+      dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(bo.getOnholdDate(), bo.getOffholdDate()));
       return dto;
   }
 
@@ -130,8 +125,8 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
       bo.setOnholdReasonText(StConverter.convertToString(dto.getOnholdReasonText()));
       bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
       bo.setOnholdReasonCode(OnholdReasonCode.getByCode(CdConverter.convertCdToString(dto.getOnholdReasonCode())));
-      bo.setOffholdDate(TsConverter.convertToTimestamp((Ts) dto.getOnholdDate().getHigh()));
-      bo.setOnholdDate(TsConverter.convertToTimestamp((Ts) dto.getOnholdDate().getLow()));
+      bo.setOnholdDate(IvlConverter.convertTs().convertLow(dto.getOnholdDate()));
+      bo.setOffholdDate(IvlConverter.convertTs().convertHigh(dto.getOnholdDate()));
       bo.setStudyProtocol(spBo);
       return bo;
   }

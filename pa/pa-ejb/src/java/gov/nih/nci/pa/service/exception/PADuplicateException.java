@@ -84,37 +84,15 @@ import gov.nih.nci.pa.service.PAException;
  * PA Exception for error handling.
  * 
  * @author Hugh Reinhart
- * @since 01/13/2009 copyright NCI 2007. All rights reserved. This code may not
- *        be used without the express written permission of the copyright
- *        holder, NCI.
+ * @since 01/13/2009
  */
 public class PADuplicateException extends PAException {
     static final long serialVersionUID = 1234509090L;
-
-    /** */
-    public PADuplicateException() {
-        super();
-    }
-
-    /**
-     * @param message message
-     * @param t exception
-     */
-    public PADuplicateException(String message, Throwable t) {
-        super(message, t);
-    }
 
     /**
      * @param message message
      */
     public PADuplicateException(String message) {
         super(message);
-    }
-
-    /**
-     * @param t exception
-     */
-    public PADuplicateException(Throwable t) {
-        super(t);
     }
 }
