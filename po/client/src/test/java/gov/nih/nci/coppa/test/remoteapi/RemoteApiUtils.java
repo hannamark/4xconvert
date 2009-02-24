@@ -289,32 +289,41 @@ public class RemoteApiUtils {
         @SuppressWarnings("unchecked")
         Set<Tel> set = new ListOrderedSet();
         dset.setItem(set);
-        for (String c : email) {
-            TelEmail t = new TelEmail();
-            t.setValue(createURI(TelEmail.SCHEME_MAILTO, c));
-            set.add(t);
+        if (email != null) {
+        	for (String c : email) {
+        		TelEmail t = new TelEmail();
+        		t.setValue(createURI(TelEmail.SCHEME_MAILTO, c));  	
+        		set.add(t);
+        	}
         }
-        for (String c : fax) {
-            TelPhone t = new TelPhone();
-            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_FAX, c));
-            set.add(t);
+        if (fax != null) {
+	        for (String c : fax) {
+	            TelPhone t = new TelPhone();
+	            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_FAX, c));
+	            set.add(t);
+	        }
         }
-        for (String c : phone) {
-            TelPhone t = new TelPhone();
-            t.setValue(createURI(TelPhone.SCHEME_TEL, c));
-            set.add(t);
+        if (phone != null) {
+	        for (String c : phone) {
+	            TelPhone t = new TelPhone();
+	            t.setValue(createURI(TelPhone.SCHEME_TEL, c));
+	            set.add(t);
+	        }
         }
-        for (String c : url) {
-            TelUrl t = new TelUrl();
-            t.setValue(URI.create(c));
-            set.add(t);
+        if (url != null) {
+	        for (String c : url) {
+	            TelUrl t = new TelUrl();
+	            t.setValue(URI.create(c));
+	            set.add(t);
+	        }
         }
-        for (String c : text) {
-            TelPhone t = new TelPhone();
-            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c));
-            set.add(t);
+        if (text != null) {
+	        for (String c : text) {
+	            TelPhone t = new TelPhone();
+	            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c));
+	            set.add(t);
+	        }
         }
-
         return dset;
     }
     
