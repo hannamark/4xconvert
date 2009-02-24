@@ -84,7 +84,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -488,8 +488,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
                 studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
                 studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(holder.getFundingMechanism()));
-                studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(MonitorCode.getByCode(holder
-                        .getNciDivisionProgramCode())));
+                studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
+                                    NciDivisionProgramCode.getByCode(holder.getNciDivisionProgramCode())));
                 studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(holder.getInstituteCode()));
                 studyResoureDTO.setSerialNumber(IntConverter.convertToInt(holder.getSerialNumber()));
                 // studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()

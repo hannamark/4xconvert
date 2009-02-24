@@ -6,7 +6,6 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.IdentifierTypeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -201,10 +200,10 @@ public class SearchTrialAction extends ActionSupport {
         queryCriteria.setPrimaryPurposeCode(criteria.getPrimaryPurposeCode());
         if (PAUtil.isNotEmpty(criteria.getIdentifierType())
                  && PAUtil.isNotEmpty(criteria.getIdentifier())) {            
-            if (criteria.getIdentifierType().equals(IdentifierTypeCode.NCI.getCode())) {
+            if (criteria.getIdentifierType().equals(Constants.IDENTIFIER_TYPE_NCI)) {
                 queryCriteria.setNciIdentifier(criteria.getIdentifier());
             } else if (criteria.getIdentifierType().equals(
-                        IdentifierTypeCode.LEAD_ORGANIZATION.getCode())) {
+                        Constants.IDENTIFIER_TYPE_LEAD_ORG)) {
                 queryCriteria.setLeadOrganizationTrialIdentifier(criteria.getIdentifier());
             }
         }
