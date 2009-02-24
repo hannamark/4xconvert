@@ -76,190 +76,112 @@
 * 
 * 
 */
-package gov.nih.nci.pa.action;
+package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
-import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
-import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaRegistry;
-
-import org.apache.struts2.ServletActionContext;
-
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Preparable;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
- * Abstract action class for use-cases in which a list is displayed on
- * the first jsp.  Creates and updates are done on a second edit jsp.
- * @author Hugh Reinhart
- * @since 12/6/2008
- */
-public abstract class AbstractListEditAction extends ActionSupport implements Preparable {
-    private static final long serialVersionUID = 1234573645L;
+* @author Hugh Reinhart
+* @since 2/19/2009
+*/
+public class OnholdWebDTO {
+    private String identifier;
+    private String reasonCode;
+    private String reasonText;
+    private String dateLow;
+    private String dateHigh;
 
-    /** Action result to call list jsp. */
-    protected static final String AR_LIST = "list";
-    /** Action result to call edit jsp. */
-    protected static final String AR_EDIT = "edit";
-    /** String value for currentAction property when doing a create. */
-    protected static final String CA_CREATE = "create";
-    /** String value for currentAction property when doing an edit. */
-    protected static final String CA_EDIT = "edit";
-
-    /** Bean to store current action. */
-    protected String currentAction;
-    /** Bean to store row from displaytag table. */
-    protected String selectedRowIdentifier;
-
-    /** Index of current StudyProtocol. */
-    protected Ii spIi;
-    /** StudyDiseaseService. */
-    protected StudyDiseaseServiceRemote studyDisesaeSvc;
-    /** DiseaseService. */
-    protected DiseaseServiceRemote diseaseSvc;
-    /** DiseaseParentService. */
-    protected DiseaseParentServiceRemote diseaseParentSvc;
-    /** StudyMilestoneService. */
-    protected StudyMilestoneServiceRemote studyMilestoneSvc;
-    /** ProtocolQueryService. */
-    protected ProtocolQueryServiceLocal protocolQuerySvc;
-    /** PlannedActivityService. */
-    protected PlannedActivityServiceRemote plannedActivitySvc;
-    /** InterventionService. */
-    protected InterventionServiceRemote interventionSvc;
-    /** InterventionAlternateNameService. */
-    protected InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
-    /** StudyOnholdService. */
-    protected StudyOnholdServiceRemote studyOnholdSvc;
-
-    /**
-     * @throws PAException exception
-     */
-    public void prepare() throws PAException {
-        studyDisesaeSvc = PaRegistry.getStudyDiseaseService();
-        diseaseSvc = PaRegistry.getDiseaseService();
-        diseaseParentSvc = PaRegistry.getDiseaseParentService();
-        studyMilestoneSvc = PaRegistry.getStudyMilestoneService();
-        protocolQuerySvc = PaRegistry.getProtocolQueryService();
-        plannedActivitySvc = PaRegistry.getPlannedActivityService();
-        interventionSvc = PaRegistry.getInterventionService();
-        interventionAlternateNameSvc = PaRegistry.getInterventionAlternateNameService();
-        studyOnholdSvc = PaRegistry.getStudyOnholdService();
-        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-        spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
-    }
-
-    /**
-     * Call initial list jsp.
-     * @return action result
-     * @throws PAException exception
-     */
-    @Override
-    public String execute() throws PAException {
-        selectedRowIdentifier = null;
-        loadListForm();
-        return AR_LIST;
-    }
-
-    /**
-     * Call the edit jsp in "create" mode.
-     * @return action result
-     * @throws PAException exception
-     */
-    public String create() throws PAException {
-        setCurrentAction(CA_CREATE);
-        loadEditForm();
-        return AR_EDIT;
+    /** */
+    public OnholdWebDTO() {
+        // default constructor
     }
     /**
-     * Call the edit jsp in "edit" mode.
-     * @return action result
-     * @throws PAException exception
+     * @param isoDto the is dto
      */
-    public String edit() throws PAException {
-        setCurrentAction(CA_EDIT);
-        loadEditForm();
-        return AR_EDIT;
+    public OnholdWebDTO(StudyOnholdDTO isoDto) {
+        this.identifier = IiConverter.convertToString(isoDto.getIdentifier());
+        this.reasonCode = CdConverter.convertCdToString(isoDto.getOnholdReasonCode());
+        this.reasonText = StConverter.convertToString(isoDto.getOnholdReasonText());
+        this.dateLow = IvlConverter.convertTs().convertLowToString(isoDto.getOnholdDate());
+        this.dateHigh = IvlConverter.convertTs().convertHighToString(isoDto.getOnholdDate());
     }
-    
     /**
-     * Add a new record to database (needs to be overridden).  Returns to list jsp.
-     * @return result
-     * @throws PAException exception
+     * @param studyProtocolIi Ii for the associated study protocol
+     * @return iso dto
      */
-    public String add() throws PAException {
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
-        return execute();
+    public StudyOnholdDTO getIsoDto(Ii studyProtocolIi) {
+        StudyOnholdDTO isoDto = new StudyOnholdDTO();
+        isoDto.setIdentifier(IiConverter.convertToIi(getIdentifier()));
+        isoDto.setStudyProtocolIdentifier(studyProtocolIi);
+        isoDto.setOnholdReasonCode(CdConverter.convertStringToCd(getReasonCode()));
+        isoDto.setOnholdReasonText(StConverter.convertToSt(getReasonText()));
+        isoDto.setOnholdDate(IvlConverter.convertTs().convertToIvl(getDateLow(), getDateHigh()));
+        return isoDto;
     }
-
     /**
-     * Update a record in the database (needs to be overridden).  Returns to list jsp.
-     * @return result
-     * @throws PAException exception
+     * @return the identifier
      */
-    public String update() throws PAException {
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-        return execute();
+    public String getIdentifier() {
+        return identifier;
     }
-
     /**
-     * Delete a record from database (needs to be overridden). Returns to list jsp.
-     * @return action result
-     * @throws PAException exception
+     * @param identifier the identifier to set
      */
-    public String delete() throws PAException {
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-        return execute();
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
-
     /**
-     * @throws PAException exception
+     * @return the reasonCode
      */
-    protected abstract void loadListForm() throws PAException;
-
-    /**
-     * @throws PAException exception
-     */
-    protected abstract void loadEditForm() throws PAException;
-
-    /**
-     * @return the currentAction
-     */
-    public String getCurrentAction() {
-        return currentAction;
+    public String getReasonCode() {
+        return reasonCode;
     }
-
     /**
-     * @param currentAction the currentAction to set
+     * @param reasonCode the reasonCode to set
      */
-    public void setCurrentAction(String currentAction) {
-        this.currentAction = currentAction;
+    public void setReasonCode(String reasonCode) {
+        this.reasonCode = reasonCode;
     }
-
     /**
-     * @return the selectedRowIdentifier
+     * @return the reasonText
      */
-    public String getSelectedRowIdentifier() {
-        return selectedRowIdentifier;
+    public String getReasonText() {
+        return reasonText;
     }
-
     /**
-     * @param selectedRowIdentifier the selectedRowIdentifier to set
+     * @param reasonText the reasonText to set
      */
-    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
-        this.selectedRowIdentifier = selectedRowIdentifier;
+    public void setReasonText(String reasonText) {
+        this.reasonText = PAUtil.stringSetter(reasonText);
     }
-
+    /**
+     * @return the dateLow
+     */
+    public String getDateLow() {
+        return dateLow;
+    }
+    /**
+     * @param dateLow the dateLow to set
+     */
+    public void setDateLow(String dateLow) {
+        this.dateLow = PAUtil.normalizeDateString(dateLow);
+    }
+    /**
+     * @return the dateHigh
+     */
+    public String getDateHigh() {
+        return dateHigh;
+    }
+    /**
+     * @param dateHigh the dateHigh to set
+     */
+    public void setDateHigh(String dateHigh) {
+        this.dateHigh = PAUtil.normalizeDateString(dateHigh);
+    }
 }

@@ -226,5 +226,9 @@
             <result name="edit">/WEB-INF/jsp/milestoneedit.jsp</result>
             <result name="list">/WEB-INF/jsp/milestone.jsp</result>
         </action>
+        <action name="onhold*" class="gov.nih.nci.pa.action.OnholdAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/onholdedit.jsp</result>
+            <result name="list">/WEB-INF/jsp/onhold.jsp</result>
+        </action>
 	</package>
 </struts>

@@ -99,9 +99,6 @@ import com.opensymphony.xwork2.ActionSupport;
 /**
  * @author Kalpana Guthikonda
  * @since 10/27/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 public class ObservationalStudyDesignAction extends ActionSupport {

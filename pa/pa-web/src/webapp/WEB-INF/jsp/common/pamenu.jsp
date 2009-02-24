@@ -3,7 +3,7 @@
 <li class="stdnav"><div>Protocol Abstraction</div> 
 	<ul>
 		<li><a href="#">Home</a></li>			
-		<li><a href="studyProtocolquery.action" >Trial Search</a></li>			
+		<li><a href="studyProtocolquery.action" >Trial Search</a></li>
 		<c:if test="${pageContext.request.remoteUser != null}">	
 			<li><a href="logout.action">Logout</a></li>
 		</c:if>	
@@ -27,6 +27,7 @@
                     <li><a href="trialFundingquery.action" >Trial Funding</a></li>
                     <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                     <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
+                    <li><a href="onhold.action" >On-hold Information</a></li>
                 </ul>
 			</s:if>
 			<s:if test="${docWFSMenu  == 'Accepted'}">
@@ -47,6 +48,7 @@
                         <li><a href="collaborators.action">Collaborators</a></li>
     					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
                         <li><a href="milestone.action" >Trial Milestones</a></li>
+                        <li><a href="onhold.action" >On-hold Information</a></li>
                     </ul>
     			</li>
     			<li><div>Scientific Data</div>
@@ -69,7 +71,7 @@
                             </ul>
     					</li>
                         </s:else>
-                        <li><a href="disease.action" >Disease/Condition</a></li>                        
+                        <li><a href="disease.action" >Disease/Condition</a></li>
                         <li><a href="trialInterventions.action" >Interventions</a></li>
                         <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                             <li><a href="trialArms.action" >Arms</a></li>
@@ -86,8 +88,7 @@
 				</ul>
 			</li>	
             </s:if>
-
-		</ul>					
+		</ul>
 	</li>
 </c:if>
         
