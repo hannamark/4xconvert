@@ -163,7 +163,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private boolean newParticipation = false;
     private PaPersonDTO personContactWebDTO;
     private String organizationName;
-    private OrgSearchCriteria orgFromPO = new OrgSearchCriteria();
+    private PaOrganizationDTO orgFromPO = new PaOrganizationDTO();
     private String currentAction = "create";
     private String targetAccrualNumber;
     //
@@ -248,10 +248,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab != null) {
             Organization org = tab.getFacilityOrganization();
-            orgFromPO.setOrgCity(org.getCity());
-            orgFromPO.setOrgCountry(org.getCountryName());
-            orgFromPO.setOrgName(org.getName());
-            orgFromPO.setOrgZip(org.getPostalCode());
+            orgFromPO.setCity(org.getCity());
+            orgFromPO.setCountry(org.getCountryName());
+            orgFromPO.setName(org.getName());
+            orgFromPO.setZip(org.getPostalCode());
         }
         enforceBusinessRules();
         if (hasFieldErrors()) {
@@ -316,10 +316,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
         editOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(spDto
                 .getHealthcareFacilityIi()));
-        orgFromPO.setOrgCity(editOrg.getCity());
-        orgFromPO.setOrgCountry(editOrg.getCountryName());
-        orgFromPO.setOrgName(editOrg.getName());
-        orgFromPO.setOrgZip(editOrg.getPostalCode());
+        orgFromPO.setCity(editOrg.getCity());
+        orgFromPO.setCountry(editOrg.getCountryName());
+        orgFromPO.setName(editOrg.getName());
+        orgFromPO.setZip(editOrg.getPostalCode());
         List<StudySiteAccrualStatusDTO> statusList = ssasService
                 .getCurrentStudySiteAccrualStatusByStudyParticipation(spDto.getIdentifier());
         if (!statusList.isEmpty()) {
@@ -437,10 +437,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         editOrg.setName(paOrgDTO.getName());
         editOrg.setPostalCode(paOrgDTO.getZip());
         // setting the org values to the member var
-        orgFromPO.setOrgCity(paOrgDTO.getCity());
-        orgFromPO.setOrgCountry(paOrgDTO.getCountry());
-        orgFromPO.setOrgName(paOrgDTO.getName());
-        orgFromPO.setOrgZip(paOrgDTO.getZip());
+        orgFromPO.setCity(paOrgDTO.getCity());
+        orgFromPO.setCountry(paOrgDTO.getCountry());
+        orgFromPO.setState(paOrgDTO.getState());
+        orgFromPO.setName(paOrgDTO.getName());
+        orgFromPO.setZip(paOrgDTO.getZip());
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setPoOrganizationIi(selectedOrgDTO.getIdentifier());
         tab.setFacilityOrganization(org);
@@ -797,7 +798,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (PAUtil.isEmpty(getRecStatusDate())) {
             addFieldError("recStatusDate", getText("error.participatingStatusDate"));
         }
-        if (PAUtil.isEmpty(orgFromPO.getOrgName())) {
+        if (PAUtil.isEmpty(orgFromPO.getName())) {
             addFieldError("editOrg.name", "Please choose an organization");
         }
     }
@@ -960,14 +961,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     /**
      * @return the orgFromPO
      */
-    public OrgSearchCriteria getOrgFromPO() {
+    public PaOrganizationDTO getOrgFromPO() {
         return orgFromPO;
     }
 
     /**
      * @param orgFromPO the orgFromPO to set
      */
-    public void setOrgFromPO(OrgSearchCriteria orgFromPO) {
+    public void setOrgFromPO(PaOrganizationDTO orgFromPO) {
         this.orgFromPO = orgFromPO;
     }
 

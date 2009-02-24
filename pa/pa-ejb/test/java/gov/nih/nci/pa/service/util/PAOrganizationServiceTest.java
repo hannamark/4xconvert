@@ -16,7 +16,7 @@ import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyParticipationTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
-import gov.nih.nci.pa.dto.OrganizationDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.service.PAException;
@@ -65,7 +65,7 @@ public class PAOrganizationServiceTest {
     
     @Test
     public void getOrganizationsAssociatedWithStudyProtocolTest() throws Exception {
-        List<OrganizationDTO> data = remoteEjb.getOrganizationsAssociatedWithStudyProtocol();
+        List<PaOrganizationDTO> data = remoteEjb.getOrganizationsAssociatedWithStudyProtocol();
         assertNotNull(data);
         assertEquals("Size does not match  " , data.size(), 1);
         assertEquals(" name does not match   " , data.get(0).getName(), "Mayo University");

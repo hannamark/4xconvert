@@ -108,7 +108,7 @@ public class PopUpAction extends ActionSupport {
     private List<Country> countryList = new ArrayList<Country>();
     private List<PaOrganizationDTO> orgs = new ArrayList<PaOrganizationDTO>();
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
-    private OrgSearchCriteria orgSearchCriteria = new OrgSearchCriteria();
+    private PaOrganizationDTO orgSearchCriteria = new PaOrganizationDTO();
 
     /**
      * 
@@ -193,14 +193,14 @@ public class PopUpAction extends ActionSupport {
     /**
      * @return the orgSearchCriteria
      */
-    public OrgSearchCriteria getOrgSearchCriteria() {
+    public PaOrganizationDTO getOrgSearchCriteria() {
         return orgSearchCriteria;
     }
 
     /**
      * @param orgSearchCriteria the orgSearchCriteria to set
      */
-    public void setOrgSearchCriteria(OrgSearchCriteria orgSearchCriteria) {
+    public void setOrgSearchCriteria(PaOrganizationDTO orgSearchCriteria) {
         this.orgSearchCriteria = orgSearchCriteria;
     }
 
@@ -271,10 +271,10 @@ public class PopUpAction extends ActionSupport {
                 return retvalue;
             }
             // Set the values
-            orgSearchCriteria.setOrgName(orgName);
-            orgSearchCriteria.setOrgCity(cityName);
-            orgSearchCriteria.setOrgCountry(countryName);
-            orgSearchCriteria.setOrgZip(zipCode);
+            orgSearchCriteria.setName(orgName);
+            orgSearchCriteria.setCity(cityName);
+            orgSearchCriteria.setCountry(countryName);
+            orgSearchCriteria.setZip(zipCode);
             //
             OrganizationDTO criteria = new OrganizationDTO();
             criteria.setName(EnOnConverter.convertToEnOn(orgName));

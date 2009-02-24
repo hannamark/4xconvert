@@ -150,8 +150,8 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         String poIdentifier = "1234";
         String newOrgName = MockOrganizationCorrelationService.getOrgNameFromPoIdentifier(poIdentifier);
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
-        OrgSearchCriteria org = new OrgSearchCriteria();
-        org.setOrgName(newOrgName);
+        PaOrganizationDTO org = new PaOrganizationDTO();
+        org.setName(newOrgName);
         act.setOrgFromPO(org);
         Organization facility = new Organization();
         facility.setIdentifier(poIdentifier);

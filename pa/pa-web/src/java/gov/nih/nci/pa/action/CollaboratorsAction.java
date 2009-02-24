@@ -140,7 +140,7 @@ public class CollaboratorsAction extends ActionSupport
     private Long cbValue;
     private String functionalCode;
     private String currentAction;
-    private OrgSearchCriteria orgFromPO = new OrgSearchCriteria();
+    private PaOrganizationDTO orgFromPO = new PaOrganizationDTO();
 
 
     /**
@@ -261,10 +261,10 @@ public class CollaboratorsAction extends ActionSupport
         StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
         Organization editOrg = cUtils.getPAOrganizationByPAResearchOrganizationId(
                 IiConverter.convertToLong(spDto.getResearchOrganizationIi()));
-        orgFromPO.setOrgCity(editOrg.getCity());
-        orgFromPO.setOrgCountry(editOrg.getCountryName());
-        orgFromPO.setOrgName(editOrg.getName());
-        orgFromPO.setOrgZip(editOrg.getPostalCode());
+        orgFromPO.setCity(editOrg.getCity());
+        orgFromPO.setCountry(editOrg.getCountryName());
+        orgFromPO.setName(editOrg.getName());
+        orgFromPO.setZip(editOrg.getPostalCode());
         setFunctionalCode(spDto.getFunctionalCode().getCode());
 
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
@@ -437,14 +437,14 @@ public class CollaboratorsAction extends ActionSupport
     /**
      * @return the orgFromPO
      */
-    public OrgSearchCriteria getOrgFromPO() {
+    public PaOrganizationDTO getOrgFromPO() {
         return orgFromPO;
     }
 
     /**
      * @param orgFromPO the orgFromPO to set
      */
-    public void setOrgFromPO(OrgSearchCriteria orgFromPO) {
+    public void setOrgFromPO(PaOrganizationDTO orgFromPO) {
         this.orgFromPO = orgFromPO;
     }
 
