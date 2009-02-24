@@ -1166,7 +1166,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         nv.put(StudyClassificationCode.PHARMACODYNAMICS.getCode() , "Pharmacodynamics Study");
         nv.put(StudyClassificationCode.PHARMACOKINETICS_OR_DYNAMICS.getCode() , "Pharmacokinetics/dynamics Study");
         nv.put(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode() , "Principal Investigator");
-        nv.put(StudyContactRoleCode.STUDY_SUB_INVESTIGATOR.getCode() , "Sub-Investigator");
         nv.put(AllocationCode.NA.getCode(), "N/A");
     }
     

@@ -96,8 +96,10 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
 
     /** Study Principal Investigator. */
     STUDY_PRINCIPAL_INVESTIGATOR("Study Principal Investigator"),
+    /** Principal Investigator. */
+    PRINCIPAL_INVESTIGATOR("Principal Investigator"),
     /** Study sub Investigator. */
-    STUDY_SUB_INVESTIGATOR("Study Sub Investigator"),
+    SUB_INVESTIGATOR("Sub Investigator"),
     /** Coordinating Investigator. */
     COORDINATING_INVESTIGATOR("Coordinating Investigator"),
     /** Study Director. */
