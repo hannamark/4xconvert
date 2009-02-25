@@ -25,7 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
         IdentifiedPersonCorrelationServiceTest.class,
         OrganizationalContactCorrelationServiceTest.class,
         OversightCommitteeCorrelationServiceTest.class,
-        ResearchOrganizationCorrelationServiceTest.class
+        ResearchOrganizationCorrelationServiceTest.class,
+        OrganizationTelecomAddressTest.class
 })
 public class AllApiTests {
 
