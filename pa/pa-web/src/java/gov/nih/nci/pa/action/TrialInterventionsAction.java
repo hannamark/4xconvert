@@ -165,7 +165,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         if (PAUtil.isNotEmpty(getInterventionIdentifier())) {
             InterventionDTO iDto = interventionSvc.get(IiConverter.convertToIi(interventionIdentifier));
             setInterventionName(StConverter.convertToString(iDto.getName()));
-            setInterventionDescription(StConverter.convertToString(iDto.getDescriptionText()));
             setInterventionOtherNames(otherNamesCSV(iDto.getIdentifier()));
         }
         return AR_EDIT;

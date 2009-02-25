@@ -78,7 +78,7 @@
                         <s:if test="%{currentAction == 'create'}">
                             <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left"/>
                         </s:if><s:else>
-                            <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left" readonly="true" cssClass="readonly"/>
+                            <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left;" disabled="true" readonly="true" cssClass="readonly"/>
                         </s:else>
                       </td>
                   </tr>

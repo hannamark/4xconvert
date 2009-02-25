@@ -14,7 +14,7 @@
         <pattern>*ajax*</pattern>
         <pattern>*nodecor*</pattern>   
         <pattern>*lookup*</pattern>
-        <pattern>/helpDocs/*</pattern>             
+        <pattern>/helpDocs/*</pattern>
     </excludes>
 
     <decorator name="main" page="main.jsp">

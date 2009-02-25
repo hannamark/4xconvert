@@ -116,6 +116,7 @@ import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
 import gov.nih.nci.service.MockPlannedActivityService;
+import gov.nih.nci.service.MockStudyOnholdService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyParticipationService;
 import gov.nih.nci.service.MockStudyProtocolService;
@@ -142,6 +143,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final InterventionServiceRemote interventionService = new MockInterventionService();
     private final InterventionAlternateNameServiceRemote interventionAlternateNameService = new MockInterventionAlternateNameService();
     private final PlannedActivityServiceRemote plannedActivityService = new MockPlannedActivityService();
+    private final StudyOnholdServiceRemote studyOnholdService = new MockStudyOnholdService();
     
     /**
      * @return mock service
@@ -190,6 +192,14 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
         return interventionAlternateNameService;
+    }
+
+
+    /**
+     * @return StudyOnholdServiceRemote
+     */
+    public StudyOnholdServiceRemote getStudyOnholdService() {
+      return studyOnholdService;
     }
 
     /**
@@ -398,10 +408,5 @@ public class MockServiceLocator implements ServiceLocator {
     public RegistryUserServiceRemote getRegisterUserService() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    public StudyOnholdServiceRemote getStudyOnholdService() {
-      // TODO Auto-generated method stub
-      return null;
     }
 }
