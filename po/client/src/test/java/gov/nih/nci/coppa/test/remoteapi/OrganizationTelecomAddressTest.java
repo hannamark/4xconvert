@@ -56,7 +56,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 	    public void loadData() throws Exception {
 		 if (!testDataLoaded) {
 		 DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(Arrays.asList(new String[] { "myorgtestI@myorg.com"})
-        		 ,Arrays.asList(new String[] { "+1 fax I test"}), Arrays.asList(new String[] { "+1 telephone with ext"}),
+        		 ,Arrays.asList(new String[] { "+1 342 fax"}), Arrays.asList(new String[] { "+1 603 telephone with ext"}),
         		 Arrays.asList(new String[] { "http://testurl.org"}), null);
 
          String state = "WY";
@@ -129,7 +129,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 	    }
 	 @Test
 	 public void findTelcomAddressOnlyByPhoneStartWith() {
-	        List<String> tels = Arrays.asList(new String[] { "+1"});
+	        List<String> tels = Arrays.asList(new String[] { "+1 603"});
 	        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, null, tels, null, null);
 	    	OrganizationDTO p = new OrganizationDTO();
 	        p.setTelecomAddress(telecomAddress);
@@ -156,7 +156,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 	    }
 	 @Test
 	 public void findTelcomAddressOnlyByFaxStartWith() {
-	        List<String> fax = Arrays.asList(new String[] { "+1"});
+	        List<String> fax = Arrays.asList(new String[] { "+1 342"});
 	        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, fax, null, null, null);
 	    	OrganizationDTO p = new OrganizationDTO();
 	        p.setTelecomAddress(telecomAddress);
