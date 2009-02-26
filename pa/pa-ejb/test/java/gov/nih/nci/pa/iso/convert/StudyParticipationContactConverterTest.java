@@ -114,7 +114,7 @@ public class StudyParticipationContactConverterTest {
     StudyParticipationContact bo = new StudyParticipationContact();
     bo.setId(123L);
     bo.setPrimaryIndicator(Boolean.TRUE);    
-    bo.setRoleCode(StudyParticipationContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
+    bo.setRoleCode(StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR);
     bo.setStudyParticipation(spa);
     bo.setStudyProtocol(sp);
     StudyParticipationContactConverter sg = new StudyParticipationContactConverter();
@@ -140,7 +140,7 @@ public class StudyParticipationContactConverterTest {
     dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setStudyParticipationIi(IiConverter.convertToIi(spa.getId()));
-    dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
+    dto.setRoleCode(CdConverter.convertToCd(StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
     StudyParticipationContactConverter sg = new StudyParticipationContactConverter();
     StudyParticipationContact bo = sg.convertFromDtoToDomain(dto);

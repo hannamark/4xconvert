@@ -87,7 +87,6 @@ import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -183,7 +182,9 @@ public class StudyParticipationContactConverter {
         
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setPrimaryIndicator(BlConverter.covertToBoolean(dto.getPrimaryIndicator()));
-        bo.setRoleCode(StudyParticipationContactRoleCode.getByCode(dto.getRoleCode().getCode()));
+       // bo.setRoleCode(StudyParticipationContactRoleCode.getByCode(dto.getRoleCode().getCode()));
+        bo.setRoleCode(gov.nih.nci.pa.enums.StudyParticipationContactRoleCode.getByCode(
+                dto.getRoleCode().getCode()));        
         bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         

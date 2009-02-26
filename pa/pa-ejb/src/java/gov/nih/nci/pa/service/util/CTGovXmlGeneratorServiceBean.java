@@ -938,7 +938,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     throws PAException {
         CorrelationUtils corr = new CorrelationUtils();
         for (StudyParticipationContactDTO spcDTO : spcDTOs) {
-            if (StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode().
+            if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
                     equals(spcDTO.getRoleCode().getCode())) {
                 continue;
             }
@@ -961,7 +961,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         CorrelationUtils corr = new CorrelationUtils();
         for (StudyParticipationContactDTO spcDTO : spcDTOs) {
             
-            if (!StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode().
+            if (!StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
                     equals(spcDTO.getRoleCode().getCode())) {
                 continue;
             }

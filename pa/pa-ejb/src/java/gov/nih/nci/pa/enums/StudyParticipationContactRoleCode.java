@@ -93,11 +93,11 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum StudyParticipationContactRoleCode implements CodedEnum<String> {
     
     /** Sdy primary contact 3rd tab. */
-    STUDY_PRIMARY_CONTACT("Study Primary Contact"),
+    PRIMARY_CONTACT("Primary Contact"),
     /** Study Principal Investigator. */
-    STUDY_PRINCIPAL_INVESTIGATOR("Study Principal Investigator"),
+    PRINCIPAL_INVESTIGATOR("Principal Investigator"),
     /** Study sub Investigator. */
-    STUDY_SUB_INVESTIGATOR("Study Sub Investigator"),
+    SUB_INVESTIGATOR("Sub Investigator"),
     /** Coordinating Investigator. */
     COORDINATING_INVESTIGATOR("Coordinating Investigator"),
     /** Responsible party contact . */
@@ -155,5 +155,23 @@ public enum StudyParticipationContactRoleCode implements CodedEnum<String> {
         }
         return a;
     }
+    
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[] getRoleCodes() {
+        StudyParticipationContactRoleCode[] l = StudyParticipationContactRoleCode.values();
+        String[] a = new String[2];
+        int x = 0;
+        for (int i = 0; i < l.length; i++) {
+            if (l[i].getName().equals(StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getName())
+                    | l[i].getName().equals(StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName())) {
+                a[x] = l[i].getCode();
+                x++;
+            }
+        }
+        return a;
+    } 
+
 }
     

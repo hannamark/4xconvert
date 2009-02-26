@@ -228,7 +228,7 @@ import com.opensymphony.xwork2.ActionSupport;
             .getByCode(eligibleGenderCode)));
         pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
         pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (eligibleGenderCodeId.length() != 0) {
+        if (PAUtil.isNotEmpty(eligibleGenderCodeId)) {
           pecDTO.setIdentifier(IiConverter.convertToIi(eligibleGenderCodeId));
           PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
         } else {
@@ -244,7 +244,7 @@ import com.opensymphony.xwork2.ActionSupport;
         pecDTO2.setValue(pq);
         pecDTO2.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
         pecDTO2.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (maximumValueId.length() != 0) {
+        if (PAUtil.isNotEmpty(maximumValueId)) {
           pecDTO2.setIdentifier(IiConverter.convertToIi(maximumValueId));
           PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO2);
         } else {
@@ -260,14 +260,14 @@ import com.opensymphony.xwork2.ActionSupport;
         pecDTO3.setValue(pq);
         pecDTO3.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
         pecDTO3.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (minimumValueId.length() != 0) {
+        if (PAUtil.isNotEmpty(minimumValueId)) {
           pecDTO3.setIdentifier(IiConverter.convertToIi(minimumValueId));
           PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO3);
         } else {
           PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO3);
         }
       }
-      if (eligibleGenderCodeId.length() != 0) {
+      if (PAUtil.isNotEmpty(eligibleGenderCodeId)) {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
       } else {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);

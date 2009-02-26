@@ -346,12 +346,12 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             boolean piFound = false;
             boolean contactFound = false;
             for (StudyParticipationContactDTO spContactDto : spContactDtos) {
-                if (StudyParticipationContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode()
+                if (StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
                             .equalsIgnoreCase(spContactDto.getRoleCode().getCode())
-                    || StudyParticipationContactRoleCode.STUDY_SUB_INVESTIGATOR.getCode()
+                    || StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getCode()
                             .equalsIgnoreCase(spContactDto.getRoleCode().getCode())) {
                     piFound = true;
-                } else if (StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode()
+                } else if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode()
                         .equalsIgnoreCase(spContactDto.getRoleCode().getCode())) {
                     contactFound = true;
                 }

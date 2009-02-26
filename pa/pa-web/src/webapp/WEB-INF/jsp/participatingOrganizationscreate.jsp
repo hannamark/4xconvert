@@ -105,7 +105,7 @@
 			        method: 'get',
 			        evalScripts: false
 			     });
-			     setTimeout("refreshPrimaryContact();",1000);	     
+			     //setTimeout("refreshPrimaryContact();",1000);	     
 		 }
 	     return false;
 	}

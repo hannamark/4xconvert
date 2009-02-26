@@ -83,73 +83,44 @@ package gov.nih.nci.pa.util;
  * @author gnaveh
  */
 public class Constants {
-
-/**
- * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
-*/
-    public static final String USERNAME_REQ_ERROR = "User Name is required field";
-   /**
-    *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
+    /**
+     * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
     */
+    public static final String USERNAME_REQ_ERROR = "User Name is required field";
+    /**
+     *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
+     */
     public static final String PASSWORD_REQ_ERROR = "Password is required field";
-    
     /** logged user name is stored in session using loggerUserName variable . */
     public static final String LOGGED_USER_NAME = "loggedUserName";
-    
     /** Trial Summary . */
     public static final String TRIAL_SUMMARY = "trialSummary";
-    
     /** Study Protocol II. */
     public static final String STUDY_PROTOCOL_II = "studyProtocolIi";
-
     /** Funding Mechanism code. */
     public static final String FUNDING_MECHANISM = "fundingMechanism";
-
     /** nih Institute Code . */
     public static final String NIH_INSTITUTE = "nihInstitute";
-    
     /** Country . */
     public static final String ISO_COUNTRY = "isoCounty";
-    
     /** Success Message . */
     public static final String SUCCESS_MESSAGE = "successMessage";
-    
     /** Failure Message . */
     public static final String FAILURE_MESSAGE = "failureMessage";
-
     /** Deleted Message . */
     public static final String DELETE_MESSAGE = "Record Deleted";
-
     /** Updated Message . */
     public static final String UPDATE_MESSAGE = "Record Updated";
-
     /** Create Message . */
     public static final String CREATE_MESSAGE = "Record Created";
-    
     /** Participating Organization Tab Data. */
     public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
-    
-    /** Sub investigator.*/
-    public static final String STUDY_SUB_INVESTIGATOR = "STUDY_SUB_INVESTIGATOR";
-    
-    /** Study primary contact .*/
-    public static final String STUDY_PRIMARY_CONTACT_CD = "Study Primary Contact";
-
-    /** Study primary contact .*/
-    public static final String STUDY_PRIMARY_CONTACT = "STUDY_PRIMARY_CONTACT";
-    
     /** work flow status used for menu. **/
     public static final String DOC_WFS_MENU = "docWFSMenu";
-    
     /** Session bean used to hold the role. **/
     public static final String USER_ROLE = "role";
-    
     /** CSM Group used to define reporting role. **/
     public static final String REPORT_VIEWER = "ReportViewer";
-    
     /** CSM Group used to define abstractor role. **/
     public static final String ABSTRACTOR = "Abstractor";
-    
-    /** Study principal investigator. **/
-    public static final String STUDY_PRINCIPAL_INVESTIGATOR = "STUDY_PRINCIPAL_INVESTIGATOR";
 }

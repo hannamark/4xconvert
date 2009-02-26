@@ -91,15 +91,9 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-
 public enum StudyContactRoleCode implements CodedEnum<String> {
-
     /** Study Principal Investigator. */
-    STUDY_PRINCIPAL_INVESTIGATOR("Study Principal Investigator"),
-    /** Principal Investigator. */
-    PRINCIPAL_INVESTIGATOR("Principal Investigator"),
-    /** Study sub Investigator. */
-    SUB_INVESTIGATOR("Sub Investigator"),
+    STUDY_PRINCIPAL_INVESTIGATOR("Study Principal Investigator"),    
     /** Coordinating Investigator. */
     COORDINATING_INVESTIGATOR("Coordinating Investigator"),
     /** Study Director. */
@@ -120,8 +114,8 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
     SUBMITTER("Submitter"),
     /**Responsible Party - Study Principal Investigator. */
     RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR("Responsible Party - Study Principal Investigator");
-    
     private String code;
+
     /**
      *
      * @param code
@@ -130,18 +124,21 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
     public String getCode() {
         return code;
     }
+
     /**
     *@return String DisplayName
     */
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
      *
      * @return String name
@@ -162,7 +159,7 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         StudyContactRoleCode[] l = StudyContactRoleCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -170,4 +167,6 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
         }
         return a;
     }
+
+
 }

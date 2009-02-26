@@ -278,7 +278,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     html.append(appendData("Investigator(s)", "", true , false));
     html.append(TBL_B);
     for (StudyParticipationContactDTO spcDTO : spcDTOs) {
-      if (StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode().
+      if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
           equals(spcDTO.getRoleCode().getCode())) {
         continue;
       }
@@ -306,7 +306,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     //CorrelationUtils corr = new CorrelationUtils();
     for (StudyParticipationContactDTO spcDTO : spcDTOs) {
         
-        if (!StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode().
+        if (!StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
                 equals(spcDTO.getRoleCode().getCode())) {
             continue;
         }
