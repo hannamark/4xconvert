@@ -103,7 +103,7 @@ public class DocumentWorkflowStatusServiceBeanTest {
   @Before
   public void setUp() throws Exception {
       bean.setStudyMilestoneService(milestoneServiceBean);
-      milestoneServiceBean.setDocumentWorkflowStatusService(bean);
+      milestoneServiceBean.documentWorkflowStatusService = bean;
       TestSchema.reset1();
       TestSchema.primeData();
       pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));

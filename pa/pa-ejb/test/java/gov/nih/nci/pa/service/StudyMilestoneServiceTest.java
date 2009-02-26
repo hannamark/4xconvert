@@ -83,11 +83,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -108,11 +114,13 @@ public class StudyMilestoneServiceTest {
     private StudyMilestoneServiceBean bean = new StudyMilestoneServiceBean();
     private StudyMilestoneServiceRemote remote = bean;
     private DocumentWorkflowStatusServiceBean dws = new DocumentWorkflowStatusServiceBean();
+    private StudyOnholdServiceRemote ohs = new StudyOnholdServiceBean();
     private Ii spIi;
-    
+
     @Before
     public void setUp() throws Exception {
-        bean.setDocumentWorkflowStatusService(dws);
+        bean.documentWorkflowStatusService = dws;
+        bean.studyOnholdService = ohs;
         TestSchema.reset1();
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
@@ -187,5 +195,49 @@ public class StudyMilestoneServiceTest {
         assertTrue(dtoList.size() > 0);
         StudyMilestoneDTO dto = dtoList.get(0);
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
+    @Test 
+    public void onholdTest() throws Exception {
+        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        int oldSize = dtoList.size();
+
+        // set on-hold and dwf status
+        StudyOnholdDTO ohDto = new StudyOnholdDTO();
+        ohDto.setOnholdDate(IvlConverter.convertTs().convertToIvl(PAUtil.today(), null));
+        ohDto.setOnholdReasonCode(CdConverter.convertToCd(OnholdReasonCode.PENDING_ORG_CUR));
+        ohDto.setStudyProtocolIdentifier(spIi);
+        ohs.create(ohDto);
+        DocumentWorkflowStatus dwf = new DocumentWorkflowStatus();
+        dwf.setStudyProtocol((StudyProtocol) TestSchema.getSession().get(StudyProtocol.class, IiConverter.convertToLong(spIi)));
+        dwf.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        dwf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        TestSchema.addUpdObject(dwf);
+
+        // try to create
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt("comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_CTGOV_SUBMISSION));
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setStudyProtocolIdentifier(spIi);
+        try {
+            remote.create(dto);
+            fail("Should have failed because the trial is on-hold.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        
+        // take off-hold
+        List<StudyOnholdDTO> ohList = ohs.getByStudyProtocol(spIi);
+        for (StudyOnholdDTO oh : ohList) {
+            if (IvlConverter.convertTs().convertHigh(oh.getOnholdDate()) == null) {
+                oh.setOnholdDate(IvlConverter.convertTs().convertToIvl(null, PAUtil.today()));
+                ohs.update(oh);
+            }
+        }
+        
+        // create
+        remote.create(dto);
+        dtoList = remote.getByStudyProtocol(spIi);
+        assertEquals(oldSize + 1, dtoList.size());
     }
 }

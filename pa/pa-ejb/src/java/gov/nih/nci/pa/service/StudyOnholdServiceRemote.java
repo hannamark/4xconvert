@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 
 import javax.ejb.Remote;
@@ -88,4 +90,10 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface StudyOnholdServiceRemote extends StudyPaService<StudyOnholdDTO> {
+    /**
+     * @param studyProtocolIi StudyProtocol identifier
+     * @return if there is an active onhold record
+     * @throws PAException exception
+     */
+    Bl isOnhold(Ii studyProtocolIi) throws PAException;
 }

@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -109,10 +110,11 @@ public class StudyMilestoneServiceBean
         extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter> 
         implements StudyMilestoneServiceRemote {
 
-    private DocumentWorkflowStatusServiceRemote documentWorkflowStatusService = null;
-    
+    DocumentWorkflowStatusServiceRemote documentWorkflowStatusService = null;
     @EJB
-    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    StudyOnholdServiceRemote studyOnholdService;
+    @EJB
+    AbstractionCompletionServiceRemote abstractionCompletionService;
 
     /**
      * @param dto dto
@@ -153,14 +155,6 @@ public class StudyMilestoneServiceBean
         }
         return documentWorkflowStatusService;
     }
-    
-    /**
-     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
-     */
-    void setDocumentWorkflowStatusService(
-            DocumentWorkflowStatusServiceRemote documentWorkflowStatusService) {
-        this.documentWorkflowStatusService = documentWorkflowStatusService;
-    }
 
     private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
         List<DocumentWorkflowStatusDTO> dwList = getDocumentWorkflowStatusService()
@@ -190,6 +184,13 @@ public class StudyMilestoneServiceBean
         }
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new PAException("Associated study protocol is required.");
+        }
+
+        // onhold rules
+        if (!newCode.isAllowedIfOnhold() 
+                && BlConverter.covertToBool(studyOnholdService.isOnhold(dto.getStudyProtocolIdentifier()))) {
+            throw new PAException("The milestone '" + newCode.getCode() 
+                    + "' cannot be recorded if there is an active on-hold record.");
         }
 
         // date rules
@@ -265,7 +266,7 @@ public class StudyMilestoneServiceBean
         }
         return dto;
     }
-    
+
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
         if (newCode.equals(MilestoneCode.QC_COMPLETE)) {

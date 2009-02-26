@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
@@ -87,6 +89,7 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 
@@ -104,7 +107,25 @@ implements StudyOnholdServiceRemote {
     public static final int FN_DATE_LOW = 1;
     /** id for onholdDate.high. */
     public static final int FN_DATE_HIGH = 2;
-    
+
+    /**
+     * @param studyProtocolIi StudyProtocol identifier
+     * @return if there is an active onhold record
+     * @throws PAException exception
+     */
+    public Bl isOnhold(Ii studyProtocolIi) throws PAException {
+        Bl result = new Bl();
+        List<StudyOnholdDTO> list = getByStudyProtocol(studyProtocolIi);
+        for (StudyOnholdDTO dto : list) {
+            if (IvlConverter.convertTs().convertHigh(dto.getOnholdDate()) == null) {
+                result.setValue(true);
+                return result;
+            }
+        }
+        result.setValue(false);
+        return result;
+    }
+
     /**
      * @param dto dto
      * @return dto

@@ -119,7 +119,7 @@ public class StudyProtocolServiceBeanTest {
     public void setUp() throws Exception {
         bean.setDocumentWorkflowStatusService(dwf);
         dwf.setStudyMilestoneService(milestone);
-        milestone.setDocumentWorkflowStatusService(dwf);
+        milestone.documentWorkflowStatusService = dwf;
         TestSchema.reset();
     }
 

@@ -85,6 +85,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -112,7 +113,6 @@ public class StudyOnholdServiceTest {
     private String time1 = "1/1/2000";
     private String time2 = "1/1/2099";
     private Timestamp now = new Timestamp(new Date().getTime());
-    private String today = PAUtil.normalizeDateString(now.toString());
     private String reasonText = "reason";
     private OnholdReasonCode reasonCode = OnholdReasonCode.INVALID_GRANT;
     
@@ -243,11 +243,11 @@ public class StudyOnholdServiceTest {
         StudyOnholdDTO x = new StudyOnholdDTO();
         x.setOnholdReasonCode(CdConverter.convertToCd(reasonCode));
         x.setOnholdReasonText(StConverter.convertToSt(reasonText));
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(today, today));
+        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(PAUtil.today(), PAUtil.today()));
         x.setStudyProtocolIdentifier(spIi);
         StudyOnholdDTO y = remote.create(x);
-        assertTrue(PAUtil.dateStringToTimestamp(today).before(IvlConverter.convertTs().convertLow(y.getOnholdDate())));
-        assertTrue(PAUtil.dateStringToTimestamp(today).before(IvlConverter.convertTs().convertHigh(y.getOnholdDate())));
+        assertTrue(PAUtil.dateStringToTimestamp(PAUtil.today()).before(IvlConverter.convertTs().convertLow(y.getOnholdDate())));
+        assertTrue(PAUtil.dateStringToTimestamp(PAUtil.today()).before(IvlConverter.convertTs().convertHigh(y.getOnholdDate())));
         
         // time not stored if not today
         x.setIdentifier(null);
@@ -255,5 +255,23 @@ public class StudyOnholdServiceTest {
         y = remote.create(x);
         assertTrue(PAUtil.dateStringToTimestamp(time1).equals(IvlConverter.convertTs().convertLow(y.getOnholdDate())));
         assertTrue(PAUtil.dateStringToTimestamp(time1).equals(IvlConverter.convertTs().convertHigh(y.getOnholdDate())));
+    }
+    
+    @Test
+    public void isOnholdTest() throws Exception {
+        // put on-hold
+        assertFalse(BlConverter.covertToBool(remote.isOnhold(spIi)));
+        StudyOnholdDTO x = new StudyOnholdDTO();
+        x.setOnholdReasonCode(CdConverter.convertToCd(reasonCode));
+        x.setOnholdReasonText(StConverter.convertToSt(reasonText));
+        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, null));
+        x.setStudyProtocolIdentifier(spIi);
+        x = remote.create(x);
+        assertTrue(BlConverter.covertToBool(remote.isOnhold(spIi)));
+        
+        // take off-hold
+        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, PAUtil.today()));
+        remote.update(x);
+        assertFalse(BlConverter.covertToBool(remote.isOnhold(spIi)));
     }
 }

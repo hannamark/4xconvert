@@ -97,37 +97,38 @@ import java.util.Set;
 public enum MilestoneCode implements CodedEnum<String> {
 
     /**.*/
-    SUBMISSION_RECEIVED("Submission Received Date", true, false, null), 
+    SUBMISSION_RECEIVED("Submission Received Date", true, false, null, true), 
     /**.*/
-    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null), 
+    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null, true), 
     /**.*/
-    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, null), 
+    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, null, true), 
     /**.*/
-    SUBMISSION_REJECTED("Submission Rejection Date", true, false, null), 
+    SUBMISSION_REJECTED("Submission Rejection Date", true, false, null, true), 
     /**.*/
-    READY_FOR_QC("Ready for QC Date", false, true, null), 
+    READY_FOR_QC("Ready for QC Date", false, true, null, true), 
     /**.*/
-    QC_START("QC Start Date", false, false, MilestoneCode.READY_FOR_QC), 
+    QC_START("QC Start Date", false, false, MilestoneCode.READY_FOR_QC, true), 
     /**.*/
-    QC_COMPLETE("QC Completed Date", false, true, MilestoneCode.QC_START), 
+    QC_COMPLETE("QC Completed Date", false, true, MilestoneCode.QC_START, false), 
     /**.*/
-    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false, null), 
+    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false, null, true), 
     /**.*/
-    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, false, null), 
+    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, false, null, false), 
     /**.*/
     TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false,
-             MilestoneCode.TRIAL_SUMMARY_SENT), 
+             MilestoneCode.TRIAL_SUMMARY_SENT, false), 
     /**.*/
-    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null), 
+    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false), 
     /**.*/
-    INITIAL_CTGOV_SUBMISSION("Initial Submission to CT.GOV Date", true, false, null),  
+    INITIAL_CTGOV_SUBMISSION("Initial Submission to CT.GOV Date", true, false, null, false),  
     /**.*/
-    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null);
+    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false);
 
     private String code;
     private boolean unique;
     private boolean validationTrigger;
     private MilestoneCode prerequisite;
+    private boolean allowedIfOnhold;
 
     private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
     static {
@@ -206,11 +207,13 @@ public enum MilestoneCode implements CodedEnum<String> {
      * @param requiredDwfStatus required document workflow status
      * @param prerequisite prior milestone which must have been reached before this one
      */
-    private MilestoneCode(String code, boolean unique, boolean validationTrigger, MilestoneCode prerequisite) {
+    private MilestoneCode(String code, boolean unique, boolean validationTrigger, MilestoneCode prerequisite,
+            boolean allowedIfOnhold) {
         this.code = code;
         this.unique = unique;
         this.validationTrigger = validationTrigger;
         this.prerequisite = prerequisite;
+        this.allowedIfOnhold = allowedIfOnhold;
         register(this);
     }
     
@@ -257,6 +260,13 @@ public enum MilestoneCode implements CodedEnum<String> {
     }
 
     
+    /**
+     * @return the allowedIfOnhold
+     */
+    public boolean isAllowedIfOnhold() {
+        return allowedIfOnhold;
+    }
+
     /**
      * @param documentWorkflowStatusCode dwf status code to check
      * @return if milestone is valid for given dwf status code

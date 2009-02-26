@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.service;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
@@ -148,7 +149,7 @@ public class MockStudyOnholdService implements StudyOnholdServiceRemote {
             }
         }
         throw new PAException("Onhold not found in mock service for id = " + IiConverter.convertToString(ii));
-     }
+    }
 
     public StudyOnholdDTO update(StudyOnholdDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
@@ -159,7 +160,13 @@ public class MockStudyOnholdService implements StudyOnholdServiceRemote {
         generateFieldExceptions(bo);
         return converter.convertFromDomainToDto(bo);
     }
-    
+
+    public Bl isOnhold(Ii studyProtocolIi) throws PAException {
+        Bl result = new Bl();
+        result.setValue(false);
+        return result;
+    }
+
     private static final void generateFieldExceptions(StudyOnhold bo) throws PAException {
         if (bo.getOnholdReasonCode() == null) {
             throw new PAFieldException(StudyOnholdServiceBean.FN_REASON_CODE, "code");
