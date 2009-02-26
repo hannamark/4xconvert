@@ -414,16 +414,24 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     </macrodef>
 	
 	<target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
-		<jboss-install-binaries2 
-			jboss.installGroup.option="default"
-			jboss.server.name="${jboss.server.name.grid}"
-            />
+		<antcall target="install:jboss:binaries:po-ear"/>
+		<antcall target="install:jboss:binaries:po-grid"/>
+	</target>
+	
+	<target name="install:jboss:binaries:po-ear" unless="exclude.po-ear">
 		<jboss-install-binaries2 
 			jboss.server.name="${jboss.server.name}"
 			/>
 	</target>
+	<target name="install:jboss:binaries:po-grid" unless="exclude.po-grid">
+		<jboss-install-binaries2 
+			jboss.installGroup.option="default"
+			jboss.server.name="${jboss.server.name.grid}"
+            />
+	</target>
+	
 
-	<target name="install:jboss:po-ear" description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" unless="exclude.jboss">
+	<target name="install:jboss:po-ear" description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" unless="exclude.po-ear">
 		<!-- added to ensure working.dirs are fresh for our install -->
 		<delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
 		<delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
@@ -435,7 +443,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<!-- Replace this with file from ivy when project is ivy'fied -->
 	</target>
 
-	<target name="install:jboss:po-ear:configure" description="Configure po-ear application" unless="exclude.jboss">
+	<target name="install:jboss:po-ear:configure" description="Configure po-ear application" unless="exclude.po-ear">
 		<!-- Not needed being done inside of ear
 		<copy file="${jboss-conf.dir.dest}/${po-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
 		-->
@@ -449,6 +457,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
 
         <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" src="${po-grid.dir.src}/${po-grid.artifact.file}" />
+    	<echo message="Removing tmp amp; bak web.xml files from installation"/>
     </target>
 
     <!-- Configures installed po-grid application -->
@@ -471,136 +480,148 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
 	<!-- Wrapper target to configure jboss container, not deployed application -->
 	<target name="install:jboss:configure" description="Configure po-ear" unless="exclude.jboss" >
-		<!-- Calls the following macros
-		jboss-bindings - configures ports for jboss
-		jboss-login-config - sets up authentication
-		secure-jboss-console - adds password to jboss console apps
-		jboss-update-shutdown - updates shutdown.jar with correct jndi port so no args need to used 4 shutdown 
-		appserver-ssl-configure -  enables ssl
-		appserver-configure-external-hostname - configures jboss for use through a reverse proxy 
-		grid-secure-configure-connector - configures secure grid
-		-->
-		<!-- Use below if you are defining all the ports in your install.xml not the NCICB port configuraitons-->
-		<!-- configure the po-ear instance --> 
-		<jboss-configure
-			jboss.home="${jboss.home}"
-			jboss.server.name="${jboss.server.name}"
-			jboss.server.ports.name="bda-ports"
-			jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name}/conf/bindings.xml"
-			jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding.xml"
-			jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
-			authentication.type="${authentication.type}"
-			login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
-			login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
-			jboss.web.user="${jboss.web.user}"
-			jboss.web.password="${jboss.web.password}"
-			jboss.server.jndi.port="${jboss.server.jndi.port}" 
-			jboss.conf.dir="${jboss.home}/server/${jboss.server.name}/conf"
-			jboss.server-xml.file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
-			jboss.server-xml.service.name="jboss.web"
-			jboss.ssl.enable="${jboss.ssl.enable}"
-			jboss.ssl.port="8443"
-			jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
-			jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
-			jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
-			jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
-			jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
-			jboss.external.ssl.host="${jboss.external.ssl.host}"
-			jboss.external.ssl.port="${jboss.external.ssl.port}"
-			proxy.update.connector.port.ssl="8443"
-			jboss.external.http.host="${jboss.external.http.host}"
-			jboss.external.http.port="${jboss.external.http.port}"
-			proxy.update.connector.port.http="8080"
-			grid.external.secure.host="${grid.external.secure.host}"
-			grid.external.secure.port="${grid.external.secure.port}"
-			jboss.server.hostname="${jboss.server.hostname}"
-			jboss.grid.configure="false"
-			grid.secure.dir="${grid.secure.dir}"
-			grid.secure.enable="${grid.secure.enable}"
-			grid.secure.port="${grid.secure.port}"
-			grid.secure.key.file="${grid.secure.key.file}" 
-			grid.secure.cert.file="${grid.secure.cert.file}" 
-			jboss.java.opts="${jboss.java.opts}"			
-			/>
-		
-		  <!-- create a new template bindings file from template (using ports for po-grid -->
-			<copy file="${bda-utils.resource.dir}/template-binding.xml" 
-				tofile="${bda-utils.resource.dir}/template-binding2.xml" 
-				filtering="true"
-				overwrite="true">
-				<filterset begintoken="@" endtoken="@">
-					<filter token="jboss.server.port" value="@jboss.server.grid.port@"/>
-					<filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
-					<filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-					<filter token="jboss.server.jndi.port" value="@jboss.server.grid.jndi.port@"/>
-					<filter token="jboss.cobraorb.port" value="@jboss.grid.cobraorb.port@"/>
-					<filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
-					<filter token="jboss.hajndi.port" value="@jboss.grid.hajndi.port@"/>
-					<filter token="jboss.hajrmi.port" value="@jboss.grid.hajrmi.port@"/>
-					<filter token="jboss.jms.port" value="@jboss.grid.jms.port@"/>
-					<filter token="jboss.jmx-rmi.port" value="@jboss.grid.jmx-rmi.port@"/>
-					<filter token="jboss.messaging.port" value="@jboss.grid.messaging.port@"/>
-					<filter token="jboss.pooledha.port" value="@jboss.grid.pooledha.port@"/>
-					<filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
-					<filter token="jboss.server.bind.port" value="@jboss.grid.server.bind.port@"/>
-					<filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-					<filter token="jboss.service.rmiobject.port" value="@jboss.grid.service.rmiobject.port@"/>
-					<filter token="jboss.snmp.port" value="@jboss.grid.snmp.port@"/>
-					<filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
-					<filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
-				</filterset>
-		    </copy>
-		
-		   <!-- configure the po-grid instance --> 
-	        <jboss-configure
-	            jboss.home="${jboss.home}"
-	            jboss.server.name="${jboss.server.name.grid}"
-	            jboss.server.ports.name="bda-ports"
-	            jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name.grid}/conf/bindings.xml"
-	            jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
-	            jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
-	            authentication.type="${authentication.type}"
-	            login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
-	            login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
-	            jboss.web.user="${jboss.web.user}"
-	            jboss.web.password="${jboss.web.password}"
-	            jboss.server.jndi.port="${jboss.server.grid.jndi.port}" 
-	            jboss.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
-	            jboss.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
-	            jboss.server-xml.service.name="jboss.web"
-	            jboss.ssl.enable="${jboss.ssl.enable}"
-	            jboss.ssl.port="8443"
-	            jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
-	            jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
-	            jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
-	            jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
-	            jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
-	            jboss.external.ssl.host="${jboss.external.ssl.host}"
-	            jboss.external.ssl.port="${jboss.external.ssl.port}"
-	            proxy.update.connector.port.ssl="8443"
-	            jboss.external.http.host="${jboss.external.http.host}"
-	            jboss.external.http.port="${jboss.external.http.port}"
-	            proxy.update.connector.port.http="8080"
-	            grid.external.secure.host="${grid.external.secure.host}"
-	            grid.external.secure.port="${grid.external.secure.port}"
-	            jboss.server.hostname="${jboss.server.hostname}"
-	            jboss.grid.configure="false"
-	            grid.secure.dir="${grid.secure.dir}"
-	            grid.secure.enable="${grid.secure.enable}"
-	            grid.secure.port="${grid.secure.port}"
-	            grid.secure.key.file="${grid.secure.key.file}" 
-	            grid.secure.cert.file="${grid.secure.cert.file}" 
-	            jboss.java.opts="${jboss.java.opts}"            
-	            />		
-
+	    <antcall target="install:jboss:configure:po-ear"/>		
+	    <antcall target="install:jboss:configure:po-grid"/>		
 	</target>
 
+	<target name="install:jboss:configure:po-ear" unless="exclude.po-ear">
+        <!-- Calls the following macros
+        jboss-bindings - configures ports for jboss
+        jboss-login-config - sets up authentication
+        secure-jboss-console - adds password to jboss console apps
+        jboss-update-shutdown - updates shutdown.jar with correct jndi port so no args need to used 4 shutdown 
+        appserver-ssl-configure -  enables ssl
+        appserver-configure-external-hostname - configures jboss for use through a reverse proxy 
+        grid-secure-configure-connector - configures secure grid
+        -->
+        <!-- Use below if you are defining all the ports in your install.xml not the NCICB port configuraitons-->
+        <!-- configure the po-ear instance --> 
+        <jboss-configure
+            jboss.home="${jboss.home}"
+            jboss.server.name="${jboss.server.name}"
+            jboss.server.ports.name="bda-ports"
+            jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name}/conf/bindings.xml"
+            jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding.xml"
+            jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+            authentication.type="${authentication.type}"
+            login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+            login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+            jboss.web.user="${jboss.web.user}"
+            jboss.web.password="${jboss.web.password}"
+            jboss.server.jndi.port="${jboss.server.jndi.port}" 
+            jboss.conf.dir="${jboss.home}/server/${jboss.server.name}/conf"
+            jboss.server-xml.file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+            jboss.server-xml.service.name="jboss.web"
+            jboss.ssl.enable="${jboss.ssl.enable}"
+            jboss.ssl.port="8443"
+            jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+            jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+            jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+            jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+            jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+            jboss.external.ssl.host="${jboss.external.ssl.host}"
+            jboss.external.ssl.port="${jboss.external.ssl.port}"
+            proxy.update.connector.port.ssl="8443"
+            jboss.external.http.host="${jboss.external.http.host}"
+            jboss.external.http.port="${jboss.external.http.port}"
+            proxy.update.connector.port.http="8080"
+            grid.external.secure.host="${grid.external.secure.host}"
+            grid.external.secure.port="${grid.external.secure.port}"
+            jboss.server.hostname="${jboss.server.hostname}"
+            jboss.grid.configure="false"
+            grid.secure.dir="${grid.secure.dir}"
+            grid.secure.enable="${grid.secure.enable}"
+            grid.secure.port="${grid.secure.port}"
+            grid.secure.key.file="${grid.secure.key.file}" 
+            grid.secure.cert.file="${grid.secure.cert.file}" 
+            jboss.java.opts="${jboss.java.opts}"            
+            />		
+	</target>
+	<target name="install:jboss:configure:po-grid" unless="exclude.po-grid">
+	      <!-- create a new template bindings file from template (using ports for po-grid -->
+	            <copy file="${bda-utils.resource.dir}/template-binding.xml" 
+	                tofile="${bda-utils.resource.dir}/template-binding2.xml" 
+	                filtering="true"
+	                overwrite="true">
+	                <filterset begintoken="@" endtoken="@">
+	                    <filter token="jboss.server.port" value="@jboss.server.grid.port@"/>
+	                    <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
+	                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+	                    <filter token="jboss.server.jndi.port" value="@jboss.server.grid.jndi.port@"/>
+	                    <filter token="jboss.cobraorb.port" value="@jboss.grid.cobraorb.port@"/>
+	                    <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
+	                    <filter token="jboss.hajndi.port" value="@jboss.grid.hajndi.port@"/>
+	                    <filter token="jboss.hajrmi.port" value="@jboss.grid.hajrmi.port@"/>
+	                    <filter token="jboss.jms.port" value="@jboss.grid.jms.port@"/>
+	                    <filter token="jboss.jmx-rmi.port" value="@jboss.grid.jmx-rmi.port@"/>
+	                    <filter token="jboss.messaging.port" value="@jboss.grid.messaging.port@"/>
+	                    <filter token="jboss.pooledha.port" value="@jboss.grid.pooledha.port@"/>
+	                    <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
+	                    <filter token="jboss.server.bind.port" value="@jboss.grid.server.bind.port@"/>
+	                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+	                    <filter token="jboss.service.rmiobject.port" value="@jboss.grid.service.rmiobject.port@"/>
+	                    <filter token="jboss.snmp.port" value="@jboss.grid.snmp.port@"/>
+	                    <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
+	                    <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
+	                </filterset>
+	            </copy>
+	        
+	           <!-- configure the po-grid instance --> 
+	            <jboss-configure
+	                jboss.home="${jboss.home}"
+	                jboss.server.name="${jboss.server.name.grid}"
+	                jboss.server.ports.name="bda-ports"
+	                jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name.grid}/conf/bindings.xml"
+	                jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
+	                jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+	                authentication.type="${authentication.type}"
+	                login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+	                login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+	                jboss.web.user="${jboss.web.user}"
+	                jboss.web.password="${jboss.web.password}"
+	                jboss.server.jndi.port="${jboss.server.grid.jndi.port}" 
+	                jboss.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
+	                jboss.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
+	                jboss.server-xml.service.name="jboss.web"
+	                jboss.ssl.enable="${jboss.ssl.enable}"
+	                jboss.ssl.port="8443"
+	                jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+	                jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+	                jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+	                jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+	                jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+	                jboss.external.ssl.host="${jboss.external.ssl.host}"
+	                jboss.external.ssl.port="${jboss.external.ssl.port}"
+	                proxy.update.connector.port.ssl="8443"
+	                jboss.external.http.host="${jboss.external.http.host}"
+	                jboss.external.http.port="${jboss.external.http.port}"
+	                proxy.update.connector.port.http="8080"
+	                grid.external.secure.host="${grid.external.secure.host}"
+	                grid.external.secure.port="${grid.external.secure.port}"
+	                jboss.server.hostname="${jboss.server.hostname}"
+	                jboss.grid.configure="false"
+	                grid.secure.dir="${grid.secure.dir}"
+	                grid.secure.enable="${grid.secure.enable}"
+	                grid.secure.port="${grid.secure.port}"
+	                grid.secure.key.file="${grid.secure.key.file}" 
+	                grid.secure.cert.file="${grid.secure.cert.file}" 
+	                jboss.java.opts="${jboss.java.opts}"            
+	                />  		
+	</target>
 
 	<!-- Calls to bda macros for basic functionality -->
 	<target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
+		<antcall target="install:jboss:stop:po-grid"/>
+		<antcall target="install:jboss:stop:po-ear"/>
+	</target>
+	
+	<target name="install:jboss:stop:po-ear" unless="exclude.po-ear">
 		<jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
+	</target>
+	<target name="install:jboss:stop:po-grid" unless="exclude.po-grid">
 		<jboss-stop-jboss jboss.server.jndi.port="${jboss.server.grid.jndi.port}" jboss.server.name="${jboss.server.name.grid}"/>
 	</target>
+	
     <!-- 
     jboss-start-jboss macro will start the jboss instance
     usage:  <jboss-start-jboss jboss.home="${jboss.home}"/>
@@ -646,12 +667,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 				<isset property="exclude.start.servers"/>
 			</not>
 			<then>
-				<jboss-start-jboss2 jboss.server.name="${jboss.server.name}"/>
-				<jboss-start-jboss2 jboss.server.name="${jboss.server.name.grid}"/>
+				<antcall target="install:jboss:start:po-ear"/>
+				<antcall target="install:jboss:start:po-grid"/>
 				<sleep seconds="15"/>
 			</then>
 		</if>
 	</target>
+    <target name="install:jboss:start:po-ear" unless="exclude.po-ear">
+		<jboss-start-jboss2 jboss.server.name="${jboss.server.name}"/>
+    </target>
+    <target name="install:jboss:start:po-grid" unless="exclude.po-grid">
+		<jboss-start-jboss2 jboss.server.name="${jboss.server.name.grid}"/>
+    </target>	
+	
 	<target name="install:validation:pre-install">
 		<validate-pre-install
 			ant.check.version="${ant.minimum.version}"
@@ -673,9 +701,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			</then>
 		</if>
 	</target>
-	<target name="-install:jboss:configure:update-shutdown" unless="exclude.jboss">
-		<jboss-update-shutdown />
-	</target>
 
 	<!-- Wrapper target to deploy JBOSS container -->
 	<target name="install:jboss" unless="exclude.jboss"
@@ -686,10 +711,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		install:clean:jboss,
 		install:init,
 		install:jboss:binaries,
-		install:jboss:po-ear:re-configure,
+		install:jboss:po-ear:pre-configure,
 		install:jboss:po-ear,
 		install:jboss:po-ear:configure,
-		install:jboss:po-grid:re-configure,
+		install:jboss:po-grid:pre-configure,
 		install:po-grid:application,
 		install:po-grid:configure,
 		install:jboss:configure,
@@ -713,7 +738,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		"/>
 
 	<!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
-	<target name="install:jboss:po-ear:re-configure" unless="exclude.jboss">
+	<target name="install:jboss:po-ear:pre-configure" unless="exclude.po-ear">
 		<mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
 		<delete dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
 		<mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
@@ -801,7 +826,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		
 	</target>
 	
-	<target name="install:jboss:po-grid:re-configure" unless="exclude.jboss">
+	<target name="install:jboss:po-grid:pre-configure" unless="exclude.po-grid">
         <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
         <delete dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
         <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>	      
@@ -850,10 +875,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		install:validation:pre-install,
 		install:jboss:stop,
 		install:init,
-		install:jboss:po-ear:re-configure,
+		install:jboss:po-ear:pre-configure,
 		install:jboss:po-ear,
 		install:jboss:po-ear:configure,
-		install:jboss:po-grid:re-configure,
+		install:jboss:po-grid:pre-configure,
 		install:po-grid:application,
 		install:po-grid:configure,
 		install:jboss:start
