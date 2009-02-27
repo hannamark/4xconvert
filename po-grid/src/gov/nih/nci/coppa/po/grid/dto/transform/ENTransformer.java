@@ -14,6 +14,9 @@ import org.iso._21090.ENXP;
 
 public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements Transformer<ENXX, EnXx> {
 
+    public static final ENONTransformer ENON_INSTANCE = ENONTransformer.INSTANCE;
+    public static final ENPNTransformer ENPN_INSTANCE = ENPNTransformer.INSTANCE;
+
     protected ENTransformer() {}
 
     public ENXX toXml(EnXx input) throws DtoTransformException {
@@ -58,7 +61,11 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
     protected abstract ENXX newXml();
     protected abstract EnXx newDto();
 
-    public static final ENTransformer<ENON, EnOn> ENON_INSTANCE = new ENTransformer<ENON, EnOn>() {
+
+    public static class ENONTransformer extends ENTransformer<ENON, EnOn> {
+
+        public static final ENONTransformer INSTANCE = new ENONTransformer();
+
         @Override
         protected ENON newXml() {
             return new ENON();
@@ -68,9 +75,12 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
         protected EnOn newDto() {
             return new EnOn();
         }
-    };
+    }
 
-    public static final ENTransformer<ENPN, EnPn> ENPN_INSTANCE = new ENTransformer<ENPN, EnPn>() {
+    public static class ENPNTransformer extends  ENTransformer<ENPN, EnPn> {
+
+        public static final ENPNTransformer INSTANCE = new ENPNTransformer();
+
         @Override
         protected ENPN newXml() {
             return new ENPN();
