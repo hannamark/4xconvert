@@ -665,7 +665,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Element armGroup = doc.createElement("arm_group");
             appendElement(armGroup, createElement("arm_group_label" , armDTO.getName() , doc));
             appendElement(armGroup, createElement("arm_type" , armDTO.getTypeCode() , doc));
-            createTextBlock("arm_group_description", spDTO.getPublicDescription(), doc, armGroup);
+            createTextBlock("arm_group_description", armDTO.getDescriptionText(), doc, armGroup);
             if (armGroup.hasChildNodes()) {
                 root.appendChild(armGroup);
             }
@@ -680,7 +680,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     .convertCdToString(pa.getCategoryCode())))) {
                 Element intervention = doc.createElement("intervention");
                 InterventionDTO i = PoPaServiceBeanLookup.getInterventionService().get(pa.getInterventionIdentifier());
-                appendElement(intervention, createElement("intervention_type" , i.getTypeCode() , doc));
+                appendElement(intervention, createElement("intervention_type" , pa.getSubcategoryCode() , doc));
                 appendElement(intervention, createElement("intervention_name" , i.getName() , doc));
                 createTextBlock("intervention_description", pa.getTextDescription(), doc, intervention);
                 List<InterventionAlternateNameDTO> ianList = PoPaServiceBeanLookup

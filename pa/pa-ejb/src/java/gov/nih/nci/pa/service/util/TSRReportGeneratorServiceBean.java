@@ -355,36 +355,27 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     appendTitle(html, appendBoldData("Arm/Group(s)"));
     html.append("</Font>");
     List<ArmDTO> arms = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(spDTO.getIdentifier());
-    boolean first = true;
     for (ArmDTO armDTO : arms) {     
       html.append(appendBoldData(appendData("Label", getData(armDTO.getName(), true), true , false)));
       html.append(appendData("Type", getData(armDTO.getTypeCode(), true), true , false));
       html.append(appendData("Description", getData(armDTO.getDescriptionText(), true), true , false));
       html.append(BR + "Intervention(s)");
-      StringBuffer intBuff = new StringBuffer();
       List<PlannedActivityDTO> paList = PoPaServiceBeanLookup.getPlannedActivityService()
                                                 .getByArm(armDTO.getIdentifier());
       html.append(TBL_B);
-      if (first) {
-        //first = false;
-        html.append(TR_B);
-        appendTDAndData(html, appendTRBold("Type"));
-        appendTDAndData(html, appendTRBold("Lead"));
-        appendTDAndData(html, appendTRBold("Name"));
-        appendTDAndData(html, appendTRBold("Description"));
-        html.append(TR_E);
-      }
+      html.append(TR_B);
+      appendTDAndData(html, appendTRBold("Type"));
+      appendTDAndData(html, appendTRBold("Lead"));
+      appendTDAndData(html, appendTRBold("Name"));
+      appendTDAndData(html, appendTRBold("Description"));
+      html.append(TR_E);
       for (PlannedActivityDTO pa : paList) {
         
           InterventionDTO inter = PoPaServiceBeanLookup.getInterventionService().get(pa.getInterventionIdentifier());
-          if (intBuff.length() > 0) {
-              intBuff.append(", ");
-          }
-          intBuff.append(StConverter.convertToString(inter.getName()));
           html.append(TR_B);
-          appendTDAndData(html, getData(inter.getTypeCode(), true));
+          appendTDAndData(html, getData(pa.getSubcategoryCode(), true));
           appendTDAndData(html, BlConverter.covertToBool(pa.getLeadProductIndicator()) ? "Yes" : "No");
-          appendTDAndData(html, intBuff.toString());
+          appendTDAndData(html, getData(inter.getName(), true));
           appendTDAndData(html, getData(pa.getTextDescription(), true));
           html.append(TR_E);
       } 

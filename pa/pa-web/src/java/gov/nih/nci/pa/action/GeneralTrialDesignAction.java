@@ -136,7 +136,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     
     private static final int OFFICIAL_TITLE = 4000;
-    private static final int PUBLIC_TITLE = 299;
+    private static final int PUBLIC_TITLE = 5000;
     private static final int SCI_DESC = 12000;
     private static final int KEYWORD = 600;
     private static final String SPONSOR = "sponsor";
