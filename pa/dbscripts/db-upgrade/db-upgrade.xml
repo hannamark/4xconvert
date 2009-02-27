@@ -24,4 +24,12 @@
         <comment>execute studyOnhold.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyOnhold.sql"/>
     </changeSet>
+    <changeSet id="4" author="hugh">
+        <comment>execute diseaseMenuDefault.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/diseaseMenuDefault.sql"/>
+    </changeSet>
+    <changeSet id="5" author="hugh">
+        <comment>execute studyProtocolPublicDescription.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/studyProtocolPublicDescription.sql"/>
+    </changeSet>
 </databaseChangeLog>
