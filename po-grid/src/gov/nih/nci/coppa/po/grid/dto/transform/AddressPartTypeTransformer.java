@@ -4,35 +4,30 @@ import gov.nih.nci.coppa.iso.AddressPartType;
 
 public class AddressPartTypeTransformer implements Transformer<org.iso._21090.AddressPartType, AddressPartType> {
 
-    public AddressPartType transform(org.iso._21090.AddressPartType input) throws DtoTransformException {
-        if (input == null)
+    public static final AddressPartTypeTransformer INSTANCE = new AddressPartTypeTransformer();
+
+    private AddressPartTypeTransformer() {}
+
+    public org.iso._21090.AddressPartType toXml(AddressPartType input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        AddressPartType res = AddressPartType.valueOf(input.value());
-        return res;
+        }
+        return org.iso._21090.AddressPartType.fromValue(input.name());
     }
 
-    public AddressPartType transform(org.iso._21090.AddressPartType input, AddressPartType res)
-            throws DtoTransformException {
-        if (input == null)
-            return null;
-        res = AddressPartType.valueOf(input.value());
-        return res;
+    public void copyToXml(AddressPartType source, org.iso._21090.AddressPartType target) throws DtoTransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public org.iso._21090.AddressPartType transform(gov.nih.nci.coppa.iso.AddressPartType input)
-            throws DtoTransformException {
-        if (input == null)
+    public AddressPartType toDto(org.iso._21090.AddressPartType input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        org.iso._21090.AddressPartType res = org.iso._21090.AddressPartType.fromValue(input.name());
-        return res;
+        }
+        return AddressPartType.valueOf(input.name());
     }
 
-    public org.iso._21090.AddressPartType transform(gov.nih.nci.coppa.iso.AddressPartType input,
-            org.iso._21090.AddressPartType res) throws DtoTransformException {
-        if (input == null)
-            return null;
-        res = org.iso._21090.AddressPartType.fromValue(input.name());
-        return res;
+    public void copyToDto(org.iso._21090.AddressPartType source, AddressPartType target) throws DtoTransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

@@ -1,41 +1,55 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Adxp;
+import java.util.ArrayList;
+import java.util.List;
+import org.iso._21090.AD;
+import org.iso._21090.ADXP;
 
 public class ADTransformer implements Transformer<org.iso._21090.AD, Ad> {
 
-    public gov.nih.nci.coppa.iso.Ad transform(org.iso._21090.AD input) throws DtoTransformException {
-        Ad res = new Ad();
-        res = transform(input, res);
-        return res;
-    }
+    public static final ADTransformer INSTANCE = new ADTransformer();
 
-    public Ad transform(org.iso._21090.AD input, Ad res) throws DtoTransformException {
-        if (input == null)
+    private ADTransformer() {}
+
+    public AD toXml(Ad input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-        if (input.getPart() != null) {
-            ADXPTransformer transformer = new ADXPTransformer();
-            transformer.transformADXP(input.getPart(), res.getPart());
         }
-        return res;
+        AD x = new AD();
+        copyToXml(input, x);
+        return x;
     }
 
-    public org.iso._21090.AD transform(gov.nih.nci.coppa.iso.Ad input) throws DtoTransformException {
-        org.iso._21090.AD res = new org.iso._21090.AD();
-        res = transform(input, res);
-        return res;
+    public void copyToXml(Ad source, AD target) throws DtoTransformException {
+        target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
+        List<Adxp> sourcePart = source.getPart();
+        if (sourcePart != null) {
+            List<ADXP> targetPart = target.getPart();
+            ADXPTransformer.INSTANCE.copyToXml(sourcePart, targetPart);
+        }
     }
 
-    public org.iso._21090.AD transform(gov.nih.nci.coppa.iso.Ad input, org.iso._21090.AD res)
-            throws DtoTransformException {
-        if (input == null)
+    public Ad toDto(AD input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-        if (input.getPart() != null) {
-            ADXPTransformer transformer = new ADXPTransformer();
-            transformer.transform(input.getPart(), res.getPart());
         }
-        return res;
+        Ad d = new Ad();
+        copyToDto(input, d);
+        return d;
+    }
+
+    public void copyToDto(AD source, Ad target) throws DtoTransformException {
+        target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
+        List<ADXP> sourcePart = source.getPart();
+        if (sourcePart != null) {
+            List<Adxp> targetPart = target.getPart();
+            if (targetPart == null) {
+                targetPart = new ArrayList<Adxp>(sourcePart.size());
+                target.setPart(targetPart);
+            }
+            ADXPTransformer.INSTANCE.copyToDto(sourcePart, targetPart);
+        }
     }
 }

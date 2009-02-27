@@ -1,40 +1,48 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import gov.nih.nci.coppa.iso.St;
+import org.iso._21090.ST;
 
-public class STTransformer implements Transformer<org.iso._21090.ST, gov.nih.nci.coppa.iso.St> {
+public class STTransformer implements Transformer<ST, St> {
 
-    public St transform(org.iso._21090.ST input) throws DtoTransformException {
-        St res = new St();
-        res = transform(input, res);
+    public static final STTransformer INSTANCE = new STTransformer();
 
-        return res;
-    }
+    private STTransformer() {}
 
-    public St transform(org.iso._21090.ST input, St res) throws DtoTransformException {
-        if (input == null)
+    public ST toXml(St input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-        res.setValue(input.getValue());
-
-        return res;
+        }
+        ST x = new ST();
+        copyToXml(input, x);
+        return x;
     }
 
-    public org.iso._21090.ST transform(gov.nih.nci.coppa.iso.St input) throws DtoTransformException {
-        org.iso._21090.ST res = new org.iso._21090.ST();
-        res = transform(input, res);
-
-        return res;
+    public void copyToXml(St source, ST target) throws DtoTransformException {
+        String v = source.getValue();
+        if (v != null) {
+            target.setValue(v);
+        } else {
+            target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
+        }
     }
 
-    public org.iso._21090.ST transform(gov.nih.nci.coppa.iso.St input, org.iso._21090.ST res)
-            throws DtoTransformException {
-        if (input == null)
+    public St toDto(ST input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-        res.setValue(input.getValue());
+        }
+        St d = new St();
+        copyToDto(input, d);
+        return d;
+    }
 
-        return res;
+    public void copyToDto(ST source, St target) throws DtoTransformException {
+        String v = source.getValue();
+        if (v != null) {
+            target.setValue(v);
+        } else {
+            target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
+        }
     }
 
 }

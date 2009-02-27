@@ -1,50 +1,46 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
-import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.iso._21090.DSETTEL;
 
 public class OrganizationTransformer implements Transformer<Organization, OrganizationDTO> {
-    protected static Logger logger = LogManager.getLogger(OrganizationTransformer.class);
 
-    public OrganizationDTO transform(Organization input) throws DtoTransformException {
-        OrganizationDTO res = new OrganizationDTO();
-        res = transform(input, res);
-        return res;
-    }
+    public static final OrganizationTransformer INSTANCE = new OrganizationTransformer();
 
-    public OrganizationDTO transform(Organization input, OrganizationDTO res) throws DtoTransformException {
-        if (input == null)
+    private OrganizationTransformer() {}
+
+    public Organization toXml(OrganizationDTO input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setIdentifier(new IITransformer().transform(input.getIdentifier()));
-        res.setName(new ENONTransformer().transform(input.getName()));
-        res.setPostalAddress(new ADTransformer().transform(input.getPostalAddress()));
-        res.setStatusCode(new CDTransformer().transform(input.getStatusCode()));
-        DSET_TELTransformer<Tel> dsetTransformer = new DSET_TELTransformer<Tel>();
-        gov.nih.nci.coppa.iso.DSet<Tel> telAddress = dsetTransformer.transform(input.getTelecomAddress());
-        res.setTelecomAddress(telAddress);
-        return res;
+        }
+        Organization x = new Organization();
+        copyToXml(input, x);
+        return x;
     }
 
-    public Organization transform(OrganizationDTO input) throws DtoTransformException {
-        Organization res = new Organization();
-        res = transform(input, res);
-        return res;
+    public void copyToXml(OrganizationDTO source, Organization target) throws DtoTransformException {
+        target.setIdentifier(IITransformer.INSTANCE.toXml(source.getIdentifier()));
+        target.setName(ENTransformer.ENON_INSTANCE.toXml(source.getName()));
+        target.setPostalAddress(ADTransformer.INSTANCE.toXml(source.getPostalAddress()));
+        target.setStatusCode(CDTransformer.INSTANCE.toXml(source.getStatusCode()));
+        target.setTelecomAddress(DSET_TELTransformer.INSTANCE.toXml(source.getTelecomAddress()));
     }
 
-    public Organization transform(OrganizationDTO input, Organization res) throws DtoTransformException {
-        if (input == null)
+    public OrganizationDTO toDto(Organization input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setIdentifier(new IITransformer().transform(input.getIdentifier()));
-        res.setName(new ENONTransformer().transform(input.getName()));
-        res.setPostalAddress(new ADTransformer().transform(input.getPostalAddress()));
-        res.setStatusCode(new CDTransformer().transform(input.getStatusCode()));
-        DSETTEL telAddress = new DSET_TELTransformer<Tel>().transform(input.getTelecomAddress());
-        res.setTelecomAddress(telAddress);
-        return res;
+        }
+        OrganizationDTO d = new OrganizationDTO();
+        copyToDto(input, d);
+        return d;
+    }
+
+    public void copyToDto(Organization source, OrganizationDTO target) throws DtoTransformException {
+        target.setIdentifier(IITransformer.INSTANCE.toDto(source.getIdentifier()));
+        target.setName(ENTransformer.ENON_INSTANCE.toDto(source.getName()));
+        target.setPostalAddress(ADTransformer.INSTANCE.toDto(source.getPostalAddress()));
+        target.setStatusCode(CDTransformer.INSTANCE.toDto(source.getStatusCode()));
+        target.setTelecomAddress(DSET_TELTransformer.INSTANCE.toDto(source.getTelecomAddress()));
     }
 }

@@ -33,9 +33,9 @@ public class CoppaPOImpl extends CoppaPOImplBase {
 
     public gov.nih.nci.coppa.po.Person getPerson(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
         try {
-            Ii ii_iso = new IITransformer().transform(identifier);
+            Ii ii_iso = IITransformer.INSTANCE.toDto(identifier);
             PersonDTO person_iso = personService.getPerson(ii_iso);
-            gov.nih.nci.coppa.po.Person person = new PersonTransformer().transform(person_iso);
+            gov.nih.nci.coppa.po.Person person = PersonTransformer.INSTANCE.toXml(person_iso);
             return person;
         } catch (Exception e) {
             logger.error("Error in getting persons.", e);
@@ -45,9 +45,9 @@ public class CoppaPOImpl extends CoppaPOImplBase {
 
     public gov.nih.nci.coppa.po.Organization getOrganization(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
         try {
-            Ii ii_iso = new IITransformer().transform(identifier);
+            Ii ii_iso = IITransformer.INSTANCE.toDto(identifier);
             OrganizationDTO org_dto = organizationService.getOrganization(ii_iso);
-            Organization org = new OrganizationTransformer().transform(org_dto);
+            Organization org = OrganizationTransformer.INSTANCE.toXml(org_dto);
             return org;
         } catch (Exception e) {
             logger.error("Error in getting persons.", e);
@@ -57,16 +57,15 @@ public class CoppaPOImpl extends CoppaPOImplBase {
 
     public gov.nih.nci.coppa.po.Organization[] searchOrganizations(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
         try{
-            OrganizationDTO org = new OrganizationTransformer().transform(organization);
+            OrganizationDTO org = OrganizationTransformer.INSTANCE.toDto(organization);
             List<OrganizationDTO> results = organizationService.search(org);
             if (results == null) {
                 return null;
             }
-            OrganizationTransformer transformer = new OrganizationTransformer();
             gov.nih.nci.coppa.po.Organization[] returnResults = new gov.nih.nci.coppa.po.Organization[results.size()];
             int i = 0;
             for (OrganizationDTO res : results) {
-                gov.nih.nci.coppa.po.Organization o = transformer.transform(res);
+                gov.nih.nci.coppa.po.Organization o = OrganizationTransformer.INSTANCE.toXml(res);
                 returnResults[i++] = o;
             }
             return returnResults;
@@ -78,17 +77,16 @@ public class CoppaPOImpl extends CoppaPOImplBase {
 
     public gov.nih.nci.coppa.po.Person[] searchPersons(gov.nih.nci.coppa.po.Person person) throws RemoteException {
         try {
-            PersonDTO person_iso = new PersonTransformer().transform(person);
+            PersonDTO person_iso = PersonTransformer.INSTANCE.toDto(person);
             List<PersonDTO> results = personService.search(person_iso);
             if (results == null) {
                 return null;
             }
             logger.debug("Persons searched from COPPA:" + results.size());
-            PersonTransformer transformer = new PersonTransformer();
             gov.nih.nci.coppa.po.Person[] returnResults = new gov.nih.nci.coppa.po.Person[results.size()];
             int i = 0;
             for (PersonDTO person_res : results) {
-                gov.nih.nci.coppa.po.Person person_res_tr = transformer.transform(person_res);
+                gov.nih.nci.coppa.po.Person person_res_tr = PersonTransformer.INSTANCE.toXml(person_res);
                 returnResults[i++] = person_res_tr;
             }
             return returnResults;

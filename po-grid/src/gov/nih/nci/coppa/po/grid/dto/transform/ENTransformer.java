@@ -1,57 +1,84 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import gov.nih.nci.coppa.iso.En;
+import gov.nih.nci.coppa.iso.EnOn;
+import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.Enxp;
 
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.iso._21090.EN;
+import org.iso._21090.ENON;
+import org.iso._21090.ENPN;
+import org.iso._21090.ENXP;
 
-public class ENTransformer implements Transformer<org.iso._21090.EN,gov.nih.nci.coppa.iso.En> {
-	 protected static Logger logger = LogManager.getLogger(ENTransformer.class);
-	
-	public En transform(org.iso._21090.EN input) throws DtoTransformException {
-		En res = new En();
-		res = transform(input,res);
- 		return res;
-	}
+public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements Transformer<ENXX, EnXx> {
 
-	
-	public En transform(org.iso._21090.EN input, En res) throws DtoTransformException {
-		if (input == null) return null;
-		res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-		ENXPTransformer transformer = new ENXPTransformer();
-		for (org.iso._21090.ENXP enxp : input.getPart()) {
-			Enxp enxp_iso = transformer.transform(enxp);
-			res.getPart().add(enxp_iso);
+    protected ENTransformer() {}
+
+    public ENXX toXml(EnXx input) throws DtoTransformException {
+        if (input == null) {
+            return null;
         }
-		return res;
-	}
+        ENXX d = newXml();
+        copyToXml(input, d);
+        return d;
+    }
 
-	
-	public org.iso._21090.EN transform(gov.nih.nci.coppa.iso.En input) throws DtoTransformException {
-		org.iso._21090.EN res = new org.iso._21090.EN();
-		res = transform(input,res);
- 		return res;
-	}
+    public void copyToXml(EnXx source, ENXX target) throws DtoTransformException {
+        target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
+        List<ENXP> tPart = target.getPart();
+        for (Enxp enxp : source.getPart()) {
+            tPart.add(ENXPTransformer.INSTANCE.toXml(enxp));
+        }
+    }
 
-	
-	public org.iso._21090.EN transform(gov.nih.nci.coppa.iso.En input, org.iso._21090.EN res) throws DtoTransformException {
-		if (input == null) return null;
-		res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
+    public EnXx toDto(ENXX input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        EnXx d = newDto();
+        copyToDto(input, d);
+        return d;
+    }
 
-		List<Enxp> part_iso = input.getPart();
-		if (part_iso==null) return res;
-		ENXPTransformer transformer = new ENXPTransformer();
-		for (gov.nih.nci.coppa.iso.Enxp enxp_iso : input.getPart()) {
-			logger.debug("Found part");
-			org.iso._21090.ENXP enxp = transformer
-					.transform(enxp_iso);
-			res.getPart().add(enxp);
-		}
-   		return res;
-	}
+    public void copyToDto(ENXX source, EnXx target) throws DtoTransformException {
+        target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
+        List<ENXP> sPart = source.getPart();
+        if (sPart == null || sPart.isEmpty()) {
+            return;
+        }
 
+        List<Enxp> tPart = target.getPart();
+        for (org.iso._21090.ENXP enxp : sPart) {
+            tPart.add(ENXPTransformer.INSTANCE.toDto(enxp));
+        }
+    }
 
+    protected abstract ENXX newXml();
+    protected abstract EnXx newDto();
+
+    public static final ENTransformer<ENON, EnOn> ENON_INSTANCE = new ENTransformer<ENON, EnOn>() {
+        @Override
+        protected ENON newXml() {
+            return new ENON();
+        }
+
+        @Override
+        protected EnOn newDto() {
+            return new EnOn();
+        }
+    };
+
+    public static final ENTransformer<ENPN, EnPn> ENPN_INSTANCE = new ENTransformer<ENPN, EnPn>() {
+        @Override
+        protected ENPN newXml() {
+            return new ENPN();
+        }
+
+        @Override
+        protected EnPn newDto() {
+            return new EnPn();
+        }
+    };
 }

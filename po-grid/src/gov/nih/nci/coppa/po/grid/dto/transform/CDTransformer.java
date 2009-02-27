@@ -4,47 +4,45 @@ import gov.nih.nci.coppa.iso.Cd;
 
 public class CDTransformer implements Transformer<org.iso._21090.CD, gov.nih.nci.coppa.iso.Cd> {
 
-    public Cd transform(org.iso._21090.CD input) throws DtoTransformException {
+    public static final CDTransformer INSTANCE = new CDTransformer();
+
+    private CDTransformer() {}
+
+
+    public Cd toDto(org.iso._21090.CD input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
         Cd res = new Cd();
-        res = transform(input, res);
-
+        copyToDto(input, res);
         return res;
     }
 
-    public Cd transform(org.iso._21090.CD input, Cd res) throws DtoTransformException {
-        if (input == null)
+    public void copyToDto(org.iso._21090.CD source, Cd target) throws DtoTransformException {
+        String v = source.getCode();
+        if (v != null) {
+            target.setCode(v);
+        } else {
+            target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
+        }
+    }
+
+    public org.iso._21090.CD toXml(gov.nih.nci.coppa.iso.Cd input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setCode(input.getCode());
-        res.setCodeSystem(input.getCodeSystem());
-        res.setCodeSystemName(input.getCodeSystemName());
-        res.setCodeSystemVersion(input.getCodeSystemVersion());
-        res.setDisplayName(new STTransformer().transform(input.getDisplayName()));
-        res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-        res.setOriginalText(new EDTEXTTransformer().transform(input.getOriginalText()));
-
-        return res;
-    }
-
-    public org.iso._21090.CD transform(gov.nih.nci.coppa.iso.Cd input) throws DtoTransformException {
+        }
         org.iso._21090.CD res = new org.iso._21090.CD();
-        res = transform(input, res);
-
+        copyToXml(input, res);
         return res;
     }
 
-    public org.iso._21090.CD transform(gov.nih.nci.coppa.iso.Cd input, org.iso._21090.CD res)
+    public void copyToXml(gov.nih.nci.coppa.iso.Cd source, org.iso._21090.CD target)
             throws DtoTransformException {
-        if (input == null)
-            return null;
-        res.setCode(input.getCode());
-        res.setCodeSystem(input.getCodeSystem());
-        res.setCodeSystemName(input.getCodeSystemName());
-        res.setCodeSystemVersion(input.getCodeSystemVersion());
-        res.setDisplayName(new STTransformer().transform(input.getDisplayName()));
-        res.setNullFlavor(new NullFlavorTransformer().transform(input.getNullFlavor()));
-        res.setOriginalText(new EDTEXTTransformer().transform(input.getOriginalText()));
-
-        return res;
+        String v = source.getCode();
+        if (v != null) {
+            target.setCode(v);
+        } else {
+            target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
+        }
     }
-
 }

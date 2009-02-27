@@ -1,59 +1,56 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
 
 import gov.nih.nci.coppa.iso.Enxp;
+import org.iso._21090.ENXP;
 
-public class ENXPTransformer implements Transformer<org.iso._21090.ENXP,gov.nih.nci.coppa.iso.Enxp> {
-	 protected static Logger logger = LogManager.getLogger(ENXPTransformer.class);
+public class ENXPTransformer implements Transformer<ENXP, Enxp> {
+
+    public static final ENXPTransformer INSTANCE = new ENXPTransformer();
+
+    private ENXPTransformer() {}
 	 
-	 public  String escape(String input)throws DtoTransformException {
-		  return input.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-	 }
-	
-	public Enxp transform(org.iso._21090.ENXP input) throws DtoTransformException {
-		if (input == null) return null;
-		Enxp  res = new Enxp(new EntityNamePartTypeTransformer().transform(input.getType()));
-		res = transform(input,res);
-		return res;
-	}
+    public ENXP toXml(Enxp input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        ENXP d = new ENXP();
+        copyToXml(input, d);
+        return d;
+    }
 
-	
-	public Enxp transform(org.iso._21090.ENXP input, Enxp res) throws DtoTransformException {
-		if (input == null) return null;
-		if ((res==null)&&(input.getType()!=null)) {
-			res = new Enxp(new EntityNamePartTypeTransformer().transform(input.getType()));
-		}
-		res.setCode(input.getCode());
-		res.setCodeSystem(input.getCodeSystem());
-		res.setCodeSystemVersion(input.getCodeSystemVersion());
-        EntityNamePartQualifierTransformer enpqt = new  EntityNamePartQualifierTransformer();
-        enpqt.transform(input.getQualifier(), res.getQualifier());
-        res.setValue(escape(input.getValue()));
-		return res;
-	}
+    public void copyToXml(Enxp source, ENXP target) throws DtoTransformException {
+        if (source.getType() != null) {
+            target.setType(org.iso._21090.EntityNamePartType.valueOf(source.getType().name()));
+        }
+        target.setValue(source.getValue());
+        
+        // all of these are currently ignored by PO.
+        target.setCode(source.getCode());
+        target.setCodeSystem(source.getCodeSystem());
+        target.setCodeSystemVersion(source.getCodeSystemVersion());
+    }
 
-	public org.iso._21090.ENXP transform(Enxp input) throws DtoTransformException {
-		org.iso._21090.ENXP res = new org.iso._21090.ENXP();
-		res = transform(input,res);
-		return res;
-	}
+    public Enxp toDto(ENXP input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        if (input.getType() == null) {
+            throw new IllegalArgumentException("ENXP.type is required");
+        }
+        Enxp d = new Enxp(EntityNamePartType.valueOf(input.getType().name()));
+        copyToDto(input, d);
+        return d;
+    }
 
-	
-	public org.iso._21090.ENXP transform(Enxp input, org.iso._21090.ENXP res) throws DtoTransformException {
-		if (input == null) return null;
-		logger.debug("ENXP transformed:"+input.getValue());
-		res.setCode(input.getCode());
-		res.setCodeSystem(input.getCodeSystem());
-		res.setCodeSystemVersion(input.getCodeSystemVersion());
-        EntityNamePartQualifierTransformer enpqt = new  EntityNamePartQualifierTransformer();
-        enpqt.transform(input.getQualifier(), res.getQualifier());
-        res.setType(new EntityNamePartTypeTransformer().transform(input.getType()));
-        res.setValue(input.getValue());
-		return res;
-	}	
-	
-
+    public void copyToDto(ENXP source, Enxp target) throws DtoTransformException {
+        target.setValue(source.getValue());
+        
+        // all of these are currently ignored by PO.
+        target.setCode(source.getCode());
+        target.setCodeSystem(source.getCodeSystem());
+        target.setCodeSystemVersion(source.getCodeSystemVersion());
+    }
 }

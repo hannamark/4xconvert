@@ -1,100 +1,55 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
+import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 
-import java.util.ArrayList;
 import java.util.List;
+import org.iso._21090.ADXP;
 
-public class ADXPTransformer implements Transformer<Adxp, org.iso._21090.ADXP> {
+public class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
 
-    public Adxp transform(org.iso._21090.ADXP input) throws DtoTransformException {
+    public static final ADXPTransformer INSTANCE = new ADXPTransformer();
+
+    private ADXPTransformer() {}
+
+    public ADXP toXml(Adxp input) throws DtoTransformException {
         if (input == null)
             return null;
-        Adxp res = Adxp.createAddressPart(new AddressPartTypeTransformer().transform(input.getType()));
-        res = transform(input, res);
-        return res;
+        ADXP x = new ADXP();
+        copyToXml(input, x);
+        return x;
     }
 
-    public Adxp transform(org.iso._21090.ADXP input, Adxp res) throws DtoTransformException {
-        if (input == null)
-            return res;
-        if (res == null)
-            res = Adxp.createAddressPart(new AddressPartTypeTransformer().transform(input.getType()));
-        res.setCode(input.getCode());
-        res.setValue(input.getValue());
-        return res;
+    public void copyToDto(ADXP source, Adxp target) throws DtoTransformException {
+        target.setCode(source.getCode());
+        target.setValue(source.getValue());
     }
 
-    /*
-     * public List<Adxp> transform(SetOfADXP input)throws DtoTransformException { if (input == null) return null;
-     * List<Adxp> adxps_iso = new ArrayList<Adxp>(); org.iso._21090.ADXP[] adxps =input.getAdxp(); if (adxps!=null){ for
-     * (org.iso._21090.ADXP adxp:adxps) { Adxp adxp_iso = transform(adxp); adxps_iso.add(adxp_iso); } } return
-     * adxps_iso; }
-     */
-
-    public List<Adxp> transform(org.iso._21090.ADXP[] input) throws DtoTransformException {
+    public Adxp toDto(ADXP input) throws DtoTransformException {
         if (input == null)
             return null;
-        List<Adxp> adxps_iso = new ArrayList<Adxp>(input.length);
-        org.iso._21090.ADXP[] adxps = input;
-        if (adxps != null) {
-            for (org.iso._21090.ADXP adxp : adxps) {
-                Adxp adxp_iso = transform(adxp);
-                adxps_iso.add(adxp_iso);
-            }
-        }
-        return adxps_iso;
+        AddressPartType type = AddressPartTypeTransformer.INSTANCE.toDto(input.getType());
+        Adxp d = Adxp.createAddressPart(type);
+        copyToDto(input, d);
+        return d;
     }
 
-    public void transformADXP(List<org.iso._21090.ADXP> input, List<Adxp> res) throws DtoTransformException {
-        if (input == null)
-            return;
-        for (org.iso._21090.ADXP adxp : input) {
-            Adxp adxp_iso = transform(adxp);
-            res.add(adxp_iso);
+    public void copyToXml(Adxp source, ADXP target) throws DtoTransformException {
+        target.setCode(source.getCode());
+        target.setValue(source.getValue());
+        org.iso._21090.AddressPartType type = AddressPartTypeTransformer.INSTANCE.toXml(source.getType());
+        target.setType(type);
+    }
+
+    public void copyToDto(List<ADXP> sourcePart, List<Adxp> targetPart) throws DtoTransformException {
+        for (ADXP p : sourcePart) {
+            targetPart.add(toDto(p));
         }
     }
 
-    public org.iso._21090.ADXP transform(Adxp input) throws DtoTransformException {
-        org.iso._21090.ADXP res = new org.iso._21090.ADXP();
-        res = transform(input, res);
-        return res;
-    }
-
-    public org.iso._21090.ADXP transform(Adxp input, org.iso._21090.ADXP res) throws DtoTransformException {
-        if (input == null)
-            return null;
-        res.setCode(input.getCode());
-        res.setValue(input.getValue());
-        res.setType(new AddressPartTypeTransformer().transform(input.getType()));
-        return res;
-    }
-
-    /*
-     * public SetOfADXP transform(List<Adxp> input)throws DtoTransformException { if (input == null) return null;
-     * SetOfADXP part = new SetOfADXP(); part.setAdxp(new org.iso._21090.ADXP[input.size()] ); int i=0; for
-     * (gov.nih.nci.coppa.iso.Adxp adxp_iso:input) { org.iso._21090.ADXP adxp = transform(adxp_iso);
-     * part.setAdxp(i++,adxp); } return part; }
-     */
-
-    public org.iso._21090.ADXP[] transform(List<Adxp> input) throws DtoTransformException {
-        if (input == null)
-            return null;
-        org.iso._21090.ADXP[] part = new org.iso._21090.ADXP[input.size()];
-        int i = 0;
-        for (gov.nih.nci.coppa.iso.Adxp adxp_iso : input) {
-            org.iso._21090.ADXP adxp = transform(adxp_iso);
-            part[i++] = adxp;
-        }
-        return part;
-    }
-
-    public void transform(List<Adxp> input, List<org.iso._21090.ADXP> res) throws DtoTransformException {
-        if (input == null)
-            return;
-        for (gov.nih.nci.coppa.iso.Adxp adxp_iso : input) {
-            org.iso._21090.ADXP adxp = transform(adxp_iso);
-            res.add(adxp);
+    public void copyToXml(List<Adxp> sourcePart, List<ADXP> targetPart) throws DtoTransformException {
+        for (Adxp p : sourcePart) {
+            targetPart.add(toXml(p));
         }
     }
 }

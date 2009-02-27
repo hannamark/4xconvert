@@ -4,33 +4,31 @@ import gov.nih.nci.coppa.iso.NullFlavor;
 
 public class NullFlavorTransformer implements Transformer<org.iso._21090.NullFlavor,NullFlavor> {
 
-	
-	public NullFlavor transform(org.iso._21090.NullFlavor input) throws DtoTransformException {
-		if (input == null) return null;
-		  NullFlavor nullFlavor = NullFlavor.valueOf(input.value());
- 		return nullFlavor;
-	}
+    public static final NullFlavorTransformer INSTANCE = new NullFlavorTransformer();
+
+    private NullFlavorTransformer() {}
 
 	
-	public NullFlavor transform(org.iso._21090.NullFlavor input,
-			NullFlavor res) throws DtoTransformException {
-		if (input == null) return null;
-		  res = NullFlavor.valueOf(input.value());
-		return res;
-	}
+    public org.iso._21090.NullFlavor toXml(NullFlavor input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        return org.iso._21090.NullFlavor.valueOf(input.name());
+    }
 
-	public org.iso._21090.NullFlavor transform(gov.nih.nci.coppa.iso.NullFlavor input) throws DtoTransformException {
-		if (input == null) return null;
-		org.iso._21090.NullFlavor nullFlavor = org.iso._21090.NullFlavor.fromValue(input.name());
- 		return nullFlavor;
-	}
+    public void copyToXml(NullFlavor source, org.iso._21090.NullFlavor target) throws DtoTransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-	
-	public org.iso._21090.NullFlavor transform(gov.nih.nci.coppa.iso.NullFlavor input,
-			org.iso._21090.NullFlavor res) throws DtoTransformException {
-		if (input == null) return null;
-		  res = org.iso._21090.NullFlavor.fromValue(input.name());
-		return res;
-	}	
-	
+    public NullFlavor toDto(org.iso._21090.NullFlavor input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        return NullFlavor.valueOf(input.value());
+    }
+
+    public void copyToDto(org.iso._21090.NullFlavor source, NullFlavor target) throws DtoTransformException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

@@ -1,52 +1,46 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
-import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.services.person.PersonDTO;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.iso._21090.DSETTEL;
 
 public class PersonTransformer implements Transformer<Person, PersonDTO> {
-    protected static Logger logger = LogManager.getLogger(PersonTransformer.class);
 
-    public PersonDTO transform(Person input) throws DtoTransformException {
-        PersonDTO res = new PersonDTO();
-        res = transform(input, res);
-        return res;
-    }
+    public static final PersonTransformer INSTANCE = new PersonTransformer();
 
-    public PersonDTO transform(Person input, PersonDTO res) throws DtoTransformException {
-        if (input == null)
+    private PersonTransformer() {}
+
+    public Person toXml(PersonDTO input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setIdentifier(new IITransformer().transform(input.getIdentifier()));
-        res.setName(new ENPNTransformer().transform(input.getName()));
-        res.setPostalAddress(new ADTransformer().transform(input.getPostalAddress()));
-        // res.setSexCode(new CDTransformer().transform(input.getSexCode()));
-        res.setStatusCode(new CDTransformer().transform(input.getStatusCode()));
-        DSET_TELTransformer<Tel> dsetTransformer = new DSET_TELTransformer<Tel>();
-        gov.nih.nci.coppa.iso.DSet<Tel> telAddress = dsetTransformer.transform(input.getTelecomAddress());
-        res.setTelecomAddress(telAddress);
-        return res;
+        }
+        Person d = new Person();
+        copyToXml(input, d);
+        return d;
     }
 
-    public Person transform(PersonDTO input) throws DtoTransformException {
-        Person res = new Person();
-        res = transform(input, res);
-        return res;
+    public void copyToXml(PersonDTO source, Person target) throws DtoTransformException {
+        target.setIdentifier(IITransformer.INSTANCE.toXml(source.getIdentifier()));
+        target.setName(ENTransformer.ENPN_INSTANCE.toXml(source.getName()));
+        target.setPostalAddress(ADTransformer.INSTANCE.toXml(source.getPostalAddress()));
+        target.setStatusCode(CDTransformer.INSTANCE.toXml(source.getStatusCode()));
+        target.setTelecomAddress(DSET_TELTransformer.INSTANCE.toXml(source.getTelecomAddress()));
     }
 
-    public Person transform(PersonDTO input, Person res) throws DtoTransformException {
-        if (input == null)
+    public PersonDTO toDto(Person input) throws DtoTransformException {
+        if (input == null) {
             return null;
-        res.setIdentifier(new IITransformer().transform(input.getIdentifier()));
-        res.setName(new ENPNTransformer().transform(input.getName()));
-        res.setPostalAddress(new ADTransformer().transform(input.getPostalAddress()));
-        // res.setSexCode(new CDTransformer().transform(input.getSexCode()));
-        res.setStatusCode(new CDTransformer().transform(input.getStatusCode()));
-        DSETTEL telAddress = new DSET_TELTransformer<Tel>().transform(input.getTelecomAddress());
-        res.setTelecomAddress(telAddress);
-        return res;
+        }
+        PersonDTO d = new PersonDTO();
+        copyToDto(input, d);
+        return d;
+    }
+
+    public void copyToDto(Person source, PersonDTO target) throws DtoTransformException {
+        target.setIdentifier(IITransformer.INSTANCE.toDto(source.getIdentifier()));
+        target.setName(ENTransformer.ENPN_INSTANCE.toDto(source.getName()));
+        target.setPostalAddress(ADTransformer.INSTANCE.toDto(source.getPostalAddress()));
+        target.setStatusCode(CDTransformer.INSTANCE.toDto(source.getStatusCode()));
+        target.setTelecomAddress(DSET_TELTransformer.INSTANCE.toDto(source.getTelecomAddress()));
     }
 }
