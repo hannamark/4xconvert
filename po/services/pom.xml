@@ -37,6 +37,7 @@
         <ctep.jms.topic.connection.factory.name>java:comp/resource/BETAJMSRP/TopicConnectionFactories/TCF</ctep.jms.topic.connection.factory.name>
         <ctep.jms.topic.name>java:comp/resource/BETAJMSRP/Topics/CES_OUT_TOPIC</ctep.jms.topic.name>
         <db-upgrade.run.dir>${pom.basedir}/src/main/db/db-upgrade</db-upgrade.run.dir>
+        <db-install.run.dir>${pom.basedir}/src/main/db/db-install</db-install.run.dir>
     </properties>
     
     <dependencies>
@@ -458,6 +459,7 @@
                     <plugin>
                         <groupId>org.liquibase</groupId>
                         <artifactId>liquibase-plugin</artifactId>
+                        <version>1.9.0.0</version>
                         <executions>
                             <execution>
                                 <phase>process-resources</phase>

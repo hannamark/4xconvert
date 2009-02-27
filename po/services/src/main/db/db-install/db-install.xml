@@ -10,16 +10,16 @@
     </preConditions>                                       
     <changeSet id="1.0" author="smiller">        
         <comment>version 1.0 sql files</comment>
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/po-create-schema.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/csmCreateSchema.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/countries.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/oversightcommitteetypes.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/researchorganizationtypes.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/fundingmechanisms.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/rot_fundingmech_mapping.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/organizationalcontacttypes.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/csmBootstrapData.sql" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/${csm.users.file}" />
-        <sqlFile path="${pom.basedir}/src/main/db/db-install/postgresql/extraCreateSchema.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/po-create-schema.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/csmCreateSchema.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/countries.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/oversightcommitteetypes.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/researchorganizationtypes.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/fundingmechanisms.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/rot_fundingmech_mapping.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/organizationalcontacttypes.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/csmBootstrapData.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/${csm.users.file}" />
+        <sqlFile path="${db-install.run.dir}/postgresql/extraCreateSchema.sql" />
     </changeSet>
 </databaseChangeLog>
