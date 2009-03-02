@@ -41,19 +41,19 @@ function setpersid(persIdentifier){
 }
 //
 function lookup4loadleadorg(){
-    showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
+    showPopWin('${lookupOrgUrl}', 900, 400, loadLeadOrgDiv, 'Select Organization');
 }
 function lookup4loadleadpers(){
-    showPopWin('${lookupPersUrl}', 1050, 400, loadLeadPersDiv, 'Select Principal Investigator');
+    showPopWin('${lookupPersUrl}', 900, 400, loadLeadPersDiv, 'Select Principal Investigator');
 }
 function lookup4sponsor(){
-    showPopWin('${lookupOrgUrl}', 1050, 400, loadSponsorDiv, 'Select Sponsor');
+    showPopWin('${lookupOrgUrl}', 900, 400, loadSponsorDiv, 'Select Sponsor');
 } 
 function lookup4loadresponsibleparty(){	
-	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
 }
 function lookup4loadSummary4Sponsor(){
-    showPopWin('${lookupOrgUrl}', 1050, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+    showPopWin('${lookupOrgUrl}', 900, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
 }
 //
 function loadLeadOrgDiv() {	
