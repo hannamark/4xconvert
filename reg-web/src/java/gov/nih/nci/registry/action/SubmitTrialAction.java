@@ -717,6 +717,10 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
         if (PAUtil.isEmpty(protocolWebDTO.getTrialTitle())) {
             addFieldError("protocolWebDTO.trialTitle", getText("error.submit.trialTitle"));
+        } else if (PAUtil.isNotEmpty(protocolWebDTO.getTrialTitle())) {            
+            if (protocolWebDTO.getTrialTitle().trim().length() > Constants.TRIAL_TITLE_MAX_LENGTH) {
+                addFieldError("protocolWebDTO.trialTitle", getText("error.submit.trialTitleLength"));
+            }            
         }
         if (PAUtil.isEmpty(protocolWebDTO.getTrialPhase())) {
             addFieldError("protocolWebDTO.trialPhase", getText("error.submit.trialPhase"));
