@@ -66,8 +66,8 @@
            <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">         
-                    <li>       
-                        <s:a href="#" cssClass="btn" onclick="document.forms.loginForm.submit();"><span class="btn_img"><span class="login">Login</span></span></s:a>  
+                    <li>
+                        <s:submit type="image" src="../images/btn_login.gif" cssClass="btn" title="Log In" value="Log In" align="center" />       
                     </li>  
  
                 </ul>   
