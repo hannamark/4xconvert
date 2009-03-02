@@ -24,16 +24,12 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
             return null;
         }
         ENXX d = newXml();
-        copyToXml(input, d);
-        return d;
-    }
-
-    public void copyToXml(EnXx source, ENXX target) throws DtoTransformException {
-        target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
-        List<ENXP> tPart = target.getPart();
-        for (Enxp enxp : source.getPart()) {
+        d.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(input.getNullFlavor()));
+        List<ENXP> tPart = d.getPart();
+        for (Enxp enxp : input.getPart()) {
             tPart.add(ENXPTransformer.INSTANCE.toXml(enxp));
         }
+        return d;
     }
 
     public EnXx toDto(ENXX input) throws DtoTransformException {
@@ -45,7 +41,7 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
         return d;
     }
 
-    public void copyToDto(ENXX source, EnXx target) throws DtoTransformException {
+    private void copyToDto(ENXX source, EnXx target) throws DtoTransformException {
         target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
         List<ENXP> sPart = source.getPart();
         if (sPart == null || sPart.isEmpty()) {
@@ -53,7 +49,7 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
         }
 
         List<Enxp> tPart = target.getPart();
-        for (org.iso._21090.ENXP enxp : sPart) {
+        for (ENXP enxp : sPart) {
             tPart.add(ENXPTransformer.INSTANCE.toDto(enxp));
         }
     }

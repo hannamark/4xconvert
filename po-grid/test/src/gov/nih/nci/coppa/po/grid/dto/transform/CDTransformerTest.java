@@ -2,27 +2,21 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.Cd;
-import java.io.StringReader;
-import java.io.StringWriter;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
-import javax.xml.transform.stream.StreamSource;
+
 import org.iso._21090.CD;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author gax
  */
-public class CDTransformerTest extends AbstractTransformerTestBase<CDTransformer, org.iso._21090.CD, gov.nih.nci.coppa.iso.Cd> {
+public class CDTransformerTest extends AbstractTransformerTestBase<CDTransformer, CD, Cd> {
 
     @Override
     public Cd makeDtoSimple() {
-        gov.nih.nci.coppa.iso.Cd i = new gov.nih.nci.coppa.iso.Cd();
+        Cd i = new Cd();
         i.setCode("code");
         i.setCodeSystem("ignored");
         i.setCodeSystemName("ignored");
@@ -33,8 +27,8 @@ public class CDTransformerTest extends AbstractTransformerTestBase<CDTransformer
     }
 
     @Override
-    public org.iso._21090.CD makeXmlSimple() {
-        org.iso._21090.CD x = new org.iso._21090.CD();
+    public CD makeXmlSimple() {
+        CD x = new CD();
         x.setCode("code");
         x.setCodeSystem("sys");
         x.setCodeSystemName("name");
@@ -42,7 +36,7 @@ public class CDTransformerTest extends AbstractTransformerTestBase<CDTransformer
         x.setControlActExtension("cae");
         x.setControlActRoot("r");
         x.setDisplayName(new STTransformerTest().makeXmlSimple());
-        
+
         return x;
     }
 
@@ -59,7 +53,7 @@ public class CDTransformerTest extends AbstractTransformerTestBase<CDTransformer
 
 
     @Override
-    public void verifyDtoSimple(gov.nih.nci.coppa.iso.Cd i) {
+    public void verifyDtoSimple(Cd i) {
         assertEquals("code", i.getCode());
         assertNull(i.getCodeSystem());
         assertNull(i.getCodeSystemName());

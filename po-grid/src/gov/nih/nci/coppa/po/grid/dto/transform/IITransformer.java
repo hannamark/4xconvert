@@ -3,14 +3,15 @@ package gov.nih.nci.coppa.po.grid.dto.transform;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+
 import org.iso._21090.II;
 
-public class IITransformer implements Transformer<org.iso._21090.II,Ii> {
+public class IITransformer implements Transformer<II, Ii> {
 
     public static final IITransformer INSTANCE = new IITransformer();
 
     private IITransformer() {}
-	
+
     public II toXml(Ii input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -20,7 +21,7 @@ public class IITransformer implements Transformer<org.iso._21090.II,Ii> {
         return d;
     }
 
-    public void copyToXml(Ii source, II target) throws DtoTransformException {
+    private static void copyToXml(Ii source, II target) throws DtoTransformException {
         target.setDisplayable(source.getDisplayable());
         target.setExtension(source.getExtension());
         target.setIdentifierName(source.getIdentifierName());
@@ -43,7 +44,7 @@ public class IITransformer implements Transformer<org.iso._21090.II,Ii> {
         return d;
     }
 
-    public void copyToDto(II source, Ii target) throws DtoTransformException {
+    private static void copyToDto(II source, Ii target) throws DtoTransformException {
         target.setDisplayable(source.isDisplayable());
         target.setExtension(source.getExtension());
         target.setIdentifierName(source.getIdentifierName());

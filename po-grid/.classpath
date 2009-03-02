@@ -88,5 +88,9 @@
 	<classpathentry kind="lib" path="build/stubs-CoppaPO/classes"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="var" path="PO_GLOBUS/lib/addressing-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-api.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-impl.jar"/>
+	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="test/lib/junit-4.4.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

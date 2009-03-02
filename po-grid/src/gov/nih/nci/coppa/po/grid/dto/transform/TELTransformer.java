@@ -1,6 +1,10 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPerson;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,7 +15,7 @@ import org.iso._21090.TELPerson;
 import org.iso._21090.TELPhone;
 import org.iso._21090.TELUrl;
 
-public class TELTransformer implements Transformer<org.iso._21090.TEL, gov.nih.nci.coppa.iso.Tel> {
+public class TELTransformer implements Transformer<TEL, Tel> {
 
     public static final TELTransformer INSTANCE = new TELTransformer();
 
@@ -21,26 +25,26 @@ public class TELTransformer implements Transformer<org.iso._21090.TEL, gov.nih.n
         if (input == null) {
             return null;
         }
-        org.iso._21090.TEL x;
-        if (input instanceof gov.nih.nci.coppa.iso.TelEmail) {
+        TEL x;
+        if (input instanceof TelEmail) {
             x = new TELEmail();
-        } else if (input instanceof gov.nih.nci.coppa.iso.TelPhone) {
+        } else if (input instanceof TelPhone) {
             x = new TELPhone();
-        } else if (input instanceof gov.nih.nci.coppa.iso.TelPerson) {
+        } else if (input instanceof TelPerson) {
             x = new TELPerson();
-        } else if (input instanceof gov.nih.nci.coppa.iso.TelUrl) {
+        } else if (input instanceof TelUrl) {
             x = new TELUrl();
         } else {
-            x = new org.iso._21090.TEL();
+            x = new TEL();
         }
         copyToXml(input, x);
         return x;
     }
 
-    public void copyToXml(Tel source, TEL target) throws DtoTransformException {
+    private static void copyToXml(Tel source, TEL target) throws DtoTransformException {
         URI u = source.getValue();
         if (u == null) {
-            target.setValue(u.toString());
+            target.setValue(u.toString()); // FIXME: bug here - need test case PO-854
         } else {
             target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
         }
@@ -52,21 +56,21 @@ public class TELTransformer implements Transformer<org.iso._21090.TEL, gov.nih.n
         }
         Tel d;
         if (input instanceof TELEmail) {
-            d = new gov.nih.nci.coppa.iso.TelEmail();
+            d = new TelEmail();
         } else if (input instanceof TELPhone) {
-            d = new gov.nih.nci.coppa.iso.TelPhone();
+            d = new TelPhone();
         } else if (input instanceof TELPerson) {
-            d = new gov.nih.nci.coppa.iso.TelPerson();
+            d = new TelPerson();
         } else if (input instanceof TELUrl) {
-            d = new gov.nih.nci.coppa.iso.TelUrl();
+            d = new TelUrl();
         } else {
-            d = new gov.nih.nci.coppa.iso.Tel();
+            d = new Tel();
         }
         copyToDto(input, d);
         return d;
     }
 
-    public void copyToDto(TEL source, Tel target) throws DtoTransformException {
+    private static void copyToDto(TEL source, Tel target) throws DtoTransformException {
         String v = source.getValue();
         if (v != null) {
             try {

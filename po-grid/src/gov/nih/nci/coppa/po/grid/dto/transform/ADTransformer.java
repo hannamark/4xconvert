@@ -2,12 +2,14 @@ package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.iso._21090.AD;
 import org.iso._21090.ADXP;
 
-public class ADTransformer implements Transformer<org.iso._21090.AD, Ad> {
+public class ADTransformer implements Transformer<AD, Ad> {
 
     public static final ADTransformer INSTANCE = new ADTransformer();
 
@@ -22,7 +24,7 @@ public class ADTransformer implements Transformer<org.iso._21090.AD, Ad> {
         return x;
     }
 
-    public void copyToXml(Ad source, AD target) throws DtoTransformException {
+    private static void copyToXml(Ad source, AD target) throws DtoTransformException {
         target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
         List<Adxp> sourcePart = source.getPart();
         if (sourcePart != null) {
@@ -40,7 +42,7 @@ public class ADTransformer implements Transformer<org.iso._21090.AD, Ad> {
         return d;
     }
 
-    public void copyToDto(AD source, Ad target) throws DtoTransformException {
+    private static void copyToDto(AD source, Ad target) throws DtoTransformException {
         target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
         List<ADXP> sourcePart = source.getPart();
         if (sourcePart != null) {

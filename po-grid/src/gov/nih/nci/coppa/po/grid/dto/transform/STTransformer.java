@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import gov.nih.nci.coppa.iso.St;
+
 import org.iso._21090.ST;
 
 public class STTransformer implements Transformer<ST, St> {
@@ -14,17 +15,13 @@ public class STTransformer implements Transformer<ST, St> {
             return null;
         }
         ST x = new ST();
-        copyToXml(input, x);
-        return x;
-    }
-
-    public void copyToXml(St source, ST target) throws DtoTransformException {
-        String v = source.getValue();
+        String v = input.getValue();
         if (v != null) {
-            target.setValue(v);
+            x.setValue(v);
         } else {
-            target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
+            x.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(input.getNullFlavor()));
         }
+        return x;
     }
 
     public St toDto(ST input) throws DtoTransformException {
@@ -32,17 +29,12 @@ public class STTransformer implements Transformer<ST, St> {
             return null;
         }
         St d = new St();
-        copyToDto(input, d);
+        String v = input.getValue();
+        if (v != null) {
+            d.setValue(v);
+        } else {
+            d.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(input.getNullFlavor()));
+        }
         return d;
     }
-
-    public void copyToDto(ST source, St target) throws DtoTransformException {
-        String v = source.getValue();
-        if (v != null) {
-            target.setValue(v);
-        } else {
-            target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
-        }
-    }
-
 }
