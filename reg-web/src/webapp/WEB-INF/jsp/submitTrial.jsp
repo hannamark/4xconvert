@@ -209,6 +209,7 @@ function toggledisplay2 (it) {
                 </td>
                 <td>
                     <s:textarea name="protocolWebDTO.trialTitle"  cols="75" rows="4"  />
+                    <span class="info">Max 5000 characters</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.trialTitle</s:param>
@@ -234,10 +235,10 @@ function toggledisplay2 (it) {
           <tr>
                 <td scope="row" class="label">
                     <label for="otherPhasetext"> <fmt:message key="submit.trial.otherPhaseText"/></label>
-                    <br><span class="info">(Required if Phase equals &#39;Other&#39;)</span>
                 </td>
                 <td>
                     <s:textarea name="protocolWebDTO.otherPhaseText"  cols="50" rows="2" />
+                    <span class="info">Required if Phase equals &#39;Other&#39;</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.otherPhaseText</s:param>
@@ -276,10 +277,11 @@ function toggledisplay2 (it) {
           <tr>
                 <td scope="row" class="label">
                     <label for="otherPurposetext"> <fmt:message key="submit.trial.otherPurposeText"/></label>
-                    <br><span class="info">(Required if Purpose equals &#39;Other&#39;)</span>
+
                 </td>
                 <td>
                     <s:textarea name="protocolWebDTO.otherPurposeText"  cols="50" rows="2" />
+                    <span class="info">Required if Purpose equals &#39;Other&#39;</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.otherPurposeText</s:param>
