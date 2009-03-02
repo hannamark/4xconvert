@@ -29,7 +29,7 @@
     }    
     function lookup4loadresponsibleparty(){
        var orgid = document.getElementById('sponsorIdentifier').value;
-        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
     }
 
     function setorgid(orgIdentifier){
@@ -43,7 +43,7 @@
         BubbleTips.activateTipOn("dfn"); 
     }
     function lookupCentralContact(){
-        showPopWin('${lookupPersUrl}', 1050, 400, loadCentralContactDiv, 'Select Central Contact');
+        showPopWin('${lookupPersUrl}', 900, 400, loadCentralContactDiv, 'Select Central Contact');
     }
     
     function loadCentralContactDiv() {

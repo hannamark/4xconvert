@@ -46,7 +46,7 @@
         }
     }
     function lookup(){
-        showPopWin('${lookupUrl}', 1050, 400, '', 'Intervention');
+        showPopWin('${lookupUrl}', 900, 400, '', 'Intervention');
     }   
     function loadDiv(intid){
          var url = '/pa/protected/ajaxptpInterventiondisplay.action?interventionId='+intid;

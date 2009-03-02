@@ -18,7 +18,7 @@
 <SCRIPT LANGUAGE="JavaScript">
 
 function generateReport(pid) {
-    showPopWin('/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId='+pid, 1050, 400, '', 'CLinical Trial XML Generation');
+    showPopWin('/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId='+pid, 900, 400, '', 'CLinical Trial XML Generation');
 }
 
 </SCRIPT>

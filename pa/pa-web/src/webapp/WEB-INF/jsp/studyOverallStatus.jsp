@@ -25,7 +25,7 @@
     setFormat("mm/dd/yyyy");
 
     function lookup(){
-        showPopWin('${lookupUrl}', 1050, 400, '', 'Status History');
+        showPopWin('${lookupUrl}', 900, 400, '', 'Status History');
     }   
     function statusChange() {
         newStatus=document.studyOverallStatus.currentTrialStatus.value;

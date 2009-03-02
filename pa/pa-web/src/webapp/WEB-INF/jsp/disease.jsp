@@ -18,7 +18,7 @@
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 function handleView(diseaseId){
     var url = '/pa/protected/popupDiseaseDetails.action?diseaseId='+diseaseId;
-    showPopWin(url, 1050, 400, '', 'Disease');
+    showPopWin(url, 900, 400, '', 'Disease');
 }
 function handleEdit(rowId){
     document.diseaseForm.selectedRowIdentifier.value = rowId;

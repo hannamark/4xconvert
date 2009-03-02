@@ -55,17 +55,17 @@
 	     });
 	}	
 	function lookup(){
-	    showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
+	    showPopWin('${lookupUrl}', 900, 400, '', 'Organization');
 	}	
 	function lookupperson(){
-	    showPopWin('${lookupPersonsUrl}', 1050, 400, '', 'Persons');
+	    showPopWin('${lookupPersonsUrl}', 900, 400, '', 'Persons');
 	}	
 	function lookupcontactperson(){
 		var tel = document.getElementById('personContactWebDTO_telephone').value;
 		var email = document.getElementById('personContactWebDTO_email').value;
 		var url = '${lookupContactPersonsUrl}?tel='+tel+'&email='+email;
 		
-	    showPopWin(url, 1050, 400, '', 'Persons');
+	    showPopWin(url, 900, 400, '', 'Persons');
 	}
 	function loadDiv(orgid){
 			 var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;

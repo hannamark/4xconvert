@@ -22,7 +22,7 @@ function handleAction(){
      document.forms[0].submit();     
 }
 function generateReport(pid) {
-    showPopWin('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+pid, 1050, 400, '', 'View Trial Summary Report');
+    showPopWin('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+pid, 900, 400, '', 'View Trial Summary Report');
 }
 
 </SCRIPT>

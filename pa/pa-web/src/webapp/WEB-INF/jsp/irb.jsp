@@ -83,7 +83,7 @@ function setpersid(persid){}
 function setorgid(orgid){}
 function lookup(){
     if(document.getElementById('name').disabled!=true){
-        showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
+        showPopWin('${lookupUrl}', 900, 400, '', 'Organization');
     }
 }   
 function loadDiv(orgid){
