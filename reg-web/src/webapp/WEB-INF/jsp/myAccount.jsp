@@ -54,7 +54,7 @@ function handleAction(){
 		                    <label for="emailAddress"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
 		                </td>
 		                <td>
-		                    <s:textfield name="registryUserWebDTO.loginName"  maxlength="200" size="100" readonly="true"  cssStyle="width:200px" />
+		                    <s:textfield name="registryUserWebDTO.loginName"  maxlength="100" size="35" readonly="true"  cssStyle="width:200px" />
 		                    <span class="formErrorMsg"> 
 		                        <s:fielderror>
 		                        <s:param>registryUserWebDTO.loginName</s:param>
@@ -67,7 +67,7 @@ function handleAction(){
 		                    <label for="password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
 		                </td>
 		                <td>
-		                    <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
+		                    <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
 		                    <span class="formErrorMsg"> 
 		                        <s:fielderror>
 		                        <s:param>registryUserWebDTO.password</s:param>
@@ -80,7 +80,7 @@ function handleAction(){
 		                    <label for="retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
 		                </td>
 		                <td>
-		                    <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
+		                    <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
 		                    <span class="formErrorMsg"> 
 		                        <s:fielderror>
 		                        <s:param>registryUserWebDTO.retypePassword</s:param>
@@ -108,7 +108,7 @@ function handleAction(){
                             <label for="firstName"> <fmt:message key="register.user.firstName"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.firstName"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.firstName"  maxlength="150" size="50"  cssStyle="width:150px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.firstName</s:param>
@@ -121,7 +121,7 @@ function handleAction(){
                             <label for="middleInitial"> <fmt:message key="register.user.middleInitial"/></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.middleName"  maxlength="5" size="5"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.middleName"  maxlength="2" size="35"  cssStyle="width:20px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.middleName</s:param>
@@ -134,7 +134,7 @@ function handleAction(){
                             <label for="lastName"> <fmt:message key="register.user.lastName"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.lastName"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.lastName"  maxlength="150" size="50"  cssStyle="width:150px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.lastName</s:param>
@@ -148,7 +148,7 @@ function handleAction(){
                             <label for="streetAddress"> <fmt:message key="register.user.streetAddress"/></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.addressLine"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.addressLine"  maxlength="200" size="50"  cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.addressLine</s:param>
@@ -161,7 +161,7 @@ function handleAction(){
                             <label for="city"> <fmt:message key="register.user.city"/></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.city"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.city"  maxlength="200" size="35"  cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.city</s:param>
@@ -180,7 +180,7 @@ function handleAction(){
                                 name="registryUserWebDTO.state" 
                                 list="#stateCodeValues"  
                                 value="registryUserWebDTO.state" 
-                                cssStyle="width:200px" />
+                                cssStyle="width:206px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.state</s:param>
@@ -193,7 +193,7 @@ function handleAction(){
                             <label for="zipCode"> <fmt:message key="register.user.zipCode"/></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.postalCode"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.postalCode"  maxlength="15" size="8"  cssStyle="width:80px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.postalCode</s:param>
@@ -216,7 +216,7 @@ function handleAction(){
                                      listKey="name" 
                                      listValue="name"   
                                      value="registryUserWebDTO.country" 
-                                     cssStyle="width:200px" />
+                                     cssStyle="width:206px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.country</s:param>
@@ -230,7 +230,7 @@ function handleAction(){
                             <label for="phone"> <fmt:message key="register.user.phone"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.phone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.phone"  maxlength="50" size="15"  cssStyle="width:120px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.phone</s:param>
