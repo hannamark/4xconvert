@@ -5,10 +5,10 @@
     <!--User Details-->
   	<c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
-        <div id="userarea">Welcome, <a href='<c:url value="registerUsershowMyAccount.action"/>'> <%=request.getRemoteUser()%> </a>  |  <a href='<c:url value="/logout.action"/>'>Logout</a></div>
+        <div id="userarea">Welcome, <a href='<c:url value="registerUsershowMyAccount.action"/>'> <%=request.getRemoteUser()%> </a>  |  <a href='<c:url value="/logout.action"/>'>Log Out</a></div>
         </c:when>
         <c:otherwise>
-        <div id="userarea"><a href='<c:url value="/protected/home.action"/>'>Login</a></div>
+        <div id="userarea"><a href='<c:url value="/protected/home.action"/>'>Log In</a></div>
         </c:otherwise>
     </c:choose>
 </div>
