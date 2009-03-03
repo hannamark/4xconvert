@@ -435,6 +435,7 @@ function toggledisplay2 (it) {
                          			                    
           
           <tr>  <td colspan="2" class="space">&nbsp;</td></tr>
+          <table class="data2">
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.grantInfo"/></th> 
           </tr>
@@ -454,13 +455,14 @@ function toggledisplay2 (it) {
           
           <tr>
                 <td colspan="3">
-					<table class="data2">	
+					<table class="form">
+					<tbody>	
 					   <tr>
-							<th>Funding Mechanism</th>
+							<th><fmt:message key="submit.trial.fundingMechanism"/></th>
 							<th><fmt:message key="submit.trial.instituteCode"/></th>
 							<th><fmt:message key="submit.trial.serialNumber"/></th>
 							<th><fmt:message key="submit.trial.divProgram"/></th>
-							<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+							<th></th>
 				 	</tr>
 					   
 					   <tr>
@@ -511,9 +513,11 @@ function toggledisplay2 (it) {
 							<td> <input type="button" id="grantbtnid" value="Add Grant.." onclick="addGrant();" disabled="disabled"/></td>
 							<td> &nbsp;</td><td> &nbsp;</td><td> &nbsp;</td>
 					  </tr>
+					  </tbody>
 					</table>
                 </td>
           </tr>
+          </table>
          
           <tr>
                 <td colspan="2" class="space">       <div id="grantdiv">   
@@ -529,7 +533,7 @@ function toggledisplay2 (it) {
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
-          
+          <table class="form">
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.statusDates"/></th>
           </tr>
@@ -622,12 +626,13 @@ function toggledisplay2 (it) {
             </td>
 
         </tr>
+       </table> 
+        
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
-          </tr>
+          </tr>          
           
-          
- 
+        <table class="data2">
         <tr>
               <th colspan="2">FDA IND/IDE Information for applicable trials</th>
         </tr>     
@@ -656,9 +661,11 @@ function toggledisplay2 (it) {
 		    </div>
 		    </td>
         </tr>
+        </table>
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
+        <table class="form">  
         <tr>
               <th colspan="2"><fmt:message key="submit.trial.documents"/></th>
         </tr>
@@ -747,6 +754,7 @@ function toggledisplay2 (it) {
                  </span>                 
                </td>         
          </tr> 
+         </table>
         </table>
         <p align="center" class="info">
            Please verify ALL the trial information you provided on this screen before clicking the &#34;Submit Trial&#34; button below.  

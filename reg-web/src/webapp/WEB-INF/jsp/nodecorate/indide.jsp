@@ -170,7 +170,7 @@
 	<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 	<s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
 
-	<table class="data2">	
+	<table class="form">	
 
 		<tbody>
 			<tr>
