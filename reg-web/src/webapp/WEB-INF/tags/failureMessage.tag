@@ -5,7 +5,7 @@
 
 <c:if test="${request.failureMessage  != null}">
 <div class="error_msg">
-	<strong>Message.</strong> <c:out value="${request.failureMessage }"/>.
+	<strong>Error Message:</strong> <c:out value="${request.failureMessage }"/>.
 </div>
 <c:remove var="failureMessage" scope="request"/>
 </c:if>
