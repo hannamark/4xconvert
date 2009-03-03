@@ -132,7 +132,6 @@ public class Arm extends AbstractStudyEntity {
      * @return the descriptionText
      */
     @Column(name = "DESCRIPTION_TEXT")
-    @NotNull
     @Length(max = DESCRIPTION_TEXT_LENGTH)
     public String getDescriptionText() {
         return descriptionText;

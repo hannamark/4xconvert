@@ -32,4 +32,8 @@
         <comment>execute studyProtocolPublicDescription.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyProtocolPublicDescription.sql"/>
     </changeSet>
+    <changeSet id="6" author="hugh">
+        <comment>execute armDescription.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/armDescription.sql"/>
+    </changeSet>
 </databaseChangeLog>

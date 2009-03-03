@@ -117,7 +117,7 @@ import com.opensymphony.xwork2.Preparable;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.SignatureDeclareThrowsException", "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1884666890L;
 
@@ -148,9 +148,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
 
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
-     * @throws Exception e
+     * @throws PAException e
      */
-    public void prepare() throws Exception {
+    public void prepare() throws PAException {
         armService = PaRegistry.getArmService();
         plaService = PaRegistry.getPlannedActivityService();
         intService = PaRegistry.getInterventionService();
@@ -164,10 +164,10 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
 
     /**
      * @return Action result.
-     * @throws Exception exception.
+     * @throws PAException exception.
      */
     @Override
-    public String execute() throws Exception {
+    public String execute() throws PAException {
         loadForm();
         setCurrentAction(ACT_LIST_ARM);
         return ACT_LIST;
@@ -175,9 +175,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     
     /**
      * @return Action result.
-     * @throws Exception exception.
+     * @throws PAException exception.
      */
-    public String observational() throws Exception {
+    public String observational() throws PAException {
         loadForm();
         setCurrentAction(ACT_LIST_GROUP);
         return ACT_LIST;
@@ -185,9 +185,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String create() throws Exception {
+    public String create() throws PAException {
         loadEditForm(null);
         setCurrentAction(ACT_EDIT_NEW_ARM);
         return ACT_EDIT;
@@ -195,9 +195,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String createGroup() throws Exception {
+    public String createGroup() throws PAException {
         loadEditForm(null);
         setCurrentAction(ACT_EDIT_NEW_GROUP);
         return ACT_EDIT;
@@ -205,18 +205,18 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String edit() throws Exception {
+    public String edit() throws PAException {
         loadEditForm(getSelectedArmIdentifier());
         setCurrentAction(ACT_EDIT_ARM);
         return ACT_EDIT;
     }
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String editGroup() throws Exception {
+    public String editGroup() throws PAException {
         loadEditForm(getSelectedArmIdentifier());
         setCurrentAction(ACT_EDIT_GROUP);
         return ACT_EDIT;
@@ -224,9 +224,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String delete() throws Exception {
+    public String delete() throws PAException {
         armService.delete(IiConverter.convertToIi(getSelectedArmIdentifier()));
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
@@ -234,9 +234,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     }
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String add() throws Exception {
+    public String add() throws PAException {
         businessRules();
         if (hasActionErrors()) {
             reloadInterventions();
@@ -265,9 +265,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     }
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String update() throws Exception {
+    public String update() throws PAException {
         businessRules();
         if (hasActionErrors()) {
             reloadInterventions();
@@ -295,7 +295,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         return ACT_LIST;
     }
     
-    private void businessRules() throws Exception {
+    private void businessRules() throws PAException {
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
                 && (!PAUtil.isEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode()) 
                 && (getAssociatedIds().size() > 0))) {
@@ -303,7 +303,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         }
     }
 
-    private void loadForm() throws Exception {
+    private void loadForm() throws PAException {
         setArmList(new ArrayList<TrialArmsWebDTO>());
         List<ArmDTO> armIsoList = armService.getByStudyProtocol(spIdIi);
         for (ArmDTO arm : armIsoList) {
@@ -326,7 +326,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         }
     }
 
-    private void loadEditForm(String armId) throws Exception {
+    private void loadEditForm(String armId) throws PAException {
         Set<Long> cInterventions = new HashSet<Long>();
         if (armId != null) {
             ArmDTO cArm = armService.get(IiConverter.convertToIi(armId));
@@ -362,7 +362,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         }
     }
     
-    private void reloadInterventions() throws Exception {
+    private void reloadInterventions() throws PAException {
         setIntList(new ArrayList<InterventionWebDTO>());
         List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
         for (PlannedActivityDTO pla : plaList) {

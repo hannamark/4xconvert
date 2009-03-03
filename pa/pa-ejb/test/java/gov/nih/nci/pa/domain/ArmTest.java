@@ -175,15 +175,15 @@ public class ArmTest {
         assertEquals(armCount - 1, armList.size());
     }
     @Test
-    public void armDesriptionRequiredTest() {
+    public void armDesriptionNotRequiredTest() {
         Arm a = (Arm) sess.get(Arm.class, TestSchema.armIds.get(0));
         a.setDescriptionText(null);
         sess.merge(a);
         try {
             sess.flush();
-            fail("Should have failed for null descriptionText.  ");
+            // expected behavior
         } catch (PropertyValueException e) {
-            // expected bahavior
+            fail("As of release 1.1.1 description is no longer required (tracker #19280).");
         }
     }
 }

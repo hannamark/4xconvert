@@ -156,9 +156,6 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getName()))) {
             throw new PAException("The arm/group label (name) must be set.  ");
         }
-        if (PAUtil.isEmpty(StConverter.convertToString(dto.getDescriptionText()))) {
-            throw new PAException("The arm/group description must be set.  ");
-        }
     }
 
     /**
