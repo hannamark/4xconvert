@@ -223,6 +223,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             validateForm();
             if (hasFieldErrors()) {
                 resetValuesFromSession();
+                ServletActionContext.getRequest().setAttribute(
+                        "failureMessage" , "The form has errors and could not be submitted, "
+                        + "please check the fields highlighted below");
                 return ERROR;
             }
             Ii studyProtocolIi = null;
@@ -346,25 +349,32 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                     protocolDTO.getAssignedIdentifier().getExtension(), // generatedidentifier
                     participationWebDTO.getLocalProtocolIdentifier() // lead org trial identifier
                     );
-            ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
-            ServletActionContext.getRequest().getSession().removeAttribute("grantList");
-            ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
-            ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
-            ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
-            ServletActionContext.getRequest().getSession().removeAttribute("Sponsorselected");
-            ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
-            ServletActionContext.getRequest().getSession().removeAttribute("PoSummary4Sponsor");
+            removeSessionAttributes();
         } catch (Exception e) {
             if (e != null && e.getMessage() != null) {
                 addActionError(e.getMessage());
             } else {
-                addActionError("Please try again");
+                addActionError("Error occured, please try again");
             }
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while submitting trial: " + e);
             return ERROR;
         }
         return "redirect_to_search";
+    }
+
+    /**
+     * 
+     */
+    private void removeSessionAttributes() {
+        ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
+        ServletActionContext.getRequest().getSession().removeAttribute("grantList");
+        ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
+        ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
+        ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
+        ServletActionContext.getRequest().getSession().removeAttribute("Sponsorselected");
+        ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
+        ServletActionContext.getRequest().getSession().removeAttribute("PoSummary4Sponsor");
     }
 
     /**
