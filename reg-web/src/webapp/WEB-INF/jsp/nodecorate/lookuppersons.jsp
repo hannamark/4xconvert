@@ -81,7 +81,7 @@
 	    }
 </SCRIPT> 
 </head> 
-<body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">>
+<body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
 <div class="box">
 <s:form id="poOrganizations" name="poOrganizations" >
 
