@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/CoreServices/Context" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns7="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns0="http://po.coppa.nci.nih.gov" xmlns:ns10="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" xmlns:ns12="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" xmlns:ns13="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns11="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" xmlns:ns5="http://enterpriseservices.nci.nih.gov/CoreServices/Context/types" xmlns:ns6="http://enterpriseservices.nci.nih.gov/entities/Organization/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" xmlns:ns2="http://enterpriseservices.nci.nih.gov/CoreServices/types" name="Person" targetNamespace="http://enterpriseservices.nci.nih.gov/CoreServices/Context">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/entities/Person" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns7="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns0="http://po.coppa.nci.nih.gov" xmlns:ns10="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" xmlns:ns12="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" xmlns:ns13="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns11="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" xmlns:ns5="http://enterpriseservices.nci.nih.gov/entities/Person/types" xmlns:ns6="http://enterpriseservices.nci.nih.gov/entities/Organization/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" xmlns:ns2="http://enterpriseservices.nci.nih.gov/CoreServices/types" name="Person" targetNamespace="http://enterpriseservices.nci.nih.gov/entities/Person">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -10,7 +10,7 @@
                       
   ============================================================-->
   <types>
-    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/CoreServices/Context" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/entities/Person" elementFormDefault="qualified" attributeFormDefault="unqualified">
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" schemaLocation="./HealthCareFacilityTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
@@ -23,7 +23,7 @@
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" schemaLocation="./IdentifiedPersonTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" schemaLocation="./ResearchOrganizationTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" schemaLocation="./ClinicalResearchStaffTypes.xsd" />
-      <import namespace="http://enterpriseservices.nci.nih.gov/CoreServices/Context/types" schemaLocation="./PersonTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/entities/Person/types" schemaLocation="./PersonTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/entities/Organization/types" schemaLocation="./OrganizationTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" schemaLocation="./HealthCareProviderTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/CoreServices/types" schemaLocation="./CoreServicesTypes.xsd" />
@@ -201,28 +201,28 @@
   ============================================================-->
   <portType name="PersonPortType" wsrp:ResourceProperties="tns:PersonResourceProperties">
     <operation name="getById">
-      <input message="tns:GetByIdRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/GetByIdRequest" />
-      <output message="tns:GetByIdResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/GetByIdResponse" />
+      <input message="tns:GetByIdRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/GetByIdRequest" />
+      <output message="tns:GetByIdResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/GetByIdResponse" />
     </operation>
     <operation name="create">
-      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/CreateRequest" />
-      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/CreateResponse" />
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/CreateResponse" />
     </operation>
     <operation name="validate">
-      <input message="tns:ValidateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/ValidateRequest" />
-      <output message="tns:ValidateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/ValidateResponse" />
+      <input message="tns:ValidateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/ValidateRequest" />
+      <output message="tns:ValidateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/ValidateResponse" />
     </operation>
     <operation name="search">
-      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/SearchRequest" />
-      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/SearchResponse" />
+      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/SearchRequest" />
+      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/SearchResponse" />
     </operation>
     <operation name="update">
-      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/UpdateRequest" />
-      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/UpdateResponse" />
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/UpdateResponse" />
     </operation>
     <operation name="updateStatus">
-      <input message="tns:UpdateStatusRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/UpdateStatusRequest" />
-      <output message="tns:UpdateStatusResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/CoreServices/Context/UpdateStatusResponse" />
+      <input message="tns:UpdateStatusRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/UpdateStatusRequest" />
+      <output message="tns:UpdateStatusResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/UpdateStatusResponse" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

@@ -12,17 +12,17 @@ import java.rmi.RemoteException;
  */
 public interface OrganizationI {
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException ;
+  public void updateStatus(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException ;
 
-  public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
+  public void update(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException ;
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id id) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
 
 }
 

@@ -76,7 +76,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 		}
 	}
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateRequest();
@@ -88,7 +88,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact getById(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByIdRequest();
@@ -100,7 +100,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact[] getByIds(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByIdsRequest();
@@ -112,7 +112,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact[] search(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact[] search(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest();
@@ -124,7 +124,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateRequest();
@@ -135,7 +135,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateStatusRequest();
@@ -149,7 +149,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"validate");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.ValidateRequest();

@@ -518,7 +518,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://enterpriseservices.nci.nih.gov/CoreServices/Context}PersonResultsKey</value>
+          <value>{http://enterpriseservices.nci.nih.gov/entities/Person}PersonResultsKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>

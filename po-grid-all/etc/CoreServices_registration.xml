@@ -25,7 +25,7 @@
 			xmlns:ns11="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"
 			xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"
 			xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"
-			xmlns:ns5="http://enterpriseservices.nci.nih.gov/CoreServices/Context/types"
+			xmlns:ns5="http://enterpriseservices.nci.nih.gov/entities/Person/types"
 			xmlns:ns6="http://enterpriseservices.nci.nih.gov/entities/Organization/types"
 			xmlns:ns9="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"
 			xmlns:ns2="http://enterpriseservices.nci.nih.gov/CoreServices/types">

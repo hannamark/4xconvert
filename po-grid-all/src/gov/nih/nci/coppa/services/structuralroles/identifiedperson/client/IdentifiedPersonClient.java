@@ -76,7 +76,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
 		}
 	}
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest();
@@ -88,7 +88,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedPerson getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.IdentifiedPerson getById(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest();
@@ -100,7 +100,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedPerson[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.IdentifiedPerson[] getByIds(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest();
@@ -112,7 +112,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest();
@@ -124,7 +124,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest();
@@ -135,7 +135,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest();
@@ -149,7 +149,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
   }
 
-  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
+  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"validate");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequest();

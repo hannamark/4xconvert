@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
  */
 public class PersonAuthorization implements PDP {
 
-	public static final String SERVICE_NAMESPACE = "http://enterpriseservices.nci.nih.gov/CoreServices/Context";
+	public static final String SERVICE_NAMESPACE = "http://enterpriseservices.nci.nih.gov/entities/Person";
 	
 	
 	public PersonAuthorization() {
