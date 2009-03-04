@@ -14,8 +14,17 @@
             <jxb:package name="org.iso._21090"/>
         </jxb:schemaBindings>
     </jxb:bindings>
-<!--    
     <jxb:bindings schemaLocation="CoreServicesTypes.xsd" node="/xs:schema">
+        <jxb:schemaBindings>
+            <jxb:package name="gov.nih.nci.coppa.po.grid.stubs.types"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+    <jxb:bindings schemaLocation="OrganizationTypes.xsd" node="/xs:schema">
+        <jxb:schemaBindings>
+            <jxb:package name="gov.nih.nci.coppa.po.grid.stubs.types"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+    <jxb:bindings schemaLocation="PersonTypes.xsd" node="/xs:schema">
         <jxb:schemaBindings>
             <jxb:package name="gov.nih.nci.coppa.po.grid.stubs.types"/>
         </jxb:schemaBindings>
@@ -60,16 +69,7 @@
             <jxb:package name="gov.nih.nci.coppa.po.grid.stubs.types"/>
         </jxb:schemaBindings>
     </jxb:bindings>
-    <jxb:bindings schemaLocation="OrganizationTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.po.grid.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="PersonTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.po.grid.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
+<!--
 -->
 
     
