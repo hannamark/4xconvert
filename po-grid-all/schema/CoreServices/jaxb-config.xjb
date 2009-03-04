@@ -14,6 +14,7 @@
             <jxb:package name="org.iso._21090"/>
         </jxb:schemaBindings>
     </jxb:bindings>
+<!--
     <jxb:bindings schemaLocation="CoreServicesTypes.xsd" node="/xs:schema">
         <jxb:schemaBindings>
             <jxb:package name="gov.nih.nci.coppa.services.stubs.types"/>
@@ -69,5 +70,5 @@
             <jxb:package name="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types"/>
         </jxb:schemaBindings>
     </jxb:bindings>
-    
+-->    
 </jxb:bindings>

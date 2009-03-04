@@ -88,6 +88,7 @@
         	<arg value="-xmlschema"/>
             <arg file="${basedir}/schema/CoreServices/CoppaPO.xsd"/>
             <arg file="${basedir}/schema/CoreServices/ISO_datatypes_Narrative.xsd"/>
+        	<!--
             <arg file="${basedir}/schema/CoreServices/CoreServicesTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/PersonTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/OrganizationTypes.xsd"/>
@@ -99,6 +100,7 @@
             <arg file="${basedir}/schema/CoreServices/OrganizationalContactTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/OversightCommitteeTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/ResearchOrganizationTypes.xsd"/>
+            -->
             <arg value="-d"/><arg file="${stubs.src}"/>
             <arg value="-b"/><arg file="${basedir}/schema/CoreServices/jaxb-config.xjb"/>
             <arg value="-nv"/>

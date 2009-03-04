@@ -15,6 +15,17 @@
    <ns2:SchemaElement className="ResearchOrganization" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" type="ResearchOrganization" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="StringMap" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" type="StringMap" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
   <ns2:Namespace generateStubs="false" location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="br" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="caption" xsi:type="ns2:SchemaElementType"/>
@@ -87,7 +98,7 @@
    <ns2:SchemaElement type="unsignedLong" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="unsignedShort" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./CoreServicesTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/CoreServices/types" packageName="gov.nih.nci.coppa.services.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./CoreServicesTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/CoreServices/types" packageName="gov.nih.nci.coppa.services.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="CoreServicesReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace generateStubs="false" location="./xsd/cagrid/types/security/security.xsd" namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" packageName="gov.nih.nci.cagrid.metadata.security" xsi:type="ns2:NamespaceType">
@@ -103,34 +114,34 @@
   <ns2:Namespace generateStubs="false" location="./xsd/cagrid/types/caGridMetadata.xsd" namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" packageName="gov.nih.nci.cagrid.metadata" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="ServiceMetadata" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./PersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Person/types" packageName="gov.nih.nci.coppa.services.entities.person.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./PersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Person/types" packageName="gov.nih.nci.coppa.services.entities.person.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="PersonReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./OrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Organization/types" packageName="gov.nih.nci.coppa.services.entities.organization.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./OrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Organization/types" packageName="gov.nih.nci.coppa.services.entities.organization.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="OrganizationReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./HealthCareFacilityTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./HealthCareFacilityTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="HealthCareFacilityReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./ClinicalResearchStaffTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" packageName="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./ClinicalResearchStaffTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" packageName="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="ClinicalResearchStaffReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./HealthCareProviderTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./HealthCareProviderTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="HealthCareProviderReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./IdentifiedOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./IdentifiedOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="IdentifiedOrganizationReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./IdentifiedPersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./IdentifiedPersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="IdentifiedPersonReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./OrganizationalContactTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" packageName="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./OrganizationalContactTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" packageName="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="OrganizationalContactReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./OversightCommitteeTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" packageName="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./OversightCommitteeTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" packageName="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="OversightCommitteeReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace generateStubs="false" location="./ResearchOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./ResearchOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="ResearchOrganizationReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
  </ns2:Namespaces>
