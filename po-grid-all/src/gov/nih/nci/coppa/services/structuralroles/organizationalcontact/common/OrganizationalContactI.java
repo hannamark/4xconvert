@@ -12,19 +12,19 @@ import java.rmi.RemoteException;
  */
 public interface OrganizationalContactI {
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact getById(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id id) throws RemoteException ;
+  public gov.nih.nci.coppa.po.OrganizationalContact getById(gov.nih.nci.coppa.po.Id id) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact[] getByIds(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id[] id) throws RemoteException ;
+  public gov.nih.nci.coppa.po.OrganizationalContact[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact[] search(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
+  public gov.nih.nci.coppa.po.OrganizationalContact[] search(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
 
-  public void update(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
+  public void update(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
 
-  public void updateStatus(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException ;
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
+  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException ;
 
 }
 

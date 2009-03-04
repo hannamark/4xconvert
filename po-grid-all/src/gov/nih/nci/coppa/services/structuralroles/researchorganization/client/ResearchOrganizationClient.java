@@ -76,7 +76,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
 		}
 	}
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.CreateRequest();
@@ -88,7 +88,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.ResearchOrganization getById(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.po.ResearchOrganization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByIdRequest();
@@ -100,7 +100,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.ResearchOrganization[] getByIds(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.ResearchOrganization[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByIdsRequest();
@@ -112,7 +112,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.ResearchOrganization[] search(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
+  public gov.nih.nci.coppa.po.ResearchOrganization[] search(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchRequest();
@@ -124,7 +124,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
+  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"validate");
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.ValidateRequest();
@@ -136,7 +136,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateRequest();
@@ -147,7 +147,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateStatusRequest();

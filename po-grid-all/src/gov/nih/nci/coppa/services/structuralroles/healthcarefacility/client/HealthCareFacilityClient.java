@@ -76,7 +76,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 		}
 	}
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.HealthCareFacility getById(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareFacility getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdRequest();
@@ -88,7 +88,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.HealthCareFacility[] getByIds(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareFacility[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdsRequest();
@@ -100,7 +100,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.CreateRequest();
@@ -112,7 +112,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"validate");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.ValidateRequest();
@@ -124,7 +124,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.HealthCareFacility[] search(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareFacility[] search(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest();
@@ -136,7 +136,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateRequest();
@@ -147,7 +147,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusRequest();

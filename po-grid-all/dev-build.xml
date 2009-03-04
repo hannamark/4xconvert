@@ -273,5 +273,6 @@
         </junit>
     </target>
 
-
+	<target name="stubGenerationPostProcessor">
+	</target>
 </project>
