@@ -1,0 +1,611 @@
+<ns1:ServiceMetadata xmlns:ns1="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata">
+ <ns1:serviceDescription>
+  <ns2:Service description="" name="CoreServices" version="1.2" xmlns:ns2="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service">
+   <ns2:pointOfContactCollection>
+    <ns3:PointOfContact affiliation="" email="" firstName="" lastName="" phoneNumber="" role="" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+   </ns2:pointOfContactCollection>
+   <ns2:serviceContextCollection>
+    <ns2:ServiceContext description="" name="CoreServices">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="GetMultipleResourceProperties">
+       <ns2:inputParameterCollection/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="GetResourceProperty">
+       <ns2:inputParameterCollection/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="QueryResourceProperties">
+       <ns2:inputParameterCollection/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns4:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection>
+      <ns2:ContextProperty description="" name="{gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata}ServiceMetadata"/>
+     </ns2:contextPropertyCollection>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="Person">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns5:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns6:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns6="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns7:Person" dimensionality="1" isArray="false" xmlns:ns7="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns8:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns8="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns9:Id" dimensionality="1" isArray="false" xmlns:ns9="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns10:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns10="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns11:StringMap" dimensionality="1" isArray="false" xmlns:ns11="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns12:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns12="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns13:Person" dimensionality="1" isArray="true" xmlns:ns13="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns14:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns14="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns15:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns15="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns16:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns16="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="Organization">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns17:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns17="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns18:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns18="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns19:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns19="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns20:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns20="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns21:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns21="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns22:Organization" dimensionality="1" isArray="true" xmlns:ns22="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns23:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns23="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns24:StringMap" dimensionality="1" isArray="false" xmlns:ns24="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns25:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns25="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns26:Organization" dimensionality="1" isArray="false" xmlns:ns26="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns27:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns27="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns28:Id" dimensionality="1" isArray="false" xmlns:ns28="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="HealthCareFacility">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns29:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns29="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns30:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns30="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns31:HealthCareFacility" dimensionality="1" isArray="false" xmlns:ns31="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns32:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns32="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns33:HealthCareFacility" dimensionality="1" isArray="true" xmlns:ns33="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns34:HealthCareFacility" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareFacility" xmlns:ns34="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns35:Id" dimensionality="1" isArray="false" xmlns:ns35="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns36:HealthCareFacility" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareFacility" xmlns:ns36="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns37:StringMap" dimensionality="1" isArray="false" xmlns:ns37="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns38:HealthCareFacility" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareFacility" xmlns:ns38="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns39:HealthCareFacility" dimensionality="1" isArray="true" xmlns:ns39="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns40:HealthCareFacility" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareFacility" xmlns:ns40="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns41:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns41="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns42:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns42="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="ClinicalResearchStaff">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns43:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns43="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns44:ClinicalResearchStaff" dimensionality="1" index="0" isArray="false" isRequired="false" name="clinicalResearchStaff" xmlns:ns44="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns45:Id" dimensionality="1" isArray="false" xmlns:ns45="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns46:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns46="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns47:ClinicalResearchStaff" dimensionality="1" isArray="false" xmlns:ns47="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns48:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns48="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns49:ClinicalResearchStaff" dimensionality="1" isArray="true" xmlns:ns49="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns50:ClinicalResearchStaff" dimensionality="1" index="0" isArray="false" isRequired="false" name="clinicalResearchStaff" xmlns:ns50="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns51:ClinicalResearchStaff" dimensionality="1" isArray="true" xmlns:ns51="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns52:ClinicalResearchStaff" dimensionality="1" index="0" isArray="false" isRequired="false" name="clinicalResearchStaff" xmlns:ns52="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns53:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns53="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns54:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns54="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns55:ClinicalResearchStaff" dimensionality="1" index="0" isArray="false" isRequired="false" name="clinicalResearchStaff" xmlns:ns55="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns56:StringMap" dimensionality="1" isArray="false" xmlns:ns56="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="HealthCareProvider">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns57:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns57="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns58:HealthCareProvider" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareProvider" xmlns:ns58="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns59:Id" dimensionality="1" isArray="false" xmlns:ns59="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns60:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns60="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns61:HealthCareProvider" dimensionality="1" isArray="false" xmlns:ns61="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns62:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns62="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns63:HealthCareProvider" dimensionality="1" isArray="true" xmlns:ns63="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns64:HealthCareProvider" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareProvider" xmlns:ns64="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns65:HealthCareProvider" dimensionality="1" isArray="true" xmlns:ns65="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns66:HealthCareProvider" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareProvider" xmlns:ns66="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns67:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns67="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns68:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns68="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns69:HealthCareProvider" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareProvider" xmlns:ns69="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns70:StringMap" dimensionality="1" isArray="false" xmlns:ns70="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="IdentifiedOrganization">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns71:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns71="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns72:IdentifiedOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedOrganization" xmlns:ns72="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns73:Id" dimensionality="1" isArray="false" xmlns:ns73="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns74:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns74="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns75:IdentifiedOrganization" dimensionality="1" isArray="false" xmlns:ns75="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns76:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns76="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns77:IdentifiedOrganization" dimensionality="1" isArray="true" xmlns:ns77="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns78:IdentifiedOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedOrganization" xmlns:ns78="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns79:IdentifiedOrganization" dimensionality="1" isArray="true" xmlns:ns79="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns80:IdentifiedOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedOrganization" xmlns:ns80="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns81:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns81="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns82:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns82="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns83:IdentifiedOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedOrganization" xmlns:ns83="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns84:StringMap" dimensionality="1" isArray="false" xmlns:ns84="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="IdentifiedPerson">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns85:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns85="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns86:IdentifiedPerson" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedPerson" xmlns:ns86="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns87:Id" dimensionality="1" isArray="false" xmlns:ns87="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns88:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns88="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns89:IdentifiedPerson" dimensionality="1" isArray="false" xmlns:ns89="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns90:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns90="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns91:IdentifiedPerson" dimensionality="1" isArray="true" xmlns:ns91="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns92:IdentifiedPerson" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedPerson" xmlns:ns92="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns93:IdentifiedPerson" dimensionality="1" isArray="true" xmlns:ns93="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns94:IdentifiedPerson" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedPerson" xmlns:ns94="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns95:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns95="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns96:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns96="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns97:IdentifiedPerson" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedPerson" xmlns:ns97="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns98:StringMap" dimensionality="1" isArray="false" xmlns:ns98="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="OrganizationalContact">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns99:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns99="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns100:OrganizationalContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="organizationalContact" xmlns:ns100="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns101:Id" dimensionality="1" isArray="false" xmlns:ns101="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns102:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns102="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns103:OrganizationalContact" dimensionality="1" isArray="false" xmlns:ns103="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns104:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns104="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns105:OrganizationalContact" dimensionality="1" isArray="true" xmlns:ns105="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns106:OrganizationalContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="organizationalContact" xmlns:ns106="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns107:OrganizationalContact" dimensionality="1" isArray="true" xmlns:ns107="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns108:OrganizationalContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="organizationalContact" xmlns:ns108="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns109:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns109="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns110:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns110="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns111:OrganizationalContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="organizationalContact" xmlns:ns111="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns112:StringMap" dimensionality="1" isArray="false" xmlns:ns112="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="OversightCommittee">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns113:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns113="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns114:OversightCommittee" dimensionality="1" index="0" isArray="false" isRequired="false" name="oversightCommittee" xmlns:ns114="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns115:Id" dimensionality="1" isArray="false" xmlns:ns115="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns116:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns116="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns117:OversightCommittee" dimensionality="1" isArray="false" xmlns:ns117="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns118:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns118="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns119:OversightCommittee" dimensionality="1" isArray="true" xmlns:ns119="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns120:OversightCommittee" dimensionality="1" index="0" isArray="false" isRequired="false" name="oversightCommittee" xmlns:ns120="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns121:OversightCommittee" dimensionality="1" isArray="true" xmlns:ns121="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns122:OversightCommittee" dimensionality="1" index="0" isArray="false" isRequired="false" name="oversightCommittee" xmlns:ns122="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns123:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns123="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns124:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns124="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns125:OversightCommittee" dimensionality="1" index="0" isArray="false" isRequired="false" name="oversightCommittee" xmlns:ns125="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns126:StringMap" dimensionality="1" isArray="false" xmlns:ns126="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="ResearchOrganization">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns127:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns127="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns128:ResearchOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="researchOrganization" xmlns:ns128="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns129:Id" dimensionality="1" isArray="false" xmlns:ns129="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getById">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns130:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns130="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns131:ResearchOrganization" dimensionality="1" isArray="false" xmlns:ns131="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getByIds">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns132:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns132="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns133:ResearchOrganization" dimensionality="1" isArray="true" xmlns:ns133="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns134:ResearchOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="researchOrganization" xmlns:ns134="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns135:ResearchOrganization" dimensionality="1" isArray="true" xmlns:ns135="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="validate">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns136:ResearchOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="researchOrganization" xmlns:ns136="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns137:StringMap" dimensionality="1" isArray="false" xmlns:ns137="http://po.coppa.nci.nih.gov"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns138:ResearchOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="researchOrganization" xmlns:ns138="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns139:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns139="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns140:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns140="http://po.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+   </ns2:serviceContextCollection>
+   <ns141:SemanticMetadata conceptCode="C63541" conceptDefinition="A service available on a system that coordinates resources that are not subject to central control, using open, general purpose protocols and interfaces to deliver nontrivial qualities of services." conceptName="Grid Service" order="0" xmlns:ns141="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+   <ns142:SemanticMetadata conceptCode="C63543" conceptDefinition="A published API which receives data in the form of objects, performs computations based upon the input data, and returns information to a client via caGrid in the form of one or more objects." conceptName="Analytical Grid Service" order="1" xmlns:ns142="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+  </ns2:Service>
+ </ns1:serviceDescription>
+ <ns1:hostingResearchCenter>
+  <ns143:ResearchCenter displayName="" shortName="" xmlns:ns143="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
+   <ns143:Address country="" locality="" postalCode="" stateProvince="" street1="" street2=""/>
+   <ns143:pointOfContactCollection>
+    <ns143:PointOfContact affiliation="" email="" firstName="" lastName="" phoneNumber="" role=""/>
+   </ns143:pointOfContactCollection>
+  </ns143:ResearchCenter>
+ </ns1:hostingResearchCenter>
+</ns1:ServiceMetadata>
