@@ -10,7 +10,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><decorator:title default="Protocol Abstraction (PA)"/></title>     
+    <title><decorator:title default="Registration"/></title>     
     <link href="<%=request.getContextPath()%>/styles/style.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="<%=request.getContextPath()%>/styles/displayStyles.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="<%=request.getContextPath()%>/struts/niftycorners/niftyCorners.css" rel="stylesheet" type="text/css"/>
