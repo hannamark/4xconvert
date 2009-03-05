@@ -251,6 +251,7 @@
 		    <classpath refid="test.run.classpath" />
 		    <classpath refid="cobertura.classpath" />
 		    <formatter type="xml" />
+			<formatter type="plain" />
 			<batchtest fork="yes" todir="${junit.results.dir}">
 				<fileset dir="${test.src.dir}">
 					<include name="**/Test*.java" />

@@ -16,6 +16,8 @@
   <!-- START INTRODUCE TYPEMAPPINGS -->
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.ClinicalResearchStaff" qname="ns2:ClinicalResearchStaff" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.HealthCareFacility" qname="ns2:HealthCareFacility" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.Id" qname="ns2:Id" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.Organization" qname="ns2:Organization" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>

@@ -24,17 +24,34 @@ public class CoppaPOProviderImpl{
 	public CoppaPOProviderImpl() throws RemoteException {
 		impl = new CoppaPOImpl();
 	}
-	
 
-    public gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse getPerson(gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params) throws RemoteException {
-    gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse();
-    boxedResult.setPerson(impl.getPerson(params.getIdentifier().getId()));
+    public gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsResponse searchClinicalResearchStaffs(gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsResponse();
+    boxedResult.setClinicalResearchStaff(impl.searchClinicalResearchStaffs(params.getClinicalResearchStaff().getClinicalResearchStaff()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse echoOrganization(gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse();
+    boxedResult.setOrganization(impl.echoOrganization(params.getOrganization().getOrganization()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse echoPerson(gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse();
+    boxedResult.setPerson(impl.echoPerson(params.getPerson().getPerson()));
     return boxedResult;
   }
 
     public gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse getOrganization(gov.nih.nci.coppa.po.grid.stubs.GetOrganizationRequest params) throws RemoteException {
     gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse();
     boxedResult.setOrganization(impl.getOrganization(params.getIdentifier().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse getPerson(gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse();
+    boxedResult.setPerson(impl.getPerson(params.getIdentifier().getId()));
     return boxedResult;
   }
 
@@ -50,15 +67,33 @@ public class CoppaPOProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse echoPerson(gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest params) throws RemoteException {
-    gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse();
-    boxedResult.setPerson(impl.echoPerson(params.getPerson().getPerson()));
+    public gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityResponse echoHealthCareFacility(gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityResponse();
+    boxedResult.setHealthCareFacility(impl.echoHealthCareFacility(params.getHealthCareFacility().getHealthCareFacility()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse echoOrganization(gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest params) throws RemoteException {
-    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse();
-    boxedResult.setOrganization(impl.echoOrganization(params.getOrganization().getOrganization()));
+    public gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityResponse getHealthCareFacility(gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityResponse();
+    boxedResult.setHealthCareFacility(impl.getHealthCareFacility(params.getIdentifier().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesResponse searchHealthCareFacilities(gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesResponse();
+    boxedResult.setHealthCareFacility(impl.searchHealthCareFacilities(params.getHealthCareFacility().getHealthCareFacility()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffResponse echoClinicalResearchStaff(gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffResponse();
+    boxedResult.setClinicalResearchStaff(impl.echoClinicalResearchStaff(params.getClinicalResearchStaff().getClinicalResearchStaff()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffResponse getClinicalResearchStaff(gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffRequest params) throws RemoteException {
+    gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffResponse boxedResult = new gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffResponse();
+    boxedResult.setClinicalResearchStaff(impl.getClinicalResearchStaff(params.getIdentifier().getId()));
     return boxedResult;
   }
 

@@ -53,12 +53,22 @@ public class CoppaPOAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeGetPerson() throws RemoteException {
+	public static void authorizeEchoOrganization() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeEchoPerson() throws RemoteException {
 		
 		
 	}
 					
 	public static void authorizeGetOrganization() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeGetPerson() throws RemoteException {
 		
 		
 	}
@@ -73,12 +83,32 @@ public class CoppaPOAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeEchoPerson() throws RemoteException {
+	public static void authorizeEchoHealthCareFacility() throws RemoteException {
 		
 		
 	}
 					
-	public static void authorizeEchoOrganization() throws RemoteException {
+	public static void authorizeGetHealthCareFacility() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeSearchHealthCareFacilities() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeEchoClinicalResearchStaff() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeGetClinicalResearchStaff() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeSearchClinicalResearchStaffs() throws RemoteException {
 		
 		
 	}
@@ -98,9 +128,17 @@ public class CoppaPOAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("getPerson")){
+		} else if(operation.getLocalPart().equals("echoOrganization")){
 			try{
-				authorizeGetPerson();
+				authorizeEchoOrganization();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("echoPerson")){
+			try{
+				authorizeEchoPerson();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
@@ -109,6 +147,14 @@ public class CoppaPOAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("getOrganization")){
 			try{
 				authorizeGetOrganization();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("getPerson")){
+			try{
+				authorizeGetPerson();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
@@ -130,17 +176,49 @@ public class CoppaPOAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("echoPerson")){
+		} else if(operation.getLocalPart().equals("echoHealthCareFacility")){
 			try{
-				authorizeEchoPerson();
+				authorizeEchoHealthCareFacility();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("echoOrganization")){
+		} else if(operation.getLocalPart().equals("getHealthCareFacility")){
 			try{
-				authorizeEchoOrganization();
+				authorizeGetHealthCareFacility();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("searchHealthCareFacilities")){
+			try{
+				authorizeSearchHealthCareFacilities();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("echoClinicalResearchStaff")){
+			try{
+				authorizeEchoClinicalResearchStaff();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("getClinicalResearchStaff")){
+			try{
+				authorizeGetClinicalResearchStaff();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("searchClinicalResearchStaffs")){
+			try{
+				authorizeSearchClinicalResearchStaffs();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

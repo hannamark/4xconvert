@@ -1,7 +1,8 @@
 <ns1:ServiceDescription introduceVersion="1.2" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace generateStubs="false" location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement className="ClinicalResearchStaff" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" type="ClinicalResearchStaff" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="HealthCareFacility" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" type="HealthCareFacility" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Organization" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" type="Organization" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Person" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" type="Person" xsi:type="ns2:SchemaElementType"/>
@@ -124,52 +125,94 @@
      <ns4:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
      <ns4:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
     </ns4:Method>
-    <ns4:Method description="" isImported="false" isProvided="false" name="getPerson" xsi:type="ns4:MethodType">
+    <ns4:Method description="echo org" isImported="false" isProvided="false" name="echoOrganization" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="ns7:Id" description="" isArray="false" name="identifier" xmlns:ns7="http://po.coppa.nci.nih.gov"/>
+      <ns4:Input qName="ns7:Organization" description="" isArray="false" name="organization" xmlns:ns7="http://po.coppa.nci.nih.gov"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns8:Person" description="" isArray="false" xmlns:ns8="http://po.coppa.nci.nih.gov"/>
+     <ns4:Output qName="ns8:Organization" description="" isArray="false" xmlns:ns8="http://po.coppa.nci.nih.gov"/>
      <ns4:Exceptions/>
     </ns4:Method>
-    <ns4:Method description="" isImported="false" isProvided="false" name="getOrganization" xsi:type="ns4:MethodType">
+    <ns4:Method description="echo person" isImported="false" isProvided="false" name="echoPerson" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="ns9:Id" description="" isArray="false" name="identifier" xmlns:ns9="http://po.coppa.nci.nih.gov"/>
+      <ns4:Input qName="ns9:Person" description="" isArray="false" name="person" xmlns:ns9="http://po.coppa.nci.nih.gov"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns10:Organization" description="" isArray="false" xmlns:ns10="http://po.coppa.nci.nih.gov"/>
+     <ns4:Output qName="ns10:Person" description="" isArray="false" xmlns:ns10="http://po.coppa.nci.nih.gov"/>
      <ns4:Exceptions/>
     </ns4:Method>
-    <ns4:Method description="" isImported="false" isProvided="false" name="searchOrganizations" xsi:type="ns4:MethodType">
+    <ns4:Method description="get Org" isImported="false" isProvided="false" name="getOrganization" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="ns11:Organization" description="" isArray="false" name="organization" xmlns:ns11="http://po.coppa.nci.nih.gov"/>
+      <ns4:Input qName="ns11:Id" description="" isArray="false" name="identifier" xmlns:ns11="http://po.coppa.nci.nih.gov"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns12:Organization" description="" isArray="true" xmlns:ns12="http://po.coppa.nci.nih.gov"/>
+     <ns4:Output qName="ns12:Organization" description="" isArray="false" xmlns:ns12="http://po.coppa.nci.nih.gov"/>
      <ns4:Exceptions/>
     </ns4:Method>
-    <ns4:Method description="" isImported="false" isProvided="false" name="searchPersons" xsi:type="ns4:MethodType">
+    <ns4:Method description="get Person" isImported="false" isProvided="false" name="getPerson" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="ns13:Person" description="" isArray="false" name="person" xmlns:ns13="http://po.coppa.nci.nih.gov"/>
+      <ns4:Input qName="ns13:Id" description="" isArray="false" name="identifier" xmlns:ns13="http://po.coppa.nci.nih.gov"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns14:Person" description="" isArray="true" xmlns:ns14="http://po.coppa.nci.nih.gov"/>
+     <ns4:Output qName="ns14:Person" description="" isArray="false" xmlns:ns14="http://po.coppa.nci.nih.gov"/>
      <ns4:Exceptions/>
     </ns4:Method>
-    <ns4:Method description="" isImported="false" isProvided="false" name="echoPerson" xsi:type="ns4:MethodType">
+    <ns4:Method description="search Org" isImported="false" isProvided="false" name="searchOrganizations" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="ns15:Person" description="" isArray="false" name="person" xmlns:ns15="http://po.coppa.nci.nih.gov"/>
+      <ns4:Input qName="ns15:Organization" description="" isArray="false" name="organization" xmlns:ns15="http://po.coppa.nci.nih.gov"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns16:Person" description="" isArray="false" xmlns:ns16="http://po.coppa.nci.nih.gov"/>
+     <ns4:Output qName="ns16:Organization" description="" isArray="true" xmlns:ns16="http://po.coppa.nci.nih.gov"/>
      <ns4:Exceptions/>
     </ns4:Method>
-    <ns4:Method description="" isImported="false" isProvided="false" name="echoOrganization" xsi:type="ns4:MethodType">
+    <ns4:Method description="serach persons" isImported="false" isProvided="false" name="searchPersons" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="ns17:Organization" description="" isArray="false" name="organization" xmlns:ns17="http://po.coppa.nci.nih.gov"/>
+      <ns4:Input qName="ns17:Person" description="" isArray="false" name="person" xmlns:ns17="http://po.coppa.nci.nih.gov"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns18:Organization" description="" isArray="false" xmlns:ns18="http://po.coppa.nci.nih.gov"/>
+     <ns4:Output qName="ns18:Person" description="" isArray="true" xmlns:ns18="http://po.coppa.nci.nih.gov"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
+    <ns4:Method description="echo method" isImported="false" isProvided="false" name="echoHealthCareFacility" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="ns19:HealthCareFacility" description="" isArray="false" name="healthCareFacility" xmlns:ns19="http://po.coppa.nci.nih.gov"/>
+     </ns4:Inputs>
+     <ns4:Output qName="ns20:HealthCareFacility" description="" isArray="false" xmlns:ns20="http://po.coppa.nci.nih.gov"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
+    <ns4:Method description="get method" isImported="false" isProvided="false" name="getHealthCareFacility" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="ns21:Id" description="" isArray="false" name="identifier" xmlns:ns21="http://po.coppa.nci.nih.gov"/>
+     </ns4:Inputs>
+     <ns4:Output qName="ns22:HealthCareFacility" description="" isArray="false" xmlns:ns22="http://po.coppa.nci.nih.gov"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
+    <ns4:Method description="search" isImported="false" isProvided="false" name="searchHealthCareFacilities" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="ns23:HealthCareFacility" description="" isArray="false" name="healthCareFacility" xmlns:ns23="http://po.coppa.nci.nih.gov"/>
+     </ns4:Inputs>
+     <ns4:Output qName="ns24:HealthCareFacility" description="" isArray="true" xmlns:ns24="http://po.coppa.nci.nih.gov"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
+    <ns4:Method description="echoClinicalResearchStaff" isImported="false" isProvided="false" name="echoClinicalResearchStaff" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="ns25:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns25="http://po.coppa.nci.nih.gov"/>
+     </ns4:Inputs>
+     <ns4:Output qName="ns26:ClinicalResearchStaff" description="" isArray="false" xmlns:ns26="http://po.coppa.nci.nih.gov"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
+    <ns4:Method description="getClinicalResearchStaff" isImported="false" isProvided="false" name="getClinicalResearchStaff" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="ns27:Id" description="" isArray="false" name="identifier" xmlns:ns27="http://po.coppa.nci.nih.gov"/>
+     </ns4:Inputs>
+     <ns4:Output qName="ns28:ClinicalResearchStaff" description="" isArray="false" xmlns:ns28="http://po.coppa.nci.nih.gov"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
+    <ns4:Method description="searchClinicalResearchStaff" isImported="false" isProvided="false" name="searchClinicalResearchStaffs" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="ns29:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns29="http://po.coppa.nci.nih.gov"/>
+     </ns4:Inputs>
+     <ns4:Output qName="ns30:ClinicalResearchStaff" description="" isArray="true" xmlns:ns30="http://po.coppa.nci.nih.gov"/>
      <ns4:Exceptions/>
     </ns4:Method>
    </ns4:Methods>
-   <ns19:ResourcePropertiesList xsi:type="ns19:ResourcePropertiesListType" xmlns:ns19="gme://gov.nih.nci.cagrid.introduce/1/Resources">
-    <ns19:ResourceProperty qName="ns20:ServiceMetadata" fileLocation="serviceMetadata.xml" populateFromFile="true" register="true" xsi:type="ns19:ResourcePropertyType" xmlns:ns20="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"/>
-   </ns19:ResourcePropertiesList>
+   <ns31:ResourcePropertiesList xsi:type="ns31:ResourcePropertiesListType" xmlns:ns31="gme://gov.nih.nci.cagrid.introduce/1/Resources">
+    <ns31:ResourceProperty qName="ns32:ServiceMetadata" fileLocation="serviceMetadata.xml" populateFromFile="true" register="true" xsi:type="ns31:ResourcePropertyType" xmlns:ns32="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"/>
+   </ns31:ResourcePropertiesList>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Main xsi:type="ns3:Main"/>
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -177,7 +220,7 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns21:Extensions xsi:type="ns21:ExtensionsType" xmlns:ns21="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns21:Extension name="cagrid_metadata" version="1.2" xsi:type="ns21:ExtensionType"/>
- </ns21:Extensions>
+ <ns33:Extensions xsi:type="ns33:ExtensionsType" xmlns:ns33="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns33:Extension name="cagrid_metadata" version="1.2" xsi:type="ns33:ExtensionType"/>
+ </ns33:Extensions>
 </ns1:ServiceDescription>

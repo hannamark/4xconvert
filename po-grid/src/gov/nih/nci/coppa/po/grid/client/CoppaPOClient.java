@@ -4,6 +4,8 @@ import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.grid.common.CoppaPOI;
+import gov.nih.nci.coppa.po.HealthCareFacility;
+import gov.nih.nci.coppa.po.ClinicalResearchStaff;
 
 import java.rmi.RemoteException;
 
@@ -14,6 +16,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
+import org.iso._21090.AD;
+import org.iso._21090.ADXP;
 import org.iso._21090.DSETTEL;
 import org.iso._21090.II;
 import org.iso._21090.IdentifierReliability;
@@ -53,6 +57,24 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
      * The ii root value for people.
      */
     public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
+    /**
+     * The identifier name for healthCare Facility.
+     */
+    public static final String HEALTH_CARE_FACILITY_IDENTIFIER_NAME = "NCI health care facility identifier";
+
+    /**
+     * The ii root value for healthCare Facility.
+     */
+    public static final String HEALTH_CARE_FACILITY_ROOT = "2.16.840.1.113883.3.26.4.4.3";
+    /**
+     * The identifier name for ClinicalResearchStaff.
+     */
+    public static final String CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME = "NCI clinical research staff identifier";
+
+    /**
+     * The ii root value for ClinicalResearchStaff.
+     */
+    public static final String CLINICAL_RESEARCH_STAFF_ROOT = "2.16.840.1.113883.3.26.4.4.1";
 
     public CoppaPOClient(String url) throws MalformedURIException, RemoteException {
         this(url, null);
@@ -83,12 +105,22 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
                     CoppaPOClient client = new CoppaPOClient(args[1]);
                     // place client calls here if you want to use this main as a
                     // test....
-                    echoOrg(client);
-                    echoPerson(client);
-                    getOrg(client);
-                    getPerson(client);
-                    searchPersons(client);
-                    searchOrganizations(client);
+
+                    echoClinicalResearchStaff(client);
+                    getClinicalResearchStaff(client);
+                    searchClinicalResearchStaff(client);
+
+                    System.out.println("before healthCare");
+                    echoHealthCareFac(client);
+                    getHealthCareFacility(client);
+                    searchHealthCareFacility(client);
+
+                    //echoOrg(client);
+                    //echoPerson(client);
+                    //getOrg(client);
+                    //getPerson(client);
+                    //searchPersons(client);
+                    //searchOrganizations(client);
 
                 } else {
                     usage();
@@ -197,7 +229,6 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
         }
     }
 
-
     private static void getPerson(CoppaPOClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(PERSON_ROOT);
@@ -227,15 +258,151 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
     private static void print(II identifier) {
         System.out.println(ToStringBuilder.reflectionToString(identifier));
     }
+    
+    private static void echoHealthCareFac(CoppaPOClient client) throws RemoteException {
+  	  HealthCareFacility request = new HealthCareFacility();
+        II id = new II();
+        id.setControlActExtension("controlActExtension");
+        id.setControlActRoot("controlActRoot");
+        id.setDisplayable(Boolean.TRUE);
+        id.setExtension("extension");
+        id.setFlavorId("flavorId");
+        id.setIdentifierName("identifierName");
+        id.setNullFlavor(NullFlavor.OTH);
+        id.setReliability(IdentifierReliability.USE);
+        id.setRoot("root");
+        id.setScope(IdentifierScope.VER);
+        id.setUpdateMode(UpdateMode.D);
+        id.setValidTimeHigh("validTimeHigh");
+        id.setValidTimeLow("validTimeLow");
+        request.setIdentifier(id);
+        System.out.println("Request:");
+        System.out.println("=========");
+        System.out.println(ToStringBuilder.reflectionToString(request, ToStringStyle.MULTI_LINE_STYLE));
+        System.out.println(ToStringBuilder.reflectionToString(request.getIdentifier(),
+                ToStringStyle.MULTI_LINE_STYLE));
+        HealthCareFacility response = client.echoHealthCareFacility(request);
+        System.out.println("Response:");
+        System.out.println("=========");
+        System.out.println(ToStringBuilder.reflectionToString(response, ToStringStyle.MULTI_LINE_STYLE));
+        System.out.println(ToStringBuilder.reflectionToString(response.getIdentifier(),
+                ToStringStyle.MULTI_LINE_STYLE));
+    }
 
-  public gov.nih.nci.coppa.po.Person getPerson(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
+    private static void getHealthCareFacility(CoppaPOClient client) throws RemoteException {
+        Id id = new Id();
+        id.setRoot(HEALTH_CARE_FACILITY_ROOT);
+        id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        id.setExtension("640");
+        HealthCareFacility result = client.getHealthCareFacility(id);
+        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+    }
+
+    private static void searchHealthCareFacility(CoppaPOClient client) throws RemoteException {
+  	  HealthCareFacility criteria = new HealthCareFacility();
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        HealthCareFacility[] searchHealthCareFacilities = client.searchHealthCareFacilities(criteria);
+        System.out.println("Search HealthCareFacility Results Found: " + searchHealthCareFacilities.length);
+        for (HealthCareFacility hcf : searchHealthCareFacilities) {
+      	  System.out.println(ToStringBuilder.reflectionToString(hcf, ToStringStyle.MULTI_LINE_STYLE));
+        }
+    }
+
+    private static void echoClinicalResearchStaff(CoppaPOClient client) throws RemoteException {
+    	ClinicalResearchStaff request = new ClinicalResearchStaff();
+          II id = new II();
+          id.setControlActExtension("controlActExtension");
+          id.setControlActRoot("controlActRoot");
+          id.setDisplayable(Boolean.TRUE);
+          id.setExtension("extension");
+          id.setFlavorId("flavorId");
+          id.setIdentifierName("identifierName");
+          id.setNullFlavor(NullFlavor.OTH);
+          id.setReliability(IdentifierReliability.USE);
+          id.setRoot("root");
+          id.setScope(IdentifierScope.VER);
+          id.setUpdateMode(UpdateMode.D);
+          id.setValidTimeHigh("validTimeHigh");
+          id.setValidTimeLow("validTimeLow");
+          request.setIdentifier(id);
+          System.out.println("Request:");
+          System.out.println("=========");
+          System.out.println(ToStringBuilder.reflectionToString(request, ToStringStyle.MULTI_LINE_STYLE));
+          System.out.println(ToStringBuilder.reflectionToString(request.getIdentifier(),
+                  ToStringStyle.MULTI_LINE_STYLE));
+          ClinicalResearchStaff response = client.echoClinicalResearchStaff(request);
+          System.out.println("Response:");
+          System.out.println("=========");
+          System.out.println(ToStringBuilder.reflectionToString(response, ToStringStyle.MULTI_LINE_STYLE));
+          System.out.println(ToStringBuilder.reflectionToString(response.getIdentifier(),
+                  ToStringStyle.MULTI_LINE_STYLE));
+      }
+
+      private static void getClinicalResearchStaff(CoppaPOClient client) throws RemoteException {
+          Id id = new Id();
+          id.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
+          id.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+          id.setExtension("668");
+          ClinicalResearchStaff result = client.getClinicalResearchStaff(id);
+          System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+      }
+
+      private static void searchClinicalResearchStaff(CoppaPOClient client) throws RemoteException {
+    	  ClinicalResearchStaff criteria = new ClinicalResearchStaff();
+          CD statusCode = new CD();
+          statusCode.setCode("pending");
+          criteria.setStatus(statusCode);
+          ClinicalResearchStaff[] searchClinicalResearchStaffs = client.searchClinicalResearchStaffs(criteria);
+          System.out.println("Search ClinicalResearchStaff Results Found: " + searchClinicalResearchStaffs.length);
+          for (ClinicalResearchStaff crs : searchClinicalResearchStaffs) {
+        	  System.out.println(ToStringBuilder.reflectionToString(crs, ToStringStyle.MULTI_LINE_STYLE));
+        	  System.out.println("jdfhjs:-"+crs.getPostalAddress().getItem());
+        	  for(AD ad:crs.getPostalAddress().getItem()){
+        		  System.out.println("part"+ad.getPart());
+        		  for(ADXP adxp:ad.getPart()){
+        			  System.out.println("Adxp-value"+adxp.getValue());
+        			  System.out.println("Adxp-code"+adxp.getCode());
+        			  System.out.println("Adxp-Type"+adxp.getType());
+        		  }
+        	  }
+          }
+      }
+    
+
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] searchClinicalResearchStaffs(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
     synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getPerson");
-    gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest();
-    gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier();
-    identifierContainer.setId(identifier);
-    params.setIdentifier(identifierContainer);
-    gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse boxedResult = portType.getPerson(params);
+      configureStubSecurity((Stub)portType,"searchClinicalResearchStaffs");
+    gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsRequest params = new gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsRequest();
+    gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsRequestClinicalResearchStaff clinicalResearchStaffContainer = new gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsRequestClinicalResearchStaff();
+    clinicalResearchStaffContainer.setClinicalResearchStaff(clinicalResearchStaff);
+    params.setClinicalResearchStaff(clinicalResearchStaffContainer);
+    gov.nih.nci.coppa.po.grid.stubs.SearchClinicalResearchStaffsResponse boxedResult = portType.searchClinicalResearchStaffs(params);
+    return boxedResult.getClinicalResearchStaff();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.Organization echoOrganization(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"echoOrganization");
+    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest();
+    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization organizationContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization();
+    organizationContainer.setOrganization(organization);
+    params.setOrganization(organizationContainer);
+    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse boxedResult = portType.echoOrganization(params);
+    return boxedResult.getOrganization();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.Person echoPerson(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"echoPerson");
+    gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest();
+    gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson personContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse boxedResult = portType.echoPerson(params);
     return boxedResult.getPerson();
     }
   }
@@ -249,6 +416,18 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
     params.setIdentifier(identifierContainer);
     gov.nih.nci.coppa.po.grid.stubs.GetOrganizationResponse boxedResult = portType.getOrganization(params);
     return boxedResult.getOrganization();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.Person getPerson(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getPerson");
+    gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequest();
+    gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetPersonRequestIdentifier();
+    identifierContainer.setId(identifier);
+    params.setIdentifier(identifierContainer);
+    gov.nih.nci.coppa.po.grid.stubs.GetPersonResponse boxedResult = portType.getPerson(params);
+    return boxedResult.getPerson();
     }
   }
 
@@ -276,27 +455,63 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
     }
   }
 
-  public gov.nih.nci.coppa.po.Person echoPerson(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareFacility echoHealthCareFacility(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
     synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"echoPerson");
-    gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequest();
-    gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson personContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoPersonRequestPerson();
-    personContainer.setPerson(person);
-    params.setPerson(personContainer);
-    gov.nih.nci.coppa.po.grid.stubs.EchoPersonResponse boxedResult = portType.echoPerson(params);
-    return boxedResult.getPerson();
+      configureStubSecurity((Stub)portType,"echoHealthCareFacility");
+    gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityRequest();
+    gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityRequestHealthCareFacility healthCareFacilityContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityRequestHealthCareFacility();
+    healthCareFacilityContainer.setHealthCareFacility(healthCareFacility);
+    params.setHealthCareFacility(healthCareFacilityContainer);
+    gov.nih.nci.coppa.po.grid.stubs.EchoHealthCareFacilityResponse boxedResult = portType.echoHealthCareFacility(params);
+    return boxedResult.getHealthCareFacility();
     }
   }
 
-  public gov.nih.nci.coppa.po.Organization echoOrganization(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareFacility getHealthCareFacility(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
     synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"echoOrganization");
-    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequest();
-    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization organizationContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationRequestOrganization();
-    organizationContainer.setOrganization(organization);
-    params.setOrganization(organizationContainer);
-    gov.nih.nci.coppa.po.grid.stubs.EchoOrganizationResponse boxedResult = portType.echoOrganization(params);
-    return boxedResult.getOrganization();
+      configureStubSecurity((Stub)portType,"getHealthCareFacility");
+    gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityRequest();
+    gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityRequestIdentifier();
+    identifierContainer.setId(identifier);
+    params.setIdentifier(identifierContainer);
+    gov.nih.nci.coppa.po.grid.stubs.GetHealthCareFacilityResponse boxedResult = portType.getHealthCareFacility(params);
+    return boxedResult.getHealthCareFacility();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.HealthCareFacility[] searchHealthCareFacilities(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"searchHealthCareFacilities");
+    gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesRequest params = new gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesRequest();
+    gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesRequestHealthCareFacility healthCareFacilityContainer = new gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesRequestHealthCareFacility();
+    healthCareFacilityContainer.setHealthCareFacility(healthCareFacility);
+    params.setHealthCareFacility(healthCareFacilityContainer);
+    gov.nih.nci.coppa.po.grid.stubs.SearchHealthCareFacilitiesResponse boxedResult = portType.searchHealthCareFacilities(params);
+    return boxedResult.getHealthCareFacility();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff echoClinicalResearchStaff(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"echoClinicalResearchStaff");
+    gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffRequest params = new gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffRequest();
+    gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffRequestClinicalResearchStaff clinicalResearchStaffContainer = new gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffRequestClinicalResearchStaff();
+    clinicalResearchStaffContainer.setClinicalResearchStaff(clinicalResearchStaff);
+    params.setClinicalResearchStaff(clinicalResearchStaffContainer);
+    gov.nih.nci.coppa.po.grid.stubs.EchoClinicalResearchStaffResponse boxedResult = portType.echoClinicalResearchStaff(params);
+    return boxedResult.getClinicalResearchStaff();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff getClinicalResearchStaff(gov.nih.nci.coppa.po.Id identifier) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getClinicalResearchStaff");
+    gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffRequest params = new gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffRequest();
+    gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffRequestIdentifier identifierContainer = new gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffRequestIdentifier();
+    identifierContainer.setId(identifier);
+    params.setIdentifier(identifierContainer);
+    gov.nih.nci.coppa.po.grid.stubs.GetClinicalResearchStaffResponse boxedResult = portType.getClinicalResearchStaff(params);
+    return boxedResult.getClinicalResearchStaff();
     }
   }
 

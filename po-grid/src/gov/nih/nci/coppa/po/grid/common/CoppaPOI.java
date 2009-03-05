@@ -13,17 +13,89 @@ import org.iso._21090.II;
  */
 public interface CoppaPOI {
 
-  public gov.nih.nci.coppa.po.Person getPerson(gov.nih.nci.coppa.po.Id identifier) throws RemoteException ;
+  /**
+   * searchClinicalResearchStaff
+   *
+   * @param clinicalResearchStaff
+   */
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] searchClinicalResearchStaffs(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.Organization getOrganization(gov.nih.nci.coppa.po.Id identifier) throws RemoteException ;
+  /**
+   * echo org
+   *
+   * @param organization
+   */
+  public gov.nih.nci.coppa.po.Organization echoOrganization(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.Organization[] searchOrganizations(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
-
-  public gov.nih.nci.coppa.po.Person[] searchPersons(gov.nih.nci.coppa.po.Person person) throws RemoteException ;
-
+  /**
+   * echo person
+   *
+   * @param person
+   */
   public gov.nih.nci.coppa.po.Person echoPerson(gov.nih.nci.coppa.po.Person person) throws RemoteException ;
 
-  public gov.nih.nci.coppa.po.Organization echoOrganization(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
+  /**
+   * get Org
+   *
+   * @param identifier
+   */
+  public gov.nih.nci.coppa.po.Organization getOrganization(gov.nih.nci.coppa.po.Id identifier) throws RemoteException ;
+
+  /**
+   * get Person
+   *
+   * @param identifier
+   */
+  public gov.nih.nci.coppa.po.Person getPerson(gov.nih.nci.coppa.po.Id identifier) throws RemoteException ;
+
+  /**
+   * search Org
+   *
+   * @param organization
+   */
+  public gov.nih.nci.coppa.po.Organization[] searchOrganizations(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
+
+  /**
+   * serach persons
+   *
+   * @param person
+   */
+  public gov.nih.nci.coppa.po.Person[] searchPersons(gov.nih.nci.coppa.po.Person person) throws RemoteException ;
+
+  /**
+   * echo method
+   *
+   * @param healthCareFacility
+   */
+  public gov.nih.nci.coppa.po.HealthCareFacility echoHealthCareFacility(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException ;
+
+  /**
+   * get method
+   *
+   * @param identifier
+   */
+  public gov.nih.nci.coppa.po.HealthCareFacility getHealthCareFacility(gov.nih.nci.coppa.po.Id identifier) throws RemoteException ;
+
+  /**
+   * search
+   *
+   * @param healthCareFacility
+   */
+  public gov.nih.nci.coppa.po.HealthCareFacility[] searchHealthCareFacilities(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException ;
+
+  /**
+   * echoClinicalResearchStaff
+   *
+   * @param clinicalResearchStaff
+   */
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff echoClinicalResearchStaff(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException ;
+
+  /**
+   * getClinicalResearchStaff
+   *
+   * @param identifier
+   */
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff getClinicalResearchStaff(gov.nih.nci.coppa.po.Id identifier) throws RemoteException ;
 
 }
 
