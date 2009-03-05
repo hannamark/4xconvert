@@ -15,6 +15,8 @@
         </jxb:schemaBindings>
     </jxb:bindings>
 <!--
+SMM: PO-860
+
     <jxb:bindings schemaLocation="CoreServicesTypes.xsd" node="/xs:schema">
         <jxb:schemaBindings>
             <jxb:package name="gov.nih.nci.coppa.services.stubs.types"/>

@@ -10,6 +10,7 @@
     <!-- ============================================================== -->
     <!-- Place any other properties you will need here                  -->
     <!-- ============================================================== -->
+	<property file="local.properties"/>
     <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory"/>
     <property name="java.naming.provider.url.host" value="localhost"/>
     <property name="java.naming.provider.url.port" value="1099"/>
@@ -17,6 +18,16 @@
     <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces"/>
     <property name="java.naming.security.principal" value="ejbclient"/>
     <property name="java.naming.security.credentials" value="pass"/>
+    <property name="cobertura.dir" value="tools/cobertura" />
+    
+    <path id="cobertura.classpath">
+        <fileset dir="${cobertura.dir}">
+            <include name="cobertura.jar" />
+            <include name="lib/**/*.jar" />
+        </fileset>
+    </path>
+
+    <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
     
     <patternset id="dependent.schema.folders.ps">
         <include name="core/**/*"/>
@@ -89,6 +100,7 @@
             <arg file="${basedir}/schema/CoreServices/CoppaPO.xsd"/>
             <arg file="${basedir}/schema/CoreServices/ISO_datatypes_Narrative.xsd"/>
         	<!--
+        	SMM: PO-860
             <arg file="${basedir}/schema/CoreServices/CoreServicesTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/PersonTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/OrganizationTypes.xsd"/>
@@ -229,8 +241,8 @@
     <!-- ============================================================== -->
     <target name="postClean">
 
-    </target>
-	
+	</target>
+
     <!-- Compile the test implementation classes (service, resource, etc.) -->
     <target name="compileTests-nodepends">
         <runtarget target="preCompileTests" />
@@ -241,40 +253,72 @@
     <!-- ============================================================== -->
     <!-- Call any tests.                                                -->
     <!-- ============================================================== -->
-    <target name="retest" depends="checkGlobus, compileTests-nodepends" description="Runs the service's tests (without recompiling the stubs).">
-        <echo message="Test results dir: ${junit.results.dir}" />
-        <mkdir dir="${junit.results.dir}" />
-        <junit dir="${basedir}" printsummary="yes" showoutput="true">
-            <classpath refid="test.run.classpath" />
-            <formatter type="xml" />
-            <batchtest fork="yes" todir="${junit.results.dir}">
-                <fileset dir="${test.src.dir}">
-                    <include name="**/Test*.java" />
-                                        <include name="**/*Test.java" />
-                    <include name="**/*TestCase.java" />
-                </fileset>
-            </batchtest>
-        </junit>
-    </target>
-    <!-- ============================================================== -->
-    <!-- Call any tests.                                                -->
-    <!-- ============================================================== -->
-    <target name="test" depends="checkGlobus, compileTests" description="Runs the service's tests.">
-        <echo message="Test results dir: ${junit.results.dir}" />
-        <mkdir dir="${junit.results.dir}" />
-        <junit dir="${basedir}" printsummary="yes" showoutput="true">
-            <classpath refid="test.run.classpath" />
-            <formatter type="xml" />
-            <batchtest fork="yes" todir="${junit.results.dir}">
-                <fileset dir="${test.src.dir}">
-                    <include name="**/Test*.java" />
-                                        <include name="**/*Test.java" />
-                    <include name="**/*TestCase.java" />
-                </fileset>
-            </batchtest>
-        </junit>
-    </target>
+    <target name="test-quick" depends="checkGlobus, compileTests-nodepends, -test" description="Runs the service's tests (without recompiling the stubs)."/>
 
-	<target name="stubGenerationPostProcessor">
+	<!-- ============================================================== -->
+	<!-- Call any tests.                                                -->
+	<!-- ============================================================== -->
+	<target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests."/>
+	<target name="-test">
+	    <delete file="build/cobertura.ser" />
+
+	    <cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
+	        <fileset dir="${build.dest}">
+	            <include name="**/*.class" />
+	            <exclude name="**/*Test.class" />
+	        </fileset>
+	    </cobertura-instrument>
+	    
+	    <echo message="Test results dir: ${junit.results.dir}" />
+		<mkdir dir="${junit.results.dir}" />
+		<junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true">
+		    <sysproperty key="net.sourceforge.cobertura.datafile"
+		    		file="${basedir}/build/cobertura.ser" />
+		    <classpath location="${build.dir}/intrumented" />
+		    <classpath refid="test.run.classpath" />
+		    <classpath refid="cobertura.classpath" />
+		    <formatter type="xml" />
+			<batchtest fork="yes" todir="${junit.results.dir}">
+				<fileset dir="${test.src.dir}">
+					<include name="**/Test*.java" />
+                                        <include name="**/*Test.java" />
+					<include name="**/*TestCase.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	    <cobertura-report datafile="${basedir}/build/cobertura.ser" 
+	         			  format="html" 
+	        			  destdir="${build.dir}/cobertura" 
+	        			  srcdir="${src.dir}" />
+	    <cobertura-check datafile="${basedir}/build/cobertura.ser"
+	    			     totalbranchrate="4" 
+	        		     totallinerate="2"/> <!-- Increase these as unit tests are written -->
 	</target>
+
+    <target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
+        <property name="person.service.url" value="http://localhost:8080/wsrf/services/cagrid/Person" />
+        <property name="runclasspath" refid="run.classpath"/>
+        <echo message="Connecting to service: ${person.service.url}" />
+        <java failonerror="true" classname="gov.nih.nci.coppa.services.entities.person.client.PersonClient" classpathref="run.classpath" fork="yes">
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=n"/>
+            <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
+            <arg value="-url" />
+            <arg value="${person.service.url}" />
+        </java>
+    </target>
+	
+    <target name="runOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample Organization Client">
+        <property name="organization.service.url" value="http://localhost:8080/wsrf/services/cagrid/Organization" />
+        <property name="runclasspath" refid="run.classpath"/>
+        <echo message="Connecting to service: ${organization.service.url}" />
+        <java failonerror="true" classname="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient" classpathref="run.classpath" fork="yes">
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=n"/>
+            <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
+            <arg value="-url" />
+            <arg value="${organization.service.url}" />
+        </java>
+    </target>
+	
 </project>

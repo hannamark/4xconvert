@@ -45,6 +45,6 @@ public class STTransformerTest extends AbstractTransformerTestBase<STTransformer
 
     public void verifyDtoNullFlavored(St dto) {
         assertNull(dto.getValue());
-        assertEquals(NullFlavor.NI, dto.getNullFlavor());
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.NI, dto.getNullFlavor());
     }
 }

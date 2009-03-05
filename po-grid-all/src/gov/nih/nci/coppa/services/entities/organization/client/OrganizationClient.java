@@ -11,11 +11,17 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
+import org.iso._21090.II;
 
+import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.services.entities.organization.stubs.OrganizationPortType;
 import gov.nih.nci.coppa.services.entities.organization.stubs.service.OrganizationServiceAddressingLocator;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
@@ -33,7 +39,16 @@ import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
  * @created by Introduce Toolkit version 1.2
  */
 public class OrganizationClient extends OrganizationClientBase implements OrganizationI {	
+    /**
+     * The identifier name for org ii's.
+     */
+    public static final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
 
+    /**
+     * The ii root value for orgs.
+     */
+    public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
+    
 	public OrganizationClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);	
 	}
@@ -62,6 +77,8 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
 			  OrganizationClient client = new OrganizationClient(args[1]);
 			  // place client calls here if you want to use this main as a
 			  // test....
+			  getOrg(client);
+			  searchOrganizations(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -75,7 +92,34 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
 			System.exit(1);
 		}
 	}
+	
+    private static void getOrg(OrganizationClient client) throws RemoteException {
+        Id id = new Id();
+        id.setRoot(ORG_ROOT);
+        id.setIdentifierName(ORG_IDENTIFIER_NAME);
+        id.setExtension("537");
+        Organization result = client.getById(id);
+        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+    }
+    private static void searchOrganizations(OrganizationClient client) throws RemoteException {
+        Organization criteria = new Organization();
+        CD statusCode = new CD();
+        statusCode.setCode("active");
+        criteria.setStatusCode(statusCode);
+        Organization[] searchOrgs = client.search(criteria);
+        System.out.println("Search Orgs Results Found: " + searchOrgs.length);
+        for (Organization org : searchOrgs) {
+            print(org);
+        }
+    }    
+    private static void print(Organization org) {
+        print(org.getIdentifier());
+    }
 
+    private static void print(II identifier) {
+        System.out.println(ToStringBuilder.reflectionToString(identifier));
+    }
+    
   public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
