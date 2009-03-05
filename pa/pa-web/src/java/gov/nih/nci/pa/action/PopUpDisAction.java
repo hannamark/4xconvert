@@ -109,7 +109,7 @@ public class PopUpDisAction extends ActionSupport {
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
-    private static final int MAX_SEARCH_RESULT_SIZE = 200; 
+    private static final int MAX_SEARCH_RESULT_SIZE = 500; 
 
     private String searchName;
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();

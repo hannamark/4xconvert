@@ -109,7 +109,7 @@ public class PopUpIntAction extends ActionSupport {
     private static final long serialVersionUID = 9987838321L;
     private static final Logger LOG = Logger.getLogger(PopUpIntAction.class);
 
-    private static final int MAX_SEARCH_RESULT_SIZE = 200; 
+    private static final int MAX_SEARCH_RESULT_SIZE = 500; 
     
     private String searchName;
     private List<InterventionWebDTO> interWebList = new ArrayList<InterventionWebDTO>();

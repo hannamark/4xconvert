@@ -83,6 +83,7 @@ import gov.nih.nci.pa.iso.convert.DiseaseConverter;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,8 +135,9 @@ public class DiseaseServiceBean
 
             // step 2: construct query object
             query = session.createQuery(hql);
-            query.setParameter("name", "%" + StConverter.convertToString(searchCriteria.getPreferredName()) + "%");
-            
+            query.setParameter("name", PAUtil.wildcardCriteria(
+                    StConverter.convertToString(searchCriteria.getPreferredName())));
+
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {

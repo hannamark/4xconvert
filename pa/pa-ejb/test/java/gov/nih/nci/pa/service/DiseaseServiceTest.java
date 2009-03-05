@@ -168,15 +168,15 @@ public class DiseaseServiceTest {
     @Test
     public void searchTest() throws Exception {
         DiseaseDTO searchCriteria = new DiseaseDTO();
-        searchCriteria.setPreferredName(StConverter.convertToSt("Toe"));
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
         List<DiseaseDTO> r = bean.search(searchCriteria);
         assertTrue(0 < r.size());
 
-        searchCriteria.setPreferredName(StConverter.convertToSt("xToe"));
+        searchCriteria.setPreferredName(StConverter.convertToSt("xToe*"));
         r = bean.search(searchCriteria);
         assertEquals(0, r.size());
 
-        searchCriteria.setPreferredName(StConverter.convertToSt("Piggy"));
+        searchCriteria.setPreferredName(StConverter.convertToSt("*Piggy*"));
         r = bean.search(searchCriteria);
         assertTrue(0 < r.size());
 
@@ -191,7 +191,7 @@ public class DiseaseServiceTest {
     @Test 
     public void searchDoesNotReturnInactiveTest() throws Exception {
         DiseaseDTO searchCriteria = new DiseaseDTO();
-        searchCriteria.setPreferredName(StConverter.convertToSt("Toe"));
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
         List<DiseaseDTO> r = bean.search(searchCriteria);
         assertEquals(1, r.size());
         

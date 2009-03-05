@@ -381,4 +381,15 @@ public class PAUtil {
             return data;
         }
     }
+
+    /**
+     * @param data the input value which will be converted parameter used in search query
+     * @return not null sting with * converted to %
+     */
+    public static String wildcardCriteria(String data) {
+        if (data == null) {
+            data = "";
+        }
+        return data.replace('*', '%');
+    }
 }

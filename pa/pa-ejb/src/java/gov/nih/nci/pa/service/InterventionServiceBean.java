@@ -83,6 +83,7 @@ import gov.nih.nci.pa.iso.convert.InterventionConverter;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,8 +136,8 @@ public class InterventionServiceBean
 
             // step 2: construct query object
             query = session.createQuery(hql);
-            query.setParameter("name", "%" + StConverter.convertToString(searchCriteria.getName()) + "%");
-            
+            query.setParameter("name", PAUtil.wildcardCriteria(StConverter.convertToString(searchCriteria.getName())));
+
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {

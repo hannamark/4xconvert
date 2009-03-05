@@ -151,11 +151,11 @@ public class InterventionServiceTest {
     @Test
     public void searchTest() throws Exception {
         InterventionDTO searchCriteria = new InterventionDTO();
-        searchCriteria.setName(StConverter.convertToSt("CHOCOLATE"));
+        searchCriteria.setName(StConverter.convertToSt("CHOCOLATE*"));
         List<InterventionDTO> r = remoteEjb.search(searchCriteria);
         assertEquals(1, r.size());
 
-        searchCriteria.setName(StConverter.convertToSt("xCHOCOLATE"));
+        searchCriteria.setName(StConverter.convertToSt("xCHOCOLATE*"));
         r = remoteEjb.search(searchCriteria);
         assertEquals(0, r.size());
 
@@ -192,7 +192,7 @@ public class InterventionServiceTest {
     @Test
     public void noInactiveInterventionRecordsReturnedBySearchTest() throws Exception {
         InterventionDTO searchCriteria = new InterventionDTO();
-        searchCriteria.setName(StConverter.convertToSt("CHOCOLATE"));
+        searchCriteria.setName(StConverter.convertToSt("CHOCOLATE*"));
         List<InterventionDTO> r = remoteEjb.search(searchCriteria);
         int size = r.size();
         assertTrue(size > 0);
