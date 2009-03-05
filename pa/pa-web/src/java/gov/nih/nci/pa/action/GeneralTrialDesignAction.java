@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.pa.action;
 
@@ -132,28 +132,28 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" ,
     "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class GeneralTrialDesignAction extends ActionSupport {
-    
+
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
-    
+
     private static final int OFFICIAL_TITLE = 4000;
     private static final int PUBLIC_TITLE = 5000;
     private static final int SCI_DESC = 12000;
     private static final int KEYWORD = 600;
     private static final String SPONSOR = "sponsor";
-    /**  
+    /**
      * @return res
      */
     public String query() {
-        try {        
+        try {
 
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-            getAttribute(Constants.STUDY_PROTOCOL_II);             
-                
+            getAttribute(Constants.STUDY_PROTOCOL_II);
+
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             StudyProtocolQueryDTO spqDto = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.TRIAL_SUMMARY);
             CorrelationUtils cUtils = new CorrelationUtils();
-            
+
             copy(spDTO);
             copy(spqDto);
             copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null));
@@ -164,7 +164,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
             copyNctNummber(studyProtocolIi);
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        } 
+        }
         return "edit";
     }
 
@@ -186,39 +186,39 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
-                        StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) , 
+                        StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) ,
                         gtdDTO.getLeadOrganizationIdentifier() , gtdDTO.getLocalProtocolIdentifier());
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
-                        StudyParticipationFunctionalCode.SPONSOR) , 
+                        StudyParticipationFunctionalCode.SPONSOR) ,
                         gtdDTO.getSponsorIdentifier() , null);
             updateStudyContact(studyProtocolIi);
             removeSponsorContact(studyProtocolIi);
             createSponorContact(studyProtocolIi);
             createOrUpdateCentralContact(studyProtocolIi);
             updateNctNumber(studyProtocolIi);
-            StudyProtocolQueryDTO  studyProtocolQueryDTO = 
+            StudyProtocolQueryDTO  studyProtocolQueryDTO =
                 PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                         Long.valueOf(studyProtocolIi.getExtension()));
-            // put an entry in the session and store StudyProtocolQueryDTO 
-            studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(), 
-                    PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE)); 
+            // put an entry in the session and store StudyProtocolQueryDTO
+            studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(),
+                    PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().setAttribute(
-                    Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
+                    Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode())); 
+                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
 
-            
+
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
-        
-    }    
-    
-    
-    private void copy(StudyProtocolDTO spDTO) {        
+
+    }
+
+
+    private void copy(StudyProtocolDTO spDTO) {
         gtdDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
         gtdDTO.setPublicTitle(spDTO.getPublicTitle().getValue());
         gtdDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
@@ -227,7 +227,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         gtdDTO.setScientificDescription(spDTO.getScientificDescription().getValue());
         gtdDTO.setKeywordText(spDTO.getKeywordText().getValue());
     }
-    
+
 
     private void copy(StudyProtocolQueryDTO spqDTO) {
         gtdDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
@@ -265,9 +265,9 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 Person p = cUtils.getPAPersonByPAOrganizationalContactId((
                         Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
                 gtdDTO.setResponsiblePersonIdentifier(p.getIdentifier());
-                gtdDTO.setResponsiblePersonName(p.getFirstName());
-                
-                
+                 gtdDTO.setResponsiblePersonName(p.getFirstName() + ", " + p.getLastName());
+
+
             }
         }
         copy(dset);
@@ -284,7 +284,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
         if (emails != null && !emails.isEmpty()) {
             gtdDTO.setContactEmail(emails.get(0));
-        }        
+        }
     }
     private void copySponsor(Ii studyProtocolIi) throws PAException {
         StudyParticipationDTO spart = new StudyParticipationDTO();
@@ -294,16 +294,16 @@ public class GeneralTrialDesignAction extends ActionSupport {
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
             Organization o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-                    
+
                         Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
             gtdDTO.setSponsorName(o.getName());
             gtdDTO.setSponsorIdentifier(o.getIdentifier());
         }
-        
+
     }
-    
+
     private void copyNctNummber(Ii studyProtocolIi) throws PAException {
-        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi, 
+        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi,
                     StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
         if (spDto != null) {
             gtdDTO.setNctIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
@@ -311,7 +311,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
 
     private void copyCentralContact(Ii studyProtocolIi) throws PAException {
-        StudyContactDTO scDto = new StudyContactDTO(); 
+        StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
         List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         if (srDtos != null && !srDtos.isEmpty()) {
@@ -321,7 +321,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
             gtdDTO.setCentralContactIdentifier(p.getIdentifier());
             gtdDTO.setCentralContactName(p.getFullName());
-            DSet dset = scDto.getTelecomAddresses(); 
+            DSet dset = scDto.getTelecomAddresses();
             List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
             if (phones != null && !phones.isEmpty()) {
@@ -329,19 +329,19 @@ public class GeneralTrialDesignAction extends ActionSupport {
             }
             if (emails != null && !emails.isEmpty()) {
                 gtdDTO.setCentralContactEmail(emails.get(0));
-            }        
+            }
 
         }
    }
 
-    
+
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicTitle(), PUBLIC_TITLE)));
-        spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicDescription(), 
+        spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicDescription(),
                 PUBLIC_TITLE)));
         spDTO.setScientificDescription(StConverter.convertToSt(
                 PAUtil.stringSetter(gtdDTO.getScientificDescription(), SCI_DESC)));
@@ -350,10 +350,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
 
     private void updateNctNumber(Ii studyProtocolIi) throws PAException {
-        
+
         String poOrgid = getCtGocIdentifier();
         OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
-        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi , 
+        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi ,
                 StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
 
         if (PAUtil.isNotEmpty(gtdDTO.getNctIdentifier())) {
@@ -375,7 +375,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
             PaRegistry.getStudyParticipationService().delete(spDto.getIdentifier());
         }
     }
-    private StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode) 
+    private StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode)
     throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException(" StudyProtocol Ii is null");
@@ -383,20 +383,20 @@ public class GeneralTrialDesignAction extends ActionSupport {
         StudyParticipationDTO spDto = new StudyParticipationDTO();
         Cd cd = CdConverter.convertToCd(spCode);
         spDto.setFunctionalCode(cd);
-        
+
         List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
             .getByStudyProtocol(studyProtocolIi, spDto);
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos.get(0);
         } else if (spDtos != null && spDtos.size() > 1) {
-            throw new PAException(" Found more than 1 record for a protocol id = " 
+            throw new PAException(" Found more than 1 record for a protocol id = "
                     + studyProtocolIi.getExtension() + " for a given status " + cd.getCode());
-            
+
         }
         return null;
-        
+
     }
-    private void updateStudyParticipation(Ii studyProtocolIi , Cd cd , String roId , String lpIdentifier) 
+    private void updateStudyParticipation(Ii studyProtocolIi , Cd cd , String roId , String lpIdentifier)
     throws PAException {
         StudyParticipationDTO spDto = new StudyParticipationDTO();
         spDto.setFunctionalCode(cd);
@@ -405,7 +405,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         OrganizationCorrelationServiceBean ocb = new OrganizationCorrelationServiceBean();
 
         if (srDtos != null && srDtos.size() > 1) {
-            throw new PAException(" StudyParticipation has more than one recrod is found for a "  
+            throw new PAException(" StudyParticipation has more than one recrod is found for a "
                     + " given Study Protocol id = " +  studyProtocolIi.getExtension());
         } else if (srDtos == null || srDtos.isEmpty()) {
             spDto = new StudyParticipationDTO();
@@ -420,25 +420,25 @@ public class GeneralTrialDesignAction extends ActionSupport {
             spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
             PaRegistry.getStudyParticipationService().update(spDto);
         }
-        
+
     }
-    
+
     private void updateStudyContact(Ii studyProtocolIi) throws PAException {
         StudyContactDTO spDto = new StudyContactDTO();
         spDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService()
             .getByStudyProtocol(studyProtocolIi, spDto);
         if (srDtos == null || srDtos.isEmpty() || srDtos.size() > 1) {
-            throw new PAException(" PI is either null , or more than one lead is found for a "  
+            throw new PAException(" PI is either null , or more than one lead is found for a "
                     + " given Study Protocol id = " +  studyProtocolIi.getExtension());
         }
         StudyContactDTO scDto = srDtos.get(0);
-        
+
         StudyProtocolQueryDTO spqDto = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession().
-                getAttribute(Constants.TRIAL_SUMMARY);        
-        
+                getAttribute(Constants.TRIAL_SUMMARY);
+
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
-        
+
         Long crs = crbb.createClinicalResearchStaffCorrelations(
                                     gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier());
         scDto.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));
@@ -451,7 +451,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
         PaRegistry.getStudyContactService().update(scDto);
     }
-    
+
     private void createOrUpdateCentralContact(Ii studyProtocolIi) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setStudyProtocolIi(studyProtocolIi);
@@ -480,7 +480,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
         scDTO.setTelecomAddresses(dsetList);
         return scDTO;
-        
+
     }
     private void removeSponsorContact(Ii studyProtocolIi) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO();
@@ -491,7 +491,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
             PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
         } else {
             // delete from Study Participation and it will delete study_participation contact
-            StudyParticipationDTO spart = new StudyParticipationDTO();  
+            StudyParticipationDTO spart = new StudyParticipationDTO();
             spart.setFunctionalCode(CdConverter.convertToCd(
                   StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
               List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
@@ -501,18 +501,18 @@ public class GeneralTrialDesignAction extends ActionSupport {
             }
 
         }
-        
+
     }
     private void createSponorContact(Ii studyProtocolIi) throws  PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
         String phone = gtdDTO.getContactPhone().trim();
         if (gtdDTO.getResponsiblePartyType() == null || gtdDTO.getResponsiblePartyType().equals("pi")) {
             parb.createPIAsResponsiblePartyRelations(
-                    gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier(), 
+                    gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier(),
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
-        } else if (gtdDTO.getResponsiblePartyType().equals(SPONSOR)) { 
+        } else if (gtdDTO.getResponsiblePartyType().equals(SPONSOR)) {
             parb.createSponsorAsPrimaryContactRelations(gtdDTO.getSponsorIdentifier(),
-                    gtdDTO.getResponsiblePersonIdentifier(), 
+                    gtdDTO.getResponsiblePersonIdentifier(),
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
         }
     }
@@ -544,18 +544,18 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 Ii ii = PaRegistry.getPoOrganizationEntityService().createOrganization(poOrgDto);
                 identifier = ii.getExtension();
             } catch (EntityValidationException e) {
-                throw new PAException(e);            
+                throw new PAException(e);
             }
-            
+
         } else if (poOrgs.size() > 1) {
             throw new PAException(" there cannot be more than 1 record for ClinicalTrials.gov");
         } else {
             identifier = poOrgs.get(0).getIdentifier().getExtension();
         }
         return identifier;
-        
+
     }
-    
+
     private void enforceBusinessRules() {
       if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
         addFieldError("gtdDTO.localProtocolIdentifier", getText("Organization Trial ID must be Entered"));
@@ -568,11 +568,11 @@ public class GeneralTrialDesignAction extends ActionSupport {
       }
       if (PAUtil.isEmpty(gtdDTO.getPublicTitle())) {
         addFieldError("gtdDTO.publicTitle", getText("PublicTitle must be Entered"));
-      }      
+      }
       if (PAUtil.isEmpty(gtdDTO.getPublicDescription())) {
         addFieldError("gtdDTO.publicDescription", getText("Brief Summary must be Entered"));
       }
-      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())  
+      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
               && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
           addFieldError("gtdDTO.responsiblePersonName",
                   getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
@@ -598,12 +598,12 @@ public class GeneralTrialDesignAction extends ActionSupport {
       }
       if (PAUtil.isEmpty(gtdDTO.getCentralContactName())) {
           addFieldError("gtdDTO.centralContactName", getText("Central contact Name must be entered"));
-      }      
+      }
 
     }
 
     /**
-     * 
+     *
      * @return gtdDTO
      */
     public GeneralTrialDesignWebDTO getGtdDTO() {
@@ -611,13 +611,13 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @param gtdDTO gtdDTO
      */
     public void setGtdDTO(GeneralTrialDesignWebDTO gtdDTO) {
         this.gtdDTO = gtdDTO;
     }
-    
+
     private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
         String action = "";
         if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
@@ -629,5 +629,5 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
         return action;
     }
-    
+
 }
