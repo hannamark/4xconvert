@@ -110,17 +110,16 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
                     getClinicalResearchStaff(client);
                     searchClinicalResearchStaff(client);
 
-                    System.out.println("before healthCare");
                     echoHealthCareFac(client);
                     getHealthCareFacility(client);
                     searchHealthCareFacility(client);
 
-                    //echoOrg(client);
-                    //echoPerson(client);
-                    //getOrg(client);
-                    //getPerson(client);
-                    //searchPersons(client);
-                    //searchOrganizations(client);
+                    echoOrg(client);
+                    echoPerson(client);
+                    getOrg(client);
+                    getPerson(client);
+                    searchPersons(client);
+                    searchOrganizations(client);
 
                 } else {
                     usage();
@@ -358,15 +357,6 @@ public class CoppaPOClient extends CoppaPOClientBase implements CoppaPOI {
           System.out.println("Search ClinicalResearchStaff Results Found: " + searchClinicalResearchStaffs.length);
           for (ClinicalResearchStaff crs : searchClinicalResearchStaffs) {
         	  System.out.println(ToStringBuilder.reflectionToString(crs, ToStringStyle.MULTI_LINE_STYLE));
-        	  System.out.println("jdfhjs:-"+crs.getPostalAddress().getItem());
-        	  for(AD ad:crs.getPostalAddress().getItem()){
-        		  System.out.println("part"+ad.getPart());
-        		  for(ADXP adxp:ad.getPart()){
-        			  System.out.println("Adxp-value"+adxp.getValue());
-        			  System.out.println("Adxp-code"+adxp.getCode());
-        			  System.out.println("Adxp-Type"+adxp.getType());
-        		  }
-        	  }
           }
       }
     
