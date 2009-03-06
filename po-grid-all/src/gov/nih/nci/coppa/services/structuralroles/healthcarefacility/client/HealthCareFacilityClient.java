@@ -11,11 +11,16 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
 
+import gov.nih.nci.coppa.po.HealthCareFacility;
+import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.HealthCareFacilityPortType;
 import gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.service.HealthCareFacilityServiceAddressingLocator;
 import gov.nih.nci.coppa.services.structuralroles.healthcarefacility.common.HealthCareFacilityI;
@@ -33,7 +38,16 @@ import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
  * @created by Introduce Toolkit version 1.2
  */
 public class HealthCareFacilityClient extends HealthCareFacilityClientBase implements HealthCareFacilityI {	
+    /**
+     * The identifier name for healthCare Facility.
+     */
+    public static final String HEALTH_CARE_FACILITY_IDENTIFIER_NAME = "NCI health care facility identifier";
 
+    /**
+     * The ii root value for healthCare Facility.
+     */
+    public static final String HEALTH_CARE_FACILITY_ROOT = "2.16.840.1.113883.3.26.4.4.3";
+    
 	public HealthCareFacilityClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);	
 	}
@@ -62,6 +76,8 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 			  HealthCareFacilityClient client = new HealthCareFacilityClient(args[1]);
 			  // place client calls here if you want to use this main as a
 			  // test....
+              getHealthCareFacility(client);
+              searchHealthCareFacility(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -75,7 +91,28 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 			System.exit(1);
 		}
 	}
+	
+    private static void getHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
+        Id id = new Id();
+        id.setRoot(HEALTH_CARE_FACILITY_ROOT);
+        id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        id.setExtension("640");
+        HealthCareFacility result = client.getById(id);
+        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+    }
 
+    private static void searchHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
+      HealthCareFacility criteria = new HealthCareFacility();
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        HealthCareFacility[] searchHealthCareFacilities = client.search(criteria);
+        System.out.println("Search HealthCareFacility Results Found: " + searchHealthCareFacilities.length);
+        for (HealthCareFacility hcf : searchHealthCareFacilities) {
+          System.out.println(ToStringBuilder.reflectionToString(hcf, ToStringStyle.MULTI_LINE_STYLE));
+        }
+    }
+    
   public gov.nih.nci.coppa.po.HealthCareFacility getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");

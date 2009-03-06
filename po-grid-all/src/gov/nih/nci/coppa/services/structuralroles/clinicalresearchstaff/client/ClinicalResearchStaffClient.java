@@ -11,11 +11,16 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
 
+import gov.nih.nci.coppa.po.ClinicalResearchStaff;
+import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.ClinicalResearchStaffPortType;
 import gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.service.ClinicalResearchStaffServiceAddressingLocator;
 import gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.common.ClinicalResearchStaffI;
@@ -33,7 +38,16 @@ import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
  * @created by Introduce Toolkit version 1.2
  */
 public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase implements ClinicalResearchStaffI {	
+    /**
+     * The identifier name for ClinicalResearchStaff.
+     */
+    public static final String CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME = "NCI clinical research staff identifier";
 
+    /**
+     * The ii root value for ClinicalResearchStaff.
+     */
+    public static final String CLINICAL_RESEARCH_STAFF_ROOT = "2.16.840.1.113883.3.26.4.4.1";
+    
 	public ClinicalResearchStaffClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);	
 	}
@@ -62,6 +76,8 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
 			  ClinicalResearchStaffClient client = new ClinicalResearchStaffClient(args[1]);
 			  // place client calls here if you want to use this main as a
 			  // test....
+              getClinicalResearchStaff(client);
+              searchClinicalResearchStaff(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -75,7 +91,28 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
 			System.exit(1);
 		}
 	}
+	
+    private static void getClinicalResearchStaff(ClinicalResearchStaffClient client) throws RemoteException {
+        Id id = new Id();
+        id.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
+        id.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+        id.setExtension("668");
+        ClinicalResearchStaff result = client.getById(id);
+        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+    }
 
+    private static void searchClinicalResearchStaff(ClinicalResearchStaffClient client) throws RemoteException {
+        ClinicalResearchStaff criteria = new ClinicalResearchStaff();
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        ClinicalResearchStaff[] searchClinicalResearchStaffs = client.search(criteria);
+        System.out.println("Search ClinicalResearchStaff Results Found: " + searchClinicalResearchStaffs.length);
+        for (ClinicalResearchStaff crs : searchClinicalResearchStaffs) {
+            System.out.println(ToStringBuilder.reflectionToString(crs, ToStringStyle.MULTI_LINE_STYLE));
+        }
+    }
+    
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");

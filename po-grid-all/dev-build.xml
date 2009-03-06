@@ -11,6 +11,9 @@
     <!-- Place any other properties you will need here                  -->
     <!-- ============================================================== -->
 	<property file="local.properties"/>
+	<property name="service.hostname" value="localhost"/>
+	<property name="service.port" value="8080"/>
+	
     <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory"/>
     <property name="java.naming.provider.url.host" value="localhost"/>
     <property name="java.naming.provider.url.port" value="1099"/>
@@ -264,7 +267,7 @@
 
 	    <cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
 	        <fileset dir="${build.dest}">
-	            <include name="**/*.class" />
+	            <include name="**/dto/**/*.class" />
 	            <exclude name="**/*Test.class" />
 	        </fileset>
 	    </cobertura-instrument>
@@ -278,6 +281,7 @@
 		    <classpath refid="test.run.classpath" />
 		    <classpath refid="cobertura.classpath" />
 		    <formatter type="xml" />
+            <formatter type="plain" />
 			<batchtest fork="yes" todir="${junit.results.dir}">
 				<fileset dir="${test.src.dir}">
 					<include name="**/Test*.java" />
@@ -295,30 +299,40 @@
 	        		     totallinerate="2"/> <!-- Increase these as unit tests are written -->
 	</target>
 
+	<macrodef name="run-client">
+	   <attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient"/>
+	   <attribute name="serviceenpointname" default="CoreServices"/>
+	   <attribute name="hostname" default="${service.hostname}"/>
+	   <attribute name="port" default="${service.port}"/>
+		<sequential>
+			<var name="run-client.service.url" unset="true"/>
+	        <var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceEnpointName}" />
+	        <property name="runclasspath" refid="run.classpath"/>
+	        <echo message="Connecting to service: ${run-client.service.url}" />
+	        <java failonerror="true" classname="gov.nih.nci.coppa.services.entities.person.client.PersonClient" classpathref="run.classpath" fork="yes">
+	            <jvmarg value="-Xdebug"/>
+	            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=n"/>
+	            <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
+	            <arg value="-url" />
+	            <arg value="${run-client.service.url}" />
+	        </java>		
+		</sequential>
+	</macrodef>
+	
     <target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
-        <property name="person.service.url" value="http://localhost:8080/wsrf/services/cagrid/Person" />
-        <property name="runclasspath" refid="run.classpath"/>
-        <echo message="Connecting to service: ${person.service.url}" />
-        <java failonerror="true" classname="gov.nih.nci.coppa.services.entities.person.client.PersonClient" classpathref="run.classpath" fork="yes">
-            <jvmarg value="-Xdebug"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=n"/>
-            <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
-            <arg value="-url" />
-            <arg value="${person.service.url}" />
-        </java>
+    	<run-client serviceenpointname="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient"/>
     </target>
 	
     <target name="runOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample Organization Client">
-        <property name="organization.service.url" value="http://localhost:8080/wsrf/services/cagrid/Organization" />
-        <property name="runclasspath" refid="run.classpath"/>
-        <echo message="Connecting to service: ${organization.service.url}" />
-        <java failonerror="true" classname="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient" classpathref="run.classpath" fork="yes">
-            <jvmarg value="-Xdebug"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=n"/>
-            <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
-            <arg value="-url" />
-            <arg value="${organization.service.url}" />
-        </java>
+    	<run-client serviceenpointname="Organization" class="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient"/>
+    </target>
+	
+    <target name="runHealthCareFacilityClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareFacility Client">
+    	<run-client serviceenpointname="HealthCareFacility" class="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client.HealthCareFacilityClient"/>
+    </target>
+	
+    <target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths" description="Run the sample ClinicalResearchStaff Client">
+    	<run-client serviceenpointname="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient"/>
     </target>
 	
 </project>
