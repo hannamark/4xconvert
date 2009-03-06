@@ -580,6 +580,40 @@ import org.hibernate.Session;
     
 
     private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        boolean dateRulesApply = false;
+        if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+            dateRulesApply = true;
+        } else {
+            StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
+                    getStudyProtocol(studyProtocolDTO.getIdentifier()));
+            StudyProtocol newBo = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
+            if (!oldBo.getPrimaryCompletionDate().equals(newBo.getPrimaryCompletionDate())
+                    || !oldBo.getPrimaryCompletionDateTypeCode().equals(newBo.getPrimaryCompletionDateTypeCode())
+                    || !oldBo.getStartDate().equals(newBo.getStartDate())
+                    || !oldBo.getStartDateTypeCode().equals(newBo.getStartDateTypeCode())) {
+                dateRulesApply = true;
+            }
+        }
+        if (dateRulesApply) {
+            enForceDateRules(studyProtocolDTO);
+        }
+
+        //
+        if ((studyProtocolDTO.getFdaRegulatedIndicator() != null) 
+                && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null) 
+                && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()))) {
+            StudyIndldeServiceLocal local = (StudyIndldeServiceLocal) 
+                                JNDIUtil.lookup("pa/StudyIndldeServiceBean/local");
+            List<StudyIndldeDTO> list = local.getByStudyProtocol(studyProtocolDTO.getIdentifier());
+            if (!list.isEmpty()) {
+                throw new PAException("Unable to set FDARegulatedIndicator to 'No', " 
+                        + " Please remove IND/IDEs and try again");
+            }
+        }
+        
+    }
+
+    private void enForceDateRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
         Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
         ActualAnticipatedTypeCode sCode = ActualAnticipatedTypeCode.getByCode(
@@ -613,20 +647,6 @@ import org.hibernate.Session;
         }
         if ((sDate != null) && (cDate != null) && (cDate.before(sDate))) {
             throw new PAException("Primary completion date must be >= start date.");
-        }        
-        //
-        if ((studyProtocolDTO.getFdaRegulatedIndicator() != null) 
-                && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null) 
-                && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()))) {
-            StudyIndldeServiceLocal local = (StudyIndldeServiceLocal) 
-                                JNDIUtil.lookup("pa/StudyIndldeServiceBean/local");
-            List<StudyIndldeDTO> list = local.getByStudyProtocol(studyProtocolDTO.getIdentifier());
-            if (!list.isEmpty()) {
-                throw new PAException("Unable to set FDARegulatedIndicator to 'No', " 
-                        + " Please remove IND/IDEs and try again");
-            }
         }
-        
     }
-        
 }

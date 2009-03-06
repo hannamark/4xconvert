@@ -443,6 +443,13 @@ public class StudyOverallStatusAction extends ActionSupport implements
             oldReason = StConverter.convertToString(sosList.get(0).getReasonText());
         }
 
+        boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);
+        boolean dateChanged = (oldDate == null) ? (statusTimestamp != null) : !oldDate.equals(statusTimestamp);
+        boolean reasonChanged = (oldReason == null) ? (statusReason != null) : !oldReason.equals(statusReason);
+        if (!codeChanged && !dateChanged && !reasonChanged) {
+            return false;
+        }
+
         // enforce status transition rules (this must be first check per Tracker 17366
         if ((oldCode != null) && !oldCode.canTransitionTo(newCode)) {
             addActionError("Illegal study status transition from '" + oldCode.getCode()
@@ -487,9 +494,6 @@ public class StudyOverallStatusAction extends ActionSupport implements
                 }
             }
         }
-        boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);
-        boolean dateChanged = (oldDate == null) ? (statusTimestamp != null) : !oldDate.equals(statusTimestamp);
-        boolean reasonChanged = (oldReason == null) ? (statusReason != null) : !oldReason.equals(statusReason);
-        return (codeChanged || dateChanged || reasonChanged);
+        return true;
     }
 }
