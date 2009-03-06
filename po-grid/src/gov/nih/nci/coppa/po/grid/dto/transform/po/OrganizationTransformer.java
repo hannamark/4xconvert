@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.grid.dto.transform.ADTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.CDTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.DSET_TELTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.DSETTELTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.po.grid.dto.transform.ENTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.IITransformer;
@@ -11,12 +11,21 @@ import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 
-public class OrganizationTransformer implements Transformer<Organization, OrganizationDTO> {
+/**
+ * Transforms Organization instances.
+ */
+public final class OrganizationTransformer implements Transformer<Organization, OrganizationDTO> {
 
+    /**
+     * Public singleton.
+     */
     public static final OrganizationTransformer INSTANCE = new OrganizationTransformer();
 
-    private OrganizationTransformer() {}
+    private OrganizationTransformer() { }
 
+    /**
+     * {@inheritDoc}
+     */
     public Organization toXml(OrganizationDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -26,10 +35,13 @@ public class OrganizationTransformer implements Transformer<Organization, Organi
         x.setName(ENTransformer.ENON_INSTANCE.toXml(input.getName()));
         x.setPostalAddress(ADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         x.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
-        x.setTelecomAddress(DSET_TELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
+        x.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
         return x;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public OrganizationDTO toDto(Organization input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -39,7 +51,7 @@ public class OrganizationTransformer implements Transformer<Organization, Organi
         d.setName(ENTransformer.ENON_INSTANCE.toDto(input.getName()));
         d.setPostalAddress(ADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         d.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
-        d.setTelecomAddress(DSET_TELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
+        d.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
         return d;
     }
 }

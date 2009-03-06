@@ -1,20 +1,30 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.DSet;
 
 import java.util.HashSet;
-
 import java.util.Set;
-import org.iso._21090.DSETAD;
+
 import org.iso._21090.AD;
+import org.iso._21090.DSETAD;
 
-public class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
+/**
+ * Transforms sets of addresses.
+ */
+public final class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
 
+    /**
+     * Public transformer instance.
+     */
     public static final DSETADTransformer INSTANCE = new DSETADTransformer();
 
-    private DSETADTransformer() {}
+    private DSETADTransformer() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public DSETAD toXml(DSet<Ad> input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -26,6 +36,9 @@ public class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
         return x;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public DSet<Ad> toDto(DSETAD input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -41,6 +54,5 @@ public class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
         }
         return x;
     }
-
 
 }

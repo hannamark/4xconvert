@@ -7,11 +7,15 @@ import java.util.List;
 
 import org.iso._21090.ADXP;
 
-class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
+/**
+ * Transforms the parts of an address.
+ */
+final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
 
     public static final ADXPTransformer INSTANCE = new ADXPTransformer();
 
-    private ADXPTransformer() {}
+    private ADXPTransformer() {
+    }
 
     public ADXP toXml(Adxp input) throws DtoTransformException {
         if (input == null) {

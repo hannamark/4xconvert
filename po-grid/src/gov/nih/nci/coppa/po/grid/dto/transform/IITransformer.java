@@ -6,12 +6,22 @@ import gov.nih.nci.coppa.iso.Ii;
 
 import org.iso._21090.II;
 
-public class IITransformer implements Transformer<II, Ii> {
+/**
+ * Transforms identifiers.
+ */
+public final class IITransformer implements Transformer<II, Ii> {
 
+    /**
+     * Public singleton.
+     */
     public static final IITransformer INSTANCE = new IITransformer();
 
-    private IITransformer() {}
+    private IITransformer() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public II toXml(Ii input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -35,6 +45,9 @@ public class IITransformer implements Transformer<II, Ii> {
         target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Ii toDto(II input) throws DtoTransformException {
         if (input == null) {
             return null;

@@ -1,17 +1,26 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
-
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 
 import org.iso._21090.ENXP;
 
-class ENXPTransformer implements Transformer<ENXP, Enxp> {
+/**
+ * Transforms en parts.
+ */
+final class ENXPTransformer implements Transformer<ENXP, Enxp> {
 
+    /**
+     * Public singleton.
+     */
     public static final ENXPTransformer INSTANCE = new ENXPTransformer();
 
-    private ENXPTransformer() {}
+    private ENXPTransformer() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public ENXP toXml(Enxp input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -29,6 +38,9 @@ class ENXPTransformer implements Transformer<ENXP, Enxp> {
         return d;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Enxp toDto(ENXP input) throws DtoTransformException {
         if (input == null) {
             return null;

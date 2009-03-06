@@ -30,7 +30,14 @@
         </fileset>
     </path>
 
+    <path id="checkstyle.classpath">
+        <fileset dir="${basedir}">
+            <include name="tools/checkstyle/*.jar" />
+        </fileset>
+    </path>
+
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+    <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
     
     <patternset id="dependent.schema.folders.ps">
         <include name="core/**/*"/>
@@ -275,7 +282,7 @@
 	<!-- Call any tests.                                                -->
 	<!-- ============================================================== -->
 	<target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests."/>
-	<target name="-test">
+	<target name="-test" depends="checkstyle">
 	    <delete file="build/cobertura.ser" />
 
 	    <cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
@@ -311,6 +318,24 @@
 	    			     totalbranchrate="4" 
 	        		     totallinerate="2"/> <!-- Increase these as unit tests are written -->
 	</target>
+    <!--
+        A note about this target: Checkstyle has a bug that requires exception classes to be on the execution
+        classpath (http://jira.codehaus.org/browse/MPCHECKSTYLE-20).  Thus, in reality, this target should depend
+        on the compile target.  However, compile takes a long time, and in typical use this shouldn't be needed.
+        
+        If you get an error about invalid classpath, run 'ant compile checkstyle' and it should resolve.
+    -->
+    <target name="checkstyle" description="Verify coding styles and conventions.">
+        <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
+            <classpath>
+                <path location="${basedir}/build/classes"/>
+           		<path refid="checkstyle.classpath" />
+            </classpath>
+            <fileset dir="src/gov/nih/nci/coppa/po/grid/dto/transform" includes="**/*.java"/>
+          <formatter type="plain"/>
+          <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
+        </checkstyle>
+    </target>
 
 	<macrodef name="run-client">
 	   <attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient"/>

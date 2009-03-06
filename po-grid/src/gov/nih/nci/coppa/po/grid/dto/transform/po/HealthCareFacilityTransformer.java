@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
@@ -11,35 +11,42 @@ import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 
 /**
- * @author Vrushali
- *
+ * Transforms HealthCareFacility instances.
  */
-public class HealthCareFacilityTransformer  implements Transformer<HealthCareFacility,HealthCareFacilityDTO>{
-	public static final HealthCareFacilityTransformer  INSTANCE = new HealthCareFacilityTransformer ();
+public final class HealthCareFacilityTransformer implements Transformer<HealthCareFacility, HealthCareFacilityDTO> {
+    /**
+     * Public singleton.
+     */
+    public static final HealthCareFacilityTransformer INSTANCE = new HealthCareFacilityTransformer();
 
-	private HealthCareFacilityTransformer() {}
-	
-	public HealthCareFacilityDTO toDto(HealthCareFacility input)
-			throws DtoTransformException {
+    private HealthCareFacilityTransformer() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareFacilityDTO toDto(HealthCareFacility input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
         HealthCareFacilityDTO d = new HealthCareFacilityDTO();
-		d.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
-	    d.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
-	    d.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
+        d.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        d.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
+        d.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
         return d;
-	}
+    }
 
-	public HealthCareFacility toXml(HealthCareFacilityDTO input)
-			throws DtoTransformException {
-		 if (input == null) {
-	        return null;
-	     }
-	     HealthCareFacility d = new HealthCareFacility();
-	     d.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
-	     d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
-	     d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
-	     return d;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareFacility toXml(HealthCareFacilityDTO input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        HealthCareFacility d = new HealthCareFacility();
+        d.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
+        d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
+        return d;
+    }
 }

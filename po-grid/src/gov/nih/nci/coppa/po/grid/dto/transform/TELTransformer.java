@@ -15,12 +15,22 @@ import org.iso._21090.TELPerson;
 import org.iso._21090.TELPhone;
 import org.iso._21090.TELUrl;
 
-public class TELTransformer implements Transformer<TEL, Tel> {
+/**
+ * Transforms telecoms.
+ */
+public final class TELTransformer implements Transformer<TEL, Tel> {
 
+    /**
+     * Public singleton.
+     */
     public static final TELTransformer INSTANCE = new TELTransformer();
 
-    private TELTransformer() {}
+    private TELTransformer() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public TEL toXml(Tel input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -50,6 +60,9 @@ public class TELTransformer implements Transformer<TEL, Tel> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Tel toDto(TEL input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -76,7 +89,7 @@ public class TELTransformer implements Transformer<TEL, Tel> {
             try {
                 target.setValue(new URI(v));
             } catch (URISyntaxException ex) {
-                throw new DtoTransformException("error converting "+source.getClass().getSimpleName(), ex);
+                throw new DtoTransformException("error converting " + source.getClass().getSimpleName(), ex);
             }
         } else {
             target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));

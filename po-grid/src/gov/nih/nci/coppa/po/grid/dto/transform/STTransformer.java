@@ -4,12 +4,22 @@ import gov.nih.nci.coppa.iso.St;
 
 import org.iso._21090.ST;
 
-public class STTransformer implements Transformer<ST, St> {
+/**
+ * Transforms strings.
+ */
+public final class STTransformer implements Transformer<ST, St> {
 
+    /**
+     * Public singleton.
+     */
     public static final STTransformer INSTANCE = new STTransformer();
 
-    private STTransformer() {}
+    private STTransformer() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public ST toXml(St input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -24,6 +34,9 @@ public class STTransformer implements Transformer<ST, St> {
         return x;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public St toDto(ST input) throws DtoTransformException {
         if (input == null) {
             return null;

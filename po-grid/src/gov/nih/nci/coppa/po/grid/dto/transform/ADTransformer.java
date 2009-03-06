@@ -9,12 +9,22 @@ import java.util.List;
 import org.iso._21090.AD;
 import org.iso._21090.ADXP;
 
-public class ADTransformer implements Transformer<AD, Ad> {
+/**
+ * Transforms Addresses.
+ */
+public final class ADTransformer implements Transformer<AD, Ad> {
 
+    /**
+     * Public singleton.
+     */
     public static final ADTransformer INSTANCE = new ADTransformer();
 
-    private ADTransformer() {}
+    private ADTransformer() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public AD toXml(Ad input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -33,6 +43,9 @@ public class ADTransformer implements Transformer<AD, Ad> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Ad toDto(AD input) throws DtoTransformException {
         if (input == null) {
             return null;

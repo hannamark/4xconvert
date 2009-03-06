@@ -3,21 +3,27 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.ClinicalResearchStaff;
 import gov.nih.nci.coppa.po.grid.dto.transform.CDTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.DSETADTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.DSET_TELTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.DSETTELTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.po.grid.dto.transform.IITransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
 /**
- * @author Vrushali
- *
+ * Transforms ClinicalRearchStaff instances.
  */
-public class ClinicalResearchStaffTransformer implements Transformer<ClinicalResearchStaff,ClinicalResearchStaffDTO>{
-	public static final ClinicalResearchStaffTransformer  INSTANCE = new ClinicalResearchStaffTransformer ();
-	
-	public ClinicalResearchStaffDTO toDto(ClinicalResearchStaff input)
-			throws DtoTransformException {
+public final class ClinicalResearchStaffTransformer
+    implements Transformer<ClinicalResearchStaff, ClinicalResearchStaffDTO> {
+
+    /**
+     * Public singleton.
+     */
+    public static final ClinicalResearchStaffTransformer INSTANCE = new ClinicalResearchStaffTransformer();
+
+    /**
+     * {@inheritDoc}
+     */
+    public ClinicalResearchStaffDTO toDto(ClinicalResearchStaff input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
@@ -27,14 +33,16 @@ public class ClinicalResearchStaffTransformer implements Transformer<ClinicalRes
         d.setScoperIdentifier(IITransformer.INSTANCE.toDto(input.getScoperIdentifier()));
         d.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         d.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
-        d.setTelecomAddress(DSET_TELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
+        d.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
         return d;
 
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	public ClinicalResearchStaff toXml(ClinicalResearchStaffDTO input)
-			throws DtoTransformException {
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public ClinicalResearchStaff toXml(ClinicalResearchStaffDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
@@ -44,8 +52,7 @@ public class ClinicalResearchStaffTransformer implements Transformer<ClinicalRes
         d.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
         d.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
-        d.setTelecomAddress(DSET_TELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
+        d.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
         return d;
-	}
-
+    }
 }

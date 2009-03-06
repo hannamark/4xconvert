@@ -4,13 +4,22 @@ import gov.nih.nci.coppa.iso.Cd;
 
 import org.iso._21090.CD;
 
-public class CDTransformer implements Transformer<CD, Cd> {
+/**
+ * Transforms coded data elements.
+ */
+public final class CDTransformer implements Transformer<CD, Cd> {
 
+    /**
+     * Singleton for client consumption.
+     */
     public static final CDTransformer INSTANCE = new CDTransformer();
 
-    private CDTransformer() {}
+    private CDTransformer() {
+    }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public Cd toDto(CD input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -25,6 +34,9 @@ public class CDTransformer implements Transformer<CD, Cd> {
         return res;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public CD toXml(Cd input) throws DtoTransformException {
         if (input == null) {
             return null;

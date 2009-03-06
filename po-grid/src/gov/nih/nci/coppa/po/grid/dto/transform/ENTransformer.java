@@ -12,13 +12,32 @@ import org.iso._21090.ENON;
 import org.iso._21090.ENPN;
 import org.iso._21090.ENXP;
 
+/**
+ * Transformer for EN and subtypes.
+ *
+ * @param <ENXX> exact EN subtype.
+ * @param <EnXx> associated DTO type.
+ */
 public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements Transformer<ENXX, EnXx> {
 
+    /**
+     * Public singleton.
+     */
     public static final ENONTransformer ENON_INSTANCE = ENONTransformer.INSTANCE;
+    /**
+     * Public singleton.
+     */
     public static final ENPNTransformer ENPN_INSTANCE = ENPNTransformer.INSTANCE;
 
-    protected ENTransformer() {}
+    /**
+     * Ctr.
+     */
+    protected ENTransformer() {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public ENXX toXml(EnXx input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -32,6 +51,9 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
         return d;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public EnXx toDto(ENXX input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -54,34 +76,64 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
         }
     }
 
+    /**
+     * @return newly constructed xml object.
+     */
     protected abstract ENXX newXml();
+
+    /**
+     * @return newly constructed dto object.
+     */
     protected abstract EnXx newDto();
 
-
+    /**
+     * Org name transformer.
+     */
     public static class ENONTransformer extends ENTransformer<ENON, EnOn> {
 
+        /**
+         * Public singleton.
+         */
         public static final ENONTransformer INSTANCE = new ENONTransformer();
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected ENON newXml() {
             return new ENON();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected EnOn newDto() {
             return new EnOn();
         }
     }
 
-    public static class ENPNTransformer extends  ENTransformer<ENPN, EnPn> {
+    /**
+     * Person name transformer.
+     */
+    public static class ENPNTransformer extends ENTransformer<ENPN, EnPn> {
 
+        /**
+         * Public singleton.
+         */
         public static final ENPNTransformer INSTANCE = new ENPNTransformer();
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected ENPN newXml() {
             return new ENPN();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected EnPn newDto() {
             return new EnPn();

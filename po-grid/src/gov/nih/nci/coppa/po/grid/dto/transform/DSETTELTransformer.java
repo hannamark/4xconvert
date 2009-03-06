@@ -9,13 +9,22 @@ import java.util.Set;
 import org.iso._21090.DSETTEL;
 import org.iso._21090.TEL;
 
-public class DSET_TELTransformer implements Transformer<DSETTEL, DSet<Tel>> {
+/**
+ * Transforms sets of tels.
+ */
+public final class DSETTELTransformer implements Transformer<DSETTEL, DSet<Tel>> {
 
-    public static final DSET_TELTransformer INSTANCE = new DSET_TELTransformer();
+    /**
+     * Public singleton.
+     */
+    public static final DSETTELTransformer INSTANCE = new DSETTELTransformer();
 
-    private DSET_TELTransformer() {}
+    private DSETTELTransformer() {
+    }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public DSETTEL toXml(DSet<Tel> input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -30,6 +39,9 @@ public class DSET_TELTransformer implements Transformer<DSETTEL, DSet<Tel>> {
         return x;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public DSet<Tel> toDto(DSETTEL input) throws DtoTransformException {
         if (input == null || input.getNullFlavor() != null) {
             return null;
