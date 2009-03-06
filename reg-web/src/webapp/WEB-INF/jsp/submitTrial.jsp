@@ -192,7 +192,7 @@ function toggledisplay2 (it) {
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
                 <td scope="row" class="label">
-                    <label for="leadOrgIdentifier"> <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
+                    <label for="submitTrial_participationWebDTO_localProtocolIdentifier"> <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
                 </td>
                 <td>
                     <s:textfield name="participationWebDTO.localProtocolIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -205,7 +205,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td scope="row" class="label">
-                     <label for="trialTitle"> <fmt:message key="submit.trial.title"/><span class="required">*</span></label>
+                     <label for="submitTrial_protocolWebDTO_trialTitle"> <fmt:message key="submit.trial.title"/><span class="required">*</span></label>
                 </td>
                 <td>
                     <s:textarea name="protocolWebDTO.trialTitle"  cols="75" rows="4"  />
@@ -219,7 +219,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td  scope="row" class="label">
-                    <label for="trialPhase"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label> 
+                    <label for="submitTrial_protocolWebDTO_trialPhase"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label> 
                 </td>
               
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
@@ -234,7 +234,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td scope="row" class="label">
-                    <label for="otherPhasetext"> <fmt:message key="submit.trial.otherPhaseText"/></label>
+                    <label for="submitTrial_protocolWebDTO_otherPhaseText"> <fmt:message key="submit.trial.otherPhaseText"/></label>
                 </td>
                 <td>
                     <s:textarea name="protocolWebDTO.otherPhaseText"  cols="50" rows="2" />
@@ -262,7 +262,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td  scope="row" class="label">
-                    <label for="trialPurpose"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label> 
+                    <label for="submitTrial_protocolWebDTO_trialPurpose"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label> 
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
@@ -276,7 +276,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td scope="row" class="label">
-                    <label for="otherPurposetext"> <fmt:message key="submit.trial.otherPurposeText"/></label>
+                    <label for="submitTrial_protocolWebDTO_otherPurposeText"> <fmt:message key="submit.trial.otherPurposeText"/></label>
 
                 </td>
                 <td>
@@ -301,7 +301,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
 					<td scope="row" class="label">
-						<label for="org"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label> 
+						<label for="submitTrial_selectedLeadOrg_name_part_0__value"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label> 
 					</td>
 					<td class="value">
 						<div id="loadOrgField">
@@ -312,7 +312,7 @@ function toggledisplay2 (it) {
           <!-- include po person jsp -->
           <tr>
 					<td scope="row" class="label">
-						<label for="org"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label> 
+						<label for="submitTrial_poLeadPiFullName"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label> 
 					</td>
 					<td class="value">
 						<div id="loadPersField">
@@ -329,7 +329,7 @@ function toggledisplay2 (it) {
         <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
 					<td scope="row" class="label">
-						<label for="sponsor"> Sponsor:<span class="required">*</span></label> 
+						<label for="submitTrial_selectedSponsor_name_part_0__value"> Sponsor:<span class="required">*</span></label> 
 					</td>
 					<td class="value">
 						<div id="loadSponsorField">
@@ -339,7 +339,7 @@ function toggledisplay2 (it) {
 		</tr>   
 		<tr>
 				<td scope="row" class="label">
-				    <label for="responsibleParty"> <fmt:message key="submit.trial.responsibleParty"/><span class="required">*</span></label>
+				    <label for="submitTrial_resppartysponsor"> <fmt:message key="submit.trial.responsibleParty"/><span class="required">*</span></label>
 				</td>
 				<td>
 				<s:radio name="respparty" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
@@ -349,7 +349,7 @@ function toggledisplay2 (it) {
          <c:when test="${respparty == 'sponsor'}">
              <tr id="rpcid" >
               <td scope="row" class="label">
-                          <label for="responsiblepartyContact"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
+                          <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
               </td>                                        
               <td class="value">
               <div id="loadResponsibleContactField">
@@ -361,7 +361,7 @@ function toggledisplay2 (it) {
          <c:otherwise>
             <tr id="rpcid" style="display:none">
                      <td scope="row" class="label">
-                                 <label for="responsiblepartyContact"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
+                                 <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
                      </td>                                        
                      <td class="value">
                                <div id="loadResponsibleContactField">
@@ -375,7 +375,7 @@ function toggledisplay2 (it) {
 
           <tr>
                 <td scope="row" class="label">
-                   <label for="responsiblepartyEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label> 
+                   <label for="submitTrial_contactEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label> 
                 </td>
                 <td class="value">
                     <s:textfield name="contactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -388,7 +388,7 @@ function toggledisplay2 (it) {
                 </tr>
                 <tr>
                 <td scope="row" class="label">
-                 <label for="responsiblepartyPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
+                 <label for="submitTrial_contactPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
                 </td>
                 <td class="value">
                     <s:textfield name="contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -411,7 +411,7 @@ function toggledisplay2 (it) {
           </tr>          
           <tr>	
           		<td scope="row" class="label">
-					<label for="org">Summary 4 Funding Sponsor Type:</label> 
+					<label for="submitTrial_summary4FundingCategory">Summary 4 Funding Sponsor Type:</label> 
 				</td>
 			         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                 <td class="value">
@@ -428,7 +428,7 @@ function toggledisplay2 (it) {
            </tr>          
            <tr>
                	<td scope="row" class="label">
-						<label for="sponsor"> Summary 4 Funding Sponsor: </label> 
+						<label for="submitTrial_selectedSummary4Sponsor_name_part_0__value"> Summary 4 Funding Sponsor: </label> 
 				</td>
 				<td class="value">
 						<div id="loadSummary4FundingSponsorField">
@@ -547,7 +547,7 @@ function toggledisplay2 (it) {
           
           <tr>
                 <td scope="row" class="label">
-                    <label for="currentTrialStatus"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
+                    <label for="submitTrial_overallStatusWebDTO_statusCode"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
                 </td>
                     <s:set name="statusCodeValues" value="@gov.nih.nci.registry.enums.TrialStatusCode@getDisplayNames()" />
                 <td>                                             
@@ -561,7 +561,7 @@ function toggledisplay2 (it) {
           </tr>
         <tr>
             <td scope="row" class="label">
-                <label for="trialStatusReason"> <fmt:message key="submit.trial.trialStatusReason"/></label>                
+                <label for="submitTrial_overallStatusWebDTO_reason"> <fmt:message key="submit.trial.trialStatusReason"/></label>                
             </td>
             <td>
                 <s:textarea name="overallStatusWebDTO.reason"  cols="50" rows="2" />
@@ -574,7 +574,7 @@ function toggledisplay2 (it) {
             </td> 
         </tr>
         <tr>
-            <td scope="row" class="label"><label for="statusDate"><fmt:message
+            <td scope="row" class="label"><label for="submitTrial_overallStatusWebDTO_statusDate"><fmt:message
                 key="submit.trial.currentTrialStatusDate" /><span class="required">*</span></label></td>
             <td class="value"><s:textfield name="overallStatusWebDTO.statusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
@@ -589,7 +589,7 @@ function toggledisplay2 (it) {
         </tr>
         <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
         <tr>
-            <td scope="row" class="label"><label for="startDate"><fmt:message
+            <td scope="row" class="label"><label for="submitTrial_protocolWebDTO_startDate"><fmt:message
                 key="submit.trial.trialStartDate" /><span class="required">*</span></label></td>
             <td class="value"><s:textfield name="protocolWebDTO.startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
@@ -610,7 +610,7 @@ function toggledisplay2 (it) {
 
         </tr>
         <tr>
-            <td scope="row" class="label"><label for="completionDate">
+            <td scope="row" class="label"><label for="submitTrial_protocolWebDTO_completionDate">
             <fmt:message key="submit.trial.primaryCompletionDate" /><span class="required">*</span></label></td>
             <td class="value"><s:textfield name="protocolWebDTO.completionDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
@@ -687,7 +687,7 @@ function toggledisplay2 (it) {
       	
         <tr>
               <td scope="row" class="label">
-              <label for="protocolDocument">
+              <label for="submitTrial_protocolDoc">
                      <fmt:message key="submit.trial.protocolDocument"/>
                      <span class="required">*</span>
               </label>
@@ -704,7 +704,7 @@ function toggledisplay2 (it) {
          
          <tr>
               <td scope="row" class="label">
-              <label for="irbApproval">
+              <label for="submitTrial_irbApproval">
                      <fmt:message key="submit.trial.irbApproval"/>
                      <span class="required">*</span>
               </label>
@@ -720,7 +720,7 @@ function toggledisplay2 (it) {
          </tr>         
          <tr>
               <td scope="row" class="label">
-              <label for="particpating sites"><fmt:message key="submit.trial.participatingSites"/></label>
+              <label for="submitTrial_participatingSites"><fmt:message key="submit.trial.participatingSites"/></label>
              </td>
              <td class="value">
                  <s:file name="participatingSites" cssStyle="width:270px"/>
@@ -734,7 +734,7 @@ function toggledisplay2 (it) {
          
          <tr>
               <td scope="row" class="label">
-              <label for="informedConsent"><fmt:message key="submit.trial.informedConsent"/></label>
+              <label for="submitTrial_informedConsentDocument"><fmt:message key="submit.trial.informedConsent"/></label>
              </td>
              <td class="value">
                  <s:file name="informedConsentDocument" cssStyle="width:270px"/>
@@ -747,7 +747,7 @@ function toggledisplay2 (it) {
          </tr>         
          <tr>
               <td scope="row" class="label">
-              <label for="otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
+              <label for="submitTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
              </td>
              <td class="value">
                  <s:file name="otherDocument" cssStyle="width:270px"/>
