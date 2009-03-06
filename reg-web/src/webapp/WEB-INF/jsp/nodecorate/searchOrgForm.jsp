@@ -10,14 +10,14 @@
 <table  class="form">
    	<tr> 	
  		<td scope="row" class="label">
-            <label for="name"> <fmt:message key="popUpOrg.name"/></label>
+            <label for="poOrganizations_orgSearchCriteria_orgName"> <fmt:message key="popUpOrg.name"/></label>
         </td>
  		<td>
  			<s:textfield name="orgSearchCriteria.orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
  		
  		<td scope="row" class="label">
-            <label for="country"> <fmt:message key="popUpOrg.country"/></label>
+            <label for="poOrganizations_orgSearchCriteria_orgCountry"> <fmt:message key="popUpOrg.country"/></label>
         </td>
         <td>
               	<s:select  
@@ -28,13 +28,13 @@
 	</tr>
 	<tr>  
  		<td scope="row" class="label">
-            <label for="city"> <fmt:message key="popUpOrg.city"/></label>
+            <label for="poOrganizations_orgSearchCriteria_orgCity"> <fmt:message key="popUpOrg.city"/></label>
         </td>
  		<td> 			
  			<s:textfield name="orgSearchCriteria.orgCity"  maxlength="200" size="100"  cssStyle="width:200px" />
 		</td>
  		 <td scope="row" class="label">
-            <label for="zip"> <fmt:message key="popUpOrg.zip"/></label>
+            <label for="poOrganizations_orgSearchCriteria_orgZip"> <fmt:message key="popUpOrg.zip"/></label>
         </td>
  		<td>
  			<s:textfield name="orgSearchCriteria.orgZip" maxlength="75" size="20"/>
@@ -43,7 +43,7 @@
 	<tr><td colspan="4"> <hr></td> </tr>
 	<tr>  
  		<td scope="row" class="label">
-            <label for="city">CTEP Identifier :</label>
+            <label for="poOrganizations_orgSearchCriteria_ctepId">CTEP Identifier :</label>
             
         </td>
  		<td> 			
