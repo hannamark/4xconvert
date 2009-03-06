@@ -30,7 +30,7 @@
                     <!--/Home Banner-->
 
                     <!--ADD CONTENT HERE-->
-
+                    <h1>CTRP Home</h1>
                     <p class="intro">
                         This Portal enables you to  register a trial with NCI&#39;s Clinical Trials Reporting Program. You can
                     </p>
