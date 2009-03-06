@@ -151,7 +151,20 @@
     <target name="postJarStubs">
 
     </target>
-
+	
+	<target name="compile-quick">
+        <runtarget target="preCompile" />
+        <javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+    
+        <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
+        <copy toDir="${build.dest}">
+            <fileset dir="${src.dir}">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <runtarget target="postCompile" />
+	</target>
+	
     <!-- ============================================================== -->
     <!-- Pre Compile Build Target                                       -->
     <!-- ============================================================== -->
@@ -247,7 +260,7 @@
 	</target>
 
     <!-- Compile the test implementation classes (service, resource, etc.) -->
-    <target name="compileTests-nodepends">
+    <target name="compileTests-quick" depends="compile-quick">
         <runtarget target="preCompileTests" />
         <javac srcdir="${test.src.dir}" classpathref="test.build.classpath" destdir="${test.build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
         <runtarget target="postCompileTests" />
@@ -256,7 +269,7 @@
     <!-- ============================================================== -->
     <!-- Call any tests.                                                -->
     <!-- ============================================================== -->
-    <target name="test-quick" depends="checkGlobus, compileTests-nodepends, -test" description="Runs the service's tests (without recompiling the stubs)."/>
+    <target name="test-quick" depends="checkGlobus, compileTests-quick, -test" description="Runs the service's tests (without recompiling the stubs)."/>
 
 	<!-- ============================================================== -->
 	<!-- Call any tests.                                                -->
