@@ -384,21 +384,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<zip update="false" destfile="${po-grid.dist.dir}/${po-grid.artifact.file}">
 			<zipfileset dir="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/" />
 		</zip>
-		<!--
-		<unzip dest="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/lib" src="${grid.dist.relative.dir}/${resource.file.jboss-globus-lib}" />
-		<unzip dest="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" src="${grid.dist.relative.dir}/${resource.file.jboss-globus-war}" />
-
-		<replace dir="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" token="localhost:8080" value="${jboss.server.hostname}:${jboss.server.port}">
-			<include name="**/*.wsdl" />
-		</replace>
-		<replace file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/globus_resolution_service/jndi-config.xml" token="localhost:8080" value="${jboss.server.hostname}:${jboss.server.port}" />
-		<replace file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/cagrid_CoppaPO/jndi-config.xml" token="localhost:8080" value="${jboss.server.hostname}:${jboss.server.port}" />
-
-		<replace file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/web.xml" token="8080" value="${jboss.server.port}" />
-		<replaceregexp file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/cagrid_CoppaPO/CoppaPO_registration.xml" match="(\s+.wsa:Address.).*(.\/wsa:Address.)" replace="\1${grid.index.url}\2" flags="g" />
-        -->
-		<!--replaceregexp file="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/WEB-INF/etc/cagrid_CoppaPO/jndi-config.xml" match="..appservice.url." replace="http://${jboss.server.hostname}:${jboss.server.port}/po-api/http/remoteService" flags="g" /-->
-
 		<delete dir="${po-grid.artifact.dir}/server" />
 	</target>
 

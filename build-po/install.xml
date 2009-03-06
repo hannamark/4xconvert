@@ -106,6 +106,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
     <property name="po-grid.dir.src" value="${basedir}/${po-grid.dist.relative.dir}" />
     <property name="po-grid.dir.target" value="wsrf.war" />
+	<property name="po-grid.introduce.skeleton.service.name" value="CoreServices"/>
 	
 	<!-- Paths -->
 	<path id="bda-utils.classpath">
@@ -472,7 +473,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         	appserver.hostname="${jboss.server.hostname}"
         	search.host="localhost"
         	search.port="8080"
-        	grid.application.name="CoppaPO"
+        	grid.application.name="${po-grid.introduce.skeleton.service.name}"
         	grid.application.relative.dir="${po-grid.dir.target}"
         	grid.secure.enable="false"            
         />
@@ -831,10 +832,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <delete dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
         <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>	      
         <unzip src="${po-grid.dir.dist}/${po-grid.artifact.file}" dest="${temp.dir}/${po-grid.dist.relative.dir}"/>
-        <unzip src="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/CoppaPO-common.jar" dest="${temp.dir}/CoppaPO-common"/>
+        <unzip src="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${po-grid.introduce.skeleton.service.name}-common"/>
 		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
         <var name="file.list" 
-            value="CoppaPO-common/jndi.properties"/>
+            value="${po-grid.introduce.skeleton.service.name}-common/jndi.properties"/>
 
         <for list="${file.list}" param="file.relative.name">
             <sequential>
@@ -863,8 +864,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             </sequential>
         </for>
 		<move file="${po-grid.dir.dist}/${po-grid.artifact.file}" tofile="${po-grid.dir.dist}/${po-grid.artifact.file}.orig"/>
-	    <jar destfile="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/CoppaPO-common.jar" 
-	                basedir="${temp.dir}/CoppaPO-common" compress="false"/>
+	    <jar destfile="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-common.jar" 
+	                basedir="${temp.dir}/${po-grid.introduce.skeleton.service.name}-common" compress="false"/>
 		
 		<zip basedir="${temp.dir}/${po-grid.dist.relative.dir}" compress="true" file="${po-grid.dir.dist}/${po-grid.artifact.file}" update="false"/>
 	</target>
