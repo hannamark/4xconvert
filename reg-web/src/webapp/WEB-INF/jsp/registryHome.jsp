@@ -36,7 +36,7 @@
                     </p>
                     <ul>
                         <li><a href="/registry/registerUser.action"><strong>Create an account</strong></a> to register your clinical trials </li>
-                        <li><a href="/registry/protected/searchTrial.action"><strong>Login</strong></a> to your account and</li> 
+                        <li><a href="/registry/protected/searchTrial.action"><strong>Log In</strong></a> to your account and</li> 
                         	<menu> 
                         		<li>Register clinical trials</li>
                         		<li>Search registered trials by Title, Phase, Trial Identifiers and Organizations</li>
