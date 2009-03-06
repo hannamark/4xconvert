@@ -2,7 +2,7 @@
 <reg-web:failureMessage/>
 <c:if test="${orgs != null}">
 
-<display:table class="data" sort="list" pagesize="10" uid="row" 
+<display:table class="data" summary="This table contains Organization search results. Please use column headers to sort results"  sort="list" pagesize="10" uid="row" 
 	name="orgs" export="false" requestURI="popupdisplayOrgListDisplayTag.action">
 	<display:column title="Organization Name" property="name"  sortable="true"  headerClass="sortable"/>
 	<display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"/>
