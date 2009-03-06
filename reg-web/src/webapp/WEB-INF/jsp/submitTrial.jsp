@@ -338,7 +338,9 @@ function toggledisplay2 (it) {
 					</td>
 		</tr>   
 		<tr>
-				<td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
+				<td scope="row" class="label">
+				    <label for="responsibleParty"> <fmt:message key="submit.trial.responsibleParty"/><span class="required">*</span></label>
+				</td>
 				<td>
 				<s:radio name="respparty" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
 				</td>
@@ -347,7 +349,7 @@ function toggledisplay2 (it) {
          <c:when test="${respparty == 'sponsor'}">
              <tr id="rpcid" >
               <td scope="row" class="label">
-                          <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+                          <label for="responsiblepartyContact"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
               </td>                                        
               <td class="value">
               <div id="loadResponsibleContactField">
@@ -359,7 +361,7 @@ function toggledisplay2 (it) {
          <c:otherwise>
             <tr id="rpcid" style="display:none">
                      <td scope="row" class="label">
-                                 <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+                                 <label for="responsiblepartyContact"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
                      </td>                                        
                      <td class="value">
                                <div id="loadResponsibleContactField">
@@ -373,7 +375,7 @@ function toggledisplay2 (it) {
 
           <tr>
                 <td scope="row" class="label">
-                   Email Address:<span class="required">*</span>
+                   <label for="responsiblepartyEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label> 
                 </td>
                 <td class="value">
                     <s:textfield name="contactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -385,7 +387,9 @@ function toggledisplay2 (it) {
                 </td>
                 </tr>
                 <tr>
-                <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
+                <td scope="row" class="label">
+                 <label for="responsiblepartyPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
+                </td>
                 <td class="value">
                     <s:textfield name="contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
                     <span class="formErrorMsg"> 
