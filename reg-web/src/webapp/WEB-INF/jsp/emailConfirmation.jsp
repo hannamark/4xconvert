@@ -14,6 +14,7 @@
 
 <body>
 <!-- main content begins-->
+    <c:set var="topic" scope="request" value="register"/> 
     <h2><fmt:message key="register.user.email.confirm"/></h2>
     <div class="box" id="filters">
       <p>An e-mail has been sent to the e-mail address, <strong><c:out value="${requestScope.emailAddress}"/>
