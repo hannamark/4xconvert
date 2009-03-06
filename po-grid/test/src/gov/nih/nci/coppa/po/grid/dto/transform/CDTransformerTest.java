@@ -3,10 +3,13 @@ package gov.nih.nci.coppa.po.grid.dto.transform;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.NullFlavor;
 
 import org.iso._21090.CD;
+import org.junit.Test;
 
 /**
  *
@@ -59,5 +62,20 @@ public class CDTransformerTest extends AbstractTransformerTestBase<CDTransformer
         assertNull(i.getCodeSystemName());
         assertNull( i.getCodeSystemVersion());
         assertNull(i.getDisplayName());
+    }
+
+    @Test
+    public void testCdCodeNull() throws Exception {
+        Cd cd = new Cd();
+        cd.setNullFlavor(NullFlavor.ASKU);
+        CD result = CDTransformer.INSTANCE.toXml(cd);
+        assertNotNull(result);
+        assertNull(result.getCode());
+        assertEquals(org.iso._21090.NullFlavor.ASKU, result.getNullFlavor());
+
+        cd = CDTransformer.INSTANCE.toDto(result);
+        assertNotNull(cd);
+        assertNull(cd.getCode());
+        assertEquals(NullFlavor.ASKU, cd.getNullFlavor());
     }
 }

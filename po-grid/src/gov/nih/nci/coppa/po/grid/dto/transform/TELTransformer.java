@@ -53,8 +53,8 @@ public final class TELTransformer implements Transformer<TEL, Tel> {
 
     private static void copyToXml(Tel source, TEL target) throws DtoTransformException {
         URI u = source.getValue();
-        if (u == null) {
-            target.setValue(u.toString()); // FIXME: bug here - need test case PO-854
+        if (u != null) {
+            target.setValue(u.toString());
         } else {
             target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
         }

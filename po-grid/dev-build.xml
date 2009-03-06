@@ -294,7 +294,7 @@
 	    
 	    <echo message="Test results dir: ${junit.results.dir}" />
 		<mkdir dir="${junit.results.dir}" />
-		<junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true">
+		<junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="yes">
 		    <sysproperty key="net.sourceforge.cobertura.datafile"
 		    		file="${basedir}/build/cobertura.ser" />
 		    <classpath location="${build.dir}/intrumented" />
@@ -315,8 +315,8 @@
 	        			  destdir="${build.dir}/cobertura" 
 	        			  srcdir="${src.dir}" />
 	    <cobertura-check datafile="${basedir}/build/cobertura.ser"
-	    			     totalbranchrate="4" 
-	        		     totallinerate="2"/> <!-- Increase these as unit tests are written -->
+	    			     totalbranchrate="27" 
+	        		     totallinerate="22"/> <!-- Increase these as unit tests are written -->
 	</target>
     <!--
         A note about this target: Checkstyle has a bug that requires exception classes to be on the execution

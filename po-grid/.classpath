@@ -83,7 +83,7 @@
 	<classpathentry kind="lib" path="test/lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/iso-datatypes-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/iso-datatypes-1.0-SNAPSHOT.jar" sourcepath="/iso-datatypes/src/main"/>
 	<classpathentry kind="lib" path="lib/jaxb-api.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl.jar"/>
 	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
