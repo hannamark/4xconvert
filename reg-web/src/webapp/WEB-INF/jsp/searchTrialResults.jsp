@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
-<display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
-    name="${param.listName}" requestURI="searchTrialquery.action" export="false">	
+<display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results" 
+            decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
+              name="${param.listName}" requestURI="searchTrialquery.action" export="false">	
 	<display:column class="title" title="NCI Trial Identifier" sortable="true">
             <s:a href="#" onclick="viewProtocol('${row.studyProtocolId}','${row.userLastCreated}');">${row.nciIdentifier}</s:a>
       </display:column>
