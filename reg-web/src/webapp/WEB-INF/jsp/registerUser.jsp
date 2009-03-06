@@ -5,7 +5,14 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="register.user.page.title"/></title>   
+        <c:choose>
+            <c:when test="${param.resetPassword == true}">
+                  <title><fmt:message key="reset.password.page.title"/></title> 
+            </c:when>
+            <c:otherwise>
+                  <title><fmt:message key="register.user.page.title"/></title> 
+            </c:otherwise>
+        </c:choose>      
     <s:head/>
 </head>
 
@@ -19,7 +26,14 @@ function handleAction(){
 
 <body>
 <!-- main content begins-->
-    <h1><fmt:message key="register.user.page.header"/></h1>
+        <c:choose>
+            <c:when test="${param.resetPassword == true}">
+                  <h1><fmt:message key="reset.password.page.header"/></h1>
+            </c:when>
+            <c:otherwise>
+                  <h1><fmt:message key="register.user.page.header"/></h1>
+            </c:otherwise>
+        </c:choose>  
     <c:set var="topic" scope="request" value="register"/> 
     <div class="box" id="filters">
     <s:form name="registerUser" validate="true" method="POST" ><s:actionerror />
