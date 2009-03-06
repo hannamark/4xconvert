@@ -49,7 +49,7 @@ function handleMyAction(){
         
         	<tr>
         		<td scope="row" class="label">
-        		<label for="title"> <fmt:message key="search.trial.title"/></label>
+        		<label for="searchTrial_criteria_officialTitle"> <fmt:message key="search.trial.title"/></label>
         		</td>
         		<td colspan="4">
         		<s:textfield name="criteria.officialTitle" maxlength="400" size="300"  cssStyle="width:98%;max-width:680px" />
@@ -57,14 +57,14 @@ function handleMyAction(){
         	</tr>
         	<tr>
 				<td scope="row" class="label">
-					<label for="phase"> <fmt:message key="search.trial.phase"/></label>
+					<label for="searchTrial_criteria_phaseCode"> <fmt:message key="search.trial.phase"/></label>
 				</td>
 					<s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
 				<td>
 					<s:select headerKey="" headerValue="--Select--" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
 				</td>
 				<td scope="row" class="label">
-					<label for="type"> <fmt:message key="search.trial.purpose"/></label>
+					<label for="searchTrial_criteria_primaryPurposeCode"> <fmt:message key="search.trial.purpose"/></label>
 				</td>
 					<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
 				<td>
@@ -73,7 +73,7 @@ function handleMyAction(){
 			</tr>
 			<tr>
 				<td scope="row" class="label">
-					<label for="identifierType"> <fmt:message key="search.trial.identifierType"/></label>
+					<label for="searchTrial_criteria_identifierType"> <fmt:message key="search.trial.identifierType"/></label>
 				</td>
 				<td>
 					<s:select 
@@ -91,7 +91,7 @@ function handleMyAction(){
                     </span> 
 				</td>
 				<td scope="row" class="label">
-					<label for="identifier"> <fmt:message key="search.trial.identifier"/></label>
+					<label for="searchTrial_criteria_identifier"> <fmt:message key="search.trial.identifier"/></label>
 					<br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
 				</td>
 				<td>
@@ -107,14 +107,14 @@ function handleMyAction(){
 			
 			<tr>
 				<td scope="row" class="label">
-					<label for="organizationType"> <fmt:message key="search.trial.organizationType"/></label>
+					<label for="searchTrial_criteria_organizationType"> <fmt:message key="search.trial.organizationType"/></label>
 				</td>
 					<s:set name="organizationTypeValues" value="@gov.nih.nci.pa.enums.OrganizationTypeCode@getDisplayNames()" />
 				<td>
 					<s:select headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization'}" value="criteria.organizationType" cssStyle="width:206px"/> 
 				</td>
 				<td scope="row" class="label">
-					<label for="organization"> <fmt:message key="search.trial.organization"/></label>
+					<label for="searchTrial_criteria_organizationId"> <fmt:message key="search.trial.organization"/></label>
 				</td>
 				<s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
 				<td>
