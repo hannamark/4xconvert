@@ -53,7 +53,7 @@ function handleAction(){
   
           <tr>
                 <td scope="row" class="label">
-                    <label for="emailAddress"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
+                    <label for="registerUser_registryUserWebDTO_loginName"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
                 </td>
                 <td>
                     <s:textfield name="registryUserWebDTO.loginName"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -66,7 +66,7 @@ function handleAction(){
           </tr>
           <tr>
                 <td scope="row" class="label">
-                    <label for="password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
+                    <label for="registerUser_registryUserWebDTO_password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
                 </td>
                 <td>
                     <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
@@ -79,7 +79,7 @@ function handleAction(){
           </tr>
           <tr>
                 <td scope="row" class="label">
-                    <label for="retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
+                    <label for="registerUser_registryUserWebDTO_retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
                 </td>
                 <td>
                     <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
