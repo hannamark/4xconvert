@@ -107,6 +107,9 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
         ClinicalResearchStaff[] searchClinicalResearchStaffs = client.search(criteria);
+        if (searchClinicalResearchStaffs == null) {
+            System.out.println("Search ClinicalResearchStaff Results was null!");
+        }
         System.out.println("Search ClinicalResearchStaff Results Found: " + searchClinicalResearchStaffs.length);
         for (ClinicalResearchStaff crs : searchClinicalResearchStaffs) {
             System.out.println(ToStringBuilder.reflectionToString(crs, ToStringStyle.MULTI_LINE_STYLE));

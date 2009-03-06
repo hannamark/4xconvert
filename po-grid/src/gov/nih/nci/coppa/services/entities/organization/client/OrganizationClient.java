@@ -107,7 +107,10 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         statusCode.setCode("active");
         criteria.setStatusCode(statusCode);
         Organization[] searchOrgs = client.search(criteria);
-        System.out.println("Search Orgs Results Found: " + searchOrgs.length);
+        if (searchOrgs == null) {
+            System.out.println("Search Organization Results was null!");
+        }
+        System.out.println("Search Organization Results Found: " + searchOrgs.length);
         for (Organization org : searchOrgs) {
             print(org);
         }

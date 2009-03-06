@@ -95,9 +95,12 @@ public class PersonClient extends PersonClientBase implements PersonI {
         CD statusCode = new CD();
         statusCode.setCode("active");
         criteria.setStatusCode(statusCode);
-        gov.nih.nci.coppa.po.Person[] searchPersons = client.search(criteria);
-        System.out.println("Search Persons Results Found: " + searchPersons.length);
-        for (gov.nih.nci.coppa.po.Person person : searchPersons) {
+        gov.nih.nci.coppa.po.Person[] results = client.search(criteria);
+        if (results == null) {
+            System.out.println("Search Persons Results was null!");
+        }
+        System.out.println("Search Persons Results Found: " + results.length);
+        for (gov.nih.nci.coppa.po.Person person : results) {
             print(person);
         }
     }

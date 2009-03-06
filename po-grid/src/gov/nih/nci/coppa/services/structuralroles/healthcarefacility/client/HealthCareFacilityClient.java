@@ -107,6 +107,9 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
         HealthCareFacility[] searchHealthCareFacilities = client.search(criteria);
+        if (searchHealthCareFacilities == null) {
+            System.out.println("Search HealthCareFacility Results was null!");
+        }
         System.out.println("Search HealthCareFacility Results Found: " + searchHealthCareFacilities.length);
         for (HealthCareFacility hcf : searchHealthCareFacilities) {
           System.out.println(ToStringBuilder.reflectionToString(hcf, ToStringStyle.MULTI_LINE_STYLE));
