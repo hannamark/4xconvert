@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<h2>Search Organizations</h2>
 <p align="center" class="info">
 	Type a single initial character or string of initial characters in any of the text fields 
 	in the upper frame or in CTEP Identifier field in the lower frame.
