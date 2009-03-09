@@ -7,11 +7,8 @@ package gov.nih.nci.coppa.po.grid.remote;
 import java.util.List;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
-import gov.nih.nci.services.person.PersonDTO;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 

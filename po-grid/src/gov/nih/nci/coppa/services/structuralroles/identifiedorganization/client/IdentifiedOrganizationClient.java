@@ -11,11 +11,17 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
 
+import gov.nih.nci.coppa.po.ClinicalResearchStaff;
+import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.IdentifiedOrganization;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.IdentifiedOrganizationPortType;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.service.IdentifiedOrganizationServiceAddressingLocator;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.common.IdentifiedOrganizationI;
@@ -33,6 +39,16 @@ import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
  * @created by Introduce Toolkit version 1.2
  */
 public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBase implements IdentifiedOrganizationI {	
+
+	/**
+     * The identifier name for for Identified org.
+     */
+    public static final String IDENTIFIED_ORG_IDENTIFIER_NAME = "Identified org identifier";
+
+    /**
+     * The ii root value for Identified org.
+     */
+    public static final String IDENTIFIED_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.6";
 
 	public IdentifiedOrganizationClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);	
@@ -55,13 +71,15 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 	}
 	
 	public static void main(String [] args){
-	    System.out.println("Running the Grid Service Client");
+	    System.out.println("Running the Grid Service Client idOrg");
 		try{
 		if(!(args.length < 2)){
 			if(args[0].equals("-url")){
 			  IdentifiedOrganizationClient client = new IdentifiedOrganizationClient(args[1]);
 			  // place client calls here if you want to use this main as a
 			  // test....
+			  getIdentifiedOrg(client);
+			  searchIdentifiedOrg(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -75,6 +93,25 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 			System.exit(1);
 		}
 	}
+  private static void getIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
+	Id id = new Id();
+	id.setRoot(IDENTIFIED_ORG_ROOT);
+	id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
+	id.setExtension("592");
+	IdentifiedOrganization result = client.getById(id);
+	System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+  }
+  private static void searchIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
+	    IdentifiedOrganization criteria = new IdentifiedOrganization();
+	    CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        IdentifiedOrganization[] results = client.search(criteria);
+        System.out.println("Search IdentifiedOrg Results Found: " + results.length);
+        for (IdentifiedOrganization idOrg : results) {
+            System.out.println(ToStringBuilder.reflectionToString(idOrg, ToStringStyle.MULTI_LINE_STYLE));
+        }
+	  }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException {
     synchronized(portTypeMutex){
