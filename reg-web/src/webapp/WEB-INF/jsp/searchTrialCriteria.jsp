@@ -37,6 +37,7 @@ function handleMyAction(){
 </SCRIPT>
 <body>
 <!-- main content begins-->
+    <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a>
     <h1><fmt:message key="search.trial.page.header"/></h1>
     <c:set var="topic" scope="request" value="search_trials"/>
     <c:if test="${records != null}">    
@@ -146,7 +147,7 @@ function handleMyAction(){
      </div>
     	<div class="line"></div>
     	 <c:if test="${records != null}">						
-			<h2>Submitted Clinical Trials Search Results</h2>
+			<h2 id="search_results">Submitted Clinical Trials Search Results</h2>
 			   <c:set var="topic" scope="request" value="search_results"/>   
 				<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp">
 					<jsp:param name="listName" value="records" />        

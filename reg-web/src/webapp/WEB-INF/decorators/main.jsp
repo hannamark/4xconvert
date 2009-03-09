@@ -13,14 +13,15 @@
 <style type="text/css">
    BODY { width:1221px }
 </style>
-<body> 
+<body>
+<a href="#content" id="navskip">Skip to Page Content</a> 
 <div id="wrapper">
     	<jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
     	<jsp:include page="/WEB-INF/jsp/common/registryheader.jsp"/>
 	     
 	     <div id="main">	
 			<div id="contentwrapper">
-					 <div id="content">
+					 <div id="content">					    
 						<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a> 
 						
 							<decorator:body/>
