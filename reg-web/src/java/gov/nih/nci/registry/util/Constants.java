@@ -184,7 +184,7 @@ public class Constants {
     public static final String IDENTIFIER_TYPE_LEAD_ORG = "Lead Organization";
     
     /** TRIAL TITLE - Max Length. */
-    public static final int TRIAL_TITLE_MAX_LENGTH = 5000;
+    public static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     
     
     

@@ -209,7 +209,7 @@ function toggledisplay2 (it) {
                 </td>
                 <td>
                     <s:textarea name="protocolWebDTO.trialTitle"  cols="75" rows="4"  />
-                    <span class="info">Max 5000 characters</span>
+                    <span class="info">Max 4000 characters</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.trialTitle</s:param>
