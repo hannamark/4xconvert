@@ -182,7 +182,7 @@
     <!-- ============================================================== -->
     <!-- Post Compile Build Target                                       -->
     <!-- ============================================================== -->
-    <target name="postCompile">
+    <target name="postCompile" depends="checkstyle">
         <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
         <copy toDir="${build.dest}" filtering="true" overwrite="true">
             <filterset begintoken="$${" endtoken="}" >
