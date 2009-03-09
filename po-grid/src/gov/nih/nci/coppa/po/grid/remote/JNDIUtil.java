@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.po.grid.remote;
 
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -56,9 +57,16 @@ public class JNDIUtil {
                 .lookup("po/ClinicalResearchStaffCorrelationServiceBean/remote");
         return object;
     }
-    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationService() throws NamingException {
-    	IdentifiedOrganizationCorrelationServiceRemote object =(IdentifiedOrganizationCorrelationServiceRemote) context
-    	        .lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
-    	return object;
+
+    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderService() throws NamingException {
+        HealthCareProviderCorrelationServiceRemote object = (HealthCareProviderCorrelationServiceRemote) context
+            .lookup("po/HealthCareProviderCorrelationServiceBean/remote");
+        return object;
     }
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationService() throws NamingException {
+        IdentifiedOrganizationCorrelationServiceRemote object =(IdentifiedOrganizationCorrelationServiceRemote) context
+                .lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+        return object;
+    }
+
 }

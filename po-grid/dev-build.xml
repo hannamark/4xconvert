@@ -10,10 +10,10 @@
     <!-- ============================================================== -->
     <!-- Place any other properties you will need here                  -->
     <!-- ============================================================== -->
-	<property file="local.properties"/>
-	<property name="service.hostname" value="localhost"/>
-	<property name="service.port" value="8080"/>
-	
+  <property file="local.properties"/>
+  <property name="service.hostname" value="localhost"/>
+  <property name="service.port" value="8080"/>
+
     <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory"/>
     <property name="java.naming.provider.url.host" value="localhost"/>
     <property name="java.naming.provider.url.port" value="1099"/>
@@ -22,7 +22,7 @@
     <property name="java.naming.security.principal" value="ejbclient"/>
     <property name="java.naming.security.credentials" value="pass"/>
     <property name="cobertura.dir" value="tools/cobertura" />
-    
+
     <path id="cobertura.classpath">
         <fileset dir="${cobertura.dir}">
             <include name="cobertura.jar" />
@@ -38,7 +38,7 @@
 
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
     <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
-    
+
     <patternset id="dependent.schema.folders.ps">
         <include name="core/**/*"/>
         <include name="pkgdata/**/*"/>
@@ -91,7 +91,7 @@
     <!-- Pre Stubs Target                                               -->
     <!-- ============================================================== -->
     <target name="preStubs">
-        
+
     </target>
 
     <!-- ============================================================== -->
@@ -106,11 +106,11 @@
                 <pathelement location="${basedir}/lib/activation.jar"/>
                 <pathelement location="${basedir}/lib/jsr173_1.0_api.jar"/>
             </classpath>
-        	<arg value="-xmlschema"/>
+          <arg value="-xmlschema"/>
             <arg file="${basedir}/schema/CoreServices/CoppaPO.xsd"/>
             <arg file="${basedir}/schema/CoreServices/ISO_datatypes_Narrative.xsd"/>
-        	<!--
-        	SMM: PO-860
+          <!--
+          SMM: PO-860
             <arg file="${basedir}/schema/CoreServices/CoreServicesTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/PersonTypes.xsd"/>
             <arg file="${basedir}/schema/CoreServices/OrganizationTypes.xsd"/>
@@ -128,7 +128,7 @@
             <arg value="-nv"/>
             <arg value="-verbose"/>
         </java>
-        
+
     </target>
 
     <!-- ============================================================== -->
@@ -158,11 +158,11 @@
     <target name="postJarStubs">
 
     </target>
-	
-	<target name="compile-quick">
+
+  <target name="compile-quick">
         <runtarget target="preCompile" />
         <javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
-    
+
         <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
         <copy toDir="${build.dest}">
             <fileset dir="${src.dir}">
@@ -170,8 +170,8 @@
             </fileset>
         </copy>
         <runtarget target="postCompile" />
-	</target>
-	
+  </target>
+
     <!-- ============================================================== -->
     <!-- Pre Compile Build Target                                       -->
     <!-- ============================================================== -->
@@ -264,7 +264,7 @@
     <!-- ============================================================== -->
     <target name="postClean">
 
-	</target>
+  </target>
 
     <!-- Compile the test implementation classes (service, resource, etc.) -->
     <target name="compileTests-quick" depends="compile-quick">
@@ -278,58 +278,58 @@
     <!-- ============================================================== -->
     <target name="test-quick" depends="checkGlobus, compileTests-quick, -test" description="Runs the service's tests (without recompiling the stubs)."/>
 
-	<!-- ============================================================== -->
-	<!-- Call any tests.                                                -->
-	<!-- ============================================================== -->
-	<target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests."/>
-	<target name="-test" depends="checkstyle">
-	    <delete file="build/cobertura.ser" />
+  <!-- ============================================================== -->
+  <!-- Call any tests.                                                -->
+  <!-- ============================================================== -->
+  <target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests."/>
+  <target name="-test" depends="checkstyle">
+      <delete file="build/cobertura.ser" />
 
-	    <cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
-	        <fileset dir="${build.dest}">
-	            <include name="**/dto/**/*.class" />
-	            <exclude name="**/*Test.class" />
-	        </fileset>
-	    </cobertura-instrument>
-	    
-	    <echo message="Test results dir: ${junit.results.dir}" />
-		<mkdir dir="${junit.results.dir}" />
-		<junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="yes">
-		    <sysproperty key="net.sourceforge.cobertura.datafile"
-		    		file="${basedir}/build/cobertura.ser" />
-		    <classpath location="${build.dir}/intrumented" />
-		    <classpath refid="test.run.classpath" />
-		    <classpath refid="cobertura.classpath" />
-		    <formatter type="xml" />
+      <cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
+          <fileset dir="${build.dest}">
+              <include name="**/dto/**/*.class" />
+              <exclude name="**/*Test.class" />
+          </fileset>
+      </cobertura-instrument>
+
+      <echo message="Test results dir: ${junit.results.dir}" />
+    <mkdir dir="${junit.results.dir}" />
+    <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="yes">
+        <sysproperty key="net.sourceforge.cobertura.datafile"
+            file="${basedir}/build/cobertura.ser" />
+        <classpath location="${build.dir}/intrumented" />
+        <classpath refid="test.run.classpath" />
+        <classpath refid="cobertura.classpath" />
+        <formatter type="xml" />
             <formatter type="plain" />
-			<batchtest fork="yes" todir="${junit.results.dir}">
-				<fileset dir="${test.src.dir}">
-					<include name="**/Test*.java" />
+      <batchtest fork="yes" todir="${junit.results.dir}">
+        <fileset dir="${test.src.dir}">
+          <include name="**/Test*.java" />
                                         <include name="**/*Test.java" />
-					<include name="**/*TestCase.java" />
-				</fileset>
-			</batchtest>
-		</junit>
-	    <cobertura-report datafile="${basedir}/build/cobertura.ser" 
-	         			  format="html" 
-	        			  destdir="${build.dir}/cobertura" 
-	        			  srcdir="${src.dir}" />
-	    <cobertura-check datafile="${basedir}/build/cobertura.ser"
-	    			     totalbranchrate="27" 
-	        		     totallinerate="22"/> <!-- Increase these as unit tests are written -->
-	</target>
+          <include name="**/*TestCase.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+      <cobertura-report datafile="${basedir}/build/cobertura.ser"
+                   format="html"
+                  destdir="${build.dir}/cobertura"
+                  srcdir="${src.dir}" />
+      <cobertura-check datafile="${basedir}/build/cobertura.ser"
+                 totalbranchrate="27"
+                   totallinerate="22"/> <!-- Increase these as unit tests are written -->
+  </target>
     <!--
         A note about this target: Checkstyle has a bug that requires exception classes to be on the execution
         classpath (http://jira.codehaus.org/browse/MPCHECKSTYLE-20).  Thus, in reality, this target should depend
         on the compile target.  However, compile takes a long time, and in typical use this shouldn't be needed.
-        
+
         If you get an error about invalid classpath, run 'ant compile checkstyle' and it should resolve.
     -->
     <target name="checkstyle" description="Verify coding styles and conventions.">
         <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
             <classpath>
                 <path location="${basedir}/build/classes"/>
-           		<path refid="checkstyle.classpath" />
+               <path refid="checkstyle.classpath" />
             </classpath>
             <fileset dir="src/gov/nih/nci/coppa/po/grid/dto/transform" includes="**/*.java"/>
           <formatter type="plain"/>
@@ -337,40 +337,44 @@
         </checkstyle>
     </target>
 
-	<macrodef name="run-client">
-	   <attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient"/>
-	   <attribute name="serviceenpointname" default="CoreServices"/>
-	   <attribute name="hostname" default="${service.hostname}"/>
-	   <attribute name="port" default="${service.port}"/>
-		<sequential>
-			<var name="run-client.service.url" unset="true"/>
-	        <var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceEnpointName}" />
-	        <property name="runclasspath" refid="run.classpath"/>
-	        <echo message="Connecting to service: ${run-client.service.url}" />
-	        <java failonerror="true" classname="@{class}" classpathref="run.classpath" fork="yes">
-	            <jvmarg value="-Xdebug"/>
-	            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=n"/>
-	            <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
-	            <arg value="-url" />
-	            <arg value="${run-client.service.url}" />
-	        </java>		
-		</sequential>
-	</macrodef>
-	
+  <macrodef name="run-client">
+     <attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient"/>
+     <attribute name="serviceenpointname" default="CoreServices"/>
+     <attribute name="hostname" default="${service.hostname}"/>
+     <attribute name="port" default="${service.port}"/>
+    <sequential>
+      <var name="run-client.service.url" unset="true"/>
+          <var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceEnpointName}" />
+          <property name="runclasspath" refid="run.classpath"/>
+          <echo message="Connecting to service: ${run-client.service.url}" />
+          <java failonerror="true" classname="@{class}" classpathref="run.classpath" fork="yes">
+              <jvmarg value="-Xdebug"/>
+              <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=n"/>
+              <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
+              <arg value="-url" />
+              <arg value="${run-client.service.url}" />
+          </java>
+    </sequential>
+  </macrodef>
+
     <target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
-    	<run-client serviceenpointname="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient"/>
+      <run-client serviceenpointname="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient"/>
     </target>
-	
+
     <target name="runOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample Organization Client">
-    	<run-client serviceenpointname="Organization" class="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient"/>
+      <run-client serviceenpointname="Organization" class="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient"/>
     </target>
-	
+
     <target name="runHealthCareFacilityClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareFacility Client">
-    	<run-client serviceenpointname="HealthCareFacility" class="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client.HealthCareFacilityClient"/>
+      <run-client serviceenpointname="HealthCareFacility" class="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client.HealthCareFacilityClient"/>
     </target>
-	
+
+  <target name="runHealthCareProviderClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareProvider Client">
+        <run-client serviceenpointname="HealthCareProvider" class="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client.HealthCareProviderClient"/>
+  </target>
+
     <target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths" description="Run the sample ClinicalResearchStaff Client">
-    	<run-client serviceenpointname="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient"/>
+      <run-client serviceenpointname="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient"/>
     </target>
-	
+
 </project>

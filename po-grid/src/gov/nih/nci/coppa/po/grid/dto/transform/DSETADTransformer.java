@@ -30,8 +30,10 @@ public final class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
             return null;
         }
         DSETAD x = new DSETAD();
-        for (Ad ad : input.getItem()) {
-            x.getItem().add(ADTransformer.INSTANCE.toXml(ad));
+        if (input.getItem() != null) {
+            for (Ad ad : input.getItem()) {
+                x.getItem().add(ADTransformer.INSTANCE.toXml(ad));
+            }
         }
         return x;
     }
