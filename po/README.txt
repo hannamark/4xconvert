@@ -1,7 +1,7 @@
 
-1.	PO Source Code Structure and Build Process
+1.    PO Source Code Structure and Build Process
 
-1.1	Source Tree Structure
+1.1    Source Tree Structure
 
   * services /
     Sub-project that packages all PO services for deployment
@@ -40,33 +40,38 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     Install Eclipse maven plugin: http://m2eclipse.sonatype.org/update/
     Need to add other plugins here as well
 
+  * Initial DB setup
+
+    From the services/ directory, run:
+        mvn -Plocal,init-db sql:execute
+
 1.3 CI build (Maven 2.0.9)
     mvn -Plocal,init-db sql:execute
     mvn -Plocal clean install
     mvn -Pci,local integration-test
-    mvn -Plocal site verify 
-    
-1.4 Usefule, non standard mvn targets
+    mvn -Plocal site verify
 
-	mvn nci-commons:jboss-undeploy  - removes the deployable from jboss.
-	mvn nci-commons:hbm2ddl - generates the hibernate scheam.sql - usefull when writing migration scripts.
-	mvn cargo:deploy - deploys to jboss
-	mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating.
-	mvn liquibase:update run the liquibase update process, thus creating the schema (if needed) and bring the app in to line with the latest.
-		** Note this is run as part of nearly every build cycle, so there is no need to run it unless
-			you are trying to recreate the db without running the full build.  Also, it will ONLY work in the
-			services sub directory.
+1.4 Useful, non standard mvn targets
+
+    mvn nci-commons:jboss-undeploy  - removes the deployable from jboss.
+    mvn nci-commons:hbm2ddl - generates the hibernate scheam.sql - usefull when writing migration scripts.
+    mvn cargo:deploy - deploys to jboss
+    mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating.
+    mvn liquibase:update run the liquibase update process, thus creating the schema (if needed) and bring the app in to line with the latest.
+        ** Note this is run as part of nearly every build cycle, so there is no need to run it unless
+            you are trying to recreate the db without running the full build.  Also, it will ONLY work in the
+            services sub directory.
 
 1.5 Power-Maven Usage
     Deploy and run your integration tests to an already running container
     mvn -Pci-nostart integration-test
-    
+
     Run your integration tests against an already running container.
     cd client
     mvn -Pci-nostart integration-test
-    OR 
-    mvn -Pci-nostart integration-test -Dtest=<testclass>  
-    
+    OR
+    mvn -Pci-nostart integration-test -Dtest=<testclass>
+
     Run just the Selenium tests
      - Start and deploy to JBoss
 
@@ -80,7 +85,8 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
 
     mvn -Pci-nostart-nodeploy integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
 
-1.5 Peer Review 
+1.6 Peer Review
     Package up your differences by running 'svn diff -x -bw --no-diff-deleted -x --ignore-eol-style > diff.diff' and send it to another developer for review prior to committing to SVN.
 
-    
+1.7 Pre-commit check
+    Verify everything is working properly by running 'mvn -Plocal,nuke-db sql:execute && mvn -Plocal clean install sql:execute && mvn -Pci,local integration-test'

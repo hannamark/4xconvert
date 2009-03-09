@@ -19,7 +19,7 @@
         <jboss.configuration>default</jboss.configuration>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.0.19</nci-commons.version>
+        <nci-commons.version>1.0.22</nci-commons.version>
         <compileSource>1.5</compileSource>
         <hibernate.version>3.2.0.ga</hibernate.version>
         <hibernate.annotations.version>3.2.0.ga</hibernate.annotations.version>
@@ -36,11 +36,11 @@
         <jdbc.xa.driverClassName>org.postgresql.xa.PGXADataSource</jdbc.xa.driverClassName>
         <jdbc.artifactId>postgresql</jdbc.artifactId>
         <jdbc.version>8.2-507.jdbc3</jdbc.version>
-        
+
         <ldap.host.url></ldap.host.url>
         <ldap.searchable.base></ldap.searchable.base>
         <ldap.user.id.label></ldap.user.id.label>
-        
+
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
     </properties>
 
@@ -311,16 +311,16 @@
             <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
             </plugin>
-			<plugin>
-				<!-- Disabled features w/in the 2.1 plugin to speed up the report generation -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-				</configuration>
-			</plugin>
+            <plugin>
+                <!-- Disabled features w/in the 2.1 plugin to speed up the report generation -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
+            </plugin>
         </plugins>
     </reporting>
 

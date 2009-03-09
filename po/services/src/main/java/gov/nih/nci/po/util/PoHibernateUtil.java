@@ -106,7 +106,6 @@ public class PoHibernateUtil {
     private static final Map<Class<?>, ClassValidator<?>> CLASS_VALIDATOR_MAP =
         new HashMap<Class<?>, ClassValidator<?>>();
 
-
     /**
      * Get the hibernate helper.
      * @return the helper.

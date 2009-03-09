@@ -18,6 +18,11 @@
         <defaultPageSize>20</defaultPageSize>
         <jboss.home>target/jbossDeploy</jboss.home>
         <struts.devMode>false</struts.devMode>
+        <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
+        <test.jdbc.username>sa</test.jdbc.username>
+        <test.jdbc.password></test.jdbc.password>
+        <test.jdbc.driverClassName>org.hsqldb.jdbcDriver</test.jdbc.driverClassName>
+        <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
     </properties>
 
     <dependencies>
@@ -86,14 +91,14 @@
             <artifactId>hibernate-annotations</artifactId>
             <version>${hibernate.annotations.version}</version>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
             <version>1.1</version>
             <scope>provided</scope>
-        </dependency>  
-        
+        </dependency>
+
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
@@ -153,7 +158,7 @@
             <version>1.0</version>
         </dependency>
 
-        
+
 
         <!-- Provided by container -->
         <dependency>
@@ -168,7 +173,7 @@
             <version>2.0</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- Test jars -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -180,6 +185,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
             <version>2.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.7</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -271,5 +282,11 @@
                 </excludes>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
     </build>
 </project>

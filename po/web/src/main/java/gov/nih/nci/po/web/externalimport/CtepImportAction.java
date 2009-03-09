@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.service.external.CtepPersonImporter;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
 
 import java.io.BufferedReader;
@@ -104,6 +105,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
@@ -261,6 +263,11 @@ public class CtepImportAction extends ActionSupport {
                                 skippedRecords.add(line);
                             }
                         } catch (Exception e) {
+                            // Validation errors cause the transaction to be closed, so close and re-open the session
+                            // to import the rest of the lines
+                            HibernateHelper hh = PoHibernateUtil.getHibernateHelper();
+                            hh.unbindAndCleanupSession();
+                            hh.openAndBindSession();
                             LOG.error("Error importing " + callback.getType() + " with id:  " +  line, e);
                             erroredRecords.add(line);
                         }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration
+PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory name="java:/hibernate/SessionFactory">
+        <property name="connection.driver_class">${test.jdbc.driverClassName}</property>
+        <property name="connection.url">${test.jdbc.url}</property>
+        <property name="connection.username">${test.jdbc.username}</property>
+        <property name="connection.password">${test.jdbc.password}</property>
+        <property name="hibernate.dialect">${test.hibernate.dialect}</property>
+        <property name="hibernate.jdbc.batch_size">25</property>
+        <property name="hibernate.jdbc.batch_versioned_data">true</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property> 
+
+        <mapping class="gov.nih.nci.po.data.bo.Address" />
+        <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaff" />
+        <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" />
+        <mapping class="gov.nih.nci.po.data.bo.Country" />
+        <mapping class="gov.nih.nci.po.data.bo.Email"/>
+        <mapping class="gov.nih.nci.po.data.bo.FundingMechanism"/>
+        <mapping class="gov.nih.nci.po.data.bo.HealthCareProvider"/>
+        <mapping class="gov.nih.nci.po.data.bo.HealthCareProviderCR" />
+        <mapping class="gov.nih.nci.po.data.bo.HealthCareFacility"/>
+        <mapping class="gov.nih.nci.po.data.bo.HealthCareFacilityCR" />
+        <mapping class="gov.nih.nci.po.data.bo.IdentifiedOrganization" />
+        <mapping class="gov.nih.nci.po.data.bo.IdentifiedOrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.bo.IdentifiedPerson" />
+        <mapping class="gov.nih.nci.po.data.bo.IdentifiedPersonCR" />
+        <mapping class="gov.nih.nci.po.data.bo.Organization" />
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactType" />         
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContact" />      
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactCR" />         
+        <mapping class="gov.nih.nci.po.data.bo.OversightCommittee"/>
+        <mapping class="gov.nih.nci.po.data.bo.OversightCommitteeCR" />
+        <mapping class="gov.nih.nci.po.data.bo.OversightCommitteeType"/>
+        <mapping class="gov.nih.nci.po.data.bo.Person" />
+        <mapping class="gov.nih.nci.po.data.bo.PersonCR" />
+        <mapping class="gov.nih.nci.po.data.bo.PhoneNumber"/>
+        <mapping class="gov.nih.nci.po.data.bo.ResearchOrganization"/>
+        <mapping class="gov.nih.nci.po.data.bo.ResearchOrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.bo.ResearchOrganizationType"/>
+        <mapping class="gov.nih.nci.po.data.bo.State" />
+        <mapping class="gov.nih.nci.po.data.bo.URL"/>
+
+        <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
+        <mapping class="gov.nih.nci.po.audit.AuditLogDetail" />
+                
+        
+        <event type="pre-update">
+            <listener class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>
+        </event>
+        <event type="pre-insert">
+            <listener class="org.hibernate.validator.event.ValidatePreInsertEventListener"/>
+        </event>
+    </session-factory>
+</hibernate-configuration>

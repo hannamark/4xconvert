@@ -115,9 +115,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         assertTrue(EqualsBuilder.reflectionEquals(dto.getAssignedId(), newDto.getAssignedId()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected IdentifiedOrganization getExampleTestClass() {
         IdentifiedOrganization bo = new IdentifiedOrganization();
         bo.setId(ID);
@@ -130,9 +127,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         return bo;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected IdentifiedOrganizationDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
         IdentifiedOrganizationDTO dto = new IdentifiedOrganizationDTO();
         dto.setScoperIdentifier(getScoperIi(scoperId));
