@@ -3,14 +3,24 @@ package gov.nih.nci.coppa.po.grid.dto.transform;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.iso._21090.DSETTEL;
+import org.iso._21090.NullFlavor;
 import org.iso._21090.TEL;
 
 /**
- * Transforms sets of tels.
+ * Transforms sets of tels.  Note that there is a small amount of asymetry here w.r.t.
+ * empty or null sets:
+ * <ol>
+ * <li><b>DTO -> XML</b>: According to the ISO XSD, the XML can never be null.  It must
+ *     either have a NullFlavor set or its items list must be non-empty.  So we convert
+ *     both null DTOs and empty-set DTOs to a non-null result.
+ * <li><b>XML -> DTO</b>: Null or empty XML is converted to null.
+ * <li>
+ * </ol>
  */
 public final class DSETTELTransformer implements Transformer<DSETTEL, DSet<Tel>> {
 
@@ -26,15 +36,21 @@ public final class DSETTELTransformer implements Transformer<DSETTEL, DSet<Tel>>
      * {@inheritDoc}
      */
     public DSETTEL toXml(DSet<Tel> input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-            // or do we do DSETTEL.setNullFlavor(NullFlavor.NI); ? PO-853
-        }
         DSETTEL x = new DSETTEL();
-        Set<Tel> sItem = input.getItem();
-        List<TEL> tItem = x.getItem(); // FIXME: prove null case in unit tests PO-853
-        for (Tel element : sItem) {
-            tItem.add(TELTransformer.INSTANCE.toXml(element));
+        if (input != null && input.getItem() != null) {
+            Set<Tel> sItem = input.getItem();
+            List<TEL> tItem = x.getItem();
+            for (Tel element : sItem) {
+                TEL cur = TELTransformer.INSTANCE.toXml(element);
+                // XSD rule: all elements of set must be non-null
+                if (!(cur == null || cur.getNullFlavor() != null)) {
+                    tItem.add(cur);
+                }
+            }
+        }
+
+        if (x.getItem().isEmpty()) {
+            x.setNullFlavor(NullFlavor.NI);
         }
         return x;
     }
@@ -47,6 +63,7 @@ public final class DSETTELTransformer implements Transformer<DSETTEL, DSet<Tel>>
             return null;
         }
         DSet<Tel> d = new DSet<Tel>();
+        d.setItem(new HashSet<Tel>());
         List<TEL> sItem = input.getItem();
         Set<Tel> tItem = d.getItem();
         for (TEL tel : sItem) {

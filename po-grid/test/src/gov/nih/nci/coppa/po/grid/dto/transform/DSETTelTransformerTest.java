@@ -86,94 +86,108 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelPerson;
 import gov.nih.nci.coppa.iso.TelUrl;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.HashSet;
 
+import org.iso._21090.DSETTEL;
+import org.iso._21090.NullFlavor;
 import org.iso._21090.TEL;
-import org.iso._21090.TELPerson;
 import org.iso._21090.TELUrl;
 import org.junit.Test;
 
 /**
- * Tests tel transforms.
+ * @author Todd Parnell
+ *
  */
-public class TELTransformerTest extends AbstractTransformerTestBase<TELTransformer, TEL, Tel> {
+public class DSETTelTransformerTest
+    extends AbstractTransformerTestBase<DSETTELTransformer, org.iso._21090.DSETTEL, DSet<Tel>> {
 
-    public static final URI MAILTO;
-    public static final URI WEB;
+    @Override
+    public DSet<Tel> makeDtoSimple() {
+        DSet<Tel> result = new DSet<Tel>();
+        result.setItem(new HashSet<Tel>());
+        Tel item = new Tel();
+        item.setValue(TELTransformerTest.MAILTO);
+        result.getItem().add(item);
+        item = new TelUrl();
+        item.setValue(TELTransformerTest.WEB);
+        result.getItem().add(item);
 
-    static {
-        URI result = null;
-        try {
-            result = new URI("mailto:test@example.com");
-        } catch (URISyntaxException e) {
-        }
-        MAILTO = result;
-
-        result = null;
-        try {
-            result = new URI("http://www.example.com");
-        } catch (URISyntaxException e) {
-        }
-        WEB = result;
+        return result;
     }
 
     @Override
-    public Tel makeDtoSimple() {
-        Tel tel = new TelPerson();
-        tel.setValue(MAILTO);
+    public DSETTEL makeXmlSimple() {
+        DSETTEL result = new DSETTEL();
+        TEL item = new TEL();
+        item.setValue(TELTransformerTest.MAILTO.toASCIIString());
+        result.getItem().add(item);
+        item = new TELUrl();
+        item.setValue(TELTransformerTest.WEB.toASCIIString());
+        result.getItem().add(item);
 
-        return tel;
+        return result;
     }
 
     @Override
-    public TEL makeXmlSimple() {
-        TEL tel = new TELUrl();
-        tel.setValue("http://www.example.com");
-
-        return tel;
-    }
-
-    @Override
-    public void verifyDtoSimple(Tel x) {
+    public void verifyDtoSimple(DSet<Tel> x) {
         assertNotNull(x);
-        assertTrue(x instanceof TelUrl);
-        assertNull(x.getNullFlavor());
-        assertEquals(x.getValue(), WEB);
+        assertEquals(2, x.getItem().size());
+        for (Tel t : x.getItem()) {
+            assertNotNull(t);
+            assertNull(t.getNullFlavor());
+            assertNotNull(t.getValue());
+        }
     }
 
     @Override
-    public void verifyXmlSimple(TEL x) {
+    public void verifyXmlSimple(DSETTEL x) {
         assertNotNull(x);
-        assertTrue(x instanceof TELPerson);
         assertNull(x.getNullFlavor());
-        assertEquals("mailto:test@example.com", x.getValue());
+        assertEquals(2, x.getItem().size());
+        for (TEL t : x.getItem()) {
+            assertNotNull(t);
+            assertNull(t.getNullFlavor());
+            assertNotNull(t.getValue());
+        }
+    }
+
+    @Override
+    public void verifyXmlNull(DSETTEL x) {
+        assertNotNull(x);
+        assertEquals(NullFlavor.NI, x.getNullFlavor());
+        assertTrue(x.getItem().isEmpty());
     }
 
     @Test
-    public void testNullTel() throws Exception {
+    public void testNull() throws Exception {
+        DSETTEL xml = new DSETTEL();
+        xml.setNullFlavor(NullFlavor.ASKU);
+        DSet<Tel> dto = DSETTELTransformer.INSTANCE.toDto(xml);
+        assertNull(dto); // potentially, this could be non-null with an empty set (either would be fine),
+                         // but our converter converts to null so we check that here.
+
+        xml = DSETTELTransformer.INSTANCE.toXml(null);
+        assertNotNull(xml);
+        assertTrue(xml.getItem().isEmpty());
+        assertEquals(NullFlavor.NI, xml.getNullFlavor());
+
+        dto = new DSet<Tel>();
+        assertNotNull(xml);
+        assertTrue(xml.getItem().isEmpty());
+        assertEquals(NullFlavor.NI, xml.getNullFlavor());
+
+        dto.setItem(new HashSet<Tel>());
+        dto.getItem().add(null);
         Tel tel = new Tel();
-        tel.setNullFlavor(NullFlavor.ASKU);
-        TEL result = TELTransformer.INSTANCE.toXml(tel);
-        assertNotNull(result);
-        assertNull(result.getValue());
-        assertEquals(org.iso._21090.NullFlavor.ASKU, result.getNullFlavor());
-
-        tel = TELTransformer.INSTANCE.toDto(result);
-        assertNotNull(tel);
-        assertNull(tel.getValue());
-        assertEquals(NullFlavor.ASKU, tel.getNullFlavor());
-    }
-
-    @Test(expected = DtoTransformException.class)
-    public void testBadUri() throws Exception {
-        TEL tel = new TEL();
-        tel.setValue("http://!@#$%^&*(/");
-        TELTransformer.INSTANCE.toDto(tel);
+        tel.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.ASKU);
+        dto.getItem().add(tel);
+        xml = DSETTELTransformer.INSTANCE.toXml(dto);
+        assertNotNull(xml);
+        assertTrue(xml.getItem().isEmpty());
+        assertEquals(NullFlavor.NI, xml.getNullFlavor());
     }
 }
