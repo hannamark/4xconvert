@@ -182,9 +182,6 @@ public class StudyMilestoneServiceBean
         if (newDate == null) {
             throw new PAException("Milestone date is required.");
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            throw new PAException("Associated study protocol is required.");
-        }
 
         // onhold rules
         if (!newCode.isAllowedIfOnhold() 

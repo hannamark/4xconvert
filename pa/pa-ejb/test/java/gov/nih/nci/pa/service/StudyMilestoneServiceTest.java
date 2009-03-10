@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -239,5 +240,75 @@ public class StudyMilestoneServiceTest {
         remote.create(dto);
         dtoList = remote.getByStudyProtocol(spIi);
         assertEquals(oldSize + 1, dtoList.size());
+    }
+
+    @Test
+    public void getCurrentDocumentWorkflowStatusTest() throws Exception {
+        List<DocumentWorkflowStatusDTO> dwsList = dws.getByStudyProtocol(spIi);
+        for (DocumentWorkflowStatusDTO dto : dwsList) {
+            dws.delete(dto.getIdentifier());
+        }
+        // try to create w/ null dwf
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt("comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_CTGOV_SUBMISSION));
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setStudyProtocolIdentifier(spIi);
+        try {
+            remote.create(dto);
+            fail("Should have failed because of no DWF.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        
+        // create
+        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED));
+        dwfDto.setStatusDateRange(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dwfDto.setStudyProtocolIdentifier(spIi);
+        dws.create(dwfDto);
+        dto = remote.create(dto);
+        assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
+    }
+
+    @Test
+    public void missingDataTest() throws Exception {
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt("comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.PDQ_ABSTRACTION_COMPLETE));
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        
+        // spId is null
+        dto.setStudyProtocolIdentifier(null);
+        try {
+            remote.create(dto);
+            fail();
+        } catch (PAException e) {
+            // expected behvior
+        }
+
+        // code is null
+        dto.setStudyProtocolIdentifier(spIi);
+        dto.setMilestoneCode(null);
+        try {
+            remote.create(dto);
+            fail();
+        } catch (PAException e) {
+            // expected behvior
+        }
+
+        // date is null
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.PDQ_ABSTRACTION_COMPLETE));
+        dto.setMilestoneDate(null);
+        try {
+            remote.create(dto);
+            fail();
+        } catch (PAException e) {
+            // expected behavior
+        }
+        
+        // create
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        remote.create(dto);
     }
 }

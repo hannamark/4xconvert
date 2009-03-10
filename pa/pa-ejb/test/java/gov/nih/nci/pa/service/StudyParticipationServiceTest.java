@@ -152,13 +152,13 @@ public class StudyParticipationServiceTest {
     public void create() throws Exception {
         int accrualNum = 63;
         StudyParticipationDTO spDto = new StudyParticipationDTO();
-        spDto.setIdentifier(IiConverter.convertToIi((Long) null));
+        spDto.setIdentifier(null);
         spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         spDto.setHealthcareFacilityIi(facilityIi);
         spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP ID 02"));
         spDto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         spDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/15/2008")));
-        spDto.setStudyProtocolIdentifier(participationIi);
+        spDto.setStudyProtocolIdentifier(studyIi);
         spDto.setTargetAccrualNumber(IntConverter.convertToInt(accrualNum));
         StudyParticipationDTO result = remoteEjb.create(spDto);
         assertFalse(PAUtil.isIiNull(result.getIdentifier()));

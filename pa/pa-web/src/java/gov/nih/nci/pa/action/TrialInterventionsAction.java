@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
@@ -267,7 +268,8 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @param interventionDescription the interventionDescription to set
      */
     public void setInterventionDescription(String interventionDescription) {
-        this.interventionDescription = interventionDescription;
+        this.interventionDescription = PAUtil.stringSetter(interventionDescription, 
+                PlannedActivity.TEXT_DESCRIPTION_LENGTH);
     }
 
     /**

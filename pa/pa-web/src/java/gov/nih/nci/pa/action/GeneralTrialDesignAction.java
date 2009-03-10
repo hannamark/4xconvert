@@ -136,7 +136,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
 
     private static final int OFFICIAL_TITLE = 4000;
-    private static final int PUBLIC_TITLE = 5000;
+    private static final int PUBLIC_TITLE = 299;
+    private static final int PUBLIC_DESCRIPTION = 5000;
     private static final int SCI_DESC = 12000;
     private static final int KEYWORD = 600;
     private static final String SPONSOR = "sponsor";
@@ -187,7 +188,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
             updateStudyProtocol(studyProtocolIi);
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
                         StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) ,
-                        gtdDTO.getLeadOrganizationIdentifier() , gtdDTO.getLocalProtocolIdentifier());
+                        gtdDTO.getLeadOrganizationIdentifier() , 
+                        PAUtil.stringSetter(gtdDTO.getLocalProtocolIdentifier()));
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
                         StudyParticipationFunctionalCode.SPONSOR) ,
                         gtdDTO.getSponsorIdentifier() , null);
@@ -342,7 +344,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicTitle(), PUBLIC_TITLE)));
         spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicDescription(),
-                PUBLIC_TITLE)));
+                PUBLIC_DESCRIPTION)));
         spDTO.setScientificDescription(StConverter.convertToSt(
                 PAUtil.stringSetter(gtdDTO.getScientificDescription(), SCI_DESC)));
         spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));

@@ -108,6 +108,9 @@ import javax.persistence.Table;
 public class PlannedActivity extends Activity {
     private static final long serialVersionUID = 1239781890L;
 
+    /** Maximum length of textDescription attribute. */
+    public static final int TEXT_DESCRIPTION_LENGTH = 1000;
+    
     private ActivityCategoryCode categoryCode;
     private ActivitySubcategoryCode subcategoryCode;
     private Boolean leadProductIndicator;
