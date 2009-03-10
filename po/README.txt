@@ -86,7 +86,8 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     mvn -Pci-nostart-nodeploy integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
 
 1.6 Peer Review
-    Package up your differences by running 'svn diff -x -bw --no-diff-deleted -x --ignore-eol-style > diff.diff' and send it to another developer for review prior to committing to SVN.
-
+    We are using ReviewBoard for peer reviews.  Follow the directions on the wiki for setup and use instructions.
+    The ReviewBoard group for all po developers is (no quotes) 'po-all'.
+    
 1.7 Pre-commit check
     Verify everything is working properly by running 'mvn -Plocal,nuke-db sql:execute && mvn -Plocal clean install sql:execute && mvn -Pci,local integration-test'
