@@ -36,4 +36,8 @@
         <comment>execute armDescription.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/armDescription.sql"/>
     </changeSet>
+    <changeSet id="6" author="hugh">
+        <comment>execute studyParticipationContactRole.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/studyParticipationContactRole.sql"/>
+    </changeSet>
 </databaseChangeLog>
