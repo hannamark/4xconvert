@@ -40,4 +40,8 @@
         <comment>execute studyParticipationContactRole.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyParticipationContactRole.sql"/>
     </changeSet>
+    <changeSet id="8" author="hugh">
+        <comment>execute studyOutcomeMeasureName.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/studyOutcomeMeasureName.sql"/>
+    </changeSet>
 </databaseChangeLog>
