@@ -5,6 +5,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -72,6 +73,11 @@ public class JNDIUtil {
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonService() throws NamingException {
         IdentifiedPersonCorrelationServiceRemote object =(IdentifiedPersonCorrelationServiceRemote) context
                 .lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
+        return object;
+    }
+    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationService() throws NamingException {
+        ResearchOrganizationCorrelationServiceRemote object =(ResearchOrganizationCorrelationServiceRemote) context
+                .lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
         return object;
     }
 

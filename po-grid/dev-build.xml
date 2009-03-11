@@ -385,4 +385,8 @@
     <run-client serviceenpointname="IdentifiedOrganization" class="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClient"/>
   </target>
 
+  <target name="runResearchOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample ResearchOrganization Client">
+  <run-client serviceenpointname="ResearchOrganization" class="gov.nih.nci.coppa.services.structuralroles.researchorganization.client.ResearchOrganizationClient"/>
+  </target>
+
 </project>
