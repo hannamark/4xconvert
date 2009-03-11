@@ -373,8 +373,16 @@
         <run-client serviceenpointname="HealthCareProvider" class="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client.HealthCareProviderClient"/>
   </target>
 
-    <target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths" description="Run the sample ClinicalResearchStaff Client">
-      <run-client serviceenpointname="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient"/>
-    </target>
+  <target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths" description="Run the sample ClinicalResearchStaff Client">
+    <run-client serviceenpointname="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient"/>
+  </target>
+
+  <target name="runIdentifiedPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedPerson Client">
+      <run-client serviceenpointname="IdentifiedPerson" class="gov.nih.nci.coppa.services.structuralroles.identifiedperson.client.IdentifiedPersonClient"/>
+  </target>
+
+  <target name="runIdentifiedOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedOrganization Client">
+    <run-client serviceenpointname="IdentifiedOrganization" class="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClient"/>
+  </target>
 
 </project>
