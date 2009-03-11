@@ -11,11 +11,18 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
 
+import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.IdentifiedOrganization;
+import gov.nih.nci.coppa.po.OversightCommittee;
+import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClient;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.OversightCommitteePortType;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.service.OversightCommitteeServiceAddressingLocator;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.common.OversightCommitteeI;
@@ -33,6 +40,16 @@ import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
  * @created by Introduce Toolkit version 1.2
  */
 public class OversightCommitteeClient extends OversightCommitteeClientBase implements OversightCommitteeI {	
+	
+	/**
+     * The identifier name for for OversightCommittee.
+     */
+    public static final String OVERSIGHT_COMMITTEE_IDENTIFIER_NAME  = "NCI oversight committee identifier";
+
+    /**
+     * The ii root value for OversightCommittee.
+     */
+    public static final String OVERSIGHT_COMMITTEE_ROOT = "2.16.840.1.113883.3.26.4.4.4";
 
 	public OversightCommitteeClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);	
@@ -62,6 +79,8 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
 			  OversightCommitteeClient client = new OversightCommitteeClient(args[1]);
 			  // place client calls here if you want to use this main as a
 			  // test....
+			  getOversightCommittee(client);
+			  searchOversightCommittee(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -160,5 +179,23 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     return boxedResult.getStringMap();
     }
   }
-
+  private static void getOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+		Id id = new Id();
+		id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
+		id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+		id.setExtension("642");
+		OversightCommittee result = client.getById(id);
+		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+	  }
+	  private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+		    OversightCommittee criteria = new OversightCommittee();
+		    CD statusCode = new CD();
+	        statusCode.setCode("pending");
+	        criteria.setStatus(statusCode);
+	        OversightCommittee[] results = client.search(criteria);
+	        System.out.println("Search OversightCommittee Results Found: " + results.length);
+	        for (OversightCommittee oc : results) {
+	            System.out.println(ToStringBuilder.reflectionToString(oc, ToStringStyle.MULTI_LINE_STYLE));
+	        }
+		  }
 }

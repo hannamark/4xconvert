@@ -388,5 +388,7 @@
   <target name="runResearchOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample ResearchOrganization Client">
   <run-client serviceenpointname="ResearchOrganization" class="gov.nih.nci.coppa.services.structuralroles.researchorganization.client.ResearchOrganizationClient"/>
   </target>
-
+ <target name="runOversightCommitteeClient" depends="checkGlobus, defineClasspaths" description="Run the sample OversightCommitteeClient Client">
+    <run-client serviceenpointname="OversightCommittee" class="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client.OversightCommitteeClient"/>
+  </target>
 </project>

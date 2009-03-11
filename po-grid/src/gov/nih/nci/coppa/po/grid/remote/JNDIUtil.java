@@ -5,6 +5,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -80,5 +81,9 @@ public class JNDIUtil {
                 .lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
         return object;
     }
-
+    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeService() throws NamingException {
+    	OversightCommitteeCorrelationServiceRemote object =(OversightCommitteeCorrelationServiceRemote) context
+                .lookup("po/OversightCommitteeCorrelationServiceBean/remote");
+        return object;
+    }
 }
