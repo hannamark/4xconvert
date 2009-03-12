@@ -187,7 +187,7 @@ public class HealthCareProviderAction extends
      */
     @Override
     protected String getAddSuccessMessageKey() {
-        return "clinicalresearchstaff.create.success";
+        return "healthcareprovider.create.success";
     }
 
     /**
@@ -252,7 +252,7 @@ public class HealthCareProviderAction extends
      */
     @Override
     protected String getEditSuccessMessageKey() {
-        return "clinicalresearchstaff.update.success";
+        return "healthcareprovider.update.success";
     }
 
     /**

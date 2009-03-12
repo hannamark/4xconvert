@@ -186,7 +186,7 @@ public class OrganizationalContactAction extends
      */
     @Override
     protected String getAddSuccessMessageKey() {
-        return "clinicalresearchstaff.create.success";
+        return "organizationalcontact.create.success";
     }
 
     /**
@@ -251,7 +251,7 @@ public class OrganizationalContactAction extends
      */
     @Override
     protected String getEditSuccessMessageKey() {
-        return "clinicalresearchstaff.update.success";
+        return "organizationalcontact.update.success";
     }
 
     /**
