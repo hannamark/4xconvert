@@ -31,6 +31,9 @@
                                     <c:when test="${requestScope.topic == 'search_trials'}">
                                        <li><a href="/registry/protected/searchTrial.action" class="selected">Search Trials</a></li>
                                     </c:when>
+                                    <c:when test="${requestScope.topic == 'search_results'}">
+                                       <li><a href="/registry/protected/searchTrial.action" class="selected">Search Trials</a></li>
+                                    </c:when>
                                     <c:otherwise>
                                        <li><a href="/registry/protected/searchTrial.action" >Search Trials</a></li>
                                     </c:otherwise>
