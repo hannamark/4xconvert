@@ -20,9 +20,7 @@ import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
 import gov.nih.nci.coppa.po.Id;
-import gov.nih.nci.coppa.po.IdentifiedOrganization;
 import gov.nih.nci.coppa.po.OversightCommittee;
-import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClient;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.OversightCommitteePortType;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.service.OversightCommitteeServiceAddressingLocator;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.common.OversightCommitteeI;

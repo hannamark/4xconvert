@@ -11,10 +11,16 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
+
+import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.OrganizationalContact;
 
 import gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.OrganizationalContactPortType;
 import gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.service.OrganizationalContactServiceAddressingLocator;
@@ -34,6 +40,16 @@ import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
  */
 public class OrganizationalContactClient extends OrganizationalContactClientBase implements OrganizationalContactI {	
 
+	/**
+     * The identifier name for.
+     */
+    public static final String ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME = "Organizational contact identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    
 	public OrganizationalContactClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);	
 	}
@@ -62,6 +78,8 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 			  OrganizationalContactClient client = new OrganizationalContactClient(args[1]);
 			  // place client calls here if you want to use this main as a
 			  // test....
+			  getOrgContact(client);
+			  searchOrgContact(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -160,5 +178,24 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     return boxedResult.getStringMap();
     }
   }
+  private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
+		Id id = new Id();
+		id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
+		id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+		id.setExtension("648");
+		OrganizationalContact result = client.getById(id);
+		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+	  }
+	  private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
+		    OrganizationalContact criteria = new OrganizationalContact();
+		    CD statusCode = new CD();
+	        statusCode.setCode("pending");
+	        criteria.setStatus(statusCode);
+	        OrganizationalContact[] results = client.search(criteria);
+	        System.out.println("Search OrganizationalContact Results Found: " + results.length);
+	        for (OrganizationalContact orgContact : results) {
+	            System.out.println(ToStringBuilder.reflectionToString(orgContact, ToStringStyle.MULTI_LINE_STYLE));
+	        }
+		  }
 
 }

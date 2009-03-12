@@ -391,4 +391,7 @@
  <target name="runOversightCommitteeClient" depends="checkGlobus, defineClasspaths" description="Run the sample OversightCommitteeClient Client">
     <run-client serviceenpointname="OversightCommittee" class="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client.OversightCommitteeClient"/>
   </target>
+  <target name="runOrganizationalContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample OrganizationalContact Client">
+    <run-client serviceenpointname="OrganizationalContact" class="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client.OrganizationalContactClient"/>
+  </target>
 </project>
