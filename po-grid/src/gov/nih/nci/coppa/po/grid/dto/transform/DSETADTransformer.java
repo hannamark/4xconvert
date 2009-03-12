@@ -26,6 +26,7 @@ public final class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
      * {@inheritDoc}
      */
     public DSETAD toXml(DSet<Ad> input) throws DtoTransformException {
+        // FIXME: should model after DSETTELTransformer
         if (input == null) {
             return null;
         }

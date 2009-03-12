@@ -3,12 +3,10 @@ package gov.nih.nci.coppa.po.grid.dto.transform;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 
-import java.util.List;
-
 import org.iso._21090.ADXP;
 
 /**
- * Transforms the parts of an address.
+ * Transforms the parts of an address.  Should only be used by the ADTransformer class.
  */
 final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
 
@@ -18,9 +16,8 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
     }
 
     public ADXP toXml(Adxp input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
+        // Don't worry about null here - this is a package-protected class and the AD converter
+        // has the responsibility to detect null.
         ADXP x = new ADXP();
         x.setCode(input.getCode());
         x.setValue(input.getValue());
@@ -30,27 +27,12 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
     }
 
     public Adxp toDto(ADXP input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
+        // Don't worry about null here - this is a package-protected class and the AD converter
+        // has the responsibility to detect null.
         AddressPartType type = AddressPartTypeTransformer.INSTANCE.toDto(input.getType());
         Adxp d = Adxp.createAddressPart(type);
         d.setCode(input.getCode());
         d.setValue(input.getValue());
         return d;
-    }
-
-    // PO-852: this isn't an interface method
-    public static void copyToDto(List<ADXP> sourcePart, List<Adxp> targetPart) throws DtoTransformException {
-        for (ADXP p : sourcePart) {
-            targetPart.add(INSTANCE.toDto(p));
-        }
-    }
-
-    // PO-852: this isn't an interface method
-    public static void copyToXml(List<Adxp> sourcePart, List<ADXP> targetPart) throws DtoTransformException {
-        for (Adxp p : sourcePart) {
-            targetPart.add(INSTANCE.toXml(p));
-        }
     }
 }

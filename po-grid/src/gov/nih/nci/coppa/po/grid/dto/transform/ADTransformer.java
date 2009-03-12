@@ -38,8 +38,12 @@ public final class ADTransformer implements Transformer<AD, Ad> {
         target.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(source.getNullFlavor()));
         List<Adxp> sourcePart = source.getPart();
         if (sourcePart != null) {
-            List<ADXP> targetPart = target.getPart();
-            ADXPTransformer.INSTANCE.copyToXml(sourcePart, targetPart);
+            List<ADXP> targetPart = target.getPart(); // never return null
+            for (Adxp p : sourcePart) {
+                if (p != null) {
+                    targetPart.add(ADXPTransformer.INSTANCE.toXml(p));
+                }
+            }
         }
     }
 
@@ -57,14 +61,13 @@ public final class ADTransformer implements Transformer<AD, Ad> {
 
     private static void copyToDto(AD source, Ad target) throws DtoTransformException {
         target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
-        List<ADXP> sourcePart = source.getPart();
-        if (sourcePart != null) {
-            List<Adxp> targetPart = target.getPart();
-            if (targetPart == null) {
-                targetPart = new ArrayList<Adxp>(sourcePart.size());
-                target.setPart(targetPart);
+        List<ADXP> sourcePart = source.getPart(); // never returns null
+        List<Adxp> targetPart = new ArrayList<Adxp>(sourcePart.size());
+        target.setPart(targetPart);
+        for (ADXP p : sourcePart) {
+            if (p != null) {
+                targetPart.add(ADXPTransformer.INSTANCE.toDto(p));
             }
-            ADXPTransformer.INSTANCE.copyToDto(sourcePart, targetPart);
         }
     }
 }
