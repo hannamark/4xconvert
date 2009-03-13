@@ -51,7 +51,7 @@ public final class TELTransformer implements Transformer<TEL, Tel> {
         return x;
     }
 
-    private static void copyToXml(Tel source, TEL target) throws DtoTransformException {
+    private static void copyToXml(Tel source, TEL target) {
         URI u = source.getValue();
         if (u != null) {
             target.setValue(u.toString());

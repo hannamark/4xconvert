@@ -21,7 +21,7 @@ final class ENXPTransformer implements Transformer<ENXP, Enxp> {
     /**
      * {@inheritDoc}
      */
-    public ENXP toXml(Enxp input) throws DtoTransformException {
+    public ENXP toXml(Enxp input) {
         ENXP d = new ENXP();
         if (input != null && input.getType() != null) {
             d.setType(org.iso._21090.EntityNamePartType.valueOf(input.getType().name()));
@@ -40,7 +40,7 @@ final class ENXPTransformer implements Transformer<ENXP, Enxp> {
      */
     public Enxp toDto(ENXP input) throws DtoTransformException {
         if (input != null && input.getType() == null) {
-            throw new IllegalArgumentException("ENXP.type is required");
+            throw new DtoTransformException("ENXP.type is required");
         }
         Enxp d = new Enxp(EntityNamePartType.valueOf(input.getType().name()));
         d.setValue(input.getValue());

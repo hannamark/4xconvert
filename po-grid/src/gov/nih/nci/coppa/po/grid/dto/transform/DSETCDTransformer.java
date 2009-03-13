@@ -29,7 +29,7 @@ public final class DSETCDTransformer implements Transformer <DSETCD, DSet<Cd>> {
     /**
      * {@inheritDoc}
      */
-    public DSETCD toXml(DSet<Cd> input) throws DtoTransformException {
+    public DSETCD toXml(DSet<Cd> input) {
         DSETCD x = new DSETCD();
         if (input != null && input.getItem() != null) {
             Set<Cd> sItem = input.getItem();
@@ -46,16 +46,16 @@ public final class DSETCDTransformer implements Transformer <DSETCD, DSet<Cd>> {
             x.setNullFlavor(NullFlavor.NI);
         }
         return x;
-        
+
     }
-     
+
      /**
      * {@inheritDoc}
      */
     /**
      * {@inheritDoc}
      */
-    public DSet<Cd> toDto(DSETCD input) throws DtoTransformException {
+    public DSet<Cd> toDto(DSETCD input) {
         if (input == null || input.getNullFlavor() != null) {
              return null;
          }
@@ -68,7 +68,7 @@ public final class DSETCDTransformer implements Transformer <DSETCD, DSet<Cd>> {
          }
          return x;
     }
-    
 
-    
+
+
 }

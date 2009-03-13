@@ -18,7 +18,7 @@ final class NullFlavorTransformer implements Transformer<org.iso._21090.NullFlav
     /**
      * {@inheritDoc}
      */
-    public org.iso._21090.NullFlavor toXml(NullFlavor input) throws DtoTransformException {
+    public org.iso._21090.NullFlavor toXml(NullFlavor input) {
         if (input == null) {
             return null;
         }
@@ -28,7 +28,7 @@ final class NullFlavorTransformer implements Transformer<org.iso._21090.NullFlav
     /**
      * {@inheritDoc}
      */
-    public NullFlavor toDto(org.iso._21090.NullFlavor input) throws DtoTransformException {
+    public NullFlavor toDto(org.iso._21090.NullFlavor input) {
         if (input == null) {
             return null;
         }

@@ -43,6 +43,7 @@ public final class HealthCareProviderTransformer implements Transformer<HealthCa
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public HealthCareProvider toXml(HealthCareProviderDTO input)
                  throws DtoTransformException {
               if (input == null) {

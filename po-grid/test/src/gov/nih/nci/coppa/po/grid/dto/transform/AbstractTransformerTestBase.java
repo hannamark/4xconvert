@@ -29,6 +29,7 @@ import org.junit.Test;
  *
  * @author gax
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractTransformerTestBase <T extends Transformer<XML, DTO>, XML, DTO>{
 
     protected final Class<T> tClass;

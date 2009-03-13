@@ -15,7 +15,7 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
     private ADXPTransformer() {
     }
 
-    public ADXP toXml(Adxp input) throws DtoTransformException {
+    public ADXP toXml(Adxp input) {
         // Don't worry about null here - this is a package-protected class and the AD converter
         // has the responsibility to detect null.
         ADXP x = new ADXP();
@@ -26,7 +26,7 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
         return x;
     }
 
-    public Adxp toDto(ADXP input) throws DtoTransformException {
+    public Adxp toDto(ADXP input) {
         // Don't worry about null here - this is a package-protected class and the AD converter
         // has the responsibility to detect null.
         AddressPartType type = AddressPartTypeTransformer.INSTANCE.toDto(input.getType());

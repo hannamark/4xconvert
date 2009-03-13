@@ -27,7 +27,7 @@ public final class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
     /**
      * {@inheritDoc}
      */
-    public DSETAD toXml(DSet<Ad> input) throws DtoTransformException {
+    public DSETAD toXml(DSet<Ad> input) {
         DSETAD x = new DSETAD();
         if (input != null && input.getItem() != null) {
             Set<Ad> sItem = input.getItem();
@@ -49,7 +49,7 @@ public final class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
     /**
      * {@inheritDoc}
      */
-    public DSet<Ad> toDto(DSETAD input) throws DtoTransformException {
+    public DSet<Ad> toDto(DSETAD input) {
         if (input == null || input.getNullFlavor() != null) {
             return null;
         }

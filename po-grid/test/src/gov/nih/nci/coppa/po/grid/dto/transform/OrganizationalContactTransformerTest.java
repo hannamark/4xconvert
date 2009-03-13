@@ -1,13 +1,12 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import static org.junit.Assert.assertEquals;
-
-import org.iso._21090.II;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformer;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+
+import org.iso._21090.II;
 
 public class OrganizationalContactTransformerTest extends
      AbstractTransformerTestBase<OrganizationalContactTransformer,OrganizationalContact,OrganizationalContactDTO>{
@@ -38,24 +37,24 @@ public class OrganizationalContactTransformerTest extends
      * Scoper name.
      */
     public static final String SCOPER_NAME = "scoper name";
-    
+
 	@Override
 	public OrganizationalContactDTO makeDtoSimple() {
 		Ii id = new Ii();
 	    id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
 	    id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
 	    id.setExtension("123");
-	    
+
 	    Ii player = new Ii();
 	    player.setRoot(PLAYER_ROOT);
 	    player.setIdentifierName(PLAYER_NAME);
 	    player.setExtension("346");
-	    
+
 	    Ii scoper = new Ii();
 	    scoper.setRoot(SCOPER_ROOT);
 	    scoper.setIdentifierName(SCOPER_NAME);
 	    scoper.setExtension("567");
-	    
+
 	    OrganizationalContactDTO dto = new OrganizationalContactDTO();
 	    dto.setIdentifier(id);
 	    dto.setPlayerIdentifier(player);
@@ -64,7 +63,7 @@ public class OrganizationalContactTransformerTest extends
 	    dto.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
 	    dto.setStatus(new CDTransformerTest().makeDtoSimple());
 	    dto.setTypeCode(new DSETCDTransformerTest().makeDtoSimple());
-	    
+
 	    return dto;
 	}
 
@@ -74,17 +73,17 @@ public class OrganizationalContactTransformerTest extends
 	    id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
 	    id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
 	    id.setExtension("123");
-	    
+
 	    II player = new II();
 	    player.setRoot(PLAYER_ROOT);
 	    player.setIdentifierName(PLAYER_NAME);
 	    player.setExtension("346");
-	    
+
 	    II scoper = new II();
 	    scoper.setRoot(SCOPER_ROOT);
 	    scoper.setIdentifierName(SCOPER_NAME);
 	    scoper.setExtension("567");
-	    
+
 	    OrganizationalContact xml = new OrganizationalContact();
 	    xml.setIdentifier(id);
 	    xml.setPlayerIdentifier(player);
@@ -96,7 +95,8 @@ public class OrganizationalContactTransformerTest extends
 	    return xml;
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public void verifyDtoSimple(OrganizationalContactDTO x) {
 		assertEquals(x.getIdentifier().getExtension(), "123");
 		assertEquals(x.getIdentifier().getIdentifierName(),ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);

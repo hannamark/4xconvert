@@ -12,14 +12,14 @@ final class AddressPartTypeTransformer implements Transformer<org.iso._21090.Add
     private AddressPartTypeTransformer() {
     }
 
-    public org.iso._21090.AddressPartType toXml(AddressPartType input) throws DtoTransformException {
+    public org.iso._21090.AddressPartType toXml(AddressPartType input) {
         if (input == null) {
             return null;
         }
         return org.iso._21090.AddressPartType.fromValue(input.name());
     }
 
-    public AddressPartType toDto(org.iso._21090.AddressPartType input) throws DtoTransformException {
+    public AddressPartType toDto(org.iso._21090.AddressPartType input) {
         if (input == null) {
             return null;
         }

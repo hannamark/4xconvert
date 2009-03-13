@@ -22,7 +22,7 @@ public final class IITransformer implements Transformer<II, Ii> {
     /**
      * {@inheritDoc}
      */
-    public II toXml(Ii input) throws DtoTransformException {
+    public II toXml(Ii input) {
         if (input == null) {
             return null;
         }
@@ -31,7 +31,7 @@ public final class IITransformer implements Transformer<II, Ii> {
         return d;
     }
 
-    private static void copyToXml(Ii source, II target) throws DtoTransformException {
+    private static void copyToXml(Ii source, II target) {
         target.setDisplayable(source.getDisplayable());
         target.setExtension(source.getExtension());
         target.setIdentifierName(source.getIdentifierName());
@@ -48,7 +48,7 @@ public final class IITransformer implements Transformer<II, Ii> {
     /**
      * {@inheritDoc}
      */
-    public Ii toDto(II input) throws DtoTransformException {
+    public Ii toDto(II input) {
         if (input == null) {
             return null;
         }
@@ -57,7 +57,7 @@ public final class IITransformer implements Transformer<II, Ii> {
         return d;
     }
 
-    private static void copyToDto(II source, Ii target) throws DtoTransformException {
+    private static void copyToDto(II source, Ii target) {
         target.setDisplayable(source.isDisplayable());
         target.setExtension(source.getExtension());
         target.setIdentifierName(source.getIdentifierName());

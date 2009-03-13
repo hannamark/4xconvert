@@ -13,7 +13,7 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 /**
  * Transforms OrganizationalContact instances.
  */
-public final class OrganizationalContactTransformer  
+public final class OrganizationalContactTransformer
       implements Transformer<OrganizationalContact, OrganizationalContactDTO> {
       /**
      * Public singleton.
@@ -36,12 +36,13 @@ public final class OrganizationalContactTransformer
         dto.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         dto.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
         dto.setTypeCode(DSETCDTransformer.INSTANCE.toDto(input.getTypeCode()));
-        
+
         return dto;
     }
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public OrganizationalContact toXml(OrganizationalContactDTO input)
            throws DtoTransformException {
         if (input == null) {

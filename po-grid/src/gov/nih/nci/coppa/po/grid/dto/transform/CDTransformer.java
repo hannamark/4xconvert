@@ -20,7 +20,7 @@ public final class CDTransformer implements Transformer<CD, Cd> {
     /**
      * {@inheritDoc}
      */
-    public Cd toDto(CD input) throws DtoTransformException {
+    public Cd toDto(CD input) {
         if (input == null) {
             return null;
         }
@@ -37,7 +37,7 @@ public final class CDTransformer implements Transformer<CD, Cd> {
     /**
      * {@inheritDoc}
      */
-    public CD toXml(Cd input) throws DtoTransformException {
+    public CD toXml(Cd input) {
         if (input == null) {
             return null;
         }

@@ -38,7 +38,7 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
     /**
      * {@inheritDoc}
      */
-    public ENXX toXml(EnXx input) throws DtoTransformException {
+    public ENXX toXml(EnXx input) {
         if (input == null) {
             return null;
         }

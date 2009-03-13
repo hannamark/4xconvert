@@ -20,7 +20,7 @@ public final class STTransformer implements Transformer<ST, St> {
     /**
      * {@inheritDoc}
      */
-    public ST toXml(St input) throws DtoTransformException {
+    public ST toXml(St input) {
         if (input == null) {
             return null;
         }
@@ -37,7 +37,7 @@ public final class STTransformer implements Transformer<ST, St> {
     /**
      * {@inheritDoc}
      */
-    public St toDto(ST input) throws DtoTransformException {
+    public St toDto(ST input) {
         if (input == null) {
             return null;
         }
