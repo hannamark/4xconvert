@@ -108,7 +108,7 @@ public class OrganizationalContactTypeConverter extends AbstractXSnapshotConvert
         }
         throw new UnsupportedOperationException(returnClass.getName());
     }
-    
+
     /**
      * convert {@link Cd} to other types.
      */
@@ -151,11 +151,13 @@ public class OrganizationalContactTypeConverter extends AbstractXSnapshotConvert
      * @return best guess of <code>DSet&lt;Cd&gt;</code>'s ISO equivalent.
      */
     public static DSet<Cd> convertToDsetOfCd(Set<OrganizationalContactType> types) {
-        if (CollectionUtils.isEmpty(types)) {
-            return null;
-        }
         DSet<Cd> cds = new DSet<Cd>();
         cds.setItem(new HashSet<Cd>());
+
+        if (CollectionUtils.isEmpty(types)) {
+            return cds;
+        }
+
         for (OrganizationalContactType type : types) {
             Cd iso = convertToCd(type);
             cds.getItem().add(iso);

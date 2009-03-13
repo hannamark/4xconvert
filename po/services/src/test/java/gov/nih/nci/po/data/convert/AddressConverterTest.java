@@ -2,6 +2,8 @@
 package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
@@ -11,10 +13,12 @@ import gov.nih.nci.coppa.iso.AdxpCnt;
 import gov.nih.nci.coppa.iso.AdxpCty;
 import gov.nih.nci.coppa.iso.AdxpSta;
 import gov.nih.nci.coppa.iso.AdxpZip;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -70,4 +74,19 @@ public class AddressConverterTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSetEdgeCases() throws Exception {
+        AddressConverter.SetConverter c = new AddressConverter.SetConverter();
+
+        DSet<Ad> result = c.convert(DSet.class, null);
+        assertNotNull(result);
+        assertNotNull(result.getItem());
+        assertTrue(result.getItem().isEmpty());
+
+        result = c.convert(DSet.class, new HashSet<Address>());
+        assertNotNull(result);
+        assertNotNull(result.getItem());
+        assertTrue(result.getItem().isEmpty());
+    }
 }

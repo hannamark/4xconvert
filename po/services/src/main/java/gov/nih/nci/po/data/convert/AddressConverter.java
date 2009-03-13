@@ -146,11 +146,12 @@ public final class AddressConverter {
         @SuppressWarnings("unchecked")
         @Override
         public <TO> TO convert(Class<TO> returnClass, Set<Address> value) {
-            if (CollectionUtils.isEmpty(value)) {
-                return null;
-            }
             DSet<Ad> ads = new DSet<Ad>();
             ads.setItem(new HashSet<Ad>());
+
+            if (CollectionUtils.isEmpty(value)) {
+                return (TO) ads;
+            }
             for (Address address : value) {
                 Ad ad = SimpleConverter.convertToAd(address);
                 ads.getItem().add(ad);

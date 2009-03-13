@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
@@ -25,6 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Before;
+import org.junit.Test;
 
 
 public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
@@ -125,4 +127,16 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
 
     }
 
+    @Test
+    public void contactTypeEdgeCases() throws Exception {
+        DSet<Cd> result = OrganizationalContactTypeConverter.convertToDsetOfCd(null);
+        assertNotNull(result);
+        assertNotNull(result.getItem());
+        assertTrue(result.getItem().isEmpty());
+
+        result = OrganizationalContactTypeConverter.convertToDsetOfCd(new HashSet<OrganizationalContactType>());
+        assertNotNull(result);
+        assertNotNull(result.getItem());
+        assertTrue(result.getItem().isEmpty());
+    }
 }
