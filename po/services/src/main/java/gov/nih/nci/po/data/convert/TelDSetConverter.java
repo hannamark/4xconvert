@@ -102,20 +102,10 @@ import java.util.List;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class TelDSetConverter {
 
-    /**
-     * @param value the source of the info.
-     * @param email where all emails in value will be added.
-     * @param fax where all faxs in value will be added.
-     * @param phone where all phones in value will be added.
-     * @param url where all urls in value will be added.
-     * @param text where all x-text-tel in value will be added.
-     */
-    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList" })
-    public static void convertToContactList(DSet<? extends Tel> value,
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList" })
+    private static void convertToContactList(DSet<? extends Tel> value,
             List<Email> email, List<PhoneNumber> fax, List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
-        if (value == null || value.getItem() == null) { return; }
         for (Tel t : value.getItem()) {
-
             if (t.getNullFlavor() != null) {
                 continue;
             }
@@ -137,10 +127,30 @@ public class TelDSetConverter {
     }
 
     /**
+     * Conversion rules:
+     * <ol>
+     * <li>value == null || value.item == null -> e unchanged
+     * <li>value != null -> e.email, e.fax, e.phone, e.url, and e.tty are cleared
+     *     and replaced with elements from value.item.
+     * <li>for (item i : value.item), if i == null, do not add to contactable
+     * </ol>
      * @param value the source of contact.
      * @param e the entity who's contacts will be populated.
      */
     public static void convertToContactList(DSet<? extends Tel> value, Contactable e) {
-        convertToContactList(value, e.getEmail(), e.getFax(), e.getPhone(), e.getUrl(), e.getTty());
+        if (value == null || value.getItem() == null) {
+            return;
+        }
+        List<Email> email = e.getEmail();
+        List<PhoneNumber> fax = e.getFax();
+        List<PhoneNumber> phone = e.getPhone();
+        List<URL> url = e.getUrl();
+        List<PhoneNumber> tty = e.getTty();
+        email.clear();
+        fax.clear();
+        phone.clear();
+        url.clear();
+        tty.clear();
+        convertToContactList(value, email, fax, phone, url, tty);
     }
 }

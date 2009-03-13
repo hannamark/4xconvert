@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Contact;
+import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
@@ -36,6 +37,27 @@ public class TelDSetConverterTest {
     private final List<PhoneNumber> phone = new ArrayList<PhoneNumber>();
     private final List<URL> url = new ArrayList<URL>();
     private final List<PhoneNumber> text = new ArrayList<PhoneNumber>();
+    private final Contactable c = new Contactable() {
+        public List<Email> getEmail() {
+            return email;
+        }
+
+        public List<PhoneNumber> getFax() {
+            return fax;
+        }
+
+        public List<PhoneNumber> getPhone() {
+            return phone;
+        }
+
+        public List<PhoneNumber> getTty() {
+            return text;
+        }
+
+        public List<URL> getUrl() {
+            return url;
+        }
+    };
 
     @Before
     public void setup() {
@@ -76,7 +98,7 @@ public class TelDSetConverterTest {
         t.setNullFlavor(NullFlavor.UNK);
         set.add(t);
 
-        TelDSetConverter.convertToContactList(value, email, fax, phone, url, text);
+        TelDSetConverter.convertToContactList(value, c);
 
         assertEquals(1, email.size());
         assertEquals(1, fax.size());
@@ -132,12 +154,33 @@ public class TelDSetConverterTest {
                 }
             };
 
-        TelDSetConverter.convertToContactList(value, email, fax, phone, url, text);
+        TelDSetConverter.convertToContactList(value, c);
 
         for(List<? extends Contact> l : all){
             ArrayList<Contact> tmp = new ArrayList<Contact>(l);
             Collections.sort(tmp, ccomp);
             assertEquals(l, tmp);
         }
+    }
+
+    @Test
+    public void edgeCases() throws Exception {
+        Email e = new Email();
+        e.setValue("test@example.com");
+        email.add(e);
+
+        // proves null value -> no change
+        TelDSetConverter.convertToContactList(null, c);
+        assertEquals(1, email.size());
+
+        // proves null itmes list -> no change
+        DSet<Tel> value = new DSet<Tel>();
+        TelDSetConverter.convertToContactList(value, c);
+        assertEquals(1, email.size());
+
+        // proves empty items list -> empties all contactable lists
+        value.setItem(new HashSet<Tel>());
+        TelDSetConverter.convertToContactList(value, c);
+        assertEquals(0, email.size());
     }
 }

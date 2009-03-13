@@ -43,8 +43,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -131,7 +129,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         TelUrl url = new TelUrl();
         url.setValue(new URI("http://example.com"));
         dto.getTelecomAddress().getItem().add(url);
-        
+
         Ii id = remote.createPerson(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -299,6 +297,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         dto.getPostalAddress().getPart().add(adl);
         TelEmail email = new TelEmail();
         email.setValue(new URI("mailto:another.email@example.com"));
+        dto.getTelecomAddress().getItem().clear();
         dto.getTelecomAddress().getItem().add(email);
         remote.updatePerson(dto);
         @SuppressWarnings("unchecked")
@@ -307,11 +306,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         PersonCR cr = l.get(0);
 //        assertEquals("newName", cr.getName());
         assertEquals(p.getPostalAddress().getDeliveryAddressLine() + " additional ADL", cr.getPostalAddress().getDeliveryAddressLine());
-        assertTrue(CollectionUtils.exists(cr.getEmail(), new Predicate(){
-            public boolean evaluate(Object object) {
-                return ((Email)object).getValue().equals("another.email@example.com");
-            }
-        }));
+        assertEquals(1, cr.getEmail().size());
+        assertEquals("another.email@example.com", cr.getEmail().get(0).getValue());
         assertEquals(EntityStatus.PENDING, cr.getStatusCode());
     }
 
