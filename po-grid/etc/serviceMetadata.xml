@@ -41,14 +41,18 @@
         <ns2:InputParameter qName="ns6:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns6="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns7:Person" dimensionality="1" isArray="false" xmlns:ns7="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedEntityFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns8:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns8="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns9:Id" dimensionality="1" isArray="false" xmlns:ns9="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -68,14 +72,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns14:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns14="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns15:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns15="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns16:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns16="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
      </ns2:operationCollection>
      <ns2:contextPropertyCollection/>
@@ -92,13 +100,17 @@
         <ns2:InputParameter qName="ns18:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns18="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns19:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns19="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="update">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns20:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns20="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -119,14 +131,18 @@
         <ns2:InputParameter qName="ns25:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns25="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns26:Organization" dimensionality="1" isArray="false" xmlns:ns26="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedEntityFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns27:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns27="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns28:Id" dimensionality="1" isArray="false" xmlns:ns28="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
      </ns2:operationCollection>
      <ns2:contextPropertyCollection/>
@@ -143,21 +159,27 @@
         <ns2:InputParameter qName="ns30:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns30="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns31:HealthCareFacility" dimensionality="1" isArray="false" xmlns:ns31="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns32:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns32="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns33:HealthCareFacility" dimensionality="1" isArray="true" xmlns:ns33="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns34:HealthCareFacility" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareFacility" xmlns:ns34="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns35:Id" dimensionality="1" isArray="false" xmlns:ns35="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -177,14 +199,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns40:HealthCareFacility" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareFacility" xmlns:ns40="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns41:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns41="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns42:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns42="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
      </ns2:operationCollection>
      <ns2:contextPropertyCollection/>
@@ -201,21 +227,27 @@
         <ns2:InputParameter qName="ns44:ClinicalResearchStaff" dimensionality="1" index="0" isArray="false" isRequired="false" name="clinicalResearchStaff" xmlns:ns44="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns45:Id" dimensionality="1" isArray="false" xmlns:ns45="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getById">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns46:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns46="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns47:ClinicalResearchStaff" dimensionality="1" isArray="false" xmlns:ns47="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns48:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns48="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns49:ClinicalResearchStaff" dimensionality="1" isArray="true" xmlns:ns49="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -228,14 +260,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns52:ClinicalResearchStaff" dimensionality="1" index="0" isArray="false" isRequired="false" name="clinicalResearchStaff" xmlns:ns52="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns53:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns53="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns54:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns54="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -259,21 +295,27 @@
         <ns2:InputParameter qName="ns58:HealthCareProvider" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareProvider" xmlns:ns58="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns59:Id" dimensionality="1" isArray="false" xmlns:ns59="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getById">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns60:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns60="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns61:HealthCareProvider" dimensionality="1" isArray="false" xmlns:ns61="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns62:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns62="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns63:HealthCareProvider" dimensionality="1" isArray="true" xmlns:ns63="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -286,14 +328,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns66:HealthCareProvider" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareProvider" xmlns:ns66="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns67:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns67="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns68:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns68="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -317,21 +363,27 @@
         <ns2:InputParameter qName="ns72:IdentifiedOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedOrganization" xmlns:ns72="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns73:Id" dimensionality="1" isArray="false" xmlns:ns73="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getById">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns74:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns74="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns75:IdentifiedOrganization" dimensionality="1" isArray="false" xmlns:ns75="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns76:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns76="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns77:IdentifiedOrganization" dimensionality="1" isArray="true" xmlns:ns77="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -344,14 +396,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns80:IdentifiedOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedOrganization" xmlns:ns80="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns81:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns81="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns82:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns82="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -375,21 +431,27 @@
         <ns2:InputParameter qName="ns86:IdentifiedPerson" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedPerson" xmlns:ns86="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns87:Id" dimensionality="1" isArray="false" xmlns:ns87="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getById">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns88:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns88="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns89:IdentifiedPerson" dimensionality="1" isArray="false" xmlns:ns89="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns90:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns90="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns91:IdentifiedPerson" dimensionality="1" isArray="true" xmlns:ns91="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -402,14 +464,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns94:IdentifiedPerson" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedPerson" xmlns:ns94="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns95:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns95="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns96:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns96="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -433,21 +499,27 @@
         <ns2:InputParameter qName="ns100:OrganizationalContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="organizationalContact" xmlns:ns100="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns101:Id" dimensionality="1" isArray="false" xmlns:ns101="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getById">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns102:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns102="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns103:OrganizationalContact" dimensionality="1" isArray="false" xmlns:ns103="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns104:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns104="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns105:OrganizationalContact" dimensionality="1" isArray="true" xmlns:ns105="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -460,14 +532,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns108:OrganizationalContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="organizationalContact" xmlns:ns108="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns109:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns109="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns110:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns110="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -491,21 +567,27 @@
         <ns2:InputParameter qName="ns114:OversightCommittee" dimensionality="1" index="0" isArray="false" isRequired="false" name="oversightCommittee" xmlns:ns114="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns115:Id" dimensionality="1" isArray="false" xmlns:ns115="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getById">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns116:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns116="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns117:OversightCommittee" dimensionality="1" isArray="false" xmlns:ns117="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns118:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns118="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns119:OversightCommittee" dimensionality="1" isArray="true" xmlns:ns119="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -518,14 +600,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns122:OversightCommittee" dimensionality="1" index="0" isArray="false" isRequired="false" name="oversightCommittee" xmlns:ns122="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns123:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns123="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns124:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns124="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="validate">
        <ns2:inputParameterCollection>
@@ -549,21 +635,27 @@
         <ns2:InputParameter qName="ns128:ResearchOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="researchOrganization" xmlns:ns128="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns129:Id" dimensionality="1" isArray="false" xmlns:ns129="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getById">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns130:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns130="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns131:ResearchOrganization" dimensionality="1" isArray="false" xmlns:ns131="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getByIds">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns132:Id" dimensionality="1" index="0" isArray="true" isRequired="false" name="id" xmlns:ns132="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns133:ResearchOrganization" dimensionality="1" isArray="true" xmlns:ns133="http://po.coppa.nci.nih.gov"/>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="NullifiedRoleFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="search">
        <ns2:inputParameterCollection>
@@ -583,14 +675,18 @@
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns138:ResearchOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="researchOrganization" xmlns:ns138="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="updateStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns139:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="targetId" xmlns:ns139="http://po.coppa.nci.nih.gov"/>
         <ns2:InputParameter qName="ns140:Cd" dimensionality="1" index="1" isArray="false" isRequired="false" name="statusCode" xmlns:ns140="http://po.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:faultCollection/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="EntityValidationFault"/>
+       </ns2:faultCollection>
       </ns2:Operation>
      </ns2:operationCollection>
      <ns2:contextPropertyCollection/>

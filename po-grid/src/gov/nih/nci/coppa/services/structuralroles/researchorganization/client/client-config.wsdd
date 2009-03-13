@@ -79,6 +79,8 @@
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.IdentifiedPerson" qname="ns2:IdentifiedPerson" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.IIMap" qname="ns2:IIMap" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.Organization" qname="ns2:Organization" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.po.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.po.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.OrganizationalContact" qname="ns2:OrganizationalContact" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>

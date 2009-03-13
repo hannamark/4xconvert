@@ -13,28 +13,30 @@
   <Content xsi:type="agg:AggregatorContent" xmlns:agg="http://mds.globus.org/aggregator/types">
     <agg:AggregatorConfig xsi:type="agg:AggregatorConfig">
       <agg:GetMultipleResourcePropertiesPollType
-			xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types"
+			xmlns:ns13="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types"
 			xmlns:ns6="http://enterpriseservices.nci.nih.gov/entities/Person/types"
-			xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"
-			xmlns:ns2="uri:iso.org:21090"
-			xmlns:ns0="http://po.coppa.nci.nih.gov"
+			xmlns:ns17="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"
+			xmlns:ns0="uri:iso.org:21090"
+			xmlns:ns1="http://po.coppa.nci.nih.gov"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:ns4="http://faults.po.coppa.nci.nih.gov"
 			xmlns:ns11="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"
-			xmlns:ns13="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"
-			xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"
-			xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
-			xmlns:ns12="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"
-			xmlns:ns15="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"
-			xmlns:ns9="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"
-			xmlns:ns7="http://enterpriseservices.nci.nih.gov/entities/Organization/types"
-			xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing"
-			xmlns:ns10="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"
-			xmlns:ns3="http://enterpriseservices.nci.nih.gov/CoreServices/types">
+			xmlns:ns9="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"
+			xmlns:ns16="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
+			xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"
+			xmlns:ns10="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"
+			xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"
+			xmlns:ns7="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"
+			xmlns:ns5="http://enterpriseservices.nci.nih.gov/entities/Organization/types"
+			xmlns:ns3="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+			xmlns:ns12="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"
+			xmlns:ns15="http://enterpriseservices.nci.nih.gov/CoreServices/types"
+			xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd">
         <!-- Specifies that the index should refresh information
             every 300000 milliseconds (once every 5 minutes) -->
         <agg:PollIntervalMillis>INDEX_REFRESH</agg:PollIntervalMillis>
         <!-- specifies all Resource Properties that should be retrieved from the service -->
-		<agg:ResourcePropertyNames>ns5:ServiceMetadata</agg:ResourcePropertyNames>
+		<agg:ResourcePropertyNames>ns17:ServiceMetadata</agg:ResourcePropertyNames>
 	
       </agg:GetMultipleResourcePropertiesPollType>
     </agg:AggregatorConfig>

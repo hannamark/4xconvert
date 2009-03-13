@@ -93,7 +93,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
 		}
 	}
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateRequest();
@@ -105,7 +105,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.OversightCommittee getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.po.OversightCommittee getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdRequest();
@@ -117,7 +117,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.OversightCommittee[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.OversightCommittee[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsRequest();
@@ -141,7 +141,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateRequest();
@@ -152,7 +152,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusRequest();

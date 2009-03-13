@@ -26,19 +26,19 @@ public class OversightCommitteeProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getOversightCommittee().getOversightCommittee()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdResponse();
     boxedResult.setOversightCommittee(impl.getById(params.getId().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsResponse();
     boxedResult.setOversightCommittee(impl.getByIds(params.getId().getId()));
     return boxedResult;
@@ -50,13 +50,13 @@ public class OversightCommitteeProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateResponse();
     impl.update(params.getOversightCommittee().getOversightCommittee());
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
     return boxedResult;

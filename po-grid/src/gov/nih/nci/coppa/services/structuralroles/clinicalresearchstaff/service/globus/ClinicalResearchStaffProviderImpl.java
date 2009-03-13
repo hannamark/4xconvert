@@ -26,19 +26,19 @@ public class ClinicalResearchStaffProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getClinicalResearchStaff().getClinicalResearchStaff()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdResponse();
     boxedResult.setClinicalResearchStaff(impl.getById(params.getId().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsResponse();
     boxedResult.setClinicalResearchStaff(impl.getByIds(params.getId().getId()));
     return boxedResult;
@@ -50,13 +50,13 @@ public class ClinicalResearchStaffProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateResponse();
     impl.update(params.getClinicalResearchStaff().getClinicalResearchStaff());
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
     return boxedResult;

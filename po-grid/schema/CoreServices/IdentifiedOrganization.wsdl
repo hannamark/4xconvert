@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" xmlns:ns6="http://enterpriseservices.nci.nih.gov/entities/Person/types" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns2="uri:iso.org:21090" xmlns:ns0="http://po.coppa.nci.nih.gov" xmlns:ns11="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" xmlns:ns13="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns12="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" xmlns:ns15="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" xmlns:ns7="http://enterpriseservices.nci.nih.gov/entities/Organization/types" xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns10="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" xmlns:ns3="http://enterpriseservices.nci.nih.gov/CoreServices/types" name="IdentifiedOrganization" targetNamespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns13="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" xmlns:ns6="http://enterpriseservices.nci.nih.gov/entities/Person/types" xmlns:ns17="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns0="uri:iso.org:21090" xmlns:ns1="http://po.coppa.nci.nih.gov" xmlns:ns4="http://faults.po.coppa.nci.nih.gov" xmlns:ns11="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" xmlns:ns16="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" xmlns:ns10="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" xmlns:ns7="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" xmlns:ns5="http://enterpriseservices.nci.nih.gov/entities/Organization/types" xmlns:ns3="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns12="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" xmlns:ns15="http://enterpriseservices.nci.nih.gov/CoreServices/types" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="IdentifiedOrganization" targetNamespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -17,24 +17,26 @@
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
       <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
       <import namespace="http://po.coppa.nci.nih.gov" schemaLocation="./CoppaPO.xsd" />
+      <import namespace="http://faults.po.coppa.nci.nih.gov" schemaLocation="./CoppaPOFaults.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" schemaLocation="./IdentifiedOrganizationTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" schemaLocation="./OrganizationalContactTypes.xsd" />
-      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" schemaLocation="./OversightCommitteeTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" schemaLocation="./OversightCommitteeTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" schemaLocation="./IdentifiedPersonTypes.xsd" />
-      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" schemaLocation="./ResearchOrganizationTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" schemaLocation="./ClinicalResearchStaffTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" schemaLocation="./ResearchOrganizationTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/entities/Organization/types" schemaLocation="./OrganizationTypes.xsd" />
-      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./WS-Addressing.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" schemaLocation="./HealthCareProviderTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/CoreServices/types" schemaLocation="./CoreServicesTypes.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
       <element name="CreateRequest">
         <complexType>
           <sequence>
             <element name="identifiedOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns0:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns1:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -44,7 +46,7 @@
       <element name="CreateResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+            <element ref="ns1:Id" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -54,7 +56,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns1:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -64,7 +66,7 @@
       <element name="GetByIdResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
+            <element ref="ns1:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -74,7 +76,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns1:Id" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
@@ -84,7 +86,7 @@
       <element name="GetByIdsResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:IdentifiedOrganization" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns1:IdentifiedOrganization" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -94,7 +96,7 @@
             <element name="identifiedOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns0:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns1:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -104,7 +106,7 @@
       <element name="SearchResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:IdentifiedOrganization" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns1:IdentifiedOrganization" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -114,7 +116,7 @@
             <element name="identifiedOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns0:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns1:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -132,14 +134,14 @@
             <element name="targetId">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns1:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="statusCode">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Cd" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns1:Cd" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -157,7 +159,7 @@
             <element name="identifiedOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns0:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns1:IdentifiedOrganization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -167,7 +169,7 @@
       <element name="ValidateResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:StringMap" minOccurs="1" maxOccurs="1" />
+            <element ref="ns1:StringMap" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -221,6 +223,12 @@
   <message name="ValidateResponse">
     <part name="parameters" element="tns:ValidateResponse" />
   </message>
+  <message name="EntityValidationFaultFaultMessage">
+    <part name="fault" element="ns11:EntityValidationFault" />
+  </message>
+  <message name="NullifiedRoleFaultFaultMessage">
+    <part name="fault" element="ns11:NullifiedRoleFault" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
@@ -230,14 +238,17 @@
     <operation name="create">
       <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/CreateRequest" />
       <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/CreateResponse" />
+      <fault name="EntityValidationFault" message="tns:EntityValidationFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/EntityValidationFaultFaultMessage" />
     </operation>
     <operation name="getById">
       <input message="tns:GetByIdRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/GetByIdRequest" />
       <output message="tns:GetByIdResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/GetByIdResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/NullifiedRoleFaultFaultMessage" />
     </operation>
     <operation name="getByIds">
       <input message="tns:GetByIdsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/GetByIdsRequest" />
       <output message="tns:GetByIdsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/GetByIdsResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/NullifiedRoleFaultFaultMessage" />
     </operation>
     <operation name="search">
       <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/SearchRequest" />
@@ -246,10 +257,12 @@
     <operation name="update">
       <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/UpdateRequest" />
       <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/UpdateResponse" />
+      <fault name="EntityValidationFault" message="tns:EntityValidationFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/EntityValidationFaultFaultMessage" />
     </operation>
     <operation name="updateStatus">
       <input message="tns:UpdateStatusRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/UpdateStatusRequest" />
       <output message="tns:UpdateStatusResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/UpdateStatusResponse" />
+      <fault name="EntityValidationFault" message="tns:EntityValidationFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/EntityValidationFaultFaultMessage" />
     </operation>
     <operation name="validate">
       <input message="tns:ValidateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/ValidateRequest" />

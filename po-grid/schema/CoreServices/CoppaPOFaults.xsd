@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:COPPA-PO="http://po.coppa.nci.nih.gov" xmlns:COPPA-PO-FAULTS="http://faults.po.coppa.nci.nih.gov"
+	xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+	targetNamespace="http://faults.po.coppa.nci.nih.gov" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	<import
+		namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+		schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+	<xs:complexType name="StringMapType">
+		<xs:sequence>
+			<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="key" type="xs:string" nillable="false"
+							minOccurs="0" />
+						<xs:element name="value" type="xs:string" minOccurs="0"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+    <xs:complexType name="SimpleIIMapType"> 
+        <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" type="xs:string" nillable="false" minOccurs="0" />
+                        <xs:element name="value" type="xs:string" minOccurs="0" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+	<complexType name="EntityValidationFault">
+		<complexContent>
+			<extension base="wsrbf:BaseFaultType">
+				<sequence>
+					<element name="errors" type="COPPA-PO-FAULTS:StringMapType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="NullifiedDataFault" abstract="true">
+		<complexContent>
+			<extension base="wsrbf:BaseFaultType">
+				<sequence>
+					<element name="nullifiedEntries" type="COPPA-PO-FAULTS:SimpleIIMapType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="NullifiedEntityFault">
+		<complexContent>
+			<extension base="COPPA-PO-FAULTS:NullifiedDataFault" />
+		</complexContent>
+	</complexType>
+	<complexType name="NullifiedRoleFault">
+		<complexContent>
+			<extension base="COPPA-PO-FAULTS:NullifiedDataFault" />
+		</complexContent>
+	</complexType>
+</schema>

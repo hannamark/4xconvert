@@ -26,19 +26,19 @@ public class IdentifiedPersonProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getIdentifiedPerson().getIdentifiedPerson()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdResponse();
     boxedResult.setIdentifiedPerson(impl.getById(params.getId().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsResponse();
     boxedResult.setIdentifiedPerson(impl.getByIds(params.getId().getId()));
     return boxedResult;
@@ -50,13 +50,13 @@ public class IdentifiedPersonProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateResponse();
     impl.update(params.getIdentifiedPerson().getIdentifiedPerson());
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
     return boxedResult;

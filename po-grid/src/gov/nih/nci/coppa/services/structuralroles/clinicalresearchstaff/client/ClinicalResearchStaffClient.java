@@ -106,17 +106,18 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        ClinicalResearchStaff[] searchClinicalResearchStaffs = client.search(criteria);
-        if (searchClinicalResearchStaffs == null) {
+        ClinicalResearchStaff[] results = client.search(criteria);
+        if (results == null) {
             System.out.println("Search ClinicalResearchStaff Results was null!");
+        } else {
+            System.out.println("Search ClinicalResearchStaff Results Found: " + results.length);
         }
-        System.out.println("Search ClinicalResearchStaff Results Found: " + searchClinicalResearchStaffs.length);
-        for (ClinicalResearchStaff crs : searchClinicalResearchStaffs) {
+        for (ClinicalResearchStaff crs : results) {
             System.out.println(ToStringBuilder.reflectionToString(crs, ToStringStyle.MULTI_LINE_STYLE));
         }
     }
     
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateRequest();
@@ -128,7 +129,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdRequest();
@@ -140,7 +141,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsRequest();
@@ -164,7 +165,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateRequest();
@@ -175,7 +176,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.UpdateStatusRequest();

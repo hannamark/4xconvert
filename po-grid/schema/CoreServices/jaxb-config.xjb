@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <jxb:bindings version="1.0" 
     xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
     xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
@@ -14,63 +15,5 @@
             <jxb:package name="org.iso._21090"/>
         </jxb:schemaBindings>
     </jxb:bindings>
-<!--
-SMM: PO-860
-
-    <jxb:bindings schemaLocation="CoreServicesTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="OrganizationTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.entities.organization.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="PersonTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.entities.person.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="ClinicalResearchStaffTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="HealthCareFacilityTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="HealthCareProviderTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="IdentifiedOrganizationTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="IdentifiedPersonTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="OrganizationalContactTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="OversightCommitteeTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    <jxb:bindings schemaLocation="ResearchOrganizationTypes.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
--->    
+    
 </jxb:bindings>

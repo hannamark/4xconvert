@@ -98,8 +98,9 @@ public class PersonClient extends PersonClientBase implements PersonI {
         gov.nih.nci.coppa.po.Person[] results = client.search(criteria);
         if (results == null) {
             System.out.println("Search Persons Results was null!");
+        } else {
+            System.out.println("Search Persons Results Found: " + results.length);
         }
-        System.out.println("Search Persons Results Found: " + results.length);
         for (gov.nih.nci.coppa.po.Person person : results) {
             print(person);
         }
@@ -114,7 +115,8 @@ public class PersonClient extends PersonClientBase implements PersonI {
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
     
-  public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
+
+  public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequest();
@@ -126,7 +128,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
     }
   }
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.entities.person.stubs.CreateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.CreateRequest();
@@ -162,7 +164,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequest();
@@ -173,7 +175,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequest();

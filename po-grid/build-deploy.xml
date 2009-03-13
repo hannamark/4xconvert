@@ -103,7 +103,7 @@
 		<mkdir dir="tmp" />
 
 		<runtarget target="preDeployTomcat" />
-		<runtarget target="deployWebApp" />
+		<runtarget target="-deployWebApp" />
 	</target>
 
 	<!-- deploy service to jboss -->
@@ -124,13 +124,12 @@
 		<mkdir dir="tmp" />
 
 		<runtarget target="preDeployJBoss" />
-		<runtarget target="deployWebApp" />
+		<runtarget target="-deployWebApp" />
 	</target>
 
-
-
-
-	<target name="deployWebApp" depends="all,setDeploymentProperties">
+	<target name="deployWebApp" depends="all, setDeploymentProperties, -deployWebApp"/>
+	
+	<target name="-deployWebApp">
 
 		<runtarget target="prepareDeploymentTmp" />
 
@@ -198,7 +197,6 @@
 		</ant>
 		<delete dir="tmp" />
 	</target>
-
 
 	<!-- deploy a gar to globus -->
 	<target name="deployGlobus" depends="checkGlobus, createDeploymentGar" description="Deploys a gar to GLOBUS_LOCATION (to set the services properties file set the ant command line variable -Dservice.properties.file)">

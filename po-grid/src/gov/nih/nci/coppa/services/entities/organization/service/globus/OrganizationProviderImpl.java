@@ -26,13 +26,13 @@ public class OrganizationProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.organization.stubs.UpdateResponse update(gov.nih.nci.coppa.services.entities.organization.stubs.UpdateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.entities.organization.stubs.UpdateResponse update(gov.nih.nci.coppa.services.entities.organization.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.entities.organization.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.UpdateResponse();
     impl.update(params.getOrganization().getOrganization());
     return boxedResult;
@@ -50,13 +50,13 @@ public class OrganizationProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
     gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdResponse();
     boxedResult.setOrganization(impl.getById(params.getId().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.organization.stubs.CreateResponse create(gov.nih.nci.coppa.services.entities.organization.stubs.CreateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.entities.organization.stubs.CreateResponse create(gov.nih.nci.coppa.services.entities.organization.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.entities.organization.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getOrganization().getOrganization()));
     return boxedResult;

@@ -106,17 +106,18 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        HealthCareFacility[] searchHealthCareFacilities = client.search(criteria);
-        if (searchHealthCareFacilities == null) {
+        HealthCareFacility[] results = client.search(criteria);
+        if (results == null) {
             System.out.println("Search HealthCareFacility Results was null!");
+        } else {
+            System.out.println("Search HealthCareFacility Results Found: " + results.length);
         }
-        System.out.println("Search HealthCareFacility Results Found: " + searchHealthCareFacilities.length);
-        for (HealthCareFacility hcf : searchHealthCareFacilities) {
+        for (HealthCareFacility hcf : results) {
           System.out.println(ToStringBuilder.reflectionToString(hcf, ToStringStyle.MULTI_LINE_STYLE));
         }
     }
-    
-  public gov.nih.nci.coppa.po.HealthCareFacility getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
+
+  public gov.nih.nci.coppa.po.HealthCareFacility getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdRequest();
@@ -128,7 +129,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.HealthCareFacility[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareFacility[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByIdsRequest();
@@ -140,7 +141,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.CreateRequest();
@@ -176,7 +177,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateRequest();
@@ -187,7 +188,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusRequest();

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://enterpriseservices.nci.nih.gov/entities/Person/types"
-            xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:tns="http://enterpriseservices.nci.nih.gov/entities/Person/types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified">
-  <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="../ws/addressing/WS-Addressing.xsd"></import>
-  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd"></import>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:tns="http://enterpriseservices.nci.nih.gov/entities/Person/types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/entities/Person/types" xmlns:COPPA-PO-FAULTS="http://faults.po.coppa.nci.nih.gov" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="../ws/addressing/WS-Addressing.xsd" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+  <import namespace="http://faults.po.coppa.nci.nih.gov" schemaLocation="CoppaPOFaults.xsd"/>
   <element name="PersonReference">
     <complexType>
-      <sequence >
-        <element ref="wsa:EndpointReference"></element>
+      <sequence>
+        <element ref="wsa:EndpointReference" />
       </sequence>
     </complexType>
   </element>
-
+  <element name="EntityValidationFault" type="COPPA-PO-FAULTS:EntityValidationFault" />
+  <element name="NullifiedEntityFault" type="COPPA-PO-FAULTS:NullifiedEntityFault" />
 </schema>
+

@@ -26,19 +26,19 @@ public class IdentifiedOrganizationProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getIdentifiedOrganization().getIdentifiedOrganization()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdResponse();
     boxedResult.setIdentifiedOrganization(impl.getById(params.getId().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdsRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdsResponse();
     boxedResult.setIdentifiedOrganization(impl.getByIds(params.getId().getId()));
     return boxedResult;
@@ -50,13 +50,13 @@ public class IdentifiedOrganizationProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateResponse();
     impl.update(params.getIdentifiedOrganization().getIdentifiedOrganization());
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateStatusRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
     return boxedResult;

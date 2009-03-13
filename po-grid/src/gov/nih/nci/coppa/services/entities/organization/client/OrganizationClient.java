@@ -106,12 +106,13 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         CD statusCode = new CD();
         statusCode.setCode("active");
         criteria.setStatusCode(statusCode);
-        Organization[] searchOrgs = client.search(criteria);
-        if (searchOrgs == null) {
+        Organization[] results = client.search(criteria);
+        if (results == null) {
             System.out.println("Search Organization Results was null!");
+        } else {
+            System.out.println("Search Organization Results Found: " + results.length);
         }
-        System.out.println("Search Organization Results Found: " + searchOrgs.length);
-        for (Organization org : searchOrgs) {
+        for (Organization org : results) {
             print(org);
         }
     }    
@@ -123,7 +124,8 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         System.out.println(ToStringBuilder.reflectionToString(identifier));
     }
     
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException {
+
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusRequest();
@@ -137,7 +139,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
   }
 
-  public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+  public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
     gov.nih.nci.coppa.services.entities.organization.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.UpdateRequest();
@@ -172,7 +174,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
   }
 
-  public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdRequest();
@@ -184,7 +186,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
   }
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.entities.organization.stubs.CreateRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.CreateRequest();

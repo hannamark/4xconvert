@@ -26,19 +26,19 @@ public class HealthCareProviderProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.CreateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getHealthCareProvider().getHealthCareProvider()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdResponse getById(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdResponse();
     boxedResult.setHealthCareProvider(impl.getById(params.getId().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdsRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdsResponse getByIds(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdsResponse();
     boxedResult.setHealthCareProvider(impl.getByIds(params.getId().getId()));
     return boxedResult;
@@ -50,13 +50,13 @@ public class HealthCareProviderProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateResponse();
     impl.update(params.getHealthCareProvider().getHealthCareProvider());
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateStatusRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
     return boxedResult;
