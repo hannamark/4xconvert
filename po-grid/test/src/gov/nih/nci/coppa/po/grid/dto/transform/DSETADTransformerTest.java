@@ -175,7 +175,9 @@ public class DSETADTransformerTest
 
     @Override
     public void verifyXmlNull(DSETAD x) {
-        assertNull(x);
+        assertNotNull(x);
+        assertEquals(NullFlavor.NI, x.getNullFlavor());
+        assertTrue(x.getItem().isEmpty());
     }
 
     @Test
@@ -183,19 +185,29 @@ public class DSETADTransformerTest
         DSETAD xml = new DSETAD();
         xml.setNullFlavor(NullFlavor.ASKU);
         DSet<Ad> dto = DSETADTransformer.INSTANCE.toDto(xml);
+        assertNull(dto); // potentially, this could be non-null with an empty set (either would be fine),
+        // but our converter converts to null so we check that here.
 
         xml = DSETADTransformer.INSTANCE.toXml(null);
-        assertNull(xml);
+        assertNotNull(xml);
+	    assertTrue(xml.getItem().isEmpty());
+	    assertEquals(NullFlavor.NI, xml.getNullFlavor());
 
         dto = new DSet<Ad>();
+	    assertNotNull(xml);
+	    assertTrue(xml.getItem().isEmpty());
+	    assertEquals(NullFlavor.NI, xml.getNullFlavor());
+
         dto.setItem(new HashSet<Ad>());
         dto.getItem().add(null);
+
         Ad ad = new Ad();
         ad.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.ASKU);
         dto.getItem().add(ad);
 
         xml = DSETADTransformer.INSTANCE.toXml(dto);
-        assertNull(xml.getNullFlavor());
-
+        assertNotNull(xml);
+	    assertTrue(xml.getItem().isEmpty());
+	    assertEquals(NullFlavor.NI, xml.getNullFlavor());
     }
 }
