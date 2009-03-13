@@ -181,7 +181,7 @@ BubbleTips.activateTipOn("dfn");
     	<input type="hidden" name="page" />
     	<input type="hidden" name="id" /> 
     	<display:table name="${eligibilityList}" id="row" class="data" 
-    	       sort="list"  pagesize="10" requestURI="eligibilityCriteriaquery.action" export="false">
+    	       sort="list"  pagesize="100" requestURI="eligibilityCriteriaquery.action" export="false">
             <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriatype" property="inclusionIndicator" sortable="true" headerClass="sortable" />
             <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriadescription" property="textDescription" sortable="true" headerClass="sortable" maxLength= "200"/>
             <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriterianame" property="criterionName"  sortable="true" headerClass="sortable" />
