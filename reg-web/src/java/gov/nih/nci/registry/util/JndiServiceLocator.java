@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -294,5 +295,14 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudyParticipationContactServiceRemote getStudyParticipationContactService() throws PAException {
         return (StudyParticipationContactServiceRemote) JNDIUtil.lookup(
                     "pa/StudyParticipationContactServiceBean/remote");      
+    }
+    
+    /**
+     * @throws PAException e
+     * @return OrganizationCorrelationServiceRemote
+     */    
+    public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() throws PAException {
+        return (OrganizationCorrelationServiceRemote) JNDIUtil.lookup(
+                    "pa/OrganizationCorrelationServiceBean/remote");      
     } 
 }

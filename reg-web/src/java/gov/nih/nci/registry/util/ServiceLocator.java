@@ -100,6 +100,7 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 
 /**
  * Interface used to locate the services used by pa-web.
@@ -230,5 +231,11 @@ public interface ServiceLocator {
      * @return StudyParticipationContactServiceRemote
      */    
     StudyParticipationContactServiceRemote getStudyParticipationContactService() throws PAException;
+    
+    /**
+     * @throws PAException e
+     * @return OrganizationCorrelationServiceRemote
+     */    
+    OrganizationCorrelationServiceRemote getOrganizationCorrelationService() throws PAException;
 
 }

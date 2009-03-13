@@ -78,7 +78,10 @@
 */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -87,6 +90,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -97,6 +101,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
@@ -110,6 +115,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
@@ -130,9 +136,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -275,6 +284,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             LOG.info("Trial is registered with ID: " + IiConverter.convertToString(studyProtocolIi));
             ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,
                     IiConverter.convertToString(studyProtocolIi));
+            //create NCT Number
+            createStudyNCTNumber(studyProtocolIi);
             // create study overall status
             createStudyStatus(studyProtocolIi);
             // create IND/IDE information *Multiple - times*
@@ -414,6 +425,74 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                     StConverter.convertToSt(protocolWebDTO.getOtherPurposeText()));
         }
         return protocolDTO;
+    }
+    
+    /**
+     * Create a NCT record for the study protocol.
+     * @param studyProtocolIi studyProtocolIi
+     */
+    private void createStudyNCTNumber(Ii studyProtocolIi) {
+        try {
+            StudyParticipationDTO studyParticipationDTO;
+            String poOrgid = getCTGovIdentifier();
+
+            if (PAUtil.isNotEmpty(participationWebDTO.getNctNumber())) {
+                long roId = RegistryServiceLocator.getOrganizationCorrelationService()
+                                    .createResearchOrganizationCorrelations(poOrgid);
+                studyParticipationDTO = new StudyParticipationDTO();
+                studyParticipationDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                studyParticipationDTO.setResearchOrganizationIi(IiConverter.convertToIi(poOrgid));
+                studyParticipationDTO.setFunctionalCode(CdConverter.convertToCd(
+                        StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
+                studyParticipationDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(
+                            participationWebDTO.getNctNumber()));
+                studyParticipationDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+                RegistryServiceLocator.getStudyParticipationService().create(studyParticipationDTO); 
+            } 
+        } catch (PAException pae) {
+            // pae.printStackTrace();
+            LOG.error("Exception occured while creating NCT number: " + pae);
+        }
+        
+    }
+    
+    private String getCTGovIdentifier() throws  PAException {
+        OrganizationDTO poOrgDto = new OrganizationDTO();
+        poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
+        List<OrganizationDTO> poOrgs = RegistryServiceLocator.getPoOrganizationEntityService().search(poOrgDto);
+        String identifier = null;
+        if (poOrgs == null || poOrgs.isEmpty()) {
+            poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov.address", null, "ct.mun", "VA", "20171",
+                    "USA"));
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            Tel t = new Tel();
+            try {
+                t.setValue(new URI("tel", "11111", null));
+            telco.getItem().add(t);
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + "ct@ct.gov"));
+
+            telco.getItem().add(telemail);
+            } catch (URISyntaxException e) {
+                throw new PAException(e);
+            }
+
+            poOrgDto.setTelecomAddress(telco);
+            try {
+                Ii ii = RegistryServiceLocator.getPoOrganizationEntityService().createOrganization(poOrgDto);
+                identifier = ii.getExtension();
+            } catch (EntityValidationException e) {
+                throw new PAException(e);
+            }
+
+        } else if (poOrgs.size() > 1) {
+            throw new PAException(" there cannot be more than 1 record for ClinicalTrials.gov");
+        } else {
+            identifier = poOrgs.get(0).getIdentifier().getExtension();
+        }
+        return identifier;
+
     }
 
     private void createStudyStatus(Ii studyProtocolIi) {

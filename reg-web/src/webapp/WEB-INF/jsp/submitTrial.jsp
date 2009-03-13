@@ -205,6 +205,14 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td scope="row" class="label">
+                    <label for="submitTrial_participationWebDTO_nctNumber"> <fmt:message key="submit.trial.nctNumber"/></label>
+                </td>
+                <td>
+                    <s:textfield name="participationWebDTO.nctNumber"  maxlength="200" size="100"  cssStyle="width:200px" />
+                </td>                
+          </tr>
+          <tr>
+                <td scope="row" class="label">
                      <label for="submitTrial_protocolWebDTO_trialTitle"> <fmt:message key="submit.trial.title"/><span class="required">*</span></label>
                 </td>
                 <td>

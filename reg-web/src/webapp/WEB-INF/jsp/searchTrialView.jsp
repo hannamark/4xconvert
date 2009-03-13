@@ -56,6 +56,18 @@
             		<c:out value="${requestScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
             	</td>
           </tr>
+          <c:if test="${requestScope.studyNCTNumber != null}">
+	          <tr>     
+	                <td scope="row" class="label">
+	                    <label for="NCT Number">
+	                        <fmt:message key="view.trial.nctNumber"/>                
+	                        </label>
+	                </td>
+	                <td class="value">
+	                    <c:out value="${requestScope.studyNCTNumber }"/> 
+	                </td>
+	          </tr>
+          </c:if>
           <tr>     
             	<td scope="row" class="label">
                 	<label for="officialTitle">

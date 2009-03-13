@@ -120,6 +120,9 @@ public class Constants {
     /** Study Participation. */
     public static final String STUDY_PARTICIPATION = "studyParticipation";
     
+    /** Study NCT Number. */
+    public static final String STUDY_NCT_NUMBER = "studyNCTNumber";
+    
     /** Protocol Document. */
     public static final String PROTOCOL_DOCUMENT = "protocolDocument";
     
