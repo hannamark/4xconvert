@@ -27,17 +27,22 @@
 	</tr>
 	<tr>  
  		<td scope="row" class="label">
-            <label for="poOrganizations_orgSearchCriteria_orgCity"> <fmt:message key="popUpOrg.city"/></label>
+            <label for="poOrganizations_orgSearchCriteria_orgCity"> <fmt:message key="popUpOrg.state"/></label>
         </td>
  		<td> 			
  			<s:textfield name="orgSearchCriteria.orgCity"  maxlength="200" size="100"  cssStyle="width:200px" />
 		</td>
+        <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgState"> <fmt:message key="popUpOrg.state"/></label></td>
+ 		<td><s:textfield name="orgSearchCriteria.orgState" maxlength="75" size="20"/></td>
+	</tr>
+	<tr>
  		 <td scope="row" class="label">
             <label for="poOrganizations_orgSearchCriteria_orgZip"> <fmt:message key="popUpOrg.zip"/></label>
         </td>
  		<td>
  			<s:textfield name="orgSearchCriteria.orgZip" maxlength="75" size="20"/>
 		</td>
+	
 	</tr>
 	<tr><td colspan="4"> <hr></td> </tr>
 	<tr>  

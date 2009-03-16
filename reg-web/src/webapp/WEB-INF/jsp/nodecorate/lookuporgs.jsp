@@ -32,8 +32,9 @@
 		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
 		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_orgCity").value;
 		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;	
-		var ctepid = document.getElementById("poOrganizations_orgSearchCriteria_ctepId").value;	
-		var url = '/registry/protected/popupdisplayOrgList.action?orgName='+orgName+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&ctepid='+ctepid;
+		var ctepid = document.getElementById("poOrganizations_orgSearchCriteria_ctepId").value;		
+		var orgState = document.getElementById("poOrganizations_orgSearchCriteria_orgState").value;
+		var url = '/registry/protected/popupdisplayOrgList.action?orgName='+orgName+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&ctepid='+ctepid+'&stateName='+orgState;
 	    var div = document.getElementById('getOrgs');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
 	    ajaxCall(div, url);    

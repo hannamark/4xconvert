@@ -251,8 +251,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             String orgName = ServletActionContext.getRequest().getParameter("orgName");
             String countryName = ServletActionContext.getRequest().getParameter("countryName");
             String cityName = ServletActionContext.getRequest().getParameter("cityName");
+            String stateName = ServletActionContext.getRequest().getParameter("stateName");
             String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
             String ctepId = ServletActionContext.getRequest().getParameter("ctepid");
+            
             if (orgName.equals("") && countryName.equals("") && cityName.equals("") && zipCode.equals("")
                     && ctepId != null && !(ctepId.length() > 0)) {
                 String message = "Please enter at least one search criteria";
@@ -273,6 +275,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                 orgSearchCriteria.setOrgCity(cityName);
                 orgSearchCriteria.setOrgCountry(countryName);
                 orgSearchCriteria.setOrgZip(zipCode);
+                orgSearchCriteria.setOrgState(stateName);
             }
             OrganizationDTO criteria = new OrganizationDTO();
             if (ctepId != null && ctepId.length() > 0) {
@@ -286,7 +289,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             } else {
                 criteria.setName(EnOnConverter.convertToEnOn(orgName));
                 criteria.setPostalAddress(AddressConverterUtil.create(
-                        null, null, cityName, null, zipCode, countryName));
+                        null, null, cityName, stateName, zipCode, countryName));
             }
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
             if (criteria.getIdentifier() != null 
