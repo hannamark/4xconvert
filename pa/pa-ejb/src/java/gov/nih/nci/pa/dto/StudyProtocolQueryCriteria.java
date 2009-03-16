@@ -99,11 +99,13 @@ import java.io.Serializable;
  * @author Hugh Reinhart
  * @author Naveen Amiruddin
  */
+@SuppressWarnings({ "PMD.TooManyFields" })
 public class StudyProtocolQueryCriteria implements Serializable {
     static final long serialVersionUID = 252345L;
 
     private Long studyProtocolId;
     private String nciIdentifier;
+    private String nctNumber;
     private String officialTitle;
     private Long leadOrganizationId;
     private String leadOrganizationTrialIdentifier;
@@ -324,6 +326,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setMyTrialsOnly(Boolean myTrialsOnly) {
         this.myTrialsOnly = myTrialsOnly;
+    }
+    /**
+     * @param nctNumber the nctNumber to set
+     */
+    public void setNctNumber(String nctNumber) {
+        this.nctNumber = nctNumber;
+    }
+    /**
+     * @return the nctNumber
+     */
+    public String getNctNumber() {
+        return nctNumber;
     }
 
 

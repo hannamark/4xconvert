@@ -361,6 +361,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join ro.organization as org ");
 
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
+            hql.append(" order by dws.statusDateRangeLow asc");
         } catch (Exception e) {
             LOG.error("General error in while executing Study Query protocol",
                     e);
@@ -485,16 +486,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                     + "                where dws.studyProtocol = dws1.studyProtocol )"
                                     + " or dws.id is null ) ");
-                }
-                
+                }                
            }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
-                where
-                        .append(" and upper(sps.localStudyProtocolIdentifier) like '%"
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
+                where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
                                 + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
-                                        .toUpperCase().trim().replaceAll("'", "''") + "%'");
-            }
-            
+                                        .toUpperCase().trim().replaceAll("'", "''") + "%'"); 
+           }           
            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
                     where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
 
@@ -509,15 +507,21 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
                
            }
-
-           
            where.append(" and sps.functionalCode ='"
                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
-
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
            
-
+           // sub-query for searching trials by NCT number
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
+                where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 " 
+                      + " left outer join sp1.studyParticipations as sps1 "
+                      + " where upper(sps1.localStudyProtocolIdentifier) like '%"
+                               + studyProtocolQueryCriteria.getNctNumber()
+                                       .toUpperCase().trim().replaceAll("'", "''") + "%'" 
+                               + " and sps1.functionalCode = '" 
+                               + StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER + "')");
+           } 
            
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
