@@ -394,7 +394,7 @@
   </macrodef>
 
     <target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
-      <run-client serviceenpointname="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient" debug-suspend="y"/>
+      <run-client serviceenpointname="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient" debug-suspend="n"/>
     </target>
 
     <target name="runOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample Organization Client">

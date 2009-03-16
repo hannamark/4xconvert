@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.entities.person.client;
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Person;
+import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
 import gov.nih.nci.coppa.services.entities.person.common.PersonI;
 
 import java.rmi.RemoteException;
@@ -67,6 +68,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
 			  // test....
 			  
               getPerson(client);
+              getNullifiedPerson(client);
               searchPersons(client);
 			} else {
 				usage();
@@ -110,9 +112,25 @@ public class PersonClient extends PersonClientBase implements PersonI {
         Id id = new Id();
         id.setRoot(PERSON_ROOT);
         id.setIdentifierName(PERSON_IDENTIFIER_NAME);
-        id.setExtension("516");
+        id.setExtension("499");
         Person result = client.getById(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+    }
+    
+    private static void getNullifiedPerson(PersonClient client) throws RemoteException {
+        try {
+            Id id = new Id();
+            id.setRoot(PERSON_ROOT);
+            id.setIdentifierName(PERSON_IDENTIFIER_NAME);
+            id.setExtension("1140");
+            Person result = client.getById(id);
+            System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        } catch (NullifiedEntityFault e) {
+            System.out.println("NullifiedEntityFault");
+            e.printStackTrace(System.out);
+        } catch (RemoteException e) {
+            throw e;
+        }
     }
     
 

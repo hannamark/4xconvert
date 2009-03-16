@@ -5,7 +5,7 @@ import gov.nih.nci.coppa.iso.NullFlavor;
 /**
  * Transforms null flavors.
  */
-final class NullFlavorTransformer implements Transformer<org.iso._21090.NullFlavor, NullFlavor> {
+public final class NullFlavorTransformer implements Transformer<org.iso._21090.NullFlavor, NullFlavor> {
 
     /**
      * Public singleton.

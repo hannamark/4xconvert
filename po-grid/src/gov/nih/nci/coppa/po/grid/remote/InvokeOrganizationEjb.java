@@ -1,38 +1,75 @@
 package gov.nih.nci.coppa.po.grid.remote;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class InvokeOrganizationEjb {
+public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
     static Logger logger = LogManager.getLogger(InvokeOrganizationEjb.class);
-    JNDIUtil jndiUtil = JNDIUtil.getInstance();
+    ServiceLocator locator = JNDIServiceLocator.getInstance();
 
-    public List<OrganizationDTO> search(OrganizationDTO org) throws InvokeCoppaServiceException {
+    public List<OrganizationDTO> search(OrganizationDTO org) {
         try {
-            List<OrganizationDTO> orgs = jndiUtil.getOrganizationService().search(org);
-            return orgs;
-        } catch (Exception exception) {
-            logger.error("Error searching organizations.", exception);
-            throw new InvokeCoppaServiceException(exception.toString(), exception);
+            return locator.getOrganizationService().search(org);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
 
-    public OrganizationDTO getOrganization(Ii ii) throws NullifiedEntityException, InvokeCoppaServiceException {
+    public OrganizationDTO getOrganization(Ii ii) throws NullifiedEntityException {
         try {
-            OrganizationDTO person = jndiUtil.getOrganizationService().getOrganization(ii);
-            return person;
-        } catch (NullifiedEntityException nee) {
-            logger.error("Nullified entity exception getting organizations.", nee);
-            throw nee;
-        } catch (Exception exception) {
-            logger.error("Error getting organizations.", exception);
-            throw new InvokeCoppaServiceException(exception.toString(), exception);
+            return locator.getOrganizationService().getOrganization(ii);
+        } catch (NullifiedEntityException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    public Ii createOrganization(OrganizationDTO org) throws EntityValidationException {
+        try {
+            return locator.getOrganizationService().createOrganization(org);
+        } catch (EntityValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
+        try {
+            locator.getOrganizationService().updateOrganization(proposedState);
+        } catch (EntityValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
+        try {
+            locator.getOrganizationService().updateOrganizationStatus(targetOrg, statusCode);
+        } catch (EntityValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    public Map<String, String[]> validate(OrganizationDTO org) {
+        try {
+            return locator.getOrganizationService().validate(org);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
 }
