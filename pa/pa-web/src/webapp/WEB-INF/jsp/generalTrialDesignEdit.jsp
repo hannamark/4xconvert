@@ -176,11 +176,14 @@ function manageRespPartyLookUp(){
     <tr>
     	<th colspan="2"> <fmt:message key="studyProtocol.trialDescription"/></th>
     </tr>
-    
+    <tr> 
+            <td/>
+            <td class="info" colspan="2">Madatory at Abstraction Validation</td>
+     </tr>
      <tr>
     	<td scope="row" class="label">
            <label for=briefSummary>
-                    <fmt:message key="studyProtocol.briefSummary"/><span class="required">*</span>
+                    <fmt:message key="studyProtocol.briefSummary"/>
            </label>
          </td>
          <td class="value">
@@ -219,7 +222,6 @@ function manageRespPartyLookUp(){
         <td scope="row" class="label">
            <label for="nciIdentifier">
                     Central Contact
-                 <span class="required">*</span>
            </label>
          </td>
         <td class="value">
@@ -230,7 +232,7 @@ function manageRespPartyLookUp(){
     </tr>
         <tr>
             <td scope="row" class="label">
-               Email Address:<span class="required">*</span>
+               Email Address:
             </td>
             <td class="value">
                 <s:textfield name="gtdDTO.centralContactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -242,7 +244,7 @@ function manageRespPartyLookUp(){
             </td>
         </tr>
         <tr>
-            <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
+            <td scope="row" class="label">Phone Number:</td>
             <td class="value">
                 <s:textfield name="gtdDTO.centralContactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
