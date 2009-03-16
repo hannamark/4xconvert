@@ -186,6 +186,9 @@ public class Constants {
     /** TRIAL IDENTIFIER TYPE CODE - Lead Organization. */
     public static final String IDENTIFIER_TYPE_LEAD_ORG = "Lead Organization";
     
+    /** TRIAL IDENTIFIER TYPE CODE - NCT. */
+    public static final String IDENTIFIER_TYPE_NCT = "NCT";
+    
     /** TRIAL TITLE - Max Length. */
     public static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     

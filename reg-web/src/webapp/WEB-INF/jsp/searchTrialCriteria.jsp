@@ -81,7 +81,7 @@ function handleMyAction(){
 						headerKey="" 
 						headerValue="--Select--" 
 						name="criteria.identifierType"  
-						list="#{'NCI':'NCI', 'Lead Organization':'Lead Organization'}" 
+						list="#{'NCI':'NCI','NCT':'NCT','Lead Organization':'Lead Organization'}" 
 						value="criteria.identifierType" 
 						cssStyle="width:206px" 
 						/>

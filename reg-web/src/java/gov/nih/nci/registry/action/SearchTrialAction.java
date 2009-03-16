@@ -290,6 +290,9 @@ public class SearchTrialAction extends ActionSupport {
             } else if (criteria.getIdentifierType().equals(
                         Constants.IDENTIFIER_TYPE_LEAD_ORG)) {
                 queryCriteria.setLeadOrganizationTrialIdentifier(criteria.getIdentifier());
+            } else if (criteria.getIdentifierType().equals(
+                        Constants.IDENTIFIER_TYPE_NCT)) {
+                queryCriteria.setNctNumber(criteria.getIdentifier());
             }
         }
         queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
