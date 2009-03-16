@@ -25,9 +25,10 @@
 		//var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;
 		var orgNumber;
 		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
-		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_orgCity").value;
-		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;		
-		var url = '/pa/protected/popupdisplayOrgList.action?orgName='+orgName+'&nciNumber='+orgNumber+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip;
+		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_city").value;
+		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;
+		var orgState = document.getElementById("poOrganizations_orgSearchCriteria_state").value;
+		var url = '/pa/protected/popupdisplayOrgList.action?orgName='+orgName+'&nciNumber='+orgNumber+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&stateName='+orgState;
 	    var div = document.getElementById('getOrgs');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
 	    var aj = new Ajax.Updater(div,url, {
@@ -76,14 +77,23 @@
             <label for="city"> <fmt:message key="popUpOrg.city"/></label>
         </td>
  		<td> 			
- 			<s:textfield name="orgSearchCriteria.orgCity"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield name="orgSearchCriteria.city"  maxlength="200" size="100"  cssStyle="width:200px" />
 		</td>
+ 		<td scope="row" class="label">
+            <label for="state"> State</label>
+        </td>
+ 		<td>
+ 			<s:textfield name="orgSearchCriteria.state" maxlength="75" size="20"/>
+		</td>
+		
+	</tr>
+	<tr>
  		 <td scope="row" class="label">
             <label for="zip"> <fmt:message key="popUpOrg.zip"/></label>
         </td>
  		<td>
  			<s:textfield name="orgSearchCriteria.orgZip" maxlength="75" size="20"/>
-		</td>
+		</td>	
 	</tr>
 	</table>
 	<div class="actionsrow">

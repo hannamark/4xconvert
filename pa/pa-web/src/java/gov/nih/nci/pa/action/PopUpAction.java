@@ -263,6 +263,7 @@ public class PopUpAction extends ActionSupport {
             String countryName = ServletActionContext.getRequest().getParameter("countryName");
             String cityName = ServletActionContext.getRequest().getParameter("cityName");
             String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
+            String stateName = ServletActionContext.getRequest().getParameter("stateName");
             if ("".equals(orgName) && ("aaa").equals(countryName) && "".equals(cityName) && "".equals(zipCode)) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
@@ -275,10 +276,12 @@ public class PopUpAction extends ActionSupport {
             orgSearchCriteria.setCity(cityName);
             orgSearchCriteria.setCountry(countryName);
             orgSearchCriteria.setZip(zipCode);
+            orgSearchCriteria.setState(stateName);
             //
             OrganizationDTO criteria = new OrganizationDTO();
             criteria.setName(EnOnConverter.convertToEnOn(orgName));
-            criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName, null, zipCode, countryName));
+            criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName, 
+                                                                            stateName, zipCode, countryName));
             List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();
             personsList = PaRegistry.getPoOrganizationEntityService().search(criteria);
             for (OrganizationDTO dto : personsList) {
