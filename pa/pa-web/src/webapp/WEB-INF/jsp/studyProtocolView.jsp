@@ -42,24 +42,14 @@
             </tr>
             <tr>
             <td scope="row" class="label">
-                <label for="nct">
-                NCT Number
-                </label>
-            </td>
-            <td class="value"></td>
-            </tr>
-            <tr>
-            <td scope="row" class="label">
                 <label for="localProtocolIdentifer"> 
                     <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
                 </label>
             </td>
-            <td class="value"></td>
+            <td class="value">
+             <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/> 
+            </td>
             </tr>  
-            <tr>
-                <td scope="row" class="label"><label for="sectrialid">Secondary Trial Identifier</label></td>
-                <td class="value"></td>
-            </tr>
             <tr>
             <td scope="row" class="label">
                 <label for="leadOrg"> 
@@ -80,13 +70,7 @@
                  <c:out value="${sessionScope.trialSummary.officialTitle }"/> 
             </td>
             </tr>       
-             <tr>
-                <td scope="row" class="label"><label for="acronym">Acronym</label></td>
-                <td class="value"></td>
-            </tr>
-
-
-        </table>  
+            </table>  
 <!--        
  <div class="actionsrow">
 	<del class="btnwrapper">
