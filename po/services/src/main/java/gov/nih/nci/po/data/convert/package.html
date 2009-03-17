@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+Provides transformers that move between the <i>Hibernate (HIB)</i> and <i>DTO</i> layers.  These classes are
+<a href="http://xsnapshot.sourceforge.net/">XSnapshot</a> converters, and come in pairs: one class for the
+HIB -> DTO conversion and another for the DTO -> HIB conversion.  For example, <code>StringConverter</code> goes
+from String fields in the Hibernate model to ISO <code>St</code>; and <code>StConverter</code> goes from
+ISO <code>St</code> to String fields.
+
+<h2>Conversion Rules</h2>
+
+When converting from HIB to DTO:
+<ul>
+<li>Converters <em>never</em> produce null DTOs.
+<li>Null input produces ISO types with NullFlavor.NI (for simple types) or empty sets (for DSets).
+<li>NullFlavor.NI is the old NullFlavor used.
+</ul> 
+
+When converting from DTO to HIB:
+<ul>
+<li>Null inputs produce null outputs.
+<li>NullFlavored inputs produce null outputs.  <i>Implication: we lose flavor information during this transformation
+    and cannot recover it.</i>
+<li>Some OCL constraints may be checked during conversion.
+</ul>
+
+<h2>ISO Localization</h2>
+
+The DTO classes use a <i>localized</i> version of the full ISO data types.  Localized ISO data types use a subset of
+the full fields.  For instance, none of our classes have the <code>validTimeHigh</code> or <code>validTimeLow</code>
+fields from <code>HXIT</code>.
+
+</body>
+</html>
