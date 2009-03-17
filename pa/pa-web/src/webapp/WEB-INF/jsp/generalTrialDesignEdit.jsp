@@ -26,6 +26,11 @@
     function handleAction(){
         document.forms[0].action="generalTrialDesignupdate.action";
         document.forms[0].submit(); 
+    } 
+    //function which handles the remove of the Central contact.   
+    function handleRemove(){
+        document.forms[0].action="generalTrialDesignremoveCentralContact.action";
+        document.forms[0].submit(); 
     }    
     function lookup4loadresponsibleparty(){
        var orgid = document.getElementById('sponsorIdentifier').value;
@@ -217,19 +222,21 @@ function manageRespPartyLookUp(){
     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
     <tr>
         <th colspan="2"> Central Contact</th>
-    </tr>    
-    <tr>
-        <td scope="row" class="label">
-           <label for="nciIdentifier">
-                    Central Contact
-           </label>
-         </td>
+    </tr> 
+    <tr> 
+            <td/>
+            <td class="info" colspan="2">Assign values to all fields below if central contact information is recorded; otherwise leave these fields empty.</td>
+     </tr>   
+    <tr >
+        <td scope="row" class="label" >
+            <label for="nciIdentifier"> Central Contact </label>
+        </td>
         <td class="value">
             <div id="loadCentralContactDiv">
             <%@ include file="/WEB-INF/jsp/nodecorate/centralContact.jsp" %>
-            </div>      
+            </div>    
         </td>
-    </tr>
+      </tr>
         <tr>
             <td scope="row" class="label">
                Email Address:

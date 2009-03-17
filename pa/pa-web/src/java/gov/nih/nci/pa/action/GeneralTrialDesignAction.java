@@ -141,6 +141,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private static final int SCI_DESC = 12000;
     private static final int KEYWORD = 600;
     private static final String SPONSOR = "sponsor";
+    private static final String RESULT = "edit";
     /**
      * @return res
      */
@@ -166,7 +167,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
-        return "edit";
+        return RESULT;
     }
 
     /**
@@ -175,10 +176,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
     public String update() {
         enforceBusinessRules();
         if (hasFieldErrors()) {
-          return "edit";
+          return RESULT;
         }
         save();
-        return "edit";
+        return RESULT;
     }
 
     private void save() {
@@ -466,6 +467,38 @@ public class GeneralTrialDesignAction extends ActionSupport {
             PaRegistry.getStudyContactService().create(createStudyContactObj(studyProtocolIi, scDto));
         }
     }
+    
+    
+    /**
+     * Removes/Deletes the Central Contact from General Trial Details.
+     * @return result
+     */
+    public String removeCentralContact() {
+    try {
+    Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+        .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+    StudyContactDTO scDto = new StudyContactDTO();
+    
+         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
+         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
+         if (scDtos != null && !scDtos.isEmpty()) {
+             scDto = scDtos.get(0);
+             PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
+             gtdDTO.setCentralContactEmail("");
+             gtdDTO.setCentralContactName("");
+             gtdDTO.setCentralContactPhone("");
+             //query to retrieve and display the latest trial data
+              query();
+         }
+                 
+    } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        } 
+    
+      return RESULT;
+    }
+    
     private StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO) throws PAException {
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
         String phone = gtdDTO.getCentralContactPhone().trim();
@@ -576,6 +609,15 @@ public class GeneralTrialDesignAction extends ActionSupport {
           addFieldError("gtdDTO.responsiblePersonName",
                   getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
       }
+      if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+          addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
+      }
+      if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+            addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
+            addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
+       }
     if (PAUtil.isNotEmpty(gtdDTO.getCentralContactName()) || PAUtil.isNotEmpty(gtdDTO.getCentralContactPhone())
     || PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail())) {
     
@@ -587,9 +629,6 @@ public class GeneralTrialDesignAction extends ActionSupport {
       }
       if (PAUtil.isEmpty(gtdDTO.getCentralContactEmail())) {
       addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email must be Entered"));
-      }
-      if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
-          addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
       }
       if (PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getCentralContactEmail())) {
           addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email is not a valid format"));
