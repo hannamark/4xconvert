@@ -33,7 +33,24 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
             return "";
         }
     }
-
+    /**
+     * 
+     * @return formated date
+     */
+    public String getAction() {
+        String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
+        String loginUser = ServletActionContext.getRequest().getRemoteUser();
+        
+        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
+                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
+        if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED) 
+                && loginUser.equalsIgnoreCase(userCreated)) {
+            return "Amend";
+        } else  {
+            return "";
+        }
+    }
+    
     /**
      * 
      * @return formated date

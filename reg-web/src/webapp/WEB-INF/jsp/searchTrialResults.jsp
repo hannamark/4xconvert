@@ -11,7 +11,12 @@
 	<display:column titleKey="search.trial.leadOrganizationName" property="leadOrganizationName"    sortable="true" headerClass="sortable" headerScope="col"/>
 	<display:column titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.piFullName" property="piFullName"    sortable="true" headerClass="sortable" headerScope="col"/>
-    <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode"   sortable="true" headerClass="sortable" headerScope="col"/>   
+    <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode"   sortable="true" headerClass="sortable" headerScope="col"/>
+    <display:column titleKey="search.trial.action" 
+        href="studyProtocolview.action" property="action"
+        paramId="studyProtocolId" paramProperty="studyProtocolId"
+        sortable="true" headerClass="sortable"/>
+       
 </display:table>
 
 
