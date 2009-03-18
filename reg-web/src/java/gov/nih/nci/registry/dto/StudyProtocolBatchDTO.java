@@ -11,6 +11,7 @@ package gov.nih.nci.registry.dto;
 public class StudyProtocolBatchDTO {
     private String uniqueTrialId;
     private String localProtocolIdentifier;
+    private String nctNumber;
     private String title;
     private String trialType;
     private String primaryPurpose;
@@ -350,6 +351,20 @@ public class StudyProtocolBatchDTO {
      */
     public void setLocalProtocolIdentifier(String localProtocolIdentifier) {
         this.localProtocolIdentifier = localProtocolIdentifier;
+    }
+
+    /**
+     * @param nctNumber the nctNumber to set
+     */
+    public void setNctNumber(String nctNumber) {
+        this.nctNumber = nctNumber;
+    }
+
+    /**
+     * @return the nctNumber
+     */
+    public String getNctNumber() {
+        return nctNumber;
     }
 
     /**

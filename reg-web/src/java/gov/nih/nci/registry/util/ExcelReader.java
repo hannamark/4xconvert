@@ -186,6 +186,7 @@ public class ExcelReader {
         switch (col) {
         case BatchConstants.UNIQUE_TRIAL_IDENTIFIER: batchDto.setUniqueTrialId(cellValue); break;
         case BatchConstants.LEAD_ORGANIZATION_TRIAL_IDENTIFIER: batchDto.setLocalProtocolIdentifier(cellValue); break;
+        case BatchConstants.NCT_NUMBER: batchDto.setNctNumber(cellValue); break;
         case BatchConstants.TITLE: batchDto.setTitle(cellValue); break;
         case BatchConstants.TRIAL_TYPE: batchDto.setTrialType(cellValue); break;
         case BatchConstants.PRIMARY_PURPOSE: batchDto.setPrimaryPurpose(cellValue); break;

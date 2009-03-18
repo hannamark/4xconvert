@@ -97,6 +97,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -273,6 +275,9 @@ public class BatchCreateProtocols {
             }
             log.info("Trial is registered with ID: "
                     + IiConverter.convertToString(studyProtocolIi));
+            if (PAUtil.isNotEmpty(dto.getNctNumber())) {
+                createStudyNCTNumber(studyProtocolIi, dto);  // create NCT number
+            }
             createStudyStatus(studyProtocolIi, dto);  // create study overall status
             createIndIdeIndicators(studyProtocolIi, dto); // create IND/IDE information *One- times*
             createStudyResources(studyProtocolIi, dto); // create the Study Grants One- times*
@@ -391,6 +396,74 @@ public class BatchCreateProtocols {
         }
         protocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         return protocolDTO;
+    }
+    
+    /**
+     * Create a NCT record for the study protocol.
+     * @param studyProtocolIi studyProtocolIi
+     */
+    private void createStudyNCTNumber(Ii studyProtocolIi, StudyProtocolBatchDTO batchDto) {
+        try {
+            StudyParticipationDTO studyParticipationDTO;
+            String poOrgid = getCTGovIdentifier();
+
+            if (PAUtil.isNotEmpty(batchDto.getNctNumber())) {
+                long roId = RegistryServiceLocator.getOrganizationCorrelationService()
+                                    .createResearchOrganizationCorrelations(poOrgid);
+                studyParticipationDTO = new StudyParticipationDTO();
+                studyParticipationDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                studyParticipationDTO.setResearchOrganizationIi(IiConverter.convertToIi(poOrgid));
+                studyParticipationDTO.setFunctionalCode(CdConverter.convertToCd(
+                        StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
+                studyParticipationDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(
+                        batchDto.getNctNumber()));
+                studyParticipationDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+                RegistryServiceLocator.getStudyParticipationService().create(studyParticipationDTO); 
+            } 
+        } catch (PAException pae) {
+            // pae.printStackTrace();
+            log.error("Exception occured while creating NCT number: " + pae);
+        }
+        
+    }
+    
+    private String getCTGovIdentifier() throws  PAException {
+        OrganizationDTO poOrgDto = new OrganizationDTO();
+        poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
+        List<OrganizationDTO> poOrgs = RegistryServiceLocator.getPoOrganizationEntityService().search(poOrgDto);
+        String identifier = null;
+        if (poOrgs == null || poOrgs.isEmpty()) {
+            poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov.address", null, "ct.mun", "VA", "20171",
+                    "USA"));
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            Tel t = new Tel();
+            try {
+                t.setValue(new URI("tel", "11111", null));
+            telco.getItem().add(t);
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + "ct@ct.gov"));
+
+            telco.getItem().add(telemail);
+            } catch (URISyntaxException e) {
+                throw new PAException(e);
+            }
+
+            poOrgDto.setTelecomAddress(telco);
+            try {
+                Ii ii = RegistryServiceLocator.getPoOrganizationEntityService().createOrganization(poOrgDto);
+                identifier = ii.getExtension();
+            } catch (EntityValidationException e) {
+                throw new PAException(e);
+            }
+
+        } else if (poOrgs.size() > 1) {
+            throw new PAException(" there cannot be more than 1 record for ClinicalTrials.gov");
+        } else {
+            identifier = poOrgs.get(0).getIdentifier().getExtension();
+        }
+        return identifier;
+
     }
 /**
  * 
