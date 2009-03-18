@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * DTO class for displaying organizations as a list.
  * 
@@ -86,7 +88,11 @@ package gov.nih.nci.pa.dto;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class PaOrganizationDTO {
+public class PaOrganizationDTO implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String id;
     private String name;
     private String nciNumber;

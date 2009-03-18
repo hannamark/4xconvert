@@ -19,9 +19,14 @@
 		window.top.hidePopWin(true); 
 	}
 	function loadDiv() {
-		var firstName = document.forms[0].firstName.value;
-		var lastName = document.forms[0].lastName.value;      
-		var url = '/pa/protected/popupdisplayPersonsList.action?firstName='+firstName+'&lastName='+lastName;
+		var firstName = document.getElementById("poOrganizations_perSearchCriteria_firstName").value;
+		var lastName = document.getElementById("poOrganizations_perSearchCriteria_lastName").value;
+		var persCountry = document.getElementById("poOrganizations_perSearchCriteria_country").value;
+		var persCity = document.getElementById("poOrganizations_perSearchCriteria_city").value;
+		var persZip = document.getElementById("poOrganizations_perSearchCriteria_zip").value;
+		var persState = document.getElementById("poOrganizations_perSearchCriteria_state").value;		
+		//
+		var url = '/pa/protected/popupdisplayPersonsList.action?firstName='+firstName+'&lastName='+lastName+'&countryName='+persCountry+'&cityName='+persCity+'&zipCode='+persZip+'&stateName='+persState;
 	    var div = document.getElementById('getPersons');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
 	    var aj = new Ajax.Updater(div,url, {
@@ -32,30 +37,39 @@
 	    return false;
 	}
 
-</SCRIPT> 
+</SCRIPT>
+
 </head> 
 <body>
 <div class="box">
 <s:form id="poOrganizations" name="poOrganizations" >
 <h2>Search Persons</h2>
 <table  class="form">  
-   	<tr> 	
- 		<td scope="row" class="label">
-            <label for="name">First Name:</label>
-        </td>
- 		<td>
- 			<s:textfield name="firstName"  maxlength="200" size="100"  cssStyle="width:200px" />
- 		</td>
+   	<tr>
+   		<td scope="row" class="label"><label for="firstname">First Name:</label></td>
+ 		<td><s:textfield name="perSearchCriteria.firstName"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+		<td scope="row" class="label"><label for="lastname"> Last Name:</label></td>
+ 		<td><s:textfield name="perSearchCriteria.lastName"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
 	</tr>
-	<tr>  
-  		<td scope="row" class="label">
-            <label for="nciorgname"> Last Name:</label>
-        </td>
- 		<td> 			
- 			<s:textfield name="lastName"  maxlength="200" size="100"  cssStyle="width:200px" />
- 		</td>
-	</tr>
-	</table>
+   	<tr>
+   		<td scope="row" class="label"><label for="city">City:</label></td>
+ 		<td><s:textfield name="perSearchCriteria.city"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+		<td scope="row" class="label"><label for="state">State:</label></td>
+ 		<td><s:textfield name="perSearchCriteria.state"  maxlength="200" size="100"  cssStyle="width:200px" /><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font></td>
+	</tr>		
+   	<tr>
+   		<td scope="row" class="label"><label for="country">Country:</label></td>
+        <td>
+              	<s:select  
+                name="perSearchCriteria.country" 
+                list="countryList"  
+                listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
+        </td>	
+		<td scope="row" class="label"><label for="zip">Zip:</label></td>
+ 		<td><s:textfield name="perSearchCriteria.zip"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+	</tr>	
+	
+</table>
 	<div class="actionsrow">
          <del class="btnwrapper">
             <ul class="btnrow">

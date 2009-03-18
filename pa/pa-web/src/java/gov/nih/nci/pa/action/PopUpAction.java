@@ -109,6 +109,7 @@ public class PopUpAction extends ActionSupport {
     private List<PaOrganizationDTO> orgs = new ArrayList<PaOrganizationDTO>();
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private PaOrganizationDTO orgSearchCriteria = new PaOrganizationDTO();
+    private PaPersonDTO perSearchCriteria = new PaPersonDTO();
 
     /**
      * 
@@ -209,6 +210,13 @@ public class PopUpAction extends ActionSupport {
      * @return String success or failure
      */
     public String lookuppersons() {
+        try {
+            getCountriesList();
+            orgs = null;
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return ERROR;
+        }
         persons = null;
         return "persons";
     }
@@ -271,7 +279,7 @@ public class PopUpAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
                 return retvalue;
             }
-            // Set the values
+            // Set the values; so paging will retain them
             orgSearchCriteria.setName(orgName);
             orgSearchCriteria.setCity(cityName);
             orgSearchCriteria.setCountry(countryName);
@@ -296,15 +304,32 @@ public class PopUpAction extends ActionSupport {
     private String processDisplayPersons(String retvalue) {
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
-        if ("".equals(firstName) && "".equals(lastName)) {
+        //Also search by address        
+        // String nciOrgName = ServletActionContext.getRequest().getParameter("nciNumber");
+        String countryName = ServletActionContext.getRequest().getParameter("countryName");
+        String cityName = ServletActionContext.getRequest().getParameter("cityName");
+        String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
+        String stateName = ServletActionContext.getRequest().getParameter("stateName");
+        //
+        if ("".equals(firstName) && "".equals(lastName) && "".equals(countryName) 
+                && "".equals(cityName) && "".equals(zipCode) && "".equals(stateName)) {
             String message = "Please enter at least one search criteria";
             persons = null;
             addActionError(message);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return retvalue;
         }
+        // Set the values; so paging will retain them
+        perSearchCriteria.setFirstName(firstName);
+        perSearchCriteria.setLastName(lastName);
+        perSearchCriteria.setCity(cityName);
+        perSearchCriteria.setState(stateName);
+        perSearchCriteria.setCountry(countryName);
+        perSearchCriteria.setZip(zipCode);
+        //
         PersonDTO p = new PersonDTO();       
         p.setName(EnPnConverter.convertToEnPn(firstName, null, lastName, null, null));
+        p.setPostalAddress(AddressConverterUtil.create(null, null, cityName, stateName, zipCode, countryName));
         try {
             List<PersonDTO> persList = new ArrayList<PersonDTO>();
             persList = PaRegistry.getPoPersonEntityService().search(p);
@@ -325,5 +350,19 @@ public class PopUpAction extends ActionSupport {
             countryList = PaRegistry.getLookUpTableService().getCountries();
             ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);
         }    
+    }
+
+    /**
+     * @return the perSearchCriteria
+     */
+    public PaPersonDTO getPerSearchCriteria() {
+        return perSearchCriteria;
+    }
+
+    /**
+     * @param perSearchCriteria the perSearchCriteria to set
+     */
+    public void setPerSearchCriteria(PaPersonDTO perSearchCriteria) {
+        this.perSearchCriteria = perSearchCriteria;
     }
 }

@@ -104,6 +104,8 @@ public class PaPersonDTO {
     private String tty;
     private String fax;
     private String url;
+    private String address;
+    
     /*
      * This field is used to further identify this person whether he is primary contact or not
      */
@@ -408,5 +410,19 @@ public class PaPersonDTO {
      */
     public void setPaPersonId(Long paPersonId) {
         this.paPersonId = paPersonId;
+    }
+
+    /**
+     * @return the address
+     */
+    public String getAddress() {
+        return city + "," + state + "," + country + "," + zip;
+    }
+
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

@@ -7,7 +7,8 @@
 	<display:column title="PO-ID" property="id"  headerClass="sortable"/>
 	<display:column title="First Name" property="firstName"  headerClass="sortable"/> 
 	<display:column title="Middle Name" property="middleName"  headerClass="sortable"/>
-	<display:column title="Last Name" property="lastName"  headerClass="sortable"/>	
+	<display:column title="Last Name" property="lastName"  headerClass="sortable"/>
+	<display:column title="Address" property="address"  headerClass="sortable"/>
 	<display:column title="Emails" property="email"/>
 	<display:column title="Role Code">
 			 <s:select id="${row.id}"  list="#rolecode"/>

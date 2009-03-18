@@ -20,15 +20,16 @@
 	}
 	
 	
-	function loadDiv() {		
-		var orgName = document.getElementById("poOrganizations_orgSearchCriteria_orgName").value;
-		//var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;
+	function loadDiv() {
+		var orgName = document.getElementById("poOrganizations_orgSearchCriteria_name").value;
+		//var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;	
 		var orgNumber;
 		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
 		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_city").value;
-		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;
+		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_zip").value;
 		var orgState = document.getElementById("poOrganizations_orgSearchCriteria_state").value;
 		var url = '/pa/protected/popupdisplayOrgList.action?orgName='+orgName+'&nciNumber='+orgNumber+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&stateName='+orgState;
+		
 	    var div = document.getElementById('getOrgs');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
 	    var aj = new Ajax.Updater(div,url, {
@@ -53,7 +54,7 @@
             <label for="name"> <fmt:message key="popUpOrg.name"/></label>
         </td>
  		<td>
- 			<s:textfield name="orgSearchCriteria.orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield name="orgSearchCriteria.name"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
 <!-- 		<td scope="row" class="label">
             <label for="nciorgname"> <fmt:message key="popUpOrg.nciorgnumber"/></label>
@@ -83,7 +84,7 @@
             <label for="state"> State</label>
         </td>
  		<td>
- 			<s:textfield name="orgSearchCriteria.state" maxlength="75" size="20"/>
+ 			<s:textfield name="orgSearchCriteria.state" maxlength="75" size="20"/><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font>
 		</td>
 		
 	</tr>
@@ -92,7 +93,7 @@
             <label for="zip"> <fmt:message key="popUpOrg.zip"/></label>
         </td>
  		<td>
- 			<s:textfield name="orgSearchCriteria.orgZip" maxlength="75" size="20"/>
+ 			<s:textfield name="orgSearchCriteria.zip" maxlength="75" size="20"/>
 		</td>	
 	</tr>
 	</table>

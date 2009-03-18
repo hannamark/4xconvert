@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
@@ -159,6 +160,7 @@ public class TrialValidationAction extends ActionSupport {
     private static final int MAXIMUM_CHAR = 200;
     private static final String SPONSOR = "sponsor";
     private static final String UNDEFINED = "undefined";
+    private List<Country> countryList = new ArrayList<Country>();
 
     /**  
      * @return res
@@ -666,7 +668,7 @@ public class TrialValidationAction extends ActionSupport {
 
     /**
      * 
-     * @return result
+     * @return result 
      */
     public String displayLeadPrincipalInvestigator() {
         PersonDTO selectedLeadPrincipalInvestigator;
@@ -754,12 +756,13 @@ public class TrialValidationAction extends ActionSupport {
      * 
      * @return res
      */
-    public String getOrganizationContacts() {
+    public String getOrganizationContacts() {        
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
         Ii contactIi = IiConverter.converToPoOrganizationIi(orgContactIdentifier);
         OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
         contactDTO.setScoperIdentifier(contactIi);
         try {
+            getCountriesList();
             List<OrganizationalContactDTO> list = PaRegistry.getPoOrganizationalContactCorrelationService().search(
                     contactDTO);
             for (OrganizationalContactDTO organizationalContactDTO : list) {
@@ -847,5 +850,27 @@ public class TrialValidationAction extends ActionSupport {
             action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
         }
         return action;
+    }
+    
+    private void getCountriesList() throws PAException {
+        countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
+        if (countryList == null) {
+            countryList = PaRegistry.getLookUpTableService().getCountries();
+            ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);
+        }    
+    }
+
+    /**
+     * @return the countryList
+     */
+    public List<Country> getCountryList() {
+        return countryList;
+    }
+
+    /**
+     * @param countryList the countryList to set
+     */
+    public void setCountryList(List<Country> countryList) {
+        this.countryList = countryList;
     }
 }
