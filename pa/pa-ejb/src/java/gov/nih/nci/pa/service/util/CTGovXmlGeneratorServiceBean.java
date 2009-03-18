@@ -198,6 +198,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final String LAST_NAME = "last_name";
     private static final String PHONE = "phone";
     private static final String EMAIL = "email";
+    private static final String NA = "N/A";
     
     private static Map<String , String> nv = new HashMap<String, String>(); 
     /**
@@ -1167,9 +1168,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         nv.put(StudyClassificationCode.PHARMACODYNAMICS.getCode() , "Pharmacodynamics Study");
         nv.put(StudyClassificationCode.PHARMACOKINETICS_OR_DYNAMICS.getCode() , "Pharmacokinetics/dynamics Study");
         nv.put(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode() , "Principal Investigator");
-        nv.put(AllocationCode.NA.getCode(), "N/A");
-        nv.put(PhaseCode.OTHER.getCode() , PhaseCode.NA.getCode());
-        nv.put(PhaseCode.PILOT.getCode() , PhaseCode.NA.getCode());
+        nv.put(AllocationCode.NA.getCode(), NA);
+        nv.put(PhaseCode.OTHER.getCode() , NA);
+        nv.put(PhaseCode.PILOT.getCode() , NA);
     }
     
     private static String convertToCtValues(Cd cd) {
