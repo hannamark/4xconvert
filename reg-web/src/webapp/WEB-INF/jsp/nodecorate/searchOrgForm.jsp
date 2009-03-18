@@ -27,13 +27,13 @@
 	</tr>
 	<tr>  
  		<td scope="row" class="label">
-            <label for="poOrganizations_orgSearchCriteria_orgCity"> <fmt:message key="popUpOrg.state"/></label>
+            <label for="poOrganizations_orgSearchCriteria_orgCity"> <fmt:message key="popUpOrg.city"/></label>
         </td>
  		<td> 			
  			<s:textfield name="orgSearchCriteria.orgCity"  maxlength="200" size="100"  cssStyle="width:200px" />
 		</td>
         <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgState"> <fmt:message key="popUpOrg.state"/></label></td>
- 		<td><s:textfield name="orgSearchCriteria.orgState" maxlength="75" size="20"/></td>
+ 		<td><s:textfield name="orgSearchCriteria.orgState" maxlength="75" size="20"/><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font></td>
 	</tr>
 	<tr>
  		 <td scope="row" class="label">

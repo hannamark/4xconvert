@@ -4,8 +4,8 @@
 
 <display:table class="data" summary="This table contains Organization search results. Please use column headers to sort results"  sort="list" pagesize="10" uid="row" 
 	name="orgs" export="false" requestURI="popupdisplayOrgListDisplayTag.action">
-	<display:column title="Organization Name" property="name"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"  headerScope="col"/>
+	<display:column title="Organization Name" property="name"  sortable="true"  headerClass="sortable"  headerScope="col"/>	
 	<display:column title="City" property="city"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 	<display:column title="State" property="state"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Country" property="country"  sortable="true"  headerClass="sortable"  headerScope="col"/> 

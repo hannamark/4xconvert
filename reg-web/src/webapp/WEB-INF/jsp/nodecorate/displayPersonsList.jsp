@@ -7,6 +7,7 @@
 	<display:column title="First Name" property="firstName"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 	<display:column title="Middle Name" property="middleName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Last Name" property="lastName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
+	<display:column title="Address" property="address"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Email" property="email"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Action" class="action" sortable="false"  headerScope="col">	
 	<s:a href="#" cssClass="btn" onclick="submitform('${row.id}')">

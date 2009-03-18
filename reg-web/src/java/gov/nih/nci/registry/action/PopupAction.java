@@ -126,7 +126,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private OrgSearchCriteria orgSearchCriteria = new OrgSearchCriteria();
     private OrgSearchCriteria createOrg = new OrgSearchCriteria();
-    private PaPersonDTO personDTO = null;
+    private PaPersonDTO personDTO = new PaPersonDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
 
     /**
@@ -190,15 +190,30 @@ public class PopupAction extends ActionSupport implements Preparable {
             String firstName = ServletActionContext.getRequest().getParameter("firstName");
             String lastName = ServletActionContext.getRequest().getParameter("lastName");
             String email = ServletActionContext.getRequest().getParameter("email");
+            //
+            String country = ServletActionContext.getRequest().getParameter("country");
+            String city = ServletActionContext.getRequest().getParameter("city");
+            String zip = ServletActionContext.getRequest().getParameter("zip");
+            String state = ServletActionContext.getRequest().getParameter("state");
+            //
             String ctep = ServletActionContext.getRequest().getParameter("ctepId");
             if ((firstName != null) && (firstName.equals("")) && (lastName != null) && (lastName.equals(""))
-                    && (email.equals("")) && ctep != null && !(ctep.length() > 0)) {
+                    && (email.equals("")) && ctep != null && !(ctep.length() > 0) 
+                    && (city != null) && (city.equals("")) 
+                    && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))) {
                 String message = "Please enter at least one search criteria";
                 persons = null;
                 addActionError(message);
                 ServletActionContext.getRequest().setAttribute("failureMessage", message);
                 return SUCCESS;
             }
+            //set the values in the DTO
+            personDTO.setFirstName(firstName);
+            personDTO.setLastName(lastName);
+            personDTO.setEmail(email);
+            personDTO.setCountry(country);
+            personDTO.setCity(city);
+            personDTO.setState(state);
             gov.nih.nci.services.person.PersonDTO p = new gov.nih.nci.services.person.PersonDTO();
             //
             if (email != null && email.length() > 0) {
@@ -209,6 +224,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                 list.getItem().add(telemail);
                 p.setTelecomAddress(list);
             }
+            p.setPostalAddress(AddressConverterUtil.create(null, null, city, state, zip, country));
             //
             List<gov.nih.nci.services.person.PersonDTO> poPersonList = 
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
