@@ -463,14 +463,14 @@ public class GeneralTrialDesignAction extends ActionSupport {
         if (srDtos != null && !srDtos.isEmpty()) {
             scDto = srDtos.get(0);
             PaRegistry.getStudyContactService().update(createStudyContactObj(studyProtocolIi, scDto));
-        } else {
+        } else if (gtdDTO.getCentralContactIdentifier() != null && gtdDTO.getCentralContactIdentifier().length() > 0) {
             PaRegistry.getStudyContactService().create(createStudyContactObj(studyProtocolIi, scDto));
         }
     }
     
     
     /**
-     * Removes/Deletes the Central Contact from General Trial Details.
+     * Removes/Deletes the Central Contact from General Trial Details when the user click on the remove button.
      * @return result
      */
     public String removeCentralContact() {
@@ -484,12 +484,13 @@ public class GeneralTrialDesignAction extends ActionSupport {
          if (scDtos != null && !scDtos.isEmpty()) {
              scDto = scDtos.get(0);
              PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
-             gtdDTO.setCentralContactEmail("");
-             gtdDTO.setCentralContactName("");
-             gtdDTO.setCentralContactPhone("");
-             //query to retrieve and display the latest trial data
-              query();
          }
+               
+         gtdDTO.setCentralContactEmail("");
+         gtdDTO.setCentralContactName("");
+         gtdDTO.setCentralContactPhone("");
+         gtdDTO.setCentralContactIdentifier("");
+        
                  
     } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
@@ -500,6 +501,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
     
     private StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO) throws PAException {
+    
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
         String phone = gtdDTO.getCentralContactPhone().trim();
         Long crs = crbb.createClinicalResearchStaffCorrelations(
@@ -515,8 +517,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
         dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
         scDTO.setTelecomAddresses(dsetList);
         return scDTO;
-
     }
+
     private void removeSponsorContact(Ii studyProtocolIi) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
