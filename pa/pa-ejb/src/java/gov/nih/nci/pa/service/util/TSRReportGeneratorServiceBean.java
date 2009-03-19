@@ -257,9 +257,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                    ssasList.get(0).getStatusDate()).toString()) , true , false));
          }
-         //if (sp.getTargetAccrualNumber().getValue() != null) {
          html.append(appendData("Target Accrual" , getData(sp.getTargetAccrualNumber(), true) , true , false));
-        // }
          List<StudyParticipationContactDTO> spcDTOs = PoPaServiceBeanLookup.
              getStudyParticipationContactService().getByStudyParticipation(sp.getIdentifier());
          createInvestigators(html, spcDTOs);
@@ -274,10 +272,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
   private void createInvestigators(StringBuffer html, List<StudyParticipationContactDTO> spcDTOs)
   throws PAException {
-    //CorrelationUtils corr = new CorrelationUtils();
     boolean first = true;
-    html.append(appendData("Investigator(s)", "", true , false));
-    html.append(TBL_B);
     for (StudyParticipationContactDTO spcDTO : spcDTOs) {
       if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
           equals(spcDTO.getRoleCode().getCode())) {
@@ -285,6 +280,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       if (first) {
         first = false;
+        html.append(appendData("Investigator(s)", "", true , false));
+        html.append(TBL_B);
         html.append(TR_B);
         appendTDAndData(html, appendTRBold("First Name"));
         appendTDAndData(html, appendTRBold("Last Name"));
@@ -299,15 +296,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       appendTDAndData(html, getData(spcDTO.getRoleCode(), true));
       html.append(TR_E);
     } 
-    html.append(TBL_E);    
+    html.append(first ? "" : TBL_E);    
   }
 
   private void createContact(StringBuffer html,  List<StudyParticipationContactDTO> spcDTOs)
   throws PAException {
-    //CorrelationUtils corr = new CorrelationUtils();
-  
     for (StudyParticipationContactDTO spcDTO : spcDTOs) {
-        
         if (!StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
                 equals(spcDTO.getRoleCode().getCode())) {
             continue;
@@ -467,8 +461,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           }              
       } // for loop 
       html.append(BR);
+      html.append(BR);
       if (nullCrit != null && nullCrit.length() > 0) {
-          html.append(appendBoldData("No Creteria Specified")).append(nullCrit);
+          html.append(appendBoldData("Other Criteria")).append(nullCrit);
       }
       if (incCrit != null && incCrit.length() > 0) {
             html.append(appendBoldData("Inclusion Criteria")).append(incCrit);
@@ -603,9 +598,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       boolean first = true;
       for (StudyResourcingDTO fund : funds) {
           if (first) {
-        appendTitle(html, appendBoldData("NIH Grants"));
-        html.append(TBL_B);
-        first = false;
+            appendTitle(html, appendBoldData("NIH Grants"));
+            html.append(TBL_B);
+            first = false;
               html.append(TR_B);
               appendTDAndData(html, appendTRBold("Funding Mechanism"));
               appendTDAndData(html, appendTRBold("NIH Institution Code"));
@@ -626,7 +621,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           appendTDAndData(html, getData(fund.getSuffixOther(), true));
           html.append(TR_E);
       }
-      html.append(TBL_E);
+      html.append(first ? "" : TBL_E);
   }
   private void appendIdeIde(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
       
@@ -635,7 +630,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       boolean first = true;
       for (StudyIndldeDTO indDto : indides) {
           if (first) {
-        appendTitle(html, appendBoldData("IND/IDE"));
+              appendTitle(html, appendBoldData("IND/IDE"));
               html.append(TBL_B);
               first = false;
               html.append(TR_B);
@@ -664,7 +659,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           appendTDAndData(html , getData(indDto.getExpandedAccessStatusCode(), true));
           html.append(TR_E);
       }
-      html.append(TBL_E);
+      html.append(first ? "" : TBL_E);
   }
   private void appendHumanSubjectSafety(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
       Boolean b = BlConverter.covertToBoolean(spDto.getReviewBoardApprovalRequiredIndicator());
@@ -771,14 +766,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       List<StudyParticipationDTO> sParts = PoPaServiceBeanLookup.
           getStudyParticipationService().getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
       html.append("<TABLE>");
-      appendTDColumnAndData(html , "NCI Identifier" , studyProtocolDto.getAssignedIdentifier().getExtension() , true);
-      appendTDColumnAndData(html , appendTRBold("Secondary Identifiers") , "" , true);
-      //CorrelationUtils  cUtils = new CorrelationUtils();
+      appendTDColumnAndData(html , "NCI Identifier:" , studyProtocolDto.getAssignedIdentifier().getExtension() , true);
       if (!sParts.isEmpty()) {
       for (StudyParticipationDTO spart : sParts) {
-          Organization o = correlationUtils.getPAOrganizationByPAResearchOrganizationId(
-                  Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
-          appendTDColumnAndData(html , o.getName() , getData(spart.getLocalStudyProtocolIdentifier() , true) , true);
+          appendTDColumnAndData(html , "Lead Organization Identifier:" , 
+                  getData(spart.getLocalStudyProtocolIdentifier() , true) , true);
           break;
       }
       spartDTO = new StudyParticipationDTO();
@@ -786,7 +778,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       sParts = PoPaServiceBeanLookup.
           getStudyParticipationService().getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);        
       for (StudyParticipationDTO spart : sParts) {
-          appendTDColumnAndData(html , "Clinical Trials Identifier" , 
+          appendTDColumnAndData(html , "Clinical Trials Identifier:" , 
                   getData(spart.getLocalStudyProtocolIdentifier() , true) , true);
           break;
       }
@@ -821,7 +813,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
       List<StudyContactDTO> scDtos = PoPaServiceBeanLookup.getStudyContactService().
                   getByStudyProtocol(studyProtocolIi, scDto);
-      //CorrelationUtils cUtils = new CorrelationUtils();
       html.append(appendData("Sponsor" , sponsor.getName(), true , false));
       html.append(appendData("Lead Organization" , lead.getName(), true , false));
       html.append(BR).append(BR);

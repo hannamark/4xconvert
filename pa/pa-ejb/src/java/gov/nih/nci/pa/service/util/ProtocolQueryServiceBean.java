@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -101,7 +102,9 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -119,8 +122,9 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-        "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({ "PMD" })
+//@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
+//        "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudyProtocolServiceBean.class);
@@ -297,6 +301,85 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         return studyProtocolDtos;
     }
 
+    private void appendOnHold(List<StudyProtocolQueryDTO> spDtos) throws PAException {
+        StringBuffer hql = new StringBuffer();
+        Session session = null;
+        List<Object> queryList = new ArrayList<Object>();
+        long[] ids = getProtocolIds(spDtos);
+        try {
+            session = HibernateUtil.getCurrentSession();
+            hql.append(" select sp , soh from StudyProtocol as sp  "  
+                    + "join sp.studyOnholds as soh  where sp.id in ( ");
+            for (int i = 0; i < ids.length; i++) {
+                hql.append(ids[i]);
+                hql.append((i < ids.length - 1 ? " ," : " ")); 
+            }
+            hql.append(" ) ");
+            Query query = null;
+            query = session.createQuery(hql.toString());
+            Map<Long , List<StudyOnhold>> studyOnHolds = generateOnholdMap(query.list()); 
+            
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception in getStudyProtocolByCriteria ",
+                    hbe);
+            throw new PAException(
+                    " Hibernate exception in getStudyProtocolByCriteria ", hbe);
+        }        
+    }
+    private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReaons) {
+        Object[] searchResult = null;
+        StudyProtocol studyProtocol = null;
+        StudyOnhold studyOnhold = null;
+        Map<Long , List<StudyOnhold>> studyOnHolds = new HashMap<Long , List<StudyOnhold>>();
+        ArrayList<StudyOnhold> sohList = null;
+        for (int i = 0; i < onHoldReaons.size(); i++) {
+            searchResult = (Object[]) onHoldReaons.get(i);
+            if (searchResult == null) {
+                break;
+            }
+            studyProtocol = (StudyProtocol) searchResult[0];
+            studyOnhold = (StudyOnhold) searchResult[1];
+            if (studyOnHolds.containsKey(studyProtocol.getId())) {
+                studyOnHolds.get(studyProtocol.getId()).add(studyOnhold);
+            } else {
+                sohList = new ArrayList<StudyOnhold>();
+                sohList.add(studyOnhold);
+                studyOnHolds.put(studyProtocol.getId(), sohList);
+            }
+        }
+        return studyOnHolds;
+    }
+    
+    private void populateOnHoldData(List<StudyProtocolQueryDTO> spDtos , Map<Long , List<StudyOnhold>> onHold) {
+        List<StudyOnhold> sohLists = null;
+        StringBuffer sb = new StringBuffer();
+        StringBuffer sbDate = new StringBuffer();
+        for (StudyProtocolQueryDTO spqDto : spDtos) {
+            if (onHold.containsKey(spqDto.getStudyProtocolId())) {
+                sohLists = onHold.get(spqDto.getStudyProtocolId());
+                sb = new StringBuffer();
+                sbDate = new StringBuffer();
+                for (StudyOnhold studyOnhold : sohLists) {
+                    sb.append(studyOnhold.getOnholdReasonCode().getCode()).append(' ');
+                    sbDate.append(PAUtil.normalizeDateString((studyOnhold.getOnholdDate()).toString())).append(' '); 
+                }
+                spqDto.setOnHoldReasons(sb.toString());
+                spqDto.setOffHoldDates(sbDate.toString());
+            }
+        }
+    }
+    
+
+    private long[] getProtocolIds(List<StudyProtocolQueryDTO> spDtos) {
+        long[] pids = new long[spDtos.size()];
+        int x = 0;
+        for (StudyProtocolQueryDTO spqDto : spDtos) {
+            pids[x++] = spqDto.getStudyProtocolId().longValue();
+            
+        }
+        return pids;
+    }
+    
     /**
      * 
      * @param studyProtocolQueryCriteria

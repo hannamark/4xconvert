@@ -118,6 +118,8 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String primaryPurposeOtherText;
     private String userLastCreated;
     private Date dateLastCreated;
+    private String onHoldReasons;
+    private String offHoldDates;
 
 
 
@@ -408,6 +410,37 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setDateLastCreated(Date dateLastCreated) {
       this.dateLastCreated = dateLastCreated;
     }
+    /**
+     * 
+     * @return onHoldReasons 
+     */
+    public String getOnHoldReasons() {
+        return onHoldReasons;
+    }
+    /**
+     * 
+     * @param onHoldReasons onHoldReasons
+     */
+    public void setOnHoldReasons(String onHoldReasons) {
+        this.onHoldReasons = onHoldReasons;
+    }
+    /**
+     * 
+     * @return offHoldDates
+     */
+    public String getOffHoldDates() {
+        return offHoldDates;
+    }
+    /**
+     * 
+     * @param offHoldDates offHoldDates
+     */
+    public void setOffHoldDates(String offHoldDates) {
+        this.offHoldDates = offHoldDates;
+    }
+    
+    
+    
 
 
 }
