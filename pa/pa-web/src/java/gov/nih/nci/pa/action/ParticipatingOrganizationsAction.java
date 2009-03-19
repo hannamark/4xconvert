@@ -139,7 +139,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  */
 @Validation
 @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",
-        "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.NPathComplexity" })
+        "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.NPathComplexity", "PMD.InefficientStringBuffering" })
 public class ParticipatingOrganizationsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 123412653L;
     static final String ACT_FACILITY_SAVE = "facilitySave";
@@ -171,7 +171,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private static final String DISPLAY_PRIM_CONTACTS = "display_primContacts";
     private static final String DISPLAY_SPART_CONTACTS = "display_spContacts";
     private static final String DISPLAYJSP = "displayJsp";
-    private static final String DISPLAY_STUDY_PART_CONTACTS = "display_  StudyPartipants";
+    private static final String DISPLAY_STUDY_PART_CONTACTS = "display_StudyPartipants";
     private static final String ERROR_PRIMARY_CONTACTS = "error_prim_contacts";
 
     /**
@@ -380,8 +380,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private void loadForm() throws PAException {
         organizationList = new ArrayList<PaOrganizationDTO>();
         StudyParticipationDTO srDTO = new StudyParticipationDTO();
-        srDTO
-                .setFunctionalCode(CdConverter.convertStringToCd(StudyParticipationFunctionalCode.TREATING_SITE
+        srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudyParticipationFunctionalCode.TREATING_SITE
                         .getCode()));
         List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi, srDTO);
         for (StudyParticipationDTO sp : spList) {
@@ -405,7 +404,39 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 orgWebDTO.setTargetAccrualNumber(null);
             } else {
                 orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
+            }          
+            List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
+                .getPersonsByStudyParticpationId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
+                    StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
+            List<PaPersonDTO> sublInvresults = PaRegistry.getPAHealthCareProviderService()
+            .getPersonsByStudyParticpationId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
+                StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName());            
+            List<PaPersonDTO> primInvresults = PaRegistry.getPAHealthCareProviderService()
+                .getPersonsByStudyParticpationId(
+                        Long.valueOf(sp.getIdentifier().getExtension().toString()), 
+                                            StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());            
+            StringBuffer invList = new StringBuffer();
+            StringBuffer primContactList = new StringBuffer();                     
+            if (!principalInvresults.isEmpty()) {
+                for (PaPersonDTO per : principalInvresults) {
+                    invList.append(per.getFullName() + "-" + per.getRoleName());
+                    invList.append("<br>");
+                }
             }
+            if (!sublInvresults.isEmpty()) {
+                for (PaPersonDTO per : sublInvresults) {
+                    invList.append(per.getFullName() + "-" + per.getRoleName());
+                    invList.append("<br>");
+                }
+            }
+            
+            if (!primInvresults.isEmpty()) {
+                for (PaPersonDTO per : primInvresults) {
+                    primContactList.append(per.getFullName());
+                }
+            }
+            orgWebDTO.setInvestigator(invList.toString());
+            orgWebDTO.setPrimarycontact(primContactList.toString());
             organizationList.add(orgWebDTO);
         }
     }

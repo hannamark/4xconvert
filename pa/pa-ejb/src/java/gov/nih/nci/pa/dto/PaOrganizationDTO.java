@@ -105,6 +105,8 @@ public class PaOrganizationDTO implements Serializable {
     private String country;
     private String zip;
     private String nciIdentifier;
+    private String investigator;
+    private String primarycontact;
 
     /**
      * @return the id
@@ -272,5 +274,33 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
+    }
+
+    /**
+     * @return the investigator
+     */
+    public String getInvestigator() {
+        return investigator;
+    }
+
+    /**
+     * @param investigator the investigator to set
+     */
+    public void setInvestigator(String investigator) {
+        this.investigator = investigator;
+    }
+
+    /**
+     * @return the primarycontact
+     */
+    public String getPrimarycontact() {
+        return primarycontact;
+    }
+
+    /**
+     * @param primarycontact the primarycontact to set
+     */
+    public void setPrimarycontact(String primarycontact) {
+        this.primarycontact = primarycontact;
     }
 }

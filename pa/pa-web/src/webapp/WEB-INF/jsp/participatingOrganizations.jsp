@@ -54,6 +54,8 @@ function handleDelete(studyResourcingId){
         <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
         <display:column property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" class="sortable" />
         <display:column property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" class="sortable" />
+        <display:column property="investigator" titleKey="participatingOrganizations.investigators"/>
+        <display:column property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
         <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
         <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
         </display:column>
