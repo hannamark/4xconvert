@@ -217,6 +217,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * @return res
      */
     public String execute() {
+        removeSessionAttributes();
         return SUCCESS;
     }
 
