@@ -104,6 +104,9 @@ jboss.server.name.grid=The JBoss Server instance name for the CoppaPO Grid Servi
 #jboss.grid.snmp-trapd.port=11562
 #jboss.grid.web.service.port=18483
 
+#jboss.external.grid.http.host=the external http hostname for the grid services, e.g. [dev:ctms-services-[dev|qa|int|stage|].nci.nih.gov]
+#jboss.external.grid.http.port=the external http port for the grid services, e.g. 80
+
 ##############
 ###  LDAP  ###
 ##############
