@@ -74,8 +74,8 @@ pogrid.jndi.principal=ejbclient
 pogrid.jndi.credentials=pass
 
 
-jboss.external.grid.http.host=cmts-services-dev.nci.nih.gov
-jboss.external.grid.http.port=80
+jboss.external.grid.http.host=the external http hostname for the grid services, e.g. [dev:ctms-services-[dev|qa|int|stage|].nci.nih.gov]
+jboss.external.grid.http.port=the external http port for the grid services, e.g. 80
 ##################################
 #  Grid Service registration URL #
 ##################################
