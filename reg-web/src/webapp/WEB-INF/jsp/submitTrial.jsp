@@ -163,6 +163,21 @@ function resetGrantRow(){
 	document.getElementById('nciDivisionProgramCode').value = '';
 	document.getElementById('grantbtnid').disabled = true;
 }
+function deleteIndIde(rowid){
+	
+	var  url = '/registry/protected/ajaxSubmitTrialActiondeleteIndIde.action?uuid='+rowid;
+	var div = document.getElementById('indidediv');
+	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+	callAjax(url, div);				
+}
+function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype){
+	var  url = '/registry/protected/ajaxSubmitTrialActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype;
+	var div = document.getElementById('indidediv');
+	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+	callAjax(url, div);
+	resetValues();
+
+}
 </SCRIPT>
 <script language="javascript">
 function toggledisplay (it, box) {

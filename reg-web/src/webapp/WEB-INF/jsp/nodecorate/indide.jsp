@@ -72,11 +72,7 @@
 			return false;
 		}
 		var expandedaccesstype = document.getElementById('expanded_status').value;
-		var  url = '/registry/protected/ajaxSubmitTrialActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype;
-    	var div = document.getElementById('indidediv');
-    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
-    	callAjax(url, div);
-    	resetValues();
+		addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype);
 	}
 	function resetValues(){
 		document.getElementById('indidenumber').value='';
@@ -140,13 +136,7 @@
 			}
 		}
 	}	
-	function deleteIndIde(rowid){
-	
-		var  url = '/registry/protected/ajaxSubmitTrialActiondeleteIndIde.action?uuid='+rowid;
-    	var div = document.getElementById('indidediv');
-    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
-    	callAjax(url, div);				
-	}
+
 	function bindNIHToolTipOnLoad(){
 		var opts = document.getElementById('programcodenihselectedvalue').options;
 		 for (var i=0; i<opts.length; i++) {

@@ -18,9 +18,9 @@
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
-        addCalendar("Cal1", "Select Date", "overallStatusWebDTO.statusDate", "submitTrial");
-        addCalendar("Cal2", "Select Date", "protocolWebDTO.startDate", "submitTrial");
-        addCalendar("Cal3", "Select Date", "protocolWebDTO.completionDate", "submitTrial");
+        addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "submitTrial");
+        addCalendar("Cal2", "Select Date", "trialDTO.startDate", "submitTrial");
+        addCalendar("Cal3", "Select Date", "trialDTO.completionDate", "submitTrial");
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
@@ -95,7 +95,7 @@ function handleAction(){
     document.forms[0].submit();  
 }
 function submitProtocol (){	
-	var action = "submitTrialcreate.action";	
+	var action = "amendTrialsave.action";	
     document.forms[0].page.value = "Submit";
     document.forms[0].action=action;
     document.forms[0].submit();
@@ -131,14 +131,14 @@ function addGrant(){
 	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;
 	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
 	var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
-	var  url = '/registry/protected/ajaxSubmitTrialActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;	
+	var  url = '/registry/protected/ajaxAmendTrialActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;	
    	var div = document.getElementById('grantdiv');   
    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
    	callAjax(url, div);
 	resetGrantRow();
 }
 function deleteGrantRow(rowid){	
-	var  url = '/registry/protected/ajaxSubmitTrialActiondeleteGrant.action?uuid='+rowid;
+	var  url = '/registry/protected/ajaxAmendTrialActiondeleteGrant.action?uuid='+rowid;
    	var div = document.getElementById('grantdiv');
    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
    	callAjax(url, div);				
@@ -162,6 +162,21 @@ function resetGrantRow(){
 	document.getElementById('serialNumber').value = '';
 	document.getElementById('nciDivisionProgramCode').value = '';
 	document.getElementById('grantbtnid').disabled = true;
+}
+function deleteIndIde(rowid){
+	
+	var  url = '/registry/protected/ajaxAmendTrialActiondeleteIndIde.action?uuid='+rowid;
+	var div = document.getElementById('indidediv');
+	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+	callAjax(url, div);				
+}
+function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype) {
+	var  url = '/registry/protected/ajaxAmendTrialActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype;
+	var div = document.getElementById('indidediv');
+	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+	callAjax(url, div);
+	resetValues();
+
 }
 </SCRIPT>
 <script language="javascript">
@@ -230,7 +245,7 @@ function toggledisplay2 (it) {
                     <span class="info">Max 4000 characters</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>protocolWebDTO.trialTitle</s:param>
+                        <s:param>trialDTO.trialTitle</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
@@ -245,7 +260,7 @@ function toggledisplay2 (it) {
                     <s:select headerKey="" headerValue="--Select--" name="trialDTO.phaseCode" list="#phaseCodeValues" cssStyle="width:206px" value="trialDTO.phaseCode"/>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>protocolWebDTO.trialPhase</s:param>
+                        <s:param>trialDTO.trialPhase</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
@@ -259,7 +274,7 @@ function toggledisplay2 (it) {
                     <span class="info">Required if Phase equals &#39;Other&#39;</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>protocolWebDTO.otherPhaseText</s:param>
+                        <s:param>trialDTO.otherPhaseText</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>                
@@ -287,7 +302,7 @@ function toggledisplay2 (it) {
                     <s:select headerKey="" headerValue="--Select--" name="trialDTO.primaryPurposeCode" list="#typeCodeValues"  cssStyle="width:206px" value="trialDTO.primaryPurposeCode"/>
                      <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>protocolWebDTO.trialPurpose</s:param>
+                        <s:param>trialDTO.trialPurpose</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
@@ -302,7 +317,7 @@ function toggledisplay2 (it) {
                     <span class="info">Required if Purpose equals &#39;Other&#39;</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>protocolWebDTO.otherPurposeText</s:param>
+                        <s:param>trialDTO.otherPurposeText</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>                
@@ -496,7 +511,7 @@ function toggledisplay2 (it) {
                                      listKey="fundingMechanismCode"  
                                      listValue="fundingMechanismCode" 
                                      id="fundingMechanismCode"
-                                     value="trialFundingWebDTO.fundingMechanismCode" 
+                                     value="trialFundingDTO.fundingMechanismCode" 
                                      cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 							</td>
 							<s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
@@ -507,11 +522,11 @@ function toggledisplay2 (it) {
                                      listKey="nihInstituteCode" 
                                      listValue="nihInstituteCode"
                                      id="nihInstitutionCode"
-							         value="trialFundingWebDTO.nihInstitutionCode" 
+							         value="trialFundingDTO.nihInstitutionCode" 
 							         cssStyle="width:150px" onblur="enableGrantAddButton();" />
 						             <span class="formErrorMsg" >
 				                        <s:fielderror>
-				                        <s:param>trialFundingWebDTO.nihInstitutionCode</s:param>
+				                        <s:param>trialFundingDTO.nihInstitutionCode</s:param>
 				                       </s:fielderror>                            
 				                     </span>
 							</td>
@@ -519,16 +534,16 @@ function toggledisplay2 (it) {
                                 <s:textfield name="trialFundingDTO.serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px" onblur="enableGrantAddButton();" />
 	                            <span class="formErrorMsg"> 
 	                                <s:fielderror>
-	                                <s:param>trialFundingWebDTO.serialNumber</s:param>
+	                                <s:param>trialFundingDTO.serialNumber</s:param>
 	                                </s:fielderror>                            
 	                            </span>
                             </td>
 							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="--Select--" name="trialFundingDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
+							    <s:select headerKey="" headerValue="--Select--" name="trialFundingDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 		                        <span class="formErrorMsg"> 
                                    <s:fielderror>
-                                   <s:param>trialFundingWebDTO.nciDivisionProgramCode</s:param>
+                                   <s:param>trialFundingDTO.nciDivisionProgramCode</s:param>
                                   </s:fielderror>                            
                                 </span>
 							</td>
@@ -572,7 +587,7 @@ function toggledisplay2 (it) {
                     <s:select headerKey="" headerValue="--Select--" name="trialDTO.statusCode" list="#statusCodeValues"  value="trialDTO.statusCode" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>overallStatusWebDTO.statusCode</s:param>
+                        <s:param>trialDTO.statusCode</s:param>
                         </s:fielderror>                            
                     </span>
                 </td>
@@ -586,7 +601,7 @@ function toggledisplay2 (it) {
                 <span class="info">Required for Administratively Complete and Temporarily Closed statuses only</span>
                 <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>overallStatusWebDTO.reason</s:param>
+                    <s:param>trialDTO.reason</s:param>
                    </s:fielderror>                            
                  </span>                 
             </td> 
@@ -600,7 +615,7 @@ function toggledisplay2 (it) {
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                            <s:param>overallStatusWebDTO.statusDate</s:param>
+                            <s:param>trialDTO.statusDate</s:param>
                         </s:fielderror>                            
                     </span>
                 </td>
@@ -616,12 +631,12 @@ function toggledisplay2 (it) {
                 <s:radio name="trialDTO.startDateType" list="#dateTypeList" />
                 <span class="formErrorMsg"> 
                    <s:fielderror>
-                    <s:param>protocolWebDTO.startDate</s:param>
+                    <s:param>trialDTO.startDate</s:param>
                    </s:fielderror>                            
                 </span>
                 <span class="formErrorMsg"> 
                    <s:fielderror>
-                    <s:param>protocolWebDTO.startDateType</s:param>
+                    <s:param>trialDTO.startDateType</s:param>
                    </s:fielderror>                            
                 </span>
             </td>
@@ -637,12 +652,12 @@ function toggledisplay2 (it) {
                 <s:radio name="trialDTO.completionDateType" list="#dateTypeList" />
                 <span class="formErrorMsg"> 
                    <s:fielderror>
-                   <s:param>protocolWebDTO.completionDate</s:param>
+                   <s:param>trialDTO.completionDate</s:param>
                    </s:fielderror>                            
                 </span>
                 <span class="formErrorMsg"> 
                    <s:fielderror>
-                    <s:param>protocolWebDTO.completionDateType</s:param>
+                    <s:param>trialDTO.completionDateType</s:param>
                    </s:fielderror>                            
                 </span>
             </td>
