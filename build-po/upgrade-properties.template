@@ -31,7 +31,7 @@ application.url=http://${jboss.server.hostname}:${jboss.server.port}/po-web
 database.drop-schema=true
 # Type of database used by application, use database.type=postgresql
 database.type=postgresql
-# hostname or IP of the database server used by application, e.g.  
+# hostname or IP of the database server used by application, e.g.
 database.server=
 # database port to connect, e.g. database.port=5432
 database.port=
@@ -69,12 +69,12 @@ jboss.server.name.grid=
 jboss.server.grid.jndi.port=11299
 # The HTTP Port for the server instance within JBoss containing the CoppaPO Grid Services, e.g. jboss.server.grid.port=8080
 jboss.server.grid.port=19280
-#used to allow the po-grid to make EJB3 calls via jndi 
+#used to allow the po-grid to make EJB3 calls via jndi
 pogrid.jndi.principal=ejbclient
 pogrid.jndi.credentials=pass
 
 
-jboss.external.grid.http.host=the external http hostname for the grid services, e.g. [dev:ctms-services-[dev|qa|int|stage|].nci.nih.gov]
+jboss.external.grid.http.host=the external http hostname for the grid services, e.g. ctms-services-[dev|qa|int|stage|].nci.nih.gov
 jboss.external.grid.http.port=the external http port for the grid services, e.g. 80
 ##################################
 #  Grid Service registration URL #
@@ -137,7 +137,7 @@ ctep.url=
 ctep.jms.subscription.name=JMSSUBSCRIBER
 # Default CTEP Connection Factory Name for JMS
 ctep.jms.topic.connection.factory.name=
-# Default CTEP JMS Topic Name 
+# Default CTEP JMS Topic Name
 ctep.jms.topic.name=
 
 ###################################
