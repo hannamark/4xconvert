@@ -115,6 +115,7 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
+import gov.nih.nci.service.MockPAHealthCareProviderService;
 import gov.nih.nci.service.MockPlannedActivityService;
 import gov.nih.nci.service.MockStudyOnholdService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
@@ -144,6 +145,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final InterventionAlternateNameServiceRemote interventionAlternateNameService = new MockInterventionAlternateNameService();
     private final PlannedActivityServiceRemote plannedActivityService = new MockPlannedActivityService();
     private final StudyOnholdServiceRemote studyOnholdService = new MockStudyOnholdService();
+    private final PAHealthCareProviderRemote healthCareProviderRemote = new MockPAHealthCareProviderService();
     
     /**
      * @return mock service
@@ -290,9 +292,8 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
-        // TODO Auto-generated method stub
-        return null;
+    public PAHealthCareProviderRemote getPAHealthCareProviderService() {       
+        return healthCareProviderRemote;
     }
 
     public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() {
