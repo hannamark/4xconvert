@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,6 +45,14 @@ public class TrialDTO {
 
     private List<TrialFundingDTO> fundingDtos;
     private List<TrialIndIdeDTO> indDtos;
+    /**
+     * 
+     */
+    public TrialDTO() {
+        super();
+        indDtos = new ArrayList<TrialIndIdeDTO>();
+        fundingDtos = new ArrayList<TrialFundingDTO>();
+    }
     /**
      * @return the accrualReportingMethodCode
      */

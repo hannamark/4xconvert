@@ -10,10 +10,13 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialDTO;
+import gov.nih.nci.pa.dto.TrialFundingDTO;
+import gov.nih.nci.pa.dto.TrialIndIdeDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -21,16 +24,20 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author vrushali
  *
  */
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class TrialUtil {
     private static final String SPONSOR = "sponsor";
     
@@ -53,7 +60,10 @@ public class TrialUtil {
         trialDTO.setPhaseOtherText(spDTO.getPhaseOtherText().getValue());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
-
+        trialDTO.setStartDate(TsConverter.convertToTimestamp(spDTO.getStartDate()).toString());
+        trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
+        trialDTO.setCompletionDate(TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()).toString());
+        trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
     }
 
     /**
@@ -63,6 +73,8 @@ public class TrialUtil {
     */
     public void copy(StudyProtocolQueryDTO spqDTO, TrialDTO trialDTO) {
         trialDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
+        trialDTO.setStatusCode(spqDTO.getStudyStatusCode().getCode());
+        trialDTO.setStatusDate(spqDTO.getStudyStatusDate().toString());
     }
     /**
      * 
@@ -223,5 +235,37 @@ public class TrialUtil {
             trialDTO.setSummaryFourOrgName(o.getName());
         }
     }
-
+    /**
+     * 
+     * @param studyIndldeDTOList iiDto
+     * @param trialDTO dto
+     * @throws PAException ex
+     */
+    public void copyINDIDEList(List<StudyIndldeDTO> studyIndldeDTOList, TrialDTO trialDTO) throws PAException {
+        if (studyIndldeDTOList == null) {
+            return;
+        }
+        List<TrialIndIdeDTO> indList = new ArrayList<TrialIndIdeDTO>();
+        //loop thru the iso dto
+        for (StudyIndldeDTO isoDto : studyIndldeDTOList) {
+            indList.add(new TrialIndIdeDTO(isoDto));
+        }
+        trialDTO.setIndDtos(indList);
+    }
+    /**
+     * 
+     * @param isoGrantlist iso
+     * @param trialDTO dto
+     */
+    public void copyGrantList(List<StudyResourcingDTO> isoGrantlist, TrialDTO trialDTO) {
+        if (isoGrantlist == null) {
+            return;
+        }
+        List<TrialFundingDTO> grantList = new ArrayList<TrialFundingDTO>(); 
+        //loop thru iso
+        for (StudyResourcingDTO isoDto : isoGrantlist) {
+            grantList.add(new TrialFundingDTO(isoDto));
+        }
+        trialDTO.setFundingDtos(grantList);
+    }
 }
