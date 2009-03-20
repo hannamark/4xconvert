@@ -79,6 +79,12 @@
              <param name="trialAction">${trialAction}</param>
         </result>
         </action> 
+     <action name="ajaxAmendTrialAction*" class="gov.nih.nci.registry.action.AmendmentTrialAction" method="{1}">
+        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
+        <result name="display_ideind">/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp</result>
+        <result name="display_grants">/WEB-INF/jsp/nodecorate/addGrant.jsp</result>
+        <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
+     </action>        
         
 	<action name="ajaxSubmitTrialAction*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}"> 
 		<result name="display_lead_org">/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp</result> 
