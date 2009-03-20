@@ -72,6 +72,10 @@ jboss.server.grid.port=19280
 #used to allow the po-grid to make EJB3 calls via jndi 
 pogrid.jndi.principal=ejbclient
 pogrid.jndi.credentials=pass
+
+
+jboss.external.grid.http.host=cmts-services-dev.nci.nih.gov
+jboss.external.grid.http.port=80
 ##################################
 #  Grid Service registration URL #
 ##################################
