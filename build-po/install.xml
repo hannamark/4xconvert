@@ -475,7 +475,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         	search.port="8080"
         	grid.application.name="${po-grid.introduce.skeleton.service.name}"
         	grid.application.relative.dir="${po-grid.dir.target}"
-        	grid.secure.enable="false"            
+        	grid.secure.enable="false"   
+        	appserver.external.http.host="${jboss.external.grid.http.host}"
         />
     </target>
 
