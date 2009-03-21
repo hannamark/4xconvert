@@ -42,6 +42,7 @@ public class TrialDTO {
     private String completionDate;
     private String startDateType;
     private String completionDateType;
+    private String trialType;
 
     private List<TrialFundingDTO> fundingDtos;
     private List<TrialIndIdeDTO> indDtos;
@@ -437,6 +438,18 @@ public class TrialDTO {
      */
     public void setCompletionDateType(String completionDateType) {
         this.completionDateType = completionDateType;
+    }
+    /**
+     * @return the trialType
+     */
+    public String getTrialType() {
+        return trialType;
+    }
+    /**
+     * @param trialType the trialType to set
+     */
+    public void setTrialType(String trialType) {
+        this.trialType = trialType;
     }
 
     

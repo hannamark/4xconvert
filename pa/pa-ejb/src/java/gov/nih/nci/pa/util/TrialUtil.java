@@ -60,10 +60,13 @@ public class TrialUtil {
         trialDTO.setPhaseOtherText(spDTO.getPhaseOtherText().getValue());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
-        trialDTO.setStartDate(TsConverter.convertToTimestamp(spDTO.getStartDate()).toString());
+        trialDTO.setStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(spDTO.getStartDate()).
+                toString()));
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
-        trialDTO.setCompletionDate(TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()).toString());
+        trialDTO.setCompletionDate(PAUtil.normalizeDateString(TsConverter.
+                convertToTimestamp(spDTO.getPrimaryCompletionDate()).toString()));
         trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
+        trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
     }
 
     /**
@@ -74,7 +77,7 @@ public class TrialUtil {
     public void copy(StudyProtocolQueryDTO spqDTO, TrialDTO trialDTO) {
         trialDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
         trialDTO.setStatusCode(spqDTO.getStudyStatusCode().getCode());
-        trialDTO.setStatusDate(spqDTO.getStudyStatusDate().toString());
+        trialDTO.setStatusDate(PAUtil.normalizeDateString(spqDTO.getStudyStatusDate().toString()));
     }
     /**
      * 
