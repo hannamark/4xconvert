@@ -28,7 +28,6 @@
 <!-- c:url value="/protected/ajaxorganizationContactsavePI.action" var="lookupOrgUrl"/-->
 
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
-<c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="submitProtocol"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
@@ -89,17 +88,19 @@ function loadSummary4SponsorDiv() {
     callAjax(url, div);
 }
 //
-function handleAction(){  
-    document.forms[0].page.value = "Submit";
-    document.forms[0].action="submitTrialcreate.action";
-    document.forms[0].submit();  
-}
-function submitProtocol (){	
+function saveProtocol (){	
 	var action = "amendTrialsave.action";	
+    document.forms[0].page.value = "save";
+    document.forms[0].action=action;
+    document.forms[0].submit();
+	showPopWin('${saveProtocol}', 600, 200, '', 'Amend Register Trial');
+}
+function cancelProtocol (){   
+    var action = "amendTrialcancel.action";   
     document.forms[0].page.value = "Submit";
     document.forms[0].action=action;
     document.forms[0].submit();
-	showPopWin('${submitProtocol}', 600, 200, '', 'Register Trial');
+    showPopWin('${cancelProtocol}', 600, 200, '', 'cancel Trial');
 }
 function callAjax(url, div){
     var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
@@ -223,7 +224,7 @@ function toggledisplay2 (it) {
                     <s:textfield name="trialDTO.localProtocolIdentifier"  maxlength="200" size="100"  cssStyle="width:200px"  />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>participationWebDTO.localProtocolIdentifier</s:param>
+                        <s:param>trialDTO.localProtocolIdentifier</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>                
@@ -702,96 +703,13 @@ function toggledisplay2 (it) {
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
-        <table class="form">  
-        <tr>
-              <th colspan="2"><fmt:message key="submit.trial.documents"/></th>
-        </tr>
-        <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-               <fmt:message key="submit.trial.docInstructionalText"/>
-            </td>
-        </tr>
-        <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-        </tr>
-      	
-        <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_protocolDoc">
-                     <fmt:message key="submit.trial.protocolDocument"/>
-                     <span class="required">*</span>
-              </label>
-             </td>
-             <td class="value">
-                 <s:file name="protocolDoc" value="true" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.protocolDocFileName</s:param>
-                   </s:fielderror>                            
-                 </span>
-               </td>         
-         </tr>
-         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_irbApproval">
-                     <fmt:message key="submit.trial.irbApproval"/>
-                     <span class="required">*</span>
-              </label>
-             </td>
-             <td class="value">
-                 <s:file name="irbApproval" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.irbApprovalFileName</s:param>
-                   </s:fielderror>                            
-                 </span>
-               </td>         
-         </tr>         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_participatingSites"><fmt:message key="submit.trial.participatingSites"/></label>
-             </td>
-             <td class="value">
-                 <s:file name="participatingSites" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.participatingSitesFileName</s:param>
-                   </s:fielderror>                            
-                 </span>                 
-               </td>         
-         </tr>         
-         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_informedConsentDocument"><fmt:message key="submit.trial.informedConsent"/></label>
-             </td>
-             <td class="value">
-                 <s:file name="informedConsentDocument" cssStyle="width:270px"/>
-                <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.informedConsentDocumentFileName</s:param>
-                   </s:fielderror>                            
-                 </span>             
-               </td>         
-         </tr>         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
-             </td>
-             <td class="value">
-                 <s:file name="otherDocument" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.otherDocumentFileName</s:param>
-                   </s:fielderror>                            
-                 </span>                 
-               </td>         
-         </tr> 
-         </table>
+  		<c:if test="${requestScope.protocolDocument != null}">
+		<div class="box">		
+			<h3>Trial Related Documents</h3>  
+			<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
+		</div>
+		</c:if>
+
         </table>
         <p align="center" class="info">
            Please verify ALL the trial information you provided on this screen before clicking the &#34;Submit Trial&#34; button below.  
@@ -802,7 +720,8 @@ function toggledisplay2 (it) {
                 <ul class="btnrow">         
                         <li>
                         <li>            
-                            <s:a href="#" cssClass="btn" onclick="submitProtocol()"><span class="btn_img"><span class="save">Submit Trial</span></span></s:a>  
+                            <s:a href="#" cssClass="btn" onclick="saveProtocol()"><span class="btn_img"><span class="save">Save Trial</span></span></s:a>
+                            <s:a href="#" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="save">Cancel Trial</span></span></s:a>
                         </li>
                 </ul>   
             </del>

@@ -10,6 +10,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialDTO;
 import gov.nih.nci.pa.dto.TrialFundingDTO;
 import gov.nih.nci.pa.dto.TrialIndIdeDTO;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -23,6 +24,7 @@ import gov.nih.nci.pa.util.TrialUtil;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,7 +38,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * 
  * @author Vrushali
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" , "PMD" })
 public class AmendmentTrialAction extends ActionSupport implements ServletResponseAware {
 
     /**
@@ -82,12 +84,18 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             selectedLeadOrg = new OrganizationDTO();
             selectedLeadOrg.setName(EnOnConverter.convertToEnOn(trialDTO.getLeadOrganizationName()));
             selectedLeadOrg.setIdentifier(IiConverter.convertToIi(trialDTO.getLeadOrganizationIdentifier()));
+            ServletActionContext.getRequest().getSession().setAttribute("PoLeadOrg", selectedLeadOrg);
+            PersonDTO perDto = new PersonDTO();
             poLeadPiFullName = trialDTO.getPiName();
+            perDto.setIdentifier(IiConverter.convertToIi(trialDTO.getPiIdentifier()));
+            perDto.setName(RemoteApiUtil.convertToEnPn(trialDTO.getPiName(), null, null, null, null));
+            ServletActionContext.getRequest().getSession().setAttribute("PoLeadPI", perDto);
             resPartyContactFullName = trialDTO.getResponsiblePersonName();
             //this to be removed when dto.variable name will be same as include jsp's form variable
             selectedSponsor = new OrganizationDTO();
             selectedSponsor.setIdentifier(IiConverter.convertToIi(trialDTO.getSponsorIdentifier()));
             selectedSponsor.setName(EnOnConverter.convertToEnOn(trialDTO.getSponsorName()));
+            ServletActionContext.getRequest().getSession().setAttribute("Sponsorselected", selectedSponsor);
             //Copy to form variable 
             selectedSummary4Sponsor = new OrganizationDTO();
             selectedSummary4Sponsor.setIdentifier(IiConverter.convertToIi(trialDTO.getSponsorIdentifier()));
@@ -100,6 +108,14 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
                     trialDTO.getFundingDtos());
             }
+            // query the trial documents
+            List<DocumentDTO> documentISOList = RegistryServiceLocator.getDocumentService()
+                    .getDocumentsByStudyProtocol(studyProtocolIi);
+            // List <TrialDocumentWebDTO> documentList;
+            if (!(documentISOList.isEmpty())) {
+                ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
+            }
+
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -389,7 +405,71 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
         ServletActionContext.getRequest().getSession().removeAttribute("PoSummary4Sponsor");
     }
-
-
-    
+    /**
+     * Clears the session variables and redirect to search.
+     * @return s
+     */
+    public String cancel() {
+        removeSessionAttributes();
+        return "redirect_to_search";
+    }
+    /**
+     * clears the session variables and shows the review page.
+     * @return s
+     */
+    public String save() {
+      //add the IndIde,FundingList,protocolDocument,leadOrgId and LeadOrgName
+        trialDTO.setTrialType("Interventional");
+        OrganizationDTO selectLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().
+        getSession().getAttribute("PoLeadOrg");
+        if (selectLeadOrg != null) {
+            trialDTO.setLeadOrganizationIdentifier(selectLeadOrg.getIdentifier().getExtension());
+            trialDTO.setLeadOrganizationName(selectLeadOrg.getName().getPart().get(0).getValue());
+        }
+        //sponsor
+        OrganizationDTO selectsponsorOrg = (OrganizationDTO) ServletActionContext.getRequest().
+        getSession().getAttribute("PoSponsor");
+        if (selectsponsorOrg != null) {
+            trialDTO.setSponsorIdentifier(selectsponsorOrg.getIdentifier().getExtension());
+            trialDTO.setSponsorName(selectsponsorOrg.getName().getPart().get(0).getValue());
+        }
+        //pi
+        PersonDTO selectedPerson = (PersonDTO) ServletActionContext.getRequest().
+        getSession().getAttribute("PoLeadPI");
+        if (selectedPerson != null) {
+            trialDTO.setPiIdentifier(selectedPerson.getIdentifier().getExtension());
+            trialDTO.setPiName(selectedPerson.getName().getPart().get(0).getValue());
+        }
+        //resPartyContactFullName 
+        PersonDTO respContact = (PersonDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute("PoResponsibleContact");
+        if (respContact != null) {
+            trialDTO.setResponsiblePersonName(respContact.getName().getPart().get(0).getValue());
+            trialDTO.setResponsiblePersonIdentifier(respContact.getIdentifier().getExtension());
+        }
+        //selectSummary4Sponsor
+        OrganizationDTO selectSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().
+        getSession().getAttribute("PoSummary4Sponsor");
+        if (selectSummary4Sponsor != null) {
+            trialDTO.setSummaryFourOrgIdentifier(selectSummary4Sponsor.getIdentifier().getExtension());
+            trialDTO.setSummaryFourOrgName(selectSummary4Sponsor.getName().toString());
+        }
+        ArrayList<TrialIndIdeDTO> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
+        .getAttribute(Constants.INDIDE_LIST);
+        if (sessionList != null) {
+            for (int i = 0; i < sessionList.size(); i++) {
+                trialDTO.getIndDtos().add(sessionList.get(i));
+            }
+        }
+        ArrayList<TrialFundingDTO> grantList = (ArrayList) ServletActionContext.getRequest().getSession()
+        .getAttribute(Constants.GRANT_LIST);
+        if (sessionList != null) {
+            for (int i = 0; i < grantList.size(); i++) {
+                trialDTO.getFundingDtos().add(grantList.get(i));
+            }
+        }
+        removeSessionAttributes();
+        LOG.info("Calling the review page...");
+        return "review";    
+    }
 }
