@@ -76,18 +76,21 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service;
-
-import javax.ejb.Remote;
+package gov.nih.nci.pa.util;
 
 /**
- * @author Hugh Reinhart
- * @since 08/13/2008
+ * @author Bala Nair
+ * @since 03/23/2009
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@Remote
-public interface StudyProtocolServiceRemote extends StudyProtocolService {
+public class PAConstants {
+    
+    /** Comma character. */
+    public static final String COMMA = ",";
+    
+    /** Whitespace. */
+    public static final String WHITESPACE = " ";
 
 }

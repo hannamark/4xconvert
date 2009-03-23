@@ -109,7 +109,7 @@ import org.hibernate.Session;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyParticipationServiceBean
         extends AbstractStudyIsoService<StudyParticipationDTO, StudyParticipation, StudyParticipationConverter>
-        implements StudyParticipationServiceRemote {
+        implements StudyParticipationServiceRemote, StudyParticipationServiceLocal {
 
     /**
      * @param dto StudyParticipationDTO

@@ -116,7 +116,8 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals",
   "PMD.CyclomaticComplexity" })
-public class StudyResourcingServiceBean implements StudyResourcingServiceRemote {
+public class StudyResourcingServiceBean 
+            implements StudyResourcingServiceRemote, StudyResourcingServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyResourcingServiceBean.class);
 

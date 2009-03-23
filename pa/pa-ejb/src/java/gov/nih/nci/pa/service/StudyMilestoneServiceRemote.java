@@ -78,8 +78,6 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
-
 import javax.ejb.Remote;
 
 /**
@@ -91,5 +89,5 @@ import javax.ejb.Remote;
 * copyright holder, NCI.
 */
 @Remote
-public interface StudyMilestoneServiceRemote extends StudyPaService<StudyMilestoneDTO> {
+public interface StudyMilestoneServiceRemote extends StudyMilestoneService {
 }

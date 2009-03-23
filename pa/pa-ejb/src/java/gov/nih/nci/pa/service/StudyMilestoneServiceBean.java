@@ -108,7 +108,7 @@ import javax.ejb.Stateless;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyMilestoneServiceBean 
         extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter> 
-        implements StudyMilestoneServiceRemote {
+        implements StudyMilestoneServiceRemote, StudyMilestoneServicelocal {
 
     DocumentWorkflowStatusServiceRemote documentWorkflowStatusService = null;
     @EJB

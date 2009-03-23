@@ -78,16 +78,60 @@
 */
 package gov.nih.nci.pa.service;
 
-import javax.ejb.Remote;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+
+import java.util.List;
 
 /**
- * @author Hugh Reinhart
- * @since 08/13/2008
+ * @author Bala Nair
+ * @since 03/23/2009
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@Remote
-public interface StudyProtocolServiceRemote extends StudyProtocolService {
+public interface StudyContactService extends StudyPaService<StudyContactDTO> {
+    
+    
+    /**
+     * @param studyProtocolIi id of protocol
+     * @return list StudyContacDTO   
+     * @throws PAException on error 
+     */
+    List<StudyContactDTO> getByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * 
+     * @param studyContactDTO StudyContactDTO
+     * @return StudyContactDTO
+     * @throws PAException PAException
+     */
+    StudyContactDTO create(StudyContactDTO studyContactDTO) throws PAException;
+    
+    /**
+     * 
+     * @param studyContactDTO StudyContactDTO
+     * @return StudyContactDTO
+     * @throws PAException PAException
+     */
+    StudyContactDTO update(StudyContactDTO studyContactDTO) throws PAException;
+    
+    /**
+     * @param studyProtocolIi id of protocol
+     * @param scDTO StudyContactDTO 
+     * @return list StudyContactDTO   
+     * @throws PAException on error 
+     */
+    List<StudyContactDTO> getByStudyProtocol(
+            Ii studyProtocolIi , StudyContactDTO scDTO) throws PAException;
+    
+    /**
+     * @param studyProtocolIi id of protocol
+     * @param scDTOList List of StudyContactDTO containing criteria
+     * @return list StudyContactDTO   
+     * @throws PAException on error 
+     */
+    List<StudyContactDTO> getByStudyProtocol(
+            Ii studyProtocolIi , List<StudyContactDTO> scDTOList) throws PAException;
 
 }

@@ -124,7 +124,8 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
-    public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
+    public class StudyProtocolServiceBean  
+                    implements StudyProtocolServiceRemote, StudyProtocolServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
     private static final int FIVE_5 = 5;

@@ -78,11 +78,6 @@
 */
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
-
 import javax.ejb.Local;
 
 /**
@@ -94,12 +89,6 @@ import javax.ejb.Local;
  * copyright holder, NCI. 
  */
 @Local
-public interface StudyIndldeServiceLocal {
-    /**
-     * @param studyProtocolIi id of protocol
-     * @return list StudyIndldeDTO   
-     * @throws PAException on error 
-     */
-    List<StudyIndldeDTO> getByStudyProtocol(
-            Ii studyProtocolIi) throws PAException;
+public interface StudyIndldeServiceLocal extends StudyIndIdeService {
+
 }

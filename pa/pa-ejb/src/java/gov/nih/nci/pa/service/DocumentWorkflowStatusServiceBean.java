@@ -111,7 +111,7 @@ import org.hibernate.Session;
 @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity" })
 public class DocumentWorkflowStatusServiceBean extends 
     AbstractStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus, DocumentWorkflowStatusConverter> 
-    implements DocumentWorkflowStatusServiceRemote {
+    implements DocumentWorkflowStatusServiceRemote, DocumentWorkflowStatusServiceLocal {
 
     private StudyMilestoneServiceRemote studyMilestoneService;
 

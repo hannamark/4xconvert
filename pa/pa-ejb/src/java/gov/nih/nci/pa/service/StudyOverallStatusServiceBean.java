@@ -112,7 +112,7 @@ import org.hibernate.Session;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyOverallStatusServiceBean
         extends AbstractStudyPaService<StudyOverallStatusDTO>
-        implements StudyOverallStatusServiceRemote {
+        implements StudyOverallStatusServiceRemote, StudyOverallStatusServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyOverallStatusServiceBean.class);
 

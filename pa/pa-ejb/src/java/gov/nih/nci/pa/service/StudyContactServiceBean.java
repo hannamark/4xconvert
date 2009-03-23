@@ -112,7 +112,7 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class StudyContactServiceBean
         extends AbstractStudyPaService<StudyContactDTO>  
-        implements StudyContactServiceRemote {
+        implements StudyContactServiceRemote, StudyContactServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyContactServiceBean.class);
     

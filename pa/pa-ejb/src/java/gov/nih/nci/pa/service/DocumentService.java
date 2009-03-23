@@ -78,16 +78,54 @@
 */
 package gov.nih.nci.pa.service;
 
-import javax.ejb.Remote;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
+
+import java.util.List;
 
 /**
- * @author Hugh Reinhart
- * @since 08/13/2008
+ * @author Bala Nair
+ * @since 03/23/2009
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@Remote
-public interface StudyProtocolServiceRemote extends StudyProtocolService {
+public interface DocumentService {
+    
+
+    /**
+     * @param studyProtocolIi Ii 
+     * @return DocumentDTO
+     * @throws PAException PAException
+     */
+    List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * @param docDTO DocumentDTO 
+     * @return DocumentDTO
+     * @throws PAException PAException
+     */
+    DocumentDTO create(DocumentDTO docDTO) throws PAException;
+    
+    /**
+     * @param id Ii 
+     * @return DocumentDTO
+     * @throws PAException PAException
+     */
+    DocumentDTO get(Ii id) throws PAException;
+
+    /**
+     * @param docDTO DocumentDTO 
+     * @return DocumentDTO
+     * @throws PAException PAException
+     */
+    DocumentDTO update(DocumentDTO docDTO) throws PAException;
+
+    /**
+     * @param docDTO DocumentDTO 
+     * @return Boolean
+     * @throws PAException PAException
+     */
+    Boolean delete(DocumentDTO docDTO) throws PAException; 
 
 }

@@ -115,7 +115,8 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity" })
-public class DocumentServiceBean implements DocumentServiceRemote {
+public class DocumentServiceBean 
+                implements DocumentServiceRemote, DocumentServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(DocumentServiceBean.class);
 

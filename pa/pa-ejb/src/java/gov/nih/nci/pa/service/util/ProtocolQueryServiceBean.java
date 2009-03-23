@@ -99,6 +99,7 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -122,9 +123,8 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD" })
-//@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-//        "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
+        "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudyProtocolServiceBean.class);
@@ -149,7 +149,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<Object> queryList = getStudyProtocolQueryResults(spsc);
         pdtos = convertToStudyProtocolDTO(queryList);
-        pdtos = appendOnHold(pdtos);
+        if (pdtos != null && !pdtos.isEmpty()) {
+            pdtos = appendOnHold(pdtos);
+        }
         LOG.debug("Leaving getStudyProtocolByCriteria ");
         return pdtos;
     }
@@ -325,7 +327,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     hbe);
             throw new PAException(
                     " Hibernate exception in getStudyProtocolByCriteria ", hbe);
-        }    
+        }
         return spDtos;
     }
     private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReasons) {
@@ -365,9 +367,10 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     if (sb.length() == 0) {
                         sb.append(studyOnhold.getOnholdReasonCode().getCode());
                     } else {
-                        sb.append(",").append(studyOnhold.getOnholdReasonCode().getCode());
+                        sb.append(PAConstants.COMMA).append(studyOnhold.getOnholdReasonCode().getCode());
                     }
-                    sbDate.append(PAUtil.normalizeDateString((studyOnhold.getOnholdDate()).toString())).append(" ");
+                    sbDate.append(PAUtil.normalizeDateString((
+                                studyOnhold.getOnholdDate()).toString())).append(PAConstants.WHITESPACE);
                 }
                 spqDto.setOnHoldReasons(sb.toString());
                 spqDto.setOffHoldDates(sbDate.toString());
