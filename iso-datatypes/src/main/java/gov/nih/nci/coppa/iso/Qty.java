@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents iso datatype QTY.
  * @author lpower
@@ -135,6 +138,47 @@ public abstract class Qty extends Any {
      */
     public void setUncertaintyType(UncertaintyType uncertaintyType) {
         this.uncertaintyType = uncertaintyType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Qty)) {
+            return false;
+        }
+
+        Qty x = (Qty) obj;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(obj))
+            .append(this.getOriginalText(), x.getOriginalText())
+            .append(this.getUncertainty(), x.getUncertainty())
+            .append(this.getUncertaintyType(), x.getUncertaintyType())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(super.hashCode())
+            .append(this.getOriginalText())
+            .append(this.getUncertainty())
+            .append(this.getUncertaintyType())
+            .toHashCode();
     }
 
 }

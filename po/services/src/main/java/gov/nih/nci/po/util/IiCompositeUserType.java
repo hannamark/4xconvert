@@ -85,17 +85,14 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.IsoCloneException;
 import gov.nih.nci.coppa.iso.NullFlavor;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.SessionImplementor;
@@ -139,17 +136,17 @@ public class IiCompositeUserType implements CompositeUserType {
         if (value == null) {
             return null;
         }
-        // TODO PO-535 ideally, Ii would handle this clone operation
-        Ii snapshot = new Ii();
-        try {
-            BeanUtils.copyProperties(snapshot, value);
-        } catch (IllegalAccessException e) {
-            throw new HibernateException(e);
-        } catch (InvocationTargetException e) {
-            throw new HibernateException(e);
-        }
 
-        return snapshot;
+        Ii snapshot = (Ii) value;
+
+        Ii returnVal = null;
+
+        try {
+            returnVal = (Ii) snapshot.clone();
+        } catch (CloneNotSupportedException cnse) {
+            throw new IsoCloneException(cnse);
+        }
+        return returnVal;
     }
 
     /**
@@ -174,36 +171,17 @@ public class IiCompositeUserType implements CompositeUserType {
         Ii i1 = (Ii) x;
         Ii i2 = (Ii) y;
 
-        // TODO PO-535 really, all ISO types should implement correct equals and hashcode methods
-        return new EqualsBuilder()
-            .append(i1.getNullFlavor(), i2.getNullFlavor())
-            .append(i1.getDisplayable(), i2.getDisplayable())
-            .append(i1.getExtension(), i2.getExtension())
-            .append(i1.getIdentifierName(), i2.getIdentifierName())
-            .append(i1.getReliability(), i2.getReliability())
-            .append(i1.getRoot(), i2.getRoot())
-            .append(i1.getScope(), i2.getScope())
-            .isEquals();
+        return i1.equals(i2);
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode(Object x) {
-        // TODO PO-535 really, all ISO types should implement correct equals and hashcode methods
 
         Ii ii = (Ii) x;
 
-        return new HashCodeBuilder()
-            .append(ii.getNullFlavor())
-            .append(ii.getDisplayable())
-            .append(ii.getExtension())
-            .append(ii.getIdentifierName())
-            .append(ii.getReliability())
-            .append(ii.getRoot())
-            .append(ii.getScope())
-            .toHashCode();
-    }
+        return ii.hashCode();    }
 
     /**
      * {@inheritDoc}

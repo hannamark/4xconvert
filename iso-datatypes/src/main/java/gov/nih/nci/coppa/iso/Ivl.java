@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents iso data type IVL.
  * @author lpower
@@ -180,6 +183,52 @@ public class Ivl<T extends Qty> extends QSet<T> {
      */
     public void setWidth(Qty width) {
         this.width = width;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Ivl)) {
+            return false;
+        }
+
+        Ivl<T> x = (Ivl<T>) o;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(o))
+            .append(this.getHigh(), x.getHigh())
+            .append(this.getAny(), x.getAny())
+            .append(this.getHighClosed(), x.getHighClosed())
+            .append(this.getLow(), x.getLow())
+            .append(this.getLowClosed(), x.getLowClosed())
+            .append(this.getWidth(), x.getWidth())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getHigh())
+            .append(this.getAny())
+            .append(this.getHighClosed())
+            .append(this.getLow())
+            .append(this.getLowClosed())
+            .append(this.getWidth())
+            .toHashCode();
     }
 
 }

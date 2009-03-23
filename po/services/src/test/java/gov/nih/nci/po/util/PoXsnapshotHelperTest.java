@@ -50,7 +50,7 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         PersonCRServiceBeanTest.fill(per, getDefaultCountry());
         per.getPostalAddress().setDeliveryAddressLine("deliveryAddressLine");
         per.getEmail().add(new Email("222@example.com"));
-        per.getFax().add(new PhoneNumber("123-123-1234"));
+        per.getFax().add(new PhoneNumber("123-123-1235"));
         per.getPhone().add(new PhoneNumber("123-123-1234"));
         per.getTty().add(new PhoneNumber("123-123-1234"));
         per.getUrl().add(new URL("http://example.com/"));

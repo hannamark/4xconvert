@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents the iso ED type.
  * @author lpower
@@ -261,6 +264,60 @@ public class Ed extends Any {
         this.xml = xml;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
 
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Ed)) {
+            return false;
+        }
+
+        Ed x = (Ed) obj;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(obj))
+            .append(this.getData(), x.getData())
+            .append(this.getIntegrityCheck(), x.getIntegrityCheck())
+            .append(this.getCharset(), x.getCharset())
+            .append(this.getCompression(), x.getCompression())
+            .append(this.getDescription(), x.getDescription())
+            .append(this.getIntegrityCheckAlgorithm(), x.getIntegrityCheckAlgorithm())
+            .append(this.getMediaType(), x.getMediaType())
+            .append(this.getReference(), x.getReference())
+            .append(this.getThumbnail(), x.getThumbnail())
+            .append(this.getValue(), x.getValue())
+            .append(this.getXml(), x.getXml())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getData())
+            .append(this.getIntegrityCheck())
+            .append(this.getCharset())
+            .append(this.getCompression())
+            .append(this.getDescription())
+            .append(this.getIntegrityCheckAlgorithm())
+            .append(this.getMediaType())
+            .append(this.getReference())
+            .append(this.getThumbnail())
+            .append(this.getValue())
+            .append(this.getXml())
+            .toHashCode();
+    }
 
 }

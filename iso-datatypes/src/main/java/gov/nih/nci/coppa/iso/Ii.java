@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents iso data type II.
  * @author lpower
@@ -181,6 +184,49 @@ public class Ii extends Any {
         this.scope = scope;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
 
+        if (this == obj) {
+            return true;
+        }
 
+        if (!(obj instanceof Ii)) {
+            return false;
+        }
+
+        Ii x = (Ii) obj;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(obj))
+            .append(this.getDisplayable(), x.getDisplayable())
+            .append(this.getExtension(), x.getExtension())
+            .append(this.getIdentifierName(), x.getIdentifierName())
+            .append(this.getReliability(), x.getReliability())
+            .append(this.getRoot(), x.getRoot())
+            .append(this.getScope(), x.getScope())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getDisplayable())
+            .append(this.getExtension())
+            .append(this.getIdentifierName())
+            .append(this.getReliability())
+            .append(this.getRoot())
+            .append(this.getScope())
+            .toHashCode();
+    }
 }

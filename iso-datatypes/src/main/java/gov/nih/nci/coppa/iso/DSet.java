@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.iso;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -90,7 +91,7 @@ import java.util.Set;
  * @author lpower
  * @param <T> the type
  */
-public class DSet<T extends Any> implements Serializable {
+public class DSet<T extends Any> implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
     private Set<T> item;
@@ -108,4 +109,73 @@ public class DSet<T extends Any> implements Serializable {
     public void setItem(Set<T> item) {
         this.item = item;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof DSet)) {
+            return false;
+        }
+
+        DSet<T> x = (DSet<T>) obj;
+
+        return compareSets(this.getItem(), x.getItem());
+
+    }
+
+    private boolean compareSets(Set<T> currentSet, Set<T> compareSet) {
+        if (currentSet == null && compareSet == null) {
+            return true;
+        } else if (currentSet != null && compareSet != null) {
+            return currentSet.equals(compareSet);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        if (this.getItem() != null) {
+            return this.getItem().hashCode();
+        } else {
+            return super.hashCode();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("PMD.ProperCloneImplementation")
+    public Object clone() throws CloneNotSupportedException {
+
+        DSet<T> returnVal = new DSet<T>();
+        if (this.getItem() != null) {
+            returnVal.setItem(new HashSet<T>());
+
+            try {
+                for (T tem : this.getItem()) {
+                        returnVal.getItem().add((T) tem.clone());
+                }
+            } catch (Exception e) {
+                throw new IsoCloneException(e);
+            }
+        }
+
+        return returnVal;
+    }
+
 }

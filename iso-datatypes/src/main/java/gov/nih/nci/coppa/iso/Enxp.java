@@ -85,11 +85,15 @@ package gov.nih.nci.coppa.iso;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents the iso datatype.
  * @author lpower
  */
-public class Enxp implements Serializable {
+public class Enxp implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -99,6 +103,8 @@ public class Enxp implements Serializable {
     private Set<EntityNamePartQualifier> qualifier;
     private final EntityNamePartType type;
     private String value;
+    private static final int HASH_CODE_SEED_1 = 17;
+    private static final int HASH_CODE_SEED_2 = 71;
 
     /**
      * @param type the type to set
@@ -183,5 +189,68 @@ public class Enxp implements Serializable {
     public void setValue(String value) {
         this.value = value;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Enxp)) {
+            return false;
+        }
+
+        Enxp x = (Enxp) obj;
+
+        return new EqualsBuilder()
+            .append(this.getCode(), x.getCode())
+            .append(this.getType(), x.getType())
+            .append(this.getValue(), x.getValue())
+            .append(this.getCodeSystem(), x.getCodeSystem())
+            .append(this.getCodeSystemVersion(), x.getCodeSystemVersion())
+            .append(this.getQualifier(), x.getQualifier())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getCode())
+            .append(this.getType())
+            .append(this.getValue())
+            .append(this.getCodeSystem())
+            .append(this.getCodeSystemVersion())
+            .append(this.getQualifier())
+            .toHashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("PMD.ProperCloneImplementation")
+    public Object clone() throws CloneNotSupportedException {
+
+        Enxp snapshot = new Enxp(type);
+        try {
+            BeanUtils.copyProperties(snapshot, this);
+        } catch (Exception e) {
+            throw new IsoCloneException(e);
+        }
+
+        return snapshot;
+    }
+
 
 }

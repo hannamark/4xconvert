@@ -82,16 +82,16 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents iso data type AD.
  * @author lpower
  */
-public class Ad extends Any {
+public class Ad extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
-
     // TODO Invariant must be applied - see COPPA ISO's from EA
     private List<Adxp> part;
 
@@ -107,5 +107,73 @@ public class Ad extends Any {
      */
     public void setPart(List<Adxp> part) {
         this.part = part;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Ad)) {
+            return false;
+        }
+
+        Ad x = (Ad) obj;
+
+        return super.equals(obj) && compareLists(this.getPart(), x.getPart());
+
+    }
+
+    private boolean compareLists(List<Adxp> currentList, List<Adxp> compareList) {
+        if (currentList == null && compareList == null) {
+            return true;
+        } else if (currentList != null && compareList != null) {
+            return currentList.equals(compareList);
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        if (this.getPart() != null) {
+            return this.getPart().hashCode();
+        } else {
+            return super.hashCode();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+
+        Ad returnVal = (Ad) super.clone();
+        if (this.getPart() != null) {
+            returnVal.setPart(new ArrayList<Adxp>());
+
+            try {
+                for (Adxp tem : this.getPart()) {
+                    returnVal.getPart().add((Adxp) tem.clone());
+                }
+            } catch (Exception e) {
+                throw new IsoCloneException(e);
+            }
+        }
+
+        return returnVal;
     }
 }

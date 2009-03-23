@@ -85,6 +85,9 @@ package gov.nih.nci.coppa.iso;
 import java.net.URI;
 import java.util.List;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents the iso TEL data type.
  * @author lpower
@@ -130,5 +133,41 @@ public class Tel extends Any {
      */
     protected static boolean isAllowed(String scheme, List<String> allowedSchemes) {
         return allowedSchemes == null || allowedSchemes.contains(scheme);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Tel)) {
+            return false;
+        }
+
+        Tel x = (Tel) o;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(o))
+            .append(this.getValue(), x.getValue())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getValue())
+            .toHashCode();
     }
 }

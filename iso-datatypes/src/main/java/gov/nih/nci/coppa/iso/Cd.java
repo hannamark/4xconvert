@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents the iso CD type.
  * @author lpower
@@ -170,5 +173,49 @@ public class Cd extends Any {
         this.displayName = displayName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
 
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Cd)) {
+            return false;
+        }
+
+        Cd x = (Cd) obj;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(obj))
+            .append(this.getCode(), x.getCode())
+            .append(this.getCodeSystem(), x.getCodeSystem())
+            .append(this.getCodeSystemName(), x.getCodeSystemName())
+            .append(this.getCodeSystemVersion(), x.getCodeSystemVersion())
+            .append(this.getDisplayName(), x.getDisplayName())
+            .append(this.getOriginalText(), x.getOriginalText())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getCode())
+            .append(this.getCodeSystem())
+            .append(this.getCodeSystemName())
+            .append(this.getCodeSystemVersion())
+            .append(this.getDisplayName())
+            .append(this.getOriginalText())
+            .toHashCode();
+    }
 }

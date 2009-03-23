@@ -92,7 +92,7 @@ import org.apache.commons.collections.list.PredicatedList;
  * Represents the iso datatype.
  * @author lpower
  */
-public class En extends Any {
+public class En extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -118,5 +118,58 @@ public class En extends Any {
      */
     public List<Enxp> getPart() {
         return part;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof En)) {
+            return false;
+        }
+
+        En x = (En) obj;
+
+        return super.equals(obj) && this.getPart().equals(x.getPart());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        if (!this.getPart().isEmpty()) {
+            return this.getPart().hashCode();
+        } else {
+            return super.hashCode();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+
+        En returnVal = (En) super.clone();
+
+        try {
+            for (Enxp tem : this.getPart()) {
+                returnVal.getPart().add((Enxp) tem.clone());
+            }
+        } catch (Exception e) {
+            throw new IsoCloneException(e);
+        }
+
+        return returnVal;
     }
 }

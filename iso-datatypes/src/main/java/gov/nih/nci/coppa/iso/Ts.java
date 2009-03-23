@@ -84,6 +84,9 @@ package gov.nih.nci.coppa.iso;
 
 import java.util.Date;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents iso data type TS.
  * @author lpower
@@ -107,5 +110,42 @@ public class Ts extends Qty {
     public void setValue(Date value) {
         this.value = value;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Ts)) {
+            return false;
+        }
+
+        Ts x = (Ts) obj;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(obj))
+            .append(this.getValue(), x.getValue())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getValue())
+            .toHashCode();
+    }
+
 
 }

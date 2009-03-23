@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Represents iso data type QSET.
  * @author lpower
@@ -106,5 +109,41 @@ public abstract class QSet<T extends Qty> extends Any {
      */
     public void setOriginalText(EdText originalText) {
         this.originalText = originalText;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof QSet)) {
+            return false;
+        }
+
+        QSet<T> x = (QSet<T>) obj;
+
+        return new EqualsBuilder()
+            .appendSuper(super.equals(obj))
+            .append(this.getOriginalText(), x.getOriginalText())
+            .isEquals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+            .append(this.getOriginalText())
+            .toHashCode();
     }
 }

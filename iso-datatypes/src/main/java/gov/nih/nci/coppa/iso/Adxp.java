@@ -84,17 +84,22 @@ package gov.nih.nci.coppa.iso;
 
 import java.io.Serializable;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 /**
  * Represents the iso data type.
  * @author lpower
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class Adxp implements Serializable {
+public class Adxp implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
     private String code;
     private String value;
     private final AddressPartType type;
+    private static final int HASH_CODE_SEED_1 = 13;
+    private static final int HASH_CODE_SEED_2 = 31;
 
     /** ctor with immutable type.
      * @param type type
@@ -188,4 +193,60 @@ public class Adxp implements Serializable {
             default: throw new UnsupportedOperationException(type.name());
         }
     }
+
+
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public boolean equals(Object obj) {
+         if (obj == null) {
+             return false;
+         }
+
+         if (this == obj) {
+             return true;
+         }
+
+         if (!(obj instanceof Adxp)) {
+             return false;
+         }
+
+         Adxp x = (Adxp) obj;
+
+         return new EqualsBuilder()
+             .append(this.getCode(), x.getCode())
+             .append(this.getType(), x.getType())
+             .append(this.getValue(), x.getValue())
+             .isEquals();
+     }
+
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public int hashCode() {
+
+         return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
+             .append(this.getCode())
+             .append(this.getType())
+             .append(this.getValue())
+             .toHashCode();
+     }
+
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public Object clone() throws CloneNotSupportedException {
+
+         Object snapshot = null;
+         try {
+             snapshot = BeanUtils.cloneBean(this);
+         } catch (Exception e) {
+             throw new IsoCloneException(e);
+         }
+
+         return snapshot;
+     }
 }

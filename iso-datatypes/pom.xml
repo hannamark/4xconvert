@@ -1,25 +1,25 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa</groupId>
     <artifactId>iso-datatypes</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>iso</name>
-    
+
     <properties>
         <nci-commons.version>1.0.17</nci-commons.version>
         <compileSource>1.5</compileSource>
     </properties>
-    
+
     <scm>
         <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</connection>
         <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</developerConnection>
         <tag>HEAD</tag>
         <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</url>
     </scm>
-    
+
     <ciManagement>
         <system>Hudson</system>
         <url>http://nci-millersc-1.nci.nih.gov:8090/</url>
@@ -30,7 +30,7 @@
             </notifier>
         </notifiers>
     </ciManagement>
-    
+
     <developers>
         <developer>
             <email>smiller@5amsolutions.com</email>
@@ -58,7 +58,7 @@
             <name>Leslie Power</name>
         </developer>
     </developers>
-    
+
     <distributionManagement>
         <repository>
             <id>5AM-Releases</id>
@@ -72,7 +72,7 @@
             <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
-    
+
      <build>
         <plugins>
             <plugin>
@@ -126,7 +126,7 @@
             </extension>
         </extensions>
     </build>
-    
+
     <reporting>
         <plugins>
             <plugin>
@@ -151,7 +151,7 @@
             </plugin>
         </plugins>
     </reporting>
-    
+
     <repositories>
         <repository>
             <id>5AM-Releases</id>
@@ -196,7 +196,18 @@
             <version>3.2.1</version>
             <scope>compile</scope>
         </dependency>
-        
+      <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Testing only jars -->
         <dependency>
             <groupId>junit</groupId>
