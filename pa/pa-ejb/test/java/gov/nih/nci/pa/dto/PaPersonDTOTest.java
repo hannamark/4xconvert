@@ -80,10 +80,18 @@ public class PaPersonDTOTest {
 		 data.get(0).setZip("75081");
 		 data.get(0).setEmail("a@a.com");
 		 data.get(0).setPhone("1110001111");
+		 data.get(0).setTty("tty");
+		 data.get(0).setUrl("www.url.com");
+		 data.get(0).setFax("222222222");
+		 
 		 assertNotNull("Testing Address failed",data.get(0).getAddress());
 		 assertNotNull("Testing Email",data.get(0).getEmail());
 		 assertNotNull("Testing Phone",data.get(0).getPhone());
 		 assertNotNull("Testing role name",data.get(0).getRoleName());
+		 assertEquals("Testing tty","tty",data.get(0).getTty());
+		 assertEquals("Testing url","www.url.com",data.get(0).getUrl());
+		 assertEquals("Testing fax","222222222",data.get(0).getFax());
+		
 	}
 
 	
