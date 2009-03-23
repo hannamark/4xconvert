@@ -149,6 +149,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<Object> queryList = getStudyProtocolQueryResults(spsc);
         pdtos = convertToStudyProtocolDTO(queryList);
+        pdtos = appendOnHold(pdtos);
         LOG.debug("Leaving getStudyProtocolByCriteria ");
         return pdtos;
     }
@@ -301,10 +302,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         return studyProtocolDtos;
     }
 
-    private void appendOnHold(List<StudyProtocolQueryDTO> spDtos) throws PAException {
+    private List<StudyProtocolQueryDTO> appendOnHold(List<StudyProtocolQueryDTO> spDtos) throws PAException {
         StringBuffer hql = new StringBuffer();
         Session session = null;
-        List<Object> queryList = new ArrayList<Object>();
         long[] ids = getProtocolIds(spDtos);
         try {
             session = HibernateUtil.getCurrentSession();
@@ -314,26 +314,28 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 hql.append(ids[i]);
                 hql.append((i < ids.length - 1 ? " ," : " ")); 
             }
-            hql.append(" ) ");
+            hql.append(" ) and soh.offholdDate is null");
             Query query = null;
             query = session.createQuery(hql.toString());
             Map<Long , List<StudyOnhold>> studyOnHolds = generateOnholdMap(query.list()); 
+            populateOnHoldData(spDtos , studyOnHolds);
             
         } catch (HibernateException hbe) {
             LOG.error(" Hibernate exception in getStudyProtocolByCriteria ",
                     hbe);
             throw new PAException(
                     " Hibernate exception in getStudyProtocolByCriteria ", hbe);
-        }        
+        }    
+        return spDtos;
     }
-    private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReaons) {
+    private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReasons) {
         Object[] searchResult = null;
         StudyProtocol studyProtocol = null;
         StudyOnhold studyOnhold = null;
         Map<Long , List<StudyOnhold>> studyOnHolds = new HashMap<Long , List<StudyOnhold>>();
         ArrayList<StudyOnhold> sohList = null;
-        for (int i = 0; i < onHoldReaons.size(); i++) {
-            searchResult = (Object[]) onHoldReaons.get(i);
+        for (int i = 0; i < onHoldReasons.size(); i++) {
+            searchResult = (Object[]) onHoldReasons.get(i);
             if (searchResult == null) {
                 break;
             }
@@ -360,8 +362,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 sb = new StringBuffer();
                 sbDate = new StringBuffer();
                 for (StudyOnhold studyOnhold : sohLists) {
-                    sb.append(studyOnhold.getOnholdReasonCode().getCode()).append(' ');
-                    sbDate.append(PAUtil.normalizeDateString((studyOnhold.getOnholdDate()).toString())).append(' '); 
+                    if (sb.length() == 0) {
+                        sb.append(studyOnhold.getOnholdReasonCode().getCode());
+                    } else {
+                        sb.append(",").append(studyOnhold.getOnholdReasonCode().getCode());
+                    }
+                    sbDate.append(PAUtil.normalizeDateString((studyOnhold.getOnholdDate()).toString())).append(" ");
                 }
                 spqDto.setOnHoldReasons(sb.toString());
                 spqDto.setOffHoldDates(sbDate.toString());
@@ -479,7 +485,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     .getStudyProtocolId())) {
                 where.append(" and sp.id = ").append(
                         studyProtocolQueryCriteria.getStudyProtocolId());
-
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
                     .getOfficialTitle())) {
@@ -508,8 +513,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                 .getStudyStatusCode()) + "'");
                 where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
                         + "                where sos.studyProtocol = sos1.studyProtocol )"
-                        + " or sos.id is null ) ");
-                
+                        + " or sos.id is null ) ");                
             } else {
                 // add the subquery to pick the latest record
                 where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
@@ -528,7 +532,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                         + "                where dws.studyProtocol = dws1.studyProtocol )"
                         + " or dws.id is null ) ");
-
             } else {
                 // added for Registry Trial Search
                 if (studyProtocolQueryCriteria.getMyTrialsOnly() != null 
@@ -541,8 +544,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             // add the subquery to pick the latest record
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                             + "                where dws.studyProtocol = dws1.studyProtocol )"
-                                            + " or dws.id is null ) ");
-                        
+                                            + " or dws.id is null ) ");                        
                     } else if (!studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {                        
 
                             where.append(" and ((sp.userLastCreated = '").append(
@@ -561,9 +563,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                             + "                where dws.studyProtocol = dws1.studyProtocol )"
                                             + " or dws.id is null ))) ");
-
-                    }
-                    
+                    }                    
                 } else {
                     // add the subquery to pick the latest record
                     where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
@@ -593,8 +593,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            where.append(" and sps.functionalCode ='"
                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
            where.append(" and sc.roleCode ='"
-                   + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
-           
+                   + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");           
            // sub-query for searching trials by NCT number
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
                 where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 " 
@@ -604,8 +603,15 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                        .toUpperCase().trim().replaceAll("'", "''") + "%'" 
                                + " and sps1.functionalCode = '" 
                                + StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER + "')");
-           } 
-           
+           }
+           // sub-query for searching only on hold trials
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSearchOnHold())
+                   && studyProtocolQueryCriteria.getSearchOnHold().equals("true")) {
+                where.append(" and sp.id in(select distinct sp2.id from StudyProtocol as sp2 " 
+                      + " left outer join sp2.studyOnholds as spoh "
+                      + " where spoh.onholdDate is not null and "
+                      + " spoh.offholdDate is null)");
+           }           
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
             throw new PAException("General error in while create where cluase",

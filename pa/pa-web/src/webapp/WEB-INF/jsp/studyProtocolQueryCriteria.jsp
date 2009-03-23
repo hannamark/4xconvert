@@ -119,8 +119,7 @@ function generateReport(pid) {
                 <td>
                    <s:select headerKey="" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" cssStyle="width:206px" />
                 </td>                  
-            </tr>                                        
-            
+            </tr>           
             <tr>
             	<td scope="row" class="label">
                     <label for="documentWorkflowStatus"> <fmt:message key="studyProtocol.documentWorkflowStatus"/></label>    
@@ -135,6 +134,14 @@ function generateReport(pid) {
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
                 </td>  
 -->                
+            </tr>
+            <tr>
+                <td scope="row" class="label">
+                    <label for="searchOnHold"> <fmt:message key="studyProtocol.searchOnHold"/></label>                        
+                </td>
+                <td>
+                    <s:checkbox name="criteria.searchOnHold" />
+                </td>                
             </tr>
         </table>
         <div class="actionsrow">

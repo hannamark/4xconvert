@@ -120,6 +120,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Boolean excludeRejectProtocol;
     // for Registry trial search
     private Boolean myTrialsOnly;
+    private String searchOnHold;
 
 
     /**
@@ -320,6 +321,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public Boolean getMyTrialsOnly() {
         return myTrialsOnly;
+    }
+    /**
+     * @param searchOnHold the searchOnHold to set
+     */
+    public void setSearchOnHold(String searchOnHold) {
+        this.searchOnHold = searchOnHold;
+    }
+    /**
+     * @return the searchOnHold
+     */
+    public String getSearchOnHold() {
+        return searchOnHold;
     }
     /**
      * @param myTrialsOnly the myTrialsOnly to set
