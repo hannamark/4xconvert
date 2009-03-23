@@ -143,7 +143,8 @@ public class EnOnConverter {
      * @return name org name
      */
     public static String convertEnOnToString(EnOn enOn) {
-        if (enOn.getPart() != null && enOn.getPart().get(0) != null) {
+   if (enOn.getPart() != null && !enOn.getPart().isEmpty() 
+&& enOn.getPart().get(0) != null && enOn.getPart().get(0).getValue() != null) {
             return enOn.getPart().get(0).getValue();
         }
         return null;
