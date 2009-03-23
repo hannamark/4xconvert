@@ -90,7 +90,7 @@ public class CountryRegAuthorityDTO implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
-        private long id;
+        private Long id;
         private String alpha2;
         private String alpha3;
         private String name;
@@ -99,13 +99,13 @@ public class CountryRegAuthorityDTO implements Serializable {
         /**
          * @return the id
          */
-        public long getId() {
+        public Long getId() {
                 return id;
         }
         /**
          * @param id the id to set
          */
-        public void setId(long id) {
+        public void setId(Long id) {
                 this.id = id;
         }
         /**
