@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.junit.Test;
@@ -68,7 +67,7 @@ public class TsTest {
        }
 
        @Test
-       public void testHashCode() throws ParseException  {
+       public void testHashCode() throws ParseException, InterruptedException  {
 
            Int uncertainty1 = new Int();
            uncertainty1.setNullFlavor(NullFlavor.DER);
@@ -111,10 +110,22 @@ public class TsTest {
            second.setValue(date);
 
            assertEquals(first.hashCode(), second.hashCode());
-           SimpleDateFormat sdf = new SimpleDateFormat("MM/DD/yyyy");
-           second.setValue(sdf.parse("09/28/1980"));
-           assertFalse(first.getValue().getTime() == second.getValue().getTime());
+           // prove that different date hashcodes -> different Ts hashcodes
+           Date secondDate = new Date();
+           int i = 0;
+           while (secondDate.hashCode() == first.getValue().hashCode() && i < 100) {
+           Thread.sleep(100);
+           secondDate = new Date();
+           ++i;
+           }
+           if (i == 100) {
+               throw new RuntimeException("Unable to find different hash!");
+           }
+           second.setValue(new Date());
+
            assertFalse(first.hashCode() == second.hashCode());
+
+
 
        }
 
