@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.junit.Test;
@@ -66,7 +68,7 @@ public class TsTest {
        }
 
        @Test
-       public void testHashCode() {
+       public void testHashCode() throws ParseException  {
 
            Int uncertainty1 = new Int();
            uncertainty1.setNullFlavor(NullFlavor.DER);
@@ -109,9 +111,9 @@ public class TsTest {
            second.setValue(date);
 
            assertEquals(first.hashCode(), second.hashCode());
-
-           second.setValue(new Date());
-
+           SimpleDateFormat sdf = new SimpleDateFormat("MM/DD/yyyy");
+           second.setValue(sdf.parse("09/28/1980"));
+           assertFalse(first.getValue().getTime() == second.getValue().getTime());
            assertFalse(first.hashCode() == second.hashCode());
 
        }
