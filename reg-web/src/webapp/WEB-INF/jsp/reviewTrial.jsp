@@ -313,8 +313,10 @@
         <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
-                <li><a href="searchTrialquery.action"                
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+                <li><a href="amendTrialedit.action"                
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Edit</span></span></a></li>
+               <li><a href="amendTrialamend.action"                
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Submit</span></span></a></li>     
             </ul>   
         </del>
         </div>

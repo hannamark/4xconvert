@@ -31,12 +31,16 @@
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
+var chosenname;
 var persid;
-function setorgid(orgIdentifier){
+var respartOrgid;
+function setorgid(orgIdentifier, oname){
 	orgid = orgIdentifier;
+	chosenname = oname;
 }
-function setpersid(persIdentifier){
+function setpersid(persIdentifier, sname){
 	persid = persIdentifier;
+	chosenname = sname;
 }
 //
 function lookup4loadleadorg(){
@@ -56,40 +60,36 @@ function lookup4loadSummary4Sponsor(){
 }
 //
 function loadLeadOrgDiv() {	
-	var url = '/registry/protected/ajaxSubmitTrialActiondisplayLeadOrganization.action?orgId='+orgid;
-    var div = document.getElementById('loadOrgField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-    callAjax(url, div);    
+	document.getElementById("trialDTO.leadOrganizationIdentifier").value = orgid;
+    document.getElementById('trialDTO.leadOrganizationName').value = chosenname;
 }
 function loadLeadPersDiv() {
-	var url = '/registry/protected/ajaxSubmitTrialActiondisplayLeadPrincipalInvestigator.action?persId='+persid;
-    var div = document.getElementById('loadPersField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-    callAjax(url, div);    
+    document.getElementById("trialDTO.piIdentifier").value = persid;
+    document.getElementById('trialDTO.piName').value = chosenname;
+
 }
 function loadSponsorDiv() {
-	var url = '/registry/protected/ajaxSubmitTrialActiondisplaySelectedSponsor.action?orgId='+orgid;
-    var div = document.getElementById('loadSponsorField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
-    callAjax(url, div);        			
+	document.getElementById("trialDTO.sponsorIdentifier").value = orgid;
+    document.getElementById('trialDTO.sponsorName').value = chosenname;
 	document.getElementById('lookupbtn4RP').disabled = "";
+	respartOrgid = orgid;
 }
-function createOrgContactDiv() {	
-	var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
-    var div = document.getElementById('loadResponsibleContactField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
-    callAjax(url, div);
+function createOrgContactDiv() {
+	document.getElementById("trialDTO.responsiblePersonIdentifier").value = orgid;
+    document.getElementById('trialDTO.responsiblePersonName').value = chosenname;
+	//var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
+    //var div = document.getElementById('loadResponsibleContactField');   
+    //div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
+    //callAjax(url, div);
     document.getElementById('lookupbtn4RP').disabled = "";
 }
 function loadSummary4SponsorDiv() {
-	var url = '/registry/protected/ajaxSubmitTrialActiondisplaySummary4FundingSponsor.action?orgId='+orgid;
-    var div = document.getElementById('loadSummary4FundingSponsorField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
-    callAjax(url, div);
+	document.getElementById("trialDTO.summaryFourOrgName").value = chosenname;
+    document.getElementById('trialDTO.summaryFourOrgIdentifier').value = orgid;
 }
 //
 function saveProtocol (){	
-	var action = "amendTrialsave.action";	
+	var action = "amendTrialreview.action";	
     document.forms[0].page.value = "save";
     document.forms[0].action=action;
     document.forms[0].submit();
@@ -106,16 +106,13 @@ function callAjax(url, div){
     var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
     return false;
 }
-function manageRespPartyLookUp(){		
-	for(var i=0; i<2; i++) {			
-		if(document.forms[0].trialDTO.responsiblePartyType[i].checked==true) {
-			if(document.forms[0].trialDTO.responsiblePartyType[i].value == 'sponsor') {				
+function manageRespPartyLookUp(){
+	if(document.getElementById('trialDTO.responsiblePartyTypepi').checked==true) {
+		document.getElementById('rpcid').style.display='none';
+        document.getElementById('trialDTO.responsiblePersonName').value = '';
+	}
+	if(document.getElementById('trialDTO.responsiblePartyTypesponsor').checked==true) {				
 				document.getElementById('rpcid').style.display='';
-			}
-			if(document.forms[0].trialDTO.responsiblePartyType[i].value == 'pi') {					
-					document.getElementById('rpcid').style.display='none';
-			}
-		}		
 	}
 }
 function addGrant(){
@@ -193,6 +190,13 @@ function toggledisplay2 (it) {
 </script>	
 
 <body>
+<s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
+<s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/> 
+<s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
+<s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
+<s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
+<s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
+
 <!-- main content begins-->
     <h1><fmt:message key="submit.trial.page.header"/></h1>
     <c:set var="topic" scope="request" value="submit_trial"/> 
@@ -339,7 +343,7 @@ function toggledisplay2 (it) {
 					</td>
 					<td class="value">
 						<div id="loadOrgField">
-						<%@ include file="/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp" %>
+						<%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
 						</div>		
 					</td>
 		  </tr>
@@ -350,7 +354,7 @@ function toggledisplay2 (it) {
 					</td>
 					<td class="value">
 						<div id="loadPersField">
-						<%@ include file="/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp" %>
+						<%@ include file="/WEB-INF/jsp/nodecorate/trialLeadPrincipalInvestigator.jsp" %>
 						</div>		
 					</td>
 					
@@ -367,7 +371,7 @@ function toggledisplay2 (it) {
 					</td>
 					<td class="value">
 						<div id="loadSponsorField">
-						<%@ include file="/WEB-INF/jsp/nodecorate/displaySponsor.jsp" %>
+						<%@ include file="/WEB-INF/jsp/nodecorate/trialSponsor.jsp" %>
 						</div>		
 					</td>
 		</tr>   
@@ -376,7 +380,7 @@ function toggledisplay2 (it) {
 				    <label for="submitTrial_resppartysponsor"> <fmt:message key="submit.trial.responsibleParty"/><span class="required">*</span></label>
 				</td>
 				<td>
-				<s:radio name="trialDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
+				<s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
 				</td>
 		</tr>
         <c:choose>
@@ -387,7 +391,7 @@ function toggledisplay2 (it) {
               </td>                                        
               <td class="value">
               <div id="loadResponsibleContactField">
-                   <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+                   <%@ include file="/WEB-INF/jsp/nodecorate/trialresponsibleContact.jsp" %>
               </div>                                                                                             
               </td>
              </tr>
@@ -399,7 +403,7 @@ function toggledisplay2 (it) {
                      </td>                                        
                      <td class="value">
                                <div id="loadResponsibleContactField">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+                                    <%@ include file="/WEB-INF/jsp/nodecorate/trialresponsibleContact.jsp" %>
                                </div>                                                                                             
                      </td>
             </tr>
@@ -466,7 +470,7 @@ function toggledisplay2 (it) {
 				</td>
 				<td class="value">
 						<div id="loadSummary4FundingSponsorField">
-							<%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
+							<%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
 						</div>		
 				</td>
 			</tr>  

@@ -1,10 +1,6 @@
 package gov.nih.nci.registry.action;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialDTO;
@@ -15,7 +11,6 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -24,7 +19,10 @@ import gov.nih.nci.pa.util.TrialUtil;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -81,33 +79,6 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         try {
             Ii studyProtocolIi = IiConverter.convertToIi(pId);
             populateDTO(studyProtocolIi);
-            selectedLeadOrg = new OrganizationDTO();
-            selectedLeadOrg.setName(EnOnConverter.convertToEnOn(trialDTO.getLeadOrganizationName()));
-            selectedLeadOrg.setIdentifier(IiConverter.convertToIi(trialDTO.getLeadOrganizationIdentifier()));
-            ServletActionContext.getRequest().getSession().setAttribute("PoLeadOrg", selectedLeadOrg);
-            PersonDTO perDto = new PersonDTO();
-            poLeadPiFullName = trialDTO.getPiName();
-            perDto.setIdentifier(IiConverter.convertToIi(trialDTO.getPiIdentifier()));
-            perDto.setName(RemoteApiUtil.convertToEnPn(trialDTO.getPiName(), null, null, null, null));
-            ServletActionContext.getRequest().getSession().setAttribute("PoLeadPI", perDto);
-            resPartyContactFullName = trialDTO.getResponsiblePersonName();
-            //this to be removed when dto.variable name will be same as include jsp's form variable
-            selectedSponsor = new OrganizationDTO();
-            selectedSponsor.setIdentifier(IiConverter.convertToIi(trialDTO.getSponsorIdentifier()));
-            selectedSponsor.setName(EnOnConverter.convertToEnOn(trialDTO.getSponsorName()));
-            ServletActionContext.getRequest().getSession().setAttribute("Sponsorselected", selectedSponsor);
-            //Copy to form variable 
-            selectedSummary4Sponsor = new OrganizationDTO();
-            selectedSummary4Sponsor.setIdentifier(IiConverter.convertToIi(trialDTO.getSponsorIdentifier()));
-            selectedSummary4Sponsor.setName(EnOnConverter.convertToEnOn(trialDTO.getSponsorName()));
-            if (!trialDTO.getIndDtos().isEmpty()) {
-                ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
-                    trialDTO.getIndDtos());
-            }
-            if (!trialDTO.getFundingDtos().isEmpty()) {
-                ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
-                    trialDTO.getFundingDtos());
-            }
             // query the trial documents
             List<DocumentDTO> documentISOList = RegistryServiceLocator.getDocumentService()
                     .getDocumentsByStudyProtocol(studyProtocolIi);
@@ -115,6 +86,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             if (!(documentISOList.isEmpty())) {
                 ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
             }
+            addSessionAttributes(trialDTO);
 
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
@@ -417,44 +389,9 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * clears the session variables and shows the review page.
      * @return s
      */
-    public String save() {
-      //add the IndIde,FundingList,protocolDocument,leadOrgId and LeadOrgName
-        trialDTO.setTrialType("Interventional");
-        OrganizationDTO selectLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().
-        getSession().getAttribute("PoLeadOrg");
-        if (selectLeadOrg != null) {
-            trialDTO.setLeadOrganizationIdentifier(selectLeadOrg.getIdentifier().getExtension());
-            trialDTO.setLeadOrganizationName(selectLeadOrg.getName().getPart().get(0).getValue());
-        }
-        //sponsor
-        OrganizationDTO selectsponsorOrg = (OrganizationDTO) ServletActionContext.getRequest().
-        getSession().getAttribute("PoSponsor");
-        if (selectsponsorOrg != null) {
-            trialDTO.setSponsorIdentifier(selectsponsorOrg.getIdentifier().getExtension());
-            trialDTO.setSponsorName(selectsponsorOrg.getName().getPart().get(0).getValue());
-        }
-        //pi
-        PersonDTO selectedPerson = (PersonDTO) ServletActionContext.getRequest().
-        getSession().getAttribute("PoLeadPI");
-        if (selectedPerson != null) {
-            trialDTO.setPiIdentifier(selectedPerson.getIdentifier().getExtension());
-            trialDTO.setPiName(selectedPerson.getName().getPart().get(0).getValue());
-        }
-        //resPartyContactFullName 
-        PersonDTO respContact = (PersonDTO) ServletActionContext.getRequest().getSession()
-                    .getAttribute("PoResponsibleContact");
-        if (respContact != null) {
-            trialDTO.setResponsiblePersonName(respContact.getName().getPart().get(0).getValue());
-            trialDTO.setResponsiblePersonIdentifier(respContact.getIdentifier().getExtension());
-        }
-        //selectSummary4Sponsor
-        OrganizationDTO selectSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().
-        getSession().getAttribute("PoSummary4Sponsor");
-        if (selectSummary4Sponsor != null) {
-            trialDTO.setSummaryFourOrgIdentifier(selectSummary4Sponsor.getIdentifier().getExtension());
-            trialDTO.setSummaryFourOrgName(selectSummary4Sponsor.getName().toString());
-        }
-        ArrayList<TrialIndIdeDTO> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
+    public String review() {
+        //add the IndIde,FundingList,protocolDocument
+           ArrayList<TrialIndIdeDTO> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
         .getAttribute(Constants.INDIDE_LIST);
         if (sessionList != null) {
             for (int i = 0; i < sessionList.size(); i++) {
@@ -469,7 +406,44 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
         }
         removeSessionAttributes();
+        ServletActionContext.getRequest().getSession().setAttribute("trialDTO", trialDTO);
         LOG.info("Calling the review page...");
         return "review";    
+    }
+    /**
+     * 
+     * @return s
+     */
+    public String edit() {
+        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute("trialDTO");
+        addSessionAttributes(trialDTO);
+        List<DocumentDTO> documentISOList;
+        try {
+            documentISOList = RegistryServiceLocator.getDocumentService()
+            .getDocumentsByStudyProtocol(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));
+            if (!(documentISOList.isEmpty())) {
+                ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
+            }
+        } catch (PAException e) {
+            LOG.error("exception in edit" + e.getMessage());
+        }
+        return "edit";
+    }
+    /**
+     * 
+     * @return s
+     */
+    public String amend() {
+     return SUCCESS;   
+    }
+    private void addSessionAttributes(TrialDTO tDTO) {
+        if (!tDTO.getIndDtos().isEmpty()) {
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
+                    tDTO.getIndDtos());
+        }
+        if (!tDTO.getFundingDtos().isEmpty()) {
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
+                    tDTO.getFundingDtos());
+        }
     }
 }

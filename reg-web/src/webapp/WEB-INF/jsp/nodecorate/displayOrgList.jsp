@@ -11,7 +11,7 @@
 	<display:column title="Country" property="country"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 	<display:column title="Zip" property="zip"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 		<display:column title="Action" class="action" sortable="false">
-		<s:a href="#" cssClass="btn" onclick="submitform('${row.id}')"><span class="btn_img"><span class="add">Select</span></span></s:a>  
+		<s:a href="#" cssClass="btn" onclick="submitform('${row.id}','${row.name}')"><span class="btn_img"><span class="add">Select</span></span></s:a>  
 	</display:column>
 </display:table>
 </c:if>

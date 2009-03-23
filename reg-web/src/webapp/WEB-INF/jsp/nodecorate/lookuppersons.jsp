@@ -4,10 +4,10 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
 <SCRIPT language="JavaScript">
-	function submitform(persid)
+	function submitform(persid, name)
 	{	
 		//top.window.loadPersDiv(persid, func);
-		top.window.setpersid(persid);
+		top.window.setpersid(persid, name);
 		window.top.hidePopWin(true); 
 	}
 	 

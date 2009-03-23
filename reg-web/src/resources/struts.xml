@@ -72,6 +72,7 @@
 		<interceptor-ref name="nci-commonsParams" />
 		<result>/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="error">/WEB-INF/jsp/amendTrial.jsp</result>
+		<result name="edit">/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
         <result name="redirect_to_search" type="redirect-action">
              <param name="actionName">searchTrial.action</param>

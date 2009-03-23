@@ -72,7 +72,7 @@
 			return false;
 		}
 		var expandedaccesstype = document.getElementById('expanded_status').value;
-		addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype);
+		addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccesstype,expandedaccess);
 	}
 	function resetValues(){
 		document.getElementById('indidenumber').value='';

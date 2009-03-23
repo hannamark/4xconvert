@@ -4,10 +4,9 @@
 <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <SCRIPT language="JavaScript">
-	function submitform(orgid)
+	function submitform(orgid, name)
 	{		
-	
-		top.window.setorgid(orgid);
+		top.window.setorgid(orgid, name);
 		window.top.hidePopWin(true); 
 	}	
 	function createOrg(){
