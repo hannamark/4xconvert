@@ -100,4 +100,11 @@ public class CdConverterTest {
             assertTrue(xxx.getCode().equals(CdConverter.convertToCd(xxx).getCode()));
         }
     }
+    
+    @Test
+	public void testConvertToEnOn() {
+		
+		String str=null;
+		assertNull(CdConverter.convertCdToString(CdConverter.convertToCd(null)));
+	}
 }
