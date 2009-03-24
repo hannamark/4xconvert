@@ -30,7 +30,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedP
   }
 
   public gov.nih.nci.coppa.po.IdentifiedPerson getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-      return getById(id);
+      return impl.getById(id);
   }
 
   public gov.nih.nci.coppa.po.IdentifiedPerson[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
