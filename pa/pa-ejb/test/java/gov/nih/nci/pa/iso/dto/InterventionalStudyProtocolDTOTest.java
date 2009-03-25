@@ -80,8 +80,10 @@ package gov.nih.nci.pa.iso.dto;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -123,6 +125,8 @@ public class InterventionalStudyProtocolDTOTest {
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now));
         ispDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
         ispDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.I.getCode()));
+        ispDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
+        ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.OTHER.getCode()));
         return ispDTO;
     }
 

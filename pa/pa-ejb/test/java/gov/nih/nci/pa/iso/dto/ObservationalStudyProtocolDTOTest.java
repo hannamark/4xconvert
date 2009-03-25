@@ -83,7 +83,9 @@ import static org.junit.Assert.assertEquals;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
@@ -117,6 +119,9 @@ public class ObservationalStudyProtocolDTOTest {
         ospDTO.setBiospecimenDescription(StConverter.convertToSt("BiospecimenDescription"));
         ospDTO.setBiospecimenRetentionCode(CdConverter.convertStringToCd(BiospecimenRetentionCode.RETAINED.getCode()));
         ospDTO.setNumberOfGroups(IntConverter.convertToInt(4));
+        ospDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
+        ospDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.OTHER.getCode()));
+       
         return ospDTO;
     }
 
