@@ -189,7 +189,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
       }
     }
-
+    enforceTrailDescriptionDetails(studyProtocolDTO, abstractionList);
     enforceOutcomeMeasure(studyProtocolIi, abstractionList);
     enforceInterventions(studyProtocolIi, abstractionList);
     enforceTreatingSite(studyProtocolIi, abstractionList);
@@ -422,16 +422,26 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
           "Official Title must be Entered"));
     }
-    if (studyProtocolDTO.getPublicTitle().getValue() == null) {
+   /* if (studyProtocolDTO.getPublicTitle().getValue() == null) {
      abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
           "Brief Title must be Entered"));
     }    
     if (studyProtocolDTO.getPublicDescription().getValue() == null) {
       abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
           "Brief Summary must be Entered"));
-    }
+    }*/
   }
-
+  private void enforceTrailDescriptionDetails(StudyProtocolDTO studyProtocolDTO, 
+List<AbstractionCompletionDTO> abstractionList) {
+if (studyProtocolDTO.getPublicTitle().getValue() == null) {
+abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
+"Brief Title must be Entered"));
+}
+if (studyProtocolDTO.getPublicDescription().getValue() == null) {
+abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
+"Brief Summary must be Entered"));
+}
+}
 
   private void enforceNCISpecificInfo(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
