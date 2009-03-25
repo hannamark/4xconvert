@@ -80,7 +80,9 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 
@@ -146,6 +148,20 @@ public class StudyProtocol extends AbstractEntity {
     private Timestamp startDate;
     private ActualAnticipatedTypeCode startDateTypeCode;
     private Boolean acceptHealthyVolunteersIndicator;
+    //added for trial description
+    private String primaryObjective;
+    private String secondaryObjective;
+    private String ternaryObjective;
+    private String outline;
+    private String projectedAccural;
+    //added for amendments
+    private ActStatusCode statusCode;
+    private Timestamp statusDate;
+    private String amendmentNumber;
+    private Timestamp amendmentDate;
+    private AmendmentReasonCode amendmentReasonCode;
+    private Integer submissionNumber;
+    private String parentProtocolIdentifier;
     
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
@@ -501,6 +517,7 @@ public class StudyProtocol extends AbstractEntity {
     public void setPublicTitle(String publicTitle) {
         this.publicTitle = publicTitle;
     }
+   
     /**
     *
     * @return section801Indicator
@@ -721,5 +738,167 @@ public class StudyProtocol extends AbstractEntity {
     public void setStudyOnholds(List<StudyOnhold> studyOnholds) {
         this.studyOnholds = studyOnholds;
     }
+    /**
+     * 
+     * @return primaryObjectives
+     */
+    @Column(name = "PRIMARY_OBJECTIVE")
+    public String getPrimaryObjective() {
+        return primaryObjective;
+    }
+    /**
+     * 
+     * @param primaryObjective primaryObjective
+     */
+    public void setPrimaryObjective(String primaryObjective) {
+        this.primaryObjective = primaryObjective;
+    }
+   
+/**
+* @return the secondaryObjective
+*/
+@Column(name = "SECONDARY_OBJECTIVE")
+public String getSecondaryObjective() {
+return secondaryObjective;
+}
+/**
+* @param secondaryObjective the secondaryObjective to set
+*/
+public void setSecondaryObjective(String secondaryObjective) {
+this.secondaryObjective = secondaryObjective;
+}
+/**
+* @return the ternaryObjective
+*/
+@Column(name = "TERNARY_OBJECTIVE")
+public String getTernaryObjective() {
+return ternaryObjective;
+}
+/**
+* @param ternaryObjective the ternaryObjective to set
+*/
+public void setTernaryObjective(String ternaryObjective) {
+this.ternaryObjective = ternaryObjective;
+}
+/**
+* @return the outline
+*/
+@Column(name = "OUTLINE")
+public String getOutline() {
+return outline;
+}
+/**
+* @param outline the outline to set
+*/
+public void setOutline(String outline) {
+this.outline = outline;
+}
+/**
+* @return the projectedAccural
+*/
+@Column(name = "PROJECTED_ACCURAL")
+public String getProjectedAccural() {
+return projectedAccural;
+}
+/**
+* @param projectedAccural the projectedAccural to set
+*/
+public void setProjectedAccural(String projectedAccural) {
+this.projectedAccural = projectedAccural;
+}
+/**
+ * @return the statusCode
+ */
+@Column(name = "STATUS_CODE")
+@Enumerated(EnumType.STRING)
+public ActStatusCode getStatusCode() {
+return statusCode;
+}
+/**
+ * @param statusCode the statusCode to set
+ */
+public void setStatusCode(ActStatusCode statusCode) {
+this.statusCode = statusCode;
+}
+/**
+ * @return the statusDate
+ */
+@Column(name = "STATUS_DATE")
+public Timestamp getStatusDate() {
+return statusDate;
+}
+/**
+ * @param statusDate the statusDate to set
+ */
+public void setStatusDate(Timestamp statusDate) {
+this.statusDate = statusDate;
+}
+/**
+ * @return the amendmentNumber
+ */
+@Column(name = "AMENDMENT_NUMBER")
+public String getAmendmentNumber() {
+return amendmentNumber;
+}
+/**
+ * @param amendmentNumber the amendmentNumber to set
+ */
+public void setAmendmentNumber(String amendmentNumber) {
+this.amendmentNumber = amendmentNumber;
+}
+/**
+ * @return the amendmentDate
+ */
+@Column(name = "AMENDMENT_DATE")
+public Timestamp getAmendmentDate() {
+return amendmentDate;
+}
+/**
+ * @param amendmentDate the amendmentDate to set
+ */
+public void setAmendmentDate(Timestamp amendmentDate) {
+this.amendmentDate = amendmentDate;
+}
+/**
+ * @return the amendmentReasonCode
+ */
+@Column(name = "AMENDMENT_REASON_CODE")
+@Enumerated(EnumType.STRING)
+public AmendmentReasonCode getAmendmentReasonCode() {
+return amendmentReasonCode;
+}
+/**
+ * @param amendmentReasonCode the amendmentReasonCode to set
+ */
+public void setAmendmentReasonCode(AmendmentReasonCode amendmentReasonCode) {
+this.amendmentReasonCode = amendmentReasonCode;
+}
+/**
+ * @return the submissionNumber
+ */
+@Column(name = "SUBMISSION_NUMBER")
+public Integer getSubmissionNumber() {
+return submissionNumber;
+}
+/**
+ * @param submissionNumber the submissionNumber to set
+ */
+public void setSubmissionNumber(Integer submissionNumber) {
+this.submissionNumber = submissionNumber;
+}
+/**
+ * @return the parentProtocolIdentifier
+ */
+@Column(name = "PARENT_PROTOCOL_IDENTIFIER")
+public String getParentProtocolIdentifier() {
+return parentProtocolIdentifier;
+}
+/**
+ * @param parentProtocolIdentifier the parentProtocolIdentifier to set
+ */
+public void setParentProtocolIdentifier(String parentProtocolIdentifier) {
+this.parentProtocolIdentifier = parentProtocolIdentifier;
+}
+
 }
 
