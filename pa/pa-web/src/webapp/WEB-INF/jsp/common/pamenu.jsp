@@ -53,6 +53,7 @@
     			</li>
     			<li><div>Scientific Data</div>
     				<ul>
+    				    <li><a href="trialDescriptionquery.action" >Trial Description</a></li>
                         <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
     					<li class="hassubmenu">Interventional Trial Design
                             <ul id="part_sites">
