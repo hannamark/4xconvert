@@ -136,9 +136,6 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
 
     private static final int OFFICIAL_TITLE = 4000;
-    private static final int PUBLIC_TITLE = 299;
-    private static final int PUBLIC_DESCRIPTION = 5000;
-    private static final int SCI_DESC = 12000;
     private static final int KEYWORD = 600;
     private static final String SPONSOR = "sponsor";
     private static final String RESULT = "edit";
@@ -223,11 +220,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
     private void copy(StudyProtocolDTO spDTO) {
         gtdDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
-        gtdDTO.setPublicTitle(spDTO.getPublicTitle().getValue());
         gtdDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
         gtdDTO.setAcronym(spDTO.getAcronym().getValue());
-        gtdDTO.setPublicDescription(spDTO.getPublicDescription().getValue());
-        gtdDTO.setScientificDescription(spDTO.getScientificDescription().getValue());
         gtdDTO.setKeywordText(spDTO.getKeywordText().getValue());
     }
 
@@ -343,11 +337,6 @@ public class GeneralTrialDesignAction extends ActionSupport {
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
-        spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicTitle(), PUBLIC_TITLE)));
-        spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicDescription(),
-                PUBLIC_DESCRIPTION)));
-        spDTO.setScientificDescription(StConverter.convertToSt(
-                PAUtil.stringSetter(gtdDTO.getScientificDescription(), SCI_DESC)));
         spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
@@ -603,10 +592,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
       if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
           addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
       }
-      if (PAUtil.isEmpty(gtdDTO.getPublicTitle())) {
-        addFieldError("gtdDTO.publicTitle", getText("PublicTitle must be Entered"));
-      }
-      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
               && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
           addFieldError("gtdDTO.responsiblePersonName",
                   getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
