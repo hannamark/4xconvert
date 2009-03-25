@@ -81,6 +81,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -168,7 +169,37 @@ public class PAUtil {
     }
 
     /**
-     * checks if Cd is null.
+     * checks if St is null.
+     * @param st st
+     * @return boolean
+     */
+    public static boolean isStNull(St st) {
+        boolean isNull = false;
+        if (st == null || st.getValue() == null) {
+            return true;
+        } else {
+            if (st.getValue().trim().length() == 0) {
+                isNull = true;
+            }
+        }
+        return isNull;
+    }
+
+    /**
+     * checks if Ts is null.
+     * @param ts Ts
+     * @return boolean
+     */
+    public static boolean isTsNull(Ts ts) {
+        boolean isNull = false;
+        if ((ts == null) || (ts.getValue() == null)) {
+            isNull = true;
+        }
+        return isNull;
+    }
+
+    /**
+     * checks if Bl is null.
      * @param bl Bl
      * @return boolean
      */
@@ -179,7 +210,7 @@ public class PAUtil {
         }
         return isNull;
     }
-
+    
     /**
      * Private class used to decode and normalize date strings.
      */
