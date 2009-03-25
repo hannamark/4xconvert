@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="submit.trial.page.title"/></title>   
+    <title><fmt:message key="amend.trial.page.title"/></title>   
     <s:head/>
 </head>
 <!-- po integration -->
@@ -21,6 +21,7 @@
         addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "submitTrial");
         addCalendar("Cal2", "Select Date", "trialDTO.startDate", "submitTrial");
         addCalendar("Cal3", "Select Date", "trialDTO.completionDate", "submitTrial");
+        addCalendar("Cal4", "Select Date", "trialDTO.amendmentDate", "submitTrial");
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
@@ -93,7 +94,7 @@ function saveProtocol (){
     document.forms[0].page.value = "save";
     document.forms[0].action=action;
     document.forms[0].submit();
-	showPopWin('${saveProtocol}', 600, 200, '', 'Amend Register Trial');
+	//showPopWin('${saveProtocol}', 600, 200, '', 'Amend Register Trial');
 }
 function cancelProtocol (){   
     var action = "amendTrialcancel.action";   
@@ -190,22 +191,63 @@ function toggledisplay2 (it) {
 </script>	
 
 <body>
-<s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
-<s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/> 
-<s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
-<s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
-<s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
-<s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
 
 <!-- main content begins-->
-    <h1><fmt:message key="submit.trial.page.header"/></h1>
+    <h1><fmt:message key="amend.trial.page.header"/></h1>
     <c:set var="topic" scope="request" value="submit_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
+    <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
+    <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/> 
+    <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
+    <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
+    <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
+    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
+    <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
+
         <input type="hidden" name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
-        <table class="form"> 
+        <table class="form">
+        <tr>
+                <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
+          </tr>
+          <tr><td colspan="2" class="space">&nbsp;</td></tr>
+          <tr>     
+            <td scope="row" class="label">
+                <label for="Identifier">
+                    <fmt:message key="view.trial.amendmentNumber"/>                
+                </label>
+          </td>
+          <td>
+            <s:textfield name="trialDTO.localAmendmentNumber"  maxlength="200" size="100"  cssStyle="width:200px"  />
+              <span class="formErrorMsg"> 
+              <s:fielderror>
+              <s:param>trialDTO.localAmendmentNumber</s:param>
+              </s:fielderror>                            
+             </span> 
+          </td>
+          </tr>
+          <tr><td colspan="2" class="space">&nbsp;</td></tr>
+          <tr>     
+            <td scope="row" class="label">
+                <label for="Date">
+                    <fmt:message key="view.trial.amendmentDate"/>
+                    <span class="required">*</span>                
+                </label>
+          </td>
+          <td class="value">
+          <s:textfield name="trialDTO.amendmentDate"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal4')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                            <s:param>trialDTO.amendmentDate</s:param>
+                        </s:fielderror>                            
+                    </span>
+                </td>
+          </tr> 
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
           </tr>
@@ -238,7 +280,7 @@ function toggledisplay2 (it) {
                     <label for="submitTrial_participationWebDTO_nctNumber"> <fmt:message key="submit.trial.nctNumber"/></label>
                 </td>
                 <td>
-                    <s:textfield name="trialDTO.nctNumber"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>                
           </tr>
           <tr>
@@ -289,8 +331,8 @@ function toggledisplay2 (it) {
                     <label for="trialType"> <fmt:message key="submit.trial.type"/><span class="required">*</span></label> 
                 </td>
                 <td>
-				    <input type="radio" name="trialType" value="Interventional" checked="checked"> Interventional
-				    <input type="radio" name="trialType" value="Observational" disabled> Observational
+				    <input type="radio" name="trialDTO.trialType" value="Interventional" checked="checked"> Interventional
+				    <input type="radio" name="trialDTO.trialType" value="Observational" disabled> Observational
 				     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialType</s:param>
@@ -709,11 +751,122 @@ function toggledisplay2 (it) {
           </tr>
   		<c:if test="${requestScope.protocolDocument != null}">
 		<div class="box">		
-			<h3>Trial Related Documents</h3>  
+			<h3>Exiting Trial Related Documents</h3>  
 			<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
 		</div>
 		</c:if>
+        <div class="box">       
+            <h3>Amendment Related Documents</h3>  
+            <table class="form">  
+            <tr>
+              <td colspan="2" class="space">&nbsp;</td>
+            </tr>
+            <tr>
+            <td colspan="2">
+               <fmt:message key="submit.trial.docInstructionalText"/>
+            </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="space">&nbsp;</td>
+            </tr>
+        
+            <tr>
+              <td scope="row" class="label">
+              <label for="submitTrial_protocolDoc">
+                     <fmt:message key="amend.trial.protocolDocument"/>
+                     <span class="required">*</span>
+              </label>
+             </td>
+             <td class="value">
+               <s:file name="protocolDoc" id="protocolDoc" value="true" cssStyle="width:270px"/>
+               <c:if test="${requestScope.amendProtocolDoc != null}">
+               <label for="currentDocument">
+                    <fmt:message key="label.currentDocument"/>
+                    <c:out value="${requestScope.amendProtocolDoc}"></c:out>
+               </label>
+               </c:if>  
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.protocolDocFileName</s:param>
+                   </s:fielderror>                            
+                 </span>
+               </td>         
+         </tr>
+         <tr>
+              <td scope="row" class="label">
+              <label for="submitTrial_otherDocument"><fmt:message key="amend.trial.changeMemo"/>
+              <span class="required">*</span>
+              </label>
+              
+             </td>
+             <td class="value">
+                 <s:file name="changeMemoDoc" id="changeMemoDoc" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.changeMemoDocFileName</s:param>
+                   </s:fielderror>                            
+                 </span>                 
+               </td>         
+         </tr> 
+         <tr>
+              <td scope="row" class="label">
+              <label for="submitTrial_otherDocument"><fmt:message key="amend.trial.protocolHighlight"/></label>
+             </td>
+             <td class="value">
+                 <s:file name="protocolHighlight" id="protocolHighlight" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.otherDocumentFileName</s:param>
+                   </s:fielderror>                            
+                 </span>                 
+               </td>         
+         </tr> 
+         <tr>
+              <td scope="row" class="label">
+              <label for="submitTrial_irbApproval">
+                     <fmt:message key="submit.trial.irbApproval"/>
+                     <span class="required">*</span>
+              </label>
+             </td>
+             <td class="value">
+                 <s:file name="irbApproval" id="irbApproval" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.irbApprovalFileName</s:param>
+                   </s:fielderror>                            
+                 </span>
+               </td>         
+         </tr>         
+         <tr>
+              <td scope="row" class="label">
+              <label for="submitTrial_participatingSites"><fmt:message key="submit.trial.participatingSites"/></label>
+             </td>
+             <td class="value">
+                 <s:file name="participatingSites" id="participatingSites" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.participatingSitesFileName</s:param>
+                   </s:fielderror>                            
+                 </span>                 
+               </td>         
+         </tr>         
+         
+         <tr>
+              <td scope="row" class="label">
+              <label for="submitTrial_informedConsentDocument"><fmt:message key="submit.trial.informedConsent"/></label>
+             </td>
+             <td class="value">
+                 <s:file name="informedConsentDocument" id="informedConsentDocument" cssStyle="width:270px"/>
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.informedConsentDocumentFileName</s:param>
+                   </s:fielderror>                            
+                 </span>             
+               </td>         
+         </tr>         
+        </table>
 
+        </div>
         </table>
         <p align="center" class="info">
            Please verify ALL the trial information you provided on this screen before clicking the &#34;Submit Trial&#34; button below.  

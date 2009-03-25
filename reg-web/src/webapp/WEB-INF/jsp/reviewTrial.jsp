@@ -17,7 +17,37 @@
         
     <table class="form">
           <tr>
-            <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
+            <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
+          </tr>
+          <tr>     
+                <td scope="row" class="label">
+                    <label for="Amendment Number">
+                        <fmt:message key="view.trial.amendmentNumber"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <c:out value="${trialDTO.localAmendmentNumber}"/> 
+                </td>
+          </tr>
+          <tr>     
+                <td scope="row" class="label">
+                    <label for="Amendment Date">
+                        <fmt:message key="view.trial.amendmentDate"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <c:out value="${trialDTO.amendmentDate}"/> 
+                </td>
+          </tr>
+          <tr>     
+                <td scope="row" class="label">
+                    <label for="Assigned NCI Identifier">
+                        <fmt:message key="view.trial.nci.id"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <c:out value="${trialDTO.assignedIdentifier}"/> 
+                </td>
           </tr>
           <tr>     
                 <td scope="row" class="label">
@@ -61,7 +91,7 @@
                     <c:out value="${trialDTO.phaseCode}"/> 
                 </td>
           </tr>
-          <c:if test="${trialDTO.phaseOtherText!= null}">
+          <c:if test="${trialDTO.phaseOtherText!= ''}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Phase Text">
@@ -93,7 +123,7 @@
                     <c:out value="${trialDTO.primaryPurposeCode}"/>
                 </td>
           </tr>
-          <c:if test="${trialDTO.primaryPurposeOtherText != null}">
+          <c:if test="${trialDTO.primaryPurposeOtherText != ''}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">
@@ -160,7 +190,7 @@
                     <c:out value="${trialDTO.responsiblePartyType}"/>
                  </td>
            </tr> 
-           <c:if test="${trialDTO.responsiblePersonName != null}">  
+           <c:if test="${trialDTO.responsiblePersonName != ''}">  
                <tr>     
                     <td scope="row" class="label">
                     <label for="Responsible Party Contact">
@@ -196,7 +226,7 @@
                 <td colspan="2" class="space">&nbsp;</td>
            </tr>
        </c:if>
-       <c:if test="${trialDTO.summaryFourOrgName != null}">             
+       <c:if test="${trialDTO.summaryFourOrgName != ''}">             
            <tr>
                 <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
            </tr>
@@ -237,7 +267,7 @@
             <c:out value="${trialDTO.statusCode}"/>
          </td>
       </tr> 
-      <c:if test="${trialDTO.reason != null}">
+      <c:if test="${trialDTO.reason != ''}">
           <tr>     
             <td scope="row" class="label">
             <label for="Trial Status Reason">
@@ -308,6 +338,15 @@
 				    <display:column titleKey="search.trial.view.serialNumber" property="serialNumber"   sortable="true" headerClass="sortable"/>
 				    <display:column titleKey="search.trial.view.divProgram" property="nciDivisionProgramCode"   sortable="true" headerClass="sortable"/>
 				</display:table>
+            </div>
+        </c:if>
+        <c:if test="${fn:length(trialDTO.docDtos) >0}">          
+            <div class="box">
+               <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
+                name="${trialDTO.docDtos}" requestURI="searchTrialviewDoc.action" export="false">    
+                <display:column titleKey="search.trial.view.documentTypeCode" property="typeCode"   sortable="true" headerClass="sortable"/>
+                <display:column titleKey="search.trial.view.documentFileName" property="fileName"   sortable="true" headerClass="sortable"/>" 
+                </display:table>
             </div>
         </c:if>
         <div class="actionsrow">

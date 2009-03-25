@@ -69,6 +69,7 @@
         </result>
         </action>
         <action name="amendTrial*" class="gov.nih.nci.registry.action.AmendmentTrialAction" method="{1}">
+		<interceptor-ref name="fileUpload"/>
 		<interceptor-ref name="nci-commonsParams" />
 		<result>/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="error">/WEB-INF/jsp/amendTrial.jsp</result>
