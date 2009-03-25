@@ -6,9 +6,12 @@ package gov.nih.nci.pa.dto;
 import java.util.UUID;
 
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
- * @author Administrator
+ * @author Vrushali
  *
  */
 public class TrialIndIdeDTO {
@@ -29,8 +32,8 @@ public class TrialIndIdeDTO {
      */
     public TrialIndIdeDTO(StudyIndldeDTO isoDto) {
         super();
-        this.indIdeId = isoDto.getIdentifier().getExtension();
-        this.expandedAccess = isoDto.getExpandedAccessStatusCode().getCode();
+        this.indIdeId = IiConverter.convertToString(isoDto.getIdentifier());
+        this.expandedAccess = CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode());
         if (isoDto.getExpandedAccessIndicator().getValue() != null) {
             if (isoDto.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
               this.expandedAccessType = "Yes";
@@ -38,16 +41,16 @@ public class TrialIndIdeDTO {
               this.expandedAccessType = "No";
             } 
           }
-        this.grantor = isoDto.getGrantorCode().getCode();
-        this.holderType = isoDto.getHolderTypeCode().getCode();       
+        this.grantor = CdConverter.convertCdToString(isoDto.getGrantorCode());
+        this.holderType = CdConverter.convertCdToString(isoDto.getHolderTypeCode());       
         if (isoDto.getNihInstHolderCode().getCode() != null) {
-            this.programCode = isoDto.getNihInstHolderCode().getCode();
+            this.programCode = CdConverter.convertCdToString(isoDto.getNihInstHolderCode());
         }
         if (isoDto.getNciDivProgHolderCode().getCode() != null) {
-            this.programCode = isoDto.getNciDivProgHolderCode().getCode();
+            this.programCode = CdConverter.convertCdToString(isoDto.getNciDivProgHolderCode());
         }
-        this.number = isoDto.getIndldeNumber().getValue();
-        this.indIde = isoDto.getIndldeTypeCode().getCode();
+        this.number = StConverter.convertToString(isoDto.getIndldeNumber());
+        this.indIde = CdConverter.convertCdToString(isoDto.getIndldeTypeCode());
         this.rowId = UUID.randomUUID().toString();
     }
     /**

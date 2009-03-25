@@ -43,9 +43,13 @@ public class TrialDTO {
     private String startDateType;
     private String completionDateType;
     private String trialType;
-
+    private String localAmendmentNumber;
+    private String amendmentDate;
+    private String identifier;
     private List<TrialFundingDTO> fundingDtos;
     private List<TrialIndIdeDTO> indDtos;
+    private List<TrialDocumentDTO> docDtos;
+
     /**
      * 
      */
@@ -451,6 +455,53 @@ public class TrialDTO {
     public void setTrialType(String trialType) {
         this.trialType = trialType;
     }
-
+    /**
+     * @return the localAmendmentNumber
+     */
+    public String getLocalAmendmentNumber() {
+        return localAmendmentNumber;
+    }
+    /**
+     * @param localAmendmentNumber the localAmendmentNumber to set
+     */
+    public void setLocalAmendmentNumber(String localAmendmentNumber) {
+        this.localAmendmentNumber = localAmendmentNumber;
+    }
+    /**
+     * @return the amendmentDate
+     */
+    public String getAmendmentDate() {
+        return amendmentDate;
+    }
+    /**
+     * @param amendmentDate the amendmentDate to set
+     */
+    public void setAmendmentDate(String amendmentDate) {
+        this.amendmentDate = amendmentDate;
+    }
+    /**
+     * @return the docDtos
+     */
+    public List<TrialDocumentDTO> getDocDtos() {
+        return docDtos;
+    }
+    /**
+     * @param docDtos the docDtos to set
+     */
+    public void setDocDtos(List<TrialDocumentDTO> docDtos) {
+        this.docDtos = docDtos;
+    }
+    /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
     
 }

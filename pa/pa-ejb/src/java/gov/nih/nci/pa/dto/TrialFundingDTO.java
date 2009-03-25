@@ -6,6 +6,8 @@ package gov.nih.nci.pa.dto;
 import java.util.UUID;
 
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 
 /**
@@ -25,10 +27,10 @@ public class TrialFundingDTO {
      */
     public TrialFundingDTO(StudyResourcingDTO isoDto) {
        super(); 
-       this.id = isoDto.getIdentifier().getExtension();
-       this.fundingMechanism = isoDto.getFundingMechanismCode().getCode();
-       this.instituteCode = isoDto.getNihInstitutionCode().getCode();
-       this.nciDivisionProgramCode = isoDto.getNciDivisionProgramCode().getCode();
+       this.id = IiConverter.convertToString(isoDto.getIdentifier());
+       this.fundingMechanism = CdConverter.convertCdToString(isoDto.getFundingMechanismCode());
+       this.instituteCode = CdConverter.convertCdToString(isoDto.getNihInstitutionCode());
+       this.nciDivisionProgramCode = CdConverter.convertCdToString(isoDto.getNciDivisionProgramCode());
        this.serialNumber = isoDto.getSerialNumber().getValue().toString();
        this.rowId = UUID.randomUUID().toString();
     }
