@@ -180,6 +180,9 @@
         <action name="generalTrialDesign*" class="gov.nih.nci.pa.action.GeneralTrialDesignAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/generalTrialDesignEdit.jsp</result>
         </action>
+           <action name="trialDescription*" class="gov.nih.nci.pa.action.TrialDescriptionAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/trialDescription.jsp</result>
+        </action>
         <action name="trialInterventions*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result name="displayDetails">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>              
             <result name="edit">/WEB-INF/jsp/trialInterventionsedit.jsp</result>  
