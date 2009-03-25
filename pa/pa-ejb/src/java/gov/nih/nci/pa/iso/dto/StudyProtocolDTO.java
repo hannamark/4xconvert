@@ -70,7 +70,7 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.TooManyFields" })
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolDTO extends BaseDTO {
     
     private St acronym;
@@ -100,7 +100,17 @@ public class StudyProtocolDTO extends BaseDTO {
     private Bl acceptHealthyVolunteersIndicator;
     private St studyProtocolType;
     private St userLastCreated;
-    
+    private St primaryObjective;
+    private St secondaryObjective;
+    private St ternaryObjective;
+    private St outline;
+    private St projectedAccural;
+    private Cd statusCode;
+    private Ts statusDate;
+    private St amendmentNumber;
+    private Ts amendmentDate;
+    private Cd amendmentReasonCode;
+    private Int submissionNumber;
     /**
      * 
      * @return acronym
@@ -525,8 +535,158 @@ public class StudyProtocolDTO extends BaseDTO {
     public void setUserLastCreated(St userLastCreated) {
         this.userLastCreated = userLastCreated;
     }
-    
-    
+
+/**
+* @return the primaryObjective
+*/
+public St getPrimaryObjective() {
+return primaryObjective;
+}
+
+/**
+* @param primaryObjective the primaryObjective to set
+*/
+public void setPrimaryObjective(St primaryObjective) {
+this.primaryObjective = primaryObjective;
+}
+
+/**
+* @return the secondaryObjective
+*/
+public St getSecondaryObjective() {
+return secondaryObjective;
+}
+
+/**
+* @param secondaryObjective the secondaryObjective to set
+*/
+public void setSecondaryObjective(St secondaryObjective) {
+this.secondaryObjective = secondaryObjective;
+}
+
+/**
+* @return the ternaryObjective
+*/
+public St getTernaryObjective() {
+return ternaryObjective;
+}
+
+/**
+* @param ternaryObjective the ternaryObjective to set
+*/
+public void setTernaryObjective(St ternaryObjective) {
+this.ternaryObjective = ternaryObjective;
+}
+/**
+* @return the outline
+*/
+public St getOutline() {
+return outline;
+}
+
+/**
+* @param outline the outline to set
+*/
+public void setOutline(St outline) {
+this.outline = outline;
+}
+/**
+* @return the projectedAccural
+*/
+public St getProjectedAccural() {
+return projectedAccural;
+}
+
+/**
+* @param projectedAccural the projectedAccural to set
+*/
+public void setProjectedAccural(St projectedAccural) {
+this.projectedAccural = projectedAccural;
+}
+
+/**
+ * @return the statusCode
+ */
+public Cd getStatusCode() {
+return statusCode;
+}
+
+/**
+ * @param statusCode the statusCode to set
+ */
+public void setStatusCode(Cd statusCode) {
+this.statusCode = statusCode;
+}
+
+/**
+ * @return the statusDate
+ */
+public Ts getStatusDate() {
+return statusDate;
+}
+
+/**
+ * @param statusDate the statusDate to set
+ */
+public void setStatusDate(Ts statusDate) {
+this.statusDate = statusDate;
+}
+
+/**
+ * @return the amendmentNumber
+ */
+public St getAmendmentNumber() {
+return amendmentNumber;
+}
+
+/**
+ * @param amendmentNumber the amendmentNumber to set
+ */
+public void setAmendmentNumber(St amendmentNumber) {
+this.amendmentNumber = amendmentNumber;
+}
+
+/**
+ * @return the amendmentDate
+ */
+public Ts getAmendmentDate() {
+return amendmentDate;
+}
+
+/**
+ * @param amendmentDate the amendmentDate to set
+ */
+public void setAmendmentDate(Ts amendmentDate) {
+this.amendmentDate = amendmentDate;
+}
+
+/**
+ * @return the amendmentReasonCode
+ */
+public Cd getAmendmentReasonCode() {
+return amendmentReasonCode;
+}
+
+/**
+ * @param amendmentReasonCode the amendmentReasonCode to set
+ */
+public void setAmendmentReasonCode(Cd amendmentReasonCode) {
+this.amendmentReasonCode = amendmentReasonCode;
+}
+
+/**
+ * @return the submissionNumber
+ */
+public Int getSubmissionNumber() {
+return submissionNumber;
+}
+
+/**
+ * @param submissionNumber the submissionNumber to set
+ */
+public void setSubmissionNumber(Int submissionNumber) {
+this.submissionNumber = submissionNumber;
+}
     
     
 }
