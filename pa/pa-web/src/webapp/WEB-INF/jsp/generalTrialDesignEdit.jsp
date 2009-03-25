@@ -67,17 +67,17 @@
         return false;
     }
 function manageRespPartyLookUp(){
-	//alert(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypepi').checked == true);
-/*	if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypepi').checked==true) {							
-			document.getElementById('rpcid').style.display='none';
-	}
-	if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypesponsor').checked==true) {	
-			document.getElementById('rpcid').style.display='';
-	}
-	*/
+    //alert(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypepi').checked == true);
+/*  if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypepi').checked==true) {                            
+            document.getElementById('rpcid').style.display='none';
+    }
+    if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypesponsor').checked==true) {   
+            document.getElementById('rpcid').style.display='';
+    }
+    */
 }    
 </script>
-	
+    
 </head>
 
 <body onload="setFocusToFirstControl();">
@@ -97,14 +97,14 @@ function manageRespPartyLookUp(){
     <h2>General Trial Details</h2>    
 
     <tr>
-    	<td scope="row" class="label">
+        <td scope="row" class="label">
            <label for="nciIdentifier">
                     <fmt:message key="studyProtocol.nciIdentifier"/>
            </label>
          </td>
          <td class="value">
-    		<c:out value="${sessionScope.trialSummary.nciIdentifier}"/>
-    	</td>
+            <c:out value="${sessionScope.trialSummary.nciIdentifier}"/>
+        </td>
     </tr>
     <tr>
         <td scope="row" class="label">
@@ -146,23 +146,7 @@ function manageRespPartyLookUp(){
         <s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="12"/> 
         </td>
     </tr>
-    <tr>
-    	<td scope="row" class="label">
-           <label for=briefTitle>
-                    <fmt:message key="studyProtocol.briefTitle"/>
-                 <span class="required">*</span>
-           </label>
-         </td>
-         <td class="value">
-    		<s:textarea name="gtdDTO.publicTitle" cssStyle="width:606px" rows="4"/> 
-    		<span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>gtdDTO.publicTitle</s:param>
-                   </s:fielderror>                            
-                 </span>
-    	</td>
-    </tr>
-    <tr>
+     <tr>
        <td scope="row" class="label">
           <label for="officialTitle">
                    <fmt:message key="studyProtocol.officialTitle"/>
@@ -179,45 +163,17 @@ function manageRespPartyLookUp(){
        </td>
     </tr>
     <tr>
-    	<th colspan="2"> <fmt:message key="studyProtocol.trialDescription"/></th>
-    </tr>
-    <tr> 
-            <td/>
-            <td class="info" colspan="2">Madatory at Abstraction Validation</td>
-     </tr>
-     <tr>
-    	<td scope="row" class="label">
-           <label for=briefSummary>
-                    <fmt:message key="studyProtocol.briefSummary"/>
-           </label>
-         </td>
-         <td class="value">
-    		<s:textarea name="gtdDTO.publicDescription" cssStyle="width:606px" rows="4"/>
-    		 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>gtdDTO.publicDescription</s:param>
-                   </s:fielderror>                            
-                 </span>  
-    	</td>
+        <th colspan="2"> <fmt:message key="studyProtocol.trialDescription"/></th>
     </tr>
     <tr>
-    	<td scope="row" class="label">
-           <label for=detailedDescription>
-                    <fmt:message key="studyProtocol.detailedDescription"/>
-           </label>
-         </td>
-         <td class="value">
-   			 <s:textarea name="gtdDTO.scientificDescription" cssStyle="width:606px" rows="4"/> 
-   		</td>
-    </tr>
-    <tr>
-    	<td scope="row" class="label">
+        <td scope="row" class="label">
            <label for=keywordText><fmt:message key="studyProtocol.keywordText"/>
            </label>
          </td>
          <td class="value">
-   			 <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"/> 
-   		</td>
+             <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"/> 
+        </td>
+        
     </tr>
     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
     <tr>
@@ -268,7 +224,7 @@ function manageRespPartyLookUp(){
                 <ul class="btnrow">
                     <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                     <li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-					<li><a href="nciSpecificInformationquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
+                    <li><a href="nciSpecificInformationquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
                 </ul>   
             </del>
 
