@@ -83,7 +83,9 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -179,6 +181,24 @@ public class StudyProtocolConverter {
         } else {
             studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(studyProtocol.getClass().getName()));
         }
+        studyProtocolDTO.setPrimaryObjective(
+                StConverter.convertToSt(studyProtocol.getPrimaryObjective()));
+        studyProtocolDTO.setSecondaryObjective(
+                StConverter.convertToSt(studyProtocol.getSecondaryObjective()));
+        studyProtocolDTO.setTernaryObjective(
+                StConverter.convertToSt(studyProtocol.getTernaryObjective()));
+        studyProtocolDTO.setOutline(
+                StConverter.convertToSt(studyProtocol.getOutline()));
+        studyProtocolDTO.setProjectedAccural(
+                StConverter.convertToSt(studyProtocol.getProjectedAccural()));
+        
+        studyProtocolDTO.setStatusCode(CdConverter.convertToCd(studyProtocol.getStatusCode()));
+        studyProtocolDTO.setStatusDate(TsConverter.convertToTs(studyProtocol.getStatusDate()));
+        studyProtocolDTO.setAmendmentNumber(
+                StConverter.convertToSt(studyProtocol.getAmendmentNumber()));
+        studyProtocolDTO.setAmendmentReasonCode(CdConverter.convertToCd(studyProtocol.getAmendmentReasonCode()));
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(studyProtocol.getAmendmentDate()));
+        studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(studyProtocol.getSubmissionNumber()));
         
         return studyProtocolDTO;
     }
@@ -261,6 +281,28 @@ public class StudyProtocolConverter {
        }
        studyProtocol.setAcceptHealthyVolunteersIndicator(BlConverter.covertToBoolean(
                studyProtocolDTO.getAcceptHealthyVolunteersIndicator()));
+       
+       studyProtocol.setPrimaryObjective(StConverter.convertToString(studyProtocolDTO.getPrimaryObjective()));
+       studyProtocol.setSecondaryObjective(StConverter.convertToString(studyProtocolDTO.getSecondaryObjective()));
+       studyProtocol.setTernaryObjective(StConverter.convertToString(studyProtocolDTO.getTernaryObjective()));
+       studyProtocol.setOutline(StConverter.convertToString(studyProtocolDTO.getOutline()));
+       studyProtocol.setProjectedAccural(StConverter.convertToString(studyProtocolDTO.getProjectedAccural()));
+       
+       studyProtocol.setStatusCode(ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode()));
+       if (studyProtocolDTO.getStatusDate() != null) {
+           studyProtocol.setStatusDate(
+                   TsConverter.convertToTimestamp(studyProtocolDTO.getStatusDate()));
+       }
+       studyProtocol.setAmendmentNumber(StConverter.convertToString(studyProtocolDTO.getAmendmentNumber()));
+       studyProtocol.setAmendmentReasonCode(AmendmentReasonCode.getByCode(
+    studyProtocolDTO.getAmendmentReasonCode().getCode()));
+    
+       if (studyProtocolDTO.getAmendmentDate() != null) {
+           studyProtocol.setAmendmentDate(TsConverter.convertToTimestamp(studyProtocolDTO.getAmendmentDate()));
+       }
+       studyProtocol.setSubmissionNumber(
+               IntConverter.convertToInteger(studyProtocolDTO.getSubmissionNumber()));
+       
        return studyProtocol;
    }
     
