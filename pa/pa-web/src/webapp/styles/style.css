@@ -443,6 +443,8 @@ TABLE.data TD A IMG.thumbnail:hover
 { clear:both; font-size:100%; color:#c00; font-style:italic; display:block; }
 .required
 { color:#c00; font-weight:bold; font-size:18px;}
+.notRequired
+{ color:blue; font-weight:bold; font-size:18px;}
 
 /* ToolTip Bubble */
 
