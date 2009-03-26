@@ -7,7 +7,19 @@
 <head>
     <title><fmt:message key="view.trial.page.title"/></title>
 </head>
-
+<link href="<%=request.getContextPath()%>/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
+<link href="<%=request.getContextPath()%>/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<script language="javascript">
+function submit (){   
+    var action = "amendTrialamend.action";   
+    document.forms[0].page.value = "Submit";
+    document.forms[0].action=action;
+    document.forms[0].submit();
+    showPopWin('${saveProtocol}', 600, 200, '', 'Amend Trial');
+</script>
 <body>
 <div id="contentwide"> 
  <h1><fmt:message key="search.trial.view.page.title" /></h1>
@@ -355,7 +367,7 @@
                 <li><a href="amendTrialedit.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Edit</span></span></a></li>
                <li><a href="amendTrialamend.action"                
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Submit</span></span></a></li>     
+                    class="btn" onclick="submit();"><span class="btn_img"><span class="back">Submit</span></span></a></li>     
             </ul>   
         </del>
         </div>

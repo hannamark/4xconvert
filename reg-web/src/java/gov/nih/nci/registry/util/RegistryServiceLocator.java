@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -325,5 +326,12 @@ public final class RegistryServiceLocator {
         throws PAException {    
         return getInstance().getServiceLocator().getOrganizationCorrelationService();
     }
-         
+    /**
+     * 
+     * @return TrialRegistrationServiceRemote
+     * @throws PAException e
+     */
+    public static TrialRegistrationServiceRemote getTrialRegistrationService() throws PAException {    
+        return getInstance().getServiceLocator().getTrialRegistrationService();
+    }
 }

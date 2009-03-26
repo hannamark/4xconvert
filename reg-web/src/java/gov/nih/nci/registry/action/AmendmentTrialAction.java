@@ -12,8 +12,11 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -28,6 +31,8 @@ import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -403,7 +408,49 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * @return s
      */
     public String amend() {
-     return SUCCESS;   
+     //call the service
+        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute("trialDTO");
+        TrialUtil util = new TrialUtil();
+        try {
+            StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
+            StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
+            List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
+            OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
+            PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
+            OrganizationDTO sponsorOrganizationDTO = util.convertToSponsorOrgDTO(trialDTO);
+            StudyParticipationDTO leadOrganizationParticipationIdDTO = util.convertToStudyParticipationDTO(trialDTO);
+            StudyParticipationDTO nctIdentifierParticipationIdDTO = util.convertToNCTStudyParticipationDTO(trialDTO);
+            StudyContactDTO studyContactDTO = null;
+            StudyParticipationContactDTO studyParticipationContactDTO = null;
+            OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
+            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
+            PersonDTO responsiblePartyContactDTO = util.convertToResponsiblePartyContactDTO(trialDTO);
+            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+                studyContactDTO = util.convertToStudyContactDTO(trialDTO);
+            } else {
+                studyParticipationContactDTO = util.convertToStudyParticipationContactDTO(trialDTO);
+            }
+            List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndDtos());
+            List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
+            
+            RegistryServiceLocator.getTrialRegistrationService().
+            amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                    studyResourcingDTOs, documentDTOs, leadOrganizationDTO, 
+                    principalInvestigatorDTO, sponsorOrganizationDTO, 
+                    leadOrganizationParticipationIdDTO, 
+                    nctIdentifierParticipationIdDTO, studyContactDTO, 
+                    studyParticipationContactDTO, summary4organizationDTO, 
+                    summary4studyResourcingDTO, responsiblePartyContactDTO);  
+        } catch (PAException e) {
+            // TODO Auto-generated catch block
+            LOG.error(e.getMessage());
+            addActionError(e.getMessage());
+            return ERROR;
+        }
+       /* */
+        removeSessionAttributes();
+        ServletActionContext.getRequest().getSession().removeAttribute("trialDTO");
+     return "redirect_to_search";   
     }
     private void addSessionAttributes(TrialDTO tDTO) {
         if (!tDTO.getIndDtos().isEmpty()) {

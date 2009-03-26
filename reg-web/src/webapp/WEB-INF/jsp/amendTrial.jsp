@@ -89,7 +89,7 @@ function loadSummary4SponsorDiv() {
     document.getElementById('trialDTO.summaryFourOrgIdentifier').value = orgid;
 }
 //
-function saveProtocol (){	
+function reviewProtocol (){	
 	var action = "amendTrialreview.action";	
     document.forms[0].page.value = "save";
     document.forms[0].action=action;
@@ -101,7 +101,7 @@ function cancelProtocol (){
     document.forms[0].page.value = "Submit";
     document.forms[0].action=action;
     document.forms[0].submit();
-    showPopWin('${cancelProtocol}', 600, 200, '', 'cancel Trial');
+    //showPopWin('${cancelProtocol}', 600, 200, '', 'cancel Trial');
 }
 function callAjax(url, div){
     var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
@@ -877,7 +877,7 @@ function toggledisplay2 (it) {
                 <ul class="btnrow">         
                         <li>
                         <li>            
-                            <s:a href="#" cssClass="btn" onclick="saveProtocol()"><span class="btn_img"><span class="save">Save Trial</span></span></s:a>
+                            <s:a href="#" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="save">Cancel Trial</span></span></s:a>
                         </li>
                 </ul>   
