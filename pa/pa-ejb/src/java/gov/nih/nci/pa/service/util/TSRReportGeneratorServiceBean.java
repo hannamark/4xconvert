@@ -190,6 +190,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       try {
           appendSecondaryIdentifiers(htmldata , spDTO); 
           appendTitles(htmldata , spDTO);
+          appendDetailedDescription(htmldata , spDTO);
           appendOrgsAndPersons(htmldata , spDTO.getIdentifier());
           apppendTrialStatus(htmldata , spDTO);
           appendRegulatoryInformation(htmldata , spDTO);
@@ -795,13 +796,73 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       append(getInfo(studyProtocolDto.getAcronym(), true));
       html.append(BR).append(BR).append(BLD_B).append("Brief Summary: ").append(BLD_E).
       append(getInfo(studyProtocolDto.getPublicDescription(), true));
-      html.append(BR).append(BLD_B).append("Detailed Description: ").append(BLD_E).
-      append(getInfo(studyProtocolDto.getScientificDescription(), true));
+     /* html.append(BR).append(BLD_B).append("Detailed Description: ").append(BLD_E).
+      append(getInfo(studyProtocolDto.getScientificDescription(), true));*/
   html.append(BR).append(BLD_B).append("Keywords: ").append(BLD_E).
       append(getInfo(studyProtocolDto.getKeywordText(), true));
       html.append(BR);
 
   }
+  
+  /**
+   * Appends the details description data. It appends the primary, secondary and ternary objectives along with the
+   * outline and projected accural if these elements are populated in the DTO.
+ * @param html
+ * @param studyProtocolDto
+ */
+private void appendDetailedDescription(StringBuffer html , StudyProtocolDTO studyProtocolDto) {
+if (isDetailedDescriptionPopulated(studyProtocolDto)) {
+      html.append(BR).append(BLD_B).append("Detailed Description: ").append(BLD_E).append(BR);
+      html.append(BR).append("OBJECTIVES: ");
+      if (isPopulated(studyProtocolDto.getPrimaryObjective())) {   
+      html.append(BR).append("Primary: ").append(getInfo(studyProtocolDto.getPrimaryObjective(), true));
+      }
+      if (isPopulated(studyProtocolDto.getSecondaryObjective())) {
+      html.append(BR).append("Secondary: ").append(getInfo(studyProtocolDto.getSecondaryObjective(), true));
+      }
+      if (isPopulated(studyProtocolDto.getTernaryObjective())) {
+          html.append(BR).append("Ternary: ").append(getInfo(studyProtocolDto.getTernaryObjective(), true))
+          .append(BR);
+      }
+      if (isPopulated(studyProtocolDto.getOutline())) {
+      html.append(BR).append("OUTLINE: ").append(getInfo(studyProtocolDto.getOutline(), true)).append(BR);
+      }
+      if (isPopulated(studyProtocolDto.getProjectedAccural())) {
+      html.append(BR).append("PROJECTED ACCURAL: ").append(getInfo(studyProtocolDto.getProjectedAccural(), true));
+      }
+      html.append(BR);
+}  
+ 
+}
+/**
+ * Checks, if the studyProtocolDto is populated with detailed description data, before displaying the data. 
+ * @param studyProtocolDto
+ * @return
+ */
+private boolean isDetailedDescriptionPopulated(StudyProtocolDTO studyProtocolDto) {
+boolean populated = false;
+if (isPopulated(studyProtocolDto.getPrimaryObjective()) || isPopulated(studyProtocolDto.getSecondaryObjective())
+|| isPopulated(studyProtocolDto.getTernaryObjective()) || isPopulated(studyProtocolDto.getOutline())
+|| isPopulated(studyProtocolDto.getProjectedAccural())) {
+
+populated = true;
+
+}
+return populated;
+}
+/**
+ * Checks if the St is populated before displaying the labels and data. 
+ * @param obj
+ * @return
+ */
+private boolean isPopulated(St obj) {
+boolean populated = false;
+if (obj != null  && !(getInfo(obj, true).equals(NO_INFO))) {
+populated = true;
+}
+return populated;
+}
+
   private void appendOrgsAndPersons(StringBuffer html , Ii studyProtocolIi) throws PAException {
       Organization sponsor = PoPaServiceBeanLookup.getOrganizationCorrelationService().getOrganizationByFunctionRole(
               studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
