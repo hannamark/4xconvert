@@ -241,10 +241,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO , 
             PersonDTO responsiblePartyContactDTO)
     throws PAException {
-        
+        Ii curentIdentifier =  studyProtocolDTO.getIdentifier();
         Ii studyProtocolIi = null;
         StudyTypeCode studyTypeCode = null;
-        if (studyProtocolDTO instanceof StudyProtocolDTO) {
+        if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
             studyProtocolIi =  studyProtocolService.createInterventionalStudyProtocol(
                         (InterventionalStudyProtocolDTO) studyProtocolDTO);
             studyTypeCode = StudyTypeCode.INTERVENTIONAL;
@@ -274,6 +274,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         return studyProtocolIi;
     }
     
+    private void createOverallStatusHistory() {
+        
+    }
     private void createIndIdes(Ii studyProtocolIi , List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
         for (StudyIndldeDTO studyIndldeDTO : studyIndldeDTOs) {
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
