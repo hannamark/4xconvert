@@ -287,22 +287,28 @@ public class StudyProtocolConverter {
        studyProtocol.setTernaryObjective(StConverter.convertToString(studyProtocolDTO.getTernaryObjective()));
        studyProtocol.setOutline(StConverter.convertToString(studyProtocolDTO.getOutline()));
        studyProtocol.setProjectedAccural(StConverter.convertToString(studyProtocolDTO.getProjectedAccural()));
-       
-       studyProtocol.setStatusCode(ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode()));
+       if (studyProtocolDTO.getStatusCode() != null) {
+           studyProtocol.setStatusCode(ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode()));
+       }
        if (studyProtocolDTO.getStatusDate() != null) {
            studyProtocol.setStatusDate(
                    TsConverter.convertToTimestamp(studyProtocolDTO.getStatusDate()));
        }
-       studyProtocol.setAmendmentNumber(StConverter.convertToString(studyProtocolDTO.getAmendmentNumber()));
-       studyProtocol.setAmendmentReasonCode(AmendmentReasonCode.getByCode(
-    studyProtocolDTO.getAmendmentReasonCode().getCode()));
+       if (studyProtocolDTO.getAmendmentNumber() != null) {
+           studyProtocol.setAmendmentNumber(StConverter.convertToString(studyProtocolDTO.getAmendmentNumber()));
+       }
+       if (studyProtocolDTO.getAmendmentReasonCode() != null) {
+           studyProtocol.setAmendmentReasonCode(AmendmentReasonCode.getByCode(
+                   studyProtocolDTO.getAmendmentReasonCode().getCode()));
+       }
     
        if (studyProtocolDTO.getAmendmentDate() != null) {
            studyProtocol.setAmendmentDate(TsConverter.convertToTimestamp(studyProtocolDTO.getAmendmentDate()));
        }
-       studyProtocol.setSubmissionNumber(
+       if (studyProtocolDTO.getSubmissionNumber() != null) {
+           studyProtocol.setSubmissionNumber(
                IntConverter.convertToInteger(studyProtocolDTO.getSubmissionNumber()));
-       
+       }
        return studyProtocol;
    }
     

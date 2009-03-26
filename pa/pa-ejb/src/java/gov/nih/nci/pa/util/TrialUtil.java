@@ -15,6 +15,7 @@ import gov.nih.nci.pa.dto.TrialDocumentDTO;
 import gov.nih.nci.pa.dto.TrialFundingDTO;
 import gov.nih.nci.pa.dto.TrialIndIdeDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -22,6 +23,8 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -29,10 +32,12 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -295,7 +300,12 @@ public class TrialUtil {
      * @return isoDto
      */
     public StudyProtocolDTO convertToStudyProtocolDTO(TrialDTO trialDTO) {
-        StudyProtocolDTO isoDto = new StudyProtocolDTO();
+        StudyProtocolDTO isoDto = null;
+        if (trialDTO.getTrialType().equalsIgnoreCase("Observational")) {
+            isoDto = new ObservationalStudyProtocolDTO();
+        } else {
+            isoDto  = new InterventionalStudyProtocolDTO();
+        }
         isoDto.setAssignedIdentifier(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));
         isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
@@ -317,6 +327,8 @@ public class TrialUtil {
         isoDto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode
                 .getByCode(trialDTO.getCompletionDateType())));
         isoDto.setStudyProtocolType(StConverter.convertToSt(trialDTO.getTrialType()));
+        isoDto.setAmendmentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate())));
+        isoDto.setAmendmentNumber(StConverter.convertToSt(trialDTO.getLocalAmendmentNumber()));
         return isoDto;
     }
     /**
@@ -400,7 +412,7 @@ public class TrialUtil {
      */
     public StudyParticipationDTO convertToStudyParticipationDTO(TrialDTO trialDTO) {
         StudyParticipationDTO isoDto = new StudyParticipationDTO();
-        isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLeadOrganizationIdentifier()));
+        isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLocalProtocolIdentifier()));
         return isoDto;
     }
     /**
@@ -452,7 +464,7 @@ public class TrialUtil {
     * @return isoDTOList
     * @throws PAException ex
     */
-   public List<DocumentDTO> copyToISODocumentList(List<TrialDocumentDTO> docList) throws PAException {
+   public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentDTO> docList) throws PAException {
        List<DocumentDTO> studyDocDTOList = new ArrayList<DocumentDTO>();
        //loop thru the iso dto
        for (TrialDocumentDTO dto : docList) {
@@ -508,6 +520,51 @@ public class TrialUtil {
        }
        return content;
    }
-
-
+   /**
+    * 
+    * @param indList ind
+    * @return isoList    
+    */
+   public List<StudyIndldeDTO>  convertISOINDIDEList(List<TrialIndIdeDTO> indList) {
+       List<StudyIndldeDTO>  studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
+       //loop thru the non-iso dto
+       StudyIndldeDTO isoDTO = null;
+       for (TrialIndIdeDTO dto : indList) {
+           isoDTO = new StudyIndldeDTO();
+           isoDTO.setIndldeTypeCode(CdConverter.convertStringToCd(dto.getIndIde()));
+           isoDTO.setIndldeNumber(StConverter.convertToSt(dto.getNumber()));
+           isoDTO.setGrantorCode(CdConverter.convertStringToCd(dto.getGrantor()));
+           isoDTO.setHolderTypeCode(CdConverter.convertStringToCd(dto.getHolderType()));
+           if (dto.getHolderType().equalsIgnoreCase("NIH")) {
+               isoDTO.setNihInstHolderCode(CdConverter.convertStringToCd(dto.getProgramCode()));
+           }
+           if (dto.getHolderType().equalsIgnoreCase("NCI")) {
+               isoDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(dto.getProgramCode()));
+           }
+           isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(dto.getExpandedAccess())));
+           isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
+           studyIndldeDTOList.add(isoDTO);
+       }
+       return studyIndldeDTOList;
+   }
+   /**
+    * 
+    * @param grantList list
+    * @return isoList
+    */
+   public List<StudyResourcingDTO>  convertISOGrantsList(List<TrialFundingDTO> grantList) {
+       List<StudyResourcingDTO>  grantsDTOList = new ArrayList<StudyResourcingDTO>();
+       StudyResourcingDTO isoDTO = null;
+       for (TrialFundingDTO dto : grantList) {
+           isoDTO = new StudyResourcingDTO();
+           isoDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
+           isoDTO.setFundingMechanismCode(CdConverter.convertStringToCd(dto.getFundingMechanism()));
+           isoDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
+                               NciDivisionProgramCode.getByCode(dto.getNciDivisionProgramCode())));
+           isoDTO.setNihInstitutionCode(CdConverter.convertStringToCd(dto.getInstituteCode()));
+           isoDTO.setSerialNumber(IntConverter.convertToInt(dto.getSerialNumber()));
+           grantsDTOList.add(isoDTO);
+       }
+       return grantsDTOList;
+   }
 }
