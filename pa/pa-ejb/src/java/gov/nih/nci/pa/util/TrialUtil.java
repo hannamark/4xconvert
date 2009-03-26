@@ -59,7 +59,7 @@ import java.util.List;
  * @author vrushali
  *
  */
-@SuppressWarnings({ "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class TrialUtil {
     private static final String SPONSOR = "sponsor";
     private static final int MAXF = 1024;
