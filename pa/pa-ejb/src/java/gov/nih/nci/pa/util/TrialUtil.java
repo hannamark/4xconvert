@@ -351,6 +351,9 @@ public class TrialUtil {
      * @return iso
      */
     public OrganizationDTO convertToSummary4OrgDTO(TrialDTO trialDTO) {
+        if (trialDTO.getSummaryFourOrgIdentifier().equals("")) {
+            return null;
+        }
         OrganizationDTO isoDto = new OrganizationDTO();
         isoDto.setIdentifier(IiConverter.convertToIi(trialDTO.getSummaryFourOrgIdentifier()));
         return isoDto;
@@ -526,6 +529,9 @@ public class TrialUtil {
     * @return isoList    
     */
    public List<StudyIndldeDTO>  convertISOINDIDEList(List<TrialIndIdeDTO> indList) {
+       if (indList.isEmpty()) {
+           return null;
+       }
        List<StudyIndldeDTO>  studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
        //loop thru the non-iso dto
        StudyIndldeDTO isoDTO = null;
@@ -553,6 +559,9 @@ public class TrialUtil {
     * @return isoList
     */
    public List<StudyResourcingDTO>  convertISOGrantsList(List<TrialFundingDTO> grantList) {
+       if (grantList.isEmpty()) {
+           return null;
+       }
        List<StudyResourcingDTO>  grantsDTOList = new ArrayList<StudyResourcingDTO>();
        StudyResourcingDTO isoDTO = null;
        for (TrialFundingDTO dto : grantList) {
