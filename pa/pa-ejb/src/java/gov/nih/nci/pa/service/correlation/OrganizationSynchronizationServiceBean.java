@@ -419,22 +419,21 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
         LOG.debug("Leaving updateResearchOrganization");
     }
 
+
+ 
     private List<Long> getAffectedStudyProtocolIds(String className , String identifier) throws PAException  {
-        return null;
+        Session session = null;
+        List<Long> spIds = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            String hql = " Select distinct sp.id from StudyProtocol sp  " 
+                      + " join sp.studyParticipations as sps" 
+                      + " join sps." + className + " as cl where cl.identifier = '" + identifier + "'";
+            spIds =  session.createQuery(hql).list();
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception while retrieving affected Ids for identifier = " 
+                    + identifier + " for class name " + className , hbe);
+        }
+        return spIds;
     }
-//    private List<Long> getAffectedStudyProtocolIds(String className , String identifier) throws PAException  {
-//        Session session = null;
-//        List<Long> spIds = null;
-//        try {
-//            session = HibernateUtil.getCurrentSession();
-//            String hql = " Select distinct sp.id from StudyProtocol sp  " 
-//                      + " join sp.studyParticipations as sps" 
-//                      + " join sps." + className + " as cl where cl.identifier = '" + identifier + "'";
-//            spIds =  session.createQuery(hql).list();
-//        } catch (HibernateException hbe) {
-//            throw new PAException("Hibernate exception while retrieving affected Ids for identifier = " 
-//                    + identifier + " for class name " + className , hbe);
-//        }
-//        return spIds;
-//    }
 }

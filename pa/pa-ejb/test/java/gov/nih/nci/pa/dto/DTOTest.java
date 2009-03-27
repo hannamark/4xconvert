@@ -104,7 +104,7 @@ public class DTOTest {
 	private static void createDefaultArguments(){
 		Long default_long=1l;
 		Boolean default_bool= true;
-		DEFAULT_ARGUMENTS.put("java.lang.String", new String("test"));
+		DEFAULT_ARGUMENTS.put("java.lang.String", "test");
 		DEFAULT_ARGUMENTS.put("java.lang.Long", default_long);
 		DEFAULT_ARGUMENTS.put("java.lang.Boolean", default_bool);
 	}

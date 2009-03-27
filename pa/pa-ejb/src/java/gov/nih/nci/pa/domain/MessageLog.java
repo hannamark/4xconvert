@@ -79,39 +79,72 @@
 package gov.nih.nci.pa.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.validator.NotNull;
+
 /**
- * @author Harsha
- * @since 12/09/2008
+ * @author  Harsha
+ * @since  12/09/2008
  */
 @Entity
 @Table(name = "MESSAGES_LOG")
 public class MessageLog implements Serializable {
 
     private static final long serialVersionUID = 8652324159502559218L;
+    /**
+     * @uml.property  name="id"
+     */
     private Long id;
     //private StudyProtocol studyProtocol;
+    /**
+     * @uml.property  name="studyProtocol"
+     */
     private Long studyProtocol;
+    /**
+     * @uml.property  name="entityName"
+     */
     private String entityName;
+    /**
+     * @uml.property  name="assignedIdentifier"
+     */
     private String assignedIdentifier;
+    /**
+     * @uml.property  name="dateCreated"
+     */
     private Date dateCreated;
+    /**
+     * @uml.property  name="messageAction"
+     */
     private String messageAction;
+    /**
+     * @uml.property  name="result"
+     */
     private Boolean result;
+    /**
+     * @uml.property  name="exceptionMessage"
+     */
     private String exceptionMessage;
+    
+    private List<MessageLogAudit> messageLogAudits = new ArrayList<MessageLogAudit>();
 
     /**
      * set id.
-     * @param id id
+     * @param id  id
+     * @uml.property  name="id"
      */
      public void setId(Long id) {
         this.id = id;
@@ -119,7 +152,8 @@ public class MessageLog implements Serializable {
 
     /**
      * Get the id of the object.
-     * @return the id
+     * @return  the id
+     * @uml.property  name="id"
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -147,8 +181,8 @@ public class MessageLog implements Serializable {
 //    }
 
     /**
-     *
-     * @return statusDateRangeLow
+     * @return  statusDateRangeLow
+     * @uml.property  name="dateCreated"
      */
     @Column(name = "DATE_CREATED")
     @Temporal(TemporalType.TIMESTAMP)
@@ -157,14 +191,16 @@ public class MessageLog implements Serializable {
     }
 
     /**
-     * @param createdDate last updated date
+     * @param createdDate  last updated date
+     * @uml.property  name="dateCreated"
      */
     public void setDateCreated(Date createdDate) {
         this.dateCreated = createdDate;
     }
 
     /**
-     * @return the entityName
+     * @return  the entityName
+     * @uml.property  name="entityName"
      */
     @Column(name = "ENTITY_NAME")
     public String getEntityName() {
@@ -172,14 +208,16 @@ public class MessageLog implements Serializable {
     }
 
     /**
-     * @param entityName the entityName to set
+     * @param entityName  the entityName to set
+     * @uml.property  name="entityName"
      */
     public void setEntityName(String entityName) {
         this.entityName = entityName;
     }
 
     /**
-     * @return the assignedIdentifier
+     * @return  the assignedIdentifier
+     * @uml.property  name="assignedIdentifier"
      */
      @Column(name = "ASSIGNED_IDENTIFIER")
     public String getAssignedIdentifier() {
@@ -187,14 +225,16 @@ public class MessageLog implements Serializable {
     }
 
     /**
-     * @param assignedIdentifier the assignedIdentifier to set
+     * @param assignedIdentifier  the assignedIdentifier to set
+     * @uml.property  name="assignedIdentifier"
      */
     public void setAssignedIdentifier(String assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
 
     /**
-     * @return the messageAction
+     * @return  the messageAction
+     * @uml.property  name="messageAction"
      */
     @Column(name = "MESSAGE_ACTION")
     public String getMessageAction() {
@@ -202,14 +242,16 @@ public class MessageLog implements Serializable {
     }
 
     /**
-     * @param messageAction the messageAction to set
+     * @param messageAction  the messageAction to set
+     * @uml.property  name="messageAction"
      */
     public void setMessageAction(String messageAction) {
         this.messageAction = messageAction;
     }
 
     /**
-     * @return the result
+     * @return  the result
+     * @uml.property  name="result"
      */
     @Column(name = "RESULT")
     public Boolean getResult() {
@@ -217,14 +259,16 @@ public class MessageLog implements Serializable {
     }
 
     /**
-     * @param result the result to set
+     * @param result  the result to set
+     * @uml.property  name="result"
      */
     public void setResult(Boolean result) {
         this.result = result;
     }
 
     /**
-     * @return the exceptionMessage
+     * @return  the exceptionMessage
+     * @uml.property  name="exceptionMessage"
      */
     @Column(name = "EXCEPTION_MESSAGE")
     public String getExceptionMessage() {
@@ -232,14 +276,16 @@ public class MessageLog implements Serializable {
     }
 
     /**
-     * @param exceptionMessage the exceptionMessage to set
+     * @param exceptionMessage  the exceptionMessage to set
+     * @uml.property  name="exceptionMessage"
      */
     public void setExceptionMessage(String exceptionMessage) {
         this.exceptionMessage = exceptionMessage;
     }
 
     /**
-     * @return the studyProtocol
+     * @return  the studyProtocol
+     * @uml.property  name="studyProtocol"
      */
     @Column(name = "STUDY_PROTOCOL_IDENTIFIER")
     public Long getStudyProtocol() {
@@ -247,10 +293,30 @@ public class MessageLog implements Serializable {
     }
 
     /**
-     * @param studyProtocol the studyProtocol to set
+     * @param studyProtocol  the studyProtocol to set
+     * @uml.property  name="studyProtocol"
      */
     public void setStudyProtocol(Long studyProtocol) {
         this.studyProtocol = studyProtocol;
     }
+
+    /**
+     * @return the messageLogAudits
+     */
+    @OneToMany
+    @JoinColumn(name = "messageIdentifier")
+    @NotNull    
+    public List<MessageLogAudit> getMessageLogAudits() {
+        return messageLogAudits;
+    }
+
+    /**
+     * @param messageLogAudits the messageLogAudits to set
+     */
+    public void setMessageLogAudits(List<MessageLogAudit> messageLogAudits) {
+        this.messageLogAudits = messageLogAudits;
+    }
+    
+    
 
    }

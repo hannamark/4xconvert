@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.MessageLog;
+import gov.nih.nci.pa.domain.MessageLogAudit;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationSynchronizationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PersonSynchronizationServiceRemote;
@@ -88,6 +89,7 @@ import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -128,6 +130,7 @@ public class PAMessageDrivenBean implements MessageListener {
         LOG.info("Entering PAMessageDrivenBean onMessage()");
         ObjectMessage msg = null;
         Long msgId = null;
+        List<Long> spIds = null;
         HibernateUtil.getHibernateHelper().openAndBindSession();
         try {
             if (message instanceof ObjectMessage) {
@@ -143,30 +146,33 @@ public class PAMessageDrivenBean implements MessageListener {
                     PersonSynchronizationServiceRemote perRemote = (PersonSynchronizationServiceRemote) 
                         JNDIUtil.lookup("pa/PersonSynchronizationServiceBean/remote");
                     if (identifierName.equals(IiConverter.ORG_IDENTIFIER_NAME)) {
-                        orgRemote.synchronizeOrganization(updateMessage.getId());
+                        orgRemote.synchronizeOrganization(updateMessage.getId());                        
                     }
                     if (identifierName.equals(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME)) {
-                        orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
+                        spIds = orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)) {
-                        orgRemote.synchronizeOversightCommittee(updateMessage.getId());
+                        spIds = orgRemote.synchronizeOversightCommittee(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME)) {
-                        orgRemote.synchronizeResearchOrganization(updateMessage.getId());
+                        spIds = orgRemote.synchronizeResearchOrganization(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.PERSON_IDENTIFIER_NAME)) {
                         perRemote.synchronizePerson(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME)) {
-                        perRemote.synchronizeClinicalResearchStaff(updateMessage.getId());
+                        spIds = perRemote.synchronizeClinicalResearchStaff(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)) {
-                        perRemote.synchronizeHealthCareProvider(updateMessage.getId());
+                        spIds = perRemote.synchronizeHealthCareProvider(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME)) {
-                        perRemote.synchronizeOrganizationalContact(updateMessage.getId());
+                        spIds = perRemote.synchronizeOrganizationalContact(updateMessage.getId());
                     }
                     updateExceptionAuditMessageLog(msgId, "Processed", null, true);
+                    if (spIds != null) {
+                        createAuditLog(msgId, spIds);
+                    }
                 } catch (PAException paex) {
                     updateExceptionAuditMessageLog(msgId, "Failed", " PAException -" + paex.getMessage(), false);
                     LOG.error("PAMessageDrivenBean onMessage() method threw an PAException ", paex);
@@ -182,6 +188,21 @@ public class PAMessageDrivenBean implements MessageListener {
         } finally {
             HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
+    }
+    private void createAuditLog(Long msgid, List<Long> spIds) {
+        try {
+            Session session = HibernateUtil.getCurrentSession();
+            for (Long spId : spIds) {
+                MessageLogAudit mlaudit = new MessageLogAudit();
+                mlaudit.setStudyProtocolIdentifier(spId);
+                mlaudit.setMessageIdentifier(msgid);
+                session.save(mlaudit);
+                session.flush();
+            }
+        } catch (HibernateException hbe) {
+            //moving on!
+            LOG.error("Updating the Message_Log_Audit table threw exception ", hbe);
+        }  
     }
     
     private Long createAuditMessageLog(Ii identifier) throws PAException {

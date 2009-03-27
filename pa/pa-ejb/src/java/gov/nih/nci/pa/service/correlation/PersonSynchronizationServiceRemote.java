@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service.correlation;
 
+import java.util.List;
+
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.service.PAException;
 
@@ -105,21 +107,24 @@ public interface PersonSynchronizationServiceRemote {
      * 
      * @param crsIdentifer po ClinicalResearchStaff identifier
      * @throws PAException on error
+     * @return List of protocol ids
      */
-    void synchronizeClinicalResearchStaff(Ii crsIdentifer) throws PAException;
+    List<Long> synchronizeClinicalResearchStaff(Ii crsIdentifer) throws PAException;
     
     /***
      * 
      * @param hcpIdentifer po HealthCareProvider identifier
      * @throws PAException on error
+     * @return List of protocol ids
      */
-    void synchronizeHealthCareProvider(Ii hcpIdentifer) throws PAException;
+    List<Long> synchronizeHealthCareProvider(Ii hcpIdentifer) throws PAException;
 
     /***
      * OrganizationalContact.
      * @param ocIdentifer oc HealthCareProvider identifier
      * @throws PAException on error
+     * @return List of protocol ids
      */
-    void synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException;
+    List<Long> synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException;
     
 }

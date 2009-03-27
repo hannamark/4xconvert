@@ -93,7 +93,11 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -147,15 +151,16 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     }
 
     /***
-     * 
+     * @return List list of sp ids 
      * @param crsIdentifer po ClinicalResearchStaff identifier
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void synchronizeClinicalResearchStaff(Ii crsIdentifer) throws PAException {
+    public List<Long> synchronizeClinicalResearchStaff(Ii crsIdentifer) throws PAException {
 
         ClinicalResearchStaffDTO crsDto = null;
         LOG.debug("Entering synchronizeClinicalResearchStaff");
+        List<Long> spIds = getAffectedStudyProtocolIds("clinicalResearchStaff" , crsIdentifer.getExtension());
         try {
             crsDto = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().getCorrelation(crsIdentifer);
             updateClinicalResearchStaff(crsDto);
@@ -164,18 +169,20 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
            nulifyClinicalResearchStaff(crsIdentifer);
         }
         LOG.debug("Leaving synchronizeClinicalResearchStaff");
+        return spIds;
     }
 
     /***
-     * 
+     * @return List list of sp ids 
      * @param hcpIdentifer po HealthCareProvider identifier
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void synchronizeHealthCareProvider(Ii hcpIdentifer) throws PAException {
+    public List<Long> synchronizeHealthCareProvider(Ii hcpIdentifer) throws PAException {
 
         HealthCareProviderDTO hcpDto = null;
         LOG.debug("Entering synchronizeHealthCareProvider");
+        List<Long> spIds = getAffectedStudyProtocolIds("healthCareProvider" , hcpIdentifer.getExtension());
         try {
             hcpDto = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().getCorrelation(hcpIdentifer);
             updateHealthCareProvider(hcpDto);
@@ -184,19 +191,22 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
            nulifyHealthCareProvider(hcpIdentifer);
         }
         LOG.debug("Leaving synchronizeHealthCareProvider");
+        return spIds;
     }
     
 
     /***
      * OrganizationalContact.
+     * @return List list of sp ids  
      * @param ocIdentifer oc HealthCareProvider identifier
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException {
+    public  List<Long> synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException {
 
         OrganizationalContactDTO ocDto = null;
         LOG.debug("Entering synchronizeOrganizationalContact");
+        List<Long> spIds = getAffectedStudyProtocolIds("organizationalContact" , ocIdentifer.getExtension());
         try {
             ocDto = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifer);
             updateOrganizationalContact(ocDto);
@@ -205,6 +215,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
            nulifyOrganizationalContact(ocIdentifer);
         }
         LOG.debug("Leaving synchronizeOrganizationalContact");
+        return spIds;
     }
     
     private void nulifyPerson(Ii personIdentifer) throws PAException {
@@ -410,4 +421,58 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         LOG.debug("Leaving updateOrganizationalContact");
     }
     
+
+    private List<Long> getAffectedStudyProtocolIds(String className , String identifier)  {        
+        List<Long> retList = new ArrayList();
+        Set<Long> ids = new HashSet();
+        List<Long> scIds = new ArrayList();
+        if (!"organizationalContact".equals(className)) {
+            scIds = getAffectedStudyProtocolIds(className , identifier , true); 
+        }
+        List<Long> sptIds = getAffectedStudyProtocolIds(className , identifier , false);
+        for (Long id : scIds) {
+            if (ids.add(id)) {
+                retList.add(id);
+            }
+        }
+        for (Long id : sptIds) {
+            if (ids.add(id)) {
+                retList.add(id);
+            }
+        }        
+        return retList;
+    }    
+
+    
+    /***
+     * 
+     * @param className as String
+     * @param identifier as String
+     * @return List list of sp ids
+     */
+    private List<Long> getAffectedStudyProtocolIds(String className , String identifier , boolean studyContact)  {
+        Session session = null;
+        List<Long> spIds = null;
+        String hql = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            if (studyContact) {
+              hql  = " Select distinct sp.id from StudyProtocol sp  " 
+                    + " join sp.studyContacts as scs" 
+                    + " join scs." + className + " as cl where cl.identifier = '" + identifier + "'";
+                
+            } else {
+                hql  = " Select distinct sp.id from StudyProtocol sp  " 
+                    + " join sp.studyParticipations as sps"
+                    + " join sps.studyParticipationContacts as spc" 
+                    + " join spc." + className + " as cl where cl.identifier = '" + identifier + "'";
+                
+            }
+            spIds =  session.createQuery(hql).list();
+        } catch (HibernateException hbe) {
+            LOG.error("Exception in getAffectedStudyProtocolIds method exception is - ", hbe);
+        }
+        return spIds;
+    }    
+
 }
