@@ -110,7 +110,7 @@ public class IntTest {
        }
 
        @Test
-       public void testCloneable() throws CloneNotSupportedException {
+       public void testCloneable() {
            Int uncertainty1 = new Int();
            uncertainty1.setNullFlavor(NullFlavor.DER);
            uncertainty1.setOriginalText(new EdText());
@@ -130,7 +130,7 @@ public class IntTest {
            first.setUncertaintyType(UncertaintyType.B);
            first.setUncertainty(uncertainty1);
 
-           Int second = (Int) first.clone();
+           Int second = first.clone();
 
            assertTrue(first != second);
            assertTrue(first.equals(second));

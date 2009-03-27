@@ -88,7 +88,7 @@ import org.apache.commons.collections.functors.NotNullPredicate;
  * Represents the iso datatype. EN.PN (Person Name)
  * @author lpower
  */
-public class EnPn extends En {
+public final class EnPn extends En implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -97,5 +97,13 @@ public class EnPn extends En {
      */
     public EnPn() {
         super(NotNullPredicate.getInstance());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EnPn clone() {
+        return (EnPn) super.clone();
     }
 }

@@ -90,7 +90,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author lpower
  * @param <T>
  */
-public class Ivl<T extends Qty> extends QSet<T> {
+public final class Ivl<T extends Qty> extends QSet<T> implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -202,7 +202,7 @@ public class Ivl<T extends Qty> extends QSet<T> {
             return false;
         }
 
-        Ivl<T> x = (Ivl<T>) o;
+        Ivl<?> x = (Ivl<?>) o;
 
         return new EqualsBuilder()
             .appendSuper(super.equals(o))
@@ -231,4 +231,11 @@ public class Ivl<T extends Qty> extends QSet<T> {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Ivl<T> clone() {
+        return (Ivl<T>) super.clone();
+    }
 }

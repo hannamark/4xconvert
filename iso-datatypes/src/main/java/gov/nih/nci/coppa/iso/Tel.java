@@ -92,7 +92,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents the iso TEL data type.
  * @author lpower
  */
-public class Tel extends Any {
+public class Tel extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -169,5 +169,14 @@ public class Tel extends Any {
         return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
             .append(this.getValue())
             .toHashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
+    @Override
+    public Tel clone() {
+        return (Tel) super.clone();
     }
 }

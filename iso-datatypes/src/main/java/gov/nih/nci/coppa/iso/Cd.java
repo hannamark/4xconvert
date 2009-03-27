@@ -89,7 +89,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents the iso CD type.
  * @author lpower
  */
-public class Cd extends Any {
+public final class Cd extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -217,5 +217,13 @@ public class Cd extends Any {
             .append(this.getDisplayName())
             .append(this.getOriginalText())
             .toHashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Cd clone() {
+        return (Cd) super.clone();
     }
 }

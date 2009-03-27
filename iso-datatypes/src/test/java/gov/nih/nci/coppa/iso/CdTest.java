@@ -1,6 +1,8 @@
 package gov.nih.nci.coppa.iso;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -82,7 +84,7 @@ public class CdTest {
         }
 
         @Test
-        public void testCloneable() throws CloneNotSupportedException {
+        public void testCloneable() {
             Cd first = new Cd();
             first.setNullFlavor(NullFlavor.ASKU);
             first.setCode("COD");
@@ -96,7 +98,7 @@ public class CdTest {
             text.setValue("ed text");
             first.setOriginalText(text);
 
-            Cd second = (Cd) first.clone();
+            Cd second = first.clone();
 
             assertTrue(first != second);
             assertTrue(first.equals(second));

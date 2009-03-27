@@ -89,7 +89,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents iso data type II.
  * @author lpower
  */
-public class Ii extends Any {
+public final class Ii extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -228,5 +228,13 @@ public class Ii extends Any {
             .append(this.getRoot())
             .append(this.getScope())
             .toHashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Ii clone() {
+        return (Ii) super.clone();
     }
 }

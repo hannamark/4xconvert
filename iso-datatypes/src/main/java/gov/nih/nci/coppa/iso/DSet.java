@@ -91,7 +91,7 @@ import java.util.Set;
  * @author lpower
  * @param <T> the type
  */
-public class DSet<T extends Any> implements Serializable, Cloneable {
+public final class DSet<T extends Any> implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
     private Set<T> item;
@@ -127,13 +127,13 @@ public class DSet<T extends Any> implements Serializable, Cloneable {
             return false;
         }
 
-        DSet<T> x = (DSet<T>) obj;
+        DSet<?> x = (DSet<?>) obj;
 
         return compareSets(this.getItem(), x.getItem());
 
     }
 
-    private boolean compareSets(Set<T> currentSet, Set<T> compareSet) {
+    private boolean compareSets(Set<?> currentSet, Set<?> compareSet) {
         if (currentSet == null && compareSet == null) {
             return true;
         } else if (currentSet != null && compareSet != null) {
@@ -159,8 +159,8 @@ public class DSet<T extends Any> implements Serializable, Cloneable {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.ProperCloneImplementation")
-    public Object clone() throws CloneNotSupportedException {
+    @SuppressWarnings({ "PMD.ProperCloneImplementation", "unchecked" })
+    public DSet<T> clone() {
 
         DSet<T> returnVal = new DSet<T>();
         if (this.getItem() != null) {
@@ -168,7 +168,7 @@ public class DSet<T extends Any> implements Serializable, Cloneable {
 
             try {
                 for (T tem : this.getItem()) {
-                        returnVal.getItem().add((T) tem.clone());
+                    returnVal.getItem().add((T) tem.clone());
                 }
             } catch (Exception e) {
                 throw new IsoCloneException(e);

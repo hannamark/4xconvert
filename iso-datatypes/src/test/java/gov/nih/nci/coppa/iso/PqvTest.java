@@ -95,7 +95,7 @@ public class PqvTest {
        }
 
        @Test
-       public void testCloneable() throws CloneNotSupportedException {
+       public void testCloneable() {
            Pqv first = new Pqv();
            first.setNullFlavor(NullFlavor.ASKU);
            EdText firstText = new EdText();
@@ -110,7 +110,7 @@ public class PqvTest {
            first.setPrecision(111);
            first.setValue(new BigDecimal(222));
 
-           Pqv second = (Pqv) first.clone();
+           Pqv second = first.clone();
 
            assertTrue(first != second);
            assertTrue(first.equals(second));

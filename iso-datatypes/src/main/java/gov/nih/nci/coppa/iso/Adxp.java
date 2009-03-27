@@ -91,7 +91,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents the iso data type.
  * @author lpower
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class Adxp implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
@@ -151,75 +150,30 @@ public class Adxp implements Serializable, Cloneable {
     }
 
     /**
-     * factory method to create an address part.
-     * @param type the typeof the part to create.
-     * @return an address part with the
+     * {@inheritDoc}
      */
-     public static Adxp createAddressPart(AddressPartType type) {
-        if (type == null) { return new Adxp(null); }
-
-        switch (type) {
-            case ADL: return new AdxpAdl();
-            case AL : return new AdxpAl();
-            case BNN: return new AdxpBnn();
-            case BNR: return new AdxpBnr();
-            case BNS: return new AdxpBns();
-            case CAR: return new AdxpCar();
-            case CEN: return new AdxpCen();
-            case CNT: return new AdxpCnt();
-            case CPA: return new AdxpCpa();
-            case CTY: return new AdxpCty();
-            case DAL: return new AdxpDal();
-            case DEL: return new AdxpDel();
-            case DINST: return new AdxpDinst();
-            case DINSTA: return new AdxpDinsta();
-            case DINSTQ: return new AdxpDinstq();
-            case DIR: return new AdxpDir();
-            case DMOD: return new AdxpDmod();
-            case DMODID: return new AdxpDmodid();
-            case INT: return new AdxpInt();
-            case POB: return new AdxpPob();
-            case PRE: return new AdxpPre();
-            case SAL: return new AdxpSal();
-            case STA: return new AdxpSta();
-            case STB: return new AdxpStb();
-            case STR: return new AdxpStr();
-            case STTYP: return new AdxpSttyp();
-            case UNID: return new AdxpUnid();
-            case UNIT: return new AdxpUnit();
-            case ZIP: return new AdxpZip();
-
-            // there must be a new type added
-            default: throw new UnsupportedOperationException(type.name());
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Adxp)) {
+            return false;
+        }
+
+        Adxp x = (Adxp) obj;
+
+        return new EqualsBuilder()
+        .append(this.getCode(), x.getCode())
+        .append(this.getType(), x.getType())
+        .append(this.getValue(), x.getValue())
+        .isEquals();
     }
-
-
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public boolean equals(Object obj) {
-         if (obj == null) {
-             return false;
-         }
-
-         if (this == obj) {
-             return true;
-         }
-
-         if (!(obj instanceof Adxp)) {
-             return false;
-         }
-
-         Adxp x = (Adxp) obj;
-
-         return new EqualsBuilder()
-             .append(this.getCode(), x.getCode())
-             .append(this.getType(), x.getType())
-             .append(this.getValue(), x.getValue())
-             .isEquals();
-     }
 
      /**
       * {@inheritDoc}
@@ -237,12 +191,13 @@ public class Adxp implements Serializable, Cloneable {
      /**
       * {@inheritDoc}
       */
+     @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
      @Override
-     public Object clone() throws CloneNotSupportedException {
+     public Adxp clone() {
 
-         Object snapshot = null;
+         Adxp snapshot = null;
          try {
-             snapshot = BeanUtils.cloneBean(this);
+             snapshot = (Adxp) BeanUtils.cloneBean(this);
          } catch (Exception e) {
              throw new IsoCloneException(e);
          }

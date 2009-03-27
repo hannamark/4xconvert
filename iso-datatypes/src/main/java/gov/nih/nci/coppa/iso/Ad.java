@@ -89,7 +89,7 @@ import java.util.List;
  * Represents iso data type AD.
  * @author lpower
  */
-public class Ad extends Any implements Cloneable {
+public final class Ad extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
     // TODO Invariant must be applied - see COPPA ISO's from EA
@@ -159,7 +159,7 @@ public class Ad extends Any implements Cloneable {
      * {@inheritDoc}
      */
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public Ad clone() {
 
         Ad returnVal = (Ad) super.clone();
         if (this.getPart() != null) {
@@ -167,7 +167,7 @@ public class Ad extends Any implements Cloneable {
 
             try {
                 for (Adxp tem : this.getPart()) {
-                    returnVal.getPart().add((Adxp) tem.clone());
+                    returnVal.getPart().add(tem.clone());
                 }
             } catch (Exception e) {
                 throw new IsoCloneException(e);

@@ -91,7 +91,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents iso data type TS.
  * @author lpower
  */
-public class Ts extends Qty {
+public final class Ts extends Qty implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -147,5 +147,11 @@ public class Ts extends Qty {
             .toHashCode();
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Ts clone() {
+        return (Ts) super.clone();
+    }
 }

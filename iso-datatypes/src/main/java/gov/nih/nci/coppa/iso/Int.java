@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Naveen Amiruddin
  *
  */
-public class Int extends Qty {
+public final class Int extends Qty implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,4 +70,11 @@ public class Int extends Qty {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Int clone() {
+        return (Int) super.clone();
+    }
 }

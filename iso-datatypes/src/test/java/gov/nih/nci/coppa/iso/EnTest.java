@@ -60,7 +60,7 @@ public class EnTest {
     }
 
     @Test
-    public void testCloneable() throws CloneNotSupportedException {
+    public void testCloneable() {
         En first = new En();
         first.setNullFlavor(NullFlavor.ASKU);
 
@@ -68,7 +68,7 @@ public class EnTest {
         first.getPart().add(new Enxp(EntityNamePartType.FAM));
         first.getPart().add(new Enxp(EntityNamePartType.GIV));
 
-        En second = (En) first.clone();
+        En second = first.clone();
 
         assertTrue(first != second);
         assertTrue(first.equals(second));

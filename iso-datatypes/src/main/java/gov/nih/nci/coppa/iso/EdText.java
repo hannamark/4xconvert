@@ -90,7 +90,7 @@ package gov.nih.nci.coppa.iso;
  * integrity check, thumbnail, compression and translations are not allowed
  * @author lpower
  */
-public class EdText extends Ed {
+public final class EdText extends Ed implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -116,7 +116,7 @@ public class EdText extends Ed {
      * @return the integrityCheck - null for ED.TEXT
      */
     @Override
-    @SuppressWarnings({"PMD.MethodReturnsInternalArray", "PMD.ReturnEmptyArrayRatherThanNull" })
+    @SuppressWarnings("PMD.ReturnEmptyArrayRatherThanNull")
     public byte[] getIntegrityCheck() {
         return null;
     }
@@ -180,7 +180,11 @@ public class EdText extends Ed {
         throw new IllegalArgumentException("thumbnail not allowed in ED.TEXT");
     }
 
-
-
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EdText clone() {
+        return (EdText) super.clone();
+    }
 }

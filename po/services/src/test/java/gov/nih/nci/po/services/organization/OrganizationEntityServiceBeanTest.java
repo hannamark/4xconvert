@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAdl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
@@ -362,7 +363,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
         dto.setName(StringConverter.convertToEnOn("newName"));
-        Adxp adl = Adxp.createAddressPart(AddressPartType.ADL);
+        Adxp adl = new AdxpAdl();
         adl.setValue("additional ADL");
         dto.getPostalAddress().getPart().add(adl);
         TelEmail email = new TelEmail();

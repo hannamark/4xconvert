@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -15,9 +14,9 @@ public class AdTest {
         Ad first = new Ad();
         first.setNullFlavor(NullFlavor.ASKU);
         first.setPart(new ArrayList<Adxp>());
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.ADL));
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.AL));
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.BNN));
+        first.getPart().add(new AdxpAdl());
+        first.getPart().add(new AdxpAl());
+        first.getPart().add(new AdxpBnn());
 
         assertTrue(first.equals(first));
         assertFalse(first.equals(null));
@@ -25,9 +24,9 @@ public class AdTest {
         Ad second = new Ad();
         second.setNullFlavor(NullFlavor.DER);
         second.setPart(new ArrayList<Adxp>());
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.ADL));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.AL));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.BNN));
+        second.getPart().add(new AdxpAdl());
+        second.getPart().add(new AdxpAl());
+        second.getPart().add(new AdxpBnn());
 
         assertFalse(first.equals(second));
 
@@ -35,8 +34,8 @@ public class AdTest {
 
         assertTrue(first.equals(second));
 
-        second.getPart().remove(Adxp.createAddressPart(AddressPartType.ADL));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.CEN));
+        second.getPart().remove(new AdxpAdl());
+        second.getPart().add(new AdxpCen());
 
         assertFalse(first.equals(second));
 
@@ -47,41 +46,41 @@ public class AdTest {
         Ad first = new Ad();
         first.setNullFlavor(NullFlavor.ASKU);
         first.setPart(new ArrayList<Adxp>());
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.ADL));
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.AL));
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.BNN));
+        first.getPart().add(new AdxpAdl());
+        first.getPart().add(new AdxpAl());
+        first.getPart().add(new AdxpBnn());
 
         Ad second = new Ad();
         second.setNullFlavor(NullFlavor.ASKU);
         second.setPart(new ArrayList<Adxp>());
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.ADL));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.AL));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.BNN));
+        second.getPart().add(new AdxpAdl());
+        second.getPart().add(new AdxpAl());
+        second.getPart().add(new AdxpBnn());
 
 
         assertEquals(first.hashCode(), second.hashCode());
 
-        second.getPart().remove(Adxp.createAddressPart(AddressPartType.ADL));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.CEN));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.DAL));
-        second.getPart().add(Adxp.createAddressPart(AddressPartType.DINST));
+        second.getPart().remove(new AdxpAdl());
+        second.getPart().add(new AdxpCen());
+        second.getPart().add(new AdxpDal());
+        second.getPart().add(new AdxpDinst());
 
         assertFalse(first.hashCode() == second.hashCode());
 
     }
 
     @Test
-    public void testCloneable() throws CloneNotSupportedException {
+    public void testCloneable() {
 
         Ad first = new Ad();
         first.setNullFlavor(NullFlavor.ASKU);
         first.setPart(new ArrayList<Adxp>());
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.ADL));
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.AL));
-        first.getPart().add(Adxp.createAddressPart(AddressPartType.BNN));
+        first.getPart().add(new AdxpAdl());
+        first.getPart().add(new AdxpAl());
+        first.getPart().add(new AdxpBnn());
 
 
-        Ad second = (Ad) first.clone();
+        Ad second = first.clone();
 
         assertTrue(first != second);
         assertTrue(first.equals(second));
@@ -90,7 +89,7 @@ public class AdTest {
         Ad third = new Ad();
         third.setNullFlavor(NullFlavor.MSK);
 
-        Ad fourth = (Ad) third.clone();
+        Ad fourth = third.clone();
 
         assertTrue(third != fourth);
         assertTrue(third.equals(fourth));

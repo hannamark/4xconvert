@@ -1,7 +1,10 @@
 package gov.nih.nci.coppa.iso;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
-import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +16,7 @@ import org.junit.Test;
 public class EdTest {
 
     private Ed t;
-    private String phrase = "this+is+the=way+the+world+ends";
+    private final String phrase = "this+is+the=way+the+world+ends";
 
     @Before
     public void init() {
@@ -107,7 +110,7 @@ public class EdTest {
     }
 
     @Test
-    public void testCloneable() throws CloneNotSupportedException {
+    public void testCloneable() {
         t.setCharset(phrase);
         t.setCompression(Compression.BZ);
         t.setData(phrase.getBytes());
@@ -127,7 +130,7 @@ public class EdTest {
         assertTrue(t.equals(t));
         assertFalse(t.equals(null));
 
-        Ed t2 = (Ed) t.clone();
+        Ed t2 = t.clone();
 
         assertTrue(t != t2);
         assertTrue(t.equals(t2));

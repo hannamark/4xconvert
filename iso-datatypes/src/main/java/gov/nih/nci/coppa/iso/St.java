@@ -90,7 +90,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * A ST SHALL have at least one character or else be NULL.
  * @author Scott Miller
  */
-public class St extends Any {
+public final class St extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -147,4 +147,11 @@ public class St extends Any {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public St clone() {
+        return (St) super.clone();
+    }
 }

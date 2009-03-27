@@ -89,7 +89,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents the iso ED type.
  * @author lpower
  */
-public class Ed extends Any {
+public class Ed extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -320,4 +320,12 @@ public class Ed extends Any {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
+    @Override
+    public Ed clone() {
+        return (Ed) super.clone();
+    }
 }

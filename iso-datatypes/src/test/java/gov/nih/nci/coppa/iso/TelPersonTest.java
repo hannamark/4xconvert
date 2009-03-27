@@ -1,9 +1,10 @@
 package gov.nih.nci.coppa.iso;
 
-import java.net.URI;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.net.URI;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,11 +16,11 @@ import org.junit.Test;
 public class TelPersonTest {
 
     private TelPerson t;
-    private String TEL = "tel:";
-    private String XTEL = "x-text-tel:";
-    private String XFAX = "x-text-fax:";
-    private String MAILTO = "mailto:";
-    private String phrase = "this+is+the+way+the+world+ends";
+    private final String TEL = "tel:";
+    private final String XTEL = "x-text-tel:";
+    private final String XFAX = "x-text-fax:";
+    private final String MAILTO = "mailto:";
+    private final String phrase = "this+is+the+way+the+world+ends";
 
     @Before
     public void init() {
@@ -104,13 +105,13 @@ public class TelPersonTest {
        }
 
        @Test
-       public void testCloneable() throws CloneNotSupportedException {
+       public void testCloneable() {
            TelPerson first = new TelPerson();
            first.setNullFlavor(NullFlavor.ASKU);
            String u = TEL + phrase;
            first.setValue(URI.create(u));
 
-           TelPerson second = (TelPerson) first.clone();
+           TelPerson second = first.clone();
 
            assertTrue(first != second);
            assertTrue(first.equals(second));

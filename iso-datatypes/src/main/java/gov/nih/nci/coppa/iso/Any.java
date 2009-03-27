@@ -161,12 +161,13 @@ public abstract class Any implements Serializable, Cloneable {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public Any clone() {
 
-        Object snapshot = null;
+        Any snapshot = null;
         try {
-            snapshot = BeanUtils.cloneBean(this);
+            snapshot = (Any) BeanUtils.cloneBean(this);
         } catch (Exception e) {
             throw new IsoCloneException(e);
         }

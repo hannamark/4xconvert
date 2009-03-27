@@ -89,7 +89,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents the iso BL data type.
  * @author lpower
  */
-public class Bl extends Any {
+public final class Bl extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -145,4 +145,11 @@ public class Bl extends Any {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Bl clone() {
+        return (Bl) super.clone();
+    }
 }

@@ -94,7 +94,7 @@ import java.util.List;
  * @author lpower
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class TelUrl extends Tel {
+public final class TelUrl extends Tel implements Cloneable {
 
     private static final long serialVersionUID = 1L;
     /** scheme. */
@@ -123,5 +123,13 @@ public class TelUrl extends Tel {
     @Override
     protected List<String> getAllowedSchemes() {
         return SCHEMES;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TelUrl clone() {
+        return (TelUrl) super.clone();
     }
 }

@@ -7,6 +7,35 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAdl;
+import gov.nih.nci.coppa.iso.AdxpAl;
+import gov.nih.nci.coppa.iso.AdxpBnn;
+import gov.nih.nci.coppa.iso.AdxpBnr;
+import gov.nih.nci.coppa.iso.AdxpBns;
+import gov.nih.nci.coppa.iso.AdxpCar;
+import gov.nih.nci.coppa.iso.AdxpCen;
+import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCpa;
+import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpDal;
+import gov.nih.nci.coppa.iso.AdxpDel;
+import gov.nih.nci.coppa.iso.AdxpDinst;
+import gov.nih.nci.coppa.iso.AdxpDinsta;
+import gov.nih.nci.coppa.iso.AdxpDinstq;
+import gov.nih.nci.coppa.iso.AdxpDir;
+import gov.nih.nci.coppa.iso.AdxpDmod;
+import gov.nih.nci.coppa.iso.AdxpDmodid;
+import gov.nih.nci.coppa.iso.AdxpInt;
+import gov.nih.nci.coppa.iso.AdxpPob;
+import gov.nih.nci.coppa.iso.AdxpPre;
+import gov.nih.nci.coppa.iso.AdxpSal;
+import gov.nih.nci.coppa.iso.AdxpSta;
+import gov.nih.nci.coppa.iso.AdxpStb;
+import gov.nih.nci.coppa.iso.AdxpStr;
+import gov.nih.nci.coppa.iso.AdxpSttyp;
+import gov.nih.nci.coppa.iso.AdxpUnid;
+import gov.nih.nci.coppa.iso.AdxpUnit;
+import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -29,13 +58,13 @@ import org.junit.Test;
 public class AdConverterTest extends AbstractHibernateTestCase {
     private Country c;
     private State state;
-    
+
     @Before
     public void init() {
         Session s = PoHibernateUtil.getCurrentSession();
         c = new Country("Super Country", "999", "ZZ", "USA");
         s.save(c);
-        
+
         state = new State();
         state.setCode("IN");
         state.setName("INDIANA");
@@ -53,7 +82,7 @@ public class AdConverterTest extends AbstractHibernateTestCase {
         AdConverter.SimpleConverter instance = new AdConverter.SimpleConverter();
         instance.convert(Integer.class, null);
     }
-    
+
     /**
      * 7.7.1.6 - The value cannot be empty
      */
@@ -66,7 +95,7 @@ public class AdConverterTest extends AbstractHibernateTestCase {
             Ad iso = new Ad();
             List<Adxp> part = new ArrayList<Adxp>();
             iso.setPart(part);
-            Adxp adxp = Adxp.createAddressPart(type);
+            Adxp adxp = createAddressPart(type);
             adxp.setValue(null);
             part.add(adxp);
             try {
@@ -75,7 +104,7 @@ public class AdConverterTest extends AbstractHibernateTestCase {
             } catch (PoIsoConstraintException e) {
                 assertEquals("Adxp.value is required", e.getMessage());
             }
-            
+
             adxp.setValue("");
             try {
                 AdConverter.SimpleConverter.convertToAddress(iso);
@@ -120,19 +149,19 @@ labelled in regard to their semantic significance.
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
-        Adxp a = Adxp.createAddressPart(null);
+        Adxp a = createAddressPart(null);
         a.setValue("1050 W Wishard Blvd,");
         part.add(a);
 
-        part.add(Adxp.createAddressPart(AddressPartType.DEL));
+        part.add(createAddressPart(AddressPartType.DEL));
 
-        a = Adxp.createAddressPart(null);
+        a = createAddressPart(null);
         a.setValue("RG 5th floor,");
         part.add(a);
 
-        part.add(Adxp.createAddressPart(AddressPartType.DEL));
+        part.add(createAddressPart(AddressPartType.DEL));
 
-        a = Adxp.createAddressPart(null);
+        a = createAddressPart(null);
         a.setValue("Indianapolis, IN 46240");
         part.add(a);
 
@@ -163,27 +192,27 @@ address lines, this is not implied by this example. See Section 7.7.3.6.
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
-        Adxp a = Adxp.createAddressPart(AddressPartType.AL);
+        Adxp a = createAddressPart(AddressPartType.AL);
         a.setValue("1050 W Wishard Blvd");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.AL);
+        a = createAddressPart(AddressPartType.AL);
         a.setValue("RG 5th floor");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CTY);
+        a = createAddressPart(AddressPartType.CTY);
         a.setValue("Indianapolis");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.STA);
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("IN");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.ZIP);
+        a = createAddressPart(AddressPartType.ZIP);
         a.setValue("46240");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CNT);
+        a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
@@ -211,27 +240,27 @@ This is the same address from a system that differentiates between different lin
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
-        Adxp a = Adxp.createAddressPart(AddressPartType.SAL);
+        Adxp a = createAddressPart(AddressPartType.SAL);
         a.setValue("1050 W Wishard Blvd");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.ADL);
+        a = createAddressPart(AddressPartType.ADL);
         a.setValue("RG 5th floor");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CTY);
+        a = createAddressPart(AddressPartType.CTY);
         a.setValue("Indianapolis");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.STA);
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("IN");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.ZIP);
+        a = createAddressPart(AddressPartType.ZIP);
         a.setValue("46240");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CNT);
+        a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
@@ -265,36 +294,36 @@ useful in Germany, where many systems keep house number as a distinct field
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
-        Adxp a = Adxp.createAddressPart(AddressPartType.BNR);
+        Adxp a = createAddressPart(AddressPartType.BNR);
         a.setValue("1050");
         part.add(a);
-        a = Adxp.createAddressPart(AddressPartType.DIR);
+        a = createAddressPart(AddressPartType.DIR);
         a.setValue("W");
         part.add(a);
-        a = Adxp.createAddressPart(AddressPartType.STB);
+        a = createAddressPart(AddressPartType.STB);
         a.setValue("Wishard");
         part.add(a);
-        a = Adxp.createAddressPart(AddressPartType.STTYP);
+        a = createAddressPart(AddressPartType.STTYP);
         a.setValue("Blvd");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.ADL);
+        a = createAddressPart(AddressPartType.ADL);
         a.setValue("RG 5th floor");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CTY);
+        a = createAddressPart(AddressPartType.CTY);
         a.setValue("Indianapolis");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.STA);
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("IN");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.ZIP);
+        a = createAddressPart(AddressPartType.ZIP);
         a.setValue("46240");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CNT);
+        a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
@@ -314,23 +343,23 @@ useful in Germany, where many systems keep house number as a distinct field
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
 
-        Adxp a = Adxp.createAddressPart(AddressPartType.POB);
+        Adxp a = createAddressPart(AddressPartType.POB);
         a.setValue("909");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CTY);
+        a = createAddressPart(AddressPartType.CTY);
         a.setValue("Indianapolis");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.STA);
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("IN");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.ZIP);
+        a = createAddressPart(AddressPartType.ZIP);
         a.setValue("46240");
         part.add(a);
 
-        a = Adxp.createAddressPart(AddressPartType.CNT);
+        a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
@@ -342,102 +371,139 @@ useful in Germany, where many systems keep house number as a distinct field
 
         assertEquals("P.O.Box 909", result.getStreetAddressLine());
     }
-    
-    @Test 
+
+    @Test
     public void testConvertToAddressWithStateValueButNoCountry() {
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
         Adxp a = null;
-        
-        a = Adxp.createAddressPart(AddressPartType.STA);
+
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("INDIANA");
         part.add(a);
-        
+
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
         assertEquals("INDIANA", result.getStateOrProvince());
         assertNull(result.getCountry());
     }
-    
-    @Test 
+
+    @Test
     public void testConvertToAddressWithStateCodeButNoCountry() {
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
         Adxp a = null;
-        
-        a = Adxp.createAddressPart(AddressPartType.STA);
+
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("INDIANA");
         a.setCode("IN");
         part.add(a);
-        
+
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
         assertEquals("INDIANA", result.getStateOrProvince());
         assertNull(result.getCountry());
     }
-    
-    @Test 
+
+    @Test
     public void testConvertToAddressWithStateValueSpecifiedButNoSuchStateForGivenCountry() {
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
         Adxp a = null;
-        
-        a = Adxp.createAddressPart(AddressPartType.STA);
+
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("ZZZZZ");
         part.add(a);
-        
-        a = Adxp.createAddressPart(AddressPartType.CNT);
+
+        a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
-        
+
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
         assertEquals("ZZZZZ", result.getStateOrProvince());
         assertEquals("USA",  result.getCountry().getAlpha3());
     }
-    @Test 
+    @Test
     public void testConvertToAddressWithStateCodeSpecifiedButNoSuchStateForGivenCountry() {
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
         Adxp a = null;
-        
-        a = Adxp.createAddressPart(AddressPartType.STA);
+
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("ZZZZZ");
         a.setCode("ZZ");
         part.add(a);
-        
-        a = Adxp.createAddressPart(AddressPartType.CNT);
+
+        a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
-        
+
         try {
             AdConverter.SimpleConverter.convertToAddress(iso);
         } catch (PoIsoConstraintException e) {
             assertEquals("unsupported ISO 3166 state or province code 'ZZ' for Country code 'USA'", e.getMessage());
         }
     }
-    
-    @Test 
+
+    @Test
     public void testConvertToAddressWithStateSpecifiedButNoSuchStateForGivenCountry2() {
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
         Adxp a = null;
-        
-        a = Adxp.createAddressPart(AddressPartType.STA);
+
+        a = createAddressPart(AddressPartType.STA);
         a.setValue("ZZZZZ");
         part.add(a);
-        
-        a = Adxp.createAddressPart(AddressPartType.CNT);
+
+        a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("AAA");
         part.add(a);
-        
+
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
         assertEquals("ZZZZZ", result.getStateOrProvince());
         assertEquals("AAA",  result.getCountry().getAlpha3());
+    }
+
+    private static Adxp createAddressPart(AddressPartType type) {
+        switch (type) {
+            case ADL: return new AdxpAdl();
+            case AL : return new AdxpAl();
+            case BNN: return new AdxpBnn();
+            case BNR: return new AdxpBnr();
+            case BNS: return new AdxpBns();
+            case CAR: return new AdxpCar();
+            case CEN: return new AdxpCen();
+            case CNT: return new AdxpCnt();
+            case CPA: return new AdxpCpa();
+            case CTY: return new AdxpCty();
+            case DAL: return new AdxpDal();
+            case DEL: return new AdxpDel();
+            case DINST: return new AdxpDinst();
+            case DINSTA: return new AdxpDinsta();
+            case DINSTQ: return new AdxpDinstq();
+            case DIR: return new AdxpDir();
+            case DMOD: return new AdxpDmod();
+            case DMODID: return new AdxpDmodid();
+            case INT: return new AdxpInt();
+            case POB: return new AdxpPob();
+            case PRE: return new AdxpPre();
+            case SAL: return new AdxpSal();
+            case STA: return new AdxpSta();
+            case STB: return new AdxpStb();
+            case STR: return new AdxpStr();
+            case STTYP: return new AdxpSttyp();
+            case UNID: return new AdxpUnid();
+            case UNIT: return new AdxpUnit();
+            case ZIP: return new AdxpZip();
+
+            // there must be a new type added
+            default: throw new UnsupportedOperationException(type.name());
+        }
     }
 }

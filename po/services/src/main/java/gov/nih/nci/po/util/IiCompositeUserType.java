@@ -85,7 +85,6 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.IsoCloneException;
 import gov.nih.nci.coppa.iso.NullFlavor;
 
 import java.io.Serializable;
@@ -138,15 +137,7 @@ public class IiCompositeUserType implements CompositeUserType {
         }
 
         Ii snapshot = (Ii) value;
-
-        Ii returnVal = null;
-
-        try {
-            returnVal = (Ii) snapshot.clone();
-        } catch (CloneNotSupportedException cnse) {
-            throw new IsoCloneException(cnse);
-        }
-        return returnVal;
+        return snapshot.clone();
     }
 
     /**

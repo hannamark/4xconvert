@@ -45,12 +45,12 @@ public class StTest {
        }
 
        @Test
-       public void testCloneable() throws CloneNotSupportedException {
+       public void testCloneable() {
            St first = new St();
            first.setNullFlavor(NullFlavor.ASKU);
            first.setValue("value");
 
-           St second = (St) first.clone();
+           St second = first.clone();
 
            assertTrue(first != second);
            assertTrue(first.equals(second));

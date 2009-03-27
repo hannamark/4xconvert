@@ -5,8 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAdl;
+import gov.nih.nci.coppa.iso.AdxpSta;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
@@ -158,7 +159,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
         Ad add = new Ad();
         add.setPart(new ArrayList<Adxp>());
-        Adxp apart = Adxp.createAddressPart(AddressPartType.STA);
+        Adxp apart = new AdxpSta();
         apart.setValue("My State");
         add.getPart().add(apart);
         dto.setPostalAddress(add);
@@ -292,7 +293,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
         //dto.setName(StringConverter.convertToEnOn("newName"));
-        Adxp adl = Adxp.createAddressPart(AddressPartType.ADL);
+        Adxp adl = new AdxpAdl();
         adl.setValue("additional ADL");
         dto.getPostalAddress().getPart().add(adl);
         TelEmail email = new TelEmail();

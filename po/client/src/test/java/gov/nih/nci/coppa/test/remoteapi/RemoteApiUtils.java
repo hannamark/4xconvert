@@ -83,8 +83,13 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAdl;
+import gov.nih.nci.coppa.iso.AdxpAl;
+import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpSta;
+import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnOn;
@@ -113,12 +118,12 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Scott Miller
- * 
+ *
  */
 public class RemoteApiUtils {
 
     /**
-     * 
+     *
      * @param value a boolean to parse.
      * @return an iso BL
      */
@@ -149,7 +154,7 @@ public class RemoteApiUtils {
     }
 
     /**
-     * 
+     *
      * @param value a string to parse.
      * @return an iso ST
      */
@@ -163,10 +168,8 @@ public class RemoteApiUtils {
         return iso;
     }
 
-    private static void setAdxpValue(List<Adxp> l, String s, AddressPartType addressPartType) {
-        Adxp x;
+    private static void setAdxpValue(List<Adxp> l, String s, Adxp x) {
         if (StringUtils.isNotBlank(s)) {
-            x = Adxp.createAddressPart(addressPartType);
             x.setValue(s);
             l.add(x);
         }
@@ -187,17 +190,16 @@ public class RemoteApiUtils {
         Ad iso = new Ad();
         List<Adxp> l = new ArrayList<Adxp>();
         iso.setPart(l);
-        setAdxpValue(l, streetAddressLine, AddressPartType.AL);
+        setAdxpValue(l, streetAddressLine, new AdxpAl());
         if (StringUtils.isNotBlank(deliveryAddressLine)) {
-            setAdxpValue(l, deliveryAddressLine, AddressPartType.ADL);
+            setAdxpValue(l, deliveryAddressLine, new AdxpAdl());
         }
-        setAdxpValue(l, cityOrMunicipality, AddressPartType.CTY);
-        setAdxpValue(l, stateOrProvince, AddressPartType.STA);
-        setAdxpValue(l, postalCode, AddressPartType.ZIP);
+        setAdxpValue(l, cityOrMunicipality, new AdxpCty());
+        setAdxpValue(l, stateOrProvince, new AdxpSta());
+        setAdxpValue(l, postalCode, new AdxpZip());
 
         if (StringUtils.isNotBlank(countryAlpha3)) {
-            Adxp x;
-            x = Adxp.createAddressPart(AddressPartType.CNT);
+            Adxp x = new AdxpCnt();
             x.setValue("adxp.value is required");
             x.setCode(countryAlpha3);
             l.add(x);
@@ -274,7 +276,7 @@ public class RemoteApiUtils {
         addEnxp(enpn, suffix, EntityNamePartType.SFX);
         return enpn;
     }
-    
+
     /**
      * @param email email
      * @param fax fax
@@ -292,7 +294,7 @@ public class RemoteApiUtils {
         if (email != null) {
         	for (String c : email) {
         		TelEmail t = new TelEmail();
-        		t.setValue(createURI(TelEmail.SCHEME_MAILTO, c));  	
+        		t.setValue(createURI(TelEmail.SCHEME_MAILTO, c));
         		set.add(t);
         	}
         }
@@ -326,7 +328,7 @@ public class RemoteApiUtils {
         }
         return dset;
     }
-    
+
     private static URI createURI(String scheme, String schemeSpecificPart) {
         try {
             return new URI(scheme, schemeSpecificPart, null);

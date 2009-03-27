@@ -97,7 +97,7 @@ public class EnxpTest {
     }
 
     @Test
-    public void testCloneable() throws CloneNotSupportedException {
+    public void testCloneable() {
         for (EntityNamePartType type: EntityNamePartType.values()){
             Enxp first = new Enxp(type);
             first.setCode("COD");
@@ -111,7 +111,7 @@ public class EnxpTest {
             first.setQualifier(qualifier);
             first.setValue("value");
 
-            Enxp second = (Enxp) first.clone();
+            Enxp second = first.clone();
 
             assertTrue(first != second);
             assertTrue(first.equals(second));

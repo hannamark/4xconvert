@@ -82,7 +82,7 @@ public class DSetTest {
     }
 
     @Test
-    public void testCloneable() throws CloneNotSupportedException {
+    public void testCloneable() {
         DSet<Bl> firstDSet = new DSet<Bl>();
         firstDSet.setItem(new HashSet<Bl>());
         for (int i = 0; i < 5; i++) {
@@ -92,7 +92,7 @@ public class DSetTest {
             firstDSet.getItem().add(temp);
         }
 
-        DSet<Bl> secondDSet = (DSet<Bl>) firstDSet.clone();
+        DSet<Bl> secondDSet = firstDSet.clone();
 
         assertTrue(firstDSet != secondDSet);
         assertTrue(firstDSet.equals(secondDSet));

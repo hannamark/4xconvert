@@ -92,7 +92,7 @@ import java.util.List;
  * The URL scheme must be mailto
  * @author lpower
  */
-public class TelEmail extends TelPerson {
+public final class TelEmail extends TelPerson implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -106,5 +106,13 @@ public class TelEmail extends TelPerson {
     @Override
     protected List<String> getAllowedSchemes() {
         return TEL_EMAIL_SCHEMES;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TelEmail clone() {
+        return (TelEmail) super.clone();
     }
 }

@@ -1,8 +1,13 @@
 package gov.nih.nci.po.data.convert.util;
 
 import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAdl;
+import gov.nih.nci.coppa.iso.AdxpAl;
+import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpSta;
+import gov.nih.nci.coppa.iso.AdxpZip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +19,8 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public class AddressConverterUtil {
-    private static void setValue(List<Adxp> l, String s, AddressPartType addressPartType) {
-        Adxp x;
+    private static void setValue(List<Adxp> l, String s, Adxp x) {
         if (StringUtils.isNotBlank(s)) {
-            x = Adxp.createAddressPart(addressPartType);
             x.setValue(s);
             l.add(x);
         }
@@ -39,16 +42,15 @@ public class AddressConverterUtil {
         Ad iso = new Ad();
         List<Adxp> l = new ArrayList<Adxp>();
         iso.setPart(l);
-        setValue(l, streetAddressLine, AddressPartType.AL);
+        setValue(l, streetAddressLine, new AdxpAl());
         if (StringUtils.isNotBlank(deliveryAddressLine)) {
-            setValue(l, deliveryAddressLine, AddressPartType.ADL);
+            setValue(l, deliveryAddressLine, new AdxpAdl());
         }
-        setValue(l, cityOrMunicipality, AddressPartType.CTY);
-        setValue(l, stateOrProvince, AddressPartType.STA);
-        setValue(l, postalCode, AddressPartType.ZIP);
+        setValue(l, cityOrMunicipality, new AdxpCty());
+        setValue(l, stateOrProvince, new AdxpSta());
+        setValue(l, postalCode, new AdxpZip());
 
-        Adxp x;
-        x = Adxp.createAddressPart(AddressPartType.CNT);
+        Adxp x = new AdxpCnt();
         x.setValue(countryName);
         x.setCode(countryAlpha3);
         l.add(x);

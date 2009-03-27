@@ -10,7 +10,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Naveen Amiruddin
  *
  */
-public class Pqv extends Qty {
+public class Pqv extends Qty implements Cloneable {
     private static final long serialVersionUID = 1L;
 
     private BigDecimal value;
@@ -86,4 +86,12 @@ public class Pqv extends Qty {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
+    @Override
+    public Pqv clone() {
+        return (Pqv) super.clone();
+    }
 }

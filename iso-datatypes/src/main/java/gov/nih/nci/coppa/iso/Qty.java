@@ -90,7 +90,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author lpower
  */
 @SuppressWarnings("PMD.AbstractNaming")
-public abstract class Qty extends Any {
+public abstract class Qty extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -181,4 +181,12 @@ public abstract class Qty extends Any {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
+    @Override
+    public Qty clone() {
+        return (Qty) super.clone();
+    }
 }

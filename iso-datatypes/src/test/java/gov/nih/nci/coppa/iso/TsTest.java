@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
 import java.util.Date;
 
 import org.junit.Test;
@@ -12,7 +11,7 @@ import org.junit.Test;
 public class TsTest {
     private final Date date = new Date();
     @Test
-    public void testEquality() {
+    public void testEquality() throws InterruptedException {
 
         Int uncertainty1 = new Int();
         uncertainty1.setNullFlavor(NullFlavor.DER);
@@ -60,14 +59,25 @@ public class TsTest {
 
         assertTrue(first.equals(second));
 
-        second.setValue(new Date());
+        // prove that different date hashcodes -> !equal
+        Date secondDate = new Date();
+        int i = 0;
+        while (secondDate.hashCode() == first.getValue().hashCode() && i < 100) {
+        Thread.sleep(100);
+        secondDate = new Date();
+        ++i;
+        }
+        if (i == 100) {
+            throw new RuntimeException("Unable to find different hash!");
+        }
+        second.setValue(secondDate);
 
         assertFalse(first.equals(second));
 
        }
 
        @Test
-       public void testHashCode() throws ParseException, InterruptedException  {
+       public void testHashCode() throws InterruptedException  {
 
            Int uncertainty1 = new Int();
            uncertainty1.setNullFlavor(NullFlavor.DER);
@@ -114,14 +124,14 @@ public class TsTest {
            Date secondDate = new Date();
            int i = 0;
            while (secondDate.hashCode() == first.getValue().hashCode() && i < 100) {
-           Thread.sleep(100);
-           secondDate = new Date();
-           ++i;
+               Thread.sleep(100);
+               secondDate = new Date();
+               ++i;
            }
            if (i == 100) {
                throw new RuntimeException("Unable to find different hash!");
            }
-           second.setValue(new Date());
+           second.setValue(secondDate);
 
            assertFalse(first.hashCode() == second.hashCode());
 
@@ -130,7 +140,7 @@ public class TsTest {
        }
 
        @Test
-       public void testCloneable() throws CloneNotSupportedException {
+       public void testCloneable() {
            Int uncertainty1 = new Int();
            uncertainty1.setNullFlavor(NullFlavor.DER);
            uncertainty1.setOriginalText(new EdText());
@@ -151,7 +161,7 @@ public class TsTest {
            first.setUncertainty(uncertainty1);
            first.setValue(date);
 
-           Ts second = (Ts) first.clone();
+           Ts second = first.clone();
 
            assertTrue(first != second);
            assertTrue(first.equals(second));

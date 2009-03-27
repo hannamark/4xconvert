@@ -157,14 +157,15 @@ public class En extends Any implements Cloneable {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.CloneThrowsCloneNotSupportedException")
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public En clone() {
 
         En returnVal = (En) super.clone();
 
         try {
             for (Enxp tem : this.getPart()) {
-                returnVal.getPart().add((Enxp) tem.clone());
+                returnVal.getPart().add(tem.clone());
             }
         } catch (Exception e) {
             throw new IsoCloneException(e);

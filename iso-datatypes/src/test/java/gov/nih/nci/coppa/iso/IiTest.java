@@ -70,7 +70,7 @@ public class IiTest {
         }
 
         @Test
-        public void testCloneable() throws CloneNotSupportedException {
+        public void testCloneable() {
             Ii first = new Ii();
             first.setNullFlavor(NullFlavor.ASKU);
             first.setDisplayable(true);
@@ -80,7 +80,7 @@ public class IiTest {
             first.setRoot("1.2.3");
             first.setScope(IdentifierScope.BUSN);
 
-            Ii second = (Ii) first.clone();
+            Ii second = first.clone();
 
             assertTrue(first != second);
             assertTrue(first.equals(second));

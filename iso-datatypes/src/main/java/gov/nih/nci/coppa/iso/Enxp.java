@@ -93,7 +93,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents the iso datatype.
  * @author lpower
  */
-public class Enxp implements Serializable, Cloneable {
+public final class Enxp implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -240,7 +240,7 @@ public class Enxp implements Serializable, Cloneable {
      */
     @Override
     @SuppressWarnings("PMD.ProperCloneImplementation")
-    public Object clone() throws CloneNotSupportedException {
+    public Enxp clone() {
 
         Enxp snapshot = new Enxp(type);
         try {

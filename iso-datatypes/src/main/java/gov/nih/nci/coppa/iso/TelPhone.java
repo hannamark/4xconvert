@@ -93,7 +93,7 @@ import java.util.List;
  * The URL scheme must be tel, x-text-fax, or x-text-tel.
  * @author lpower
  */
-public class TelPhone extends TelPerson {
+public final class TelPhone extends TelPerson implements Cloneable {
 
     /** scheme. */
     public static final String SCHEME_TEL = "tel";
@@ -114,5 +114,13 @@ public class TelPhone extends TelPerson {
     @Override
     protected List<String> getAllowedSchemes() {
         return TEL_PHONE_SCHEMES;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TelPhone clone() {
+        return (TelPhone) super.clone();
     }
 }

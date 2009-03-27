@@ -45,12 +45,12 @@ public class BlTest {
         }
 
         @Test
-        public void testCloneable() throws CloneNotSupportedException {
+        public void testCloneable() {
             Bl first = new Bl();
             first.setNullFlavor(NullFlavor.ASKU);
             first.setValue(true);
 
-            Bl second = (Bl) first.clone();
+            Bl second = first.clone();
 
             assertTrue(first != second);
             assertTrue(first.equals(second));

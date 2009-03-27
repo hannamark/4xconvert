@@ -9,7 +9,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Naveen Amiruddin
  *
  */
-public class Pq extends Pqv {
+public final class Pq extends Pqv implements Cloneable {
     private static final long serialVersionUID = 1L;
 
     private String unit;
@@ -66,4 +66,11 @@ public class Pq extends Pqv {
             .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Pq clone() {
+        return (Pq) super.clone();
+    }
 }

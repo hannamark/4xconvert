@@ -9,7 +9,7 @@ import org.junit.Test;
 public class IvlTest {
 
     @Test
-    public void testEquality() throws CloneNotSupportedException {
+    public void testEquality() {
 
         Ivl<Int> first = new Ivl<Int>();
 
@@ -37,11 +37,11 @@ public class IvlTest {
 
         first.setHigh(firstHigh);
         first.setHighClosed(true);
-        first.setLow((Int) firstHigh.clone());
+        first.setLow(firstHigh.clone());
         first.setLowClosed(false);
         first.setNullFlavor(NullFlavor.DER);
         first.setOriginalText(new EdText());
-        first.setWidth((Qty) uncertainty1.clone());
+        first.setWidth(uncertainty1.clone());
 
 
         assertTrue(first.equals(first));
@@ -73,11 +73,11 @@ public class IvlTest {
 
         second.setHigh(secondHigh);
         second.setHighClosed(true);
-        second.setLow((Int) secondHigh.clone());
+        second.setLow(secondHigh.clone());
         second.setLowClosed(false);
         second.setNullFlavor(NullFlavor.DER);
         second.setOriginalText(new EdText());
-        second.setWidth((Qty) uncertainty2.clone());
+        second.setWidth(uncertainty2.clone());
 
         assertTrue(first.equals(second));
 
@@ -88,7 +88,7 @@ public class IvlTest {
        }
 
        @Test
-       public void testHashCode() throws CloneNotSupportedException {
+       public void testHashCode() {
 
            Ivl<Int> first = new Ivl<Int>();
 
@@ -116,11 +116,11 @@ public class IvlTest {
 
            first.setHigh(firstHigh);
            first.setHighClosed(true);
-           first.setLow((Int) firstHigh.clone());
+           first.setLow(firstHigh.clone());
            first.setLowClosed(false);
            first.setNullFlavor(NullFlavor.DER);
            first.setOriginalText(new EdText());
-           first.setWidth((Qty) uncertainty1.clone());
+           first.setWidth(uncertainty1.clone());
 
            Ivl<Int> second = new Ivl<Int>();
 
@@ -148,11 +148,11 @@ public class IvlTest {
 
            second.setHigh(secondHigh);
            second.setHighClosed(true);
-           second.setLow((Int) secondHigh.clone());
+           second.setLow(secondHigh.clone());
            second.setLowClosed(false);
            second.setNullFlavor(NullFlavor.DER);
            second.setOriginalText(new EdText());
-           second.setWidth((Qty) uncertainty2.clone());
+           second.setWidth(uncertainty2.clone());
 
            assertEquals(first.hashCode(), second.hashCode());
 
@@ -163,7 +163,7 @@ public class IvlTest {
        }
 
        @Test
-       public void testCloneable() throws CloneNotSupportedException {
+       public void testCloneable() {
            Ivl<Int> first = new Ivl<Int>();
 
            Int uncertainty1 = new Int();
@@ -189,13 +189,13 @@ public class IvlTest {
 
            first.setHigh(firstHigh);
            first.setHighClosed(true);
-           first.setLow((Int) firstHigh.clone());
+           first.setLow(firstHigh.clone());
            first.setLowClosed(false);
            first.setNullFlavor(NullFlavor.DER);
            first.setOriginalText(new EdText());
-           first.setWidth((Qty) uncertainty1.clone());
+           first.setWidth(uncertainty1.clone());
 
-           Ivl<Int> second = (Ivl<Int>) first.clone();
+           Ivl<Int> second = first.clone();
 
            assertTrue(first != second);
            assertTrue(first.equals(second));
