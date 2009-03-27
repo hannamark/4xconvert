@@ -149,19 +149,19 @@ labelled in regard to their semantic significance.
         Ad iso = new Ad();
         List<Adxp> part = new ArrayList<Adxp>();
         iso.setPart(part);
-        Adxp a = createAddressPart(null);
+        Adxp a = new Adxp();
         a.setValue("1050 W Wishard Blvd,");
         part.add(a);
 
         part.add(createAddressPart(AddressPartType.DEL));
 
-        a = createAddressPart(null);
+        a = new Adxp();
         a.setValue("RG 5th floor,");
         part.add(a);
 
         part.add(createAddressPart(AddressPartType.DEL));
 
-        a = createAddressPart(null);
+        a = new Adxp();
         a.setValue("Indianapolis, IN 46240");
         part.add(a);
 
