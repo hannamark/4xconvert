@@ -384,7 +384,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         }
         ArrayList<TrialFundingDTO> grantList = (ArrayList) ServletActionContext.getRequest().getSession()
         .getAttribute(Constants.GRANT_LIST);
-        if (sessionList != null) {
+        if (grantList != null) {
             for (int i = 0; i < grantList.size(); i++) {
                 trialDTO.getFundingDtos().add(grantList.get(i));
             }
@@ -903,11 +903,11 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             oldReason = StConverter.convertToString(sosList.get(0).getReasonText());
         }
 
-        
         boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);
         boolean dateChanged = (oldDate == null) ? (statusTimestamp != null) : !oldDate.equals(statusTimestamp);
-        boolean reasonChanged = (oldReason == null) 
-                ? (trialDTO.getReason() != null) : !oldReason.equals(trialDTO.getReason());
+        boolean reasonChanged = (oldReason == null) ? !(trialDTO.getReason().equals(""))
+                : !trialDTO.getReason().equals(oldReason);
+
         if (!codeChanged && !dateChanged && !reasonChanged) {
             return false;
         }
