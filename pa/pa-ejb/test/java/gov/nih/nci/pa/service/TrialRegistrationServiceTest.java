@@ -78,32 +78,29 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.util.TestSchema;
 
-import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @author Hugh Reinhart
- * @since 10/01/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- * @param <DTO> dto
- */
-public interface StudyPaService<DTO> extends BasePaService<DTO> {
-    /**
-     * @param ii index of object
-     * @return null
-     * @throws PAException exception
-     */
-    List<DTO> getByStudyProtocol(Ii ii) throws PAException;
+public class TrialRegistrationServiceTest {
+
+    private TrialRegistrationServiceBean bean = new TrialRegistrationServiceBean();
+    StudyProtocolServiceRemote sps = new StudyProtocolServiceBean(); 
+    @Before
+    public void setUp() throws Exception {
+//        bean.studyProtocolService = sps;
+        TestSchema.reset1();
+        TestSchema.primeData();
+     }
     
-    /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     * @param fromStudyProtocolii from where the study protocol objects to be copied  
-     * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @throws PAException on error
-     */
-    void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException;
-    
+    @Test
+    public void createInterventionalStudyProtocolTest() throws Exception {
+        //InterventionalStudyProtocolDTO ispDto = InterventionalStudyProtocolTest.createInterventionalStudyProtocolObj();
+        //Ii ii = bean.createInterventionalStudyProtocol(ispDto);
+        assertEquals("","");
+        
+    }
+
 }

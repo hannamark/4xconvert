@@ -82,6 +82,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -94,13 +95,18 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -125,17 +131,29 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private SessionContext ejbContext;
 
     @EJB
-    StudyProtocolServiceRemote studyProtocolService = null;
+    StudyProtocolServiceLocal studyProtocolService = null;
     @EJB
-    StudyOverallStatusServiceRemote studyOverallStatusService = null;    
+    StudyOverallStatusServiceLocal studyOverallStatusService = null;    
     @EJB
-    StudyIndldeServiceRemote studyIndldeService  = null;
+    StudyIndldeServiceLocal studyIndldeService  = null;
     @EJB
-    StudyResourcingServiceRemote studyResourcingService = null;
+    StudyResourcingServiceLocal studyResourcingService = null;
     @EJB
-    DocumentServiceRemote documentService = null;
-    
-    
+    DocumentServiceLocal documentService = null;
+    @EJB
+    StudyDiseaseServiceLocal studyDiseaseService = null;
+    @EJB
+    ArmServiceLocal armService = null; 
+    @EJB
+    PlannedActivityServiceLocal plannedActivityService = null;
+    @EJB
+    SubGroupsServiceLocal subGroupsService = null;
+    @EJB
+    StudyParticipationServiceLocal studyParticipationService = null;
+    @EJB
+    StudyParticipationContactServiceLocal studyParticipationContactService = null; 
+    @EJB
+    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
@@ -220,10 +238,71 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 summary4organizationDTO , 
                 summary4studyResourcingDTO , 
                 responsiblePartyContactDTO);
+        
+        
         return ii;
                 
     }
     
+    private void deepCopy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+        studyDiseaseService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        armService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        plannedActivityService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        subGroupsService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        plannedActivityService.copyPlannedEligibilityStudyCriterions(fromStudyProtocolIi, toStudyProtocolIi);
+    }
+    
+    private void deepCopyParticipation(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+        ArrayList<StudyParticipationDTO> criteriaList = new ArrayList<StudyParticipationDTO>();
+        StudyParticipationDTO searchCode = null;
+        for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
+            if (cd.isCollaboratorCode()) {
+                searchCode = new StudyParticipationDTO();
+                searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
+                criteriaList.add(searchCode);
+            }
+        }
+        searchCode = new StudyParticipationDTO();
+        searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
+        criteriaList.add(searchCode);
+        
+        List<StudyParticipationDTO> dtos =  studyParticipationService.getByStudyProtocol(
+                fromStudyProtocolIi , criteriaList);
+        StudyParticipationDTO newSpDto = null;
+        List<StudyParticipationContactDTO> spcDtos = null;
+        List<StudySiteAccrualStatusDTO> accDtos = null;
+        Ii oldSpIi = null;
+        for (StudyParticipationDTO dto : dtos) {
+            oldSpIi = dto.getIdentifier();
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            try {
+                newSpDto = studyParticipationService.create(dto);
+            } catch (PADuplicateException pud) {
+                continue;
+            }
+            
+            if (StudyParticipationFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {
+                // create study contact
+                spcDtos = studyParticipationContactService.getByStudyParticipation(oldSpIi);
+                for (StudyParticipationContactDTO spcDto : spcDtos) {
+                    spcDto.setIdentifier(null);
+                    spcDto.setStudyProtocolIdentifier(toStudyProtocolIi);
+                    spcDto.setStudyParticipationIi(newSpDto.getIdentifier());
+                    studyParticipationContactService.create(spcDto);
+                }
+                
+                // create study accrual status
+                accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudyParticipation(oldSpIi);
+                for (StudySiteAccrualStatusDTO accDto : accDtos) {
+                    accDto.setIdentifier(null);
+                    accDto.setStudyParticipationIi(newSpDto.getIdentifier());
+                    studySiteAccrualStatusService.createStudySiteAccrualStatus(accDto);
+                }
+            }
+        }
+        
+    }
     private Ii createStudyProtocolObjs(
             StudyProtocolDTO studyProtocolDTO , 
             StudyOverallStatusDTO overallStatusDTO , 
@@ -241,7 +320,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO , 
             PersonDTO responsiblePartyContactDTO)
     throws PAException {
-        Ii curentIdentifier =  studyProtocolDTO.getIdentifier();
+        Ii oldIdentifier =  studyProtocolDTO.getIdentifier();
         Ii studyProtocolIi = null;
         StudyTypeCode studyTypeCode = null;
         if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
@@ -255,7 +334,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
         // set the study over all status 
         overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
-        studyOverallStatusService.create(overallStatusDTO);
+        //studyOverallStatusService.create(overallStatusDTO);
+        createOverallStatuses(studyProtocolIi, oldIdentifier , overallStatusDTO);
         createIndIdes(studyProtocolIi , studyIndldeDTOs);
         createStudyResources(studyProtocolIi , studyResourcingDTOs);
         createdocuments(studyProtocolIi , documentDTOs);
@@ -274,9 +354,36 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         return studyProtocolIi;
     }
     
-    private void createOverallStatusHistory() {
+    private void createOverallStatuses(Ii studyProtocolIi , Ii oldStudyProtocolIi , 
+            StudyOverallStatusDTO currentStatus) 
+    throws PAException {
+        List<StudyOverallStatusDTO> sosList = studyOverallStatusService.getCurrentByStudyProtocol(oldStudyProtocolIi);
+        boolean first = true;
+        boolean statusFound = false;
+        for (StudyOverallStatusDTO sos : sosList) {
+            if (first) {
+                if (sos.getStatusCode().getCode().equals(currentStatus.getStatusCode().getCode())) {
+                    sos.setReasonText(currentStatus.getReasonText());
+                    sos.setStatusCode(currentStatus.getStatusCode());
+                    sos.setStatusDate(currentStatus.getStatusDate());
+                    statusFound = true;
+                }
+            }
+            first = false;
+            sos.setIdentifier(null);
+            sos.setStudyProtocolIi(studyProtocolIi);
+        } // for
         
+        Collections.reverse(sosList);
+        if (!statusFound) {
+            sosList.add(currentStatus);
+        }
+        
+        for (StudyOverallStatusDTO sos : sosList) {
+            studyOverallStatusService.create(sos);
+        }
     }
+    
     private void createIndIdes(Ii studyProtocolIi , List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
         for (StudyIndldeDTO studyIndldeDTO : studyIndldeDTOs) {
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);

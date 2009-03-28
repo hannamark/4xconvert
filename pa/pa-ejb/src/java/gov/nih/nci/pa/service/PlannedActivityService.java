@@ -76,34 +76,69 @@
 * 
 * 
 */
+
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 
 import java.util.List;
 
 /**
- * @author Hugh Reinhart
- * @since 10/01/2008
+ * @author Naveen Amiruddin
+ * @since 03/19/2009
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
- * @param <DTO> dto
  */
-public interface StudyPaService<DTO> extends BasePaService<DTO> {
+
+public interface PlannedActivityService  extends StudyPaService<PlannedActivityDTO> {
     /**
-     * @param ii index of object
-     * @return null
+     * @param ii index of arm
+     * @return list of planned activities associated w/arm
      * @throws PAException exception
      */
-    List<DTO> getByStudyProtocol(Ii ii) throws PAException;
-    
+    List<PlannedActivityDTO> getByArm(Ii ii) throws PAException;
     /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     * @param fromStudyProtocolii from where the study protocol objects to be copied  
-     * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @throws PAException on error
+     * @param ii index of PlannedEligibilityCriterion
+     * @return list of PlannedEligibilityCriterion 
+     * @throws PAException exception
      */
-    void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException;
+    List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii)
+    throws PAException;
+    /**
+     * @param ii index
+     * @return the PlannedEligibilityCriterion
+     * @throws PAException exception.
+     */
+    PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii) throws PAException;
+    /**
+     * @param dto PlannedEligibilityCriterion to create
+     * @return the created PlannedEligibilityCriterion
+     * @throws PAException exception.
+     */
+    PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(
+            PlannedEligibilityCriterionDTO dto) throws PAException;
+    /**
+     * @param dto PlannedEligibilityCriterion to update
+     * @return the updated PlannedEligibilityCriterion
+     * @throws PAException exception.
+     */
+    PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(
+            PlannedEligibilityCriterionDTO dto) throws PAException;
+    /**
+     * @param ii index
+     * @throws PAException exception.
+     */
+    void deletePlannedEligibilityCriterion(Ii ii) throws PAException;
+
+    /**
+     * copies the study protocol record from source to target.
+     * @param fromStudyProtocolIi source
+     * @param toStudyProtocolIi target
+     * @throws PAException exception.
+     */
+    void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
     
 }

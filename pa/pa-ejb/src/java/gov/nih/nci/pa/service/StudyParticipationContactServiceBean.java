@@ -93,6 +93,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -107,9 +109,9 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({"PMD.ExcessiveMethodLength" , "PMD.CyclomaticComplexity" })
-
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class StudyParticipationContactServiceBean extends AbstractBasePaService<StudyParticipationContactDTO> implements
-        StudyParticipationContactServiceRemote {
+        StudyParticipationContactServiceRemote , StudyParticipationContactServiceLocal {
     private static final Logger LOG = Logger.getLogger(StudyParticipationContactServiceBean.class);
 
     /**

@@ -187,4 +187,10 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
         
     }
 
+    public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

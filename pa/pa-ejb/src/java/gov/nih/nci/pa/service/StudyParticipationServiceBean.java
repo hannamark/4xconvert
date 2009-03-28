@@ -96,6 +96,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -117,6 +119,7 @@ public class StudyParticipationServiceBean
      * @throws PAException PAException
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
         StudyParticipationDTO createDto = businessRules(dto);
         createDto.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
@@ -131,6 +134,7 @@ public class StudyParticipationServiceBean
      * @throws PAException PAException
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyParticipationDTO update(StudyParticipationDTO dto)
             throws PAException {
         StudyParticipationDTO updateDto = businessRules(dto);
@@ -215,6 +219,7 @@ public class StudyParticipationServiceBean
         return resultList;
     }
 
+    
     @SuppressWarnings("PMD.NPathComplexity")
     private StudyParticipationDTO businessRules(StudyParticipationDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {

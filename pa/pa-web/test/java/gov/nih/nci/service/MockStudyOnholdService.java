@@ -178,4 +178,10 @@ public class MockStudyOnholdService implements StudyOnholdServiceRemote {
             throw new PAFieldException(StudyOnholdServiceBean.FN_DATE_HIGH, "off-hold");
         }
     }
+
+    public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 }

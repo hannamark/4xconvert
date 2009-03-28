@@ -105,4 +105,15 @@ public abstract class AbstractStudyPaService<DTO>
         serviceError(errMsgMethodNotImplemented);
         return null;        
     }
+    
+    /**
+     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolii from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @throws PAException on error
+     */
+    public void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException {
+        serviceError(errMsgMethodNotImplemented);
+    }
+    
 }

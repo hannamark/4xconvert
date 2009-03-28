@@ -100,7 +100,7 @@ import javax.ejb.Stateless;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyDiseaseServiceBean 
         extends AbstractStudyIsoService<StudyDiseaseDTO, StudyDisease, StudyDiseaseConverter>
-        implements StudyDiseaseServiceRemote {
+        implements StudyDiseaseServiceRemote, StudyDiseaseServiceLocal {
 
     private StudyDiseaseDTO businessRules(StudyDiseaseDTO dto) throws PAException {
         boolean isNew = PAUtil.isIiNull(dto.getIdentifier());

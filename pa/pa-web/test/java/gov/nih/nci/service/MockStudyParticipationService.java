@@ -201,4 +201,10 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
         return null;
     }
 
+    public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

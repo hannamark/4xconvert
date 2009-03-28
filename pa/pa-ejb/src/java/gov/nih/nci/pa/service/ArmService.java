@@ -76,34 +76,29 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+
+package gov.nih.nci.pa.service;
 
 import java.util.List;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
 /**
  * @author Hugh Reinhart
- * @since 10/01/2008
- * copyright NCI 2007.  All rights reserved.
+ * @since 11/05/2008
+ * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
- * @param <DTO> dto
  */
-public interface StudyPaService<DTO> extends BasePaService<DTO> {
+
+public interface ArmService extends StudyPaService<ArmDTO> {
+
     /**
-     * @param ii index of object
-     * @return null
+     * @param ii index of planned activity
+     * @return list of arms associated w/planned activity
      * @throws PAException exception
      */
-    List<DTO> getByStudyProtocol(Ii ii) throws PAException;
-    
-    /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     * @param fromStudyProtocolii from where the study protocol objects to be copied  
-     * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @throws PAException on error
-     */
-    void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException;
-    
+    List<ArmDTO> getByPlannedActivity(Ii ii) throws PAException;
+
 }

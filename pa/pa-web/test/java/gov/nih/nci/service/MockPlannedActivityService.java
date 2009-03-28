@@ -260,4 +260,21 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
         throw new PAException("Planned activity not found in mock service for id = " + IiConverter.convertToString(dto.getIdentifier()));
     }
 
+    /**
+     * copies the study protocol record from source to target.
+     * @param fromStudyProtocolIi source
+     * @param toStudyProtocolIi target
+     * @throws PAException exception.
+     */
+    public void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) 
+    throws PAException {
+     // TODO Auto-generated method stub
+    }
+
+    public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+    
 }

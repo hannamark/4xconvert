@@ -153,4 +153,19 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         getLogger().info("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
+    
+    /**
+     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolii from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @throws PAException on error
+     */
+    public void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException {
+        List<DTO> dtos = getByStudyProtocol(fromStudyProtocolii);
+        for (DTO dto : dtos) {
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            create(dto);
+        }
+    }
 }

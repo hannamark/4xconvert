@@ -106,7 +106,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> 
-        implements ArmServiceRemote {
+        implements ArmServiceRemote , ArmServiceLocal {
     /**
      * @param ii index of planned activity
      * @return list of arms associated w/planned activity

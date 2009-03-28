@@ -153,6 +153,7 @@ public class StudyOverallStatusServiceBean
 
             StudyStatusCode oldCode = null;
             Timestamp oldDate = null;
+            
             if (!oldStatus.isEmpty()) {
                 oldCode = StudyStatusCode.getByCode(oldStatus.get(0).getStatusCode().getCode());
                 oldDate = TsConverter.convertToTimestamp(oldStatus.get(0).getStatusDate());

@@ -107,7 +107,8 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatusServiceRemote {
+public class StudySiteAccrualStatusServiceBean implements 
+    StudySiteAccrualStatusServiceRemote , StudySiteAccrualStatusServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudySiteAccrualStatusServiceBean.class);
     private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 

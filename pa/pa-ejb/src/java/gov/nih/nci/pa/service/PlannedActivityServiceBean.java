@@ -114,7 +114,7 @@ import org.hibernate.Session;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class PlannedActivityServiceBean
  extends AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter>
-        implements PlannedActivityServiceRemote {
+        implements PlannedActivityServiceRemote , PlannedActivityServiceLocal {
 
 
     private void businessRules(PlannedActivityDTO dto) throws PAException {
@@ -382,5 +382,22 @@ public class PlannedActivityServiceBean
         }
         return resultDto;
     }
+    
+    /**
+     * copies the study protocol record from source to target.
+     * @param fromStudyProtocolIi source
+     * @param toStudyProtocolIi target
+     * @throws PAException exception.
+     */
+    public void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) 
+    throws PAException {
+        List<PlannedEligibilityCriterionDTO> dtos = getPlannedEligibilityCriterionByStudyProtocol(fromStudyProtocolIi);
+        for (PlannedEligibilityCriterionDTO dto : dtos) {
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            createPlannedEligibilityCriterion(dto);
+        }
+    }
+    
 
 }
