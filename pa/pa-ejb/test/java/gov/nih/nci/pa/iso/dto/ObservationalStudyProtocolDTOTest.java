@@ -106,6 +106,8 @@ public class ObservationalStudyProtocolDTOTest {
         assertEquals(ispDTO.getBiospecimenRetentionCode().getCode(),BiospecimenRetentionCode.RETAINED.getCode());
         assertEquals(ispDTO.getBiospecimenDescription().getValue(),"BiospecimenDescription");
         assertEquals(ispDTO.getTimePerspectiveCode().getCode(),TimePerspectiveCode.PROSPECTIVE.getCode());
+        assertEquals(ispDTO.getStatusCode().getCode(),ActStatusCode.ACTIVE.getCode());
+        assertEquals(ispDTO.getAmendmentReasonCode().getCode(),AmendmentReasonCode.OTHER.getCode());
     }
     public static ObservationalStudyProtocolDTO createObservationalStudyProtocolDTOObj() {
         ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();

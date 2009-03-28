@@ -81,8 +81,10 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
@@ -259,6 +261,13 @@ public class StudyProtocolTest  {
         sp.setUserLastUpdated("Abstractor");
         sp.setDateLastCreated(now);
         sp.setUserLastCreated("Abstractor");
+        sp.setPrimaryObjective("Primary objective");
+        sp.setSecondaryObjective("Secondary objective");
+        sp.setTernaryObjective("Ternary objective");
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setAmendmentReasonCode(AmendmentReasonCode.OTHER);
+        sp.setStatusDate(now);
+        sp.setAmendmentDate(now);
         return sp;
     }
     
@@ -335,6 +344,9 @@ public class StudyProtocolTest  {
                 create.getDateLastUpdated() , saved.getDateLastUpdated());
         assertEquals(create.getUserLastCreated(), saved.getUserLastCreated());
         assertEquals(create.getDateLastCreated(), saved.getDateLastCreated());
+        assertEquals(create.getAmendmentReasonCode(),saved.getAmendmentReasonCode());
+        assertEquals(create.getStatusCode(),saved.getStatusCode());
+        assertEquals(create.getPrimaryObjective(),saved.getPrimaryObjective());
         
     }
 

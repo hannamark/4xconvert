@@ -108,6 +108,8 @@ public class InterventionalStudyProtocolDTOTest {
         assertEquals(ispDTO.getFdaRegulatedIndicator().getValue(),Boolean.TRUE);
         assertEquals(ispDTO.getOfficialTitle().getValue(),"Phase Ii trial");
         assertEquals(ispDTO.getPhaseCode().getCode(),PhaseCode.I.getCode());
+        assertEquals(ispDTO.getStatusCode().getCode(),ActStatusCode.ACTIVE.getCode());
+        assertEquals(ispDTO.getAmendmentReasonCode().getCode(),AmendmentReasonCode.OTHER.getCode());
     }
     
     public static InterventionalStudyProtocolDTO createInterventionalStudyProtocolDTOObj() {
