@@ -77,7 +77,7 @@
            required="true" cssClass="required"
            onchange="return curateRoleForm_displayFundingMechanism(this.value);"/>
           <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
-        <div id="curateRoleForm_displayFundingMechanism" style="display: inline !important;">
+        <div id="curateRoleForm_displayFundingMechanism" class="inline">
             <%@ include file="selectFundingMechanism.jsp" %>
         </div>
         <s:select id="curateRoleForm.role.status"
