@@ -209,7 +209,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
+            //session.beginTransaction();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             session.delete(bo);
             session.flush();
@@ -227,7 +227,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
+            //session.beginTransaction();
             bo = convertFromDtoToDomain(dto);
             bo.setUserLastUpdated((ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
