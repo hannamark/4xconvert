@@ -163,10 +163,7 @@ public class StudyMilestoneServiceBean
         return documentWorkflowStatusService;
     }
 
-    /**
-     * @return the studyProtocolService
-     */
-    public StudyProtocolServiceRemote getStudyProtocolService() {
+    private StudyProtocolServiceRemote getStudyProtocolService() {
         if (studyProtocolService == null) {
             studyProtocolService = (StudyProtocolServiceRemote) JNDIUtil.lookup("pa/StudyProtocolServiceBean/remote");
         }
