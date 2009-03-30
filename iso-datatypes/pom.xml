@@ -4,7 +4,7 @@
     <groupId>gov.nih.nci.coppa</groupId>
     <artifactId>iso-datatypes</artifactId>
     <packaging>jar</packaging>
-    <version>1.2rc1</version>
+    <version>1.1-SNAPSHOT</version>
     <name>iso</name>
 
     <properties>
@@ -13,10 +13,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/test</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/test</developerConnection>
-        <tag>HEAD</tag>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/tags/test</url>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</developerConnection>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</url>
     </scm>
 
     <ciManagement>
