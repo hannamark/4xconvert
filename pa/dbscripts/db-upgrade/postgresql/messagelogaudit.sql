@@ -1,16 +1,17 @@
-DROP TABLE messages_log_audit;
+DROP TABLE IF EXISTS MESSAGES_LOG_AUDIT;
 
-CREATE TABLE messages_log_audit
+CREATE TABLE MESSAGES_LOG_AUDIT
 (
-  identifier serial NOT NULL,
-  study_protocol_identifier bigint,
-  message_log_identifier bigint,
-  date_last_created timestamp without time zone,
-  user_last_created character varying(200),
-  date_last_updated timestamp without time zone,
-  user_last_updated character varying(200),
-  CONSTRAINT messages_log_audit_pkey PRIMARY KEY (identifier),
-  CONSTRAINT fk_message_log_identifier_sp FOREIGN KEY (message_log_identifier)
-      REFERENCES messages_log (identifier) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE CASCADE
+	IDENTIFIER SERIAL NOT NULL,
+	STUDY_PROTOCOL_IDENTIFIER BIGINT NOT NULL,
+	MESSAGE_LOG_IDENTIFIER BIGINT,
+	DATE_LAST_CREATED TIMESTAMP,
+	USER_LAST_CREATED VARCHAR(200),
+	DATE_LAST_UPDATED TIMESTAMP,
+	USER_LAST_UPDATED VARCHAR(200),
+	PRIMARY KEY (IDENTIFIER) 
 )
+
+ALTER TABLE MESSAGES_LOG_AUDIT ADD CONSTRAINT FK_MESSAGES_LOG_AUDIT_MESSAGES_LOG
+FOREIGN KEY (MESSAGE_LOG_IDENTIFIER) REFERENCES MESSAGES_LOG (IDENTIFIER)
+ON DELETE RESTRICT;
