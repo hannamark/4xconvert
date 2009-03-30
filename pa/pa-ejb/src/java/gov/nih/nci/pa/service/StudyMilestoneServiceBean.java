@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -111,10 +112,15 @@ public class StudyMilestoneServiceBean
         implements StudyMilestoneServiceRemote, StudyMilestoneServicelocal {
 
     DocumentWorkflowStatusServiceRemote documentWorkflowStatusService = null;
+    StudyProtocolServiceRemote studyProtocolService = null;
+
     @EJB
     StudyOnholdServiceRemote studyOnholdService;
     @EJB
     AbstractionCompletionServiceRemote abstractionCompletionService;
+    
+    /** For testing purposes only.  Set to false to bypass abstraction validations. */
+    boolean validateAbstractions = false;
 
     /**
      * @param dto dto
@@ -126,6 +132,7 @@ public class StudyMilestoneServiceBean
         StudyMilestoneDTO workDto = businessRules(dto);
         StudyMilestoneDTO resultDto = super.create(workDto);
         createDocumentWorkflowStatuses(resultDto);
+        updateRecordVerificationDates(resultDto);
         return resultDto;
     }
 
@@ -154,6 +161,16 @@ public class StudyMilestoneServiceBean
                     JNDIUtil.lookup("pa/DocumentWorkflowStatusServiceBean/remote");
         }
         return documentWorkflowStatusService;
+    }
+
+    /**
+     * @return the studyProtocolService
+     */
+    public StudyProtocolServiceRemote getStudyProtocolService() {
+        if (studyProtocolService == null) {
+            studyProtocolService = (StudyProtocolServiceRemote) JNDIUtil.lookup("pa/StudyProtocolServiceBean/remote");
+        }
+        return studyProtocolService;
     }
 
     private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
@@ -247,9 +264,9 @@ public class StudyMilestoneServiceBean
                     + "status is " + ((dwStatus == null) ? "null." : "'" + dwStatus.getCode() + "'."));
             throw new PAException(errMsg.toString());
         }
-        
+
         // validate abstraction
-        if (newCode.isValidationTrigger()) {
+        if (validateAbstractions && newCode.isValidationTrigger()) {
             if (abstractionCompletionService == null) {
                 throw new PAException("Error injecting reference to AbstractionCompletionService.");
             }
@@ -269,22 +286,65 @@ public class StudyMilestoneServiceBean
         if (newCode.equals(MilestoneCode.QC_COMPLETE)) {
             DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
             if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
-                DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
-                dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
-                dwfDto.setStatusDateRange(dto.getMilestoneDate());
-                dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-                getDocumentWorkflowStatusService().create(dwfDto);
+                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED , dto);
             }
         }
         if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)) {
             DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
             if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)) {
-                DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
-                dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED));
-                dwfDto.setStatusDateRange(dto.getMilestoneDate());
-                dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-                getDocumentWorkflowStatusService().create(dwfDto);
+                if (milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
+                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE , dto);
+                } else {
+                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE , dto);
+                }
             }
         }
+        if (newCode.equals(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(dwStatus)
+                    && milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
+                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, dto);
+            }
+        }
+    }
+
+    private void createDocumentWorkflowStatus(
+            DocumentWorkflowStatusCode dwf, StudyMilestoneDTO dto) throws PAException {
+        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+        dwfDto.setStatusCode(CdConverter.convertToCd(dwf));
+        dwfDto.setStatusDateRange(dto.getMilestoneDate());
+        dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+        getDocumentWorkflowStatusService().create(dwfDto);
+    }
+
+    private void updateRecordVerificationDates(StudyMilestoneDTO dto) throws PAException {
+        MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
+        if (newCode.equals(MilestoneCode.QC_COMPLETE)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
+                updateRecordVerificationDate(dto);
+            }
+        }
+        if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)
+                || newCode.equals(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION)) {
+            updateRecordVerificationDate(dto);
+        }
+    }
+
+    private void updateRecordVerificationDate(StudyMilestoneDTO dto) throws PAException {
+        StudyProtocolDTO sp = getStudyProtocolService().getStudyProtocol(dto.getStudyProtocolIdentifier());
+        sp.setRecordVerificationDate(dto.getMilestoneDate());
+        studyProtocolService.updateStudyProtocol(sp);
+    }
+
+    boolean milestoneExists(MilestoneCode milestoneCode, StudyMilestoneDTO dto) throws PAException {
+        List<StudyMilestoneDTO> smList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        for (StudyMilestoneDTO sm : smList) {
+            MilestoneCode tempCode = MilestoneCode.getByCode(CdConverter.convertCdToString(sm.getMilestoneCode()));
+            if (tempCode.equals(milestoneCode)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

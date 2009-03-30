@@ -27,6 +27,7 @@
                     <li><a href="trialFundingquery.action" >Trial Funding</a></li>
                     <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                     <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
+                    <li><a href="milestone.action" >Trial Milestones</a></li>
                     <li><a href="onhold.action" >On-hold Information</a></li>
                 </ul>
 			</s:if>

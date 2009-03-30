@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -116,12 +117,15 @@ public class StudyMilestoneServiceTest {
     private StudyMilestoneServiceRemote remote = bean;
     private DocumentWorkflowStatusServiceBean dws = new DocumentWorkflowStatusServiceBean();
     private StudyOnholdServiceRemote ohs = new StudyOnholdServiceBean();
+    private StudyProtocolServiceRemote sps = new StudyProtocolServiceBean();
     private Ii spIi;
 
     @Before
     public void setUp() throws Exception {
         bean.documentWorkflowStatusService = dws;
         bean.studyOnholdService = ohs;
+        bean.studyProtocolService = sps;
+        bean.validateAbstractions = false;
         TestSchema.reset1();
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
@@ -210,7 +214,7 @@ public class StudyMilestoneServiceTest {
         ohs.create(ohDto);
         DocumentWorkflowStatus dwf = new DocumentWorkflowStatus();
         dwf.setStudyProtocol((StudyProtocol) TestSchema.getSession().get(StudyProtocol.class, IiConverter.convertToLong(spIi)));
-        dwf.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        dwf.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dwf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         TestSchema.addUpdObject(dwf);
 
@@ -263,7 +267,7 @@ public class StudyMilestoneServiceTest {
         
         // create
         DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
-        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED));
+        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE));
         dwfDto.setStatusDateRange(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dwfDto.setStudyProtocolIdentifier(spIi);
         dws.create(dwfDto);
@@ -284,7 +288,7 @@ public class StudyMilestoneServiceTest {
             remote.create(dto);
             fail();
         } catch (PAException e) {
-            // expected behvior
+            // expected behavior
         }
 
         // code is null
@@ -294,7 +298,7 @@ public class StudyMilestoneServiceTest {
             remote.create(dto);
             fail();
         } catch (PAException e) {
-            // expected behvior
+            // expected behavior
         }
 
         // date is null
@@ -310,5 +314,108 @@ public class StudyMilestoneServiceTest {
         // create
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         remote.create(dto);
+    }
+
+    @Test
+    public void prerequisiteTest() throws Exception {
+        // trial summary sent is prerequisite for trial summay feedback
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt("comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setStudyProtocolIdentifier(spIi);
+        try {
+            remote.create(dto);
+            fail("Should fail for missing prerequisite.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+        remote.create(dto);
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
+        remote.create(dto);
+    }
+
+    @Test
+    public void createDocumentWorkflowStatusesTest() throws Exception {
+        List<DocumentWorkflowStatusDTO> dwsList = dws.getByStudyProtocol(spIi);
+        int dwsCount = dwsList.size();
+        assertTrue(dwsCount > 0);
+        
+        // start qc does not change dws
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt("comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.QC_START));
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setStudyProtocolIdentifier(spIi);
+        remote.create(dto);
+        dwsList = dws.getByStudyProtocol(spIi);
+        assertEquals(dwsCount, dwsList.size());
+
+        // complete qc only changes dws if current dws is accepted
+        dwsList = dws.getCurrentByStudyProtocol(spIi);
+        assertFalse(DocumentWorkflowStatusCode.ACCEPTED.equals(
+                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsList.get(0).getStatusCode()))));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.QC_COMPLETE));
+        remote.create(dto);
+        dwsList = dws.getByStudyProtocol(spIi);
+        assertEquals(dwsCount, dwsList.size());
+
+        // initial verification set dws to verified-noresponse if no feedback has been received
+        assertFalse(bean.milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
+        remote.create(dto);
+        dwsList = dws.getCurrentByStudyProtocol(spIi);
+        assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(
+                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsList.get(0).getStatusCode()))));
+        dwsList = dws.getByStudyProtocol(spIi);
+        assertEquals(++dwsCount, dwsList.size());
+        
+        //  ongoing verifications do not change dws if still no feedback
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
+        remote.create(dto);
+        dwsList = dws.getByStudyProtocol(spIi);
+        assertEquals(dwsCount, dwsList.size());
+        
+        // trial summary sent feedback does not change dws
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+        remote.create(dto);
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
+        remote.create(dto);
+        dwsList = dws.getByStudyProtocol(spIi);
+        assertEquals(dwsCount, dwsList.size());
+
+        // ongoing verifications set to verified-response after feedback
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
+        remote.create(dto);
+        dwsList = dws.getCurrentByStudyProtocol(spIi);
+        assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.equals(
+                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsList.get(0).getStatusCode()))));
+        dwsList = dws.getByStudyProtocol(spIi);
+        assertEquals(++dwsCount, dwsList.size());
+    }
+    
+    @Test
+    public void updateRecordVerificationDateTest() throws Exception {
+        Timestamp t1 = new Timestamp(new Date().getTime());
+        Thread.sleep(100);
+        Timestamp t2 = new Timestamp(new Date().getTime());
+        assertFalse(t1.equals(t2));
+        
+        // set initial date
+        StudyProtocolDTO sp = sps.getStudyProtocol(spIi);
+        sp.setRecordVerificationDate(TsConverter.convertToTs(t1));
+        sps.updateStudyProtocol(sp);
+
+        // milestone triggers change of date
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt("comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
+        dto.setMilestoneDate(TsConverter.convertToTs(t2));
+        dto.setStudyProtocolIdentifier(spIi);
+        remote.create(dto);
+        sp = sps.getStudyProtocol(spIi);
+        assertTrue(t2.equals(TsConverter.convertToTimestamp(sp.getRecordVerificationDate())));
     }
 }
