@@ -82,6 +82,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -221,8 +222,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO , 
             PersonDTO responsiblePartyContactDTO)
     throws PAException {
-        
-        Ii ii = createStudyProtocolObjs(
+        Ii fromStudyProtocolii = studyProtocolDTO.getIdentifier();
+        Ii toStudyProtocolIi = createStudyProtocolObjs(
                 studyProtocolDTO , 
                 overallStatusDTO , 
                 studyIndldeDTOs , 
@@ -239,8 +240,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 summary4studyResourcingDTO , 
                 responsiblePartyContactDTO);
         
-        
-        return ii;
+        deepCopy(fromStudyProtocolii , toStudyProtocolIi);
+        deepCopyParticipation(fromStudyProtocolii , toStudyProtocolIi);
+        return toStudyProtocolIi;
                 
     }
     
@@ -320,6 +322,24 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO , 
             PersonDTO responsiblePartyContactDTO)
     throws PAException {
+        
+        enforceBusinessRules(
+                studyProtocolDTO, 
+                overallStatusDTO, 
+                studyIndldeDTOs, 
+                studyResourcingDTOs, 
+                documentDTOs, 
+                summary4organizationDTO, 
+                summary4studyResourcingDTO, 
+                leadOrganizationDTO, 
+                principalInvestigatorDTO, 
+                responsiblePartyContactDTO, 
+                sponsorOrganizationDTO, 
+                studyContactDTO, 
+                studyParticipationContactDTO, 
+                leadOrganizationParticipationIdentifierDTO, 
+                nciIdentifierParticipationIdentifierDTO);
+        
         Ii oldIdentifier =  studyProtocolDTO.getIdentifier();
         Ii studyProtocolIi = null;
         StudyTypeCode studyTypeCode = null;
@@ -332,6 +352,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     (ObservationalStudyProtocolDTO) studyProtocolDTO);
             studyTypeCode = StudyTypeCode.OBSERVATIONAL;
         }
+        
+        StudyProtocolDTO oldSpDto = studyProtocolService.getStudyProtocol(oldIdentifier);
+        oldSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+        studyProtocolService.updateStudyProtocol(oldSpDto);
+
+        
         // set the study over all status 
         overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
         //studyOverallStatusService.create(overallStatusDTO);

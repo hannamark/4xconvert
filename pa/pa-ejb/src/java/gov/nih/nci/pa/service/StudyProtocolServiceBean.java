@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -369,15 +370,8 @@ import org.hibernate.Session;
         enForceBusinessRules(ispDTO);
         LOG.debug("Entering createInterventionalStudyProtocol");
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
-        convertFromDTOToDomain(ispDTO);
-        isp.setIdentifier(generateNciIdentifier());
-        if (ejbContext != null) {
-            isp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
-        }
-        isp.setDateLastCreated(new Timestamp((new Date()).getTime()));
-        if (ispDTO.getUserLastCreated() != null) {
-            isp.setUserLastCreated(ispDTO.getUserLastCreated().getValue());
-        }
+                convertFromDTOToDomain(ispDTO);
+        setDefaultValues(isp , ispDTO);
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -648,6 +642,22 @@ import org.hibernate.Session;
         }
         if ((sDate != null) && (cDate != null) && (cDate.before(sDate))) {
             throw new PAException("Primary completion date must be >= start date.");
+        }
+    }
+    
+    private void setDefaultValues(StudyProtocol sp , StudyProtocolDTO spDTO) throws PAException {
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setStatusDate(new Timestamp((new Date()).getTime()));
+        
+        if (sp.getIdentifier() == null) {
+            sp.setIdentifier(generateNciIdentifier());
+        }
+        if (ejbContext != null) {
+            sp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
+        }
+        sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
+        if (spDTO.getUserLastCreated() != null) {
+            sp.setUserLastCreated(spDTO.getUserLastCreated().getValue());
         }
     }
 }
