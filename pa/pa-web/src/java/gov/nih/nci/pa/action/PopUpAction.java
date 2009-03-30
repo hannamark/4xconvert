@@ -116,14 +116,20 @@ public class PopUpAction extends ActionSupport {
      * @return String success or failure
      */
     public String lookupcontactpersons() {
-        persons = null;
-        String email = ServletActionContext.getRequest().getParameter("email");
-        String telephone = ServletActionContext.getRequest().getParameter("tel");
-        if (email != null) {
-            ServletActionContext.getRequest().getSession().setAttribute("emailEntered", email);
-        }
-        if (telephone != null) {
-            ServletActionContext.getRequest().getSession().setAttribute("telephoneEntered", telephone);
+        try {
+            persons = null;
+            getCountriesList();
+            String email = ServletActionContext.getRequest().getParameter("email");
+            String telephone = ServletActionContext.getRequest().getParameter("tel");
+            if (email != null) {
+                ServletActionContext.getRequest().getSession().setAttribute("emailEntered", email);
+            }
+            if (telephone != null) {
+                ServletActionContext.getRequest().getSession().setAttribute("telephoneEntered", telephone);
+            }
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return ERROR;            
         }
         return "contactpersons";
     }
