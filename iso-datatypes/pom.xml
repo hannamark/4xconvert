@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa</groupId>
@@ -14,10 +13,10 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</developerConnection>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/test</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/test</developerConnection>
         <tag>HEAD</tag>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</url>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/tags/test</url>
     </scm>
 
     <ciManagement>
