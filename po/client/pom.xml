@@ -11,17 +11,17 @@
     <packaging>pom</packaging>
     <name>po-client</name>
     <url>../../client/target/site</url>
-    
+
     <properties>
         <test.selenium.server.port>60001</test.selenium.server.port>
-        <test.selenium.server.debug>true</test.selenium.server.debug>        
+        <test.selenium.server.debug>true</test.selenium.server.debug>
         <test.selenium.browser>*chrome</test.selenium.browser>
         <selenium-maven-plugin.version>1.0-rc-1-SNAPSHOT</selenium-maven-plugin.version>
         <deployedArtifact>${jboss.home}/server/${jboss.configuration}/deploy/po.ear</deployedArtifact>
         <jboss.jmx.username>admin</jboss.jmx.username>
         <jboss.jmx.password>admin</jboss.jmx.password>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>log4j</groupId>
@@ -29,7 +29,7 @@
             <version>1.2.8</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>${pom.parent.groupId}</groupId>
             <artifactId>po-services</artifactId>
@@ -61,7 +61,7 @@
             <version>0.2</version>
             <scope>test</scope>
         </dependency>
-    
+
         <!-- Selenium -->
         <dependency>
             <groupId>org.openqa.selenium.client-drivers</groupId>
@@ -81,7 +81,7 @@
             <version>${jdbc.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- API tests -->
         <dependency>
             <groupId>jboss</groupId>
@@ -119,9 +119,9 @@
             <systemPath>${jboss.home}/client/jboss-aspect-jdk50-client.jar</systemPath>
         </dependency>
     </dependencies>
-    
+
     <pluginRepositories>
-	    <pluginRepository>
+        <pluginRepository>
             <id>openqa</id>
             <name>OpenQA Repository</name>
             <url>http://archiva.openqa.org/repository/releases/</url>
@@ -131,19 +131,19 @@
             </snapshots>
             <releases>
             </releases>
-	    </pluginRepository>
-	    <pluginRepository>
-	            <id>codehaus snapshots</id>
-	            <name>Codehaus Snapshots Repository</name>
-	            <url>http://snapshots.repository.codehaus.org</url>
-	            <snapshots>
-	            </snapshots>
-	            <releases>
-	                <enabled>false</enabled>
-	            </releases>
-	    </pluginRepository>
+        </pluginRepository>
+        <pluginRepository>
+                <id>codehaus snapshots</id>
+                <name>Codehaus Snapshots Repository</name>
+                <url>http://snapshots.repository.codehaus.org</url>
+                <snapshots>
+                </snapshots>
+                <releases>
+                    <enabled>false</enabled>
+                </releases>
+        </pluginRepository>
     </pluginRepositories>
-    
+
     <repositories>
         <repository>
             <id>openqa</id>
@@ -167,7 +167,7 @@
             </releases>
         </repository>
     </repositories>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -180,7 +180,7 @@
                                 <type>ear</type>
                                 <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
                                 <pingTimeout>90000</pingTimeout>
-                                <location>${pom.base90dir}/../ear/target/po.ear</location>
+                                <location>${pom.basedir}/../ear/target/po.ear</location>
                             </deployable>
                         </deployables>
                     </deployer>
@@ -202,7 +202,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <profiles>
         <profile>
             <id>ci</id>
@@ -546,7 +546,7 @@
                     </testResource>
                 </testResources>
             </build>
-        </profile>  
+        </profile>
         <profile>
             <id>ci-nostart-nodeploy</id>
             <activation></activation>
@@ -656,6 +656,6 @@
                     </testResource>
                 </testResources>
             </build>
-        </profile>               
+        </profile>
     </profiles>
 </project>
