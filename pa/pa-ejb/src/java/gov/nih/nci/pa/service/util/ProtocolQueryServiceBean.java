@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -124,7 +125,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-        "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+        "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength"  })
 public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudyProtocolServiceBean.class);
@@ -597,6 +598,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");           
+           where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");           
+
            // sub-query for searching trials by NCT number
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
                 where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 " 

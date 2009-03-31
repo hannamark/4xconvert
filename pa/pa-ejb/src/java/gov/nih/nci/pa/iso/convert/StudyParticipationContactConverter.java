@@ -97,7 +97,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Convert StudyParticipationContact domain to DTO.
@@ -188,13 +187,9 @@ public class StudyParticipationContactConverter {
         bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         
-        
-        List retList = null;
         if (dto.getTelecomAddresses() != null) {
-            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");
-            bo.setEmail(retList.get(0).toString());
-            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
-            bo.setPhone(retList.get(0).toString());
+            bo.setEmail(DSetConverter.getFirstElement(dto.getTelecomAddresses(), "EMAIL"));
+            bo.setPhone(DSetConverter.getFirstElement(dto.getTelecomAddresses(), "PHONE"));
         }
 
         if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {

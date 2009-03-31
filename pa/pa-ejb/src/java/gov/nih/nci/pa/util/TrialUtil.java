@@ -23,8 +23,6 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -298,13 +296,17 @@ public class TrialUtil {
      * 
      * @param trialDTO dtotoConvert
      * @return isoDto
+     * @throws PAException on error 
      */
-    public StudyProtocolDTO convertToStudyProtocolDTO(TrialDTO trialDTO) {
+    public StudyProtocolDTO convertToStudyProtocolDTO(TrialDTO trialDTO) throws PAException {
         StudyProtocolDTO isoDto = null;
+        
         if (trialDTO.getTrialType().equalsIgnoreCase("Observational")) {
-            isoDto = new ObservationalStudyProtocolDTO();
+            isoDto = PoPaServiceBeanLookup.getStudyProtocolService().getObservationalStudyProtocol(
+                        IiConverter.convertToIi(trialDTO.getIdentifier()));
         } else {
-            isoDto  = new InterventionalStudyProtocolDTO();
+            isoDto  = PoPaServiceBeanLookup.getStudyProtocolService().getInterventionalStudyProtocol(
+                    IiConverter.convertToIi(trialDTO.getIdentifier()));
         }
         isoDto.setAssignedIdentifier(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));
         isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));

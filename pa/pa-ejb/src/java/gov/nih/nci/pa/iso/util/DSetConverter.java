@@ -232,7 +232,7 @@ public class DSetConverter {
      * @return first element of phone/email
      */
     public static String getFirstElement(DSet<Tel> dSet, String type) {
-        List<String> tels = convertDSetToList(dSet, "type");
+        List<String> tels = convertDSetToList(dSet, type);
         String tel = null;
         if (tels != null && !tels.isEmpty()) {
             tel =  tels.get(0);

@@ -343,6 +343,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         Ii oldIdentifier =  studyProtocolDTO.getIdentifier();
         Ii studyProtocolIi = null;
         StudyTypeCode studyTypeCode = null;
+        studyProtocolDTO.setIdentifier(null);
         if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
             studyProtocolIi =  studyProtocolService.createInterventionalStudyProtocol(
                         (InterventionalStudyProtocolDTO) studyProtocolDTO);
@@ -362,8 +363,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
         //studyOverallStatusService.create(overallStatusDTO);
         createOverallStatuses(studyProtocolIi, oldIdentifier , overallStatusDTO);
-        createIndIdes(studyProtocolIi , studyIndldeDTOs);
-        createStudyResources(studyProtocolIi , studyResourcingDTOs);
+        if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) {
+            createIndIdes(studyProtocolIi , studyIndldeDTOs);
+        }
+        if (studyResourcingDTOs != null && !studyResourcingDTOs.isEmpty()) {
+            createStudyResources(studyProtocolIi , studyResourcingDTOs);
+        }
         createdocuments(studyProtocolIi , documentDTOs);
         createSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
         createLeadOrganization(studyProtocolIi , leadOrganizationDTO , leadOrganizationParticipationIdentifierDTO);
@@ -413,6 +418,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private void createIndIdes(Ii studyProtocolIi , List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
         for (StudyIndldeDTO studyIndldeDTO : studyIndldeDTOs) {
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
+            studyIndldeDTO.setIdentifier(null);
             studyIndldeService.create(studyIndldeDTO);
         }
     }
@@ -422,6 +428,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     throws PAException {
         for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
             studyResourcingDTO.setStudyProtocolIi(studyProtocolIi);
+            studyResourcingDTO.setIdentifier(null);
             studyResourcingService.createStudyResourcing(studyResourcingDTO);
         }
     }
@@ -430,6 +437,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     throws PAException {
         for (DocumentDTO documentDTO : documentDTOs) {
             documentDTO.setStudyProtocolIi(studyProtocolIi);
+            documentDTO.setIdentifier(null);
             documentService.create(documentDTO);
         }
     }

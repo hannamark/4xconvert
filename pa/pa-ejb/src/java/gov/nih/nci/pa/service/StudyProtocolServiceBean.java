@@ -594,7 +594,7 @@ import org.hibernate.Session;
         }
 
         //
-        if ((studyProtocolDTO.getFdaRegulatedIndicator() != null) 
+        if ((studyProtocolDTO.getIdentifier() != null && studyProtocolDTO.getFdaRegulatedIndicator() != null) 
                 && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null) 
                 && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()))) {
             StudyIndldeServiceLocal local = (StudyIndldeServiceLocal) 
