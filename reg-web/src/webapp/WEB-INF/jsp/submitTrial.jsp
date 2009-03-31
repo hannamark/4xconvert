@@ -34,7 +34,6 @@
 var orgid;
 var persid;
 function setorgid(orgIdentifier){
-	alert(orgIdentifier);
 	orgid = orgIdentifier;
 }
 function setpersid(persIdentifier){
