@@ -109,7 +109,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="po-grid.dir.target" value="wsrf.war" />
 	<property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
 	<property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-	<property name="po-grid.build.target" value="deployJBoss"/>
+	<property name="po-grid.build.target" value="clean:deployJBoss"/>
 	<property name="po-grid.artifact.dir" value="${po-grid.base.dir}/target" />
 	<property name="po-grid.dist.dir" value="${dist.exploded.dir}/${po-grid.dist.relative.dir}"/>
 
@@ -302,7 +302,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		"/>
 
 	<!-- First Maven Target -->
-	<target name="build:po" depends="init, build:iso-datatypes">
+	<target name="build:po" depends="init">
 		<delete>
 			<fileset dir="${po.base.dir}">
 				<include name="**/profiles.xml" />
@@ -349,16 +349,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 		<antcall target="build:po-grid"/>
 	</target>
-	<target name="build:iso-datatypes" depends="init">
-		<copy todir="${iso-datatypes.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-		</copy>
-		<maven
-			maven.profile.list=""
-			maven.goal.list="${iso-datatypes.maven.goal.list}"
-			maven.dir="${iso-datatypes.base.dir}"
-			/>
-	</target>
-
 	<!-- Build po-grid sub-project produces project level artifact -->
 	<target name="build:po-grid" depends="init">
 		<fail unless="jboss.server.hostname"/>
@@ -366,7 +356,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 		<echo message="Copying po-grid dependencies from po-services and iso-datatypes"/>
 		<copy todir="${po-grid.base.dir}/lib" file="${po-services.base.dir}/target/${po-services-client.jar.name}" overwrite="true"/>
-		<copy todir="${po-grid.base.dir}/lib" file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" overwrite="true"/>
 
 		<ant inheritAll="false" inheritRefs="false" antfile="${po-grid.build.file}"
             target="${po-grid.build.target}"
@@ -825,39 +814,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	</target>
 
 	<target name="ivy:publish:artifacts" description="Use to publish PO artifacts to the CBIIT IVY repository" 
-	   depends="ivy:publish:artifact:iso-datatypes, ivy:publish:artifact:po-services-client">
-	</target>
-
-	<target name="ivy:publish:artifact:iso-datatypes" description="Use to publish PO ISO-DATATYPEs artifacts to the CBIIT IVY repository">
-		<property name="iso-datatypes.jar.name" value="iso-datatypes-1.0-SNAPSHOT.jar"/>
-
-		<available file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" property="iso-datatypes.jar.available"/>
-		<fail unless="iso-datatypes.jar.available" message="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name} not found!"/>
-
-		<mkdir dir="${temp.dir}/po-ivy-modules"/>
-		<mkdir dir="${temp.dir}/po-ivy-modules/iso-datatypes"/>
-		<copy file="${common.dir}/po-ivy-modules/iso-datatypes.xml" 
-			tofile="${temp.dir}/po-ivy-modules/iso-datatypes/ivy.xml" 
-			filtering="true">
-			<filterset>
-				<filter token="revision" value="${po-iso-datatypes.version}"/>
-			</filterset>
-		</copy>
-		<copy file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" 
-	    	tofile="${iso-datatypes.base.dir}/target/iso-datatypes-${po-iso-datatypes.version}.jar"/>
-		<ivy-module-add2repo
-             ivy-repo.base.dir="${local.repo.dir}"
-             ivy.add.org="ncicb"
-             ivy.add.module="iso-datatypes"
-             ivy.add.version="${po-iso-datatypes.version}"
-             ivy.add.module.src.dir="${software.dir}/iso-datatypes/target"
-             ivy.add.module.src.file.list="iso-datatypes-${po-iso-datatypes.version}.jar"
-             ivy.add.xml.src.location="${temp.dir}/po-ivy-modules/iso-datatypes/ivy.xml" />
+	   depends="ivy:publish:artifact:po-services-client">
 	</target>
 
 	<target name="ivy:publish:artifact:po-services-client" description="Use to publish PO SERVICES CLIENT artifact to the CBIIT IVY repository">
-		<property name="po-services-client.jar.name" value="po-services-1.0-SNAPSHOT-client.jar"/>
-
 		<available file="${po-services.base.dir}/target/${po-services-client.jar.name}" property="po-services-client.jar.available"/>
 		<fail unless="po-services-client.jar.available" message="${po-services.base.dir}/target/${po-services-client.jar.name} not found!"/>
 

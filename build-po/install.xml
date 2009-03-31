@@ -452,13 +452,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	
     <!-- Installs the po-grid application to JBOSS -->
     <target name="install:po-grid:application" description="Deploy Coppa PO Grid application to JBOSS" unless="exclude.po-grid">
+    	<echo message="Entirely removing existing wsrf.war deployment"/>
+    	<delete dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}"/>
         <mkdir dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}"/>
 
         <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
         <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
 
         <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}" src="${po-grid.dir.src}/${po-grid.artifact.file}" />
-    	<echo message="Removing tmp amp; bak web.xml files from installation"/>
     </target>
 
     <!-- Configures installed po-grid application -->
@@ -746,7 +747,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
 		<unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/${po-ear.dist.relative.dir}"/>
 		<unzip src="${temp.dir}/${po-ear.dist.relative.dir}/po-web.war" dest="${temp.dir}/po-web"/>
-		<unzip src="${temp.dir}/${po-ear.dist.relative.dir}/po-services-1.0-SNAPSHOT.jar" dest="${temp.dir}/po-services"/>
+		<unzip src="${temp.dir}/${po-ear.dist.relative.dir}/${po-services.jar.name}" dest="${temp.dir}/po-services"/>
 
 		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
 		<var name="file.list" 
@@ -817,7 +818,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			<fileset dir="${temp.dir}/po-web"/>
 		</war>
 
-	    <jar destfile="${temp.dir}/po-ear/po-services-1.0-SNAPSHOT.jar" 
+	    <jar destfile="${temp.dir}/po-ear/${po-services.jar.name}" 
 	                basedir="${temp.dir}/po-services" compress="false" />
 	            
 	    <ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}" 
