@@ -190,7 +190,13 @@ public class Constants {
     public static final String IDENTIFIER_TYPE_NCT = "NCT";
     
     /** TRIAL TITLE - Max Length. */
-    public static final int TRIAL_TITLE_MAX_LENGTH = 4000;
+    public static final int TRIAL_TITLE_MAX_LENGTH = 4000;    
+    
+    /** Organization Type- Lead Organization. */
+    public static final String LEAD_ORGANIZATION = "Lead Organization";
+    
+    /** Organization Type- Participating Site. */
+    public static final String PARTICIPATING_SITE = "Participating Site";
     
     
     

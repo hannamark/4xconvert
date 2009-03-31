@@ -48,7 +48,7 @@ function generateReport(pid) {
                     <s:textfield name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
                 </td>
              </tr>                                               
-            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
+            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
 
             <tr>
                 <td scope="row" class="label">

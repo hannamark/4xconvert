@@ -485,33 +485,28 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StringBuffer where = new StringBuffer();
         try {
             where.append("where 1 = 1 ");
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
-                    .getStudyProtocolId())) {
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getStudyProtocolId())) {
                 where.append(" and sp.id = ").append(
                         studyProtocolQueryCriteria.getStudyProtocolId());
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
-                    .getOfficialTitle())) {
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOfficialTitle())) {
                 where.append(" and upper(sp.officialTitle)  like '%"
                         + studyProtocolQueryCriteria.getOfficialTitle()
                                 .toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
-                    .getPhaseCode())) {
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPhaseCode())) {
                 where.append(" and sp.phaseCode  = '"
                         + PhaseCode.getByCode(studyProtocolQueryCriteria
                                 .getPhaseCode()) + "'");
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
-                    .getNciIdentifier())) {
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
                 where.append(" and upper(sp.identifier)  like '%"
                         + studyProtocolQueryCriteria.getNciIdentifier()
                                 .toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
-                    .getStudyStatusCode())) {
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyStatusCode())) {
                 where.append(" and sos.statusCode  = '"
                         + StudyStatusCode.getByCode(studyProtocolQueryCriteria
                                 .getStudyStatusCode()) + "'");
@@ -529,8 +524,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + PrimaryPurposeCode.getByCode(studyProtocolQueryCriteria
                                         .getPrimaryPurposeCode()) + "'");
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
-                    .getDocumentWorkflowStatusCode())) {
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())) {
                 where.append(" and dws.statusCode  = '" + DocumentWorkflowStatusCode.
                         getByCode(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode()) + "'");
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
@@ -591,15 +585,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            // Rejected trial should be excluded from duplicate check
            if (studyProtocolQueryCriteria.getExcludeRejectProtocol() != null 
                    && studyProtocolQueryCriteria.getExcludeRejectProtocol().booleanValue()) {
-               where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
-               
+               where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");               
            }
            where.append(" and sps.functionalCode ='"
                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");           
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");           
-
            // sub-query for searching trials by NCT number
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
                 where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 " 
@@ -610,18 +602,27 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                + " and sps1.functionalCode = '" 
                                + StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER + "')");
            }
+           // sub-query for searching trials by  Participating site
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOrganizationType())
+                   && studyProtocolQueryCriteria.getOrganizationType().equalsIgnoreCase(
+                           PAConstants.PARTICIPATING_SITE)) {
+               where.append(" and sp.id in(select sp2.id from StudyProtocol as sp2  "
+                       + "left outer join sp2.studyParticipations as sps2  "
+                       + "left outer join sps2.healthCareFacility as hcf "
+                       + "left outer join hcf.organization as site "
+                       + " where site.id = " + studyProtocolQueryCriteria.getParticipatingSiteId() + ")");             
+           }
            // sub-query for searching only on hold trials
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSearchOnHold())
                    && studyProtocolQueryCriteria.getSearchOnHold().equals("true")) {
-                where.append(" and sp.id in(select distinct sp2.id from StudyProtocol as sp2 " 
-                      + " left outer join sp2.studyOnholds as spoh "
+                where.append(" and sp.id in(select distinct sp3.id from StudyProtocol as sp3 " 
+                      + " left outer join sp3.studyOnholds as spoh "
                       + " where spoh.onholdDate is not null and "
                       + " spoh.offholdDate is null)");
            }           
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
-            throw new PAException("General error in while create where cluase",
-                    e);
+            throw new PAException("General error in while create where cluase", e);
         } finally {
             LOG.debug("Leaving generateWhereClause ");
         }

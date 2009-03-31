@@ -83,6 +83,7 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -118,13 +119,14 @@ public class PAOrganizationServiceBean implements
     /**
      * returns distinct organization that have been associated with a protocol.
      * @return OrganizationDTO
+     * @param organizationType Organization Type
      * @throws PAException pa exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol() 
+    public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(String organizationType) 
     throws PAException {
-        LOG.debug("Entereing getOrganizationsAssociatedWithStudyProtocol");
-        List<Organization> organizations = generateDistinctOrganizationQuery();
+        LOG.debug("Entering getOrganizationsAssociatedWithStudyProtocol");
+        List<Organization> organizations = generateDistinctOrganizationQuery(organizationType);
         List<PaOrganizationDTO> organizationDTOs = createOrganizationDTO(organizations);
         LOG.debug("Leaving getOrganizationsAssociatedWithStudyProtocol");
         return organizationDTOs;  
@@ -194,7 +196,7 @@ public class PAOrganizationServiceBean implements
 
     
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
-    private List<Organization> generateDistinctOrganizationQuery()  
+    private List<Organization> generateDistinctOrganizationQuery(String organizationType)  
     throws PAException {
         LOG.debug("Entering generateDistinctOrganizationQuery ");
 
@@ -206,15 +208,25 @@ public class PAOrganizationServiceBean implements
         try {
             session = HibernateUtil.getCurrentSession();
             StringBuffer hql = new StringBuffer();
-            hql.append(
-                    " Select o from Organization o  " 
-                  + " join o.researchOrganizations as ros " 
-                  + " join ros.studyParticipations as sps " 
-                  + " join sps.studyProtocol as sp " 
-                  + "  where sps.functionalCode = '"  
-                  +   StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'"
-                  +  " order by o.name");
-
+            if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
+                hql.append(
+                        " Select o from Organization o  " 
+                      + " join o.researchOrganizations as ros " 
+                      + " join ros.studyParticipations as sps " 
+                      + " join sps.studyProtocol as sp " 
+                      + "  where sps.functionalCode = '"  
+                      +   StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'"
+                      +  " order by o.name");
+            } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
+                hql.append(
+                        " Select o from Organization o  " 
+                      + " join o.healthCareFacilities as hcf " 
+                      + " join hcf.studyParticipations as sps " 
+                      + " join sps.studyProtocol as sp " 
+                      + "  where sps.functionalCode = '"  
+                      +   StudyParticipationFunctionalCode.TREATING_SITE  + "'"
+                      +  " order by o.name");
+            }
             organizations =  session.createQuery(hql.toString()).list();
             for (Organization o : organizations) {
                 if (orgSet.add(o.getId())) {

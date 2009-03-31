@@ -101,9 +101,10 @@ public interface PAOrganizationServiceRemote  {
     /**
      * returns all the organization that have been associated with a protocol.
      * @return OrganizationDTO
+     * @param organizationType Organization Type
      * @throws PAException PAException
      */
-    List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol()
+    List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(String organizationType)
     throws PAException;
 
     /**

@@ -92,5 +92,11 @@ public class PAConstants {
     
     /** Whitespace. */
     public static final String WHITESPACE = " ";
+    
+    /** Organization Type- Lead Organization. */
+    public static final String LEAD_ORGANIZATION = "Lead Organization";
+    
+    /** Organization Type- Participating Site. */
+    public static final String PARTICIPATING_SITE = "Participating Site";
 
 }

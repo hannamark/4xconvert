@@ -9,7 +9,7 @@
     <s:head/>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
-
+window.onload=displayOrg;
 function resetValues(){
 	document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
     document.forms.queryProtocol.queryProtocol_criteria_phaseCode.value="";
@@ -34,16 +34,28 @@ function handleMyAction(){
 		document.forms[0].action="searchTrialview.action?studyProtocolId="+pId+"&usercreated="+user;
 		document.forms[0].submit(); 
 	}
+	function displayOrg(){
+	    var input="criteria.organizationType";
+	    var inputElement = document.forms[0].elements[input];	    
+	        if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {	            
+	            document.getElementById("Lead").style.display = "none";
+	            document.getElementById("Site").style.display = "";
+	        }else {
+	               document.getElementById("Lead").style.display = "";
+                   document.getElementById("Site").style.display = "none";
+	        }
+    }
 </SCRIPT>
 <body>
 <!-- main content begins-->
     <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a>
     <h1><fmt:message key="search.trial.page.header"/></h1>
-    <c:set var="topic" scope="request" value="search_trials"/>
+    <c:set var="topic"  scope="request" value="search_trials"/>
     <c:if test="${records != null}">    
         <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
     </c:if>
     <div class="box" id="filters">
+    <reg-web:failureMessage/>
     <s:form>
     <input type="hidden" name="criteria.myTrialsOnly" id="myTrialsOnly" value="false"/>
         <table class="form">
@@ -109,23 +121,31 @@ function handleMyAction(){
 			<tr>
 				<td scope="row" class="label">
 					<label for="searchTrial_criteria_organizationType"> <fmt:message key="search.trial.organizationType"/></label>
-				</td>
-					<s:set name="organizationTypeValues" value="@gov.nih.nci.pa.enums.OrganizationTypeCode@getDisplayNames()" />
+				</td>			
 				<td>
-					<s:select headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization'}" value="criteria.organizationType" cssStyle="width:206px"/> 
+					<s:select headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/> 
 				</td>
 				<td scope="row" class="label">
 					<label for="searchTrial_criteria_organizationId"> <fmt:message key="search.trial.organization"/></label>
+				</td>		        
+				<td id="Lead">
+				    <s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
+					<s:select name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" cssStyle="width:206px"/>
+	                <span class="formErrorMsg"> 
+	                    <s:fielderror>
+	                    <s:param>criteria.organizationId</s:param>
+	                   </s:fielderror>                            
+	                </span>  
 				</td>
-				<s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
-				<td>
-				<s:select name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" cssStyle="width:206px"/>
-                <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>criteria.organizationId</s:param>
-                   </s:fielderror>                            
-                </span>  
-				</td>
+				<td id="Site" style="display:none">
+				    <s:set name="participatingSites" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
+                    <s:select name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" cssStyle="width:206px"/>
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>criteria.organizationId</s:param>
+                       </s:fielderror>                            
+                    </span>  
+                </td>
 			</tr>
         </table>
         <div class="actionsrow">

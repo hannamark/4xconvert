@@ -14,6 +14,7 @@ public class SearchProtocolCriteria {
     private String identifier;
     private String officialTitle;
     private Long organizationId;
+    private Long participatingSiteId;
     private String phaseCode;
     private String primaryPurposeCode;
     private String organizationType;
@@ -66,6 +67,18 @@ public class SearchProtocolCriteria {
      */
     public void setOrganizationId(Long organizationId) {
         this.organizationId = organizationId;
+    }
+    /**
+     * @param participatingSiteId the participatingSiteId to set
+     */
+    public void setParticipatingSiteId(Long participatingSiteId) {
+        this.participatingSiteId = participatingSiteId;
+    }
+    /**
+     * @return the participatingSiteId
+     */
+    public Long getParticipatingSiteId() {
+        return participatingSiteId;
     }
     /**
      * @return the phaseCode

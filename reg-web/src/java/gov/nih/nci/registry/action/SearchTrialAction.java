@@ -270,6 +270,8 @@ public class SearchTrialAction extends ActionSupport {
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
+            ServletActionContext.getRequest().setAttribute(
+                    "failureMessage" , "Exception occured during trials search : " + e.getMessage());
             return ERROR;
         }
     }
@@ -295,7 +297,13 @@ public class SearchTrialAction extends ActionSupport {
                 queryCriteria.setNctNumber(criteria.getIdentifier());
             }
         }
-        queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
+        if (criteria.getOrganizationId() != null) {
+            queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
+        } 
+        if (criteria.getParticipatingSiteId() != null) {
+            queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId());            
+        }
+        queryCriteria.setOrganizationType(criteria.getOrganizationType());
         queryCriteria.setMyTrialsOnly(new Boolean(criteria.getMyTrialsOnly()));
         queryCriteria.setUserLastCreated(ServletActionContext.getRequest().getRemoteUser());
         // exclude rejected protocols during search
@@ -553,10 +561,12 @@ public class SearchTrialAction extends ActionSupport {
            addFieldError("criteria.identifierType",
                    getText("error.search.identifierType"));
        }
-       if (PAUtil.isNotEmpty(criteria.getOrganizationType()) 
-                && criteria.getOrganizationId() == null) {
+       if (PAUtil.isNotEmpty(criteria.getOrganizationType())
+               && (criteria.getOrganizationId() == null 
+                       && criteria.getParticipatingSiteId() == null)) {
            addFieldError("criteria.organizationId",
                    getText("error.search.organization"));
+
        }
 
     }

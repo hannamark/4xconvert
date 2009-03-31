@@ -108,6 +108,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String nctNumber;
     private String officialTitle;
     private Long leadOrganizationId;
+    private Long participatingSiteId;
     private String leadOrganizationTrialIdentifier;
     private String phaseCode;
     private String studyStatusCode;
@@ -193,6 +194,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setLeadOrganizationTrialIdentifier(
             String leadOrganizationTrialIdentifier) {
         this.leadOrganizationTrialIdentifier = leadOrganizationTrialIdentifier;
+    }
+    /**
+     * @param participatingSiteId the participatingSiteId to set
+     */
+    public void setParticipatingSiteId(Long participatingSiteId) {
+        this.participatingSiteId = participatingSiteId;
+    }
+    /**
+     * @return the participatingSiteId
+     */
+    public Long getParticipatingSiteId() {
+        return participatingSiteId;
     }
     /**
      *
