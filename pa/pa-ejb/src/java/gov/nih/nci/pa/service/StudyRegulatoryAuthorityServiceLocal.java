@@ -77,33 +77,13 @@
 * 
 */
 package gov.nih.nci.pa.service;
-
-import gov.nih.nci.coppa.iso.Ii;
-
-import java.util.List;
+import javax.ejb.Local;
 
 /**
- * @author Hugh Reinhart
- * @since 10/01/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- * @param <DTO> dto
+ * @author Naveen Amiruddin
+ * @since 03/28/2009
  */
-public interface StudyPaService<DTO> extends BasePaService<DTO> {
-    /**
-     * @param ii index of object
-     * @return null
-     * @throws PAException exception
-     */
-    List<DTO> getByStudyProtocol(Ii ii) throws PAException;
-    
-    /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
-     * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @throws PAException on error
-     */
-    void copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
-    
+@Local
+public interface StudyRegulatoryAuthorityServiceLocal extends StudyRegulatoryAuthorityService {
+
 }

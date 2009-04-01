@@ -86,9 +86,6 @@ import javax.ejb.Local;
 /**
  * @author Naveen Amiruddin
  * @since 03/28/2009
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
 @Local
 public interface SubGroupsServiceLocal extends StudyPaService<StratumGroupDTO> {

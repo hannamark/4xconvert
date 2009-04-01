@@ -114,7 +114,9 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.AvoidDuplicateLiterals" })
-public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAuthorityServiceRemote {
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class StudyRegulatoryAuthorityServiceBean 
+    implements StudyRegulatoryAuthorityServiceRemote , StudyRegulatoryAuthorityServiceLocal {
     private static final Logger LOG = Logger.getLogger(StudyRegulatoryAuthorityServiceBean.class);
 
     private SessionContext ejbContext;
@@ -258,5 +260,19 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
         return sraDTO1;
     }
 
+    /**
+     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolii from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @throws PAException on error
+     */
+    public void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException {
+        StudyRegulatoryAuthorityDTO dto = getByStudyProtocol(fromStudyProtocolii);
+        if (dto != null) {
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            create(dto);
+        }
+    }
 
 }

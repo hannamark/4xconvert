@@ -1,4 +1,4 @@
-/*
+/**
 * caBIG Open Source Software License
 * 
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,28 +76,42 @@
 * 
 * 
 */
+
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-
-import java.util.List;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 
 /**
- * @author Hugh Reinhart
- * @since 10/01/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- * @param <DTO> dto
+ * @author Naveen Amiruddin
+ * @since 03/28/2009
  */
-public interface StudyPaService<DTO> extends BasePaService<DTO> {
+
+public interface StudyRegulatoryAuthorityService {
+
     /**
-     * @param ii index of object
-     * @return null
-     * @throws PAException exception
+     * 
+     * @param studyProtocolIi sp id
+     * @return StudyRegulatoryAuthorityDTO as the dto
+     * @throws PAException on error
      */
-    List<DTO> getByStudyProtocol(Ii ii) throws PAException;
+    StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi)  throws PAException;
     
+    /**
+     * 
+     * @param sraDTO as parameter
+     * @return StudyRegulatoryAuthorityDTO as the return object
+     * @throws PAException on error
+     */ 
+    StudyRegulatoryAuthorityDTO create(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
+    /**
+     * 
+     * @param sraDTO as parameter
+     * @return StudyRegulatoryAuthorityDTO as DTO
+     * @throws PAException on exception
+     */
+    StudyRegulatoryAuthorityDTO update(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
+
     /**
      * creates a new record of studyprotocol by changing to new studyprotocol identifier.
      * @param fromStudyProtocolIi from where the study protocol objects to be copied  
@@ -105,5 +119,5 @@ public interface StudyPaService<DTO> extends BasePaService<DTO> {
      * @throws PAException on error
      */
     void copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
-    
+
 }

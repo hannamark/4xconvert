@@ -92,6 +92,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -107,8 +109,9 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class StudyOutcomeMeasureServiceBean extends AbstractStudyPaService<StudyOutcomeMeasureDTO>
-implements StudyOutcomeMeasureServiceRemote {
+implements StudyOutcomeMeasureServiceRemote , StudyOutcomeMeasureServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyOutcomeMeasureServiceBean.class);
 
@@ -158,7 +161,6 @@ implements StudyOutcomeMeasureServiceRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             StudyOutcomeMeasure bo = StudyOutcomeMeasureConverter.convertFromDTOToDomain(dto);
             session.saveOrUpdate(bo);
             session.flush();
@@ -228,7 +230,6 @@ implements StudyOutcomeMeasureServiceRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             StudyOutcomeMeasure bo = (StudyOutcomeMeasure) session.get(StudyOutcomeMeasure.class
                     , IiConverter.convertToLong(ii));
             session.delete(bo);
@@ -285,5 +286,21 @@ implements StudyOutcomeMeasureServiceRemote {
         LOG.info("Leaving getByStudyProtocol");
         return resultList;
     }
+    
+    /**
+     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolii from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @throws PAException on error
+     */
+    @Override
+    public void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException {
+        List<StudyOutcomeMeasureDTO> dtos = getByStudyProtocol(fromStudyProtocolii);
+        for (StudyOutcomeMeasureDTO dto : dtos) {
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIi(toStudyProtocolIi);
+            create(dto);
+        }
+    }    
 
 }

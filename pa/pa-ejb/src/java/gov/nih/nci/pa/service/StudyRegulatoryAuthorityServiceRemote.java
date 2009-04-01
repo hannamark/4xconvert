@@ -78,9 +78,6 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
-
 import javax.ejb.Remote;
 
 
@@ -94,28 +91,6 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface StudyRegulatoryAuthorityServiceRemote {
+public interface StudyRegulatoryAuthorityServiceRemote extends StudyRegulatoryAuthorityService {
     
-    /**
-     * 
-     * @param studyProtocolIi sp id
-     * @return StudyRegulatoryAuthorityDTO as the dto
-     * @throws PAException on error
-     */
-    StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi)  throws PAException;
-    
-    /**
-     * 
-     * @param sraDTO as parameter
-     * @return StudyRegulatoryAuthorityDTO as the return object
-     * @throws PAException on error
-     */ 
-    StudyRegulatoryAuthorityDTO create(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
-    /**
-     * 
-     * @param sraDTO as parameter
-     * @return StudyRegulatoryAuthorityDTO as DTO
-     * @throws PAException on exception
-     */
-    StudyRegulatoryAuthorityDTO update(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
 }

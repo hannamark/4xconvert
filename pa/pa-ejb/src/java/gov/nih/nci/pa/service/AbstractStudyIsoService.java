@@ -156,12 +156,12 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
     
     /**
      * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     * @param fromStudyProtocolii from where the study protocol objects to be copied  
+     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
      * @param toStudyProtocolIi to where the study protocol objects to be copied
      * @throws PAException on error
      */
-    public void copy(Ii fromStudyProtocolii , Ii toStudyProtocolIi) throws PAException {
-        List<DTO> dtos = getByStudyProtocol(fromStudyProtocolii);
+    public void copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+        List<DTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
         for (DTO dto : dtos) {
             dto.setIdentifier(null);
             dto.setStudyProtocolIdentifier(toStudyProtocolIi);
