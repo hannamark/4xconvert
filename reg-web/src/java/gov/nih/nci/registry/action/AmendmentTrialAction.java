@@ -78,7 +78,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     private String changeMemoDocFileName = null;
     private static String actualString = "Actual";
     private static String anticipatedString = "Anticipated";
-
+    private String trialAction = null;
     /**
      * @return the trialFundingDTO
      */
@@ -334,6 +334,10 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         try {
             enforceBusinessRules();
             if (hasFieldErrors()) {
+                ServletActionContext.getRequest().setAttribute(
+                        "failureMessage" , "The form has errors and could not be submitted, "
+                        + "please check the fields highlighted below");
+
             return ERROR;
             }
             if (hasActionErrors()) {
@@ -424,23 +428,33 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             StudyParticipationContactDTO studyParticipationContactDTO = null;
             OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
-            PersonDTO responsiblePartyContactDTO = util.convertToResponsiblePartyContactDTO(trialDTO);
+            PersonDTO responsiblePartyContactDTO = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
             } else {
                 studyParticipationContactDTO = util.convertToStudyParticipationContactDTO(trialDTO);
+                responsiblePartyContactDTO = util.convertToResponsiblePartyContactDTO(trialDTO);
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             
-            RegistryServiceLocator.getTrialRegistrationService().
-            amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                    studyResourcingDTOs, documentDTOs, leadOrganizationDTO, 
-                    principalInvestigatorDTO, sponsorOrganizationDTO, 
+            Ii amendId = RegistryServiceLocator.getTrialRegistrationService().
+             amend(studyProtocolDTO, 
+                    overallStatusDTO, 
+                    studyIndldeDTOs,
+                    studyResourcingDTOs, 
+                    documentDTOs, 
+                    leadOrganizationDTO, 
+                    principalInvestigatorDTO, 
+                    sponsorOrganizationDTO, 
                     leadOrganizationParticipationIdDTO, 
-                    nctIdentifierParticipationIdDTO, studyContactDTO, 
-                    studyParticipationContactDTO, summary4organizationDTO, 
-                    summary4studyResourcingDTO, responsiblePartyContactDTO);  
+                    nctIdentifierParticipationIdDTO, 
+                    studyContactDTO, 
+                    studyParticipationContactDTO, 
+                    summary4organizationDTO, 
+                    summary4studyResourcingDTO, 
+                    responsiblePartyContactDTO);  
+            ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());    
         } catch (PAException e) {
             // TODO Auto-generated catch block
             LOG.error(e.getMessage());
@@ -450,6 +464,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
        /* */
         removeSessionAttributes();
         ServletActionContext.getRequest().getSession().removeAttribute("trialDTO");
+        setTrialAction("amend");
      return "redirect_to_search";   
     }
     private void addSessionAttributes(TrialDTO tDTO) {
@@ -888,40 +903,64 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     private boolean enforceBusinessRulesForDates() throws PAException {
         StudyStatusCode newCode = StudyStatusCode.getByCode(trialDTO.getStatusCode());
         
-        Timestamp statusTimestamp = PAUtil.dateStringToTimestamp(trialDTO.getStatusDate());
-        Timestamp startTimestamp = PAUtil.dateStringToTimestamp(trialDTO.getStartDate());
-        Timestamp completionTimestamp = PAUtil.dateStringToTimestamp(trialDTO.getCompletionDate());
+        Timestamp newStatusTimestamp = PAUtil.dateStringToTimestamp(trialDTO.getStatusDate());
+        Timestamp newStartTimestamp = PAUtil.dateStringToTimestamp(trialDTO.getStartDate());
+        Timestamp newCompletionTimestamp = PAUtil.dateStringToTimestamp(trialDTO.getCompletionDate());
         
-        StudyStatusCode oldCode = null;
-        Timestamp oldDate = null;
+        StudyStatusCode oldStatusCode = null;
+        Timestamp oldStatusDate = null;
+        Timestamp oldStartTimestamp = null;
+        Timestamp oldCompletionTimestamp = null;
         String oldReason = null;
+        String oldStartDateType = null;
+        String oldCompletionDateType = null;
+        
+        StudyProtocolDTO spDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
+                IiConverter.convertToIi(trialDTO.getIdentifier()));
+        
+        oldStartTimestamp = TsConverter.convertToTimestamp(spDTO.getStartDate());
+        oldCompletionTimestamp = TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate());
+        oldStartDateType = CdConverter.convertCdToString(spDTO.getStartDateTypeCode());
+        oldCompletionDateType = CdConverter.convertCdToString(spDTO.getPrimaryCompletionDateTypeCode());
+        
         List<StudyOverallStatusDTO> sosList = RegistryServiceLocator.getStudyOverallStatusService()
         .getCurrentByStudyProtocol(IiConverter.convertToIi(trialDTO.getIdentifier()));
         if (!sosList.isEmpty()) {
-            oldCode = StudyStatusCode.getByCode(CdConverter.convertCdToString(sosList.get(0).getStatusCode()));
-            oldDate = TsConverter.convertToTimestamp(sosList.get(0).getStatusDate());
+            oldStatusCode = StudyStatusCode.getByCode(CdConverter.convertCdToString(sosList.get(0).getStatusCode()));
+            oldStatusDate = TsConverter.convertToTimestamp(sosList.get(0).getStatusDate());
             oldReason = StConverter.convertToString(sosList.get(0).getReasonText());
         }
 
-        boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);
-        boolean dateChanged = (oldDate == null) ? (statusTimestamp != null) : !oldDate.equals(statusTimestamp);
+        boolean codeChanged = (newCode == null) ? (oldStatusCode != null) : !newCode.equals(oldStatusCode);
+        boolean statusDateChanged = (oldStatusDate == null) ? (newStatusTimestamp != null) 
+                : !oldStatusDate.equals(newStatusTimestamp);
         boolean reasonChanged = (oldReason == null) ? !(trialDTO.getReason().equals(""))
                 : !trialDTO.getReason().equals(oldReason);
-
-        if (!codeChanged && !dateChanged && !reasonChanged) {
+        boolean startDateChanged = (oldStartTimestamp == null) ? (newStartTimestamp != null) 
+                : !oldStartTimestamp.equals(newStartTimestamp);
+        boolean completionDateChanged = (oldCompletionTimestamp == null) ? (newCompletionTimestamp != null) 
+                : !oldCompletionTimestamp.equals(newCompletionTimestamp);
+        boolean startDateTypeChanged =  (oldStartDateType == null) ? (trialDTO.getStartDateType() != null) 
+                : !oldStartDateType.equals(trialDTO.getStartDateType());
+        boolean completionDateTypeChanged = (oldCompletionDateType == null)  
+                ? (trialDTO.getCompletionDateType() != null) 
+                        : !oldCompletionDateType.equals(trialDTO.getCompletionDateType());
+        
+        if (!codeChanged && !statusDateChanged && !reasonChanged && !startDateChanged 
+                && !completionDateChanged && !startDateTypeChanged && !completionDateTypeChanged) {
             return false;
         }
 
         // enforce status transition rules (this must be first check per Tracker 17366
-        if ((oldCode != null) && !oldCode.canTransitionTo(newCode)) {
-            addActionError("Illegal study status transition from '" + oldCode.getCode()
+        if (codeChanged && (oldStatusCode != null) && !oldStatusCode.canTransitionTo(newCode)) {
+            addActionError("Illegal study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
 
         // enforce date rules related to status transitions
         if ((trialDTO.getStartDateType() != null) && (trialDTO.getCompletionDateType() != null)) {
-            if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
-                if (!startTimestamp.equals(statusTimestamp)) {
+            if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
+                if (!newStartTimestamp.equals(newStatusTimestamp)) {
                     addActionError("When transitioning from 'Approved' to 'Active' the trial start "
                             + "date must be the same as the status date.");
                 }
@@ -935,7 +974,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 addActionError("Trial start date can be 'Anticipated' only if the status is "
                             + "'Approved' or 'Withdrawn'.");
             }
-            if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.WITHDRAWN.equals(newCode)
+            if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.WITHDRAWN.equals(newCode)
                     && trialDTO.getStartDateType().equals(actualString)) {
                 addActionError("Trial Start date type should be ‘Anticipated’ and Trial Start date "
                             + "should be future date if Trial Status is changed from ‘Approved’ to ‘Withdrawn’.  ");
@@ -945,7 +984,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                     addActionError("Primary Completion Date cannot be 'Anticipated' when "
                             + "Current Trial Status is '" + newCode.getCode() + "'.");
                 }
-                if (!statusTimestamp.equals(completionTimestamp)) {
+                if (!newStatusTimestamp.equals(newCompletionTimestamp)) {
                     addActionError("Current Trial Status Date and Primary Completion Date must be the same when "
                             + "Current Trial Status is '" + newCode.getCode() + "'.");
                 }
@@ -957,6 +996,20 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
         }
         return true;
+    }
+
+    /**
+     * @return the trialAction
+     */
+    public String getTrialAction() {
+        return trialAction;
+    }
+
+    /**
+     * @param trialAction the trialAction to set
+     */
+    public void setTrialAction(String trialAction) {
+        this.trialAction = trialAction;
     }
 
 }

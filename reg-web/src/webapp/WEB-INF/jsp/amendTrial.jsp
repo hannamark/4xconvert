@@ -30,6 +30,7 @@
 
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
+<c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="reviewProtocol"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
 var chosenname;
@@ -76,12 +77,8 @@ function loadSponsorDiv() {
 	respartOrgid = orgid;
 }
 function createOrgContactDiv() {
-	document.getElementById("trialDTO.responsiblePersonIdentifier").value = orgid;
+	document.getElementById("trialDTO.responsiblePersonIdentifier").value = persid;
     document.getElementById('trialDTO.responsiblePersonName').value = chosenname;
-	//var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
-    //var div = document.getElementById('loadResponsibleContactField');   
-    //div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
-    //callAjax(url, div);
     document.getElementById('lookupbtn4RP').disabled = "";
 }
 function loadSummary4SponsorDiv() {
@@ -94,7 +91,7 @@ function reviewProtocol (){
     document.forms[0].page.value = "save";
     document.forms[0].action=action;
     document.forms[0].submit();
-	//showPopWin('${saveProtocol}', 600, 200, '', 'Amend Register Trial');
+	showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
 }
 function cancelProtocol (){   
     var action = "amendTrialcancel.action";   
@@ -197,7 +194,13 @@ function toggledisplay2 (it) {
     <c:set var="topic" scope="request" value="submit_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
-    <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
+    <s:form name="submitTrial" method="POST" enctype="multipart/form-data">
+        <s:if test="hasActionErrors()">
+            <div class="error_msg"><s:actionerror/></div>
+        </s:if>
+        <s:else>
+            <s:actionerror/>
+        </s:else>
     <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
     <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/> 
     <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>

@@ -5,24 +5,28 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="view.trial.page.title"/></title>
+    <title><fmt:message key="review.trial.page.title"/></title>
+    <s:head/>
 </head>
+
 <link href="<%=request.getContextPath()%>/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
 <link href="<%=request.getContextPath()%>/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
+<c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="amendProtocol"/>
 <script language="javascript">
-function submit (){   
+function amendProtocol (){   
     var action = "amendTrialamend.action";   
-    document.forms[0].page.value = "Submit";
     document.forms[0].action=action;
     document.forms[0].submit();
-    showPopWin('${saveProtocol}', 600, 200, '', 'Amend Trial');
+    showPopWin('${amendProtocol}', 600, 200, '', 'Amend Trial');
+}
 </script>
 <body>
 <div id="contentwide"> 
- <h1><fmt:message key="search.trial.view.page.title" /></h1>
+ <h1><fmt:message key="review.trial.view.page.title" /></h1>
  
 <div class="box">
     <s:form > <s:actionerror/>          
@@ -54,7 +58,7 @@ function submit (){
           <tr>     
                 <td scope="row" class="label">
                     <label for="Assigned NCI Identifier">
-                        <fmt:message key="view.trial.nci.id"/>                
+                        <fmt:message key="view.trial.nciAccessionNumber"/>                
                         </label>
                 </td>
                 <td class="value">
@@ -367,7 +371,7 @@ function submit (){
                 <li><a href="amendTrialedit.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Edit</span></span></a></li>
                <li><a href="amendTrialamend.action"                
-                    class="btn" onclick="submit();"><span class="btn_img"><span class="back">Submit</span></span></a></li>     
+                    class="btn" onclick="amendProtocol();"><span class="btn_img"><span class="back">Submit</span></span></a></li>     
             </ul>   
         </del>
         </div>

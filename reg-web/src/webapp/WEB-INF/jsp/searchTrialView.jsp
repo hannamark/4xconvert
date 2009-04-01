@@ -30,9 +30,42 @@
           <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.trialSummary.assignedIdentifier.extension}</strong>
         </div>
      </c:if>
+     <c:if test="${param.trialAction == 'amend'}">
+        <div class="confirm_msg">
+          <strong>The trial has been successfully amended and assigned the NCI Identifier ${requestScope.trialSummary.assignedIdentifier.extension}</strong>
+        </div>
+     </c:if>
     <s:form > <s:actionerror/>          
     	
     <table class="form">
+    <c:if test="${requestScope.trialSummary.amendmentDate.value != null}">
+      <tr>
+           <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
+          </tr>
+          <tr><td colspan="2" class="space">&nbsp;</td></tr>
+          <tr>     
+            <td scope="row" class="label">
+                <label for="Identifier">
+                    <fmt:message key="view.trial.amendmentNumber"/>                
+                </label>
+          </td>
+          <td>
+              <c:if test="${requestScope.trialSummary.amendmentNumber.value != null}">
+                <c:out value="${requestScope.trialSummary.amendmentNumber.value}"/>
+              </c:if>
+           </td>
+          </tr>
+          <tr>     
+            <td scope="row" class="label">
+                <label for="Date">
+                    <fmt:message key="view.trial.amendmentDate"/>
+                </label>
+          </td>
+          <td class="value">
+                <fmt:formatDate value="${requestScope.trialSummary.amendmentDate.value }"/>
+          </td>
+          </tr> 
+        </c:if>
     	  <tr>
     	  	<th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
     	  </tr>
