@@ -371,10 +371,11 @@ import org.hibernate.Session;
         LOG.debug("Entering createInterventionalStudyProtocol");
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
                 convertFromDTOToDomain(ispDTO);
-        setDefaultValues(isp , ispDTO);
         Session session = null;
+
         try {
             session = HibernateUtil.getCurrentSession();
+            setDefaultValues(isp , ispDTO , session);
             session.save(isp);
             LOG.info("Creating isp for id = " + isp.getId());
         }  catch (HibernateException hbe) {
@@ -481,42 +482,38 @@ import org.hibernate.Session;
 
     /**
      * for creating a new OSP.
-     * @param ispDTO  for osp
+     * @param ospDTO  for osp
      * @return ii ii
      * @throws PAException exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ispDTO)
+    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO)
     throws PAException {
-        if (ispDTO == null) {
-            LOG.error(" studyProtocolDTO should not be null ");
+        if (ospDTO == null) {
+            LOG.error(" Observational studyProtocolDTO should not be null ");
             throw new PAException(" studyProtocolDTO should not be null ");
 
         }
-        if (ispDTO.getIdentifier() != null && ispDTO.getIdentifier().getExtension() != null) {
-            LOG.error(" Extension should be null = " + ispDTO.getIdentifier().getExtension());
-            throw new PAException("  Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
+        if (ospDTO.getIdentifier() != null && ospDTO.getIdentifier().getExtension() != null) {
+            LOG.error(" Extension should be null = " + ospDTO.getIdentifier().getExtension());
+            throw new PAException("  Extension should be null, but got  = " + ospDTO.getIdentifier().getExtension());
 
         }
-        enForceBusinessRules(ispDTO);
+        enForceBusinessRules(ospDTO);
         LOG.debug("Entering createObservationalStudyProtocol");
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
-        convertFromDTOToDomain(ispDTO);
-        osp.setDateLastCreated(new Timestamp((new Date()).getTime()));
-        if (ejbContext != null) {
-            osp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
-        }
-        osp.setIdentifier(generateNciIdentifier());
+            convertFromDTOToDomain(ospDTO);
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
+            setDefaultValues(osp, ospDTO, session);
             session.save(osp);
             LOG.info("Creating osp for id = " + osp.getId());
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while creating createObservationalStudyProtocol for id = " 
-                    + ispDTO.getIdentifier().getExtension() , hbe);
+                    + ospDTO.getIdentifier().getExtension() , hbe);
             throw new PAException(" Hibernate exception while createObservationalStudyProtocol for id = " 
-                    + ispDTO.getIdentifier().getExtension() , hbe);
+                    + ospDTO.getIdentifier().getExtension() , hbe);
         } finally {
             session.flush();
         }
@@ -540,36 +537,26 @@ import org.hibernate.Session;
         LOG.debug("Leaving createDocumentWorkFlowStatus().");
     }
 
-    private String generateNciIdentifier() throws PAException {
-        Session session = null;
+    private String generateNciIdentifier(Session session) throws PAException {
         Calendar today = Calendar.getInstance();
         int currentYear  = today.get(Calendar.YEAR);
         String query = "select max(sp.identifier) from StudyProtocol sp where "
             + "sp.identifier like '%" + currentYear + "%' ";
         String nciIdentifier;
 
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query queryObject = session.createQuery(query);
-            List result = queryObject.list();
-            String maxValue = (String) result.get(0);
-            if (maxValue != null && PAUtil.isNotEmpty(maxValue)) {
-                String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
-                StringBuffer nextNumber = new StringBuffer(String.valueOf(Integer.parseInt(maxNumber) + 1));
-                while (nextNumber.length() < FIVE_5) {
-                    nextNumber.insert(0, "0");
-                }
-                nciIdentifier = "NCI-" + currentYear + "-" + nextNumber;
-            } else {
-                nciIdentifier = "NCI-" + currentYear + "-00001";
+        Query queryObject = session.createQuery(query);
+        String maxValue = (String) queryObject.list().get(0);
+        if (maxValue != null && PAUtil.isNotEmpty(maxValue)) {
+            String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
+            StringBuffer nextNumber = new StringBuffer(String.valueOf(Integer.parseInt(maxNumber) + 1));
+            while (nextNumber.length() < FIVE_5) {
+                nextNumber.insert(0, "0");
             }
-
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while creating NciIdentifier " , hbe);
-            throw new PAException(" Hibernate exception while creating NciIdentifier " , hbe);
-        } finally {
-            session.flush();
+            nciIdentifier = "NCI-" + currentYear + "-" + nextNumber;
+        } else {
+            nciIdentifier = "NCI-" + currentYear + "-00001";
         }
+
         return nciIdentifier;
     }
     
@@ -645,12 +632,17 @@ import org.hibernate.Session;
         }
     }
     
-    private void setDefaultValues(StudyProtocol sp , StudyProtocolDTO spDTO) throws PAException {
+    private void setDefaultValues(StudyProtocol sp , StudyProtocolDTO spDTO , Session session) throws PAException {
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setStatusDate(new Timestamp((new Date()).getTime()));
         
         if (sp.getIdentifier() == null) {
-            sp.setIdentifier(generateNciIdentifier());
+            // this is a first submission
+            sp.setIdentifier(generateNciIdentifier(session));
+            sp.setSubmissionNumber(Integer.valueOf(1));
+        } else {
+            // this is an amendment, so generate only submission number and maintain the nci identifier
+            sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
         }
         if (ejbContext != null) {
             sp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
@@ -659,5 +651,14 @@ import org.hibernate.Session;
         if (spDTO.getUserLastCreated() != null) {
             sp.setUserLastCreated(spDTO.getUserLastCreated().getValue());
         }
+    }
+    
+    private Integer generateSubmissionNumber(String identifier , Session session) {
+        String query = "select max(sp.submissionNumber) from StudyProtocol sp where "
+            + "sp.identifier = '" + identifier + "' ";
+        Integer maxValue = (Integer) session.createQuery(query).list().get(0);
+        return (maxValue == null ? 1 : maxValue + 1);
+         
+        
     }
 }

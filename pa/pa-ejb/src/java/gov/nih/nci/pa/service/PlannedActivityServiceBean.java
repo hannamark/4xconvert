@@ -99,6 +99,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -112,6 +114,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class PlannedActivityServiceBean
  extends AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter>
         implements PlannedActivityServiceRemote , PlannedActivityServiceLocal {
@@ -338,7 +341,6 @@ public class PlannedActivityServiceBean
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class
                     , IiConverter.convertToLong(ii));
             session.delete(bo);
@@ -355,7 +357,6 @@ public class PlannedActivityServiceBean
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
             } else {

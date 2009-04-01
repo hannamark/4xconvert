@@ -86,9 +86,11 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -108,12 +110,18 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 
@@ -126,6 +134,7 @@ import org.apache.log4j.Logger;
  */
 @SuppressWarnings({ "PMD" })
 @Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class TrialRegistrationServiceBean implements TrialRegistrationServiceRemote {
     
     private static final Logger LOG  = Logger.getLogger(TrialRegistrationServiceBean.class);
@@ -155,7 +164,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyParticipationContactServiceLocal studyParticipationContactService = null; 
     @EJB
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
+    @EJB
+    StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = null;
+    @EJB
+    StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
     @Resource
+    
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
     }
@@ -248,12 +262,55 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     
     private void deepCopy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
         studyDiseaseService.copy(fromStudyProtocolIi, toStudyProtocolIi);
-        armService.copy(fromStudyProtocolIi, toStudyProtocolIi);
-        plannedActivityService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        copyPlannedActivityArmArmInterventions(fromStudyProtocolIi, toStudyProtocolIi);
         subGroupsService.copy(fromStudyProtocolIi, toStudyProtocolIi);
         plannedActivityService.copyPlannedEligibilityStudyCriterions(fromStudyProtocolIi, toStudyProtocolIi);
+        studyOutcomeMeasureService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        studyRegulatoryAuthorityService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+    }
+
+    private void copyPlannedActivityArmArmInterventions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) 
+    throws PAException {
+        List<PlannedActivityDTO> dtos = plannedActivityService.getByStudyProtocol(fromStudyProtocolIi);     
+        Map<Ii , Ii> paMap = new HashMap<Ii , Ii>();
+        Ii oldPaIi;
+        Ii newPaIi;
+        for (PlannedActivityDTO dto : dtos) {
+            oldPaIi = dto.getIdentifier();
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            newPaIi = plannedActivityService.create(dto).getIdentifier();
+            paMap.put(oldPaIi, newPaIi);
+        }
+        
+        List<ArmDTO> armDtos = armService.getByStudyProtocol(fromStudyProtocolIi);
+        for (ArmDTO armDto : armDtos) {
+                armDto.setInterventions(getAssociatedInterventions(armDto.getIdentifier() , paMap));
+                armDto.setIdentifier(null);
+                armDto.setStudyProtocolIdentifier(toStudyProtocolIi);
+                armService.create(armDto);
+        }
     }
     
+    private DSet<Ii> getAssociatedInterventions(Ii armIi , Map<Ii , Ii> paMap) throws PAException {
+        List<PlannedActivityDTO> dtos = null;
+        Set<Ii> iiSet = new HashSet<Ii>();
+        boolean armIntFound = false;
+        dtos = plannedActivityService.getByArm(armIi);
+        for (PlannedActivityDTO paDto : dtos) {
+            if (paMap.containsKey(paDto.getIdentifier())) {
+                armIntFound = true;
+                iiSet.add(paMap.get(paDto.getIdentifier()));
+            }
+        }
+        DSet<Ii> interventions = null;
+        if (armIntFound) {
+            interventions = new DSet<Ii>();
+            interventions.setItem(iiSet);
+        }
+        return interventions; 
+        
+    }
     private void deepCopyParticipation(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
         ArrayList<StudyParticipationDTO> criteriaList = new ArrayList<StudyParticipationDTO>();
         StudyParticipationDTO searchCode = null;
