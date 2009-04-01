@@ -309,8 +309,8 @@
                   destdir="${build.dir}/cobertura"
                   srcdir="${src.dir}" />
       <cobertura-check datafile="${basedir}/build/cobertura.ser"
-                 totalbranchrate="74"
-                   totallinerate="86"/> <!-- Increase these as unit tests are written -->
+  				totalbranchrate="82"
+               	totallinerate="89"/> <!-- Increase these as unit tests are written -->
   </target>
     <!--
         A note about this target: Checkstyle has a bug that requires exception classes to be on the execution

@@ -32,6 +32,9 @@ import gov.nih.nci.coppa.iso.AdxpUnid;
 import gov.nih.nci.coppa.iso.AdxpUnit;
 import gov.nih.nci.coppa.iso.AdxpZip;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.iso._21090.ADXP;
 
 /**
@@ -66,7 +69,7 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
         d.setValue(input.getValue());
         return d;
     }
-
+    
     /**
      * factory method to create an address part.
      * 
@@ -77,70 +80,44 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
         if (type == null) {
             return new Adxp();
         }
-
-        switch (type) {
-        case ADL:
-            return new AdxpAdl();
-        case AL:
-            return new AdxpAl();
-        case BNN:
-            return new AdxpBnn();
-        case BNR:
-            return new AdxpBnr();
-        case BNS:
-            return new AdxpBns();
-        case CAR:
-            return new AdxpCar();
-        case CEN:
-            return new AdxpCen();
-        case CNT:
-            return new AdxpCnt();
-        case CPA:
-            return new AdxpCpa();
-        case CTY:
-            return new AdxpCty();
-        case DAL:
-            return new AdxpDal();
-        case DEL:
-            return new AdxpDel();
-        case DINST:
-            return new AdxpDinst();
-        case DINSTA:
-            return new AdxpDinsta();
-        case DINSTQ:
-            return new AdxpDinstq();
-        case DIR:
-            return new AdxpDir();
-        case DMOD:
-            return new AdxpDmod();
-        case DMODID:
-            return new AdxpDmodid();
-        case INT:
-            return new AdxpInt();
-        case POB:
-            return new AdxpPob();
-        case PRE:
-            return new AdxpPre();
-        case SAL:
-            return new AdxpSal();
-        case STA:
-            return new AdxpSta();
-        case STB:
-            return new AdxpStb();
-        case STR:
-            return new AdxpStr();
-        case STTYP:
-            return new AdxpSttyp();
-        case UNID:
-            return new AdxpUnid();
-        case UNIT:
-            return new AdxpUnit();
-        case ZIP:
-            return new AdxpZip();
-
-            // there must be a new type added
-        default:
+        Adxp value = types.get(type);
+        if (value == null) {
             throw new UnsupportedOperationException(type.name());
         }
+        return value;
+    }
+
+    private static Map<AddressPartType, Adxp> types = new HashMap<AddressPartType, Adxp>();
+    
+    static {
+        types.put(AddressPartType.ADL, new AdxpAdl());
+        types.put(AddressPartType.AL, new AdxpAl());
+        types.put(AddressPartType.BNN, new AdxpBnn());
+        types.put(AddressPartType.BNR, new AdxpBnr());
+        types.put(AddressPartType.BNS, new AdxpBns());
+        types.put(AddressPartType.CAR, new AdxpCar());
+        types.put(AddressPartType.CEN, new AdxpCen());
+        types.put(AddressPartType.CNT, new AdxpCnt());
+        types.put(AddressPartType.CPA, new AdxpCpa());
+        types.put(AddressPartType.CTY, new AdxpCty());
+        types.put(AddressPartType.DAL, new AdxpDal());
+        types.put(AddressPartType.DEL, new AdxpDel());
+        types.put(AddressPartType.DINST, new AdxpDinst());
+        types.put(AddressPartType.DINSTA, new AdxpDinsta());
+        types.put(AddressPartType.DINSTQ, new AdxpDinstq());
+        types.put(AddressPartType.DIR, new AdxpDir());
+        types.put(AddressPartType.DMOD, new AdxpDmod());
+        types.put(AddressPartType.DMODID, new AdxpDmodid());
+        types.put(AddressPartType.INT, new AdxpInt());
+        types.put(AddressPartType.POB, new AdxpPob());
+        types.put(AddressPartType.PRE, new AdxpPre());
+        types.put(AddressPartType.SAL, new AdxpSal());
+        types.put(AddressPartType.STA, new AdxpSta());
+        types.put(AddressPartType.STB, new AdxpStb());
+        types.put(AddressPartType.STR, new AdxpStr());
+        types.put(AddressPartType.STTYP, new AdxpSttyp());
+        types.put(AddressPartType.UNID, new AdxpUnid());
+        types.put(AddressPartType.UNIT, new AdxpUnit());
+        types.put(AddressPartType.ZIP, new AdxpZip());
     }
 }
