@@ -148,12 +148,6 @@ public class StudyProtocol extends AbstractEntity {
     private Timestamp startDate;
     private ActualAnticipatedTypeCode startDateTypeCode;
     private Boolean acceptHealthyVolunteersIndicator;
-    //added for trial description
-    private String primaryObjective;
-    private String secondaryObjective;
-    private String ternaryObjective;
-    private String outline;
-    private String projectedAccural;
     //added for amendments
     private ActStatusCode statusCode;
     private Timestamp statusDate;
@@ -738,74 +732,7 @@ public class StudyProtocol extends AbstractEntity {
     public void setStudyOnholds(List<StudyOnhold> studyOnholds) {
         this.studyOnholds = studyOnholds;
     }
-    /**
-     * 
-     * @return primaryObjectives
-     */
-    @Column(name = "PRIMARY_OBJECTIVE")
-    public String getPrimaryObjective() {
-        return primaryObjective;
-    }
-    /**
-     * 
-     * @param primaryObjective primaryObjective
-     */
-    public void setPrimaryObjective(String primaryObjective) {
-        this.primaryObjective = primaryObjective;
-    }
-   
-/**
-* @return the secondaryObjective
-*/
-@Column(name = "SECONDARY_OBJECTIVE")
-public String getSecondaryObjective() {
-return secondaryObjective;
-}
-/**
-* @param secondaryObjective the secondaryObjective to set
-*/
-public void setSecondaryObjective(String secondaryObjective) {
-this.secondaryObjective = secondaryObjective;
-}
-/**
-* @return the ternaryObjective
-*/
-@Column(name = "TERNARY_OBJECTIVE")
-public String getTernaryObjective() {
-return ternaryObjective;
-}
-/**
-* @param ternaryObjective the ternaryObjective to set
-*/
-public void setTernaryObjective(String ternaryObjective) {
-this.ternaryObjective = ternaryObjective;
-}
-/**
-* @return the outline
-*/
-@Column(name = "OUTLINE")
-public String getOutline() {
-return outline;
-}
-/**
-* @param outline the outline to set
-*/
-public void setOutline(String outline) {
-this.outline = outline;
-}
-/**
-* @return the projectedAccural
-*/
-@Column(name = "PROJECTED_ACCURAL")
-public String getProjectedAccural() {
-return projectedAccural;
-}
-/**
-* @param projectedAccural the projectedAccural to set
-*/
-public void setProjectedAccural(String projectedAccural) {
-this.projectedAccural = projectedAccural;
-}
+  
 /**
  * @return the statusCode
  */

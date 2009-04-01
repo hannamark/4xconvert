@@ -238,8 +238,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createSponsors(spDTO.getIdentifier() , doc , root);
             createOversightInfo(spDTO , doc , root);
             createTextBlock("brief_summary", spDTO.getPublicDescription(), doc, root);
-            createDetailedDescription(spDTO, doc, root);
-            //createTextBlock("detailed_description", spDTO.getScientificDescription(), doc, root);
+            createTextBlock("detailed_description", spDTO.getScientificDescription(), doc, root);
             createOverallStatus(spDTO, doc, root);
            //createElement("expanded_access_status", convertBLToString(spDTO.getExpandedAccessIndicator()), doc , root);
             if (spDTO.getExpandedAccessIndicator() != null && spDTO.getExpandedAccessIndicator().getValue() != null) {
@@ -321,57 +320,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         return writer.toString();
     }
 
-    /**Creates the deatiled description.
-     * @param spDTO
-     * @param doc
-     * @param root
-     * @throws PAException
-     */
-    private static void createDetailedDescription(StudyProtocolDTO spDTO , Document doc , Element root) 
-    throws PAException {
-    if (isDetailedDescriptionPopulated(spDTO)) {
-       Element detailedDescription  = doc.createElement("Detailed_Description");
-       Element objective = doc.createElement("Objectives");
-        appendElement(objective, createElement("Primary", spDTO.getPrimaryObjective(), doc));
-        appendElement(objective, createElement("Secondary", spDTO.getSecondaryObjective(), doc));
-        appendElement(objective, createElement("Ternary", spDTO.getTernaryObjective(), doc));
-        appendElement(detailedDescription, objective);
-        appendElement(detailedDescription, createElement("Outline", spDTO.getOutline(), doc));
-        appendElement(detailedDescription, createElement("Projected_Accural", spDTO.getProjectedAccural(), doc));
-        appendElement(root, detailedDescription);
-    } 
-    }
-    /**
-     * Checks, if the studyProtocolDto is populated with detailed description data, before displaying the data. 
-     * @param studyProtocolDto
-     * @return
-     */
-    private static boolean isDetailedDescriptionPopulated(StudyProtocolDTO studyProtocolDto) {
-    boolean populated = false;
-    if (isPopulated(studyProtocolDto.getPrimaryObjective()) || isPopulated(studyProtocolDto.getSecondaryObjective())
-    || isPopulated(studyProtocolDto.getTernaryObjective()) || isPopulated(studyProtocolDto.getOutline())
-    || isPopulated(studyProtocolDto.getProjectedAccural())) {
-
-    populated = true;
-
-    }
-    return populated;
-    }
-    /**
-     * Checks if the St is populated before displaying the elements and data. 
-     * @param obj
-     * @return
-     */
-    private static boolean isPopulated(St obj) {
-    boolean populated = false;
-    if (obj != null && obj.getValue() != null && obj.getValue().length() > 0) {
-    populated = true;
-    }
-    return populated;
-    }
-
-      
-     private static void createOverallStatus(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
+    private static void createOverallStatus(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<StudyOverallStatusDTO> soDTOs = PoPaServiceBeanLookup.getStudyOverallStatusService().
             getCurrentByStudyProtocol(spDTO.getIdentifier());
         if (soDTOs == null || soDTOs.isEmpty()) {

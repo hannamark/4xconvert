@@ -106,7 +106,7 @@ public class TrialDescriptionAction extends ActionSupport {
     
     private static final int PUBLIC_TITLE = 300;
     private static final int PUBLIC_DESCRIPTION = 5000;
-    private static final int FIELD_LENGTH = 2400;
+    private static final int FIELD_LENGTH = 5000;
     private static final String RESULT = "edit";
     /**
      * @return res
@@ -168,11 +168,7 @@ public class TrialDescriptionAction extends ActionSupport {
     private void copy(StudyProtocolDTO spDTO) {
     trialDescriptionDTO.setTrialBriefTitle(spDTO.getPublicTitle().getValue());
     trialDescriptionDTO.setTrialBriefSummary(spDTO.getPublicDescription().getValue());
-    trialDescriptionDTO.setTrialPrimaryObjectives(spDTO.getPrimaryObjective().getValue());
-    trialDescriptionDTO.setTrialSecondaryObjectives(spDTO.getSecondaryObjective().getValue());
-    trialDescriptionDTO.setTrialTernaryObjectives(spDTO.getTernaryObjective().getValue());
-    trialDescriptionDTO.setTrialOutline(spDTO.getOutline().getValue());
-    trialDescriptionDTO.setTrialProjectedAccrual(spDTO.getProjectedAccural().getValue());    
+    trialDescriptionDTO.setScientificDescription(spDTO.getScientificDescription().getValue());   
     }
 
 
@@ -184,15 +180,8 @@ public class TrialDescriptionAction extends ActionSupport {
         PUBLIC_TITLE)));
        spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(trialDescriptionDTO.getTrialBriefSummary()
        , PUBLIC_DESCRIPTION)));
-spDTO.setPrimaryObjective(StConverter.convertToSt(PAUtil.stringSetter(trialDescriptionDTO.getTrialPrimaryObjectives(),
-       FIELD_LENGTH)));
-spDTO.setSecondaryObjective(StConverter.convertToSt(PAUtil.stringSetter(
-trialDescriptionDTO.getTrialSecondaryObjectives(), FIELD_LENGTH)));
-spDTO.setTernaryObjective(StConverter.convertToSt(PAUtil.stringSetter(trialDescriptionDTO.getTrialTernaryObjectives(),
-FIELD_LENGTH)));
-spDTO.setOutline(StConverter.convertToSt(PAUtil.stringSetter(trialDescriptionDTO.getTrialOutline(), FIELD_LENGTH)));
-spDTO.setProjectedAccural(StConverter.convertToSt(PAUtil.stringSetter(trialDescriptionDTO.getTrialProjectedAccrual(),
-FIELD_LENGTH)));
+spDTO.setScientificDescription(StConverter.convertToSt(PAUtil.stringSetter(
+trialDescriptionDTO.getScientificDescription(), FIELD_LENGTH)));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
 

@@ -71,55 +71,16 @@
         <th colspan="2"><fmt:message key="trial.detailedDescription"/></th>
         </tr>
         <tr>
-        <td scope="row" class="label">
-           <label for=trialPrimaryObjectives>
-                    <fmt:message key="trial.primaryObjectives"/>
+        <td class="label">
+           <label for=scientificDescrption>
+                    <fmt:message key="trial.scientificDescription"/>
            </label>
          </td>
          <td class="value">
-        <s:textfield name="trialDescriptionDTO.trialPrimaryObjectives" cssStyle="width:500px" maxlength="2400"/> 
+        <s:textarea name="trialDescriptionDTO.scientificDescription" cssStyle="width:606px" rows="4"/> 
         </td>
     </tr>
-    <tr>
-        <td scope="row" class="label">
-           <label for="trialSecondaryObjectives">
-                    <fmt:message key="trial.secondaryObjectives"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textfield name="trialDescriptionDTO.trialSecondaryObjectives" cssStyle="width:500px" maxlength="2400"/> 
-        </td>
-    </tr>
-    <tr>
-        <td scope="row" class="label">
-           <label for="trialTernaryObjectives">
-                    <fmt:message key="trial.ternaryObjectives"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textfield name="trialDescriptionDTO.trialTernaryObjectives" cssStyle="width:500px" maxlength="2400"/> 
-        </td>
-    </tr>
-    <tr>
-        <td scope="row" class="label">
-           <label for="trialOutline">
-                    <fmt:message key="trial.outline"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textfield name="trialDescriptionDTO.trialOutline" cssStyle="width:500px" maxlength="2400"/> 
-        </td>
-    </tr>
-    <tr>
-        <td scope="row" class="label">
-           <label for="trialProjectedAccrual">
-                    <fmt:message key="trial.projectedAccrual"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textfield name="trialDescriptionDTO.trialProjectedAccrual" cssStyle="width:500px" maxlength="2400"/> 
-        </td>
-    </tr>
+    
     </table>
    
 <div class="actionsrow">

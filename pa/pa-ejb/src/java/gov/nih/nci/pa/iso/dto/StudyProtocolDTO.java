@@ -100,11 +100,6 @@ public class StudyProtocolDTO extends BaseDTO {
     private Bl acceptHealthyVolunteersIndicator;
     private St studyProtocolType;
     private St userLastCreated;
-    private St primaryObjective;
-    private St secondaryObjective;
-    private St ternaryObjective;
-    private St outline;
-    private St projectedAccural;
     private Cd statusCode;
     private Ts statusDate;
     private St amendmentNumber;
@@ -535,75 +530,6 @@ public class StudyProtocolDTO extends BaseDTO {
     public void setUserLastCreated(St userLastCreated) {
         this.userLastCreated = userLastCreated;
     }
-
-/**
-* @return the primaryObjective
-*/
-public St getPrimaryObjective() {
-return primaryObjective;
-}
-
-/**
-* @param primaryObjective the primaryObjective to set
-*/
-public void setPrimaryObjective(St primaryObjective) {
-this.primaryObjective = primaryObjective;
-}
-
-/**
-* @return the secondaryObjective
-*/
-public St getSecondaryObjective() {
-return secondaryObjective;
-}
-
-/**
-* @param secondaryObjective the secondaryObjective to set
-*/
-public void setSecondaryObjective(St secondaryObjective) {
-this.secondaryObjective = secondaryObjective;
-}
-
-/**
-* @return the ternaryObjective
-*/
-public St getTernaryObjective() {
-return ternaryObjective;
-}
-
-/**
-* @param ternaryObjective the ternaryObjective to set
-*/
-public void setTernaryObjective(St ternaryObjective) {
-this.ternaryObjective = ternaryObjective;
-}
-/**
-* @return the outline
-*/
-public St getOutline() {
-return outline;
-}
-
-/**
-* @param outline the outline to set
-*/
-public void setOutline(St outline) {
-this.outline = outline;
-}
-/**
-* @return the projectedAccural
-*/
-public St getProjectedAccural() {
-return projectedAccural;
-}
-
-/**
-* @param projectedAccural the projectedAccural to set
-*/
-public void setProjectedAccural(St projectedAccural) {
-this.projectedAccural = projectedAccural;
-}
-
 /**
  * @return the statusCode
  */

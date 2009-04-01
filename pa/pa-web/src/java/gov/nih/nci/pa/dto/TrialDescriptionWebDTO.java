@@ -90,11 +90,7 @@ package gov.nih.nci.pa.dto;
 public class TrialDescriptionWebDTO {
     private String trialBriefTitle;
     private String trialBriefSummary;
-    private String trialPrimaryObjectives;
-    private String trialSecondaryObjectives;
-    private String trialTernaryObjectives;
-    private String trialOutline;
-    private String trialProjectedAccrual;
+    private String scientificDescription;
 /**
 * @return the trialBriefTitle
 */
@@ -120,63 +116,16 @@ public void setTrialBriefSummary(String trialBriefSummary) {
 this.trialBriefSummary = trialBriefSummary;
 }
 /**
-* @return the trialPrimaryObjectives
-*/
-public String getTrialPrimaryObjectives() {
-return trialPrimaryObjectives;
+ * @return the scientificDescription
+ */
+public String getScientificDescription() {
+return scientificDescription;
 }
 /**
-* @param trialPrimaryObjectives the trialPrimaryObjectives to set
-*/
-public void setTrialPrimaryObjectives(String trialPrimaryObjectives) {
-this.trialPrimaryObjectives = trialPrimaryObjectives;
+ * @param scientificDescription the scientificDescription to set
+ */
+public void setScientificDescription(String scientificDescription) {
+this.scientificDescription = scientificDescription;
 }
-/**
-* @return the trialSecondaryObjectives
-*/
-public String getTrialSecondaryObjectives() {
-return trialSecondaryObjectives;
-}
-/**
-* @param trialSecondaryObjectives the trialSecondaryObjectives to set
-*/
-public void setTrialSecondaryObjectives(String trialSecondaryObjectives) {
-this.trialSecondaryObjectives = trialSecondaryObjectives;
-}
-/**
-* @return the trialTernaryObjectives
-*/
-public String getTrialTernaryObjectives() {
-return trialTernaryObjectives;
-}
-/**
-* @param trialTernaryObjectives the trialTernaryObjectives to set
-*/
-public void setTrialTernaryObjectives(String trialTernaryObjectives) {
-this.trialTernaryObjectives = trialTernaryObjectives;
-}
-/**
-* @return the trialOutline
-*/
-public String getTrialOutline() {
-return trialOutline;
-}
-/**
-* @param trialOutline the trialOutline to set
-*/
-public void setTrialOutline(String trialOutline) {
-this.trialOutline = trialOutline;
-}
-/**
-* @return the trialProjectedAccrual
-*/
-public String getTrialProjectedAccrual() {
-return trialProjectedAccrual;
-}
-/**
-* @param trialProjectedAccrual the trialProjectedAccrual to set
-*/
-public void setTrialProjectedAccrual(String trialProjectedAccrual) {
-this.trialProjectedAccrual = trialProjectedAccrual;
-}
+
 }

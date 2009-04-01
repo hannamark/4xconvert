@@ -202,6 +202,6 @@ public class StudyProtocolConverterTest  {
         assertEquals(sp.getStartDateTypeCode().getCode() , spDTO.getStartDateTypeCode().getCode());  
         assertEquals(sp.getAmendmentReasonCode().getCode() ,spDTO.getAmendmentReasonCode().getCode());
         assertEquals(sp.getStatusCode().getCode() ,spDTO.getStatusCode().getCode());
-        assertEquals(sp.getPrimaryObjective(),spDTO.getPrimaryObjective().getValue()); 
+       
     }
 }

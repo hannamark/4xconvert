@@ -181,17 +181,6 @@ public class StudyProtocolConverter {
         } else {
             studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(studyProtocol.getClass().getName()));
         }
-        studyProtocolDTO.setPrimaryObjective(
-                StConverter.convertToSt(studyProtocol.getPrimaryObjective()));
-        studyProtocolDTO.setSecondaryObjective(
-                StConverter.convertToSt(studyProtocol.getSecondaryObjective()));
-        studyProtocolDTO.setTernaryObjective(
-                StConverter.convertToSt(studyProtocol.getTernaryObjective()));
-        studyProtocolDTO.setOutline(
-                StConverter.convertToSt(studyProtocol.getOutline()));
-        studyProtocolDTO.setProjectedAccural(
-                StConverter.convertToSt(studyProtocol.getProjectedAccural()));
-        
         studyProtocolDTO.setStatusCode(CdConverter.convertToCd(studyProtocol.getStatusCode()));
         studyProtocolDTO.setStatusDate(TsConverter.convertToTs(studyProtocol.getStatusDate()));
         studyProtocolDTO.setAmendmentNumber(
@@ -282,11 +271,6 @@ public class StudyProtocolConverter {
        studyProtocol.setAcceptHealthyVolunteersIndicator(BlConverter.covertToBoolean(
                studyProtocolDTO.getAcceptHealthyVolunteersIndicator()));
        
-       studyProtocol.setPrimaryObjective(StConverter.convertToString(studyProtocolDTO.getPrimaryObjective()));
-       studyProtocol.setSecondaryObjective(StConverter.convertToString(studyProtocolDTO.getSecondaryObjective()));
-       studyProtocol.setTernaryObjective(StConverter.convertToString(studyProtocolDTO.getTernaryObjective()));
-       studyProtocol.setOutline(StConverter.convertToString(studyProtocolDTO.getOutline()));
-       studyProtocol.setProjectedAccural(StConverter.convertToString(studyProtocolDTO.getProjectedAccural()));
        if (studyProtocolDTO.getStatusCode() != null) {
            studyProtocol.setStatusCode(ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode()));
        }

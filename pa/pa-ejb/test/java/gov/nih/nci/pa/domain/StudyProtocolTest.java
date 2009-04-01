@@ -261,9 +261,6 @@ public class StudyProtocolTest  {
         sp.setUserLastUpdated("Abstractor");
         sp.setDateLastCreated(now);
         sp.setUserLastCreated("Abstractor");
-        sp.setPrimaryObjective("Primary objective");
-        sp.setSecondaryObjective("Secondary objective");
-        sp.setTernaryObjective("Ternary objective");
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setAmendmentReasonCode(AmendmentReasonCode.OTHER);
         sp.setStatusDate(now);
@@ -346,7 +343,7 @@ public class StudyProtocolTest  {
         assertEquals(create.getDateLastCreated(), saved.getDateLastCreated());
         assertEquals(create.getAmendmentReasonCode(),saved.getAmendmentReasonCode());
         assertEquals(create.getStatusCode(),saved.getStatusCode());
-        assertEquals(create.getPrimaryObjective(),saved.getPrimaryObjective());
+       
         
     }
 
