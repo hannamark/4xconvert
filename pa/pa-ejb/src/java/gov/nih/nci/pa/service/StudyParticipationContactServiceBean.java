@@ -136,7 +136,8 @@ public class StudyParticipationContactServiceBean extends AbstractBasePaService<
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
+            //session.beginTransaction();
+            
             StudyParticipationContact bo = StudyParticipationContactConverter.convertFromDtoToDomain(dto);
             bo.setDateLastCreated(new Timestamp((new Date()).getTime()));
             session.saveOrUpdate(bo);
