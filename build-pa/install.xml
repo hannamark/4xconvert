@@ -538,9 +538,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
     <!-- Wrapper target to upgrade jboss container. Does not install or configure binaries -->
     <target name="upgrade:jboss" unless="exclude.jboss"
-        description="Wrapper target to call all targets required to upgrade jboss container." 
         depends="
-        upgrade-ncm:jboss,
         install:validation:pre-install,
         install:jboss:stop,
         install:init,
@@ -551,9 +549,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         " />
 
     <!-- Wrapper target to upgrade all container. Does not install or configure binaries -->
-    <target name="upgrade" description="Upgrades JBoss and Database"
+    <target name="upgrade" description="Deploys application and runs incremental database build" 
         depends="
-        upgrade-ncm,
         upgrade:init,
         install:validation:pre-install,
         install:jboss:stop,
@@ -634,116 +631,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             </then>
         </if>
     </target>
-    
-    <!-- Upgrade with Disposable Application Conttainer (DAC) -->
-    <target name="upgrade-dac:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        install:validation:pre-install:ports,
-        install:clean:jboss,
-        install:init,
-        install:jboss:binaries,
-        install:jboss:configure,
-        install:post:jboss,
-        install:jboss:start
-        ">
-    </target>
 
-    <target name="upgrade-dac" description="Upgrades JBoss and Database"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        upgrade:init,
-        install:init,
-        upgrade:database,
-        upgrade:jboss,
-        install:validation:post-install
-        ">
-    </target>
 
-    <target name="upgrade-dac:with-dbinstall" description="Upgrades JBoss and Database"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        upgrade:init,
-        install:init,
-        install:database,
-        upgrade:jboss,
-        install:validation:post-install
-        ">
-    </target>
-    
-    <!-- Upgrade with Container Modification (CM) -->
-    <target name="upgrade-cm:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        install:validation:pre-install:ports,
-        install:init,
-        install:jboss:configure,
-        install:post:jboss,
-        install:jboss:start
-        ">
-    </target>
-
-    <target name="upgrade-cm" description="Upgrades JBoss and Database"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        upgrade:init,
-        install:init,
-        upgrade:database,
-        upgrade:jboss,
-        install:validation:post-install
-        ">
-    </target>
-
-    <target name="upgrade-cm:with-dbinstall" description="Upgrades JBoss and Database"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        upgrade:init,
-        install:init,
-        install:database,
-        upgrade:jboss,
-        install:validation:post-install
-        ">
-    </target>
-    
-    <!-- Upgrade with No Container Modification (NCM) -->
-    <target name="upgrade-ncm:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        install:validation:pre-install:ports,
-        install:init,
-        install:post:jboss,
-        install:jboss:start
-        ">
-    </target>
-
-    <target name="upgrade-ncm" description="Upgrades JBoss and Database"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        upgrade:init,
-        install:init,
-        upgrade:database,
-        upgrade:jboss,
-        install:validation:post-install
-        ">
-    </target>
-
-    <target name="upgrade-ncm:with-dbinstall" description="Upgrades JBoss and Database"
-        depends="
-        install:validation:pre-install,
-        install:jboss:stop,
-        upgrade:init,
-        install:init,
-        install:database,
-        upgrade:jboss,
-        install:validation:post-install
-        ">
-    </target>
 </project>
