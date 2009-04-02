@@ -44,4 +44,17 @@
         <comment>execute studyOutcomeMeasureName.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyOutcomeMeasureName.sql"/>
     </changeSet>
+    <changeSet id="9" author="Naveen">
+        <comment>execute messagelogaudit.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/messagelogaudit.sql"/>
+    </changeSet>
+    <changeSet id="10" author="Naveen">
+        <comment>execute amendments.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/amendments.sql"/>
+    </changeSet>
+    <changeSet id="11" author="Naveen">
+        <comment>execute studyProtocolUpdate.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/studyProtocolUpdate.sql"/>
+    </changeSet>
+    
 </databaseChangeLog>
