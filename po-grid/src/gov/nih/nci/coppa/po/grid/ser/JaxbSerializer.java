@@ -1,12 +1,13 @@
 package gov.nih.nci.coppa.po.grid.ser;
 
-import gov.nih.nci.cagrid.encoding.AxisContentHandler;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
+
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
@@ -19,6 +20,8 @@ import org.xml.sax.Attributes;
  * @author gax
  */
 public class JaxbSerializer implements Serializer {
+
+    private static final Map<String, Marshaller> MAP = new HashMap<String, Marshaller>();
 
     /**
      * Serialize a JAXB object.
@@ -36,13 +39,17 @@ public class JaxbSerializer implements Serializer {
                           SerializationContext context)
             throws IOException {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(value.getClass().getPackage().getName());
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            
-            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-//            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            Marshaller marshaller = MAP.get(value.getClass().getPackage().getName());
+            if (marshaller == null) {
+                JAXBContext jaxbContext = JAXBContext.newInstance(value.getClass().getPackage().getName());
+                marshaller = jaxbContext.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+//                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                MAP.put(value.getClass().getPackage().getName(), marshaller);
+            }
+
             marshaller.marshal(value, new Filter(context));
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new IOException(e.getMessage());

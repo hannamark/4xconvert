@@ -1,9 +1,13 @@
 
 package gov.nih.nci.coppa.po.grid.ser;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -18,6 +22,8 @@ public class JaxbDeserializer
         extends DeserializerImpl
         implements Deserializer {
 
+    private static final Map<String, Unmarshaller> MAP = new HashMap<String, Unmarshaller>();
+
     public QName xmlType;
     public Class javaType;
 
@@ -29,6 +35,7 @@ public class JaxbDeserializer
     /**
      * Return something even if no characters were found.
      */
+    @Override
     public void onEndElement(
             String namespace,
             String localName,
@@ -37,9 +44,13 @@ public class JaxbDeserializer
         try {
             MessageElement msgElem = context.getCurElement();
             if (msgElem != null) {
+                Unmarshaller unmarshaller = MAP.get(javaType.getPackage().getName());
+                if (unmarshaller == null) {
+                    JAXBContext jc = JAXBContext.newInstance(javaType.getPackage().getName());
+                    unmarshaller = jc.createUnmarshaller();
+                    MAP.put(javaType.getPackage().getName(), unmarshaller);
+                }
                 // Unmarshall the nested XML element into a jaxb object of type 'javaType'
-                JAXBContext jc = JAXBContext.newInstance(javaType.getPackage().getName());
-                Unmarshaller unmarshaller = jc.createUnmarshaller();
                 value = unmarshaller.unmarshal(msgElem.getAsDOM());
             }
         } catch (Exception e) {
