@@ -99,6 +99,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -312,8 +313,37 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         
     }
     private void deepCopyParticipation(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
-        ArrayList<StudyParticipationDTO> criteriaList = new ArrayList<StudyParticipationDTO>();
+        
+        ArrayList<StudyParticipationDTO> criteriaList = null;
         StudyParticipationDTO searchCode = null;
+
+        // check for site related of IRB
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(fromStudyProtocolIi);
+        if (BlConverter.covertToBool(spDTO.getReviewBoardApprovalRequiredIndicator())) {
+            // update the lead organization record 
+            searchCode = new StudyParticipationDTO();
+            searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+            List<StudyParticipationDTO> fromDtos = 
+                    studyParticipationService.getByStudyProtocol(fromStudyProtocolIi, searchCode);
+            List<StudyParticipationDTO> toDtos = 
+                    studyParticipationService.getByStudyProtocol(toStudyProtocolIi, searchCode);
+            StudyParticipationDTO fromDto = null;
+            StudyParticipationDTO toDto = null;
+            if (fromDtos != null && !fromDtos.isEmpty()) {
+                fromDto = fromDtos.get(0);
+            }
+            if (toDtos != null && !toDtos.isEmpty()) {
+                toDto = toDtos.get(0);
+            }
+            if (fromDto != null && toDto != null) {
+                toDto.setReviewBoardApprovalNumber(fromDto.getReviewBoardApprovalNumber());
+                toDto.setReviewBoardApprovalStatusCode(fromDto.getReviewBoardApprovalStatusCode());
+                toDto.setOversightCommitteeIi(fromDto.getOversightCommitteeIi());
+                studyParticipationService.update(toDto);
+            }
+
+        }
+        criteriaList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
             if (cd.isCollaboratorCode()) {
                 searchCode = new StudyParticipationDTO();
