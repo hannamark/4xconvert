@@ -28,6 +28,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TrialUtil;
 import gov.nih.nci.registry.enums.TrialStatusCode;
+import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
@@ -79,6 +80,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     private static String actualString = "Actual";
     private static String anticipatedString = "Anticipated";
     private String trialAction = null;
+    private String studyProtocolId = null;
     /**
      * @return the trialFundingDTO
      */
@@ -111,14 +113,16 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * @return res
      */
     public String view() {
-        String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
         //clear the session
         removeSessionAttributes();
         try {
-            Ii studyProtocolIi = IiConverter.convertToIi(pId);
-            populateDTO(studyProtocolIi);
-            trialDTO.setIdentifier(pId);
-            addSessionAttributes(trialDTO);
+                String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+                if (studyProtocolId == null) {
+                    studyProtocolId = pId;
+                }
+                Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+                populateDTO(studyProtocolIi);
+                addSessionAttributes(trialDTO);
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -337,10 +341,11 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 ServletActionContext.getRequest().setAttribute(
                         "failureMessage" , "The form has errors and could not be submitted, "
                         + "please check the fields highlighted below");
-
+                addSessionAttributes(trialDTO);
             return ERROR;
             }
             if (hasActionErrors()) {
+                addSessionAttributes(trialDTO);
                 return ERROR;
             }
             TrialUtil util = new TrialUtil();
@@ -414,6 +419,9 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     public String amend() {
      //call the service
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute("trialDTO");
+        if (trialDTO == null) {
+           return ERROR; 
+        }
         TrialUtil util = new TrialUtil();
         try {
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
@@ -463,11 +471,20 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         }
        /* */
         removeSessionAttributes();
+        final MailManager mailManager = new MailManager();
+        mailManager.sendAmendNotificationMail(ServletActionContext.getRequest().getRemoteUser(), // remote user
+                trialDTO.getAssignedIdentifier(), //// generated identifier
+                trialDTO.getAmendmentDate(), //AmendementDate
+                trialDTO.getLocalAmendmentNumber()); 
+        
         ServletActionContext.getRequest().getSession().removeAttribute("trialDTO");
         setTrialAction("amend");
      return "redirect_to_search";   
     }
     private void addSessionAttributes(TrialDTO tDTO) {
+        if (tDTO == null) {
+            return;
+        }
         if (!tDTO.getIndDtos().isEmpty()) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
                     tDTO.getIndDtos());
@@ -493,6 +510,10 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * @throws PAException 
      */
     private void enforceBusinessRules() throws PAException {
+        if (trialDTO == null) {
+            addActionError("Form is Empty");
+            return;
+        }
         if (PAUtil.isEmpty(trialDTO.getAmendmentDate())) {
             addFieldError("trialDTO.amendmentDate",
                     getText("error.submit.amendmentDate"));
@@ -1012,4 +1033,18 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         this.trialAction = trialAction;
     }
 
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
+    }
+    
 }

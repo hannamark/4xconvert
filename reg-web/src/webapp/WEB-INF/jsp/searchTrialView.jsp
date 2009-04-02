@@ -32,7 +32,7 @@
      </c:if>
      <c:if test="${param.trialAction == 'amend'}">
         <div class="confirm_msg">
-          <strong>The trial has been successfully amended and assigned the NCI Identifier ${requestScope.trialSummary.assignedIdentifier.extension}</strong>
+          <strong>The amendment to trial with the NCI Identifier ${requestScope.trialSummary.assignedIdentifier.extension} was successfully submitted.</strong>
         </div>
      </c:if>
     <s:form > <s:actionerror/>          
