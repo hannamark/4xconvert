@@ -145,6 +145,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         }
     }
     
+
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");

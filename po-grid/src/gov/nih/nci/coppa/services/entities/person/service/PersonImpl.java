@@ -30,8 +30,7 @@ public class PersonImpl extends PersonImplBase {
         super();
     }
 
-    public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException,
-            gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
+  public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
         try {
             Ii ii_dto = IITransformer.INSTANCE.toDto(id);
             PersonDTO person_dto = personService.getPerson(ii_dto);
@@ -43,8 +42,7 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-    public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Person person) throws RemoteException,
-            gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             PersonDTO dto = PersonTransformer.INSTANCE.toDto(person);
             return IdTransformer.INSTANCE.toXml(personService.createPerson(dto));
@@ -54,7 +52,7 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-    public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Person person) throws RemoteException {
         try {
             PersonDTO dto = PersonTransformer.INSTANCE.toDto(person);
             return StringMapTransformer.INSTANCE.toXml(personService.validate(dto));
@@ -64,7 +62,7 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-    public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException {
         try {
             PersonDTO person_iso = PersonTransformer.INSTANCE.toDto(person);
             List<PersonDTO> results = personService.search(person_iso);
@@ -85,8 +83,7 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-    public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException,
-            gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             PersonDTO dto = PersonTransformer.INSTANCE.toDto(person);
             personService.updatePerson(dto);
@@ -96,8 +93,7 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-    public void updateStatus(gov.nih.nci.coppa.po.Id targetId, gov.nih.nci.coppa.po.Cd statusCode)
-            throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             Ii targetId_dto = IITransformer.INSTANCE.toDto(targetId);
             Cd targetStatus_dto = CDTransformer.INSTANCE.toDto(statusCode);

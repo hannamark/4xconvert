@@ -93,6 +93,25 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
 		}
 	}
 
+  private static void getOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+		Id id = new Id();
+		id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
+		id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+		id.setExtension("642");
+		OversightCommittee result = client.getById(id);
+		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+	  }
+	  private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+		    OversightCommittee criteria = new OversightCommittee();
+		    CD statusCode = new CD();
+	        statusCode.setCode("pending");
+	        criteria.setStatus(statusCode);
+	        OversightCommittee[] results = client.search(criteria);
+	        System.out.println("Search OversightCommittee Results Found: " + results.length);
+	        for (OversightCommittee oc : results) {
+	            System.out.println(ToStringBuilder.reflectionToString(oc, ToStringStyle.MULTI_LINE_STYLE));
+	        }
+		  }
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
@@ -177,23 +196,5 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     return boxedResult.getStringMap();
     }
   }
-  private static void getOversightCommittee(OversightCommitteeClient client) throws RemoteException {
-		Id id = new Id();
-		id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
-		id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-		id.setExtension("642");
-		OversightCommittee result = client.getById(id);
-		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
-	  }
-	  private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
-		    OversightCommittee criteria = new OversightCommittee();
-		    CD statusCode = new CD();
-	        statusCode.setCode("pending");
-	        criteria.setStatus(statusCode);
-	        OversightCommittee[] results = client.search(criteria);
-	        System.out.println("Search OversightCommittee Results Found: " + results.length);
-	        for (OversightCommittee oc : results) {
-	            System.out.println(ToStringBuilder.reflectionToString(oc, ToStringStyle.MULTI_LINE_STYLE));
-	        }
-		  }
+
 }

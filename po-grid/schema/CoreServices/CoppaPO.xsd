@@ -33,35 +33,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
-    <xs:element name="IIMap" >
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PO:IIMapType"/>
-            </xs:complexContent>
-        </xs:complexType>    
-    </xs:element>
-    <xs:complexType name="IIMapType">
-        <xs:annotation>
-            <xs:appinfo>
-             <jxb:class name="IIMapType">
-                <jxb:javadoc>
-                The IIMap type.
-                </jxb:javadoc>
-             </jxb:class>
-            </xs:appinfo>
-        </xs:annotation>    
-        <xs:sequence>
-            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
-			    <xs:complexType>
-			        <xs:sequence>
-			            <xs:element name="key" type="ISO:II" nillable="false" minOccurs="0" />
-			            <xs:element name="value" type="ISO:II" minOccurs="0" />
-			        </xs:sequence>
-			    </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:element name="Id">
         <xs:complexType>

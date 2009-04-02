@@ -33,7 +33,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         super();
     }
 
-    public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
+  public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
         try {
             Ii ii_iso = IITransformer.INSTANCE.toDto(id);
             OrganizationDTO org_dto = service.getOrganization(ii_iso);
@@ -45,7 +45,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-    public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             OrganizationDTO organizationDTO = OrganizationTransformer.INSTANCE.toDto(organization);
             Ii ii = service.createOrganization(organizationDTO);
@@ -56,7 +56,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-    public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
         try {
             OrganizationDTO org = OrganizationTransformer.INSTANCE.toDto(organization);
             List<OrganizationDTO> results = service.search(org);
@@ -76,7 +76,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-    public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             OrganizationDTO organizationDTO = OrganizationTransformer.INSTANCE.toDto(organization);
             service.updateOrganization(organizationDTO);
@@ -86,7 +86,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-    public void updateStatus(gov.nih.nci.coppa.po.Id targetId, gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             Ii iiDto = IdTransformer.INSTANCE.toDto(targetId);
             Cd cdDto = CDTransformer.INSTANCE.toDto(statusCode);
@@ -97,7 +97,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-    public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
+  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
         try {
             OrganizationDTO organizationDTO = OrganizationTransformer.INSTANCE.toDto(organization);
             Map<String, String[]> map = service.validate(organizationDTO);

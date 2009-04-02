@@ -94,6 +94,26 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 		}
 	}
 
+  private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
+		Id id = new Id();
+		id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
+		id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+		id.setExtension("648");
+		OrganizationalContact result = client.getById(id);
+		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+	  }
+	  private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
+		    OrganizationalContact criteria = new OrganizationalContact();
+		    CD statusCode = new CD();
+	        statusCode.setCode("pending");
+	        criteria.setStatus(statusCode);
+	        OrganizationalContact[] results = client.search(criteria);
+	        System.out.println("Search OrganizationalContact Results Found: " + results.length);
+	        for (OrganizationalContact orgContact : results) {
+	            System.out.println(ToStringBuilder.reflectionToString(orgContact, ToStringStyle.MULTI_LINE_STYLE));
+	        }
+		  }
+
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
@@ -178,24 +198,5 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     return boxedResult.getStringMap();
     }
   }
-  private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
-		Id id = new Id();
-		id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
-		id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
-		id.setExtension("648");
-		OrganizationalContact result = client.getById(id);
-		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
-	  }
-	  private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
-		    OrganizationalContact criteria = new OrganizationalContact();
-		    CD statusCode = new CD();
-	        statusCode.setCode("pending");
-	        criteria.setStatus(statusCode);
-	        OrganizationalContact[] results = client.search(criteria);
-	        System.out.println("Search OrganizationalContact Results Found: " + results.length);
-	        for (OrganizationalContact orgContact : results) {
-	            System.out.println(ToStringBuilder.reflectionToString(orgContact, ToStringStyle.MULTI_LINE_STYLE));
-	        }
-		  }
 
 }
