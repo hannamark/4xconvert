@@ -88,6 +88,7 @@ public class TrialUtil {
                 convertToTimestamp(spDTO.getPrimaryCompletionDate()).toString()));
         trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
         trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
+        trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
     }
 
     /**
