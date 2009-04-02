@@ -92,7 +92,6 @@ import javax.ejb.Stateless;
  * copyright holder, NCI.
  */
 @Stateless
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class SubGroupsServiceBean extends AbstractStudyIsoService<StratumGroupDTO, StratumGroup, StratumGroupConverter>
 implements SubGroupsServiceRemote , SubGroupsServiceLocal {
     

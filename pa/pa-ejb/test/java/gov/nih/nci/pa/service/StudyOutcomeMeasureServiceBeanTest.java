@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -97,13 +98,14 @@ import org.junit.Test;
 public class StudyOutcomeMeasureServiceBeanTest {
 
     private StudyOutcomeMeasureServiceRemote remoteEjb = new StudyOutcomeMeasureServiceBean();;
-    Ii pid;
-
+     Ii pid;
+     Ii outComesid;
     @Before
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
         pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        outComesid=IiConverter.convertToIi(TestSchema.outcomeIds.get(0));
     }
 
     @Test
@@ -139,6 +141,35 @@ public class StudyOutcomeMeasureServiceBeanTest {
         dto2 = remoteEjb.create(dto);
         assertFalse(PAUtil.isIiNull(dto2.getIdentifier()));
         assertEquals(dto.getName().getValue(), dto2.getName().getValue());
+    }
+
+    @Test
+    public void update() throws Exception {
+        StudyOutcomeMeasureDTO dto = remoteEjb.get(outComesid);
+        dto.setName(StConverter.convertToSt("StudyOutcomeMeasure NEW"));
+        StudyOutcomeMeasureDTO updatedStudyOutcomeMeasure = remoteEjb.update(dto);
+        assertEquals("StudyOutcomeMeasure NEW", StConverter.convertToString(updatedStudyOutcomeMeasure.getName()));
+       
+    }
+    @Test
+    public void delete() throws Exception {
+    	StudyOutcomeMeasureDTO dto = new StudyOutcomeMeasureDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setStudyProtocolIi(pid);
+        dto.setName(StConverter.convertToSt("StudyOutcomeMeasure secondary"));
+        dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        StudyOutcomeMeasureDTO dto2 = null;
+        dto2 = new StudyOutcomeMeasureDTO();
+        dto2 = remoteEjb.create(dto);
+        
+        remoteEjb.delete(dto2.getIdentifier());
+        try {
+            remoteEjb.get(dto2.getIdentifier());
+            fail("get() should have thrown an exception after delete().");
+        } catch(PAException e) {
+            // expected behavior
+        }
+               
     }
     @Test 
     public void iiRootTest() throws Exception {

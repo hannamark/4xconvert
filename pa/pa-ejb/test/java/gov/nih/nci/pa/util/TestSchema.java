@@ -184,6 +184,7 @@ public class TestSchema {
         public static ArrayList<Long> researchOrganizationIds;
         public static ArrayList<Long> oversightCommitteeIds;
         public static ArrayList<Long> diseaseIds;
+        public static ArrayList<Long> outcomeIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -363,6 +364,7 @@ public class TestSchema {
             researchOrganizationIds = new ArrayList<Long>();
             oversightCommitteeIds = new ArrayList<Long>();
             diseaseIds = new ArrayList<Long>();
+            outcomeIds = new ArrayList<Long>();
                 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -403,7 +405,7 @@ public class TestSchema {
             oCommittee.setStatusCode(StatusCode.ACTIVE);
             addUpdObject(oCommittee);
             oversightCommitteeIds.add(oCommittee.getId());
-            
+                     
             Person per = PersonTest.createPersonObj();
             per.setFirstName("Joe");
             per.setLastName("the Clinician");
@@ -528,6 +530,7 @@ public class TestSchema {
             som.setPrimaryIndicator(Boolean.TRUE);
             som.setUserLastUpdated("curator");
             addUpdObject(som); 
+            outcomeIds.add(som.getId());
             
             StudyIndlde si = new StudyIndlde();
             si.setIndldeTypeCode(IndldeTypeCode.IND);

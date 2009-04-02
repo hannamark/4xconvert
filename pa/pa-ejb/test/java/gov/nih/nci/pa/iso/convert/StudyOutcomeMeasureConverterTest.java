@@ -93,6 +93,7 @@ import org.junit.Test;
 
 public class StudyOutcomeMeasureConverterTest {
     private Session sess;
+    private StudyOutcomeMeasureConverter studyOutcomeMeasureConverter = new StudyOutcomeMeasureConverter();
 
     @Before
     public void setUp() throws Exception {
@@ -110,7 +111,7 @@ public class StudyOutcomeMeasureConverterTest {
         bo.setStudyProtocol(sp);
         bo.setPrimaryIndicator(Boolean.TRUE);
 
-        StudyOutcomeMeasureDTO dto = StudyOutcomeMeasureConverter.convertFromDomainToDTO(bo);
+        StudyOutcomeMeasureDTO dto = studyOutcomeMeasureConverter.convertFromDomainToDto(bo);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getName(), dto.getName().getValue());
         assertEquals(bo.getPrimaryIndicator(), dto.getPrimaryIndicator().getValue());
@@ -126,7 +127,7 @@ public class StudyOutcomeMeasureConverterTest {
         dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
 
-        StudyOutcomeMeasure bo = StudyOutcomeMeasureConverter.convertFromDTOToDomain(dto);
+        StudyOutcomeMeasure bo = studyOutcomeMeasureConverter.convertFromDtoToDomain(dto);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getName(), dto.getName().getValue());
         assertEquals(bo.getPrimaryIndicator(), dto.getPrimaryIndicator().getValue());

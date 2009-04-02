@@ -104,6 +104,7 @@ public class Converters {
     private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
     private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
     private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
+    private static StudyOutcomeMeasureConverter studyOutcomeMeasureConverter = new StudyOutcomeMeasureConverter();
 
     /**
      * @param clazz class
@@ -151,6 +152,9 @@ public class Converters {
         if (clazz.equals(StudyOnholdConverter.class)) {
           return studyOnholdConverter;
       }
+        if (clazz.equals(StudyOutcomeMeasureConverter.class)) {
+            return studyOutcomeMeasureConverter;
+        }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }
 }

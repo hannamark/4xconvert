@@ -66,7 +66,7 @@ import gov.nih.nci.coppa.iso.St;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI. 
  */
-public class StudyOutcomeMeasureDTO extends BaseDTO {
+public class StudyOutcomeMeasureDTO extends StudyDTO {
     private St name;
     private St timeFrame;
     private Bl primaryIndicator;

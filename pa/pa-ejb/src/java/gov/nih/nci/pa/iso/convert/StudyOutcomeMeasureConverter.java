@@ -96,13 +96,14 @@ import java.util.Date;
  * copyright holder, NCI. 
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
-public class StudyOutcomeMeasureConverter {
+public class StudyOutcomeMeasureConverter extends
+gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcomeMeasure> {
 
     /**
      * @param som StudyOutcomeMeasure
      * @return StudyOutcomeMeasureDTO
      */
-    public static StudyOutcomeMeasureDTO convertFromDomainToDTO(StudyOutcomeMeasure som) {
+    public StudyOutcomeMeasureDTO convertFromDomainToDto(StudyOutcomeMeasure som) {
         StudyOutcomeMeasureDTO somDTO = new StudyOutcomeMeasureDTO();
         somDTO.setIdentifier(IiConverter.converToStudyOutcomeMeasureIi(som.getId()));
         somDTO.setName(StConverter.convertToSt(som.getName()));
@@ -119,7 +120,7 @@ public class StudyOutcomeMeasureConverter {
      * @param somDTO StudyOutcomeMeasureDTO
      * @return StudyOutcomeMeasure
      */
-    public static StudyOutcomeMeasure convertFromDTOToDomain(StudyOutcomeMeasureDTO somDTO) {
+    public  StudyOutcomeMeasure convertFromDtoToDomain(StudyOutcomeMeasureDTO somDTO) {
         StudyOutcomeMeasure som = new StudyOutcomeMeasure();
 
         StudyProtocol spBo = new StudyProtocol();
