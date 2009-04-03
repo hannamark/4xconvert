@@ -59,5 +59,6 @@
     <changeSet id="12" author="Vrushali">
         <comment>execute pa_properties.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/pa_properties.sql"/>
+    </changeSet>    
 
 </databaseChangeLog>
