@@ -91,7 +91,7 @@ import gov.nih.nci.coppa.iso.St;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI. 
  */
-public class StudyIndldeDTO extends BaseDTO {
+public class StudyIndldeDTO extends StudyDTO {
 
     private Ii studyProtocolIi;
     private Cd expandedAccessStatusCode;

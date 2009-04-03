@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+
 import javax.ejb.Remote;
 
 /**
@@ -89,6 +91,6 @@ import javax.ejb.Remote;
  * copyright holder, NCI. 
  */
 @Remote
-public interface StudyIndldeServiceRemote  extends StudyIndIdeService {
+public interface StudyIndldeServiceRemote  extends StudyPaService<StudyIndldeDTO> {
 
 }

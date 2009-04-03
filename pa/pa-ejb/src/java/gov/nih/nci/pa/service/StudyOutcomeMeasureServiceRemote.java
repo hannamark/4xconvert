@@ -91,6 +91,6 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface StudyOutcomeMeasureServiceRemote extends StudyPaService<StudyOutcomeMeasureDTO> {
+public interface StudyOutcomeMeasureServiceRemote  extends StudyPaService<StudyOutcomeMeasureDTO> {
 
 }

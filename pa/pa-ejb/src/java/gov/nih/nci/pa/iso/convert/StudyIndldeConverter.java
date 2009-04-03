@@ -103,12 +103,13 @@ import java.util.Date;
  * copyright holder, NCI. 
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
-public class StudyIndldeConverter {
+public class StudyIndldeConverter extends 
+gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
     /**
      * @param si StudyIndlde
      * @return StudyIndldeDTO
      */
-    public static StudyIndldeDTO convertFromDomainToDTO(StudyIndlde si) {
+    public StudyIndldeDTO convertFromDomainToDto(StudyIndlde si) {
         StudyIndldeDTO siDTO = new StudyIndldeDTO();
         siDTO.setIdentifier(IiConverter.converToStudyIndIdeIi(si.getId()));
         siDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(si.getStudyProtocol().getId()));
@@ -128,7 +129,7 @@ public class StudyIndldeConverter {
      * @param siDTO StudyIndldeDTO
      * @return StudyIndlde
      */
-    public static StudyIndlde convertFromDTOToDomain(StudyIndldeDTO siDTO) {
+    public StudyIndlde convertFromDtoToDomain(StudyIndldeDTO siDTO) {
         StudyIndlde si = new StudyIndlde();
 
         StudyProtocol spBo = new StudyProtocol();

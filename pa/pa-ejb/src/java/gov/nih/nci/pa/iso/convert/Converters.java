@@ -105,7 +105,7 @@ public class Converters {
     private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
     private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
     private static StudyOutcomeMeasureConverter studyOutcomeMeasureConverter = new StudyOutcomeMeasureConverter();
-
+    private static StudyIndldeConverter studyIndldeConverter = new StudyIndldeConverter();
     /**
      * @param clazz class
      * @return converter
@@ -154,6 +154,9 @@ public class Converters {
       }
         if (clazz.equals(StudyOutcomeMeasureConverter.class)) {
             return studyOutcomeMeasureConverter;
+        }
+        if (clazz.equals(StudyIndldeConverter.class)) {
+            return studyIndldeConverter;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

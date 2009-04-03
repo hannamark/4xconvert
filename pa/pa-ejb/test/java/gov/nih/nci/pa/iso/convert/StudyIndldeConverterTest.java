@@ -122,7 +122,8 @@ public class StudyIndldeConverterTest {
         bo.setGrantorCode(GrantorCode.CDER);
         bo.setIndldeNumber("1234");
 
-        StudyIndldeDTO dto = StudyIndldeConverter.convertFromDomainToDTO(bo);
+        StudyIndldeDTO dto = (StudyIndldeDTO)
+        (Converters.get(StudyIndldeConverter.class).convertFromDomainToDto(bo));
         assertStudyIndlde(bo, dto);
     }
 
@@ -151,7 +152,7 @@ public class StudyIndldeConverterTest {
         dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
         dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
         dto.setIndldeNumber(StConverter.convertToSt("1234"));
-        StudyIndlde bo = StudyIndldeConverter.convertFromDTOToDomain(dto);
+        StudyIndlde bo = (StudyIndlde) (Converters.get(StudyIndldeConverter.class).convertFromDtoToDomain(dto));
         assertEquals("","");
         assertStudyIndlde(bo, dto);
     }

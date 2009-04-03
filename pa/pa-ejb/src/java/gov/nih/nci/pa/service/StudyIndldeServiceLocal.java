@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+
 import javax.ejb.Local;
 
 /**
@@ -89,6 +91,6 @@ import javax.ejb.Local;
  * copyright holder, NCI. 
  */
 @Local
-public interface StudyIndldeServiceLocal extends StudyIndIdeService {
+public interface StudyIndldeServiceLocal extends StudyPaService<StudyIndldeDTO> {
 
 }
