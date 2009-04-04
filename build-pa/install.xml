@@ -541,9 +541,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         description="Wrapper target to call all targets required to upgrade jboss container." 
         depends="
         upgrade-ncm:jboss,
-        install:validation:pre-install,
-        install:jboss:stop,
-        install:init,
         install:jboss:pa-ear:re-configure,
         install:jboss:pa-ear,
         install:jboss:pa-ear:configure,
@@ -645,8 +642,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:init,
         install:jboss:binaries,
         install:jboss:configure,
-        install:post:jboss,
-        install:jboss:start
+        install:post:jboss
         ">
     </target>
 
@@ -682,8 +678,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:validation:pre-install:ports,
         install:init,
         install:jboss:configure,
-        install:post:jboss,
-        install:jboss:start
+        install:post:jboss
         ">
     </target>
 
@@ -718,8 +713,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:jboss:stop,
         install:validation:pre-install:ports,
         install:init,
-        install:post:jboss,
-        install:jboss:start
+        install:post:jboss
         ">
     </target>
 
