@@ -62,10 +62,7 @@ function generateReport(pid) {
                 <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Abstracted'}">
                 <li><s:a href="abstractionCompletionverified.action" cssClass="btn"><span class="btn_img"><span class="save">Verify Abstraction</span></span></s:a></li>
                 </s:if>
-                -->
-                <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code != 'Accepted'}">
-                <li><s:a href="abstractionCompletionsendEmail.action" cssClass="btn"><span class="btn_img"><span class="save">Send Email</span></span></s:a></li>		    
-				</s:if>     
+                --> 
             </ul>   
         </del>
     </div> 

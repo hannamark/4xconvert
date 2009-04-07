@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.pa.util.MailManager;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -130,6 +131,8 @@ public class StudyMilestoneServiceBean
     @Override
     public StudyMilestoneDTO create(StudyMilestoneDTO dto) throws PAException {
         StudyMilestoneDTO workDto = businessRules(dto);
+        // Send TSR e-mail for the appropriate milestone
+        sendTSREmail(workDto);
         StudyMilestoneDTO resultDto = super.create(workDto);
         createDocumentWorkflowStatuses(resultDto);
         updateRecordVerificationDates(resultDto);
@@ -343,5 +346,18 @@ public class StudyMilestoneServiceBean
             }
         }
         return false;
+    }
+    
+    private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {
+        MilestoneCode milestoneCode = MilestoneCode.getByCode(
+                            CdConverter.convertCdToString(workDto.getMilestoneCode()));
+        if (milestoneCode.equals(MilestoneCode.TRIAL_SUMMARY_SENT)) {
+            try {
+                MailManager.getInstance().sendTSREmail(workDto.getStudyProtocolIdentifier());
+            } catch (PAException e) {
+                throw new PAException(workDto.getMilestoneCode().getCode() + "' could not "
+                        + "be recorded as sending the TSR report to the submitter  failed.", e);
+            }            
+        }        
     }
 }

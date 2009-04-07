@@ -5,7 +5,7 @@ insert into pa_properties(IDENTIFIER,name,value) VALUES(1,'tsr.subject',
 insert into pa_properties(IDENTIFIER,name,value) VALUES(2,'tsr.body',
 '${CurrentDate}
 
-Attn: ${SubmitterName}
+Dear ${SubmitterName}
 
 Your Trial, ${localOrgID}, ${trialTitle}, received by the NCI Clinical Trial Reporting Office (CTRO) on ${receiptDate} and assigned NCI Trial ID ${nciTrialID}, has been processed by the CTRO.
 
