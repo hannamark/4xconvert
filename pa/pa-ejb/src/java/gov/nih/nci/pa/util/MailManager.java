@@ -123,7 +123,7 @@ import org.apache.log4j.Logger;
 public final class MailManager {
     
     private static MailManager instance = null;
-    private static final Logger LOG = Logger.getLogger(HibernateHelper.class);
+    private static final Logger LOG = Logger.getLogger(MailManager.class);
     private static final String TSR = "TSR_";
     private static final String HTML = ".html";
     
@@ -144,52 +144,32 @@ public final class MailManager {
     /**
      * 
      * @param studyProtocolIi studyProtocolIi
-     * @return String
      * @throws PAException exception
      */
     @SuppressWarnings({ "PMD.StringInstantiation", "PMD.ExcessiveMethodLength", "PMD.SimpleDateFormatNeedsLocale" })
-    public String sendTSREmail(Ii studyProtocolIi) throws PAException {
+    public void sendTSREmail(Ii studyProtocolIi) throws PAException {
       LOG.info("Entering sendEmail");
       try {
         StudyProtocolQueryDTO spDTO = new ProtocolQueryServiceBean()
                     .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-        
-        Properties props = System.getProperties();
-        // Set up mail server
-        props.put("mail.smtp.host", new LookUpTableServiceBean().getPropertyValue("smtp"));
 
-        // Get session
-        Session session = Session.getDefaultInstance(props, null);
-
-        // Define Message
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(new LookUpTableServiceBean().getPropertyValue("fromaddress")));
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress(spDTO.getUserLastCreated()));
-        message.setSentDate(new java.util.Date());
-        message.setSubject(new LookUpTableServiceBean().getPropertyValue("tsr.subject"));
         RegistryUser userbean = new RegistryUserServiceBean().getUser(spDTO.getUserLastCreated());
-        // body
-        Multipart multipart = new MimeMultipart();
 
         Calendar calendar = new GregorianCalendar();
         Date date = calendar.getTime();
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 
-        // message
-        BodyPart msgPart = new MimeBodyPart();
         String body = new LookUpTableServiceBean().getPropertyValue("tsr.body");
-        String mailBody1 = body.replace("${CurrentDate}", format.format(date));
-        String mailBody2 = mailBody1.replace("${SubmitterName}", 
+        body = body.replace("${CurrentDate}", format.format(date));
+        body = body.replace("${SubmitterName}", 
                 userbean.getFirstName() + " " + userbean.getLastName());
-        String mailBody3 = mailBody2.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
-        String mailBody4 = mailBody3.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
-        String mailBody5 = mailBody4.replace("${receiptDate}", format.format(spDTO.getDateLastCreated()));
-        String mailBody6 = mailBody5.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
-        String mailBody7 = mailBody6.replace("${fileName}", TSR 
+        body = body.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
+        body = body.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
+        body = body.replace("${receiptDate}", format.format(spDTO.getDateLastCreated()));
+        body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
+        body = body.replace("${fileName}", TSR 
                                            + spDTO.getNciIdentifier().toString() + HTML);
-        String mailBody8 = mailBody7.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
-        msgPart.setText(mailBody8);
-        multipart.addBodyPart(msgPart);
+        body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
 
         new ProtocolQueryServiceBean().getTrialSummaryByStudyProtocolId(
             IiConverter.convertToLong(studyProtocolIi));
@@ -215,17 +195,11 @@ public final class MailManager {
         oosHtml.close();
         File[] attachments = {new File(inputFile), new File(outputFile)};
 
-        // attachments        
-        for (File attachment : attachments) {
-          MimeBodyPart attPart = new MimeBodyPart();
-          attPart.setDataHandler(new DataHandler(new FileDataSource(attachment)));
-          attPart.setFileName(attachment.getName());
-          multipart.addBodyPart(attPart);
-        }
-        message.setContent(multipart);       
-
         // Send Message
-        Transport.send(message);
+        sendMail(spDTO.getUserLastCreated(), //Mail Recipient
+                new LookUpTableServiceBean().getPropertyValue("tsr.subject"), // Mail Subject
+                body, // Mail Body
+                attachments); // Mail Attachments if any
 
         new File(inputFile).delete();
         new File(outputFile).delete();
@@ -234,8 +208,56 @@ public final class MailManager {
           LOG.error("Exception occured while emailing TSR Report " + e.getLocalizedMessage());
           throw new PAException("Exception occured while sending TSR Report to submitter", e);
       }
-      LOG.info("Leaving sendEmail");
-      return "";
+      LOG.info("Leaving sendTSREmail");
+    }
+    
+    /**
+     * 
+     * @param mailTo mailTo
+     * @param subject subject
+     * @param mailBody mailBody
+     * @param attachments File attachments
+     */
+    private  void sendMail(String mailTo, String subject, 
+                              String mailBody, File [] attachments) {
+        try {
+            // get system properties
+            Properties props = System.getProperties();
+
+            // Set up mail server
+            props.put("mail.smtp.host", 
+                    new LookUpTableServiceBean().getPropertyValue("smtp"));
+            // Get session
+            Session session = Session.getDefaultInstance(props, null);
+
+            // Define Message
+            MimeMessage message = new MimeMessage(session);
+            // body
+            Multipart multipart = new MimeMultipart();
+            
+            message.setFrom(new InternetAddress(new LookUpTableServiceBean().getPropertyValue("fromaddress")));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
+            message.setSentDate(new java.util.Date());            
+            message.setSubject(subject);
+            
+            BodyPart msgPart = new MimeBodyPart();            
+            msgPart.setText(mailBody);
+            multipart.addBodyPart(msgPart);
+            if (attachments != null && attachments.length > 0) {
+                // Add attachments to message       
+                for (File attachment : attachments) {
+                  MimeBodyPart attPart = new MimeBodyPart();
+                  attPart.setDataHandler(new DataHandler(new FileDataSource(attachment)));
+                  attPart.setFileName(attachment.getName());
+                  multipart.addBodyPart(attPart);
+                }                
+            }
+            message.setContent(multipart);
+            // Send Message
+            Transport.send(message);
+        } catch (Exception e) {
+            LOG.error("Send Mail error", e);
+        } // catch
     }
 
 

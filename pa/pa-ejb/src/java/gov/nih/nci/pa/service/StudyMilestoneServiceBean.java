@@ -351,7 +351,7 @@ public class StudyMilestoneServiceBean
     private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(
                             CdConverter.convertCdToString(workDto.getMilestoneCode()));
-        if (milestoneCode.equals(MilestoneCode.TRIAL_SUMMARY_SENT)) {
+        if ((MilestoneCode.TRIAL_SUMMARY_SENT.equals(milestoneCode))) {
             try {
                 MailManager.getInstance().sendTSREmail(workDto.getStudyProtocolIdentifier());
             } catch (PAException e) {
