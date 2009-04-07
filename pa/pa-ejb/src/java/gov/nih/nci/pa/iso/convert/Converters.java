@@ -89,7 +89,8 @@ import gov.nih.nci.pa.service.PAException;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
+"PMD.TooManyFields" })
 public class Converters {
     private static ArmConverter arm = new ArmConverter();
     private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
@@ -106,6 +107,7 @@ public class Converters {
     private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
     private static StudyOutcomeMeasureConverter studyOutcomeMeasureConverter = new StudyOutcomeMeasureConverter();
     private static StudyIndldeConverter studyIndldeConverter = new StudyIndldeConverter();
+    private static StudyContactConverter studyContactConverter = new StudyContactConverter();
     /**
      * @param clazz class
      * @return converter
@@ -157,6 +159,9 @@ public class Converters {
         }
         if (clazz.equals(StudyIndldeConverter.class)) {
             return studyIndldeConverter;
+        }
+        if (clazz.equals(StudyContactConverter.class)) {
+            return studyContactConverter;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

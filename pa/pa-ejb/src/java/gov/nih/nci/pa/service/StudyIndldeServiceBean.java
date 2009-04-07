@@ -98,8 +98,8 @@ import javax.ejb.TransactionAttributeType;
  * copyright holder, NCI. 
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS) 
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyIndldeServiceBean extends 
 AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter>
 implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {

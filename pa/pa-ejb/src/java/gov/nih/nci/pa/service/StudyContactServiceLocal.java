@@ -88,6 +88,6 @@ import javax.ejb.Local;
  * copyright holder, NCI.
  */
 @Local
-public interface StudyContactServiceLocal extends StudyContactService {
+public interface StudyContactServiceLocal extends StudyContactService  {
 
 }

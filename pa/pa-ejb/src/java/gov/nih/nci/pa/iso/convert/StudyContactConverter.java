@@ -109,14 +109,14 @@ import java.util.List;
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity" })
 
-public class StudyContactConverter {
+public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractConverter<StudyContactDTO, StudyContact> {
     /**
      * 
      * @param bo StudyContact domain object
      * @return dto
      * @throws PAException PAException
      */
-    public static StudyContactDTO convertFromDomainToDTO(
+    public StudyContactDTO convertFromDomainToDto(
                                 StudyContact bo) throws PAException {
         
         StudyContactDTO dto = new StudyContactDTO();
@@ -153,7 +153,7 @@ public class StudyContactConverter {
      * @return StudyContact StudyContact
      * @throws PAException PAException
      */
-    public static StudyContact convertFromDtoToDomain(
+    public StudyContact convertFromDtoToDomain(
             StudyContactDTO dto) throws PAException {
         return convertFromDtoToDomain(dto , new StudyContact());
     }
@@ -165,12 +165,14 @@ public class StudyContactConverter {
      * @return StudyContact StudyContact
      * @throws PAException PAException
      */
-    public static StudyContact convertFromDtoToDomain(
-            StudyContactDTO dto , StudyContact bo) throws PAException {
+    public StudyContact convertFromDtoToDomain(StudyContactDTO dto , StudyContact bo) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
         HealthCareProvider hfBo = null;
         ClinicalResearchStaff crs = null;
+        if (dto.getIdentifier() != null) {
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        }
         if (!PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
             hfBo = new HealthCareProvider();
             hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
@@ -198,7 +200,8 @@ public class StudyContactConverter {
             if (retList != null && !retList.isEmpty()) {
                 bo.setPhone(retList.get(0).toString());
             }
-        }        
+        }   
+        
         return bo;
     }
     

@@ -102,7 +102,7 @@ import java.util.Date;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI. 
  */
-@SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class StudyIndldeConverter extends 
 gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
     /**
@@ -129,6 +129,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
      * @param siDTO StudyIndldeDTO
      * @return StudyIndlde
      */
+    @SuppressWarnings("PMD.NPathComplexity")
     public StudyIndlde convertFromDtoToDomain(StudyIndldeDTO siDTO) {
         StudyIndlde si = new StudyIndlde();
 
