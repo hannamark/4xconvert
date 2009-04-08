@@ -22,7 +22,9 @@
   * pom.xml
     Top level Maven project file
   * profiles.xml.example
-    File to override default build (Maven) properties. To use rename to 'profiles.xml' and alter values within renamed file (Note: Do not commit your local 'profiles.xml' file to CM repository)
+    File to override default build (Maven) properties. To use, rename to 'profiles.xml' and alter values within renamed file (Note: Do not commit your local 'profiles.xml' file to CM repository).
+    The default jboss.home value is "/Applications/jboss-4.0.5.GA," the default JBoss location on a Mac.  If you are on a different platform or have JBoss installed to a different location, set
+    the value accordingly in profiles.xml.
   * README.txt
     <this file>
 
@@ -88,6 +90,6 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
 1.6 Peer Review
     We are using ReviewBoard for peer reviews.  Follow the directions on the wiki for setup and use instructions.
     The ReviewBoard group for all po developers is (no quotes) 'po-all'.
-    
+
 1.7 Pre-commit check
     Verify everything is working properly by running 'mvn -Plocal,nuke-db sql:execute && mvn -Plocal clean install sql:execute && mvn -Pci,local integration-test'

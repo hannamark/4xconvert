@@ -14,7 +14,7 @@
     <packaging>ejb</packaging>
     <name>po-services</name>
     <url>../../services/target/site</url>
-    
+
     <properties>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <schema.file>schema.sql</schema.file>
@@ -26,20 +26,20 @@
         <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
         <admin.db.username>postgres</admin.db.username>
         <admin.db.password>postgres</admin.db.password>
-    	<hbm2ddl.drop.table>true</hbm2ddl.drop.table>
+        <hbm2ddl.drop.table>true</hbm2ddl.drop.table>
         <hbm2ddl.create.table>true</hbm2ddl.create.table>
         <jboss.home>target/jbossDeploy</jboss.home>
         <xsnapshot.version>1.1-beta4</xsnapshot.version>
         <ctep.username>coppaUser</ctep.username>
         <ctep.password>coppa1</ctep.password>
-        <ctep.url>ormi://156.40.130.87:12401/CES</ctep.url>
+        <ctep.url>ormi://156.40.130.87:12402/CES</ctep.url>
         <ctep.jms.subscription.name>JMSSUBSCRIBER</ctep.jms.subscription.name>
         <ctep.jms.topic.connection.factory.name>java:comp/resource/BETAJMSRP/TopicConnectionFactories/TCF</ctep.jms.topic.connection.factory.name>
         <ctep.jms.topic.name>java:comp/resource/BETAJMSRP/Topics/CES_OUT_TOPIC</ctep.jms.topic.name>
         <db-upgrade.run.dir>${pom.basedir}/src/main/db/db-upgrade</db-upgrade.run.dir>
         <db-install.run.dir>${pom.basedir}/src/main/db/db-install</db-install.run.dir>
     </properties>
-    
+
     <dependencies>
         <!-- JBoss Provided Libs -->
         <dependency>
@@ -83,7 +83,7 @@
             <artifactId>jms</artifactId>
             <version>1.1</version>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>
 
         <!-- Jars required -->
         <dependency>
@@ -202,7 +202,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        
+
         <!-- Testing only jars -->
         <dependency>
             <groupId>hsqldb</groupId>
@@ -210,12 +210,12 @@
             <version>1.8.0.7</version>
             <scope>test</scope>
         </dependency>
-		<dependency>
-		    <groupId>${jdbc.groupId}</groupId>
-		    <artifactId>${jdbc.artifactId}</artifactId>
-		    <version>${jdbc.version}</version>
+        <dependency>
+            <groupId>${jdbc.groupId}</groupId>
+            <artifactId>${jdbc.artifactId}</artifactId>
+            <version>${jdbc.version}</version>
             <scope>test</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <artifactId>jta</artifactId>
             <groupId>javax.transaction</groupId>
@@ -234,7 +234,7 @@
             <version>2.5.6</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- Dependencies for the ant build script for xsnapshot generation -->
         <dependency>
             <groupId>ant</groupId>
@@ -314,8 +314,8 @@
                     <clientIncludes>
                         <clientInclude>gov/nih/nci/services/**/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/service/OneCriterionRequiredException.class</clientInclude>                        
-                        <clientInclude>gov/nih/nci/po/service/SearchCriteriaValidationException.class</clientInclude>                        
+                        <clientInclude>gov/nih/nci/po/service/OneCriterionRequiredException.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/service/SearchCriteriaValidationException.class</clientInclude>
                     </clientIncludes>
                     <clientExcludes>
                         <clientExclude>gov/nih/nci/services/**/*Helper*</clientExclude>
@@ -496,9 +496,9 @@
                             <autocommit>true</autocommit>
                             <sqlCommand>
                                 drop database if exists ${database.name};
-                                drop user if exists ${jdbc.username}; 
-                                create database ${database.name}; 
-                                create user ${jdbc.username} with password '${jdbc.password}'; 
+                                drop user if exists ${jdbc.username};
+                                create database ${database.name};
+                                create user ${jdbc.username} with password '${jdbc.password}';
                                 grant all on database ${database.name} to ${jdbc.username};
                             </sqlCommand>
                         </configuration>
