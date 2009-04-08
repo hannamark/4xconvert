@@ -5,14 +5,21 @@ http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/ArmService=gov.nih.nci.coppa.services.pa.armservice.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/bindings=gov.nih.nci.coppa.services.pa.armservice.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/service=gov.nih.nci.coppa.services.pa.armservice.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
+http\://faults.pa.services.coppa.nci.nih.gov=faults.pa.services.coppa.nci.nih.gov
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090
+http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/types=gov.nih.nci.coppa.services.pa.armservice.stubs.types
 http\://pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
 http\://enterpriseservices.nci.nih.gov/PAServices/types=gov.nih.nci.coppa.services.pa.stubs.types
+
 
 
 

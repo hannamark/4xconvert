@@ -10,8 +10,12 @@
     <!-- ============================================================== -->
     <!-- Place any other properties you will need here                  -->
     <!-- ============================================================== -->
-
-
+    <patternset id="dependent.schema.folders.ps">
+        <include name="core/**/*"/>
+        <include name="pkgdata/**/*"/>
+        <include name="ws/**/*"/>
+        <include name="wsrf/**/*"/>
+    </patternset>
 
 
     <!-- ============================================================== -->
@@ -39,7 +43,11 @@
     <!-- Pre Init Target                                                -->
     <!-- ============================================================== -->
     <target name="preInit">
-
+        <copy todir="${schema.dir}">
+            <fileset dir="${ext.globus.dir}/schema">
+                <patternset refid="dependent.schema.folders.ps"/>
+            </fileset>
+        </copy>
     </target>
 
     <!-- ============================================================== -->
@@ -167,7 +175,17 @@
     <!-- Pre Clean Target                                               -->
     <!-- ============================================================== -->
     <target name="preClean">
-
+        <delete>
+            <fileset dir="${schema.dir}">
+                <patternset refid="dependent.schema.folders.ps"/>
+            </fileset>
+        </delete>
+        <delete>
+            <dirset dir="${schema.dir}">
+                <include name="**/*"/>
+                <exclude name="${introduce.skeleton.service.name}/**"/>
+            </dirset>
+        </delete>
     </target>
 
     <!-- ============================================================== -->

@@ -1,6 +1,6 @@
-package gov.nih.nci.coppa.services.pa.service;
+package gov.nih.nci.coppa.services.pa.armservice.service;
 
-import gov.nih.nci.coppa.services.pa.service.globus.resource.PAServicesResource;
+import gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResource;
 import  gov.nih.nci.coppa.services.pa.service.PAServicesConfiguration;
 
 import java.rmi.RemoteException;
@@ -26,9 +26,9 @@ import org.globus.wsrf.ResourcePropertySet;
  * @created by Introduce Toolkit version 1.3
  * 
  */
-public abstract class PAServicesImplBase {
+public abstract class ArmServiceImplBase {
 	
-	public PAServicesImplBase() throws RemoteException {
+	public ArmServiceImplBase() throws RemoteException {
 	
 	}
 	
@@ -37,17 +37,17 @@ public abstract class PAServicesImplBase {
 	}
 	
 	
-	public gov.nih.nci.coppa.services.pa.service.globus.resource.PAServicesResourceHome getResourceHome() throws Exception {
+	public gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome getResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("home");
-		return (gov.nih.nci.coppa.services.pa.service.globus.resource.PAServicesResourceHome)resource;
+		return (gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome)resource;
 	}
 
 	
 	
 	
-	public gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome getArmServiceResourceHome() throws Exception {
-		ResourceHome resource = getResourceHome("armServiceHome");
-		return (gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome)resource;
+	public gov.nih.nci.coppa.services.pa.service.globus.resource.PAServicesResourceHome getPAServicesResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("pAServicesHome");
+		return (gov.nih.nci.coppa.services.pa.service.globus.resource.PAServicesResourceHome)resource;
 	}
 	
 	
