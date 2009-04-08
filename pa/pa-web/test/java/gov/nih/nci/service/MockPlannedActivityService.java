@@ -95,14 +95,21 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MockPlannedActivityService.
+ * 
  * @author hreinhart
- *
  */
 public class MockPlannedActivityService implements PlannedActivityServiceRemote {
 
+    /** The list. */
     public static List<PlannedActivity> list;
+    
+    /** The converter. */
     static PlannedActivityConverter converter = new PlannedActivityConverter();
+    
+    /** The seq. */
     private static Long seq = 1L;
     
     static {
@@ -122,9 +129,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * Creates the planned eligibility criterion.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned eligibility criterion dto
+     * 
+     * @throws PAException the PA exception
      */
     public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(
             PlannedEligibilityCriterionDTO dto) throws PAException {
@@ -133,8 +144,11 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param ii
-     * @throws PAException
+     * Delete planned eligibility criterion.
+     * 
+     * @param ii the ii
+     * 
+     * @throws PAException the PA exception
      */
     public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
         // TODO Auto-generated method stub
@@ -142,9 +156,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * Gets the by arm.
+     * 
+     * @param ii the ii
+     * 
+     * @return the by arm
+     * 
+     * @throws PAException the PA exception
      */
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
         // TODO Auto-generated method stub
@@ -152,9 +170,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * Gets the planned eligibility criterion.
+     * 
+     * @param ii the ii
+     * 
+     * @return the planned eligibility criterion
+     * 
+     * @throws PAException the PA exception
      */
     public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii)
             throws PAException {
@@ -163,9 +185,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * Gets the planned eligibility criterion by study protocol.
+     * 
+     * @param ii the ii
+     * 
+     * @return the planned eligibility criterion by study protocol
+     * 
+     * @throws PAException the PA exception
      */
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(
             Ii ii) throws PAException {
@@ -174,9 +200,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * Update planned eligibility criterion.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned eligibility criterion dto
+     * 
+     * @throws PAException the PA exception
      */
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(
             PlannedEligibilityCriterionDTO dto) throws PAException {
@@ -185,9 +215,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * Gets the by study protocol.
+     * 
+     * @param ii the ii
+     * 
+     * @return the by study protocol
+     * 
+     * @throws PAException the PA exception
      */
     public List<PlannedActivityDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
@@ -198,11 +232,27 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
         }
         return resultList;
     }
+   
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     */
+    public List<PlannedActivityDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        List<PlannedActivityDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
+        List<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
+        if (!dtoList.isEmpty()) {
+            resultList.add(dtoList.get(dtoList.size() - 1));
+        }
+        return resultList;
+    }
 
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * Creates the.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned activity dto
+     * 
+     * @throws PAException the PA exception
      */
     public PlannedActivityDTO create(PlannedActivityDTO dto) throws PAException {
         PlannedActivity bo = converter.convertFromDtoToDomain(dto);
@@ -216,8 +266,11 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param ii
-     * @throws PAException
+     * Delete.
+     * 
+     * @param ii the ii
+     * 
+     * @throws PAException the PA exception
      */
     public void delete(Ii ii) throws PAException {
         for (PlannedActivity item : list) {
@@ -230,9 +283,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * Gets the.
+     * 
+     * @param ii the ii
+     * 
+     * @return the planned activity dto
+     * 
+     * @throws PAException the PA exception
      */
     public PlannedActivityDTO get(Ii ii) throws PAException {
         for (PlannedActivity item : list) {
@@ -244,9 +301,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
      }
 
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * Update.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned activity dto
+     * 
+     * @throws PAException the PA exception
      */
     public PlannedActivityDTO update(PlannedActivityDTO dto) throws PAException {
         for (PlannedActivity item : list) {
@@ -262,8 +323,10 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
 
     /**
      * copies the study protocol record from source to target.
+     * 
      * @param fromStudyProtocolIi source
      * @param toStudyProtocolIi target
+     * 
      * @throws PAException exception.
      */
     public void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) 
@@ -271,6 +334,9 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
      // TODO Auto-generated method stub
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+     */
     public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
             throws PAException {
         // TODO Auto-generated method stub

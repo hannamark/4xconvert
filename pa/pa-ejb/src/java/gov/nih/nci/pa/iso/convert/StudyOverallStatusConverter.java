@@ -102,7 +102,8 @@ import org.apache.log4j.Logger;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class StudyOverallStatusConverter {
+public class StudyOverallStatusConverter extends 
+gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOverallStatusDTO, StudyOverallStatus> {
 
     private static final Logger LOG  = Logger.getLogger(StudyOverallStatusConverter.class);
 
@@ -112,7 +113,7 @@ public class StudyOverallStatusConverter {
      * @return dto
      * @throws PAException PAException
      */
-    public static StudyOverallStatusDTO convertFromDomainToDTO(
+    public StudyOverallStatusDTO convertFromDomainToDto(
             StudyOverallStatus bo) throws PAException {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setIdentifier(IiConverter.converToStudyOverallStatusIi(bo.getId()));
@@ -129,7 +130,7 @@ public class StudyOverallStatusConverter {
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public static StudyOverallStatus convertFromDtoToDomain(
+    public StudyOverallStatus convertFromDtoToDomain(
             StudyOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             String errmsg = " convertFromDtoToDomain has been implemented for new domain"
@@ -147,6 +148,9 @@ public class StudyOverallStatusConverter {
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
 
         StudyOverallStatus bo = new StudyOverallStatus();
+        if (dto.getIdentifier() != null) {
+            bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+            }
         bo.setDateLastUpdated(new Date());
         bo.setCommentText(StConverter.convertToString(dto.getReasonText()));
         bo.setStatusCode(StudyStatusCode.getByCode(dto.getStatusCode().getCode()));

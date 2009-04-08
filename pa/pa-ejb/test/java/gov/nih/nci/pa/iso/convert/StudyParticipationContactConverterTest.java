@@ -118,7 +118,7 @@ public class StudyParticipationContactConverterTest {
     bo.setStudyParticipation(spa);
     bo.setStudyProtocol(sp);
     StudyParticipationContactConverter sg = new StudyParticipationContactConverter();
-    StudyParticipationContactDTO dto = sg.convertFromDomainToDTO(bo);
+    StudyParticipationContactDTO dto = sg.convertFromDomainToDto(bo);
     assertStudyParticipationContactConverter(bo, dto);
   }
 

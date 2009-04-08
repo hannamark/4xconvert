@@ -108,6 +108,11 @@ public class Converters {
     private static StudyOutcomeMeasureConverter studyOutcomeMeasureConverter = new StudyOutcomeMeasureConverter();
     private static StudyIndldeConverter studyIndldeConverter = new StudyIndldeConverter();
     private static StudyContactConverter studyContactConverter = new StudyContactConverter();
+    private static StudyOverallStatusConverter studyOverallStatusConverter = new StudyOverallStatusConverter();
+    private static StudyRecruitmentStatusConverter studyRecruitmentStatusConverter = 
+    new StudyRecruitmentStatusConverter();
+    private static StudyParticipationContactConverter studyParticipationContactConverter = 
+        new StudyParticipationContactConverter();
     /**
      * @param clazz class
      * @return converter
@@ -162,6 +167,15 @@ public class Converters {
         }
         if (clazz.equals(StudyContactConverter.class)) {
             return studyContactConverter;
+        }
+        if (clazz.equals(StudyOverallStatusConverter.class)) {
+            return studyOverallStatusConverter;
+        }
+        if (clazz.equals(StudyRecruitmentStatusConverter.class)) {
+            return studyRecruitmentStatusConverter;
+        }
+        if (clazz.equals(StudyParticipationContactConverter.class)) {
+            return studyParticipationContactConverter;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

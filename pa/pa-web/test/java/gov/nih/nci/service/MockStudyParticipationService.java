@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -158,7 +159,15 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
         }
         return resultList;
     }
-
+    
+    public List<StudyParticipationDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        List<StudyParticipationDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
+        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
+        if (!dtoList.isEmpty()) {
+            resultList.add(dtoList.get(dtoList.size() - 1));
+        }
+        return resultList;
+    }
     /**
      * @param dto
      * @return

@@ -108,14 +108,15 @@ import java.util.ArrayList;
  * copyright holder, NCI.
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class StudyParticipationContactConverter {
+public class StudyParticipationContactConverter extends 
+gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  StudyParticipationContact> {
     /**
      *
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
      */
-    public static StudyParticipationContactDTO convertFromDomainToDTO(
+    public StudyParticipationContactDTO convertFromDomainToDto(
             StudyParticipationContact bo) throws PAException {
         if (bo == null) {
             throw new PAException("Tried to pass null as argument to converter "
@@ -163,7 +164,7 @@ public class StudyParticipationContactConverter {
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public static StudyParticipationContact convertFromDtoToDomain(
+    public StudyParticipationContact convertFromDtoToDomain(
             StudyParticipationContactDTO dto) throws PAException {
         return convertFromDtoToDomain(dto , new StudyParticipationContact());
     }
@@ -176,7 +177,7 @@ public class StudyParticipationContactConverter {
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public static StudyParticipationContact convertFromDtoToDomain(
+    public StudyParticipationContact convertFromDtoToDomain(
             StudyParticipationContactDTO dto , StudyParticipationContact bo) throws PAException {
         
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));

@@ -101,7 +101,8 @@ import org.apache.log4j.Logger;
  * copyright holder, NCI.
  */
 
-public class StudyRecruitmentStatusConverter {
+public class StudyRecruitmentStatusConverter extends 
+gov.nih.nci.pa.iso.convert.AbstractConverter< StudyRecruitmentStatusDTO,  StudyRecruitmentStatus> {
 
     private static final Logger LOG  = Logger.getLogger(StudyRecruitmentStatusConverter.class);
     
@@ -111,7 +112,7 @@ public class StudyRecruitmentStatusConverter {
     * @return dto
     * @throws PAException PAException
     */
-   public static StudyRecruitmentStatusDTO convertFromDomainToDTO(
+   public StudyRecruitmentStatusDTO convertFromDomainToDto(
            StudyRecruitmentStatus bo) throws PAException {
        StudyRecruitmentStatusDTO dto = new StudyRecruitmentStatusDTO();
        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
@@ -127,7 +128,7 @@ public class StudyRecruitmentStatusConverter {
     * @return StudyProtocol StudyProtocol
     * @throws PAException PAException
     */
-   public static StudyRecruitmentStatus convertFromDtoToDomain(
+   public StudyRecruitmentStatus convertFromDtoToDomain(
            StudyRecruitmentStatusDTO dto) throws PAException {
        if (PAUtil.isIiNull(dto.getStudyProtocolIi())) {
            String errmsg = " StudyOverallStatus.studyProtocol cannot be null. ";
@@ -139,6 +140,9 @@ public class StudyRecruitmentStatusConverter {
        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
 
        StudyRecruitmentStatus bo = new StudyRecruitmentStatus();
+       if (dto.getIdentifier() != null) {
+           bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+           }
        bo.setDateLastUpdated(new Date());
        bo.setStatusCode(StudyRecruitmentStatusCode.getByCode(dto.getStatusCode().getCode()));
        bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));

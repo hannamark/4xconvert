@@ -85,6 +85,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyParticipationContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -132,7 +133,8 @@ public class StudyParticipationContactServiceTest {
     @Test
     public void get() throws Exception {
         StudyParticipationContactDTO spcDto = remoteEjb.get(contactIi);
-        StudyParticipationContact spcBo = StudyParticipationContactConverter.convertFromDtoToDomain(spcDto);
+        StudyParticipationContact spcBo = (StudyParticipationContact)
+        Converters.get(StudyParticipationContactConverter.class).convertFromDtoToDomain(spcDto);
         assertEquals(participationId, spcBo.getStudyParticipation().getId());
         assertEquals(protocolId, spcBo.getStudyProtocol().getId());
     }

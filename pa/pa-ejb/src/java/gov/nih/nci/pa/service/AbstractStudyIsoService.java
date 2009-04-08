@@ -168,4 +168,22 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             create(dto);
         }
     }
+    
+    /**
+     * Gets the current by study protocol.
+     * 
+     * @param studyProtocolIi the study protocol ii
+     * 
+     * @return the current by study protocol
+     * 
+     * @throws PAException the PA exception
+     */
+    public List<DTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        List<DTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
+        List<DTO> resultList = new ArrayList<DTO>();
+        if (!dtoList.isEmpty()) {
+            resultList.add(dtoList.get(dtoList.size() - 1));
+        }
+        return resultList;
+    }
 }

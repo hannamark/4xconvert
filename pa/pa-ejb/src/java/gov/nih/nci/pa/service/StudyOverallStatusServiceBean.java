@@ -82,24 +82,20 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -111,11 +107,13 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyOverallStatusServiceBean
-        extends AbstractStudyPaService<StudyOverallStatusDTO>
+extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>  
         implements StudyOverallStatusServiceRemote, StudyOverallStatusServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyOverallStatusServiceBean.class);
-
+    /** Standard error message for empty methods to be overridden. */
+    protected static String errMsgMethodNotImplemented = "Method not yet implemented.";
+    
     /**
      * @return log4j Logger
      */
@@ -174,13 +172,14 @@ public class StudyOverallStatusServiceBean
                 throw new PAException("New current status date should be bigger/same as old date.  ");
             }
 
-            StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
+            StudyOverallStatus bo = (StudyOverallStatus)
+            Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
             if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
                 if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
-                    serviceError("A reason must be entered when the study status is set to "
+                throw new PAException("A reason must be entered when the study status is set to "
                              + bo.getStatusCode().getCode() + ".  ");
                 }
             } else {
@@ -194,74 +193,29 @@ public class StudyOverallStatusServiceBean
                 session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
             }
             session.flush();
-            resultDto = StudyOverallStatusConverter.convertFromDomainToDTO(bo);
+            resultDto = (StudyOverallStatusDTO)
+            Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
-            serviceError(" Hibernate exception in createStudyOverallStatus ", hbe);
+        throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);
         }
         return resultDto;
     }
-
+    
     /**
-     * @param studyProtocolIi Primary key assigned to a StudyProtocl.
-     * @return List.
-     * @throws PAException Exception.
+     * @param dto dto
+     * @return null
+     * @throws PAException exception
      */
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyOverallStatusDTO> getByStudyProtocol(
-            Ii studyProtocolIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolIi)) {
-            String errMsg = " Ii should not be null ";
-            LOG.error(errMsg);
-            throw new PAException(errMsg);
-        }
-        LOG.info("Entering getStudyOverallStatusByStudyProtocol");
-
-        Session session = null;
-        List<StudyOverallStatus> queryList = new ArrayList<StudyOverallStatus>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-
-            // step 1: form the hql
-            String hql = "select sos "
-                       + "from StudyOverallStatus sos "
-                       + "join sos.studyProtocol sp "
-                       + "where sp.id = :studyProtocolId "
-                       + "order by sos.id ";
-            LOG.info(" query StudyOverallStatus = " + hql);
-
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
-
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getStudyProtocolByCriteria.  ", hbe);
-        }
-        ArrayList<StudyOverallStatusDTO> resultList = new ArrayList<StudyOverallStatusDTO>();
-        for (StudyOverallStatus bo : queryList) {
-            resultList.add(StudyOverallStatusConverter.convertFromDomainToDTO(bo));
-        }
-
-        LOG.info("Leaving getStudyOverallStatusByStudyProtocol, returning " + resultList.size() + " object(s).");
-        return resultList;
+    public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
+    throw new PAException(errMsgMethodNotImplemented);
     }
-
+    
     /**
-     * @param studyProtocolIi Primary key assigned to a StudyProtocl.
-     * @return List Current status StudyOverllStatusDTO.
-     * @throws PAException Exception.
+     * @param ii index of object
+     * @throws PAException exception
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyOverallStatusDTO> getCurrentByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
-        List<StudyOverallStatusDTO> sosList = this.getByStudyProtocol(studyProtocolIi);
-        List<StudyOverallStatusDTO> resultList = new ArrayList<StudyOverallStatusDTO>();
-        if (!sosList.isEmpty()) {
-            resultList.add(sosList.get(sosList.size() - 1));
-        }
-        return resultList;
+    public void delete(Ii ii) throws PAException {
+    throw new PAException(errMsgMethodNotImplemented);
     }
+    
 }

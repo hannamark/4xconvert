@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -122,6 +123,15 @@ public class MockStudyOnholdService implements StudyOnholdServiceRemote {
             if (item.getStudyProtocol().getId().equals(IiConverter.convertToLong(ii))) {
                 resultList.add(converter.convertFromDomainToDto(item));
             }
+        }
+        return resultList;
+    }
+   
+    public List<StudyOnholdDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        List<StudyOnholdDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
+        List<StudyOnholdDTO> resultList = new ArrayList<StudyOnholdDTO>();
+        if (!dtoList.isEmpty()) {
+            resultList.add(dtoList.get(dtoList.size() - 1));
         }
         return resultList;
     }

@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -146,11 +147,13 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
         ArrayList<StudyOverallStatusDTO> result = new ArrayList<StudyOverallStatusDTO>();
         for (StudyOverallStatus sos : sosList) {
             if(sos.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolId))) {
-                result.add(StudyOverallStatusConverter.convertFromDomainToDTO(sos));
+                result.add((StudyOverallStatusDTO)
+                		Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(sos));
             }
         }
         return result;
     }
+    
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusService#updateStudyOverallStatus(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO)

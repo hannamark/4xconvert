@@ -66,7 +66,7 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class StudyRecruitmentStatusDTO extends BaseDTO {
+public class StudyRecruitmentStatusDTO extends StudyDTO {
     private static final long serialVersionUID = 1234562452L;
     
     Cd statusCode;

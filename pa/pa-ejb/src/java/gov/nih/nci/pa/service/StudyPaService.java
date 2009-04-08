@@ -105,5 +105,12 @@ public interface StudyPaService<DTO> extends BasePaService<DTO> {
      * @throws PAException on error
      */
     void copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
-    
+ 
+    /**
+     * Gets the current by study protocol. 
+     * @param studyProtocolIi the study protocol ii 
+     * @return the current by study protocol 
+     * @throws PAException the PA exception
+     */
+    List<DTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException; 
 }

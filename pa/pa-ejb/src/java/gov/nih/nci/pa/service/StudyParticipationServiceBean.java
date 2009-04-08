@@ -78,30 +78,22 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -110,7 +102,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyParticipationServiceBean
-        extends AbstractStudyIsoService<StudyParticipationDTO, StudyParticipation, StudyParticipationConverter>
+        extends AbstractRoleIsoService<StudyParticipationDTO, StudyParticipation, StudyParticipationConverter>
         implements StudyParticipationServiceRemote, StudyParticipationServiceLocal {
 
     /**
@@ -143,83 +135,6 @@ public class StudyParticipationServiceBean
         return resultDto;
     }
 
-    /**
-     * Get list of StudyParticipations for a given protocol having
-     * a given functional code.
-     * @param studyProtocolIi id of protocol
-     * @param spDTO StudyParticipationDTO with the functional code criteria
-     * @return list StudyParticipationDTO
-     * @throws PAException on error
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(
-            Ii studyProtocolIi , StudyParticipationDTO spDTO) throws PAException {
-        List <StudyParticipationDTO> spDtoList = new ArrayList<StudyParticipationDTO>();
-        spDtoList.add(spDTO);
-        return getByStudyProtocol(studyProtocolIi, spDtoList);
-    }
-
-    /**
-     * Get list of StudyParticipations for a given protocol having
-     * functional codes from a list.
-     * @param studyProtocolIi id of protocol
-     * @param spDTOList List containing desired functional codes
-     * @return list StudyParticipationDTO
-     * @throws PAException on error
-     */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" , "" })
-    public List<StudyParticipationDTO> getByStudyProtocol(
-            Ii studyProtocolIi , List<StudyParticipationDTO> spDTOList) throws PAException {
-        if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
-            throw new PAException("Ii is null ");
-        }
-        if ((spDTOList == null) || (spDTOList.isEmpty())) {
-            getLogger().debug("Using method getByStudyProtocol(Ii).  ");
-            return getByStudyProtocol(studyProtocolIi);
-        }
-        getLogger().debug("Entering getByStudyProtocol(Ii, List<DTO>).  ");
-        StringBuffer criteria = new StringBuffer();
-        Session session = null;
-        List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StringBuffer hql = new StringBuffer("select spart "
-                               + "from StudyParticipation spart "
-                               + "join spart.studyProtocol spro "
-                               + "where spro.id = :studyProtocolId ");
-            boolean first = true;
-            for (StudyParticipationDTO crit : spDTOList) {
-                if (first) {
-                    hql.append("and ( ");
-                    first = false;
-                } else {
-                    criteria.append("or ");
-                }
-                criteria.append("spart.functionalCode = '"
-                    + StudyParticipationFunctionalCode.getByCode(crit.getFunctionalCode().getCode()) + "' ");
-            }
-            hql.append(criteria);
-            hql.append(") order by spart.id ");
-            getLogger().debug(" query StudyParticipation = " + hql);
-
-            Query query = session.createQuery(hql.toString());
-            query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
-            queryList = query.list();
-
-        }  catch (HibernateException hbe) {
-            throw new PAException(" Hibernate exception while retrieving "
-                    + "StudyParticipation for pid = " + studyProtocolIi.getExtension() , hbe);
-        }
-
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : queryList) {
-            resultList.add(convertFromDomainToDto(sp));
-        }
-        getLogger().debug("Leaving getByStudyProtocol() for (" + criteria + ").  ");
-        getLogger().debug("Returning " + resultList.size() + " object(s).  ");
-        return resultList;
-    }
-
-    
     @SuppressWarnings("PMD.NPathComplexity")
     private StudyParticipationDTO businessRules(StudyParticipationDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {

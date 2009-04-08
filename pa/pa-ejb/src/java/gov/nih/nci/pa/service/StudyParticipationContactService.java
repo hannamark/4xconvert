@@ -90,7 +90,7 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface StudyParticipationContactService extends BasePaService<StudyParticipationContactDTO> {
+public interface StudyParticipationContactService extends RolePaService<StudyParticipationContactDTO> {
     
     
     /**

@@ -76,22 +76,38 @@
 * 
 * 
 */
+
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.coppa.iso.Ii;
 
-import javax.ejb.Remote;
+import java.util.List;
 
 /**
- * @author Hugh Reinhart
- * @since 10/14/2008
- * 
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Naveen Amiruddin
+ * @since 04/07/2009
+ * @param <DTO> dto
  */
-@Remote
-public interface StudyRecruitmentStatusServiceRemote extends StudyPaService<StudyRecruitmentStatusDTO> {
+
+public interface RolePaService<DTO> extends StudyPaService<DTO> {
     
-    
+    /**
+     * Get list of participation for a given functional role code.
+     * @param studyProtocolIi id of protocol
+     * @param dto with the functional code criteria
+     * @return list of objects
+     * @throws PAException on error
+     */
+    List<DTO> getByStudyProtocol(
+            Ii studyProtocolIi , DTO dto) throws PAException;
+
+    /**
+     * Get list of participation for a given functional role code.
+     * @param studyProtocolIi id of protocol
+     * @param dto with the functional code criteria
+     * @return list of objects
+     * @throws PAException on error
+     */
+    List<DTO> getByStudyProtocol(
+            Ii studyProtocolIi , List<DTO> dto) throws PAException;    
 }
