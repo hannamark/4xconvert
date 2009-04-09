@@ -17,6 +17,8 @@
 			<li><div>Trial Overview</div>
 				<ul>
 					<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Identification</a></li>
+					<li><a href="milestone.action" >Trial Milestones</a></li>
+                    <li><a href="onhold.action" >On-hold Information</a></li>
 				</ul>
 			</li>
 			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
@@ -48,9 +50,7 @@
                         <li><a href="participatingOrganizations.action">Participating Sites</a></li>
                         <li><a href="collaborators.action">Collaborators</a></li>
     					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
-                        <li><a href="milestone.action" >Trial Milestones</a></li>
-                        <li><a href="onhold.action" >On-hold Information</a></li>
-                    </ul>
+                      </ul>
     			</li>
     			<li><div>Scientific Data</div>
     				<ul>
