@@ -32,7 +32,7 @@
                     <!--ADD CONTENT HERE-->
                     <h1>CTRP Home</h1>
                     <p class="intro">
-                        This Portal enables you to  register a trial with NCI&#39;s Clinical Trials Reporting Program. You can
+                        This site enables you to register a trial with NCI&#39;s Clinical Trials Reporting Program. You can
                     </p>
                     <ul>
                         <li><a href="/registry/registerUser.action"><strong>Create an account</strong></a> to register your clinical trials </li>
