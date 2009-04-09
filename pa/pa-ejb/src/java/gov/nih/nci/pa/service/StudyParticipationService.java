@@ -78,10 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
-
-import java.util.List;
 
 /**
  * @author Bala Nair
@@ -91,22 +88,5 @@ import java.util.List;
  * copyright holder, NCI.
  */
 public interface StudyParticipationService extends RolePaService<StudyParticipationDTO> {
-    
-    /**
-     * @param studyProtocolIi id of protocol
-     * @param spDTO StudyParticipationDTO
-     * @return list StudyParticipationDTO   
-     * @throws PAException on error 
-     */
-    List<StudyParticipationDTO> getByStudyProtocol(
-            Ii studyProtocolIi , StudyParticipationDTO spDTO) throws PAException;
-    /**
-     * @param studyProtocolIi id of protocol
-     * @param spDTOList List of StudyParticipationDTO containing criteria
-     * @return list StudyParticipationDTO   
-     * @throws PAException on error 
-     */
-    List<StudyParticipationDTO> getByStudyProtocol(
-            Ii studyProtocolIi , List<StudyParticipationDTO> spDTOList) throws PAException;
-
+   
 }

@@ -101,22 +101,4 @@ public interface StudyParticipationContactService extends RolePaService<StudyPar
     List<StudyParticipationContactDTO> getByStudyParticipation(Ii studyParticipationIi) 
             throws PAException;
     
-    /**
-     * @param studyProtocolIi id of protocol
-     * @param scDTO StudyContactDTO 
-     * @return list StudyContactDTO   
-     * @throws PAException on error 
-     */
-    List<StudyParticipationContactDTO> getByStudyProtocol(
-            Ii studyProtocolIi , StudyParticipationContactDTO scDTO) throws PAException;
-    
-    /**
-     * @param studyProtocolIi id of protocol
-     * @param scDTOList List of StudyContactDTO containing criteria
-     * @return list StudyContactDTO   
-     * @throws PAException on error 
-     */
-    List<StudyParticipationContactDTO> getByStudyProtocol(
-            Ii studyProtocolIi , List<StudyParticipationContactDTO> scDTOList) throws PAException;   
-
-}
+  }
