@@ -121,7 +121,7 @@ public class StudyMilestoneServiceBean
     AbstractionCompletionServiceRemote abstractionCompletionService;
     
     /** For testing purposes only.  Set to false to bypass abstraction validations. */
-    boolean validateAbstractions = false;
+    boolean validateAbstractions = true;
 
     /**
      * @param dto dto
