@@ -88,7 +88,8 @@ import gov.nih.nci.coppa.iso.Ts;
  * @since 02/11/2009
  */
 public class StudyOnholdDTO  extends StudyDTO {
-  private St onholdReasonText;
+  private static final long serialVersionUID = -487404345792624715L;
+private St onholdReasonText;
   private Cd onholdReasonCode;
   private Ivl<Ts> onholdDate;  
   

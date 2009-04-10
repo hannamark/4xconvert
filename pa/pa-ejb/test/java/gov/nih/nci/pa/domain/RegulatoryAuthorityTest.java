@@ -114,6 +114,7 @@ public class RegulatoryAuthorityTest {
     /**
      * Test Method.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void createRegulatoryAuthority() {            
         Session session  = TestSchema.getSession();

@@ -91,6 +91,7 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("PMD")
 public class PAException extends Exception {
 
+    private static final long serialVersionUID = -412014421822871391L;
     private static Logger log = Logger.getLogger(PAException.class);
 
     /**

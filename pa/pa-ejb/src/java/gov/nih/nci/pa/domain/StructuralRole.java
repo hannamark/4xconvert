@@ -97,6 +97,7 @@ import org.hibernate.validator.NotNull;
 @MappedSuperclass
 public class StructuralRole extends AbstractEntity {
 
+    private static final long serialVersionUID = 7498499786106581528L;
     private StatusCode statusCode;
     private Timestamp statusDateRangeLow;
 

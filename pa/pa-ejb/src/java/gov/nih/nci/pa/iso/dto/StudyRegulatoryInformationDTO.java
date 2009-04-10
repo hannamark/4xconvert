@@ -65,6 +65,7 @@ import gov.nih.nci.coppa.iso.St;
  * copyright holder, NCI.
  */
 public class StudyRegulatoryInformationDTO extends BaseDTO {
+    private static final long serialVersionUID = 8889491975655013781L;
     private St trialOversgtAuthCountry;  
     private St trialOversgtAuthOrgName;
     /**

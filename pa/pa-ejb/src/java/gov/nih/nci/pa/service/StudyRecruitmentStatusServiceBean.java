@@ -134,6 +134,7 @@ extends AbstractStudyIsoService<StudyRecruitmentStatusDTO, StudyRecruitmentStatu
      * @return null
      * @throws PAException exception
      */
+    @Override
     public StudyRecruitmentStatusDTO update(StudyRecruitmentStatusDTO dto) throws PAException {
     throw new PAException(errMsgMethodNotImplemented);
     }
@@ -142,6 +143,7 @@ extends AbstractStudyIsoService<StudyRecruitmentStatusDTO, StudyRecruitmentStatu
      * @param ii index of object
      * @throws PAException exception
      */
+    @Override
     public void delete(Ii ii) throws PAException {
     throw new PAException(errMsgMethodNotImplemented);
     }

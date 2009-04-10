@@ -105,6 +105,7 @@ import org.hibernate.validator.NotNull;
 @Table(name = "HEALTHCARE_FACILITY")
 public class HealthCareFacility  extends StructuralRole {
 
+    private static final long serialVersionUID = -5085371602155096105L;
     private Organization organization;
     private String identifier;
     private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();

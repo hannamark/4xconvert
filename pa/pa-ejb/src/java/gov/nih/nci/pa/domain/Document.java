@@ -98,6 +98,7 @@ import org.hibernate.validator.NotNull;
 @Table(name =  "DOCUMENT")
 public class Document extends AbstractEntity {
 
+    private static final long serialVersionUID = 8042681583974060450L;
     private DocumentTypeCode typeCode;
     private StudyProtocol studyProtocol;
     private Boolean activeIndicator;

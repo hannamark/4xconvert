@@ -102,6 +102,8 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class TrialDescriptionAction extends ActionSupport {
 
+    private static final long serialVersionUID = -263739685830642951L;
+
     private TrialDescriptionWebDTO trialDescriptionDTO = new TrialDescriptionWebDTO();
     
     private static final int PUBLIC_TITLE = 300;

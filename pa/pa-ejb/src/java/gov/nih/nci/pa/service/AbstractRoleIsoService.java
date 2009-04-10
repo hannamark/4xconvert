@@ -33,10 +33,10 @@ import org.hibernate.Session;
  * @param <CONVERTER> converter class
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public abstract class 
-    AbstractRoleIsoService<DTO extends StudyDTO, BO extends AbstractEntity, 
-    CONVERTER extends AbstractConverter<DTO, BO>>  
-    extends AbstractStudyIsoService<DTO, BO, CONVERTER> 
+public abstract class
+    AbstractRoleIsoService<DTO extends StudyDTO, BO extends AbstractEntity,
+    CONVERTER extends AbstractConverter<DTO, BO>>
+    extends AbstractStudyIsoService<DTO, BO, CONVERTER>
     implements RolePaService<DTO> {
 
     /**
@@ -47,7 +47,7 @@ public abstract class
      * @return list StudyParticipationDTO
      * @throws PAException on error
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
+    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity", "unchecked" })
     public List<DTO> getByStudyProtocol(
             Ii studyProtocolIi , List<DTO> dtos) throws PAException {
         if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
@@ -71,7 +71,7 @@ public abstract class
                 } else {
                     criteria.append("or ");
                 }
-                
+
             if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
                     StudyContactDTO spcDTO = (StudyContactDTO) crit;
                     criteria.append("spart.roleCode = '"
@@ -79,19 +79,19 @@ public abstract class
                     appended = true;
                 }
                 if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipationContact")) {
-                
+
                     StudyParticipationContactDTO spcDTO = (StudyParticipationContactDTO) crit;
                     criteria.append("spart.roleCode = '"
                         + StudyParticipationContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
                     appended = true;
                 }
                 if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipation")) {
-                    
+
                     StudyParticipationDTO spcDTO = (StudyParticipationDTO) crit;
                     criteria.append("spart.functionalCode = '"
                             + StudyParticipationFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
                     appended = true;
-                }  
+                }
             }
             if (appended) {
             hql.append('(');
@@ -118,18 +118,18 @@ public abstract class
         getLogger().info("Returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
-    
+
     /**
      * Get list of StudyParticipations for a given a given functional code.
      * @param studyProtocolIi id of protocol
      * @param dto Object with the functional code criteria
      * @return list dtos
      * @throws PAException on error
-     */    
+     */
     public List<DTO> getByStudyProtocol(
             Ii studyProtocolIi , DTO dto) throws PAException {
         List <DTO> spDtoList = new ArrayList<DTO>();
         spDtoList.add(dto);
         return getByStudyProtocol(studyProtocolIi, spDtoList);
-    }    
+    }
 }

@@ -176,7 +176,7 @@ public class StudyProtocolTest  {
         Session session  = TestSchema.getSession();
 
         InterventionalStudyProtocol create = new InterventionalStudyProtocol();  
-         create = (InterventionalStudyProtocol) createStudyProtocolObj((StudyProtocol) create);    
+         create = (InterventionalStudyProtocol) createStudyProtocolObj(create);    
          create = createInterventionalStudyProtocolObj(create);
          Serializable isp = session.save(create);
          assertNotNull(isp);
@@ -199,7 +199,7 @@ public class StudyProtocolTest  {
         Session session  = TestSchema.getSession();
 
         ObservationalStudyProtocol create = new ObservationalStudyProtocol();  
-         create = (ObservationalStudyProtocol) createStudyProtocolObj((StudyProtocol) create);    
+         create = (ObservationalStudyProtocol) createStudyProtocolObj(create);    
          create = createObservationalStudyProtocolObj(create);
          Serializable isp = session.save(create);
          assertNotNull(isp);

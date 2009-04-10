@@ -133,8 +133,7 @@ public class StudyParticipationContactServiceTest {
     @Test
     public void get() throws Exception {
         StudyParticipationContactDTO spcDto = remoteEjb.get(contactIi);
-        StudyParticipationContact spcBo = (StudyParticipationContact)
-        Converters.get(StudyParticipationContactConverter.class).convertFromDtoToDomain(spcDto);
+        StudyParticipationContact spcBo = Converters.get(StudyParticipationContactConverter.class).convertFromDtoToDomain(spcDto);
         assertEquals(participationId, spcBo.getStudyParticipation().getId());
         assertEquals(protocolId, spcBo.getStudyProtocol().getId());
     }

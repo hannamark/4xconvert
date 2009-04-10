@@ -50,7 +50,7 @@
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG™ SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  */
 package gov.nih.nci.pa.iso.dto;
 
@@ -63,19 +63,20 @@ import gov.nih.nci.coppa.iso.Int;
  * StudyProtocolDTO for transferring Study Protocol object .
  * @author Naveen Amiruddin
  * @since 09/04/2008
- 
+
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
 
+    private static final long serialVersionUID = 3698226719901738956L;
     Cd allocationCode;
-    DSet blindedRoleCode;
+    DSet<Cd> blindedRoleCode;
     Cd blindingSchemaCode;
     Cd designConfigurationCode;
-    Int numberOfInterventionGroups;    
+    Int numberOfInterventionGroups;
     Cd studyClassificationCode;
-    
+
     /**
      * @return allocationCode
      */
@@ -90,17 +91,17 @@ public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @return blindedRoleCode
      */
-    public DSet getBlindedRoleCode() {
+    public DSet<Cd> getBlindedRoleCode() {
         return blindedRoleCode;
     }
     /**
-     * 
+     *
      * @param blindedRoleCode blindedRoleCode
      */
-    public void setBlindedRoleCode(DSet blindedRoleCode) {
+    public void setBlindedRoleCode(DSet<Cd> blindedRoleCode) {
         this.blindedRoleCode = blindedRoleCode;
     }
     /**
@@ -121,13 +122,13 @@ public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
     public Cd getDesignConfigurationCode() {
         return designConfigurationCode;
     }
-    /** 
+    /**
      * @param designConfigurationCode designConfigurationCode
      */
     public void setDesignConfigurationCode(Cd designConfigurationCode) {
         this.designConfigurationCode = designConfigurationCode;
     }
-        
+
     /**
      * @return numberOfInterventionGroups
      */
@@ -141,19 +142,19 @@ public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
         this.numberOfInterventionGroups = numberOfInterventionGroups;
     }
     /**
-     * 
+     *
      * @return studyClassificationCode
      */
     public Cd getStudyClassificationCode() {
         return studyClassificationCode;
     }
     /**
-     * 
+     *
      * @param studyClassificationCode studyClassificationCodeR
      */
     public void setStudyClassificationCode(Cd studyClassificationCode) {
         this.studyClassificationCode = studyClassificationCode;
     }
-    
-    
+
+
 }

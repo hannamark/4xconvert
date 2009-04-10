@@ -115,8 +115,7 @@ public class StudyContactConverterTest {
     bo.setStudyProtocol(sp);
     bo.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
 
-    StudyContactDTO dto = (StudyContactDTO)
-    (Converters.get(StudyContactConverter.class).convertFromDomainToDto(bo));
+    StudyContactDTO dto = (Converters.get(StudyContactConverter.class).convertFromDomainToDto(bo));
     assertStudyContactConverter(bo, dto);
   }
 

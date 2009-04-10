@@ -126,8 +126,7 @@ public class ObservationalStudyProtocolConverterTest   {
         session.save(osp);
         //TestSchema.addUpdObject(osp);
         assertNotNull(osp.getId());
-        ObservationalStudyProtocolDTO ospDTO = (ObservationalStudyProtocolDTO) 
-            ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        ObservationalStudyProtocolDTO ospDTO = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
         
         assertObservationalStudyProtocol(osp , ospDTO);
  
@@ -155,8 +154,7 @@ public class ObservationalStudyProtocolConverterTest   {
         session.save(osp);
         //TestSchema.addUpdObject(osp);
         assertNotNull(osp.getId());
-        ObservationalStudyProtocolDTO ospDTO = (ObservationalStudyProtocolDTO) 
-            ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        ObservationalStudyProtocolDTO ospDTO = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
         osp = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
 
         assertObservationalStudyProtocol(osp , ospDTO);

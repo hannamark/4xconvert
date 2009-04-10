@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.pa.action;
 
@@ -132,7 +132,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  * Action class for viewing and editing the participating organizations.
- * 
+ *
  * @author Hugh Reinhart, Harsha
  * @since 08/20/2008 copyright NCI 2007. All rights reserved. This code may not be used without the express written
  *        permission of the copyright holder, NCI.
@@ -192,7 +192,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     /**
      * @return Action result.
      * @throws PAException on error
-     * 
+     *
      */
     @Override
     public String execute() throws PAException {
@@ -352,10 +352,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         List<PaPersonDTO> subInvresults = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 tab.getStudyParticipationId(), StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName());
         for (int i = 0; i < principalInvresults.size(); i++) {
-            personWebDTOList.add((PaPersonDTO) principalInvresults.get(i));
+            personWebDTOList.add(principalInvresults.get(i));
         }
         for (int i = 0; i < subInvresults.size(); i++) {
-            personWebDTOList.add((PaPersonDTO) subInvresults.get(i));
+            personWebDTOList.add(subInvresults.get(i));
         }
         List<PaPersonDTO> resultsList = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 tab.getStudyParticipationId(), StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());
@@ -374,7 +374,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sPartService.delete(IiConverter.convertToIi(cbValue));
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
-        return this.ACT_DELETE;
+        return ParticipatingOrganizationsAction.ACT_DELETE;
     }
 
     private void loadForm() throws PAException {
@@ -404,19 +404,19 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 orgWebDTO.setTargetAccrualNumber(null);
             } else {
                 orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
-            }          
+            }
             List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
                 .getPersonsByStudyParticpationId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
                     StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
             List<PaPersonDTO> sublInvresults = PaRegistry.getPAHealthCareProviderService()
             .getPersonsByStudyParticpationId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
-                StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName());            
+                StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName());
             List<PaPersonDTO> primInvresults = PaRegistry.getPAHealthCareProviderService()
                 .getPersonsByStudyParticpationId(
-                        Long.valueOf(sp.getIdentifier().getExtension().toString()), 
-                                            StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());            
+                        Long.valueOf(sp.getIdentifier().getExtension().toString()),
+                                            StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());
             StringBuffer invList = new StringBuffer();
-            StringBuffer primContactList = new StringBuffer();                     
+            StringBuffer primContactList = new StringBuffer();
             if (!principalInvresults.isEmpty()) {
                 for (PaPersonDTO per : principalInvresults) {
                     invList.append(per.getFullName() + "-" + per.getRoleName());
@@ -429,7 +429,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     invList.append("<br>");
                 }
             }
-            
+
             if (!primInvresults.isEmpty()) {
                 for (PaPersonDTO per : primInvresults) {
                     primContactList.append(per.getFullName());
@@ -453,7 +453,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
-        // convert the PO DTO to the pa domain        
+        // convert the PO DTO to the pa domain
         paOrgDTO = EnOnConverter.convertPoOrganizationDTO(selectedOrgDTO, null);
         //paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
         // store selection
@@ -485,7 +485,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     /**
      * This method is called upon clicking the second tab (Investigators).
-     * 
+     *
      * @return result
      * @throws PAException on error
      */
@@ -500,7 +500,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     /**
      * @return the result
      * @throws PAException on error.
-     *  @throws NullifiedEntityException on deletes             
+     *  @throws NullifiedEntityException on deletes
      */
     public String saveStudyParticipationContact() throws PAException, NullifiedEntityException {
         clearErrorsAndMessages();
@@ -558,7 +558,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         // This makes a fresh db call to show the result on the JSP
         if (!isPrimaryContact) {
             return returnDisplaySPContacts(tab);
-        } else {            
+        } else {
             personContactWebDTO = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                     tab.getStudyParticipationId(), StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName()).get(0);
             return DISPLAY_PRIM_CONTACTS;
@@ -615,10 +615,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         List<PaPersonDTO> subInvresults = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName());
         for (int i = 0; i < principalInvresults.size(); i++) {
-            personWebDTOList.add((PaPersonDTO) principalInvresults.get(i));
+            personWebDTOList.add(principalInvresults.get(i));
         }
         for (int i = 0; i < subInvresults.size(); i++) {
-            personWebDTOList.add((PaPersonDTO) subInvresults.get(i));
+            personWebDTOList.add(subInvresults.get(i));
         }
         return DISPLAY_SPART_CONTACTS;
     }
@@ -633,12 +633,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         List<PaPersonDTO> subInvresults = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName());
         for (int i = 0; i < principalInvresults.size(); i++) {
-            if (((PaPersonDTO) principalInvresults.get(i)).getSelectedPersId().equals(persid)) {
+            if ((principalInvresults.get(i)).getSelectedPersId().equals(persid)) {
                 return true;
             }
         }
         for (int i = 0; i < subInvresults.size(); i++) {
-            if (((PaPersonDTO) subInvresults.get(i)).getPaPersonId().equals(persid)) {
+            if ((subInvresults.get(i)).getPaPersonId().equals(persid)) {
                 return true;
             }
         }
@@ -659,10 +659,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         List<PaPersonDTO> subInvresults = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getName());
         for (int i = 0; i < principalInvresults.size(); i++) {
-            personWebDTOList.add((PaPersonDTO) principalInvresults.get(i));
+            personWebDTOList.add(principalInvresults.get(i));
         }
         for (int i = 0; i < subInvresults.size(); i++) {
-            personWebDTOList.add((PaPersonDTO) subInvresults.get(i));
+            personWebDTOList.add(subInvresults.get(i));
         }
         return DISPLAY_SPART_CONTACTS;
     }
@@ -677,10 +677,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         // check if primary contact already exists; if it exists delete it
-        List returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
+        List<PaPersonDTO> returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());
         if (!returnlist.isEmpty()) {
-            sPartContactService.delete(IiConverter.convertToIi(((PaPersonDTO) returnlist.get(0)).getId()));
+            sPartContactService.delete(IiConverter.convertToIi(returnlist.get(0).getId()));
         }
         boolean validationError = createStudyParticationContactRecord(orgsTabWebDTO, true,
                 StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode());
@@ -739,7 +739,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     .getPersonsByStudyParticpationId(orgsTabWebDTO.getStudyParticipationId(),
                             StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());
             if (!resultsList.isEmpty()) {
-                Long idToDelete = ((PaPersonDTO) resultsList.get(0)).getId();
+                Long idToDelete = (resultsList.get(0)).getId();
                 sPartContactService.delete(IiConverter.convertToIi(idToDelete));
             }
             sPartContactService.create(participationContactDTO);
@@ -754,7 +754,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     /**
      * @return the result
      * @throws PAException on error.
-     * @throws NullifiedEntityException on deletes         
+     * @throws NullifiedEntityException on deletes
      */
     public String saveStudyParticipationPrimContact() throws PAException, NullifiedEntityException {
         clearErrorsAndMessages();
@@ -782,10 +782,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     /**
      * SET AS PRIMARY CONTACT. This method does not save it simply sets the values.
-     * 
+     *
      * @return the result
      * @throws PAException  on error.
-     *  * @throws NullifiedEntityException on deletes            
+     *  * @throws NullifiedEntityException on deletes
      */
     public String displayStudyParticipationPrimContact() throws PAException, NullifiedEntityException {
         clearErrorsAndMessages();

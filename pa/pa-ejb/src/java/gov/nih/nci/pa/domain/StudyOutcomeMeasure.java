@@ -95,6 +95,7 @@ import org.hibernate.validator.NotNull;
 @Table(name =  "STUDY_OUTCOME_MEASURE")
 public class StudyOutcomeMeasure extends AbstractEntity {
 
+    private static final long serialVersionUID = 3611886766045727957L;
     private String name;
     private String timeFrame;
     private Boolean primaryIndicator;

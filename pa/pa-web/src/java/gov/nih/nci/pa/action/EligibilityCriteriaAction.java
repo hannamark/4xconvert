@@ -115,7 +115,8 @@ import com.opensymphony.xwork2.ActionSupport;
   "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" })
   public class EligibilityCriteriaAction extends ActionSupport {
 
-  private static final String ELIGIBILITY = "eligibility";
+  private static final long serialVersionUID = -5307419735675359757L;
+private static final String ELIGIBILITY = "eligibility";
   private static final String ELIGIBILITYADD = "eligibilityAdd";
   private static final int MAXIMUM_CHAR_POPULATION = 800;
   private static final int MAXIMUM_CHAR_DESCRIPTION = 400;
@@ -282,7 +283,8 @@ import com.opensymphony.xwork2.ActionSupport;
   /**
    * @return result
    */
-  public String input() {
+  @Override
+public String input() {
     return ELIGIBILITYADD;
   }
 

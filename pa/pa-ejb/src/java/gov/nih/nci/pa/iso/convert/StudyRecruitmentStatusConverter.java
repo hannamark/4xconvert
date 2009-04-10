@@ -112,7 +112,8 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyRecruitmentStatusDTO,  StudyR
     * @return dto
     * @throws PAException PAException
     */
-   public StudyRecruitmentStatusDTO convertFromDomainToDto(
+   @Override
+public StudyRecruitmentStatusDTO convertFromDomainToDto(
            StudyRecruitmentStatus bo) throws PAException {
        StudyRecruitmentStatusDTO dto = new StudyRecruitmentStatusDTO();
        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
@@ -128,7 +129,8 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyRecruitmentStatusDTO,  StudyR
     * @return StudyProtocol StudyProtocol
     * @throws PAException PAException
     */
-   public StudyRecruitmentStatus convertFromDtoToDomain(
+   @Override
+public StudyRecruitmentStatus convertFromDtoToDomain(
            StudyRecruitmentStatusDTO dto) throws PAException {
        if (PAUtil.isIiNull(dto.getStudyProtocolIi())) {
            String errmsg = " StudyOverallStatus.studyProtocol cannot be null. ";

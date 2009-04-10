@@ -67,6 +67,7 @@ import gov.nih.nci.coppa.iso.St;
 */
 public class StratumGroupDTO extends StudyDTO {
 
+    private static final long serialVersionUID = 7599434306662924307L;
     private St description;
     private St groupNumberText;
     private Ii studyProtocolIi;

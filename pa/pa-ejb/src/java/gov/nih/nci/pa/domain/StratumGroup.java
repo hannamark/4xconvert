@@ -95,6 +95,7 @@ import org.hibernate.validator.NotNull;
 @Table(name =  "STRATUM_GROUP")
 public class StratumGroup extends AbstractEntity {
 
+    private static final long serialVersionUID = 4232189962059209724L;
     private StudyProtocol studyProtocol;
     private String description;
     private String groupNumberText;

@@ -101,6 +101,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @since 01/23/2009 
  */
 public class DisplayInfoAction extends ActionSupport {
+    private static final long serialVersionUID = 1263639653650385803L;
     PaPersonDTO persWebDTO = new PaPersonDTO();
 
     /**

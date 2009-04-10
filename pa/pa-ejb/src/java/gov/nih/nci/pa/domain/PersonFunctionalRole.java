@@ -91,6 +91,7 @@ import javax.persistence.MappedSuperclass;
 @SuppressWarnings("PMD")
 public abstract class PersonFunctionalRole extends FunctionalRole {
 
+    private static final long serialVersionUID = 7343588759906574065L;
     private HealthCareProvider healthCareProvider;
     private ClinicalResearchStaff clinicalResearchStaff;
 

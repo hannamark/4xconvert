@@ -67,6 +67,7 @@ import gov.nih.nci.coppa.iso.St;
  * copyright holder, NCI. 
  */
 public class StudyOutcomeMeasureDTO extends StudyDTO {
+    private static final long serialVersionUID = -7897206730366124158L;
     private St name;
     private St timeFrame;
     private Bl primaryIndicator;

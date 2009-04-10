@@ -109,6 +109,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
      * @param si StudyIndlde
      * @return StudyIndldeDTO
      */
+    @Override
     public StudyIndldeDTO convertFromDomainToDto(StudyIndlde si) {
         StudyIndldeDTO siDTO = new StudyIndldeDTO();
         siDTO.setIdentifier(IiConverter.converToStudyIndIdeIi(si.getId()));
@@ -129,6 +130,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
      * @param siDTO StudyIndldeDTO
      * @return StudyIndlde
      */
+    @Override
     @SuppressWarnings("PMD.NPathComplexity")
     public StudyIndlde convertFromDtoToDomain(StudyIndldeDTO siDTO) {
         StudyIndlde si = new StudyIndlde();

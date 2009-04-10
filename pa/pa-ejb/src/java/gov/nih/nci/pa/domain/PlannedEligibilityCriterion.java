@@ -96,6 +96,7 @@ import javax.persistence.Enumerated;
 @Entity
 @DiscriminatorColumn(name = "PlannedEligibilityCriterion", discriminatorType = DiscriminatorType.STRING)
 public class PlannedEligibilityCriterion extends PlannedActivity {
+    private static final long serialVersionUID = 4586185578199985945L;
     private Boolean inclusionIndicator;
     private String criterionName;
     private String operator;

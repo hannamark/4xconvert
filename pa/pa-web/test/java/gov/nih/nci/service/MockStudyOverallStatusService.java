@@ -147,8 +147,7 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
         ArrayList<StudyOverallStatusDTO> result = new ArrayList<StudyOverallStatusDTO>();
         for (StudyOverallStatus sos : sosList) {
             if(sos.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolId))) {
-                result.add((StudyOverallStatusDTO)
-                		Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(sos));
+                result.add(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(sos));
             }
         }
         return result;

@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.pa.service.correlation;
 
@@ -111,7 +111,7 @@ import org.hibernate.Session;
 
 /**
  * A Service class for handing common methods for all correlations.
- * 
+ *
  * @author Naveen Amiruddin
  * @since 04/11/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
@@ -124,12 +124,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
 
     /**
-     * 
+     *
      * @param poIdentifer id
      * @param paIdentifer id
      * @return Person
      * @throws PAException e
      */
+    @SuppressWarnings("unchecked")
     public Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
         Person per = null;
         if (poIdentifer == null && paIdentifer == null) {
@@ -186,10 +187,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            ClinicalResearchStaff clinicalResearchStaff = 
+            ClinicalResearchStaff clinicalResearchStaff =
                 (ClinicalResearchStaff) session.get(ClinicalResearchStaff.class, paClinicalResearchStaffId);
             if (clinicalResearchStaff == null) {
-                String errMsg = "Object not found using getPAPersonByPAClinicalResearchStaffId() for id = " 
+                String errMsg = "Object not found using getPAPersonByPAClinicalResearchStaffId() for id = "
                     + paClinicalResearchStaffId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
@@ -216,10 +217,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            OrganizationalContact organizationalContact = 
+            OrganizationalContact organizationalContact =
                 (OrganizationalContact) session.get(OrganizationalContact.class, paOrganizationalContactId);
             if (organizationalContact == null) {
-                String errMsg = "Object not found using getPAPersonByPAOrganizationalContactId() for id = " 
+                String errMsg = "Object not found using getPAPersonByPAOrganizationalContactId() for id = "
                     + paOrganizationalContactId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
@@ -233,12 +234,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     }
 
     /**
-     * 
+     *
      * @param paIdentifer id
      * @param poIdentifer id
      * @return Organization
      * @throws PAException e
      */
+    @SuppressWarnings("unchecked")
     public Organization getPAOrganizationByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
         Organization org = null;
         if (poIdentifer == null && paIdentifer == null) {
@@ -280,7 +282,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         return org;
     }
-    
+
     /**
      * @param paResearchOrganizationId id
      * @return Organization
@@ -295,10 +297,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            ResearchOrganization researchOrg = (ResearchOrganization) session.get(ResearchOrganization.class, 
+            ResearchOrganization researchOrg = (ResearchOrganization) session.get(ResearchOrganization.class,
                     paResearchOrganizationId);
             if (researchOrg == null) {
-                String errMsg = "Object not found using getPAOrganizationByPAResearchOrganizationId() for id = " 
+                String errMsg = "Object not found using getPAOrganizationByPAResearchOrganizationId() for id = "
                     + paResearchOrganizationId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
@@ -310,7 +312,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         return organization;
     }
-    
+
     /**
      * @param paHealthCareFacilityId id
      * @return Organization
@@ -325,10 +327,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            HealthCareFacility healthCareFac = (HealthCareFacility) session.get(HealthCareFacility.class, 
+            HealthCareFacility healthCareFac = (HealthCareFacility) session.get(HealthCareFacility.class,
                     paHealthCareFacilityId);
             if (healthCareFac == null) {
-                String errMsg = "Object not found using getPAOrganizationByPAHealthCareFacilityId() for id = " 
+                String errMsg = "Object not found using getPAOrganizationByPAHealthCareFacilityId() for id = "
                     + paHealthCareFacilityId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
@@ -355,10 +357,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            OversightCommittee healthCareFac = (OversightCommittee) session.get(OversightCommittee.class, 
+            OversightCommittee healthCareFac = (OversightCommittee) session.get(OversightCommittee.class,
                     paOversightCommitteeId);
             if (healthCareFac == null) {
-                String errMsg = "Object not found using getPAOrganizationByPAOversightCommitteeId() for id = " 
+                String errMsg = "Object not found using getPAOrganizationByPAOversightCommitteeId() for id = "
                     + paOversightCommitteeId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
@@ -370,14 +372,15 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         return organization;
     }
-    
+
     /**
-     * 
+     *
      * @param crs crs
      * @return crs
      * @throws PAException
      */
-    HealthCareFacility getPAHealthCareFacility(HealthCareFacility hcf) 
+    @SuppressWarnings("unchecked")
+    HealthCareFacility getPAHealthCareFacility(HealthCareFacility hcf)
     throws PAException {
         if (hcf == null) {
             LOG.error("HealthCareFacility Staff cannot be null");
@@ -387,7 +390,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         List<HealthCareFacility> queryList = new ArrayList<HealthCareFacility>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select hcf from HealthCareFacility hcf  " 
+        hql.append(" select hcf from HealthCareFacility hcf  "
                 + "join hcf.organization as org where 1 = 1 ");
         if (hcf.getId() != null) {
             hql.append(" and hcf.id = ").append(hcf.getId());
@@ -401,14 +404,14 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
         query = session.createQuery(hql.toString());
         queryList = query.list();
-        
+
         if (queryList.size() > 1) {
             LOG.error(" HealthCareFacility should be more than 1 for any given criteria");
             throw new PAException(" HealthCareFacility should be more than 1 for any given criteria");
-            
+
         }
     }  catch (HibernateException hbe) {
         LOG.error(" Error while retrieving HealthCareFacility" , hbe);
@@ -416,18 +419,19 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     } finally {
         session.flush();
     }
-    
+
     if (!queryList.isEmpty()) {
         hcfOut = queryList.get(0);
     }
     return hcfOut;
     }
-    
+
     /**
      * @param crs crs
      * @return crs
      * @throws PAException
      */
+    @SuppressWarnings("unchecked")
     OversightCommittee getPAOversightCommittee(OversightCommittee oc) throws PAException {
         if (oc == null) {
             throw new PAException("OversightCommittee cannot be null.  ");
@@ -436,7 +440,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         List<OversightCommittee> queryList = new ArrayList<OversightCommittee>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select oc from OversightCommittee oc  " 
+        hql.append(" select oc from OversightCommittee oc  "
                 + "join oc.organization as org where 1 = 1 ");
         if (oc.getId() != null) {
             hql.append(" and oc.id = ").append(oc.getId());
@@ -450,10 +454,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
             query = session.createQuery(hql.toString());
             queryList = query.list();
-        
+
             if (queryList.size() > 1) {
                 throw new PAException("Oversight committee count should not be more than 1 for any given criteria.  ");
             }
@@ -462,20 +466,21 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } finally {
             session.flush();
         }
-        
+
         if (!queryList.isEmpty()) {
             ocOut = queryList.get(0);
         }
         return ocOut;
     }
-    
+
     /**
-     * 
+     *
      * @param ro ro
      * @return ro
      * @throws PAException
      */
-    ResearchOrganization getPAResearchOrganization(ResearchOrganization ro) 
+    @SuppressWarnings("unchecked")
+    ResearchOrganization getPAResearchOrganization(ResearchOrganization ro)
     throws PAException {
         if (ro == null) {
             LOG.error("ResearchOrganization Staff cannot be null");
@@ -485,7 +490,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         List<ResearchOrganization> queryList = new ArrayList<ResearchOrganization>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select ro from ResearchOrganization ro  " 
+        hql.append(" select ro from ResearchOrganization ro  "
                 + "join ro.organization as org where 1 = 1 ");
         if (ro.getId() != null) {
             hql.append(" and ro.id = ").append(ro.getId());
@@ -499,14 +504,14 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
         query = session.createQuery(hql.toString());
         queryList = query.list();
-        
+
         if (queryList.size() > 1) {
             LOG.error(" ResearchOrganization should be more than 1 for any given criteria");
             throw new PAException(" ResearchOrganization should be more than 1 for any given criteria");
-            
+
         }
     }  catch (HibernateException hbe) {
         LOG.error(" Error while retrieving ResearchOrganization" , hbe);
@@ -514,42 +519,43 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     } finally {
         session.flush();
     }
-    
+
     if (!queryList.isEmpty()) {
         roOut = queryList.get(0);
     }
     return roOut;
     }
-    
+
     /**
-     * 
+     *
      * @param crs crs
      * @return crs
      * @throws PAException
      */
-    ClinicalResearchStaff getPAClinicalResearchStaff(ClinicalResearchStaff crs) 
+    @SuppressWarnings("unchecked")
+    ClinicalResearchStaff getPAClinicalResearchStaff(ClinicalResearchStaff crs)
     throws PAException {
         if (crs == null) {
             LOG.error("Clinicial Research Staff cannot be null");
             throw new PAException("Clinicial Research Staff cannot be null");
         }
-        if (crs.getPerson() != null && crs.getOrganization() == null  
+        if (crs.getPerson() != null && crs.getOrganization() == null
             || crs.getPerson() == null && crs.getOrganization() != null) {
             LOG.error("Both person and organization should be specified and it cannot be either");
             throw new PAException("Both person and organization should be specified and it cannot be either");
-            
+
         }
         ClinicalResearchStaff crsOut = null;
         Session session = null;
         List<ClinicalResearchStaff> queryList = new ArrayList<ClinicalResearchStaff>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select crs from ClinicalResearchStaff crs  " 
+        hql.append(" select crs from ClinicalResearchStaff crs  "
                 + "join crs.person as per "
                 + "join crs.organization as org where 1 = 1 ");
         if (crs.getId() != null) {
             hql.append(" and crs.id = ").append(crs.getId());
         }
-        if (crs.getPerson() != null && crs.getOrganization()  != null 
+        if (crs.getPerson() != null && crs.getOrganization()  != null
                 && crs.getPerson().getId() != null && crs.getOrganization().getId() != null) {
             hql.append(" and per.id = ").append(crs.getPerson().getId());
             hql.append(" and org.id = ").append(crs.getOrganization().getId());
@@ -560,14 +566,14 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
         query = session.createQuery(hql.toString());
         queryList = query.list();
-        
+
         if (queryList.size() > 1) {
             LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
             throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-            
+
         }
     }  catch (HibernateException hbe) {
         LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
@@ -575,26 +581,27 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     } finally {
         session.flush();
     }
-    
+
     if (!queryList.isEmpty()) {
         crsOut = queryList.get(0);
     }
     return crsOut;
     }
-    
+
     /**
-     * 
+     *
      * @param hcp HealthCareProvider
      * @return  HealthCareProvider
      * @throws PAException
      */
-    HealthCareProvider getPAHealthCareProvider(HealthCareProvider hcp) 
+    @SuppressWarnings("unchecked")
+    HealthCareProvider getPAHealthCareProvider(HealthCareProvider hcp)
     throws PAException {
         if (hcp == null) {
             LOG.error("HealthCareProvider  cannot be null");
             throw new PAException("HealthCareProvider cannot be null");
         }
-        if (hcp.getPerson() != null && hcp.getOrganization() == null 
+        if (hcp.getPerson() != null && hcp.getOrganization() == null
                 || hcp.getPerson() == null && hcp.getOrganization() != null) {
             LOG.error("Both person and organization should be specified and it cannot be either");
             throw new PAException("Both person and organization should be specified and it cannot be either");
@@ -603,13 +610,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         List<HealthCareProvider> queryList = new ArrayList<HealthCareProvider>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select hcp from HealthCareProvider hcp  " 
+        hql.append(" select hcp from HealthCareProvider hcp  "
                 + "join hcp.person as per  "
                 + "join hcp.organization as org where 1 = 1 ");
         if (hcp.getId() != null) {
             hql.append(" and hcp.id = ").append(hcp.getId());
         }
-        if (hcp.getPerson() != null && hcp.getPerson().getId() != null 
+        if (hcp.getPerson() != null && hcp.getPerson().getId() != null
                 && hcp.getOrganization() != null && hcp.getOrganization().getId() != null) {
             hql.append(" and per.id = ").append(hcp.getPerson().getId());
             hql.append(" and org.id = ").append(hcp.getOrganization().getId());
@@ -620,14 +627,14 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
         query = session.createQuery(hql.toString());
         queryList = query.list();
-        
+
         if (queryList.size() > 1) {
             LOG.error("HealthCareProvider should not be more than 1 for any given criteria");
             throw new PAException("HealthCareProvider should not be more than 1 for any given criteria");
-            
+
         }
     }  catch (HibernateException hbe) {
         LOG.error(" Error while retrieving HealthCareProvider" , hbe);
@@ -635,7 +642,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     } finally {
         session.flush();
     }
-    
+
     if (!queryList.isEmpty()) {
         hcpOut = queryList.get(0);
     }
@@ -643,35 +650,36 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     }
 
     /**
-     * 
+     *
      * @param oc oc
      * @return oc
      * @throws PAException pe
      */
-    
-    public OrganizationalContact getPAOrganizationalContact(OrganizationalContact oc) 
+
+    @SuppressWarnings("unchecked")
+    public OrganizationalContact getPAOrganizationalContact(OrganizationalContact oc)
     throws PAException {
         if (oc == null) {
             LOG.error("Clinicial Research Staff cannot be null");
             throw new PAException("Clinicial Research Staff cannot be null");
         }
-        if (oc.getPerson() != null && oc.getOrganization() == null  
+        if (oc.getPerson() != null && oc.getOrganization() == null
             || oc.getPerson() == null && oc.getOrganization() != null) {
             LOG.error("Both person and organization should be specified and it cannot be either");
             throw new PAException("Both person and organization should be specified and it cannot be either");
-            
+
         }
         OrganizationalContact ocOut = null;
         Session session = null;
         List<OrganizationalContact> queryList = new ArrayList<OrganizationalContact>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select oc from OrganizationalContact oc  " 
+        hql.append(" select oc from OrganizationalContact oc  "
                 + "join oc.person as per "
                 + "join oc.organization as org where 1 = 1 ");
         if (oc.getId() != null) {
             hql.append(" and oc.id = ").append(oc.getId());
         }
-        if (oc.getPerson() != null && oc.getOrganization()  != null 
+        if (oc.getPerson() != null && oc.getOrganization()  != null
                 && oc.getPerson().getId() != null && oc.getOrganization().getId() != null) {
             hql.append(" and per.id = ").append(oc.getPerson().getId());
             hql.append(" and org.id = ").append(oc.getOrganization().getId());
@@ -682,14 +690,14 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
         query = session.createQuery(hql.toString());
         queryList = query.list();
-        
+
         if (queryList.size() > 1) {
             LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
             throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-            
+
         }
     }  catch (HibernateException hbe) {
         LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
@@ -697,15 +705,15 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     } finally {
         session.flush();
     }
-    
+
     if (!queryList.isEmpty()) {
         ocOut = queryList.get(0);
     }
     return ocOut;
     }
-    
+
     /**
-     * 
+     *
      * @param poOrg po
      * @return Organization o
      * @throws PAException pe
@@ -739,13 +747,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             }
         }
         return paOrg;
-        
+
     }
 
     /**
-     * 
+     *
      * method to create pa person from po.
-     * 
+     *
      * @param poOrg
      * @return
      * @throws PAException
@@ -753,12 +761,12 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     Person createPAPerson(PersonDTO poPerson) throws PAException {
         return createPAPerson(convertPOToPAPerson(poPerson));
     }
-    
-    
+
+
     /**
-     * 
+     *
      * method to create pa person from po.
-     * 
+     *
      * @param poOrg
      * @return
      * @throws PAException
@@ -767,8 +775,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         if (poPerson == null) {
             throw new PAException(" PO Person cannot be null");
         }
-        Person per = new Person();        
-        try {            
+        Person per = new Person();
+        try {
             per = EnPnConverter.convertToPaPerson(poPerson);
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -779,13 +787,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         return per;
     }
 
-    
+
 
 
 
 
     /**
-     * 
+     *
      * @param crs ClinicalResearchStaff
      * @return ClinicalResearchStaff
      * @throws PAException PAException
@@ -811,7 +819,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     }
 
     /**
-     * 
+     *
      * @param cd
      * @return
      * @throws PAException
@@ -834,7 +842,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     }
 
     /**
-     * 
+     *
      * @param cd
      * @return
      * @throws PAException
@@ -859,7 +867,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     }
 
     /**
-     * 
+     *
      * @param organization Organization
      * @return Organization
      * @throws PAException PAException
@@ -886,7 +894,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
 
     /**
-     * 
+     *
      * @param person person
      * @return Person
      * @throws PAException PAException

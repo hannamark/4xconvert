@@ -70,6 +70,7 @@ import gov.nih.nci.coppa.iso.St;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class StudyResourcingDTO extends BaseDTO {
+    private static final long serialVersionUID = 5304999422726239395L;
     private Cd typeCode;
     private Bl summary4ReportedResourceIndicator;
     private Ii organizationIdentifier;

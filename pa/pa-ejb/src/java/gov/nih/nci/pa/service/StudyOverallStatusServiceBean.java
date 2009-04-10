@@ -131,6 +131,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
      * @return StudyOverallStatusDTO
      * @throws PAException PAException
      */
+    @Override
     @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     public StudyOverallStatusDTO create(
             StudyOverallStatusDTO dto) throws PAException {
@@ -172,8 +173,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
                 throw new PAException("New current status date should be bigger/same as old date.  ");
             }
 
-            StudyOverallStatus bo = (StudyOverallStatus)
-            Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
+            StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
             if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
@@ -193,8 +193,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
                 session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
             }
             session.flush();
-            resultDto = (StudyOverallStatusDTO)
-            Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
+            resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
         throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);
         }
@@ -206,6 +205,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
      * @return null
      * @throws PAException exception
      */
+    @Override
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
     throw new PAException(errMsgMethodNotImplemented);
     }
@@ -214,6 +214,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
      * @param ii index of object
      * @throws PAException exception
      */
+    @Override
     public void delete(Ii ii) throws PAException {
     throw new PAException(errMsgMethodNotImplemented);
     }

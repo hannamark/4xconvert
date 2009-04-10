@@ -86,4 +86,6 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 public class Activity extends AbstractStudyEntity {
+
+    private static final long serialVersionUID = -4911602940850620244L;
 }

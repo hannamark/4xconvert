@@ -117,6 +117,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @return result
      * @throws PAException exception
      */
+    @Override
     public String delete() throws PAException {
         try {
             plannedActivitySvc.delete(IiConverter.convertToIi(selectedRowIdentifier));
@@ -131,6 +132,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @return result
      * @throws PAException exception
      */
+    @Override
     public String add() throws PAException {
         try {
             plannedActivitySvc.create(generateIsoDto());
@@ -145,6 +147,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @return result
      * @throws PAException exception
      */
+    @Override
     public String update() throws PAException {
         PlannedActivityDTO pa = generateIsoDto();
         pa.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
@@ -174,6 +177,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @throws PAException exception
      */
+    @Override
     protected void loadListForm() throws PAException {
         setInterventionsList(new ArrayList<InterventionWebDTO>());
         List<PlannedActivityDTO> paList = plannedActivitySvc.getByStudyProtocol(spIi);
@@ -188,6 +192,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @throws PAException exception
      */
+    @Override
     protected void loadEditForm() throws PAException {
         if (PAUtil.isNotEmpty(selectedRowIdentifier)) {
             PlannedActivityDTO paDto = plannedActivitySvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));

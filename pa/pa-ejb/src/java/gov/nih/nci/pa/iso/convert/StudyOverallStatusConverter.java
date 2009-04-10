@@ -113,6 +113,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOverallStatusDTO, StudyOverall
      * @return dto
      * @throws PAException PAException
      */
+    @Override
     public StudyOverallStatusDTO convertFromDomainToDto(
             StudyOverallStatus bo) throws PAException {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
@@ -130,6 +131,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOverallStatusDTO, StudyOverall
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
+    @Override
     public StudyOverallStatus convertFromDtoToDomain(
             StudyOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {

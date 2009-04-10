@@ -116,6 +116,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
      * @return dto
      * @throws PAException PAException
      */
+    @Override
     public StudyParticipationContactDTO convertFromDomainToDto(
             StudyParticipationContact bo) throws PAException {
         if (bo == null) {
@@ -164,6 +165,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
+    @Override
     public StudyParticipationContact convertFromDtoToDomain(
             StudyParticipationContactDTO dto) throws PAException {
         return convertFromDtoToDomain(dto , new StudyParticipationContact());

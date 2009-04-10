@@ -125,7 +125,7 @@ public class CodedEnumHelper extends EnumHelper {
      * @param instance instance
      * @return String x
      */
-    public static <T extends Enum<T> & CodedEnum> String toStringHelper(T instance) {
+    public static <T extends Enum<T> & CodedEnum<?>> String toStringHelper(T instance) {
         return new StringBuilder()
             .append(instance.getCode()).append(": ")
             .append(instance.getDisplayName()).toString();

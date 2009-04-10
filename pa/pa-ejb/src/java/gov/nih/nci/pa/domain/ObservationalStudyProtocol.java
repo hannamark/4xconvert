@@ -105,6 +105,7 @@ import javax.persistence.Enumerated;
 
 public class ObservationalStudyProtocol extends StudyProtocol {
 
+    private static final long serialVersionUID = 9007234006923029024L;
     private String biospecimenDescription;
     private BiospecimenRetentionCode biospecimenRetentionCode;
     private Integer numberOfGroups;

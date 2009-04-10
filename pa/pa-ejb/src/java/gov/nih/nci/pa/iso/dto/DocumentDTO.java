@@ -68,6 +68,7 @@ import gov.nih.nci.coppa.iso.St;
  * copyright holder, NCI.
  */
 public class DocumentDTO extends BaseDTO {
+    private static final long serialVersionUID = 6363271404447384900L;
     private Cd typeCode;
     private Ii studyProtocolIi;
     private Bl activeIndicator;

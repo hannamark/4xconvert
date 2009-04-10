@@ -89,4 +89,6 @@ import javax.persistence.MappedSuperclass;
 @SuppressWarnings("PMD")
 public abstract class OrganizationFunctionalRole extends FunctionalRole {
 
+    private static final long serialVersionUID = -8121622197892901456L;
+
 }

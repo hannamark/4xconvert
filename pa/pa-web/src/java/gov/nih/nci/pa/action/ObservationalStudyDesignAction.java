@@ -103,6 +103,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 public class ObservationalStudyDesignAction extends ActionSupport {
 
+    private static final long serialVersionUID = -3532986378452861444L;
     private OSDesignDetailsWebDTO webDTO =  new OSDesignDetailsWebDTO();
     private static final int MAXIMUM_CHAR = 200;
     /**  

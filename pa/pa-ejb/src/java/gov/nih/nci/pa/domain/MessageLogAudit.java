@@ -13,6 +13,7 @@ import javax.persistence.Table;
 @Table(name = "MESSAGES_LOG_AUDIT")
 public class MessageLogAudit extends AbstractEntity {
     
+    private static final long serialVersionUID = -4684858490042459986L;
     private Long studyProtocolIdentifier;
     private Long messageIdentifier;
     

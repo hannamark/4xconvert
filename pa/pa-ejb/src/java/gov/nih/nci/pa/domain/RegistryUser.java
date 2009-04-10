@@ -90,6 +90,7 @@ import javax.persistence.Table;
 @Table(name =  "REGISTRY_USER")
 public class RegistryUser extends  AbstractEntity {
 
+    private static final long serialVersionUID = -6519568778371398209L;
     private String firstName;
     private String lastName;
     private String middleName;

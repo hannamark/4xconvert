@@ -72,6 +72,7 @@ import gov.nih.nci.coppa.iso.Tel;
 public class StudyContactDTO extends PersonFunctionalRoleDTO {
     
 
+    private static final long serialVersionUID = 3439458093846665017L;
     private Ii studyProtocolIi;
     private Bl primaryIndicator;
     private Cd roleCode;

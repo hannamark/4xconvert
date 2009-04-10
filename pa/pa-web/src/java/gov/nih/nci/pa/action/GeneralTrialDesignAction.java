@@ -133,6 +133,8 @@ import com.opensymphony.xwork2.ActionSupport;
     "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class GeneralTrialDesignAction extends ActionSupport {
 
+    private static final long serialVersionUID = -541776965053776382L;
+
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
 
     private static final int OFFICIAL_TITLE = 4000;
@@ -186,7 +188,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
             updateStudyProtocol(studyProtocolIi);
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
                         StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) ,
-                        gtdDTO.getLeadOrganizationIdentifier() , 
+                        gtdDTO.getLeadOrganizationIdentifier() ,
                         PAUtil.stringSetter(gtdDTO.getLocalProtocolIdentifier()));
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
                         StudyParticipationFunctionalCode.SPONSOR) ,
@@ -242,7 +244,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        DSet dset = null;
+        DSet<Tel> dset = null;
         if (scDtos != null && !scDtos.isEmpty()) {
             gtdDTO.setResponsiblePartyType("pi");
             scDto = scDtos.get(0);
@@ -270,7 +272,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         copy(dset);
     }
 
-    private void copy(DSet dset) {
+    private void copy(DSet<Tel> dset) {
         if (dset == null) {
             return;
         }
@@ -318,7 +320,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
             gtdDTO.setCentralContactIdentifier(p.getIdentifier());
             gtdDTO.setCentralContactName(p.getFullName());
-            DSet dset = scDto.getTelecomAddresses();
+            DSet<Tel> dset = scDto.getTelecomAddresses();
             List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
             if (phones != null && !phones.isEmpty()) {
@@ -457,8 +459,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
             PaRegistry.getStudyContactService().create(createStudyContactObj(studyProtocolIi, scDto));
         }
     }
-    
-    
+
+
     /**
      * Removes/Deletes the Central Contact from General Trial Details when the user click on the remove button.
      * @return result
@@ -468,30 +470,30 @@ public class GeneralTrialDesignAction extends ActionSupport {
     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
         .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
     StudyContactDTO scDto = new StudyContactDTO();
-    
+
          scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
          List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
          if (scDtos != null && !scDtos.isEmpty()) {
              scDto = scDtos.get(0);
              PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
          }
-               
+
          gtdDTO.setCentralContactEmail("");
          gtdDTO.setCentralContactName("");
          gtdDTO.setCentralContactPhone("");
          gtdDTO.setCentralContactIdentifier("");
-        
-                 
+
+
     } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-        } 
-    
+        }
+
       return RESULT;
     }
-    
+
     private StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO) throws PAException {
-    
+
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
         String phone = gtdDTO.getCentralContactPhone().trim();
         Long crs = crbb.createClinicalResearchStaffCorrelations(
@@ -609,7 +611,7 @@ if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
        }
     if (PAUtil.isNotEmpty(gtdDTO.getCentralContactName()) || PAUtil.isNotEmpty(gtdDTO.getCentralContactPhone())
     || PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail())) {
-    
+
     if (PAUtil.isEmpty(gtdDTO.getCentralContactName())) {
       addFieldError("gtdDTO.centralContactName", getText("Central contact Name must be entered"));
       }

@@ -104,6 +104,7 @@ import org.hibernate.validator.NotNull;
 @Table(name =  "STUDY_INDLDE")
 public class StudyIndlde extends AbstractEntity {
 
+    private static final long serialVersionUID = -4624022065301553590L;
     private StudyProtocol studyProtocol;
     private ExpandedAccessStatusCode expandedAccessStatusCode;
     private Boolean expandedAccessIndicator;

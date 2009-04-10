@@ -118,6 +118,7 @@ import com.opensymphony.xwork2.ActionSupport;
     "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class InterventionalStudyDesignAction extends ActionSupport {
 
+    private static final long serialVersionUID = -8139821069851279621L;
     private static final String OUTCOME = "outcome";
     private static final String FALSE = "false";
     private static final String OUTCOMEADD = "outcomeAdd";

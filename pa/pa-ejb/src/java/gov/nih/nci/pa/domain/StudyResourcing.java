@@ -105,6 +105,7 @@ import org.hibernate.validator.NotNull;
 @Table(name =  "STUDY_RESOURCING")
 public class StudyResourcing extends AbstractEntity {
 
+    private static final long serialVersionUID = 4862154740562809004L;
     private SummaryFourFundingCategoryCode typeCode;
     private Boolean summary4ReportedResourceIndicator;
     private String organizationIdentifier;

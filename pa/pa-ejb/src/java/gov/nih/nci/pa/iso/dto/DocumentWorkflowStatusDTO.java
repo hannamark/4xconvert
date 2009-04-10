@@ -66,6 +66,7 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright holder, NCI.
  */
 public class DocumentWorkflowStatusDTO extends StudyDTO {
+    private static final long serialVersionUID = -25642382339770501L;
     private St commentText;
     private Cd statusCode;
     private Ts statusDateRange;

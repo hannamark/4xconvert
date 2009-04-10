@@ -66,6 +66,7 @@ import gov.nih.nci.coppa.iso.St;
 * copyright holder, NCI.
 */
 public class ObservationalStudyProtocolDTO extends StudyProtocolDTO {
+    private static final long serialVersionUID = 6877702567997997743L;
     private St biospecimenDescription;
     private Cd biospecimenRetentionCode;
     private Int numberOfGroups;

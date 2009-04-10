@@ -102,6 +102,7 @@ import javax.persistence.Enumerated;
 @DiscriminatorColumn(name = "InterventionalStudyProtocol", discriminatorType = DiscriminatorType.STRING)
 public class InterventionalStudyProtocol extends StudyProtocol {
 
+    private static final long serialVersionUID = -7019574546215547954L;
     private AllocationCode allocationCode;
     private BlindingRoleCode blindingRoleCodeSubject;
     private BlindingRoleCode blindingRoleCodeCaregiver;

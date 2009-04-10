@@ -93,6 +93,7 @@ import gov.nih.nci.coppa.iso.St;
  */
 public class StudyIndldeDTO extends StudyDTO {
 
+    private static final long serialVersionUID = 3369161746616052203L;
     private Ii studyProtocolIi;
     private Cd expandedAccessStatusCode;
     private Bl expandedAccessIndicator;

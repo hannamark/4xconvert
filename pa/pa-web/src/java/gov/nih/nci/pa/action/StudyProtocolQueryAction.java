@@ -111,6 +111,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 @Validation
 public class StudyProtocolQueryAction extends ActionSupport implements ServletResponseAware {
+    private static final long serialVersionUID = -2308994602660261367L;
     private List<StudyProtocolQueryDTO> records = null;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
@@ -119,6 +120,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @return res
      * @throws PAException exception
      */
+    @Override
     public String execute() throws PAException {
         if (!userRoleInSession()) {
             return showCriteria();
@@ -242,7 +244,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             return showCriteria();
         }
         try {
-            String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+            String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
             PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                     Long.valueOf(pId));
                 

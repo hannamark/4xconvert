@@ -66,6 +66,7 @@ import gov.nih.nci.coppa.iso.Ii;
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class StudyRegulatoryAuthorityDTO extends BaseDTO {
+    private static final long serialVersionUID = 6820293873809276285L;
     private Ii studyProtocolIdentifier;
     private Ii regulatoryAuthorityIdentifier;
     /**

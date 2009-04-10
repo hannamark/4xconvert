@@ -68,6 +68,7 @@ import gov.nih.nci.coppa.iso.St;
  */
 public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
 
+    private static final long serialVersionUID = 8371533513891834575L;
     private Bl inclusionIndicator;
     private St criterionName;
     private St operator;

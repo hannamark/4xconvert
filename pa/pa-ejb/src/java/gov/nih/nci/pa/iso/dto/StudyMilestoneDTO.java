@@ -67,7 +67,8 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright holder, NCI.
  */
 public class StudyMilestoneDTO extends StudyDTO {
-//    private static final long serialVersionUID = 1234599890L;
+private static final long serialVersionUID = 2371680558974772324L;
+    //    private static final long serialVersionUID = 1234599890L;
     private St commentText;
     private Cd milestoneCode;
     private Ts milestoneDate;

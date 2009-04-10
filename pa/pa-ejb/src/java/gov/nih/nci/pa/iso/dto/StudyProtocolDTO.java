@@ -73,6 +73,7 @@ import gov.nih.nci.coppa.iso.Ts;
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolDTO extends BaseDTO {
     
+    private static final long serialVersionUID = 7235772554482606133L;
     private St acronym;
     private Cd accrualReportingMethodCode;
     private Ii assignedIdentifier; 

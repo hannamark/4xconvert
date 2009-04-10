@@ -170,6 +170,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
      * @return result
      * @throws PAException exception
      */
+    @Override
     public String update() throws PAException {
         enforceBusinessRules();
         if (!hasActionErrors()) {

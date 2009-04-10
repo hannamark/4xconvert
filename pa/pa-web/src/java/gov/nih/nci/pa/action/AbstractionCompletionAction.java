@@ -124,6 +124,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class AbstractionCompletionAction extends ActionSupport implements ServletResponseAware {
    
+    private static final long serialVersionUID = 3504378270162991585L;
     private List<AbstractionCompletionDTO> abstractionList = null;
     private boolean abstractionError = false;
     private Long studyProtocolId = null;
@@ -234,7 +235,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
      */
     public String generateXML() {
         try {
-            String pId = (String) ServletActionContext.getRequest()
+            String pId = ServletActionContext.getRequest()
                     .getParameter("studyProtocolId");
             if (pId == null) {
                 return DISPLAY_XML;
@@ -339,7 +340,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
      * @return res
      */
     public String displayReportingXML() {
-        String pId = (String) ServletActionContext.getRequest().getParameter(
+        String pId = ServletActionContext.getRequest().getParameter(
                 "studyProtocolId");
         ServletActionContext.getRequest().setAttribute(
                 "protocolIdForXmlGeneration", pId);

@@ -122,8 +122,7 @@ public class InterventionalStudyProtocolConverterTest   {
         session.save(isp);
         //TestSchema.addUpdObject(sp);
         assertNotNull(isp.getId());
-        InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO) 
-            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        InterventionalStudyProtocolDTO ispDTO = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
         
         assertInterventionalStudyProtocol(isp , ispDTO);
  
@@ -148,8 +147,7 @@ public class InterventionalStudyProtocolConverterTest   {
         session.save(isp);
         //TestSchema.addUpdObject(sp);
         assertNotNull(isp.getId());
-        InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO) 
-            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        InterventionalStudyProtocolDTO ispDTO = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
         isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         assertInterventionalStudyProtocol(isp , ispDTO);
     }
