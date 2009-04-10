@@ -7,8 +7,8 @@
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
-    <display:column titleKey="studyProtocol.studyStatus" property="studyStatusCode.code" sortable="true" headerClass="sortable"/>
-    <display:column titleKey="studyProtocol.studyStatusDate" property="studyStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+    <display:column titleKey="studyProtocol.milestone" property="studyMilsetone.code" sortable="true" headerClass="sortable"/>
+    <display:column titleKey="studyProtocol.milestoneDate" property="studyMilestoneDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.studyOnholdReasons" property="onHoldReasons"  headerClass="sortable"/>

@@ -122,6 +122,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     // for Registry trial search
     private Boolean myTrialsOnly;
     private String searchOnHold;
+    private String studyMilestone;
 
 
     /**
@@ -346,6 +347,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public String getSearchOnHold() {
         return searchOnHold;
+    }
+    /**
+     * @param studyMilestone the studyMilestone to set
+     */
+    public void setStudyMilestone(String studyMilestone) {
+        this.studyMilestone = studyMilestone;
+    }
+    /**
+     * @return the studyMilestone
+     */
+    public String getStudyMilestone() {
+        return studyMilestone;
     }
     /**
      * @param myTrialsOnly the myTrialsOnly to set

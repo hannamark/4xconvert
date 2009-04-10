@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
@@ -97,6 +98,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -129,9 +131,13 @@ import org.hibernate.Session;
 public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudyProtocolServiceBean.class);
-    private static final int PI_PERSON_3 = 3;
-    private static final int LEAD_ORG_4 = 4;
-    private static final int ST_PARTY_5 = 5;
+    private static final int STUDY_PROTOCOL_INDEX = 0;
+    private static final int WORKFLOW_STATUS_INDEX = 1;
+    private static final int MILESTONE_INDEX = 2;
+    private static final int OVERALL_STATUS_INDEX = 3;
+    private static final int PI_INDEX = 4;
+    private static final int LEAD_ORG_INDEX = 5;
+    private static final int STUDY_PARTICIPATION_INDEX = 6;
 
     /**
      * gets a list StudyProtocl by criteria.
@@ -215,6 +221,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StudyProtocol studyProtocol = null;
         StudyOverallStatus studyOverallStatus = null;
         DocumentWorkflowStatus documentWorkflowStatus = null;
+        StudyMilestone studyMilestone;
         Organization organization = null;
         Person person = null;
         StudyParticipation studyParticipation = null;
@@ -228,17 +235,19 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 }
                 studyProtocolDto = new StudyProtocolQueryDTO();
                 // get study protocol
-                studyProtocol = (StudyProtocol) searchResult[0];
+                studyProtocol = (StudyProtocol) searchResult[STUDY_PROTOCOL_INDEX];
                 // get documentWorkflowStatus
-                documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[1];
+                documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[WORKFLOW_STATUS_INDEX];
+                // get studyMilestone
+                studyMilestone = (StudyMilestone) searchResult[MILESTONE_INDEX];
                 // get studyOverallStatus
-                studyOverallStatus = (StudyOverallStatus) searchResult[2];
+                studyOverallStatus = (StudyOverallStatus) searchResult[OVERALL_STATUS_INDEX];
                 // get the person
-                person = (Person) searchResult[PI_PERSON_3];
+                person = (Person) searchResult[PI_INDEX];
                 // get the organization
-                organization = (Organization) searchResult[LEAD_ORG_4];
+                organization = (Organization) searchResult[LEAD_ORG_INDEX];
                 // get the StudyParticipation
-                studyParticipation = (StudyParticipation) searchResult[ST_PARTY_5];
+                studyParticipation = (StudyParticipation) searchResult[STUDY_PARTICIPATION_INDEX];
 
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
@@ -270,6 +279,10 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                     studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated());
                     studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
+                }
+                if (studyMilestone != null) {
+                    studyProtocolDto.setStudyMilsetone(studyMilestone.getMilestoneCode());
+                    studyProtocolDto.setStudyMilestoneDate(studyMilestone.getMilestoneDate());
                 }
                 if (studyOverallStatus != null) {
                     studyProtocolDto.setStudyStatusCode(studyOverallStatus
@@ -443,8 +456,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StringBuffer hql = new StringBuffer();
         try {
             hql
-                    .append(" select sp , dws , sos  , per , org , sps , sc from StudyProtocol as sp  "
+                    .append(" select sp , dws , sms , sos  , per , org , sps , sc from StudyProtocol as sp  "
                             + "left outer join sp.documentWorkflowStatuses as dws  "
+                            + "left outer join sp.studyMilestones as sms  "
                             + "left outer join sp.studyOverallStatuses as sos  "
                             + "left outer join sp.studyContacts as sc "
                             + "left outer join sc.clinicalResearchStaff as hcp "
@@ -587,12 +601,42 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                    && studyProtocolQueryCriteria.getExcludeRejectProtocol().booleanValue()) {
                where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");               
            }
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyMilestone())) {
+               where.append(" and sms.milestoneCode  = '" + MilestoneCode.
+                       getByCode(studyProtocolQueryCriteria.getStudyMilestone()) + "'");
+               where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
+                       + " where sms.studyProtocol = sms1.studyProtocol )"
+                       + " or sms.id is null ) ");
+           } else {
+               // add the sub-query to pick the latest record
+               where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
+                               + " where sms.studyProtocol = sms1.studyProtocol )"
+                               + " or sms.id is null ) ");
+           }     
            where.append(" and sps.functionalCode ='"
                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");           
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");           
-           // sub-query for searching trials by NCT number
+           addSubQueries(studyProtocolQueryCriteria, where);           
+        } catch (Exception e) {
+            LOG.error("General error in while create where cluase", e);
+            throw new PAException("General error in while create where cluase", e);
+        } finally {
+            LOG.debug("Leaving generateWhereClause ");
+        }
+        return where.toString();
+    }
+
+    /**
+     * @param studyProtocolQueryCriteria
+     * @param where
+     */
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
+    private void addSubQueries(
+            StudyProtocolQueryCriteria studyProtocolQueryCriteria,
+            StringBuffer where) {
+        // sub-query for searching trials by NCT number
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
                 where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 " 
                       + " left outer join sp1.studyParticipations as sps1 "
@@ -619,13 +663,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                       + " left outer join sp3.studyOnholds as spoh "
                       + " where spoh.onholdDate is not null and "
                       + " spoh.offholdDate is null)");
-           }           
-        } catch (Exception e) {
-            LOG.error("General error in while create where cluase", e);
-            throw new PAException("General error in while create where cluase", e);
-        } finally {
-            LOG.debug("Leaving generateWhereClause ");
-        }
-        return where.toString();
+           }
     }
 }

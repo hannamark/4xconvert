@@ -128,14 +128,15 @@ function generateReport(pid) {
                 <td>
                    <s:select headerKey="" headerValue="All" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
                 </td>                  
-<!--    
-                 <td colspan="2">                        
-                    <INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>          
-                    <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                </td>  
--->                
+                <td scope="row" class="label">
+                    <label for="milestoneCode"> <fmt:message key="studyProtocol.milestone"/></label>    
+                </td>
+                <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
+                <td>
+                   <s:select headerKey="" headerValue="All" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
+                </td>             
             </tr>
-            <tr>
+            <tr> 
                 <td scope="row" class="label">
                     <label for="searchOnHold"> <fmt:message key="studyProtocol.searchOnHold"/></label>                        
                 </td>

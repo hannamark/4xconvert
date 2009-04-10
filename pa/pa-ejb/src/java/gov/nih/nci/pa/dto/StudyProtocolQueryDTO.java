@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -120,6 +121,8 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date dateLastCreated;
     private String onHoldReasons;
     private String offHoldDates;
+    private MilestoneCode studyMilsetone;
+    private Date studyMilestoneDate;
 
 
 
@@ -431,6 +434,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     public String getOffHoldDates() {
         return offHoldDates;
     }
+    
     /**
      * 
      * @param offHoldDates offHoldDates
@@ -438,6 +442,32 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setOffHoldDates(String offHoldDates) {
         this.offHoldDates = offHoldDates;
     }
+    
+    /**
+     * @param studyMilsetone the studyMilsetone to set
+     */
+    public void setStudyMilsetone(MilestoneCode studyMilsetone) {
+        this.studyMilsetone = studyMilsetone;
+    }
+    /**
+     * @return the studyMilsetone
+     */
+    public MilestoneCode getStudyMilsetone() {
+        return studyMilsetone;
+    }
+    /**
+     * @param studyMilestoneDate the studyMilestoneDate to set
+     */
+    public void setStudyMilestoneDate(Date studyMilestoneDate) {
+        this.studyMilestoneDate = studyMilestoneDate;
+    }
+    /**
+     * @return the studyMilestoneDate
+     */
+    public Date getStudyMilestoneDate() {
+        return studyMilestoneDate;
+    }
+
     
     
     
