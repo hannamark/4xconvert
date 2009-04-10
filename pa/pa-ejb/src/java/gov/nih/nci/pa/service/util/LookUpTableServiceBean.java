@@ -110,6 +110,7 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
+    private static final String UNCHECKED = "unchecked";
     private static final Logger LOG  = Logger.getLogger(LookUpTableServiceBean.class);
 
     /**
@@ -117,7 +118,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return fmList  FundingMechanism
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
@@ -143,7 +144,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return nihList  FundingMechanism
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<NIHinstitute> getNihInstitutes() throws PAException {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
@@ -169,7 +170,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return country  Country
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<Country> getCountries() throws PAException {
         LOG.info("Entering getCountries");
         Session session = null;
@@ -193,7 +194,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return value  val
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public String getPropertyValue(String name) throws PAException {
         LOG.info("Entering getPropertyValue");
         Session session = null;
