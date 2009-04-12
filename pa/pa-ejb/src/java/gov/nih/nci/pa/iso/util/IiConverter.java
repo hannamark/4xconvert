@@ -272,6 +272,16 @@ public class IiConverter {
     public static final String CTEP_ORG_IDENTIFIER_ROOT = 
                                     "Cancer Therapy Evaluation Program Organization Identifier";
     
+    /**
+     * The identifier name for.
+     */
+    public static final String STUDY_RELATIONSHIP_IDENTIFIER_NAME = "Study Relationship identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String STUDY_RELATIONSHIP_ROOT = "2.16.840.1.113883.3.26.4.4.9";
+
 
     /**
      * 
@@ -560,6 +570,20 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
         ii.setRoot(OVERSIGHT_COMMITTEE_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to study relationship ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyRelationshipIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_RELATIONSHIP_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_RELATIONSHIP_ROOT);
         return ii;
     }
 
