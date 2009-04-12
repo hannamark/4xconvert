@@ -50,6 +50,7 @@ public class EnumTest {
 		testMethods(TimePerspectiveCode.class);
 		testMethods(UnitsCode.class);
 		testMethods(USStateCode.class);
+		testMethods(StudyRelationshipTypeCode.class);
 	}
 	
 	
@@ -309,6 +310,12 @@ public class EnumTest {
 		        assertEquals(USStateCode.values().length, x.length);
 		        assertEquals("AK", USStateCode.AK.getName());
 		        assertEquals("Alaska", USStateCode.AK.getCode());
+		} 
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyRelationshipTypeCode")){			
+			 String[] x = StudyRelationshipTypeCode.getDisplayNames();
+		        assertEquals(StudyRelationshipTypeCode.values().length, x.length);
+		        assertEquals("MOD", StudyRelationshipTypeCode.MOD.getName());
+		        assertEquals("Modified", StudyRelationshipTypeCode.MOD.getCode());
 		} 
 		 
 	}
