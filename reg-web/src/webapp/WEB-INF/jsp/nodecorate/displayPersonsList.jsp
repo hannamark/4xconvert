@@ -10,8 +10,8 @@
 	<display:column title="Address" property="address"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Email" property="email"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Action" class="action" sortable="false"  headerScope="col">	
-	<s:a href="#" cssClass="btn" onclick="submitform('${row.id}','${row.lastName}'+','+'${row.firstName}')">
-							<span class="btn_img"><span class="add">Select</span></span></s:a>	
+	<a href="#" class="btn" onclick="submitform('${row.id}','${row.lastName}'+','+'${row.firstName}')">
+							<span class="btn_img"><span class="add">Select</span></span></a>	
 	</display:column>
 </display:table>
 </c:if>

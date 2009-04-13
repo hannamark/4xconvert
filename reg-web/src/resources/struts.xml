@@ -9,7 +9,24 @@
     <package name="default" extends="struts-default">
         <interceptors>
 			<interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
-			<interceptor name="fileUpload" class="org.apache.struts2.interceptor.FileUploadInterceptor"/>            
+			<interceptor-stack name="methodValidationStack">
+                <interceptor-ref name="exception" />
+                <interceptor-ref name="alias" />
+                <interceptor-ref name="params"/>
+                <interceptor-ref name="servletConfig" />
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="i18n" />
+                <interceptor-ref name="chain" />
+                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="params"/>
+                <interceptor-ref name="conversionError" />
+                <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                    <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+			  </interceptor-stack>
         </interceptors>
         <global-results>
 			<result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
@@ -69,9 +86,9 @@
         </result>
         </action>
         <action name="amendTrial*" class="gov.nih.nci.registry.action.AmendmentTrialAction" method="{1}">
-		<interceptor-ref name="fileUpload"/>
-		<interceptor-ref name="nci-commonsParams" />
-		<result>/WEB-INF/jsp/amendTrial.jsp</result>
+		<interceptor-ref name="methodValidationStack" />
+		<result name="success">/WEB-INF/jsp/amendTrial.jsp</result>
+		<result name="input">/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="error">/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="edit">/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
@@ -81,12 +98,16 @@
              <param name="trialAction">${trialAction}</param>
         </result>
         </action> 
-     <action name="ajaxAmendTrialAction*" class="gov.nih.nci.registry.action.AmendmentTrialAction" method="{1}">
+    <action name="ajaxManageGrantsAction*" class="gov.nih.nci.registry.action.ManageGrantsAction" method="{1}"> 
+        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
+        <result name="display_grants">/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp</result>
+        <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
+    </action>
+    <action name="ajaxManageIndIdeAction*" class="gov.nih.nci.registry.action.ManageIndIdeAction" method="{1}"> 
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
         <result name="display_ideind">/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp</result>
-        <result name="display_grants">/WEB-INF/jsp/nodecorate/addGrant.jsp</result>
         <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
-     </action>        
+    </action>
         
 	<action name="ajaxSubmitTrialAction*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}"> 
 		<result name="display_lead_org">/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp</result> 
@@ -98,8 +119,8 @@
 		<result name="display_grants">/WEB-INF/jsp/nodecorate/addGrant.jsp</result>
 		<result name="display_summary4funding_sponsor">/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp</result>
 		<result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
-	</action>        
-        <action name="popup*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
+	</action>
+    <action name="popup*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
 		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
 		<result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
 		<result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>

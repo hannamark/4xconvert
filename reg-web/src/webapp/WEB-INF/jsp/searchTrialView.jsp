@@ -55,16 +55,6 @@
               </c:if>
            </td>
           </tr>
-          <tr>     
-            <td scope="row" class="label">
-                <label for="Date">
-                    <fmt:message key="view.trial.amendmentDate"/>
-                </label>
-          </td>
-          <td class="value">
-                <fmt:formatDate value="${requestScope.trialSummary.amendmentDate.value }"/>
-          </td>
-          </tr> 
         </c:if>
     	  <tr>
     	  	<th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>

@@ -31,5 +31,17 @@
 	</display:table>
 	</c:if>
 </c:when>
+<c:when test="${trialDTO.indIdeDtos != null && fn:length(trialDTO.indIdeDtos) >0}">
+    <display:table class="data" sort="list"  uid="row"  name="${trialDTO.indIdeDtos}" requestURI="submitTrialdisplayIndIde.action">
+        <display:column title="IndIde Type" property="indIde"  headerClass="sortable"/>
+        <display:column title="Number" property="number"  headerClass="sortable"/>
+        <display:column title="Grantor" property="grantor"  headerClass="sortable"/>
+        <display:column title="Holder" property="holderType"  headerClass="sortable"/>
+        <display:column title="Program Code" property="programCode"  headerClass="sortable"/>
+        <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
+        <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
+    </display:table>
+</c:when>
+
 </c:choose>
 

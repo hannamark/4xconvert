@@ -127,14 +127,14 @@ function addGrant(){
 	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;
 	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
 	var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
-	var  url = '/registry/protected/ajaxAmendTrialActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;	
+	var  url = '/registry/protected/ajaxManageGrantsActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;	
    	var div = document.getElementById('grantdiv');   
    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
    	callAjax(url, div);
 	resetGrantRow();
 }
 function deleteGrantRow(rowid){	
-	var  url = '/registry/protected/ajaxAmendTrialActiondeleteGrant.action?uuid='+rowid;
+	var  url = '/registry/protected/ajaxManageGrantsActiondeleteGrant.action?uuid='+rowid;
    	var div = document.getElementById('grantdiv');
    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
    	callAjax(url, div);				
@@ -161,13 +161,13 @@ function resetGrantRow(){
 }
 function deleteIndIde(rowid){
 	
-	var  url = '/registry/protected/ajaxAmendTrialActiondeleteIndIde.action?uuid='+rowid;
+	var  url = '/registry/protected/ajaxManageIndIdeActiondeleteIndIde.action?uuid='+rowid;
 	var div = document.getElementById('indidediv');
 	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
 	callAjax(url, div);				
 }
 function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype) {
-	var  url = '/registry/protected/ajaxAmendTrialActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype;
+	var  url = '/registry/protected/ajaxManageIndIdeActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype;
 	var div = document.getElementById('indidediv');
 	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
 	callAjax(url, div);
@@ -194,7 +194,7 @@ function toggledisplay2 (it) {
     <c:set var="topic" scope="request" value="submit_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
-    <s:form name="submitTrial" method="POST" enctype="multipart/form-data">
+    <s:form name="amendTrial" method="POST" validate="true" enctype="multipart/form-data">
         <s:if test="hasActionErrors()">
             <div class="error_msg"><s:actionerror/></div>
         </s:if>
@@ -295,7 +295,7 @@ function toggledisplay2 (it) {
                     <span class="info">Max 4000 characters</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>trialDTO.trialTitle</s:param>
+                        <s:param>trialDTO.officialTitle</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
@@ -310,7 +310,7 @@ function toggledisplay2 (it) {
                     <s:select headerKey="" headerValue="--Select--" name="trialDTO.phaseCode" list="#phaseCodeValues" cssStyle="width:206px" value="trialDTO.phaseCode"/>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>trialDTO.trialPhase</s:param>
+                        <s:param>trialDTO.phaseCode</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
@@ -324,7 +324,7 @@ function toggledisplay2 (it) {
                     <span class="info">Required if Phase equals &#39;Other&#39;</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>trialDTO.otherPhaseText</s:param>
+                        <s:param>trialDTO.phaseOtherText</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>                
@@ -335,10 +335,10 @@ function toggledisplay2 (it) {
                 </td>
                 <td>
 				    <input type="radio" name="trialDTO.trialType" value="Interventional" checked="checked"> Interventional
-				    <input type="radio" name="trialDTO.trialType" value="Observational" disabled> Observational
+				    <input type="radio" name="trialDTO.trialType" value="Observational" disabled="disabled"> Observational
 				     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>trialType</s:param>
+                        <s:param>trialDTO.trialType</s:param>
                        </s:fielderror>                            
                      </span>				
 				</td>
@@ -352,7 +352,7 @@ function toggledisplay2 (it) {
                     <s:select headerKey="" headerValue="--Select--" name="trialDTO.primaryPurposeCode" list="#typeCodeValues"  cssStyle="width:206px" value="trialDTO.primaryPurposeCode"/>
                      <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>trialDTO.trialPurpose</s:param>
+                        <s:param>trialDTO.primaryPurposeCode</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
@@ -367,7 +367,7 @@ function toggledisplay2 (it) {
                     <span class="info">Required if Purpose equals &#39;Other&#39;</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>trialDTO.otherPurposeText</s:param>
+                        <s:param>trialDTO.primaryPurposeOtherText</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>                
@@ -404,7 +404,7 @@ function toggledisplay2 (it) {
 					</td>
 					
 				</tr>
-          <tr>          
+        
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
              <th colspan="2"><fmt:message key="submit.trial.sponsorResParty"/></th>
@@ -464,7 +464,7 @@ function toggledisplay2 (it) {
                     <s:textfield name="trialDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px"/>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>contactEmail</s:param>
+                        <s:param>trialDTO.contactEmail</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
@@ -477,7 +477,7 @@ function toggledisplay2 (it) {
                     <s:textfield name="trialDTO.contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>contactPhone</s:param>
+                        <s:param>trialDTO.contactPhone</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>           
@@ -504,7 +504,7 @@ function toggledisplay2 (it) {
                             cssStyle="width:206px" />
                      <span class="formErrorMsg"> 
                            <s:fielderror>
-                           <s:param>summary4FundingCategory</s:param>
+                           <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
                            </s:fielderror>                            
                       </span>
                 </td>
@@ -607,8 +607,9 @@ function toggledisplay2 (it) {
           </table>
          
           <tr>
-                <td colspan="2" class="space">       <div id="grantdiv">   
-                <%@ include file="/WEB-INF/jsp/nodecorate/addGrant.jsp" %>
+                <td colspan="2" class="space">  
+                <div id="grantdiv">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
                 </div>
                 </td>
                 

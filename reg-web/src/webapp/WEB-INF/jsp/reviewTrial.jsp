@@ -23,6 +23,19 @@ function amendProtocol (){
     document.forms[0].submit();
     showPopWin('${amendProtocol}', 600, 200, '', 'Amend Trial');
 }
+function printProtocol (){   
+	var sOption="toolbar=no,location=no,directories=no,menubar=yes,"; 
+    sOption+="scrollbars=yes,width=750,height=600,left=100,top=25"; 
+var sWinHTML = document.getElementById('contentprint').innerHTML; 
+
+var winprint=window.open("","",sOption); 
+    winprint.document.open(); 
+    winprint.document.write('<html><body>'); 
+    winprint.document.write(sWinHTML);          
+    winprint.document.write('</body></html>'); 
+    winprint.document.close(); 
+    winprint.focus(); 
+}
 </script>
 <body>
 <div id="contentwide"> 
@@ -30,7 +43,7 @@ function amendProtocol (){
  
 <div class="box">
     <s:form > <s:actionerror/>          
-        
+    <div id="contentprint">        
     <table class="form">
           <tr>
             <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
@@ -54,6 +67,9 @@ function amendProtocol (){
                 <td class="value">
                     <c:out value="${trialDTO.amendmentDate}"/> 
                 </td>
+          </tr>
+          <tr>
+            <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
           </tr>
           <tr>     
                 <td scope="row" class="label">
@@ -328,34 +344,15 @@ function amendProtocol (){
         </td>
       </tr> 
      </table>
-     <c:if test="${fn:length(trialDTO.indDtos) > 0}">
+     <c:if test="${fn:length(trialDTO.indIdeDtos) > 0}">
         <div class="box">                                   
-                <h3>FDA IND/IDE Information for applicable trials</h3>  
-                <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
-                    name="${trialDTO.indDtos }" requestURI="searchTrialview.action" export="false"> 
-                <display:column titleKey="search.trial.view.indldeTypeCode" property="indIde"   sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.view.indldeNumber" property="number"   sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.view.grantorCode" property="grantor"   sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.view.holderTypeCode" property="holderType"   sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.view.nciDivProgHolderCode" property="programCode"   sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.view.expandedAccessIndicator" property="expandedAccessType"   sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.view.expandedAccessStatusCode" property="expandedAccess"   sortable="true" headerClass="sortable"/>
-                </display:table>
-            
+        <h3>FDA IND/IDE Information for applicable trials</h3>  
+        <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
         </div>
-        </c:if>
-        <c:if test="${fn:length(trialDTO.fundingDtos) >0}">          
-            <div class="box">
-                <h3>NIH Grant Information (for NIH funded Trials)</h3>  
-				<display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
-				        name="${trialDTO.fundingDtos}" requestURI="searchTrialview.action" export="false">    
-				    <display:column titleKey="search.trial.view.fundingMechanism" property="fundingMechanism"   sortable="true" headerClass="sortable"/>
-				    <display:column titleKey="search.trial.view.nihInstitutionCode" property="instituteCode"   sortable="true" headerClass="sortable"/>
-				    <display:column titleKey="search.trial.view.serialNumber" property="serialNumber"   sortable="true" headerClass="sortable"/>
-				    <display:column titleKey="search.trial.view.divProgram" property="nciDivisionProgramCode"   sortable="true" headerClass="sortable"/>
-				</display:table>
-            </div>
-        </c:if>
+     </c:if>
+     <c:if test="${trialDTO.fundingDtos != null}">  
+        <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
+     </c:if>
         <c:if test="${fn:length(trialDTO.docDtos) >0}">          
             <div class="box">
                <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
@@ -365,13 +362,16 @@ function amendProtocol (){
                 </display:table>
             </div>
         </c:if>
+        </div>
         <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li><a href="amendTrialedit.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Edit</span></span></a></li>
                <li><a href="#"                
-                    class="btn" onclick="amendProtocol();"><span class="btn_img"><span class="back">Submit</span></span></a></li>     
+                    class="btn" onclick="amendProtocol();"><span class="btn_img"><span class="back">Submit</span></span></a></li>
+               <li><a href="#"                
+                    class="btn" onclick="printProtocol();"><span class="btn_img"><span class="back">Print</span></span></a></li>          
             </ul>   
         </del>
         </div>

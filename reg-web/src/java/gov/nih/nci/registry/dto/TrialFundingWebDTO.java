@@ -1,6 +1,8 @@
 package gov.nih.nci.registry.dto;
 
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 /**
  * Class for holding attributes for StudyResourcing DTO.
@@ -13,17 +15,17 @@ public class TrialFundingWebDTO {
     private String nihInstitutionCode;
     private String nciDivisionProgramCode;
     private String serialNumber;
-
+    private String rowId;
     /**
      * @param iso StudyResourcingDTO object
      */
     public TrialFundingWebDTO(StudyResourcingDTO iso) {
         super();
-        this.fundingMechanismCode = iso.getFundingMechanismCode().getCode();
-        this.nihInstitutionCode = iso.getNihInstitutionCode().getCode();
-        this.nciDivisionProgramCode = iso.getNciDivisionProgramCode().getCode();
+        this.fundingMechanismCode = CdConverter.convertCdToString(iso.getFundingMechanismCode());
+        this.nihInstitutionCode = CdConverter.convertCdToString(iso.getNihInstitutionCode());
+        this.nciDivisionProgramCode = CdConverter.convertCdToString(iso.getNciDivisionProgramCode());
         this.serialNumber = iso.getSerialNumber().getValue().toString();
-        this.id = iso.getIdentifier().getExtension();
+        this.id = IiConverter.convertToString(iso.getIdentifier());
     }
 
     /** .
@@ -102,6 +104,20 @@ public class TrialFundingWebDTO {
      */
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    /**
+     * @return the rowId
+     */
+    public String getRowId() {
+        return rowId;
+    }
+
+    /**
+     * @param rowId the rowId to set
+     */
+    public void setRowId(String rowId) {
+        this.rowId = rowId;
     }
 
 

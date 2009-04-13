@@ -1,25 +1,34 @@
 package gov.nih.nci.registry.dto;
 
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 /**
  * 
  * @author Bala Nair
  */
+@SuppressWarnings({"PMD.MethodReturnsInternalArray" })
 public class TrialDocumentWebDTO {
 
     private String typeCode;
     private String fileName;
     private String id;
     private String inactiveCommentText;
+    private byte[] text;
+
     
     /**
      * @param iso DocumentDTO object
      */
     public TrialDocumentWebDTO(DocumentDTO iso) {
         super();
-        this.typeCode = iso.getTypeCode().getCode();
-        this.fileName = iso.getFileName().getValue(); 
-        this.id = iso.getIdentifier().getExtension();
+        this.typeCode = CdConverter.convertCdToString(iso.getTypeCode());
+        this.fileName = StConverter.convertToString(iso.getFileName());
+        this.id = IiConverter.convertToString(iso.getIdentifier());
+        this.inactiveCommentText = StConverter.convertToString(iso.getInactiveCommentText());
+        this.text = EdConverter.convertToByte(iso.getText());
     }
     
     /** .
@@ -84,4 +93,21 @@ public class TrialDocumentWebDTO {
     public void setInactiveCommentText(String inactiveCommentText) {
         this.inactiveCommentText = inactiveCommentText;
     }
+
+    /**
+     * @return the text
+     */
+    public byte[] getText() {
+        return text;
+    }
+
+    /**
+     * @param text the text to set
+     */
+    public void setText(byte[] text) {
+        byte[] temp = text;
+        this.text = temp;
+
+    }
+    
 }
