@@ -58,6 +58,10 @@ public class ArmServiceAuthorization implements PDP {
 	public void authorizeGetServiceSecurityMetadata(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
+	   				
+	public void authorizeGet(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -68,6 +72,9 @@ public class ArmServiceAuthorization implements PDP {
 		}
 		if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("get")){
+			authorizeGet(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

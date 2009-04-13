@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/ArmService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns3="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns5="uri:iso.org:21090" xmlns:ns1="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns4="http://pa.services.coppa.nci.nih.gov" xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns0="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="ArmService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/ArmService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns3="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns5="uri:iso.org:21090" xmlns:ns0="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns4="http://pa.services.coppa.nci.nih.gov" xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="ArmService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -19,10 +19,30 @@
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" schemaLocation="./ArmServiceTypes.xsd" />
       <import namespace="http://pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPA.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
-      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/types" schemaLocation="./PAServicesTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="ArmServiceResourceProperties">
         <complexType>
           <sequence />
@@ -31,12 +51,26 @@
     </schema>
   </types>
   <!--  place service messages here -->
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns0:PAFault" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="ArmServicePortType" wsrp:ResourceProperties="tns:ArmServiceResourceProperties">
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
       <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />

@@ -26,4 +26,10 @@ public class ArmServiceProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse();
+    boxedResult.setArm(impl.get(params.getId().getId()));
+    return boxedResult;
+  }
+
 }

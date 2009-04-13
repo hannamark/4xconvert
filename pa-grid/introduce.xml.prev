@@ -1,6 +1,10 @@
 <ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace generateStubs="true" location="../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./ArmServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" packageName="gov.nih.nci.coppa.services.pa.armservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="ArmServiceReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="PAFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
@@ -11,42 +15,49 @@
    <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace location="./ArmServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" packageName="gov.nih.nci.coppa.services.pa.armservice.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="ArmServiceReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="PAFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
   <ns2:Namespace location="./../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" packageName="org.oasis.wsrf.faults" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace location="./CoppaPAFaults.xsd" namespace="http://faults.pa.services.coppa.nci.nih.gov" packageName="faults.pa.services.coppa.nci.nih.gov" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./CoppaPAFaults.xsd" namespace="http://faults.pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa.faults" xsi:type="ns2:NamespaceType"/>
   <ns2:Namespace generateStubs="false" location="./CoppaPA.xsd" namespace="http://pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.Arm" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Arm" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.Document" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Document" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="DocumentWorkflowStatus" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.FunctionalRole" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="FunctionalRole" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.Id" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Id" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="InterventionalStudyProtocol" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="ObservationalStudyProtocol" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.OrganizationFunctionalRole" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="OrganizationFunctionalRole" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.PersonFunctionalRole" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="PersonFunctionalRole" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.PlannedActivity" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="PlannedActivity" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="PlannedEligibilityCriterion" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StratumGroup" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StratumGroup" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.Study" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Study" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyContact" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyContact" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyDisease" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyDisease" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyIndlde" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyIndlde" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyMilestone" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyMilestone" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyOnhold" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyOnhold" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyOutcomeMeasure" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyOverallStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyOverallStatus" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyParticipation" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyParticipation" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyParticipationContact" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyParticipationContact" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyProtocol" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyProtocol" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyRecruitmentStatus" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyRegulatoryAuthority" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudyResourcing" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyResourcing" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudySiteAccrualStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Arm" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Arm" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Document" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Document" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="DocumentWorkflowStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="DocumentWorkflowStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="FunctionalRole" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="FunctionalRole" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Id" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="InterventionalStudyProtocol" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="InterventionalStudyProtocol" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="ObservationalStudyProtocol" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="ObservationalStudyProtocol" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="OrganizationFunctionalRole" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="OrganizationFunctionalRole" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PersonFunctionalRole" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="PersonFunctionalRole" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PlannedActivity" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="PlannedActivity" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PlannedEligibilityCriterion" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="PlannedEligibilityCriterion" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StratumGroup" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StratumGroup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Study" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Study" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyContact" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyContact" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyDisease" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyDisease" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyIndlde" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyIndlde" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyMilestone" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyMilestone" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyOnhold" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyOnhold" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyOutcomeMeasure" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyOutcomeMeasure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyOverallStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyOverallStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyParticipation" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyParticipation" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyParticipationContact" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyParticipationContact" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyProtocol" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyProtocol" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyRecruitmentStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyRecruitmentStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyRegulatoryAuthority" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyRegulatoryAuthority" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyResourcing" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudyResourcing" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudySiteAccrualStatus" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="StudySiteAccrualStatus" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="br" xsi:type="ns2:SchemaElementType"/>
@@ -220,15 +231,24 @@
      <ns15:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
      <ns15:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
     </ns15:Method>
+    <ns15:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns18:Id" description="" isArray="false" name="id" xmlns:ns18="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="ns19:Arm" description="" isArray="false" xmlns:ns19="http://pa.services.coppa.nci.nih.gov"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns20:PAFault" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"/>
+     </ns15:Exceptions>
+    </ns15:Method>
    </ns15:Methods>
-   <ns18:ResourcePropertiesList xsi:type="ns18:ResourcePropertiesListType" xmlns:ns18="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns21:ResourcePropertiesList xsi:type="ns21:ResourcePropertiesListType" xmlns:ns21="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns19:Extensions xsi:type="ns19:ExtensionsType" xmlns:ns19="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns19:Extension name="cagrid_metadata" version="1.3" xsi:type="ns19:ExtensionType"/>
- </ns19:Extensions>
+ <ns22:Extensions xsi:type="ns22:ExtensionsType" xmlns:ns22="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns22:Extension name="cagrid_metadata" version="1.3" xsi:type="ns22:ExtensionType"/>
+ </ns22:Extensions>
 </ns1:ServiceDescription>

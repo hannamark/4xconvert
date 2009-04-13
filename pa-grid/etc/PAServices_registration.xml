@@ -17,11 +17,11 @@
 			xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service"
 			xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"
 			xmlns:ns5="uri:iso.org:21090"
-			xmlns:ns1="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"
+			xmlns:ns0="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
 			xmlns:ns4="http://pa.services.coppa.nci.nih.gov"
 			xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
-			xmlns:ns0="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+			xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing"
 			xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"
 			xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types"
 			xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd">

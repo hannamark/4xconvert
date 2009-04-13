@@ -10,7 +10,7 @@ http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/bindings=gov.nih.nc
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/service=gov.nih.nci.coppa.services.pa.armservice.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
-http\://faults.pa.services.coppa.nci.nih.gov=faults.pa.services.coppa.nci.nih.gov
+http\://faults.pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa.faults
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090

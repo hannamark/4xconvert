@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  */
 public interface ArmServiceI {
 
-
+  public gov.nih.nci.coppa.services.pa.Arm get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 
