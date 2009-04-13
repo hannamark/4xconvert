@@ -15,24 +15,29 @@ import org.apache.axis.message.MessageElement;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * JAXB based deserializer.
  * @author gax
  */
 public class JaxbDeserializer
         extends DeserializerImpl
         implements Deserializer {
 
+    private static final long serialVersionUID = 6701906739176588187L;
+
     private static final Map<String, Unmarshaller> MAP = new HashMap<String, Unmarshaller>();
 
-    public QName xmlType;
-    public Class javaType;
+    private final Class<?> javaType;
 
-    public JaxbDeserializer(Class javaType, QName xmlType) {
-        this.xmlType = xmlType;
+    /**
+     * @param javaType java type this deserializes
+     * @param xmlType not used
+     */
+    public JaxbDeserializer(Class<?> javaType, QName xmlType) {
         this.javaType = javaType;
     }
 
     /**
+     * {@inheritDoc}
      * Return something even if no characters were found.
      */
     @Override
