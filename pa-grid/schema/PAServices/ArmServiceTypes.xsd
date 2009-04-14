@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"
-            xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:COPPA-PA-FAULTS="http://faults.pa.services.coppa.nci.nih.gov" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<schema targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" elementFormDefault="qualified" attributeFormDefault="unqualified">
   <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="../ws/addressing/WS-Addressing.xsd"></import>
-  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd"></import>
-  <import namespace="http://faults.pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPAFaults.xsd"></import>
+
   <element name="ArmServiceReference">
     <complexType>
       <sequence >
@@ -11,7 +10,5 @@
       </sequence>
     </complexType>
   </element>
-
-  <element name="PAFault" type="COPPA-PA-FAULTS:PAFault"/>
 
 </schema>

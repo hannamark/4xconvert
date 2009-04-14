@@ -1,35 +1,26 @@
 <ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace location="./ArmServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" packageName="gov.nih.nci.coppa.services.pa.armservice.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="ArmServiceReference" xsi:type="ns2:SchemaElementType"/>
+  <ns2:Namespace location="./CoppaPAFaults.xsd" namespace="http://faults.pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa.faults" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="PAFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" packageName="org.oasis.wsrf.faults" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace location="./CoppaPAFaults.xsd" namespace="http://faults.pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa.faults" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./../ws/xml.xsd" namespace="http://www.w3.org/XML/1998/namespace" packageName="namespace" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./ArmServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" packageName="gov.nih.nci.coppa.services.pa.armservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="ArmServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
   <ns2:Namespace generateStubs="false" location="./CoppaPA.xsd" namespace="http://pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement className="Arm" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Arm" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Document" deserializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbDeserializer" serializer="gov.nih.nci.coppa.services.pa.grid.ser.JaxbSerializer" type="Document" xsi:type="ns2:SchemaElementType"/>
@@ -237,7 +228,7 @@
      </ns15:Inputs>
      <ns15:Output qName="ns19:Arm" description="" isArray="false" xmlns:ns19="http://pa.services.coppa.nci.nih.gov"/>
      <ns15:Exceptions>
-      <ns15:Exception description="" name="PAFault" qname="ns20:PAFault" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"/>
+      <ns15:Exception description="" name="PAFault" qname="ns20:PAFault" xmlns:ns20="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns15:Exceptions>
     </ns15:Method>
    </ns15:Methods>

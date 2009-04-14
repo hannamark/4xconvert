@@ -4,13 +4,14 @@
     xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
     targetNamespace="http://faults.pa.services.coppa.nci.nih.gov" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
-    <import
-        namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+    <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
         schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
 
-    <complexType name="PAFault">
-        <complexContent>
-            <extension base="wsrbf:BaseFaultType"/>
-        </complexContent>
-    </complexType>
+    <element name="PAFault">
+        <complexType>
+            <complexContent>
+                <extension base="wsrbf:BaseFaultType" />
+            </complexContent>
+        </complexType>
+    </element>
 </schema>

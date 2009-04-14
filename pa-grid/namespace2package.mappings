@@ -11,15 +11,15 @@ http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/service=gov.nih.nci
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 http\://faults.pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa.faults
-gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
+http\://www.w3.org/XML/1998/namespace=namespace
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
+http\://enterpriseservices.nci.nih.gov/PAServices/types=gov.nih.nci.coppa.services.pa.stubs.types
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/types=gov.nih.nci.coppa.services.pa.armservice.stubs.types
 http\://pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa
-gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
-gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
-http\://enterpriseservices.nci.nih.gov/PAServices/types=gov.nih.nci.coppa.services.pa.stubs.types
-
 
 
 
