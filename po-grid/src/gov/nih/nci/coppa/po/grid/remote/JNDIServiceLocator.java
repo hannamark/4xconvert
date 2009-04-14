@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.naming.CommunicationException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -34,7 +35,7 @@ import org.apache.log4j.Logger;
 
 public class JNDIServiceLocator implements ServiceLocator {
     private static final Logger logger = LogManager.getLogger(JNDIServiceLocator.class);
-
+    private static final int MAX_RETRIES = 2;
     private static JNDIServiceLocator instance = new JNDIServiceLocator();
     private InitialContext context;
     @SuppressWarnings("unchecked")
@@ -78,63 +79,78 @@ public class JNDIServiceLocator implements ServiceLocator {
         return instance;
     }
 
+    private Object lookup(String name) throws NamingException {
+        Object object = null;
+        int i = 0;
+        while (object == null && i < MAX_RETRIES) {
+             try {
+                 object = context.lookup(name);
+             } catch (CommunicationException com) {
+                 instance = new JNDIServiceLocator();
+             }
+             i++;
+        }
+
+        return object;
+    }
+
     public PersonEntityServiceRemote getPersonService() throws NamingException {
-        PersonEntityServiceRemote object = (PersonEntityServiceRemote) context
-                .lookup("po/PersonEntityServiceBean/remote");
+        PersonEntityServiceRemote object = (PersonEntityServiceRemote)
+        lookup("po/PersonEntityServiceBean/remote");
         return object;
     }
 
     public OrganizationEntityServiceRemote getOrganizationService() throws NamingException {
-        OrganizationEntityServiceRemote object = (OrganizationEntityServiceRemote) context
-                .lookup("po/OrganizationEntityServiceBean/remote");
+        OrganizationEntityServiceRemote object = (OrganizationEntityServiceRemote)
+        lookup("po/OrganizationEntityServiceBean/remote");
         return object;
     }
 
     public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityService() throws NamingException {
-        HealthCareFacilityCorrelationServiceRemote object = (HealthCareFacilityCorrelationServiceRemote) context
-                .lookup("po/HealthCareFacilityCorrelationServiceBean/remote");
+        HealthCareFacilityCorrelationServiceRemote object = (HealthCareFacilityCorrelationServiceRemote)
+        lookup("po/HealthCareFacilityCorrelationServiceBean/remote");
         return object;
     }
 
     public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffService() throws NamingException {
-        ClinicalResearchStaffCorrelationServiceRemote object = (ClinicalResearchStaffCorrelationServiceRemote) context
-                .lookup("po/ClinicalResearchStaffCorrelationServiceBean/remote");
+        ClinicalResearchStaffCorrelationServiceRemote object = (ClinicalResearchStaffCorrelationServiceRemote)
+        lookup("po/ClinicalResearchStaffCorrelationServiceBean/remote");
         return object;
     }
 
     public HealthCareProviderCorrelationServiceRemote getHealthCareProviderService() throws NamingException {
-        HealthCareProviderCorrelationServiceRemote object = (HealthCareProviderCorrelationServiceRemote) context
-                .lookup("po/HealthCareProviderCorrelationServiceBean/remote");
+        HealthCareProviderCorrelationServiceRemote object = (HealthCareProviderCorrelationServiceRemote)
+        lookup("po/HealthCareProviderCorrelationServiceBean/remote");
         return object;
     }
 
     public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationService() throws NamingException {
-        IdentifiedOrganizationCorrelationServiceRemote object = (IdentifiedOrganizationCorrelationServiceRemote) context
-                .lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+        IdentifiedOrganizationCorrelationServiceRemote object = (IdentifiedOrganizationCorrelationServiceRemote)
+        lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
         return object;
     }
 
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonService() throws NamingException {
-        IdentifiedPersonCorrelationServiceRemote object = (IdentifiedPersonCorrelationServiceRemote) context
-                .lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
+        IdentifiedPersonCorrelationServiceRemote object = (IdentifiedPersonCorrelationServiceRemote)
+        lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
         return object;
     }
 
     public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationService() throws NamingException {
-        ResearchOrganizationCorrelationServiceRemote object = (ResearchOrganizationCorrelationServiceRemote) context
-                .lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
+        ResearchOrganizationCorrelationServiceRemote object = (ResearchOrganizationCorrelationServiceRemote)
+        lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
         return object;
     }
 
     public OversightCommitteeCorrelationServiceRemote getOversightCommitteeService() throws NamingException {
-        OversightCommitteeCorrelationServiceRemote object = (OversightCommitteeCorrelationServiceRemote) context
-                .lookup("po/OversightCommitteeCorrelationServiceBean/remote");
+        OversightCommitteeCorrelationServiceRemote object = (OversightCommitteeCorrelationServiceRemote)
+        lookup("po/OversightCommitteeCorrelationServiceBean/remote");
         return object;
     }
 
     public OrganizationalContactCorrelationServiceRemote getOrganizationalContactService() throws NamingException {
-        OrganizationalContactCorrelationServiceRemote object = (OrganizationalContactCorrelationServiceRemote) context
-                .lookup("po/OrganizationalContactCorrelationServiceBean/remote");
+        OrganizationalContactCorrelationServiceRemote object = (OrganizationalContactCorrelationServiceRemote)
+        lookup("po/OrganizationalContactCorrelationServiceBean/remote");
         return object;
     }
 
