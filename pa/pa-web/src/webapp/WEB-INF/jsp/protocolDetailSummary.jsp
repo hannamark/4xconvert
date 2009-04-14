@@ -35,6 +35,12 @@
 					<span class="label"><fmt:message key="studyProtocol.leadOrganization"/>:</span> 
 					<span class="value"><c:out value="${sessionScope.trialSummary.leadOrganizationName }"/></span>
 				</div>
+				<c:if test="${sessionScope.trialSummary.amendmentNumber != null}">
+                    <div class="row">
+                        <span class="label"><fmt:message key="studyProtocol.amendmentNumber"/>:</span> 
+                        <span class="value"><c:out value="${sessionScope.trialSummary.amendmentNumber }"/></span>
+                    </div>
+                </c:if>
 			</div>
 							
 			<div class="float33">
@@ -46,6 +52,12 @@
 					 <span class="label">Trial Submitter:</span> 
 					<span class="value"><a href="javascript:displaySubmitter();"><c:out value="${sessionScope.trialSummary.userLastCreated }"/></a></span> 
 				</div>
+			    <c:if test="${sessionScope.trialSummary.amendmentDate != null}">
+                    <div class="row">
+                        <span class="label"><fmt:message key="studyProtocol.amendmentDate"/>:</span>
+                        <span class="value"><fmt:formatDate value="${sessionScope.trialSummary.amendmentDate }" dateStyle="short"/></span>
+                    </div>
+                </c:if>
 			</div>
 							
 			<div class="float33">

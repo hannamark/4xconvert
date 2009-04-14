@@ -280,6 +280,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                     studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated());
                     studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
+                    // return amendment number and date only for amended trials
+                    if (studyProtocol.getSubmissionNumber() != null 
+                            &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
+                        studyProtocolDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
+                        studyProtocolDto.setAmendmentDate(studyProtocol.getAmendmentDate());
+                    }
                 }
                 if (studyMilestone != null) {
                     studyProtocolDto.setStudyMilsetone(studyMilestone.getMilestoneCode());

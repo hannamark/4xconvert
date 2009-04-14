@@ -123,6 +123,8 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String offHoldDates;
     private MilestoneCode studyMilsetone;
     private Date studyMilestoneDate;
+    private String amendmentNumber;
+    private Date amendmentDate;
 
 
 
@@ -466,6 +468,30 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public Date getStudyMilestoneDate() {
         return studyMilestoneDate;
+    }
+    /**
+     * @param amendmentNumber the amendmentNumber to set
+     */
+    public void setAmendmentNumber(String amendmentNumber) {
+        this.amendmentNumber = amendmentNumber;
+    }
+    /**
+     * @return the amendmentNumber
+     */
+    public String getAmendmentNumber() {
+        return amendmentNumber;
+    }
+    /**
+     * @param amendmentDate the amendmentDate to set
+     */
+    public void setAmendmentDate(Date amendmentDate) {
+        this.amendmentDate = amendmentDate;
+    }
+    /**
+     * @return the amendmentDate
+     */
+    public Date getAmendmentDate() {
+        return amendmentDate;
     }
 
     
