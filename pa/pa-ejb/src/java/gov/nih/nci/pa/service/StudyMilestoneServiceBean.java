@@ -91,8 +91,8 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
-import gov.nih.nci.pa.util.MailManager;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -119,6 +119,8 @@ public class StudyMilestoneServiceBean
     StudyOnholdServiceRemote studyOnholdService;
     @EJB
     AbstractionCompletionServiceRemote abstractionCompletionService;
+    @EJB
+    MailManagerServiceLocal mailManagerService;
 
     /** For testing purposes only.  Set to false to bypass abstraction validations. */
     boolean validateAbstractions = true;
@@ -353,7 +355,7 @@ public class StudyMilestoneServiceBean
                             CdConverter.convertCdToString(workDto.getMilestoneCode()));
         if ((MilestoneCode.TRIAL_SUMMARY_SENT.equals(milestoneCode))) {
             try {
-                MailManager.getInstance().sendTSREmail(workDto.getStudyProtocolIdentifier());
+                mailManagerService.sendTSREmail(workDto.getStudyProtocolIdentifier());
             } catch (PAException e) {
                 throw new PAException(workDto.getMilestoneCode().getCode() + "' could not "
                         + "be recorded as sending the TSR report to the submitter  failed.", e);
