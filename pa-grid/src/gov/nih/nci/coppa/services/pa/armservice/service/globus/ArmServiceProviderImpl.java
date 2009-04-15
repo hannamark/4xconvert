@@ -26,9 +26,51 @@ public class ArmServiceProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolResponse();
+    boxedResult.setArm(impl.getCurrentByStudyProtocol(params.getStudyProtocolId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse create(gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse();
+    boxedResult.setArm(impl.create(params.getArm().getArm()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateResponse update(gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateResponse();
+    boxedResult.setArm(impl.update(params.getArm().getArm()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteResponse delete(gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteResponse();
+    impl.delete(params.getId().getId());
+    return boxedResult;
+  }
+
     public gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse();
     boxedResult.setArm(impl.get(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityResponse getByPlannedActivity(gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityResponse();
+    boxedResult.setArm(impl.getByPlannedActivity(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolResponse getByStudyProtocol(gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolResponse();
+    boxedResult.setArm(impl.getByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.armservice.stubs.CopyResponse copy(gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CopyResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyResponse();
+    impl.copy(params.getFromStudyProtocolId().getId(),params.getToStudyProtocolId().getId());
     return boxedResult;
   }
 

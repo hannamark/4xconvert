@@ -44,6 +44,149 @@
           </sequence>
         </complexType>
       </element>
+      <element name="GetByPlannedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByPlannedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns4:Arm" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns4:Arm" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CopyRequest">
+        <complexType>
+          <sequence>
+            <element name="fromStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="toStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CopyResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="GetCurrentByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCurrentByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns4:Arm" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="arm">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="arm">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="ArmServiceResourceProperties">
         <complexType>
           <sequence />
@@ -58,6 +201,48 @@
   <message name="GetResponse">
     <part name="parameters" element="tns:GetResponse" />
   </message>
+  <message name="GetByPlannedActivityRequest">
+    <part name="parameters" element="tns:GetByPlannedActivityRequest" />
+  </message>
+  <message name="GetByPlannedActivityResponse">
+    <part name="parameters" element="tns:GetByPlannedActivityResponse" />
+  </message>
+  <message name="GetByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetByStudyProtocolRequest" />
+  </message>
+  <message name="GetByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetByStudyProtocolResponse" />
+  </message>
+  <message name="CopyRequest">
+    <part name="parameters" element="tns:CopyRequest" />
+  </message>
+  <message name="CopyResponse">
+    <part name="parameters" element="tns:CopyResponse" />
+  </message>
+  <message name="GetCurrentByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolRequest" />
+  </message>
+  <message name="GetCurrentByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolResponse" />
+  </message>
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
   <message name="PAFaultFaultMessage">
     <part name="fault" element="ns0:PAFault" />
   </message>
@@ -70,6 +255,41 @@
     <operation name="get">
       <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetRequest" />
       <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getByPlannedActivity">
+      <input message="tns:GetByPlannedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetByPlannedActivityRequest" />
+      <output message="tns:GetByPlannedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetByPlannedActivityResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getByStudyProtocol">
+      <input message="tns:GetByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetByStudyProtocolRequest" />
+      <output message="tns:GetByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="copy">
+      <input message="tns:CopyRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/CopyRequest" />
+      <output message="tns:CopyResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/CopyResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getCurrentByStudyProtocol">
+      <input message="tns:GetCurrentByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetCurrentByStudyProtocolRequest" />
+      <output message="tns:GetCurrentByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/GetCurrentByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/CreateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/UpdateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/DeleteResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/PAFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
