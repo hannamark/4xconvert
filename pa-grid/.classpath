@@ -82,5 +82,10 @@
 	<classpathentry kind="lib" path="lib/jaxb-api.jar"/>
 	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
 	<classpathentry kind="var" path="PA_GLOBUS"/>
+	<classpathentry kind="lib" path="lib/iso-datatypes-1.2rc1.jar"/>
+	<classpathentry kind="lib" path="test/lib/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="lib/pa-ejb-client-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-impl.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
