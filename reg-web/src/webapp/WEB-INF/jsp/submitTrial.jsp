@@ -602,7 +602,7 @@ function toggledisplay2 (it) {
             <td class="value"><s:textfield name="overallStatusWebDTO.statusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                             <s:param>overallStatusWebDTO.statusDate</s:param>
@@ -617,7 +617,7 @@ function toggledisplay2 (it) {
             <td class="value"><s:textfield name="protocolWebDTO.startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal2')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
                 <s:radio name="protocolWebDTO.startDateType" list="#dateTypeList" />
                 <span class="formErrorMsg"> 
                    <s:fielderror>
@@ -638,7 +638,7 @@ function toggledisplay2 (it) {
             <td class="value"><s:textfield name="protocolWebDTO.completionDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal3')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)  
                 <s:radio name="protocolWebDTO.completionDateType" list="#dateTypeList" />
                 <span class="formErrorMsg"> 
                    <s:fielderror>
