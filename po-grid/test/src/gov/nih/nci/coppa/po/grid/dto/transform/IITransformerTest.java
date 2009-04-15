@@ -1,12 +1,15 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
 
 import org.iso._21090.II;
+import org.iso._21090.NullFlavor;
+import org.junit.Test;
 
 
 public class IITransformerTest extends AbstractTransformerTestBase<IITransformer,II,Ii>{
@@ -19,7 +22,7 @@ public class IITransformerTest extends AbstractTransformerTestBase<IITransformer
      * The ii root value.
      */
     public static final String ROOT = "2.16.840.1.113883.3.26.4.4.3";
- 
+
 	@Override
 	public Ii makeDtoSimple() {
 		  Ii id = new Ii();
@@ -27,7 +30,6 @@ public class IITransformerTest extends AbstractTransformerTestBase<IITransformer
 		  id.setRoot(ROOT);
 		  id.setIdentifierName(IDENTIFIER_NAME);
 		  id.setExtension("123");
-	      id.setNullFlavor(NullFlavor.OTH);
 	      id.setReliability(IdentifierReliability.ISS);
 	      id.setScope(IdentifierScope.VER);
 		  return id;
@@ -40,7 +42,6 @@ public class IITransformerTest extends AbstractTransformerTestBase<IITransformer
 		  id.setRoot(ROOT);
 		  id.setIdentifierName(IDENTIFIER_NAME);
 		  id.setExtension("123");
-	      id.setNullFlavor(org.iso._21090.NullFlavor.OTH);
 	      id.setReliability(org.iso._21090.IdentifierReliability.ISS);
 	      id.setScope(org.iso._21090.IdentifierScope.VER);
 		  return id;
@@ -52,10 +53,10 @@ public class IITransformerTest extends AbstractTransformerTestBase<IITransformer
 		assertEquals(x.getRoot(),ROOT);
 		assertEquals(x.getIdentifierName(),IDENTIFIER_NAME);
 		assertEquals(x.getExtension(), "123");
-		assertEquals(x.getNullFlavor(),NullFlavor.OTH);
+		assertNull(x.getNullFlavor());
 		assertEquals(x.getReliability(),IdentifierReliability.ISS);
 		assertEquals(x.getScope(),IdentifierScope.VER);
-		
+
 	}
 
 	@Override
@@ -63,9 +64,20 @@ public class IITransformerTest extends AbstractTransformerTestBase<IITransformer
 		assertEquals(x.getRoot(),ROOT);
 		assertEquals(x.getIdentifierName(),IDENTIFIER_NAME);
 		assertEquals(x.getExtension(), "123");
-		assertEquals(x.getNullFlavor(),org.iso._21090.NullFlavor.OTH);
+		assertNull(x.getNullFlavor());
 		assertEquals(x.getReliability(),org.iso._21090.IdentifierReliability.ISS);
 		assertEquals(x.getScope(),org.iso._21090.IdentifierScope.VER);
 	}
 
+	@Test
+	public void testNullFlavorConversion() {
+	    II x = new II();
+	    x.setNullFlavor(NullFlavor.ASKU);
+	    Ii y = IITransformer.INSTANCE.toDto(x);
+	    assertNotNull(y);
+	    assertEquals(y.getNullFlavor(), gov.nih.nci.coppa.iso.NullFlavor.ASKU);
+	    x = IITransformer.INSTANCE.toXml(y);
+	    assertNotNull(x);
+	    assertEquals(x.getNullFlavor(), NullFlavor.ASKU);
+	}
 }
