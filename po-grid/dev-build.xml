@@ -175,7 +175,7 @@
     <!-- Post Compile Build Target                                       -->
     <!-- ============================================================== -->
     <target name="postCompile">
-    	<runtarget target="checkstyle"/>
+      <runtarget target="checkstyle"/>
         <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
         <copy toDir="${build.dest}" filtering="true" overwrite="true">
             <filterset begintoken="$${" endtoken="}" >
@@ -259,7 +259,7 @@
 
   </target>
 
-    
+
     <!-- Compile the test implementation classes (service, resource, etc.) -->
     <target name="compileTests-quick" depends="compile-quick">
         <runtarget target="preCompileTests" />
@@ -309,8 +309,8 @@
                   destdir="${build.dir}/cobertura"
                   srcdir="${src.dir}" />
       <cobertura-check datafile="${basedir}/build/cobertura.ser"
-  				totalbranchrate="82"
-               	totallinerate="89"/> <!-- Increase these as unit tests are written -->
+          totalbranchrate="82"
+                 totallinerate="90"/> <!-- Increase these as unit tests are written -->
   </target>
     <!--
         A note about this target: Checkstyle has a bug that requires exception classes to be on the execution
@@ -330,7 +330,7 @@
           <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
         </checkstyle>
     </target>
-  
+
     <!-- Create a JAR file with the implementation classes -->
     <target name="jar-quick" depends="compile-quick">
         <runtarget target="preJar" />
@@ -367,11 +367,11 @@
 
     <!-- Empty target, in case we simply want to generate the JAR files -->
     <target name="jars-quick" depends="jarStubs-quick, jar-quick, jarTests-quick" />
-    
+
     <target name="all-quick" depends="jars-quick" description="RE-COMPILE, RE-JAR QUICKLY"/>
-    
+
     <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY"/>
-    
+
   <macrodef name="run-client">
      <attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient"/>
      <attribute name="serviceenpointname" default="CoreServices"/>
