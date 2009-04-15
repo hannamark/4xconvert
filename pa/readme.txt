@@ -68,7 +68,7 @@ IDE - Eclipse
             set print margin column as 120
 
 BDA
-    1. Initialize BDA jars: cd to <coppa>\code\pa-grid and run "ant init"
+    1. Initialize BDA jars: cd to <coppa>\code\build-pa and run "ant init"
 
 Setting up the Eclipse IDE
 --------------------------
