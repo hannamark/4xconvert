@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/ArmService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns0="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns5="uri:iso.org:21090" xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns3="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns4="http://pa.services.coppa.nci.nih.gov" xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="ArmService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/ArmService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns2="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns12="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns5="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns0="http://pa.services.coppa.nci.nih.gov" xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="ArmService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -17,10 +17,12 @@
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
       <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" schemaLocation="./StudySiteAccrualStatusServiceTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/types" schemaLocation="./PAServicesTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" schemaLocation="./ArmServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" schemaLocation="./StudyProtocolServiceTypes.xsd" />
       <import namespace="http://pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPA.xsd" />
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
@@ -30,7 +32,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -40,7 +42,7 @@
       <element name="GetResponse">
         <complexType>
           <sequence>
-            <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+            <element ref="ns0:Arm" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -50,7 +52,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -60,7 +62,7 @@
       <element name="GetByPlannedActivityResponse">
         <complexType>
           <sequence>
-            <element ref="ns4:Arm" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns0:Arm" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -70,7 +72,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -80,7 +82,7 @@
       <element name="GetByStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns4:Arm" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns0:Arm" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -90,14 +92,14 @@
             <element name="fromStudyProtocolId">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="toStudyProtocolId">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -115,7 +117,7 @@
             <element name="studyProtocolId">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -125,7 +127,7 @@
       <element name="GetCurrentByStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns4:Arm" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns0:Arm" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -135,7 +137,7 @@
             <element name="arm">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Arm" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -145,7 +147,7 @@
       <element name="CreateResponse">
         <complexType>
           <sequence>
-            <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+            <element ref="ns0:Arm" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -155,7 +157,7 @@
             <element name="arm">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Arm" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -165,7 +167,7 @@
       <element name="UpdateResponse">
         <complexType>
           <sequence>
-            <element ref="ns4:Arm" minOccurs="1" maxOccurs="1" />
+            <element ref="ns0:Arm" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -175,7 +177,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns4:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -244,7 +246,7 @@
     <part name="parameters" element="tns:DeleteResponse" />
   </message>
   <message name="PAFaultFaultMessage">
-    <part name="fault" element="ns0:PAFault" />
+    <part name="fault" element="ns2:PAFault" />
   </message>
   <!--============================================================
 

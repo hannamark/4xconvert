@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns2="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns12="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns5="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns0="http://pa.services.coppa.nci.nih.gov" xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="StudyProtocolService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://faults.pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPAFaults.xsd" />
+      <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="./../ws/xml.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" schemaLocation="./StudySiteAccrualStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/types" schemaLocation="./PAServicesTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" schemaLocation="./ArmServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" schemaLocation="./StudyProtocolServiceTypes.xsd" />
+      <import namespace="http://pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPA.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyProtocol" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocol">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudyProtocol" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyProtocol" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetInterventionalStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetInterventionalStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateInterventionalStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="interventionalStudyProtocol">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateInterventionalStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateInterventionalStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="interventionalStudyProtocol">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateInterventionalStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetObservationalStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetObservationalStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:ObservationalStudyProtocol" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateObservationalStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="observationalStudyProtocol">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:ObservationalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateObservationalStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:ObservationalStudyProtocol" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateObservationalStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="observationalStudyProtocol">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:ObservationalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateObservationalStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="StudyProtocolServiceResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="GetStudyProtocolRequest">
+    <part name="parameters" element="tns:GetStudyProtocolRequest" />
+  </message>
+  <message name="GetStudyProtocolResponse">
+    <part name="parameters" element="tns:GetStudyProtocolResponse" />
+  </message>
+  <message name="UpdateStudyProtocolRequest">
+    <part name="parameters" element="tns:UpdateStudyProtocolRequest" />
+  </message>
+  <message name="UpdateStudyProtocolResponse">
+    <part name="parameters" element="tns:UpdateStudyProtocolResponse" />
+  </message>
+  <message name="GetInterventionalStudyProtocolRequest">
+    <part name="parameters" element="tns:GetInterventionalStudyProtocolRequest" />
+  </message>
+  <message name="GetInterventionalStudyProtocolResponse">
+    <part name="parameters" element="tns:GetInterventionalStudyProtocolResponse" />
+  </message>
+  <message name="UpdateInterventionalStudyProtocolRequest">
+    <part name="parameters" element="tns:UpdateInterventionalStudyProtocolRequest" />
+  </message>
+  <message name="UpdateInterventionalStudyProtocolResponse">
+    <part name="parameters" element="tns:UpdateInterventionalStudyProtocolResponse" />
+  </message>
+  <message name="CreateInterventionalStudyProtocolRequest">
+    <part name="parameters" element="tns:CreateInterventionalStudyProtocolRequest" />
+  </message>
+  <message name="CreateInterventionalStudyProtocolResponse">
+    <part name="parameters" element="tns:CreateInterventionalStudyProtocolResponse" />
+  </message>
+  <message name="GetObservationalStudyProtocolRequest">
+    <part name="parameters" element="tns:GetObservationalStudyProtocolRequest" />
+  </message>
+  <message name="GetObservationalStudyProtocolResponse">
+    <part name="parameters" element="tns:GetObservationalStudyProtocolResponse" />
+  </message>
+  <message name="UpdateObservationalStudyProtocolRequest">
+    <part name="parameters" element="tns:UpdateObservationalStudyProtocolRequest" />
+  </message>
+  <message name="UpdateObservationalStudyProtocolResponse">
+    <part name="parameters" element="tns:UpdateObservationalStudyProtocolResponse" />
+  </message>
+  <message name="CreateObservationalStudyProtocolRequest">
+    <part name="parameters" element="tns:CreateObservationalStudyProtocolRequest" />
+  </message>
+  <message name="CreateObservationalStudyProtocolResponse">
+    <part name="parameters" element="tns:CreateObservationalStudyProtocolResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns2:PAFault" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="StudyProtocolServicePortType" wsrp:ResourceProperties="tns:StudyProtocolServiceResourceProperties">
+    <operation name="getStudyProtocol">
+      <input message="tns:GetStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/GetStudyProtocolRequest" />
+      <output message="tns:GetStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/GetStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updateStudyProtocol">
+      <input message="tns:UpdateStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/UpdateStudyProtocolRequest" />
+      <output message="tns:UpdateStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/UpdateStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getInterventionalStudyProtocol">
+      <input message="tns:GetInterventionalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/GetInterventionalStudyProtocolRequest" />
+      <output message="tns:GetInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/GetInterventionalStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updateInterventionalStudyProtocol">
+      <input message="tns:UpdateInterventionalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/UpdateInterventionalStudyProtocolRequest" />
+      <output message="tns:UpdateInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/UpdateInterventionalStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="createInterventionalStudyProtocol">
+      <input message="tns:CreateInterventionalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/CreateInterventionalStudyProtocolRequest" />
+      <output message="tns:CreateInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/CreateInterventionalStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getObservationalStudyProtocol">
+      <input message="tns:GetObservationalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/GetObservationalStudyProtocolRequest" />
+      <output message="tns:GetObservationalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/GetObservationalStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updateObservationalStudyProtocol">
+      <input message="tns:UpdateObservationalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/UpdateObservationalStudyProtocolRequest" />
+      <output message="tns:UpdateObservationalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/UpdateObservationalStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="createObservationalStudyProtocol">
+      <input message="tns:CreateObservationalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/CreateObservationalStudyProtocolRequest" />
+      <output message="tns:CreateObservationalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/CreateObservationalStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+

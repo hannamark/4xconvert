@@ -50,6 +50,16 @@ public abstract class PAServicesImplBase {
 		return (gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.studyprotocolservice.service.globus.resource.StudyProtocolServiceResourceHome getStudyProtocolServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyProtocolServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyprotocolservice.service.globus.resource.StudyProtocolServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceHome getStudySiteAccrualStatusServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studySiteAccrualStatusServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

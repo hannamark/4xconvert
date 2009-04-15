@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns2="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns12="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns5="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns0="http://pa.services.coppa.nci.nih.gov" xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="StudySiteAccrualStatusService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://faults.pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPAFaults.xsd" />
+      <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="./../ws/xml.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" schemaLocation="./StudySiteAccrualStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/types" schemaLocation="./PAServicesTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" schemaLocation="./ArmServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" schemaLocation="./StudyProtocolServiceTypes.xsd" />
+      <import namespace="http://pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPA.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetStudySiteAccrualStatusRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudySiteAccrualStatusResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateStudySiteAccrualStatusRequest">
+        <complexType>
+          <sequence>
+            <element name="studySiteAccrualStatus">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateStudySiteAccrualStatusResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudySiteAccrualStatusRequest">
+        <complexType>
+          <sequence>
+            <element name="studySiteAccrualStatus">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudySiteAccrualStatusResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudySiteAccrualStatusByStudyParticipationRequest">
+        <complexType>
+          <sequence>
+            <element name="studyParticipationId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudySiteAccrualStatusByStudyParticipationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCurrentStudySiteAccrualStatusByStudyParticipationRequest">
+        <complexType>
+          <sequence>
+            <element name="studyParticipationId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCurrentStudySiteAccrualStatusByStudyParticipationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="StudySiteAccrualStatusServiceResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="GetStudySiteAccrualStatusRequest">
+    <part name="parameters" element="tns:GetStudySiteAccrualStatusRequest" />
+  </message>
+  <message name="GetStudySiteAccrualStatusResponse">
+    <part name="parameters" element="tns:GetStudySiteAccrualStatusResponse" />
+  </message>
+  <message name="CreateStudySiteAccrualStatusRequest">
+    <part name="parameters" element="tns:CreateStudySiteAccrualStatusRequest" />
+  </message>
+  <message name="CreateStudySiteAccrualStatusResponse">
+    <part name="parameters" element="tns:CreateStudySiteAccrualStatusResponse" />
+  </message>
+  <message name="UpdateStudySiteAccrualStatusRequest">
+    <part name="parameters" element="tns:UpdateStudySiteAccrualStatusRequest" />
+  </message>
+  <message name="UpdateStudySiteAccrualStatusResponse">
+    <part name="parameters" element="tns:UpdateStudySiteAccrualStatusResponse" />
+  </message>
+  <message name="GetStudySiteAccrualStatusByStudyParticipationRequest">
+    <part name="parameters" element="tns:GetStudySiteAccrualStatusByStudyParticipationRequest" />
+  </message>
+  <message name="GetStudySiteAccrualStatusByStudyParticipationResponse">
+    <part name="parameters" element="tns:GetStudySiteAccrualStatusByStudyParticipationResponse" />
+  </message>
+  <message name="GetCurrentStudySiteAccrualStatusByStudyParticipationRequest">
+    <part name="parameters" element="tns:GetCurrentStudySiteAccrualStatusByStudyParticipationRequest" />
+  </message>
+  <message name="GetCurrentStudySiteAccrualStatusByStudyParticipationResponse">
+    <part name="parameters" element="tns:GetCurrentStudySiteAccrualStatusByStudyParticipationResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns2:PAFault" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="StudySiteAccrualStatusServicePortType" wsrp:ResourceProperties="tns:StudySiteAccrualStatusServiceResourceProperties">
+    <operation name="getStudySiteAccrualStatus">
+      <input message="tns:GetStudySiteAccrualStatusRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/GetStudySiteAccrualStatusRequest" />
+      <output message="tns:GetStudySiteAccrualStatusResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/GetStudySiteAccrualStatusResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="createStudySiteAccrualStatus">
+      <input message="tns:CreateStudySiteAccrualStatusRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/CreateStudySiteAccrualStatusRequest" />
+      <output message="tns:CreateStudySiteAccrualStatusResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/CreateStudySiteAccrualStatusResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updateStudySiteAccrualStatus">
+      <input message="tns:UpdateStudySiteAccrualStatusRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/UpdateStudySiteAccrualStatusRequest" />
+      <output message="tns:UpdateStudySiteAccrualStatusResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/UpdateStudySiteAccrualStatusResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getStudySiteAccrualStatusByStudyParticipation">
+      <input message="tns:GetStudySiteAccrualStatusByStudyParticipationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/GetStudySiteAccrualStatusByStudyParticipationRequest" />
+      <output message="tns:GetStudySiteAccrualStatusByStudyParticipationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/GetStudySiteAccrualStatusByStudyParticipationResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getCurrentStudySiteAccrualStatusByStudyParticipation">
+      <input message="tns:GetCurrentStudySiteAccrualStatusByStudyParticipationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/GetCurrentStudySiteAccrualStatusByStudyParticipationRequest" />
+      <output message="tns:GetCurrentStudySiteAccrualStatusByStudyParticipationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/GetCurrentStudySiteAccrualStatusByStudyParticipationResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+

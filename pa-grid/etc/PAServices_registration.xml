@@ -13,19 +13,21 @@
   <Content xsi:type="agg:AggregatorContent" xmlns:agg="http://mds.globus.org/aggregator/types">
     <agg:AggregatorConfig xsi:type="agg:AggregatorConfig">
       <agg:GetMultipleResourcePropertiesPollType
-			xmlns:ns0="http://faults.pa.services.coppa.nci.nih.gov"
+			xmlns:ns2="http://faults.pa.services.coppa.nci.nih.gov"
 			xmlns:xml="http://www.w3.org/XML/1998/namespace"
 			xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"
-			xmlns:ns5="uri:iso.org:21090"
+			xmlns:ns1="uri:iso.org:21090"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
 			xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
+			xmlns:ns12="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types"
 			xmlns:ns6="http://enterpriseservices.nci.nih.gov/PAServices/types"
 			xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"
 			xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service"
-			xmlns:ns3="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"
-			xmlns:ns4="http://pa.services.coppa.nci.nih.gov"
-			xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing"
-			xmlns:ns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd">
+			xmlns:ns5="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"
+			xmlns:ns11="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types"
+			xmlns:ns0="http://pa.services.coppa.nci.nih.gov"
+			xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+			xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd">
         <!-- Specifies that the index should refresh information
             every 300000 milliseconds (once every 5 minutes) -->
         <agg:PollIntervalMillis>INDEX_REFRESH</agg:PollIntervalMillis>

@@ -1,6 +1,6 @@
-package gov.nih.nci.coppa.services.pa.armservice.service;
+package gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service;
 
-import gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResource;
+import gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResource;
 import  gov.nih.nci.coppa.services.pa.service.PAServicesConfiguration;
 
 import java.rmi.RemoteException;
@@ -26,9 +26,9 @@ import org.globus.wsrf.ResourcePropertySet;
  * @created by Introduce Toolkit version 1.3
  * 
  */
-public abstract class ArmServiceImplBase {
+public abstract class StudySiteAccrualStatusServiceImplBase {
 	
-	public ArmServiceImplBase() throws RemoteException {
+	public StudySiteAccrualStatusServiceImplBase() throws RemoteException {
 	
 	}
 	
@@ -37,9 +37,9 @@ public abstract class ArmServiceImplBase {
 	}
 	
 	
-	public gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome getResourceHome() throws Exception {
+	public gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceHome getResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("home");
-		return (gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome)resource;
+		return (gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceHome)resource;
 	}
 
 	
@@ -50,14 +50,14 @@ public abstract class ArmServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.service.globus.resource.PAServicesResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome getArmServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("armServiceHome");
+		return (gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceHome)resource;
+	}
+	
 	public gov.nih.nci.coppa.services.pa.studyprotocolservice.service.globus.resource.StudyProtocolServiceResourceHome getStudyProtocolServiceResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("studyProtocolServiceHome");
 		return (gov.nih.nci.coppa.services.pa.studyprotocolservice.service.globus.resource.StudyProtocolServiceResourceHome)resource;
-	}
-	
-	public gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceHome getStudySiteAccrualStatusServiceResourceHome() throws Exception {
-		ResourceHome resource = getResourceHome("studySiteAccrualStatusServiceHome");
-		return (gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceHome)resource;
 	}
 	
 	

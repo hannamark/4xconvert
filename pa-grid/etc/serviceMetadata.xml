@@ -110,17 +110,154 @@
      </ns2:operationCollection>
      <ns2:contextPropertyCollection/>
     </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="StudyProtocolService">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns21:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns21="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns22:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns22="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns23:StudyProtocol" dimensionality="1" isArray="false" xmlns:ns23="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns24:StudyProtocol" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocol" xmlns:ns24="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns25:StudyProtocol" dimensionality="1" isArray="false" xmlns:ns25="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getInterventionalStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns26:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns26="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns27:InterventionalStudyProtocol" dimensionality="1" isArray="false" xmlns:ns27="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateInterventionalStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns28:InterventionalStudyProtocol" dimensionality="1" index="0" isArray="false" isRequired="false" name="interventionalStudyProtocol" xmlns:ns28="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns29:InterventionalStudyProtocol" dimensionality="1" isArray="false" xmlns:ns29="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="createInterventionalStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns30:InterventionalStudyProtocol" dimensionality="1" index="0" isArray="false" isRequired="false" name="interventionalStudyProtocol" xmlns:ns30="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns31:Id" dimensionality="1" isArray="false" xmlns:ns31="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getObservationalStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns32:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns32="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns33:ObservationalStudyProtocol" dimensionality="1" isArray="false" xmlns:ns33="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateObservationalStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns34:ObservationalStudyProtocol" dimensionality="1" index="0" isArray="false" isRequired="false" name="observationalStudyProtocol" xmlns:ns34="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns35:ObservationalStudyProtocol" dimensionality="1" isArray="false" xmlns:ns35="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="createObservationalStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns36:ObservationalStudyProtocol" dimensionality="1" index="0" isArray="false" isRequired="false" name="observationalStudyProtocol" xmlns:ns36="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns37:Id" dimensionality="1" isArray="false" xmlns:ns37="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="StudySiteAccrualStatusService">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns38:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns38="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getStudySiteAccrualStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns39:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns39="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns40:StudySiteAccrualStatus" dimensionality="1" isArray="false" xmlns:ns40="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="createStudySiteAccrualStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns41:StudySiteAccrualStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studySiteAccrualStatus" xmlns:ns41="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns42:StudySiteAccrualStatus" dimensionality="1" isArray="false" xmlns:ns42="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="updateStudySiteAccrualStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns43:StudySiteAccrualStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studySiteAccrualStatus" xmlns:ns43="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns44:StudySiteAccrualStatus" dimensionality="1" isArray="false" xmlns:ns44="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getStudySiteAccrualStatusByStudyParticipation">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns45:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns45="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns46:StudySiteAccrualStatus" dimensionality="1" isArray="true" xmlns:ns46="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getCurrentStudySiteAccrualStatusByStudyParticipation">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns47:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns47="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns48:StudySiteAccrualStatus" dimensionality="1" isArray="true" xmlns:ns48="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
    </ns2:serviceContextCollection>
-   <ns21:SemanticMetadata conceptCode="C63541" conceptDefinition="A service available on a system that coordinates resources that are not subject to central control, using open, general purpose protocols and interfaces to deliver nontrivial qualities of services." conceptName="Grid Service" order="0" xmlns:ns21="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
-   <ns22:SemanticMetadata conceptCode="C63543" conceptDefinition="A published API which receives data in the form of objects, performs computations based upon the input data, and returns information to a client via caGrid in the form of one or more objects." conceptName="Analytical Grid Service" order="1" xmlns:ns22="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+   <ns49:SemanticMetadata conceptCode="C63541" conceptDefinition="A service available on a system that coordinates resources that are not subject to central control, using open, general purpose protocols and interfaces to deliver nontrivial qualities of services." conceptName="Grid Service" order="0" xmlns:ns49="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+   <ns50:SemanticMetadata conceptCode="C63543" conceptDefinition="A published API which receives data in the form of objects, performs computations based upon the input data, and returns information to a client via caGrid in the form of one or more objects." conceptName="Analytical Grid Service" order="1" xmlns:ns50="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
   </ns2:Service>
  </ns1:serviceDescription>
  <ns1:hostingResearchCenter>
-  <ns23:ResearchCenter displayName="" shortName="" xmlns:ns23="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
-   <ns23:Address country="" locality="" postalCode="" stateProvince="" street1="" street2=""/>
-   <ns23:pointOfContactCollection>
-    <ns23:PointOfContact affiliation="" email="" firstName="" lastName="" phoneNumber="" role=""/>
-   </ns23:pointOfContactCollection>
-  </ns23:ResearchCenter>
+  <ns51:ResearchCenter displayName="" shortName="" xmlns:ns51="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
+   <ns51:Address country="" locality="" postalCode="" stateProvince="" street1="" street2=""/>
+   <ns51:pointOfContactCollection>
+    <ns51:PointOfContact affiliation="" email="" firstName="" lastName="" phoneNumber="" role=""/>
+   </ns51:pointOfContactCollection>
+  </ns51:ResearchCenter>
  </ns1:hostingResearchCenter>
 </ns1:ServiceMetadata>

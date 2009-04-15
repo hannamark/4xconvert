@@ -9,16 +9,26 @@ http\://enterpriseservices.nci.nih.gov/PAServices/ArmService=gov.nih.nci.coppa.s
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/bindings=gov.nih.nci.coppa.services.pa.armservice.stubs.bindings
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/service=gov.nih.nci.coppa.services.pa.armservice.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/bindings=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/service=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService=gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/bindings=gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/service=gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 http\://faults.pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa.faults
 http\://www.w3.org/XML/1998/namespace=namespace
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types=gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/types=gov.nih.nci.coppa.services.pa.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/types=gov.nih.nci.coppa.services.pa.armservice.stubs.types
+http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.types
 http\://pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa
 
 
