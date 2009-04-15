@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -105,7 +106,7 @@ public class DiseaseAltername extends AbstractEntityWithStatusCode<ActiveInactiv
      * @return the alternateName
      */
     @Column(name = "ALTERNATE_NAME")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getAlternateName() {
         return alternateName;
     }

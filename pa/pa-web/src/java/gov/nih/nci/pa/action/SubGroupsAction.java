@@ -79,12 +79,12 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.dto.SubGroupsWebDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -304,7 +304,7 @@ public class SubGroupsAction extends ActionSupport {
             addFieldError("subGroupsWebDTO.code",
                     getText("error.subGroups.code"));
         }
-        if (subGroupsWebDTO.getDescription().length() > AbstractEntity.LONG_TEXT_LENGTH) {
+        if (subGroupsWebDTO.getDescription().length() > PAAttributeMaxLen.LONG_TEXT_LENGTH) {
             addFieldError("subGroupsWebDTO.description",
                     getText("Cannot enter more than 200 characters"));
 

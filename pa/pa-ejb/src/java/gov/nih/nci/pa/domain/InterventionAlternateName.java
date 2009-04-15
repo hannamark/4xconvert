@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -104,7 +105,7 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
      * @return the name
      */
     @Column(name = "NAME")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     @NotNull
     public String getName() {
         return name;

@@ -166,9 +166,9 @@
                 <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
                 <filter token="po.topic.userName" value="${po.topic.userName}" />
                 <filter token="po.topic.password" value="${po.topic.password}" />
-            	<filter token="po.topic.clientId" value="${po.topic.clientId}" />
+                <filter token="po.topic.clientId" value="${po.topic.clientId}" />
             </filterset>
-        </copy>    	
+        </copy>     
     </target>
     
     <!-- ====================================================================== -->
@@ -190,8 +190,8 @@
                 <pathelement location="${pa-ejb.build.srcDir.0}"/>
             </src>
             <classpath>
-                <path refid="compile.classpath"/> 
-                <path refid="jboss.classpath"/>  
+                <path refid="compile.classpath"/>
+                <path refid="jboss.classpath"/>
                 <path refid="jboss.client.classpath"/>
             </classpath>
         </javac>
@@ -392,14 +392,35 @@
              index="false" 
              basedir="${pa-ejb.build.outputDir}"/>
     </target>
+
+    <target name="jar-client">
+        <jar jarfile="${pa-ejb.build.dir}/pa-ejb-client.jar" 
+             compress="true" 
+             index="false" 
+             basedir="${pa-ejb.build.outputDir}"
+             includes="**/*.class"
+             excludes="**/service/**/*Bean.class
+                       **/domain/*
+                       **/iso/convert/*
+                       **/iso/util/En*Converter*
+                       **/service/correlation/*
+                       **/service/util/*
+                       **/util/Hibernate*
+                       **/util/TrialUtil*
+                       **/util/PaEarPropertyReader*
+        "/>
+    </target>
     
-    <target name="package-notest-noivy" depends="compile,jar"/>
+    <target name="package-notest-noivy" depends="compile,jar,jar-client"/>
 
     <target name="package-notest" depends="ivy-get,compile,jar"
             description="Package the application.  Do not run tests."/>
 
-    <target name="package" depends="ivy-get,compile,test-all,jar" 
+    <target name="package" depends="ivy-get,compile,test-all,jar,jar-client" 
             description="Package the application"/>
+
+    <target name="package-client" depends="package-notest-noivy,jar-client" 
+            description="Package the client jar."/>
     
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->

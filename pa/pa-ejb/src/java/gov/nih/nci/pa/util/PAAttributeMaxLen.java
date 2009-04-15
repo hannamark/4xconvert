@@ -94,6 +94,8 @@ public class PAAttributeMaxLen {
     public static final  int KEYWORD = 160;
     /** max lengtH for middle name. **/
     public static final int MIDDLE_NAME = 10;
-    /** max display lengtH for offcial tile. **/
+    /** max display lengtH for official tile. **/
     public static final int DISPLAY_OFFICIAL_TITLE = 200;
+    /** Standard max length for text columns. **/
+    public static final int LONG_TEXT_LENGTH = 200;
 }

@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 
 import java.sql.Timestamp;
 
@@ -108,7 +109,7 @@ public class StudyMilestone extends AbstractStudyEntity {
      * @return the commentText
      */
     @Column(name = "COMMENT_TEXT")
-    @Length(max = LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getCommentText() {
         return commentText;
     }

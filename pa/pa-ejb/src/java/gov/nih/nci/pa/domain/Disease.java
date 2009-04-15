@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the diseaseCode
      */
     @Column(name = "DISEASE_CODE")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getDiseaseCode() {
         return diseaseCode;
     }
@@ -129,7 +130,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the ntTermIdentifier
      */
     @Column(name = "NT_TERM_IDENTIFIER")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getNtTermIdentifier() {
         return ntTermIdentifier;
     }
@@ -143,7 +144,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the preferredName
      */
     @Column(name = "PREFERRED_NAME")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getPreferredName() {
         return preferredName;
     }
@@ -157,7 +158,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the menuDisplayName
      */
     @Column(name = "MENU_DISPLAY_NAME")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getMenuDisplayName() {
         return menuDisplayName;
     }

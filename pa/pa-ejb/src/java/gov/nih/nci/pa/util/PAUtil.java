@@ -83,7 +83,6 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
@@ -357,7 +356,7 @@ public class PAUtil {
      * @return null if empty, otherwise a string no longer than the default
      */
     public static String stringSetter(String value) {
-        return stringSetter(value, AbstractEntity.LONG_TEXT_LENGTH);
+        return stringSetter(value, PAAttributeMaxLen.LONG_TEXT_LENGTH);
     }
 
     /**

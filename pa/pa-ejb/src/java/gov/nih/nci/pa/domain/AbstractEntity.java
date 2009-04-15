@@ -107,11 +107,6 @@ public  class AbstractEntity implements Serializable, Auditable {
     private String userLastUpdated;
 
     /**
-     * Standard max length for text columns.
-     */
-    public static final int LONG_TEXT_LENGTH = 200;
-
-    /**
      * set id.
      * @param id id
      */

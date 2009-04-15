@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -301,12 +300,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
      * @param statusReason the statusReason to set
      */
     public void setStatusReason(String statusReason) {
-        if (statusReason == null) {
-            this.statusReason = null;
-        } else {
-            this.statusReason = (statusReason.length() > AbstractEntity.LONG_TEXT_LENGTH)
-                    ? statusReason.substring(0, AbstractEntity.LONG_TEXT_LENGTH) : statusReason;
-        }
+        this.statusReason = PAUtil.stringSetter(statusReason);
     }
 
     /**

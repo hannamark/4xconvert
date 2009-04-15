@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +121,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      * @return the name
      */
     @Column(name = "NAME")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     @NotNull
     public String getName() {
         return name;
@@ -164,7 +165,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      * @return the pdqTermIdentifier
      */
     @Column(name = "PDQ_TERM_IDENTIFIER")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getPdqTermIdentifier() {
         return pdqTermIdentifier;
     }
@@ -178,7 +179,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      * @return the ntTermIdentifier
      */
     @Column(name = "NT_TERM_IDENTIFIER")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
     public String getNtTermIdentifier() {
         return ntTermIdentifier;
     }
