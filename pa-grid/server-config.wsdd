@@ -1,5 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:aggr="http://mds.globus.org/aggregator/types" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="defaultServerConfig">
+  <service name="SERVICE-INSTANCE-PREFIX/StudyOutcomeMeasureService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.service.globus.StudyOutcomeMeasureServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyOutcomeMeasureService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyOutcomeMeasureService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyOutcomeMeasureService-security-metadata.xml" />
+    <parameter name="studyoutcomemeasureservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyoutcomemeasureservice-serviceName" value="StudyOutcomeMeasureService" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudyOverallStatusService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyoverallstatusservice.service.globus.StudyOverallStatusServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyOverallStatusService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyOverallStatusService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyOverallStatusService-security-metadata.xml" />
+    <parameter name="studyoverallstatusservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyoverallstatusservice-serviceName" value="StudyOverallStatusService" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudyParticipationContactService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.service.globus.StudyParticipationContactServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyParticipationContactService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyParticipationContactService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyParticipationContactService-security-metadata.xml" />
+    <parameter name="studyparticipationcontactservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyparticipationcontactservice-serviceName" value="StudyParticipationContactService" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudyParticipationService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyparticipationservice.service.globus.StudyParticipationServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyParticipationService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyParticipationService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyParticipationService-security-metadata.xml" />
+    <parameter name="studyparticipationservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyparticipationservice-serviceName" value="StudyParticipationService" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudyRecruitmentStatusService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.service.globus.StudyRecruitmentStatusServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyRecruitmentStatusService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyRecruitmentStatusService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyRecruitmentStatusService-security-metadata.xml" />
+    <parameter name="studyrecruitmentstatusservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyrecruitmentstatusservice-serviceName" value="StudyRecruitmentStatusService" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudyRegulatoryAuthorityService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.service.globus.StudyRegulatoryAuthorityServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyRegulatoryAuthorityService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyRegulatoryAuthorityService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyRegulatoryAuthorityService-security-metadata.xml" />
+    <parameter name="studyregulatoryauthorityservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyregulatoryauthorityservice-serviceName" value="StudyRegulatoryAuthorityService" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudyResourcingService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyresourcingservice.service.globus.StudyResourcingServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyResourcingService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyResourcingService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyResourcingService-security-metadata.xml" />
+    <parameter name="studyresourcingservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyresourcingservice-serviceName" value="StudyResourcingService" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudySiteAccrualStatusService" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.StudySiteAccrualStatusServiceProviderImpl" />
     <wsdlFile>share/schema/PAServices/StudySiteAccrualStatusService_service.wsdl</wsdlFile>

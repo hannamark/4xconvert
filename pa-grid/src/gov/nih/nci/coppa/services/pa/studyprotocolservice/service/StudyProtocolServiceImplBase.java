@@ -60,6 +60,41 @@ public abstract class StudyProtocolServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.studyresourcingservice.service.globus.resource.StudyResourcingServiceResourceHome getStudyResourcingServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyResourcingServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyresourcingservice.service.globus.resource.StudyResourcingServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.service.globus.resource.StudyRegulatoryAuthorityServiceResourceHome getStudyRegulatoryAuthorityServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyRegulatoryAuthorityServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.service.globus.resource.StudyRegulatoryAuthorityServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.service.globus.resource.StudyRecruitmentStatusServiceResourceHome getStudyRecruitmentStatusServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyRecruitmentStatusServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.service.globus.resource.StudyRecruitmentStatusServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studyparticipationservice.service.globus.resource.StudyParticipationServiceResourceHome getStudyParticipationServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyParticipationServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyparticipationservice.service.globus.resource.StudyParticipationServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.service.globus.resource.StudyParticipationContactServiceResourceHome getStudyParticipationContactServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyParticipationContactServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.service.globus.resource.StudyParticipationContactServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studyoverallstatusservice.service.globus.resource.StudyOverallStatusServiceResourceHome getStudyOverallStatusServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyOverallStatusServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyoverallstatusservice.service.globus.resource.StudyOverallStatusServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.service.globus.resource.StudyOutcomeMeasureServiceResourceHome getStudyOutcomeMeasureServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyOutcomeMeasureServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.service.globus.resource.StudyOutcomeMeasureServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();
