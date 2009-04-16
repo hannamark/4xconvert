@@ -107,13 +107,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String nciIdentifier;
     private String nctNumber;
     private String officialTitle;
-    private Long leadOrganizationId;
-    private Long participatingSiteId;
+    private String leadOrganizationId;
+    private String participatingSiteId;
     private String leadOrganizationTrialIdentifier;
     private String phaseCode;
     private String studyStatusCode;
     private String documentWorkflowStatusCode;
-    private Long principalInvestigatorId;
+    private String principalInvestigatorId;
     private String primaryPurposeCode;
     private String identifierType;
     private String organizationType;
@@ -171,14 +171,14 @@ public class StudyProtocolQueryCriteria implements Serializable {
      *
      * @return leadOrganizationId
      */
-    public Long getLeadOrganizationId() {
+    public String getLeadOrganizationId() {
         return leadOrganizationId;
     }
     /**
      *
      * @param leadOrganizationId leadOrganizationId
      */
-    public void setLeadOrganizationId(Long leadOrganizationId) {
+    public void setLeadOrganizationId(String leadOrganizationId) {
         this.leadOrganizationId = leadOrganizationId;
     }
     /**
@@ -199,13 +199,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
     /**
      * @param participatingSiteId the participatingSiteId to set
      */
-    public void setParticipatingSiteId(Long participatingSiteId) {
+    public void setParticipatingSiteId(String participatingSiteId) {
         this.participatingSiteId = participatingSiteId;
     }
     /**
      * @return the participatingSiteId
      */
-    public Long getParticipatingSiteId() {
+    public String getParticipatingSiteId() {
         return participatingSiteId;
     }
     /**
@@ -255,14 +255,14 @@ public class StudyProtocolQueryCriteria implements Serializable {
      *
      * @return principalInvestigatorId
      */
-    public Long getPrincipalInvestigatorId() {
+    public String getPrincipalInvestigatorId() {
         return principalInvestigatorId;
     }
     /**
      *
      * @param principalInvestigatorId principalInvestigatorId
      */
-    public void setPrincipalInvestigatorId(Long principalInvestigatorId) {
+    public void setPrincipalInvestigatorId(String principalInvestigatorId) {
         this.principalInvestigatorId = principalInvestigatorId;
     }
     /**

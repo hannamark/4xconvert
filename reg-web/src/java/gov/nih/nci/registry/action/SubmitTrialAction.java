@@ -246,7 +246,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             if (paOrg != null && paOrg.getId() != null) {            
                 StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
                 criteria.setLeadOrganizationTrialIdentifier(participationWebDTO.getLocalProtocolIdentifier());
-                criteria.setLeadOrganizationId(paOrg.getId());
+                criteria.setLeadOrganizationId(paOrg.getId().toString());
                 criteria.setExcludeRejectProtocol(new Boolean(true));
                 List<StudyProtocolQueryDTO> records = RegistryServiceLocator.
                                     getProtocolQueryService().getStudyProtocolByCriteria(criteria);

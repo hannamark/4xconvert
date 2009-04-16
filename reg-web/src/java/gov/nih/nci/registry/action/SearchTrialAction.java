@@ -297,10 +297,12 @@ public class SearchTrialAction extends ActionSupport {
                 queryCriteria.setNctNumber(criteria.getIdentifier());
             }
         }
-        if (criteria.getOrganizationId() != null) {
+        if (criteria.getOrganizationId() != null 
+                && criteria.getOrganizationId().trim().length() > 0) {
             queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
         } 
-        if (criteria.getParticipatingSiteId() != null) {
+        if (criteria.getParticipatingSiteId() != null
+                && criteria.getParticipatingSiteId().trim().length() > 0) {
             queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId());            
         }
         queryCriteria.setOrganizationType(criteria.getOrganizationType());

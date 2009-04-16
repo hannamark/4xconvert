@@ -67,7 +67,11 @@ function generateReport(pid) {
                      <s:select  
                         name="criteria.leadOrganizationId" 
                         list="#protocolOrgs"  
-                        listKey="id" listValue="name" headerKey="" headerValue="All" />
+                        listKey="id" 
+                        listValue="name" 
+                        headerKey="" 
+                        headerValue="All" 
+                        value="criteria.leadOrganizationId" />
                 </td>
 
             </tr>           
@@ -87,7 +91,7 @@ function generateReport(pid) {
                         listValue="fullName" 
                         headerKey="" 
                         headerValue="All"
-                        />
+                        value="criteria.principalInvestigatorId" />
 
                 </td>                    
                 <td  scope="row" class="label">

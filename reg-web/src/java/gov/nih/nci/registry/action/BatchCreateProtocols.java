@@ -227,7 +227,7 @@ public class BatchCreateProtocols {
                 if (paOrg != null && paOrg.getId() != null) {
                     StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
                     criteria.setLeadOrganizationTrialIdentifier(dto.getLocalProtocolIdentifier());
-                    criteria.setLeadOrganizationId(paOrg.getId());    
+                    criteria.setLeadOrganizationId(paOrg.getId().toString());    
                     criteria.setExcludeRejectProtocol(new Boolean(true));
 
                     List<StudyProtocolQueryDTO> records = RegistryServiceLocator

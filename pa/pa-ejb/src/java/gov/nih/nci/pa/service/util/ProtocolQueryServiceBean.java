@@ -597,11 +597,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                 + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
                                         .toUpperCase().trim().replaceAll("'", "''") + "%'");
            }
-           if (studyProtocolQueryCriteria.getLeadOrganizationId() != null) {
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
                     where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
 
            }
-           if (studyProtocolQueryCriteria.getPrincipalInvestigatorId() != null) {
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
                 where.append(" and per.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId());
            }
            // required for Registry duplicate trial check

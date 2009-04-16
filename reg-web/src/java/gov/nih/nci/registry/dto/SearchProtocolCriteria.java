@@ -13,8 +13,8 @@ public class SearchProtocolCriteria {
     private String identifierType;
     private String identifier;
     private String officialTitle;
-    private Long organizationId;
-    private Long participatingSiteId;
+    private String organizationId;
+    private String participatingSiteId;
     private String phaseCode;
     private String primaryPurposeCode;
     private String organizationType;
@@ -59,25 +59,25 @@ public class SearchProtocolCriteria {
     /**
      * @return the organizationId
      */
-    public Long getOrganizationId() {
+    public String getOrganizationId() {
         return organizationId;
     }
     /**
      * @param organizationId the organizationId to set
      */
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
     /**
      * @param participatingSiteId the participatingSiteId to set
      */
-    public void setParticipatingSiteId(Long participatingSiteId) {
+    public void setParticipatingSiteId(String participatingSiteId) {
         this.participatingSiteId = participatingSiteId;
     }
     /**
      * @return the participatingSiteId
      */
-    public Long getParticipatingSiteId() {
+    public String getParticipatingSiteId() {
         return participatingSiteId;
     }
     /**

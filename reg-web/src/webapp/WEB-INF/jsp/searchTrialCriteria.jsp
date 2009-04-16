@@ -130,7 +130,7 @@ function handleMyAction(){
 				</td>		        
 				<td id="Lead">
 				    <s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
-					<s:select name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" cssStyle="width:206px"/>
+					<s:select name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssStyle="width:206px"/>
 	                <span class="formErrorMsg"> 
 	                    <s:fielderror>
 	                    <s:param>criteria.organizationId</s:param>
@@ -139,7 +139,7 @@ function handleMyAction(){
 				</td>
 				<td id="Site" style="display:none">
 				    <s:set name="participatingSites" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
-                    <s:select name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" cssStyle="width:206px"/>
+                    <s:select name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssStyle="width:206px"/>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>criteria.organizationId</s:param>
