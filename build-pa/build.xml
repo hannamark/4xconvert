@@ -108,6 +108,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
     <property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
 
+	<property name="pa-grid.base.dir" location="${software.dir}/pa-grid"/>
+	<property name="pa-grid.build.file" location="${pa-grid.base.dir}/build.xml"/>
+	<property name="pa-grid.dir.target" value="wsrf.war" />
+	<property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+	<property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+	<property name="pa-grid.build.target" value="clean:deployJBoss"/>
+	<property name="pa-grid.artifact.dir" value="${pa-grid.base.dir}/target" />
+	<property name="pa-grid.dist.dir" value="${dist.exploded.dir}/${pa-grid.dist.relative.dir}"/>
+	
     <!-- Selenium settings -->
     <property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
     <property name="selenium.browser" value="*firefox"/>
@@ -213,6 +222,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="clean">
         <delete dir="${dist.dir}"/>
         <delete dir="${temp.dir}"/>
+    	<delete dir="${pa-grid.artifact.dir}"/>
     </target>
 
     <target name="init" >
@@ -233,6 +243,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <mkdir dir="${temp.dir}"/>
         <mkdir dir="${download.dir}"/>
         <mkdir dir="${pt.dir}"/>
+		<mkdir dir="${pa-grid.artifact.dir}"/>
+		<mkdir dir="${pa-grid.dist.dir}"/>
         <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
         <!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
@@ -285,7 +297,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         clean,
         init,
-        build:pa-ear
+        build:pa-ear,
+    	build:pa-grid
         "/>
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
@@ -313,7 +326,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
+            
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
         </ant>
@@ -343,7 +356,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
+            
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-web.build.target}"/>
         </ant>
@@ -373,7 +386,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
+            
             <target name="${pa-clean.build.target}"/>
             <target name="${reg-web.build.target}"/>
         </ant>
@@ -403,11 +416,36 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
+            
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
         </ant>
     </target>
+	
+	<!-- Build pa-grid sub-project produces project level artifact -->
+	<target name="build:pa-grid" depends="init">
+		<fail unless="jboss.server.hostname"/>
+		<fail unless="jboss.server.port"/>
+
+		<ant inheritAll="false" inheritRefs="false" antfile="${pa-grid.build.file}"
+            target="${pa-grid.build.target}"
+            dir="${pa-grid.base.dir}" >
+			<property name="project.name" value="${project.name}"/>
+			<property name="jboss.dir" value="target"/>
+			<property name="jboss.serverinstance.name" value="${jboss.server.name.grid}"/>
+			<property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
+			<property name="java.naming.provider.url.host" value="localhost"/>
+			<property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
+			<property name="java.naming.security.principal" value="%%pagrid.jndi.principal%%"/>
+			<property name="java.naming.security.credentials" value="%%pagrid.jndi.credentials%%"/>
+			<property name="no.deployment.validation" value="true"/>
+		</ant>
+
+		<zip update="false" destfile="${pa-grid.dist.dir}/${pa-grid.artifact.file}">
+			<zipfileset dir="${pa-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}/" />
+		</zip>
+		<delete dir="${pa-grid.artifact.dir}/server" />
+	</target>	
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="validate:pre:build">
         <validate-pre-build
@@ -543,41 +581,48 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Creates upgrader distribution -->
     <target name="dist:upgrader" depends="dist:upgrader:prep">
         <delete file="${dist.dir}/${pa-ear.upgrade.zip.file}"/>
-    <!-- Set environment name to external -->
-    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-
-    <obfuscate-properties-file
-        properties.file="${dist.exploded.dir}/install.properties"
-        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-        optional.property.list="ldap.url,ldap.basedn"
-        delete.property.list="exclude.jboss.backup"
-        />
-    <copy todir="${dist.exploded.dir}" overwrite="true">
-        <fileset dir="${build.dir}">
-            <include name="upgrade.properties" />
-        </fileset>
-    </copy>
-    <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
+    	<delete file="${dist.dir}/${pa-grid.upgrade.zip.file}"/>
+    	
+	    <!-- Set environment name to external -->
+	    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+	
+	    <obfuscate-properties-file
+	        properties.file="${dist.exploded.dir}/install.properties"
+	        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+	        optional.property.list="ldap.url,ldap.basedn"
+	        delete.property.list="exclude.jboss.backup"
+	        />
+	    <copy todir="${dist.exploded.dir}" overwrite="true">
+	        <fileset dir="${build.dir}">
+	            <include name="upgrade.properties" />
+	        </fileset>
+	    </copy>
+	    <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
+    	
         <zip destfile="${dist.dir}/${pa-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}"/>
+    	<zip destfile="${dist.dir}/${pa-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db-upgrade.dist.relative.dir}/**"/>
     </target>
 
 
-    <target name="deploy:local:install" depends="build:all,dist:installer:prep" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
-        <!--
-        * Requires a database installation.
-        * Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
-        * If you want properties to be used at install time they must be included in a proeprties file.
-        * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
-        * This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
-        * It only supports using those properties files for now, so if you want to change install time properites edit these files.
-        -->
-        <deploy-local
-            target.name="${install.target}"
-            />
+    <target name="deploy:local:install" depends="build:all,local:install" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" />
+    
+	<target name="local:install" depends="dist:installer:prep">
+		<!--
+		* Requires a database installation.
+		* Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
+		* If you want properties to be used at install time they must be included in a proeprties file.
+		* Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
+		* This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
+		* It only supports using those properties files for now, so if you want to change install time properites edit these files.
+		-->
+		<deploy-local
+	            target.name="${install.target}"
+	            />
+	</target>	
 
-    </target>
+    <target name="deploy:local:upgrade" depends="build:all,local:upgrade" description="Upgrades the application on the local machine, used for developer desktops and ci environments" />
 
-    <target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
+	<target name="local:upgrade" depends="dist:upgrader:prep">
         <!--
         * Requires a database installation.
         * Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
@@ -587,42 +632,80 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         -->
         <deploy-local
             target.name="${upgrade.target}"
-            />
-    </target>
+            />	
+	</target>
 
-    <target name="deploy:remote:install"
-        depends="
-        build:all,
-        dist:installer
-        ">
-    <!--
-    * Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
-    * Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into.
-    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
-    -->
-    <!-- Call macro to deploy files on desired server -->
-    <deploy-files dist.file="${pa-ear.install.zip.file}" />
-    <!-- SSH to machine ant run ant command line to install application --> 
-    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
-    </target>
+	<!-- Install the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into -->
+	<target name="deploy:remote:install"
+		depends="
+		build:all,
+		dist:installer,
+		remote:install
+		">
+	</target>
 
-    <target name="deploy:remote:upgrade"
-        depends="
-        build:all,
-        dist:upgrader
-        ">
-    <!--
-    * Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).
-    * Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into.
-    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
-    -->
-    <!-- Call macro to deploy files on desired server -->
-    <deploy-files dist.file="${pa-ear.upgrade.zip.file}" />
-    <!-- SSH to machine ant run ant command line to install application --> 
-    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${upgrade.target}" />
+	<target name="remote:install" depends="remote:install:pa-ear, remote:install:pa-grid"/>
+	<target name="remote:install:pa-ear">
+		<deploy-files2
+	            dist.file="${pa-ear.install.zip.file}"
+	            />
+		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
+	</target>
+	<target name="remote:install:pa-grid">
+		<!-- install pa-grid only-->
+		<deploy-files2
+         ssh.user="${pagrid.ssh.server.username}"
+         ssh.host="${pagrid.ssh.server.hostname}"
+         ssh.port="${pagrid.ssh.port}"
+         ssh.key.file="${pagrid.ssh.key.file}"
+         remote.directory.property.name="pagrid.ssh.dir.temp"
+         dist.file="${pa-grid.upgrade.zip.file}"
+         />
+		<remote-ssh 
+			remoteSshUser="${pagrid.ssh.server.username}" 
+			remoteSshHost="${pagrid.ssh.server.hostname}" 
+			remoteSshPort="${pagrid.ssh.port}" 
+			remoteSshKeyfile="${pagrid.ssh.key.file}" 
+			remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${install.target}" />
+	</target>
+	
+	<!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
+	<target name="deploy:remote:upgrade"
+		depends="
+		build:all,
+		dist:upgrader,
+		remote:upgrade
+		">
+	</target>
 
-    </target>
+	<target name="remote:upgrade" depends="remote:upgrade:po-ear,remote:upgrade:po-grid">
+	</target>
 
+	<target name="remote:upgrade:po-ear">
+		<!-- install po-ear only-->
+		<deploy-files2
+             dist.file="${po-ear.upgrade.zip.file}"
+             />
+		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true ${upgrade.target}" />
+	</target>
+
+	<target name="remote:upgrade:po-grid">
+		<!-- install po-grid only-->
+		<deploy-files2
+             ssh.user="${pagrid.ssh.server.username}"
+             ssh.host="${pagrid.ssh.server.hostname}"
+             ssh.port="${pagrid.ssh.port}"
+             ssh.key.file="${pagrid.ssh.key.file}"
+             remote.directory.property.name="pagrid.ssh.dir.temp"
+             dist.file="${po-grid.upgrade.zip.file}"
+             />
+		<remote-ssh
+         	remoteSshUser="${pagrid.ssh.server.username}"
+         	remoteSshHost="${pagrid.ssh.server.hostname}"
+            remoteSshPort="${pagrid.ssh.port}"
+         	remoteSshKeyfile="${pagrid.ssh.key.file}"
+         	remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${upgrade.target}" />
+	</target>
     <target name="usage" description="Explains how to use this build script">
         <echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
     </target>

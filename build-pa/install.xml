@@ -76,7 +76,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="pa-ear.dir.dist" value="${basedir}/${pa-ear.dist.relative.dir}" />
     <property name="pa-ear.ds.file" value="pa-ds.xml" />
     <property name="pa-ear.ear.file" value="pa.ear" />
-
+	
+	<!-- Default to false, properties can override -->
+	<property name="grid.secure.enable" value="false"/>
+	<property name="jboss.ssl.enable" value="false"/>
+	<property name="tomcat.ssl.enable" value="false"/>
+	
+	<property name="pa-grid.dir.dist" value="${basedir}/${pa-grid.dist.relative.dir}" />
+    <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+    <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+    <property name="grid.resource.dir" value="${working.dir}/${grid.dist.relative.dir}" />
+    <property name="grid.application.dir" value="${working.dir}/grid-application" />
+    <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
+    <property name="pa-grid.dir.src" value="${basedir}/${pa-grid.dist.relative.dir}" />
+    <property name="pa-grid.dir.target" value="wsrf.war" />
+	<property name="pa-grid.introduce.skeleton.service.name" value="PAServices"/>
+	
     <!-- Paths -->
     <path id="bda-utils.classpath">
         <fileset dir="${bda-utils.dir}">
@@ -228,6 +243,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <!-- So these directories won't be included in the backup, they are not needed to use jboss --> 
                 <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
                 <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+                <delete dir="${jboss.home}/server/${jboss.server.name.grid}/work"/>
+                <delete dir="${jboss.home}/server/${jboss.server.name.grid}/tmp"/>
 
                 <backup-dir
                     src.dir="${jboss.home}"
@@ -315,12 +332,81 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <database-tag/>
     </target>
 
-    <target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
-         <jboss-install-binaries
-             />
-    </target>
+	<target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
+		<antcall target="install:jboss:binaries:pa-ear"/>
+		<antcall target="install:jboss:binaries:pa-grid"/>
+	</target>
+	
+    <macrodef name="jboss-install-binaries2" description="Added params to support different types of installations, should be pulled up into BDA-utils">
+        <attribute name="application.base.path" default="${application.base.path}"/>
+        <attribute name="jboss.binaries.file" default="${tools.dir}/${jboss.binaries.file}" />
+        <attribute name="jboss.server.name" default="${jboss.server.name}" />
+        <attribute name="jems.install.option" default="ejb3" />
+    	<attribute name="jboss.home" default="${jboss.home}" />
+        <sequential>
+			<var name="jboss.file.is.zip" unset="true"/>
+            <propertyregex property="jboss.file.is.zip"
+                input="@{jboss.binaries.file}"
+                regexp=".*.zip"
+                select="true"
+                />
+			<var name="jboss.file.is.jar" unset="true"/>				
+            <propertyregex property="jboss.file.is.jar"
+                input="@{jboss.binaries.file}"
+                regexp=".*.jar"
+                select="true"
+                />
+            <if>
+                <isset property="jboss.file.is.zip"/>
+                <then>
+                    <unzip dest="${application.base.path}" src="${tools.dir}/${jboss.binaries.file}" />
+                </then>
+            </if>
+            <if>
+                <isset property="jboss.file.is.jar"/>
+                <then>
+        			<echo message="Using -installGroup @{jems.install.option} installpath=@{jboss.home}"/>
+                    <java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
+                        <arg line="-installGroup @{jems.install.option} installpath=@{jboss.home}"/>
+                    </java>
+                </then>
+            </if>
 
-    <target name="install:jboss:pa-ear" description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries" unless="exclude.jboss">
+            <!-- make sure default server is renamed if applicable -->
+            <if>            
+                <not>                   
+                    <equals arg1="@{jboss.server.name}" arg2="default"/>
+                </not>                  
+                <then>                  
+                    <move todir="@{jboss.home}/server/@{jboss.server.name}">
+                        <fileset dir="@{jboss.home}/server/default"/>
+                    </move>                         
+                </then>                 
+            </if>           
+
+            <if>            
+                <os family="unix"/>     
+                <then>                  
+                    <chmod dir="@{jboss.home}/bin" perm="ugo+rx" 
+                        includes="**/*.sh"/>                    
+                </then>                 
+            </if>           
+        </sequential>
+    </macrodef>	
+	
+	<target name="install:jboss:binaries:pa-ear" unless="exclude.pa-ear">
+		<jboss-install-binaries2 
+			jboss.server.name="${jboss.server.name}"
+			/>
+	</target>
+	<target name="install:jboss:binaries:pa-grid" unless="exclude.pa-grid">
+		<jboss-install-binaries2 
+			jems.install.option="default"
+			jboss.server.name="${jboss.server.name.grid}"
+            />
+	</target>	
+
+    <target name="install:jboss:pa-ear" description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries" unless="exclude.pa-ear">
         <!-- added to ensure working.dirs are fresh for our install -->
         <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
         <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
@@ -331,7 +417,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
         <!--  Many NCI applications require clm for csm, so you can point this to where you have the version you want to use
         <copy file="${bda-utils.dir}/clm-3.2.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
-        <copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+        <copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />j
         -->
 
         <!-- deploy jars to server lib -->
@@ -340,11 +426,91 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         </copy>  
     </target>
 
-    <target name="install:jboss:pa-ear:configure" description="Configure pa-ear application" unless="exclude.jboss">
+    <target name="install:jboss:pa-ear:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
         <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
     </target>
 
-    <target name="install:jboss:configure:log4j" description="Configure custom entries in system wide log4j" unless="exclude.jboss" >
+	
+	<target name="install:jboss:pa-grid:pre-configure" unless="exclude.pa-grid">
+        <mkdir dir="${temp.dir}/${pa-grid.dist.relative.dir}"/>
+        <delete dir="${temp.dir}/${pa-grid.dist.relative.dir}"/>
+        <mkdir dir="${temp.dir}/${pa-grid.dist.relative.dir}"/>	      
+        <unzip src="${pa-grid.dir.dist}/${pa-grid.artifact.file}" dest="${temp.dir}/${pa-grid.dist.relative.dir}"/>
+        <unzip src="${temp.dir}/${pa-grid.dist.relative.dir}/WEB-INF/lib/${pa-grid.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${pa-grid.introduce.skeleton.service.name}-common"/>
+		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+        <var name="file.list" 
+            value="${pa-grid.introduce.skeleton.service.name}-common/jndi.properties"/>
+
+        <for list="${file.list}" param="file.relative.name">
+            <sequential>
+                <propertyregex property="file.name"
+                    input="@{file.relative.name}"
+                    regexp="^.*\/(.*)"
+                    select="\1"
+                    override="true"
+                    />
+                <propertyregex property="relative.dir"
+                    input="@{file.relative.name}"
+                    regexp="^(.*)\/.*"
+                    select="\1"
+                    override="true"
+                    />
+                <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+                <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+                <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+                    <filterset>
+                        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+                        <filter token="pagrid.jndi.principal" value="${pagrid.jndi.principal}"/>
+                        <filter token="pagrid.jndi.credentials" value="${pagrid.jndi.credentials}"/>
+                    </filterset>
+                </copy>
+                <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+            </sequential>
+        </for>
+		<move file="${pa-grid.dir.dist}/${pa-grid.artifact.file}" tofile="${pa-grid.dir.dist}/${pa-grid.artifact.file}.orig"/>
+	    <jar destfile="${temp.dir}/${pa-grid.dist.relative.dir}/WEB-INF/lib/${pa-grid.introduce.skeleton.service.name}-common.jar" 
+	                basedir="${temp.dir}/${pa-grid.introduce.skeleton.service.name}-common" compress="false"/>
+		
+		<zip basedir="${temp.dir}/${pa-grid.dist.relative.dir}" compress="true" file="${pa-grid.dir.dist}/${pa-grid.artifact.file}" update="false"/>
+	</target>	
+	
+    <!-- Installs the pa-grid application to JBOSS -->
+    <target name="install:pa-grid:application" description="Deploy Coppa PO Grid application to JBOSS" unless="exclude.pa-grid">
+    	<echo message="Entirely removing existing wsrf.war deployment"/>
+    	<delete dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}"/>
+        <mkdir dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}"/>
+
+        <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
+        <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
+
+        <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}" src="${pa-grid.dir.src}/${pa-grid.artifact.file}" />
+    </target>
+
+    <!-- Configures installed pa-grid application -->
+    <target name="install:pa-grid:configure" description="Configure pa-grid service based on properties" unless="exclude.pa-grid">
+        <grid-appserver-configure
+        	appserver.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
+        	appserver.webapp.dir="${jboss.home}/server/${jboss.server.name.grid}/deploy"
+        	appserver.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
+        	appserver.server-xml.service.name="jboss.web"
+        	appserver.port.http="${jboss.server.grid.port}"
+        	appserver.port.ssl=""
+        	appserver.hostname="${jboss.server.hostname}"
+        	search.host="localhost"
+        	search.port="8080"
+        	grid.application.name="${pa-grid.introduce.skeleton.service.name}"
+        	grid.application.relative.dir="${pa-grid.dir.target}"
+        	grid.secure.enable="false"   
+			
+        />
+		<!-- TODO: We need support within v0.10.3+ for 
+		        	appserver.external.http.host="${jboss.external.grid.http.host}"
+				this within <grid-appserver-configure > macrodef 
+				-->
+    </target>
+	
+	
+    <target name="install:jboss:configure:log4j" description="Configure custom entries in system wide log4j" unless="exclude.pa-ear" >
         <echo message="Configuring Log4J"/>
         <copy file="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml" tofile="${jboss.home}/server/${jboss.server.name}/conf/log4j.xml.pre"/>
 
@@ -392,11 +558,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             />
     </target>
 
-    <!-- Wrapper target to configure jboss container, not deployed application -->
-    <target name="install:jboss:configure" description="Configure pa-ear" unless="exclude.jboss"
-        depends="
-        install:jboss:configure:log4j 
-        ">
+	<!-- Wrapper target to configure jboss container, not deployed application -->
+	<target name="install:jboss:configure" description="Configure pa-ear" unless="exclude.jboss" >
+	    <runtarget target="install:jboss:configure:pa-ear"/>		
+	    <runtarget target="install:jboss:configure:pa-grid"/>		
+	</target>	
+	<target name="install:jboss:configure:pa-ear">
+		<runtarget target="install:jboss:configure:log4j"/>
         <!-- Calls the following macros
         jboss-bindings - configures ports for jboss
         jboss-login-config - sets up authentication
@@ -415,19 +583,91 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <jboss-configure
             />
         -->
-    </target>
+	</target>
+	<target name="install:jboss:configure:pa-grid" unless="exclude.pa-grid">
+	      <!-- create a new template bindings file from template (using ports for pa-grid -->
+	            <copy file="${bda-utils.resource.dir}/template-binding.xml" 
+	                tofile="${bda-utils.resource.dir}/template-binding2.xml" 
+	                filtering="true"
+	                overwrite="true">
+	                <filterset begintoken="@" endtoken="@">
+	                    <filter token="jboss.server.port" value="@jboss.server.grid.port@"/>
+	                    <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
+	                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+	                    <filter token="jboss.server.jndi.port" value="@jboss.server.grid.jndi.port@"/>
+	                    <filter token="jboss.cobraorb.port" value="@jboss.grid.cobraorb.port@"/>
+	                    <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
+	                    <filter token="jboss.hajndi.port" value="@jboss.grid.hajndi.port@"/>
+	                    <filter token="jboss.hajrmi.port" value="@jboss.grid.hajrmi.port@"/>
+	                    <filter token="jboss.jms.port" value="@jboss.grid.jms.port@"/>
+	                    <filter token="jboss.jmx-rmi.port" value="@jboss.grid.jmx-rmi.port@"/>
+	                    <filter token="jboss.messaging.port" value="@jboss.grid.messaging.port@"/>
+	                    <filter token="jboss.pooledha.port" value="@jboss.grid.pooledha.port@"/>
+	                    <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
+	                    <filter token="jboss.server.bind.port" value="@jboss.grid.server.bind.port@"/>
+	                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+	                    <filter token="jboss.service.rmiobject.port" value="@jboss.grid.service.rmiobject.port@"/>
+	                    <filter token="jboss.snmp.port" value="@jboss.grid.snmp.port@"/>
+	                    <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
+	                    <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
+	                </filterset>
+	            </copy>
+	        
+	           <!-- configure the pa-grid instance --> 
+	            <jboss-configure
+	                jboss.home="${jboss.home}"
+	                jboss.server.name="${jboss.server.name.grid}"
+	                jboss.server.ports.name="bda-ports"
+	                jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name.grid}/conf/bindings.xml"
+	                jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
+	                jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+	                authentication.type="${authentication.type}"
+	                login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+	                login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+	                jboss.web.user="${jboss.web.user}"
+	                jboss.web.password="${jboss.web.password}"
+	                jboss.server.jndi.port="${jboss.server.grid.jndi.port}" 
+	                jboss.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
+	                jboss.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
+	                jboss.server-xml.service.name="jboss.web"
+	                jboss.ssl.enable="${jboss.ssl.enable}"
+	                jboss.ssl.port="8443"
+	                jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+	                jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+	                jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+	                jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+	                jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+	                jboss.external.ssl.host="${jboss.external.ssl.host}"
+	                jboss.external.ssl.port="${jboss.external.ssl.port}"
+	                proxy.update.connector.port.ssl="8443"
+	                jboss.external.http.host="${jboss.external.grid.http.host}"
+	                jboss.external.http.port="${jboss.external.grid.http.port}"
+	                proxy.update.connector.port.http="8080"
+	                grid.external.secure.host="${grid.external.secure.host}"
+	                grid.external.secure.port="${grid.external.secure.port}"
+	                jboss.server.hostname="${jboss.server.hostname}"
+	                jboss.grid.configure="false"
+	                grid.secure.dir="${grid.secure.dir}"
+	                grid.secure.enable="${grid.secure.enable}"
+	                grid.secure.port="${grid.secure.port}"
+	                grid.secure.key.file="${grid.secure.key.file}" 
+	                grid.secure.cert.file="${grid.secure.cert.file}" 
+	                jboss.java.opts="${jboss.java.opts}"            
+	                />  		
+	</target>
 
-    <!-- Calls to bda macros for basic functionality -->
-    
-    <!-- Temporary patch -->
-    <target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
-        <jboss-stop-jboss/>
-    </target>
-    <!-- Version below should be used once bda macros have been fixed -->
-    <!--target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
-        <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}"/>
-        <jboss-stop-jboss />
-    </target-->
+	<!-- Calls to bda macros for basic functionality -->
+	<target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
+		<antcall target="install:jboss:stop:pa-grid"/>
+		<antcall target="install:jboss:stop:pa-ear"/>
+	</target>
+	
+	<target name="install:jboss:stop:pa-ear" unless="exclude.pa-ear">
+		<jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
+	</target>
+	<target name="install:jboss:stop:pa-grid" unless="exclude.pa-grid">
+		<jboss-stop-jboss jboss.server.jndi.port="${jboss.server.grid.jndi.port}" jboss.server.name="${jboss.server.name.grid}"/>
+	</target>
     
     
     <target name="install:jboss:start"  unless="exclude.jboss">
@@ -436,10 +676,57 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <isset property="exclude.start.servers"/>
             </not>
             <then>
-                <jboss-start-jboss />
+				<antcall target="install:jboss:start:pa-ear"/>
+				<antcall target="install:jboss:start:pa-grid"/>
+				<sleep seconds="15"/>
             </then>
         </if>
     </target>
+	
+    <!-- 
+		Needed b/c Windows support in bda-utils lacks ".. -c @{jboss.server.name}"
+    -->
+    <macrodef name="jboss-start-jboss2" description="Starts a local JBoss instance">
+        <attribute name="jboss.home" default="${jboss.home}" />
+        <attribute name="jboss.server.name" default="${jboss.server.name}" />
+        <sequential>
+            <available file="@{jboss.home}/server/@{jboss.server.name}/bin" property="jboss.bin.exists"/>
+            <if>
+                <isset property="jboss.bin.exists"/>
+                <then>
+                    <echo message="Starting JBoss instance (@{jboss.server.name}) at @{jboss.home} with start_jboss" />
+                    <exec executable="@{jboss.home}/server/@{jboss.server.name}/bin/start_jboss" osfamily="unix" />
+                </then>
+                <else>
+                    <echo message="Starting JBoss instance (@{jboss.server.name}) at @{jboss.home} with run.sh" />
+                    <exec osfamily="unix" executable="chmod" spawn="true">
+                        <arg value="+x" />
+                        <arg file="@{jboss.home}/bin/run.sh" />
+                        <arg file="@{jboss.home}/bin/shutdown.sh" />
+                    </exec>
+        
+                    <exec executable="sh" osfamily="unix" dir="@{jboss.home}/bin" spawn="true">
+                        <env key="NOPAUSE" value="true" />
+                        <arg line="run.sh -c @{jboss.server.name}" />
+                    </exec>
+
+                    <exec osfamily="windows" executable="${bda-utils.dir}/resource/psexec.exe" dir="@{jboss.home}/bin" spawn="true" >
+                        <env key="NOPAUSE" value="true" />
+                        <arg line="-d -i -w @{jboss.home}/bin @{jboss.home}/bin/run.bat -c @{jboss.server.name}" />
+                    </exec>
+                    <sleep seconds="15" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>	
+	
+    <target name="install:jboss:start:pa-ear" unless="exclude.pa-ear">
+		<jboss-start-jboss2 jboss.server.name="${jboss.server.name}"/>
+    </target>
+    <target name="install:jboss:start:pa-grid" unless="exclude.pa-grid">
+		<jboss-start-jboss2 jboss.server.name="${jboss.server.name.grid}"/>
+    </target>	
+	
     <target name="install:validation:pre-install">
         <validate-pre-install
             ant.check.version="${ant.minimum.version}"
@@ -461,9 +748,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             </then>
         </if>
     </target>
-    <target name="-install:jboss:configure:update-shutdown" unless="exclude.jboss">
-        <jboss-update-shutdown />
-    </target>
 
     <!-- Wrapper target to deploy JBOSS container -->
     <target name="install:jboss" unless="exclude.jboss"
@@ -477,6 +761,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:jboss:pa-ear:re-configure,
         install:jboss:pa-ear,
         install:jboss:pa-ear:configure,
+		install:jboss:pa-grid:pre-configure,
+		install:pa-grid:application,
+		install:pa-grid:configure,    	
         install:jboss:configure,
     install:post,
         install:jboss:start

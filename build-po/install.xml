@@ -260,6 +260,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 				<!-- So these directories won't be included in the backup, they are not needed to use jboss --> 
 				<delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
 				<delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+                <delete dir="${jboss.home}/server/${jboss.server.name.grid}/work"/>
+                <delete dir="${jboss.home}/server/${jboss.server.name.grid}/tmp"/>
 
 				<backup-dir
 					src.dir="${jboss.home}"
