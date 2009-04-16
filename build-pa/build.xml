@@ -308,7 +308,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/> 
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
             <property name="jdbc.driver" value="${jdbc.driver}"/>
@@ -338,7 +338,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/> 
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
             <property name="jdbc.driver" value="${jdbc.driver}"/>
@@ -368,7 +368,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/> 
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
             <property name="jdbc.driver" value="${jdbc.driver}"/>
@@ -398,7 +398,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/> 
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
             <property name="jdbc.driver" value="${jdbc.driver}"/>
