@@ -47,7 +47,6 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/ser
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 http\://faults.pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa.faults
-http\://www.w3.org/XML/1998/namespace=namespace
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types=gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090
