@@ -186,6 +186,27 @@
   <ns2:Namespace location="./StudyOutcomeMeasureServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" packageName="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="StudyOutcomeMeasureServiceReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
+  <ns2:Namespace location="./StudyOnholdServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" packageName="gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyOnholdServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyIndIdeServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" packageName="gov.nih.nci.coppa.services.pa.studyindideservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyIndIdeServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyDiseaseServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" packageName="gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyDiseaseServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyContactServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" packageName="gov.nih.nci.coppa.services.pa.studycontactservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyContactServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./PlannedActivityServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" packageName="gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="PlannedActivityServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./DocumentWorkflowStatusServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" packageName="gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DocumentWorkflowStatusServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./DocumentServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" packageName="gov.nih.nci.coppa.services.pa.documentservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DocumentServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
  </ns2:Namespaces>
  <ns3:Services xsi:type="ns3:ServicesType" xmlns:ns3="gme://gov.nih.nci.cagrid.introduce/1/Services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ns3:Service name="PAServices" namespace="http://enterpriseservices.nci.nih.gov/PAServices" packageName="gov.nih.nci.coppa.services.pa" xsi:type="ns3:ServiceType">
@@ -1086,8 +1107,148 @@
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
+  <ns3:Service name="StudyOnholdService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService" packageName="gov.nih.nci.coppa.services.pa.studyonholdservice" xsi:type="ns3:ServiceType">
+   <ns265:Methods xsi:type="ns265:MethodsType" xmlns:ns265="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns265:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns265:MethodType">
+     <ns265:Output qName="ns266:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns266="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns267:MethodSecurity xsi:type="ns267:MethodSecurity" xmlns:ns267="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns267:SecuritySetting xsi:type="ns267:SecuritySetting">None</ns267:SecuritySetting>
+      <ns267:MethodAuthorization xsi:type="ns267:MethodAuthorization">
+       <ns267:NoAuthorization xsi:type="ns267:NoAuthorization"/>
+      </ns267:MethodAuthorization>
+     </ns267:MethodSecurity>
+     <ns265:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns265:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns265:Method>
+   </ns265:Methods>
+   <ns268:ResourcePropertiesList xsi:type="ns268:ResourcePropertiesListType" xmlns:ns268="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyIndIdeService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService" packageName="gov.nih.nci.coppa.services.pa.studyindideservice" xsi:type="ns3:ServiceType">
+   <ns269:Methods xsi:type="ns269:MethodsType" xmlns:ns269="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns269:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns269:MethodType">
+     <ns269:Output qName="ns270:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns270="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns271:MethodSecurity xsi:type="ns271:MethodSecurity" xmlns:ns271="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns271:SecuritySetting xsi:type="ns271:SecuritySetting">None</ns271:SecuritySetting>
+      <ns271:MethodAuthorization xsi:type="ns271:MethodAuthorization">
+       <ns271:NoAuthorization xsi:type="ns271:NoAuthorization"/>
+      </ns271:MethodAuthorization>
+     </ns271:MethodSecurity>
+     <ns269:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns269:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns269:Method>
+   </ns269:Methods>
+   <ns272:ResourcePropertiesList xsi:type="ns272:ResourcePropertiesListType" xmlns:ns272="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyDiseaseService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService" packageName="gov.nih.nci.coppa.services.pa.studydiseaseservice" xsi:type="ns3:ServiceType">
+   <ns273:Methods xsi:type="ns273:MethodsType" xmlns:ns273="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns273:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns273:MethodType">
+     <ns273:Output qName="ns274:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns274="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns275:MethodSecurity xsi:type="ns275:MethodSecurity" xmlns:ns275="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns275:SecuritySetting xsi:type="ns275:SecuritySetting">None</ns275:SecuritySetting>
+      <ns275:MethodAuthorization xsi:type="ns275:MethodAuthorization">
+       <ns275:NoAuthorization xsi:type="ns275:NoAuthorization"/>
+      </ns275:MethodAuthorization>
+     </ns275:MethodSecurity>
+     <ns273:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns273:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns273:Method>
+   </ns273:Methods>
+   <ns276:ResourcePropertiesList xsi:type="ns276:ResourcePropertiesListType" xmlns:ns276="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyContactService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService" packageName="gov.nih.nci.coppa.services.pa.studycontactservice" xsi:type="ns3:ServiceType">
+   <ns277:Methods xsi:type="ns277:MethodsType" xmlns:ns277="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns277:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns277:MethodType">
+     <ns277:Output qName="ns278:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns278="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns279:MethodSecurity xsi:type="ns279:MethodSecurity" xmlns:ns279="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns279:SecuritySetting xsi:type="ns279:SecuritySetting">None</ns279:SecuritySetting>
+      <ns279:MethodAuthorization xsi:type="ns279:MethodAuthorization">
+       <ns279:NoAuthorization xsi:type="ns279:NoAuthorization"/>
+      </ns279:MethodAuthorization>
+     </ns279:MethodSecurity>
+     <ns277:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns277:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns277:Method>
+   </ns277:Methods>
+   <ns280:ResourcePropertiesList xsi:type="ns280:ResourcePropertiesListType" xmlns:ns280="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="PlannedActivityService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService" packageName="gov.nih.nci.coppa.services.pa.plannedactivityservice" xsi:type="ns3:ServiceType">
+   <ns281:Methods xsi:type="ns281:MethodsType" xmlns:ns281="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns281:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns281:MethodType">
+     <ns281:Output qName="ns282:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns282="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns283:MethodSecurity xsi:type="ns283:MethodSecurity" xmlns:ns283="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns283:SecuritySetting xsi:type="ns283:SecuritySetting">None</ns283:SecuritySetting>
+      <ns283:MethodAuthorization xsi:type="ns283:MethodAuthorization">
+       <ns283:NoAuthorization xsi:type="ns283:NoAuthorization"/>
+      </ns283:MethodAuthorization>
+     </ns283:MethodSecurity>
+     <ns281:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns281:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns281:Method>
+   </ns281:Methods>
+   <ns284:ResourcePropertiesList xsi:type="ns284:ResourcePropertiesListType" xmlns:ns284="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="DocumentWorkflowStatusService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService" packageName="gov.nih.nci.coppa.services.pa.documentworkflowstatusservice" xsi:type="ns3:ServiceType">
+   <ns285:Methods xsi:type="ns285:MethodsType" xmlns:ns285="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns285:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns285:MethodType">
+     <ns285:Output qName="ns286:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns286="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns287:MethodSecurity xsi:type="ns287:MethodSecurity" xmlns:ns287="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns287:SecuritySetting xsi:type="ns287:SecuritySetting">None</ns287:SecuritySetting>
+      <ns287:MethodAuthorization xsi:type="ns287:MethodAuthorization">
+       <ns287:NoAuthorization xsi:type="ns287:NoAuthorization"/>
+      </ns287:MethodAuthorization>
+     </ns287:MethodSecurity>
+     <ns285:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns285:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns285:Method>
+   </ns285:Methods>
+   <ns288:ResourcePropertiesList xsi:type="ns288:ResourcePropertiesListType" xmlns:ns288="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="DocumentService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService" packageName="gov.nih.nci.coppa.services.pa.documentservice" xsi:type="ns3:ServiceType">
+   <ns289:Methods xsi:type="ns289:MethodsType" xmlns:ns289="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns289:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns289:MethodType">
+     <ns289:Output qName="ns290:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns290="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns291:MethodSecurity xsi:type="ns291:MethodSecurity" xmlns:ns291="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns291:SecuritySetting xsi:type="ns291:SecuritySetting">None</ns291:SecuritySetting>
+      <ns291:MethodAuthorization xsi:type="ns291:MethodAuthorization">
+       <ns291:NoAuthorization xsi:type="ns291:NoAuthorization"/>
+      </ns291:MethodAuthorization>
+     </ns291:MethodSecurity>
+     <ns289:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns289:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns289:Method>
+   </ns289:Methods>
+   <ns292:ResourcePropertiesList xsi:type="ns292:ResourcePropertiesListType" xmlns:ns292="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
  </ns3:Services>
- <ns265:Extensions xsi:type="ns265:ExtensionsType" xmlns:ns265="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns265:Extension name="cagrid_metadata" version="1.3" xsi:type="ns265:ExtensionType"/>
- </ns265:Extensions>
+ <ns293:Extensions xsi:type="ns293:ExtensionsType" xmlns:ns293="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns293:Extension name="cagrid_metadata" version="1.3" xsi:type="ns293:ExtensionType"/>
+ </ns293:Extensions>
 </ns1:ServiceDescription>

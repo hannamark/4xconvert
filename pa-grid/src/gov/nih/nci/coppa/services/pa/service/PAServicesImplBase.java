@@ -95,6 +95,41 @@ public abstract class PAServicesImplBase {
 		return (gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.service.globus.resource.StudyOutcomeMeasureServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.studyonholdservice.service.globus.resource.StudyOnholdServiceResourceHome getStudyOnholdServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyOnholdServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyonholdservice.service.globus.resource.StudyOnholdServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studyindideservice.service.globus.resource.StudyIndIdeServiceResourceHome getStudyIndIdeServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyIndIdeServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyindideservice.service.globus.resource.StudyIndIdeServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studydiseaseservice.service.globus.resource.StudyDiseaseServiceResourceHome getStudyDiseaseServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyDiseaseServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studydiseaseservice.service.globus.resource.StudyDiseaseServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studycontactservice.service.globus.resource.StudyContactServiceResourceHome getStudyContactServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyContactServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studycontactservice.service.globus.resource.StudyContactServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.plannedactivityservice.service.globus.resource.PlannedActivityServiceResourceHome getPlannedActivityServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("plannedActivityServiceHome");
+		return (gov.nih.nci.coppa.services.pa.plannedactivityservice.service.globus.resource.PlannedActivityServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.service.globus.resource.DocumentWorkflowStatusServiceResourceHome getDocumentWorkflowStatusServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("documentWorkflowStatusServiceHome");
+		return (gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.service.globus.resource.DocumentWorkflowStatusServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.documentservice.service.globus.resource.DocumentServiceResourceHome getDocumentServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("documentServiceHome");
+		return (gov.nih.nci.coppa.services.pa.documentservice.service.globus.resource.DocumentServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();
