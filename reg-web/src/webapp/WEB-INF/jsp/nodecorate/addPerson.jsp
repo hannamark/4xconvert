@@ -7,7 +7,7 @@
    </tr>
 	<tr>   
 		<td scope="row" class="label"><label for="poOrganizations_personDTO_preFix">Prefix :</label></td><td><s:textfield name="preFix"  maxlength="10" size="100"  cssStyle="width:200px" /></td>
-		<td scope="row" class="label"><label for="poOrganizations_personDTO_middleName">Middle Name :</label></td><td><s:textfield name="middleName"  maxlength="10" size="100"  cssStyle="width:200px" /></td>
+		<td scope="row" class="label"><label for="poOrganizations_personDTO_middleName">Middle Name :</label></td><td><s:textfield name="middleName"  maxlength="50" size="100"  cssStyle="width:200px" /></td>
 	</tr>   
 	<tr>   
 		<td scope="row" class="label"><label for="poOrganizations_personDTO_suffix">Suffix :</label></td><td><s:textfield name="suffix"  maxlength="10" size="100"  cssStyle="width:200px" /></td>
