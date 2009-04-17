@@ -121,7 +121,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -137,8 +139,8 @@ import javax.ejb.TransactionAttributeType;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" , 
     "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" , "PMD.ExcessiveMethodLength" , "PMD.TooManyFields" })
-public class TrialRegistrationServiceBean implements TrialRegistrationServiceRemote {
 
+public class TrialRegistrationServiceBean implements TrialRegistrationServiceRemote {
 
     @EJB
     StudyProtocolServiceLocal studyProtocolService = null;
@@ -172,6 +174,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
     @EJB
     OrganizationCorrelationServiceRemote ocsr = null;
+    
+    private SessionContext ejbContext;
+
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+        this.ejbContext = ctx;
+    }
 
 
     /**
@@ -203,6 +212,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @throws PAException on error
      */
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii createInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO ,
             StudyOverallStatusDTO overallStatusDTO ,
@@ -221,7 +231,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             PersonDTO responsiblePartyContactDTO)
     throws PAException {
 
-        return createStudyProtocolObjs(
+        Ii studyProtocolIi = null;
+        try { 
+        studyProtocolIi = createStudyProtocolObjs(
                 studyProtocolDTO ,
                 overallStatusDTO ,
                 studyIndldeDTOs ,
@@ -237,6 +249,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 summary4organizationDTO ,
                 summary4studyResourcingDTO ,
                 responsiblePartyContactDTO , false);
+        } catch (Exception e) {
+            ejbContext.setRollbackOnly();
+            throw new PAException(e);
+        }
+        return studyProtocolIi;
         
 
     }
@@ -266,6 +283,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @throws PAException on error
      */
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii amend(
             StudyProtocolDTO studyProtocolDTO ,
             StudyOverallStatusDTO overallStatusDTO ,
@@ -283,26 +301,36 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO ,
             PersonDTO responsiblePartyContactDTO)
     throws PAException {
-        Ii fromStudyProtocolii = studyProtocolDTO.getIdentifier();
-        Ii toStudyProtocolIi = createStudyProtocolObjs(
-                studyProtocolDTO ,
-                overallStatusDTO ,
-                studyIndldeDTOs ,
-                studyResourcingDTOs ,
-                documentDTOs ,
-                leadOrganizationDTO ,
-                principalInvestigatorDTO ,
-                sponsorOrganizationDTO ,
-                leadOrganizationParticipationIdentifierDTO ,
-                nctIdentifierParticipationIdentifierDTO ,
-                studyContactDTO ,
-                studyParticipationContactDTO ,
-                summary4organizationDTO ,
-                summary4studyResourcingDTO ,
-                responsiblePartyContactDTO , true);
-
-        deepCopy(fromStudyProtocolii , toStudyProtocolIi);
-        deepCopyParticipation(fromStudyProtocolii , toStudyProtocolIi);
+        Ii fromStudyProtocolii = null;
+        Ii toStudyProtocolIi = null;
+        
+        try {
+            fromStudyProtocolii = studyProtocolDTO.getIdentifier();
+            toStudyProtocolIi = createStudyProtocolObjs(
+                    studyProtocolDTO ,
+                    overallStatusDTO ,
+                    studyIndldeDTOs ,
+                    studyResourcingDTOs ,
+                    documentDTOs ,
+                    leadOrganizationDTO ,
+                    principalInvestigatorDTO ,
+                    sponsorOrganizationDTO ,
+                    leadOrganizationParticipationIdentifierDTO ,
+                    nctIdentifierParticipationIdentifierDTO ,
+                    studyContactDTO ,
+                    studyParticipationContactDTO ,
+                    summary4organizationDTO ,
+                    summary4studyResourcingDTO ,
+                    responsiblePartyContactDTO , true);
+    
+            deepCopy(fromStudyProtocolii , toStudyProtocolIi);
+            deepCopyParticipation(fromStudyProtocolii , toStudyProtocolIi);
+            Ii i = null;
+            i.getExtension();
+        } catch (Exception e) {
+            ejbContext.setRollbackOnly();
+            throw new PAException(e);
+        }
         return toStudyProtocolIi;
 
     }
