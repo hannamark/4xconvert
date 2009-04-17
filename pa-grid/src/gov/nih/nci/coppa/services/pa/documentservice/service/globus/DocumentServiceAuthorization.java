@@ -58,6 +58,26 @@ public class DocumentServiceAuthorization implements PDP {
 	public void authorizeGetServiceSecurityMetadata(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
+	   				
+	public void authorizeGetDocumentsByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeGet(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeCreate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeUpdate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeDelete(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -68,6 +88,21 @@ public class DocumentServiceAuthorization implements PDP {
 		}
 		if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getDocumentsByStudyProtocol")){
+			authorizeGetDocumentsByStudyProtocol(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("get")){
+			authorizeGet(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("create")){
+			authorizeCreate(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("update")){
+			authorizeUpdate(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("delete")){
+			authorizeDelete(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

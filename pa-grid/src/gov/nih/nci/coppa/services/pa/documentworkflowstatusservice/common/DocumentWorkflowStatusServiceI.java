@@ -12,7 +12,27 @@ import java.rmi.RemoteException;
  */
 public interface DocumentWorkflowStatusServiceI {
 
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  /**
+   * Creates copies of the DocumentWorkflowStatuses that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead.
+   *
+   * @param fromStudyProtocolId
+   * @param toStudyProtocolId
+   * @throws PAFault
+   *	
+   */
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus create(gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus documentWorkflowStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus update(gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus documentWorkflowStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

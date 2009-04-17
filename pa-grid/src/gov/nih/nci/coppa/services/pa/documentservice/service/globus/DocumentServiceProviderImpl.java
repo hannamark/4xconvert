@@ -26,4 +26,34 @@ public class DocumentServiceProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.pa.documentservice.stubs.GetDocumentsByStudyProtocolResponse getDocumentsByStudyProtocol(gov.nih.nci.coppa.services.pa.documentservice.stubs.GetDocumentsByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentservice.stubs.GetDocumentsByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentservice.stubs.GetDocumentsByStudyProtocolResponse();
+    boxedResult.setDocument(impl.getDocumentsByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.documentservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentservice.stubs.GetResponse();
+    boxedResult.setDocument(impl.get(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentservice.stubs.CreateResponse create(gov.nih.nci.coppa.services.pa.documentservice.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentservice.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentservice.stubs.CreateResponse();
+    boxedResult.setDocument(impl.create(params.getDocument().getDocument()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentservice.stubs.UpdateResponse update(gov.nih.nci.coppa.services.pa.documentservice.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentservice.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentservice.stubs.UpdateResponse();
+    boxedResult.setDocument(impl.update(params.getDocument().getDocument()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentservice.stubs.DeleteResponse delete(gov.nih.nci.coppa.services.pa.documentservice.stubs.DeleteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentservice.stubs.DeleteResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentservice.stubs.DeleteResponse();
+    impl.delete(params.getDocument().getDocument());
+    return boxedResult;
+  }
+
 }

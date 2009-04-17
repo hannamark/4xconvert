@@ -26,4 +26,46 @@ public class DocumentWorkflowStatusServiceProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolResponse();
+    boxedResult.setDocumentWorkflowStatus(impl.getCurrentByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolResponse getByStudyProtocol(gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolResponse();
+    boxedResult.setDocumentWorkflowStatus(impl.getByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyResponse copy(gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyResponse();
+    impl.copy(params.getFromStudyProtocolId().getId(),params.getToStudyProtocolId().getId());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetResponse();
+    boxedResult.setDocumentWorkflowStatus(impl.get(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateResponse create(gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateResponse();
+    boxedResult.setDocumentWorkflowStatus(impl.create(params.getDocumentWorkflowStatus().getDocumentWorkflowStatus()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateResponse update(gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateResponse();
+    boxedResult.setDocumentWorkflowStatus(impl.update(params.getDocumentWorkflowStatus().getDocumentWorkflowStatus()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteResponse delete(gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteResponse boxedResult = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteResponse();
+    impl.delete(params.getId().getId());
+    return boxedResult;
+  }
+
 }

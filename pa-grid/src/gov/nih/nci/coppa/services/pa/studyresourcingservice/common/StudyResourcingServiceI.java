@@ -22,7 +22,7 @@ public interface StudyResourcingServiceI {
 
   public gov.nih.nci.coppa.services.pa.StudyResourcing getStudyResourceByID(gov.nih.nci.coppa.services.pa.Id studyResourceId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public boolean deleteStudyResourceByID(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public void deleteStudyResourceByID(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

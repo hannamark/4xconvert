@@ -40,6 +40,104 @@
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" schemaLocation="./StudyResourcingServiceTypes.xsd" />
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetDocumentsByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetDocumentsByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:Document" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:Document" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="document">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Document" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:Document" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="document">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Document" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:Document" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="document">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Document" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="DocumentServiceResourceProperties">
         <complexType>
           <sequence />
@@ -48,12 +146,70 @@
     </schema>
   </types>
   <!--  place service messages here -->
+  <message name="GetDocumentsByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetDocumentsByStudyProtocolRequest" />
+  </message>
+  <message name="GetDocumentsByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetDocumentsByStudyProtocolResponse" />
+  </message>
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns2:PAFault" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="DocumentServicePortType" wsrp:ResourceProperties="tns:DocumentServiceResourceProperties">
+    <operation name="getDocumentsByStudyProtocol">
+      <input message="tns:GetDocumentsByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/GetDocumentsByStudyProtocolRequest" />
+      <output message="tns:GetDocumentsByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/GetDocumentsByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/GetResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/CreateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/UpdateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/DeleteResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/PAFaultFaultMessage" />
+    </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
       <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />

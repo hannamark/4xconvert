@@ -58,7 +58,7 @@ public class StudyResourcingServiceProviderImpl{
 
     public gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.DeleteStudyResourceByIDResponse deleteStudyResourceByID(gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.DeleteStudyResourceByIDRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.DeleteStudyResourceByIDResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.DeleteStudyResourceByIDResponse();
-    boxedResult.setResponse(impl.deleteStudyResourceByID(params.getStudyResourcing().getStudyResourcing()));
+    impl.deleteStudyResourceByID(params.getStudyResourcing().getStudyResourcing());
     return boxedResult;
   }
 

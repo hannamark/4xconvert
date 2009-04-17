@@ -26,4 +26,46 @@ public class StudyDiseaseServiceProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetByStudyProtocolResponse getByStudyProtocol(gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetByStudyProtocolResponse();
+    boxedResult.setStudyDisease(impl.getByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CopyResponse copy(gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CopyRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CopyResponse boxedResult = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CopyResponse();
+    impl.copy(params.getFromStudyProtocolId().getId(),params.getToStudyProtocolId().getId());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetCurrentByStudyProtocolResponse();
+    boxedResult.setStudyDisease(impl.getCurrentByStudyProtocol(params.getStudyProtocolId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetResponse();
+    boxedResult.setStudyDisease(impl.get(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CreateResponse create(gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CreateResponse();
+    boxedResult.setStudyDisease(impl.create(params.getStudyDisease().getStudyDisease()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.UpdateResponse update(gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.UpdateResponse();
+    boxedResult.setStudyDisease(impl.update(params.getStudyDisease().getStudyDisease()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.DeleteResponse delete(gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.DeleteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.DeleteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.DeleteResponse();
+    impl.delete(params.getId().getId());
+    return boxedResult;
+  }
+
 }

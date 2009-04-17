@@ -26,4 +26,46 @@ public class StudyOnholdServiceProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetByStudyProtocolResponse getByStudyProtocol(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetByStudyProtocolResponse();
+    boxedResult.setStudyOnhold(impl.getByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CopyResponse copy(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CopyRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CopyResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CopyResponse();
+    impl.copy(params.getFromStudyProtocolId().getId(),params.getToStudyProtocolId().getId());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolResponse();
+    boxedResult.setStudyOnhold(impl.getCurrentByStudyProtocol(params.getStudyProtocolId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetResponse();
+    boxedResult.setStudyOnhold(impl.get(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CreateResponse create(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CreateResponse();
+    boxedResult.setStudyOnhold(impl.create(params.getStudyOnhold().getStudyOnhold()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.UpdateResponse update(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.UpdateResponse();
+    boxedResult.setStudyOnhold(impl.update(params.getStudyOnhold().getStudyOnhold()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.DeleteResponse delete(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.DeleteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.DeleteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.DeleteResponse();
+    impl.delete(params.getId().getId());
+    return boxedResult;
+  }
+
 }

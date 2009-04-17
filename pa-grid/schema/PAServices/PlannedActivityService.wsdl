@@ -40,6 +40,292 @@
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" schemaLocation="./StudyResourcingServiceTypes.xsd" />
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetByArmRequest">
+        <complexType>
+          <sequence>
+            <element name="armId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByArmResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPlannedEligibilityCriterionByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPlannedEligibilityCriterionByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedEligibilityCriterion" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPlannedEligibilityCriterionRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPlannedEligibilityCriterionResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedEligibilityCriterion" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePlannedEligibilityCriterionRequest">
+        <complexType>
+          <sequence>
+            <element name="plannedEligibilityCriterion">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PlannedEligibilityCriterion" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePlannedEligibilityCriterionResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedEligibilityCriterion" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePlannedEligibilityCriterionRequest">
+        <complexType>
+          <sequence>
+            <element name="plannedEligibilityCriterion">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PlannedEligibilityCriterion" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePlannedEligibilityCriterionResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedEligibilityCriterion" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeletePlannedEligibilityCriterionRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeletePlannedEligibilityCriterionResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="CopyPlannedEligibilityStudyCriterionsRequest">
+        <complexType>
+          <sequence>
+            <element name="fromStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="toStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CopyPlannedEligibilityStudyCriterionsResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CopyRequest">
+        <complexType>
+          <sequence>
+            <element name="fromStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="toStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CopyResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="GetCurrentByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCurrentByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="plannedActivity">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="plannedActivity">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PlannedActivity" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="PlannedActivityServiceResourceProperties">
         <complexType>
           <sequence />
@@ -48,12 +334,169 @@
     </schema>
   </types>
   <!--  place service messages here -->
+  <message name="GetByArmRequest">
+    <part name="parameters" element="tns:GetByArmRequest" />
+  </message>
+  <message name="GetByArmResponse">
+    <part name="parameters" element="tns:GetByArmResponse" />
+  </message>
+  <message name="GetPlannedEligibilityCriterionByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetPlannedEligibilityCriterionByStudyProtocolRequest" />
+  </message>
+  <message name="GetPlannedEligibilityCriterionByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetPlannedEligibilityCriterionByStudyProtocolResponse" />
+  </message>
+  <message name="GetPlannedEligibilityCriterionRequest">
+    <part name="parameters" element="tns:GetPlannedEligibilityCriterionRequest" />
+  </message>
+  <message name="GetPlannedEligibilityCriterionResponse">
+    <part name="parameters" element="tns:GetPlannedEligibilityCriterionResponse" />
+  </message>
+  <message name="CreatePlannedEligibilityCriterionRequest">
+    <part name="parameters" element="tns:CreatePlannedEligibilityCriterionRequest" />
+  </message>
+  <message name="CreatePlannedEligibilityCriterionResponse">
+    <part name="parameters" element="tns:CreatePlannedEligibilityCriterionResponse" />
+  </message>
+  <message name="UpdatePlannedEligibilityCriterionRequest">
+    <part name="parameters" element="tns:UpdatePlannedEligibilityCriterionRequest" />
+  </message>
+  <message name="UpdatePlannedEligibilityCriterionResponse">
+    <part name="parameters" element="tns:UpdatePlannedEligibilityCriterionResponse" />
+  </message>
+  <message name="DeletePlannedEligibilityCriterionRequest">
+    <part name="parameters" element="tns:DeletePlannedEligibilityCriterionRequest" />
+  </message>
+  <message name="DeletePlannedEligibilityCriterionResponse">
+    <part name="parameters" element="tns:DeletePlannedEligibilityCriterionResponse" />
+  </message>
+  <message name="CopyPlannedEligibilityStudyCriterionsRequest">
+    <part name="parameters" element="tns:CopyPlannedEligibilityStudyCriterionsRequest" />
+  </message>
+  <message name="CopyPlannedEligibilityStudyCriterionsResponse">
+    <part name="parameters" element="tns:CopyPlannedEligibilityStudyCriterionsResponse" />
+  </message>
+  <message name="GetByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetByStudyProtocolRequest" />
+  </message>
+  <message name="GetByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetByStudyProtocolResponse" />
+  </message>
+  <message name="CopyRequest">
+    <part name="parameters" element="tns:CopyRequest" />
+  </message>
+  <message name="CopyResponse">
+    <part name="parameters" element="tns:CopyResponse" />
+  </message>
+  <message name="GetCurrentByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolRequest" />
+  </message>
+  <message name="GetCurrentByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolResponse" />
+  </message>
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns2:PAFault" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="PlannedActivityServicePortType" wsrp:ResourceProperties="tns:PlannedActivityServiceResourceProperties">
+    <operation name="getByArm">
+      <input message="tns:GetByArmRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetByArmRequest" />
+      <output message="tns:GetByArmResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetByArmResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getPlannedEligibilityCriterionByStudyProtocol">
+      <input message="tns:GetPlannedEligibilityCriterionByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetPlannedEligibilityCriterionByStudyProtocolRequest" />
+      <output message="tns:GetPlannedEligibilityCriterionByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetPlannedEligibilityCriterionByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getPlannedEligibilityCriterion">
+      <input message="tns:GetPlannedEligibilityCriterionRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetPlannedEligibilityCriterionRequest" />
+      <output message="tns:GetPlannedEligibilityCriterionResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetPlannedEligibilityCriterionResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="createPlannedEligibilityCriterion">
+      <input message="tns:CreatePlannedEligibilityCriterionRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CreatePlannedEligibilityCriterionRequest" />
+      <output message="tns:CreatePlannedEligibilityCriterionResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CreatePlannedEligibilityCriterionResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updatePlannedEligibilityCriterion">
+      <input message="tns:UpdatePlannedEligibilityCriterionRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/UpdatePlannedEligibilityCriterionRequest" />
+      <output message="tns:UpdatePlannedEligibilityCriterionResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/UpdatePlannedEligibilityCriterionResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="deletePlannedEligibilityCriterion">
+      <input message="tns:DeletePlannedEligibilityCriterionRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/DeletePlannedEligibilityCriterionRequest" />
+      <output message="tns:DeletePlannedEligibilityCriterionResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/DeletePlannedEligibilityCriterionResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="copyPlannedEligibilityStudyCriterions">
+      <input message="tns:CopyPlannedEligibilityStudyCriterionsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CopyPlannedEligibilityStudyCriterionsRequest" />
+      <output message="tns:CopyPlannedEligibilityStudyCriterionsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CopyPlannedEligibilityStudyCriterionsResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getByStudyProtocol">
+      <input message="tns:GetByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetByStudyProtocolRequest" />
+      <output message="tns:GetByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="copy">
+      <input message="tns:CopyRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CopyRequest" />
+      <output message="tns:CopyResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CopyResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getCurrentByStudyProtocol">
+      <input message="tns:GetCurrentByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetCurrentByStudyProtocolRequest" />
+      <output message="tns:GetCurrentByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetCurrentByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/GetResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/CreateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/UpdateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/DeleteResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/PAFaultFaultMessage" />
+    </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
       <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />

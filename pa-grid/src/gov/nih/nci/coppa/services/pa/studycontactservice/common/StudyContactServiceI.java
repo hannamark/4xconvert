@@ -12,7 +12,49 @@ import java.rmi.RemoteException;
  */
 public interface StudyContactServiceI {
 
+  /**
+   * Gets the StudyContacts for a given functional role code and study protocol.
+   *
+   * @param studyProtocolId
+   * @param studyContact
+   *	StudyContact with the functional code criteria
+   * @throws PAFault
+   *	
+   */
+  public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  /**
+   * Gets the StudyContacts for the given functional role codes and study protocol.
+   *
+   * @param studyProtocolId
+   * @param studyContact
+   *	StudyContacts with the functional code criteria
+   * @throws PAFault
+   *	
+   */
+  public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  /**
+   * Creates copies of the StudyContacts that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead.
+   *
+   * @param fromStudyProtocolId
+   * @param toStudyProtocolId
+   * @throws PAFault
+   *	
+   */
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyContact[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyContact get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyContact create(gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyContact update(gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

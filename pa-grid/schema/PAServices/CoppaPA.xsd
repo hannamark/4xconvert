@@ -12,6 +12,14 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="Bl">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ISO:BL" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
     <xs:complexType name="BaseType" abstract="true">
         <xs:sequence>
             <xs:element name="identifier" type="ISO:II" />

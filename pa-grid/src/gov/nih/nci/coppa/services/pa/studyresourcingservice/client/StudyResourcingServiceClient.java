@@ -136,7 +136,7 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
     }
   }
 
-  public boolean deleteStudyResourceByID(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void deleteStudyResourceByID(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"deleteStudyResourceByID");
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.DeleteStudyResourceByIDRequest params = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.DeleteStudyResourceByIDRequest();
@@ -144,7 +144,6 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
     studyResourcingContainer.setStudyResourcing(studyResourcing);
     params.setStudyResourcing(studyResourcingContainer);
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.DeleteStudyResourceByIDResponse boxedResult = portType.deleteStudyResourceByID(params);
-    return boxedResult.isResponse();
     }
   }
 

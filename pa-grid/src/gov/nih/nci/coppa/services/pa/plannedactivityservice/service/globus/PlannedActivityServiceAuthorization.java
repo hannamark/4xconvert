@@ -58,6 +58,62 @@ public class PlannedActivityServiceAuthorization implements PDP {
 	public void authorizeGetServiceSecurityMetadata(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
+	   				
+	public void authorizeGetByArm(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeGetPlannedEligibilityCriterionByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeGetPlannedEligibilityCriterion(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeCreatePlannedEligibilityCriterion(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeUpdatePlannedEligibilityCriterion(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeDeletePlannedEligibilityCriterion(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeCopyPlannedEligibilityStudyCriterions(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeGetByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeCopy(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeGetCurrentByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeGet(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeCreate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeUpdate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeDelete(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -68,6 +124,48 @@ public class PlannedActivityServiceAuthorization implements PDP {
 		}
 		if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getByArm")){
+			authorizeGetByArm(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getPlannedEligibilityCriterionByStudyProtocol")){
+			authorizeGetPlannedEligibilityCriterionByStudyProtocol(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getPlannedEligibilityCriterion")){
+			authorizeGetPlannedEligibilityCriterion(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("createPlannedEligibilityCriterion")){
+			authorizeCreatePlannedEligibilityCriterion(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("updatePlannedEligibilityCriterion")){
+			authorizeUpdatePlannedEligibilityCriterion(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("deletePlannedEligibilityCriterion")){
+			authorizeDeletePlannedEligibilityCriterion(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("copyPlannedEligibilityStudyCriterions")){
+			authorizeCopyPlannedEligibilityStudyCriterions(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getByStudyProtocol")){
+			authorizeGetByStudyProtocol(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("copy")){
+			authorizeCopy(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getCurrentByStudyProtocol")){
+			authorizeGetCurrentByStudyProtocol(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("get")){
+			authorizeGet(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("create")){
+			authorizeCreate(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("update")){
+			authorizeUpdate(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("delete")){
+			authorizeDelete(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

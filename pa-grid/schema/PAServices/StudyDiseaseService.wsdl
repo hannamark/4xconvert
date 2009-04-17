@@ -40,6 +40,149 @@
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" schemaLocation="./StudyResourcingServiceTypes.xsd" />
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyDisease" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CopyRequest">
+        <complexType>
+          <sequence>
+            <element name="fromStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="toStudyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CopyResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="GetCurrentByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCurrentByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyDisease" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyDisease" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="studyDisease">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudyDisease" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyDisease" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="studyDisease">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudyDisease" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyDisease" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="StudyDiseaseServiceResourceProperties">
         <complexType>
           <sequence />
@@ -48,12 +191,92 @@
     </schema>
   </types>
   <!--  place service messages here -->
+  <message name="GetByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetByStudyProtocolRequest" />
+  </message>
+  <message name="GetByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetByStudyProtocolResponse" />
+  </message>
+  <message name="CopyRequest">
+    <part name="parameters" element="tns:CopyRequest" />
+  </message>
+  <message name="CopyResponse">
+    <part name="parameters" element="tns:CopyResponse" />
+  </message>
+  <message name="GetCurrentByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolRequest" />
+  </message>
+  <message name="GetCurrentByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolResponse" />
+  </message>
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns2:PAFault" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="StudyDiseaseServicePortType" wsrp:ResourceProperties="tns:StudyDiseaseServiceResourceProperties">
+    <operation name="getByStudyProtocol">
+      <input message="tns:GetByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/GetByStudyProtocolRequest" />
+      <output message="tns:GetByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/GetByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="copy">
+      <input message="tns:CopyRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/CopyRequest" />
+      <output message="tns:CopyResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/CopyResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getCurrentByStudyProtocol">
+      <input message="tns:GetCurrentByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/GetCurrentByStudyProtocolRequest" />
+      <output message="tns:GetCurrentByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/GetCurrentByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/GetResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/CreateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/UpdateResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/DeleteResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/PAFaultFaultMessage" />
+    </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
       <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />

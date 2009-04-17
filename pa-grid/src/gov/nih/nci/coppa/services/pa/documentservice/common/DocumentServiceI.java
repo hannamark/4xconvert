@@ -12,7 +12,15 @@ import java.rmi.RemoteException;
  */
 public interface DocumentServiceI {
 
+  public gov.nih.nci.coppa.services.pa.Document[] getDocumentsByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  public gov.nih.nci.coppa.services.pa.Document get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.Document create(gov.nih.nci.coppa.services.pa.Document document) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.Document update(gov.nih.nci.coppa.services.pa.Document document) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public void delete(gov.nih.nci.coppa.services.pa.Document document) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

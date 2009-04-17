@@ -26,4 +26,88 @@ public class PlannedActivityServiceProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmResponse getByArm(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmResponse();
+    boxedResult.setPlannedActivity(impl.getByArm(params.getArmId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolResponse getPlannedEligibilityCriterionByStudyProtocol(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolResponse();
+    boxedResult.setPlannedEligibilityCriterion(impl.getPlannedEligibilityCriterionByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionResponse getPlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionResponse();
+    boxedResult.setPlannedEligibilityCriterion(impl.getPlannedEligibilityCriterion(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionResponse createPlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionResponse();
+    boxedResult.setPlannedEligibilityCriterion(impl.createPlannedEligibilityCriterion(params.getPlannedEligibilityCriterion().getPlannedEligibilityCriterion()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionResponse updatePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionResponse();
+    boxedResult.setPlannedEligibilityCriterion(impl.updatePlannedEligibilityCriterion(params.getPlannedEligibilityCriterion().getPlannedEligibilityCriterion()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionResponse deletePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionResponse();
+    impl.deletePlannedEligibilityCriterion(params.getId().getId());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsResponse copyPlannedEligibilityStudyCriterions(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsResponse();
+    impl.copyPlannedEligibilityStudyCriterions(params.getFromStudyProtocolId().getId(),params.getToStudyProtocolId().getId());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolResponse getByStudyProtocol(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolResponse();
+    boxedResult.setPlannedActivity(impl.getByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyResponse copy(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyResponse();
+    impl.copy(params.getFromStudyProtocolId().getId(),params.getToStudyProtocolId().getId());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse();
+    boxedResult.setPlannedActivity(impl.getCurrentByStudyProtocol(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse();
+    boxedResult.setPlannedActivity(impl.get(params.getId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateResponse create(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateResponse();
+    boxedResult.setPlannedActivity(impl.create(params.getPlannedActivity().getPlannedActivity()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateResponse update(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateResponse();
+    boxedResult.setPlannedActivity(impl.update(params.getPlannedActivity().getPlannedActivity()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteResponse delete(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteResponse();
+    impl.delete(params.getId().getId());
+    return boxedResult;
+  }
+
 }

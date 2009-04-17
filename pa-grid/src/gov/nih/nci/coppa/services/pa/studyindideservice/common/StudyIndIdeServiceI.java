@@ -12,7 +12,27 @@ import java.rmi.RemoteException;
  */
 public interface StudyIndIdeServiceI {
 
+  public gov.nih.nci.coppa.services.pa.StudyIndlde[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  /**
+   * Creates copies of the StudyIndldes that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead.
+   *
+   * @param fromStudyProtocolId
+   * @param toStudyProtocolId
+   * @throws PAFault
+   *	
+   */
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyIndlde[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyIndlde get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyIndlde create(gov.nih.nci.coppa.services.pa.StudyIndlde studyIndlde) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyIndlde update(gov.nih.nci.coppa.services.pa.StudyIndlde studyIndlde) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 
