@@ -105,12 +105,12 @@ public interface StudyProtocolService {
     
    
     /**
-     * Gets the study protocol. 
+     * Searches the study protocol. 
      * @param dto the dto 
      * @return the study protocol 
      * @throws PAException the PA exception
      */
-    List<StudyProtocolDTO> getStudyProtocol(StudyProtocolDTO dto) throws PAException;
+    List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException;
     
     /**
      * 

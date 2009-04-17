@@ -114,7 +114,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
         list.add(sp);
     }
-    public List<StudyProtocolDTO> getStudyProtocol(StudyProtocolDTO spDTO) throws PAException{
+    public List<StudyProtocolDTO> search(StudyProtocolDTO spDTO) throws PAException{
     	return null;
     }
 

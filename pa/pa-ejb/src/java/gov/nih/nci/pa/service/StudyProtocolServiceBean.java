@@ -126,7 +126,7 @@ import org.hibernate.criterion.Example;
  */
 @Stateless
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
+    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.TooManyMethods" })
     public class StudyProtocolServiceBean
                     implements StudyProtocolServiceRemote, StudyProtocolServiceLocal {
 
@@ -198,7 +198,7 @@ import org.hibernate.criterion.Example;
     * @throws PAException PAException
     */
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-   public List<StudyProtocolDTO> getStudyProtocol(StudyProtocolDTO dto) throws PAException {
+   public List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException {
        if (dto == null) {
            LOG.error(" StudyProtocolDTO should not be null ");
            throw new PAException(" StudyProtocolDTO should not be null ");

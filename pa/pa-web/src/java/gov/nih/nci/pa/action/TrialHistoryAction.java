@@ -204,7 +204,7 @@ return servletResponse;
         getAttribute(Constants.STUDY_PROTOCOL_II);
 
         StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
-        List<StudyProtocolDTO>spList = studyProtocolSvc.getStudyProtocol(spDTO);
+        List<StudyProtocolDTO>spList = studyProtocolSvc.search(spDTO);
         List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
         for (StudyProtocolDTO sp : spList) {
             TrialHistoryWebDTO dto =  new TrialHistoryWebDTO(sp);
