@@ -17,6 +17,7 @@
 			<li><div>Trial Overview</div>
 				<ul>
 					<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Identification</a></li>
+					<li><a href="trialHistory.action" >Trial History</a></li>
 					<li><a href="milestone.action" >Trial Milestones</a></li>
                     <li><a href="onhold.action" >On-hold Information</a></li>
 				</ul>
@@ -29,9 +30,7 @@
                     <li><a href="trialFundingquery.action" >Trial Funding</a></li>
                     <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                     <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
-                    <li><a href="milestone.action" >Trial Milestones</a></li>
-                    <li><a href="onhold.action" >On-hold Information</a></li>
-                </ul>
+                  </ul>
 			</s:if>
 			<s:if test="${docWFSMenu  == 'Accepted'}">
     			<li><div>Administrative Data</div>

@@ -102,6 +102,7 @@ import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -117,6 +118,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Example;
 
 /**
  * @author Hugh Reinhart
@@ -188,7 +190,50 @@ import org.hibernate.Session;
     }
 
 
+  
+    /**
+    *
+    * @param dto of StudyProtocolDTO
+    * @return List StudyProtocolDTO
+    * @throws PAException PAException
+    */
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+   public List<StudyProtocolDTO> getStudyProtocol(StudyProtocolDTO dto) throws PAException {
+       if (dto == null) {
+           LOG.error(" StudyProtocolDTO should not be null ");
+           throw new PAException(" StudyProtocolDTO should not be null ");
+       }
+       LOG.info("Entering getStudyProtocol");
+       Session session = null;
+       List <StudyProtocol> studyProtocolList = null;
+       try {
+           session = HibernateUtil.getCurrentSession();
+           StudyProtocol exampleDO = new StudyProtocol();
+           exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+           Example example = Example.create(exampleDO);
+           studyProtocolList = session.createCriteria(StudyProtocol.class).add(example).list();
+           session.flush();
 
+       }  catch (HibernateException hbe) {
+           LOG.error(" Hibernate exception while retrieving StudyProtocol for dto = " + hbe);
+           throw new PAException(" Hibernate exception while retrieving "
+                   + "StudyProtocol for dto = " +  hbe);
+       }
+
+       LOG.info("Leaving getStudyProtocol");
+       
+       List<StudyProtocolDTO> studyProtocolDTOList = null;
+       if (studyProtocolList != null) {
+    studyProtocolDTOList = new ArrayList<StudyProtocolDTO>();
+    for (StudyProtocol sp : studyProtocolList) {
+    StudyProtocolDTO studyProtocolDTO =
+              StudyProtocolConverter.convertFromDomainToDTO(sp);
+    studyProtocolDTOList.add(studyProtocolDTO);
+    }
+    }
+       return studyProtocolDTOList;
+
+   }
     /**
      *
      * @param studyProtocolDTO studyProtocolDTO

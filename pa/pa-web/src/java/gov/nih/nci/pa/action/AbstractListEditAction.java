@@ -83,6 +83,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
@@ -90,6 +91,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -142,6 +144,10 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     protected InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
     /** StudyOnholdService. */
     protected StudyOnholdServiceRemote studyOnholdSvc;
+    /** StudyOnholdService. */
+    protected StudyProtocolServiceRemote studyProtocolSvc;
+    /** DocumentService. */
+    protected DocumentServiceRemote documentSvc;
 
     /**
      * @throws PAException exception
@@ -159,6 +165,8 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
+        studyProtocolSvc = PaRegistry.getStudyProtocolService();
+        documentSvc = PaRegistry.getDocumentService();
     }
 
     /**

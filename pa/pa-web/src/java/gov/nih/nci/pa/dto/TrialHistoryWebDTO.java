@@ -76,97 +76,256 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.dto;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
-import java.util.List;
 
 /**
- * @author Bala Nair
- * @since 03/23/2009
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * The Class TrialHistoryWebDTO.
+ * 
+ * @author Hugh Reinhart
+ * @since 2/19/2009
  */
-public interface StudyProtocolService {
+public class TrialHistoryWebDTO {
     
+    /** The submission number. */
+    private String submissionNumber;
+    
+    /** The amendment number. */
+    private String amendmentNumber;
+    
+    /** The amendment date. */
+    private String amendmentDate;
+    
+    /** The type. */
+    private String type;
+    
+    /** The submission date. */
+    private String submissionDate;
+    
+    /** The amendment reason code. */
+    private String amendmentReasonCode;
+    
+    /** The documents. */
+    private String documents;
+    
+    /** The identifier. */
+    private String identifier;
     
     /**
+     * Instantiates a new trial history web dto.
+     */
+    public TrialHistoryWebDTO() {
+        // default constructor
+    }
+    
+    /**
+     * The Constructor.
      * 
-     * @param ii primary id of StudyProtocol
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
+     * @param isoDto the is dto
      */
-    StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException;
+    public TrialHistoryWebDTO(StudyProtocolDTO isoDto) {
+        this.identifier = IiConverter.convertToString(isoDto.getIdentifier());
+        this.submissionNumber = IntConverter.convertToInteger(isoDto.getSubmissionNumber()).toString();
+        this.amendmentNumber = StConverter.convertToString(isoDto.getAmendmentNumber());
+        this.amendmentReasonCode = CdConverter.convertCdToString(isoDto.getAmendmentReasonCode());
+        if (isoDto.getAmendmentDate() != null && isoDto.getAmendmentDate().getValue() != null) {
+          this.amendmentDate = TsConverter.convertToTimestamp(isoDto.getAmendmentDate()).toString();
+        } else {
+          this.amendmentDate = "";
+        }
+        if (isoDto.getStatusDate() != null && isoDto.getStatusDate().getValue() != null) {
+          this.submissionDate = TsConverter.convertToTimestamp(isoDto.getStatusDate()).toString();
+         } else {
+            this.submissionDate = "";
+            }
+        this.documents = "";
+        this.type = getType(isoDto);
+    }
     
-   
-    /**
-     * Gets the study protocol. 
-     * @param dto the dto 
-     * @return the study protocol 
-     * @throws PAException the PA exception
-     */
-    List<StudyProtocolDTO> getStudyProtocol(StudyProtocolDTO dto) throws PAException;
+    
     
     /**
+     * Gets the iso dto.
      * 
-     * @param studyProtocolDTO studyProtocolDTO
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
-     */
-    StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException;
-    
-    /**
+     * @param isoDto the iso dto
      * 
-     * @param ii ii
-     * @return InterventionalStudyProtocolDTO
-     * @throws PAException PAException
+     * @return the iso dto
      */
-    InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException;
+    public StudyProtocolDTO getIsoDto(StudyProtocolDTO isoDto) {
+        isoDto.setAmendmentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getAmendmentDate())));
+        isoDto.setAmendmentReasonCode(CdConverter.convertStringToCd(getAmendmentReasonCode()));
+        isoDto.setAmendmentNumber(StConverter.convertToSt(getAmendmentNumber()));
+        return isoDto;
+    }
     
     /**
+     * Gets the identifier.
      * 
-     * @param ispDTO studyProtocolDTO
-     * @return InterventionalStudyProtocolDTO
-     * @throws PAException PAException
-     */     
-    InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
-            InterventionalStudyProtocolDTO ispDTO) throws PAException;
-    
-    /**
-     * for creating a new ISP.
-     * @param ispDTO  for isp
-     * @return ii ii
-     * @throws PAException exception
+     * @return the identifier
      */
-    Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO) throws PAException;    
-    /**
-     * 
-     * @param ii ii
-     * @return ObservationalStudyProtocolDTO
-     * @throws PAException PAException
-     */
-    ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException;
-    
-    /**
-     * 
-     * @param ospDTO ObservationalStudyProtocolDTO
-     * @return ObservationalStudyProtocolDTO
-     * @throws PAException PAException
-     */     
-    ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
-            ObservationalStudyProtocolDTO ospDTO) throws PAException;
-    
-    /**
-     * for creating a new OSP.
-     * @param ospDTO  for osp
-     * @return ii ii
-     * @throws PAException exception
-     */
-    Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO) throws PAException; 
+     public String getIdentifier() {
+       return identifier;
+     }
+     
+     /**
+      * @param identifier the identifier to set.
+      */
+     public void setIdentifier(String identifier) {
+      this.identifier = identifier;
+     }
+     
+     /**
+      * Gets the type.
+      * 
+      * @param isoDto the iso dto
+      * 
+      * @return the type
+      */
+    private String getType(StudyProtocolDTO isoDto) {
+    int submissionNum = 0;
+    submissionNum = IntConverter.convertToInteger(isoDto.getSubmissionNumber());
+    if (submissionNum == 1) {
+    return "Actual";
+    } else {
+    return "Amend";
+}
 
+    
+    }
+   
+ 
+/**
+ * Gets the submission number.
+ * 
+ * @return the submissionNumber
+ */
+public String getSubmissionNumber() {
+return submissionNumber;
+}
+
+/**
+ * Sets the submission number.
+ * 
+ * @param submissionNumber the submissionNumber to set
+ */
+public void setSubmissionNumber(String submissionNumber) {
+this.submissionNumber = submissionNumber;
+}
+
+/**
+ * Gets the amendment number.
+ * 
+ * @return the amendmentNumber
+ */
+public String getAmendmentNumber() {
+return amendmentNumber;
+}
+
+/**
+ * Sets the amendment number.
+ * 
+ * @param amendmentNumber the amendmentNumber to set
+ */
+public void setAmendmentNumber(String amendmentNumber) {
+this.amendmentNumber = amendmentNumber;
+}
+
+/**
+ * Gets the amendment date.
+ * 
+ * @return the amendmentDate
+ */
+public String getAmendmentDate() {
+return amendmentDate;
+}
+
+/**
+ * Sets the amendment date.
+ * 
+ * @param amendmentDate the amendmentDate to set
+ */
+public void setAmendmentDate(String amendmentDate) {
+this.amendmentDate = amendmentDate;
+}
+
+/**
+ * Gets the type.
+ * 
+ * @return the type
+ */
+public String getType() {
+return type;
+}
+
+/**
+ * Sets the type.
+ * 
+ * @param type the type to set
+ */
+public void setType(String type) {
+this.type = type;
+}
+
+/**
+ * Gets the submission date.
+ * 
+ * @return the submissionDate
+ */
+public String getSubmissionDate() {
+return submissionDate;
+}
+
+/**
+ * Sets the submission date.
+ * 
+ * @param submissionDate the submissionDate to set
+ */
+public void setSubmissionDate(String submissionDate) {
+this.submissionDate = submissionDate;
+}
+
+/**
+ * Gets the amendment reason code.
+ * 
+ * @return the amendmentReasonCode
+ */
+public String getAmendmentReasonCode() {
+return amendmentReasonCode;
+}
+
+/**
+ * Sets the amendment reason code.
+ * 
+ * @param amendmentReasonCode the amendmentReasonCode to set
+ */
+public void setAmendmentReasonCode(String amendmentReasonCode) {
+this.amendmentReasonCode = amendmentReasonCode;
+}
+
+/**
+ * Gets the documents.
+ * 
+ * @return the documents
+ */
+public String getDocuments() {
+return documents;
+}
+
+/**
+ * Sets the documents.
+ * 
+ * @param documents the documents to set
+ */
+public void setDocuments(String documents) {
+this.documents = documents;
+}
+  
 }

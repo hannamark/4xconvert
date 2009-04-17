@@ -233,5 +233,9 @@
             <result name="edit">/WEB-INF/jsp/onholdedit.jsp</result>
             <result name="list">/WEB-INF/jsp/onhold.jsp</result>
         </action>
+        <action name="trialHistory*" class="gov.nih.nci.pa.action.TrialHistoryAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/trialHistoryEdit.jsp</result>
+            <result name="list">/WEB-INF/jsp/trialHistory.jsp</result>
+        </action>
 	</package>
 </struts>
