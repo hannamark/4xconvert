@@ -84,7 +84,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.validator.NotNull;
 
 /**
  * Describes the comprehensive state of the study.
@@ -111,128 +115,131 @@ public class StudyRelationship extends AbstractEntity {
     /** The sequence number. */
     private Integer sequenceNumber;
     
-    /** The source study protocol id. */
-    private Long sourceStudyProtocolId;
+    /** The source study protocol id. (toStudyProtocolIdentifier studyProtocolIdentifier*/
+    private StudyProtocol sourceStudyProtocol;
     
-    /** The target study protocol id. */
-    private Long targetStudyProtocolId;
+    /** The target study protocol id. parent identifier*/
+    private StudyProtocol targetStudyProtocol;
     
         
     
-/**
- * Gets the type code.
- * 
- * @return the type code
- */
-@Column(name = "TYPE_CODE") 
-@Enumerated(EnumType.STRING)
-public StudyRelationshipTypeCode getTypeCode() {
-return typeCode;
-}
-
-/**
- * Sets the type code.
- * 
- * @param typeCode the new type code
- */
-public void setTypeCode(StudyRelationshipTypeCode typeCode) {
-this.typeCode = typeCode;
-}
-
-/**
- * Gets the description text.
- * 
- * @return the description text
- */
-@Column(name = "DESCRIPTION_TEXT")
-public String getDescriptionText() {
-return descriptionText;
-}
-
-/**
- * Sets the description text.
- * 
- * @param descriptionText the new description text
- */
-public void setDescriptionText(String descriptionText) {
-this.descriptionText = descriptionText;
-}
-
-/**
- * Gets the comment text.
- * 
- * @return the comment text
- */
-@Column(name = "COMMENT_TEXT")
-public String getCommentText() {
-return commentText;
-}
-
-/**
- * Sets the comment text.
- * 
- * @param commentText the new comment text
- */
-public void setCommentText(String commentText) {
-this.commentText = commentText;
-}
-
-/**
- * Gets the sequence number.
- * 
- * @return the sequence number
- */
-@Column(name = "SEQUENCE_NUMBER")
-public Integer getSequenceNumber() {
-return sequenceNumber;
-}
-
-/**
- * Sets the sequence number.
- * 
- * @param sequenceNumber the new sequence number
- */
-public void setSequenceNumber(Integer sequenceNumber) {
-this.sequenceNumber = sequenceNumber;
-}
-
-/**
- * Gets the source study protocol id.
- * 
- * @return the source study protocol id
- */
-@Column(name = "SOURCE_STUDY_PROTOCOL_IDENTIFIER")
-public Long getSourceStudyProtocolId() {
-return sourceStudyProtocolId;
-}
-
-/**
- * Sets the source study protocol id.
- * 
- * @param sourceStudyProtocolId the new source study protocol id
- */
-public void setSourceStudyProtocolId(Long sourceStudyProtocolId) {
-this.sourceStudyProtocolId = sourceStudyProtocolId;
-}
-
-/**
- * Gets the target study protocol id.
- * 
- * @return the target study protocol id
- */
-@Column(name = "TARGET_STUDY_PROTOCOL_IDENTIFIER")
-public Long getTargetStudyProtocolId() {
-return targetStudyProtocolId;
-}
-
-/**
- * Sets the target study protocol id.
- * 
- * @param targetStudyProtocolId the new target study protocol id
- */
-public void setTargetStudyProtocolId(Long targetStudyProtocolId) {
-this.targetStudyProtocolId = targetStudyProtocolId;
-}
-
+    /**
+     * Gets the type code.
+     * 
+     * @return the type code
+     */
+    @Column(name = "TYPE_CODE") 
+    @Enumerated(EnumType.STRING)
+    public StudyRelationshipTypeCode getTypeCode() {
+    return typeCode;
+    }
+    
+    /**
+     * Sets the type code.
+     * 
+     * @param typeCode the new type code
+     */
+    public void setTypeCode(StudyRelationshipTypeCode typeCode) {
+    this.typeCode = typeCode;
+    }
+    
+    /**
+     * Gets the description text.
+     * 
+     * @return the description text
+     */
+    @Column(name = "DESCRIPTION_TEXT")
+    public String getDescriptionText() {
+    return descriptionText;
+    }
+    
+    /**
+     * Sets the description text.
+     * 
+     * @param descriptionText the new description text
+     */
+    public void setDescriptionText(String descriptionText) {
+    this.descriptionText = descriptionText;
+    }
+    
+    /**
+     * Gets the comment text.
+     * 
+     * @return the comment text
+     */
+    @Column(name = "COMMENT_TEXT")
+    public String getCommentText() {
+    return commentText;
+    }
+    
+    /**
+     * Sets the comment text.
+     * 
+     * @param commentText the new comment text
+     */
+    public void setCommentText(String commentText) {
+    this.commentText = commentText;
+    }
+    
+    /**
+     * Gets the sequence number.
+     * 
+     * @return the sequence number
+     */
+    @Column(name = "SEQUENCE_NUMBER")
+    public Integer getSequenceNumber() {
+    return sequenceNumber;
+    }
+    
+    /**
+     * Sets the sequence number.
+     * 
+     * @param sequenceNumber the new sequence number
+     */
+    public void setSequenceNumber(Integer sequenceNumber) {
+    this.sequenceNumber = sequenceNumber;
+    }
+    
+  
+    /**
+    *
+    * @return studyProtocol
+    */
+   @OneToOne
+   @JoinColumn(name = "SOURCE_STUDY_PROTOCOL_IDENTIFIER")
+   @NotNull
+   public StudyProtocol getSourceStudyProtocol() {
+       return sourceStudyProtocol;
+   }
+    
+    /**
+     * Sets the source study protocol id.
+     * 
+     * @param sourceStudyProtocol the new source study protocol id
+     */
+    public void setSourceStudyProtocol(StudyProtocol sourceStudyProtocol) {
+    this.sourceStudyProtocol = sourceStudyProtocol;
+    }
+    
+    /**
+     * Gets the target study protocol id.
+     * 
+     * @return the target study protocol id
+     */
+    @OneToOne
+    @JoinColumn(name = "TARGET_STUDY_PROTOCOL_IDENTIFIER")
+    @NotNull
+    public StudyProtocol getTargetStudyProtocol() {
+        return targetStudyProtocol;
+    }
+    
+    /**
+     * Sets the target study protocol id.
+     * 
+     * @param targetStudyProtocol the new target study protocol id
+     */
+    public void setTargetStudyProtocol(StudyProtocol targetStudyProtocol) {
+        this.targetStudyProtocol = targetStudyProtocol;
+    }
   
 }

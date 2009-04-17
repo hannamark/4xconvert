@@ -372,6 +372,9 @@ public class TestSchema {
             sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
             sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
             sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+            sp.setIdentifier("NCI-2009-00001");
+            sp.setSubmissionNumber(Integer.valueOf(1));
+            
             addUpdObject(sp); 
             sp.setId(sp.getId());
             studyProtocolIds.add(sp.getId());

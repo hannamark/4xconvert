@@ -95,7 +95,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Protocol DAO for accessing DAO.
  *
  * @author Naveen Amiruddin
  * @since 05/30/2007

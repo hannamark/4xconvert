@@ -79,13 +79,8 @@
 
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-
-import javax.ejb.Remote;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -96,6 +91,10 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.List;
+
+import javax.ejb.Remote;
+
 
 /**
  * @author Naveen Amiruddin
@@ -105,7 +104,8 @@ import gov.nih.nci.services.person.PersonDTO;
  * copyright holder, NCI.
  */
 @Remote
-@SuppressWarnings({ "PMD" })
+@SuppressWarnings({ "PMD.ExcessiveParameterList" })
+
 public interface TrialRegistrationServiceRemote {
     
     /**
@@ -118,12 +118,42 @@ public interface TrialRegistrationServiceRemote {
      * <li>
      * </ul>
      *
-     * @param ispDto attributes of study protocol dto.
-     * @throws PAException on any error
-     * @return ii of StudyProtocol.
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator 
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationParticipationIdentifierDTO local protocol identifier
+     * @param nctIdentifierParticipationIdentifierDTO nct Identifier
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studyParticipationContactDTO phone and email info when sponsor is responsible
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactDTO name of the person when sponsor is responsible
+     * @return ii of Study Protocol
+     * @throws PAException on error
      */
 
-    Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDto) throws PAException;
+    Ii createInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO , 
+            StudyOverallStatusDTO overallStatusDTO , 
+            List<StudyIndldeDTO> studyIndldeDTOs , 
+            List<StudyResourcingDTO> studyResourcingDTOs , 
+            List<DocumentDTO> documentDTOs , 
+            OrganizationDTO leadOrganizationDTO , 
+            PersonDTO principalInvestigatorDTO , 
+            OrganizationDTO sponsorOrganizationDTO , 
+            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO ,
+            StudyParticipationDTO nctIdentifierParticipationIdentifierDTO , 
+            StudyContactDTO studyContactDTO , 
+            StudyParticipationContactDTO studyParticipationContactDTO ,
+            OrganizationDTO summary4organizationDTO , 
+            StudyResourcingDTO summary4studyResourcingDTO , 
+            PersonDTO responsiblePartyContactDTO)
+    throws PAException;
     
     /**
      * An action plan and execution of a pre-clinical for amending an existing protocols.

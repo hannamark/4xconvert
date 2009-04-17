@@ -79,7 +79,21 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -87,18 +101,60 @@ import org.junit.Test;
 public class TrialRegistrationServiceTest {
 
     private TrialRegistrationServiceBean bean = new TrialRegistrationServiceBean();
-    StudyProtocolServiceRemote sps = new StudyProtocolServiceBean(); 
+    StudyProtocolServiceLocal studyProtocolService = new StudyProtocolServiceBean();
+    StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusServiceBean();    
+    StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeServiceBean();
+    StudyResourcingServiceLocal studyResourcingService = new StudyResourcingServiceBean();
+    DocumentServiceLocal documentService = new DocumentServiceBean();
+    StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseServiceBean();
+    ArmServiceLocal armService = new ArmServiceBean();  
+    PlannedActivityServiceLocal plannedActivityService = new PlannedActivityServiceBean();
+    SubGroupsServiceLocal subGroupsService = new SubGroupsServiceBean();
+    StudyParticipationServiceLocal studyParticipationService = new StudyParticipationServiceBean();
+    StudyParticipationContactServiceLocal studyParticipationContactService = new StudyParticipationContactServiceBean(); 
+    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusServiceBean();
+    StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureServiceBean();
+    StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityServiceBean();
+    private Ii spIi;
     @Before
     public void setUp() throws Exception {
-//        bean.studyProtocolService = sps;
+        bean.studyProtocolService = studyProtocolService;
+        bean.studyOverallStatusService = studyOverallStatusService;
+        bean.studyIndldeService = studyIndldeService;
+        bean.studyResourcingService = studyResourcingService;
+        bean.documentService  = documentService;
+        bean.studyDiseaseService = studyDiseaseService;
+        bean.armService = armService;
+        bean.plannedActivityService = plannedActivityService;
+        bean.subGroupsService = subGroupsService;
+        bean.studyParticipationService = studyParticipationService;
+        bean.studyParticipationContactService = studyParticipationContactService;
+        bean.studySiteAccrualStatusService = studySiteAccrualStatusService;
+        bean.studyOutcomeMeasureService = studyOutcomeMeasureService;
+        bean.studyRegulatoryAuthorityService = studyRegulatoryAuthorityService;
         TestSchema.reset1();
         TestSchema.primeData();
+        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
      }
     
     @Test
     public void createInterventionalStudyProtocolTest() throws Exception {
-        //InterventionalStudyProtocolDTO ispDto = InterventionalStudyProtocolTest.createInterventionalStudyProtocolObj();
-        //Ii ii = bean.createInterventionalStudyProtocol(ispDto);
+        StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi).get(0);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getstudyResourceByStudyProtocol(spIi);
+        List<DocumentDTO> documentDTOs = documentService.getDocumentsByStudyProtocol(spIi);
+        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
+        leadOrganizationDTO.setIdentifier(IiConverter.converToPoOrganizationIi("abc"));
+        PersonDTO principalInvestigatorDTO  = new PersonDTO();
+        principalInvestigatorDTO.setIdentifier(IiConverter.converToPoPersonIi("abc"));
+        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
+        sponsorOrganizationDTO.setIdentifier(IiConverter.converToPoOrganizationIi("111"));
+        StudyParticipationDTO spDto = new StudyParticipationDTO();
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+        StudyParticipationDTO leadOrganizationParticipationIdentifierDTO  = 
+            studyParticipationService.getByStudyProtocol(spIi, spDto).get(0) ;
+//        StudyContactDTO studyContactDTO = 
         assertEquals("","");
         
     }

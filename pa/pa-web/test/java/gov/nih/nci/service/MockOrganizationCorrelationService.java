@@ -277,5 +277,13 @@ public class MockOrganizationCorrelationService implements
         return null;
     }
     
+    /**
+     * returns the id of the Ct.gov Po id.
+     * @return po identifier
+     * @throws PAException on error
+     */
+    public String getCtGovPOIdentifier() throws  PAException {
+        return null;
+    }
 
 }

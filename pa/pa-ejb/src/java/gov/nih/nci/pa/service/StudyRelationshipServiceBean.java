@@ -76,135 +76,25 @@
 * 
 * 
 */
-package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.St;
+package gov.nih.nci.pa.service;
+
+import gov.nih.nci.pa.domain.StudyRelationship;
+import gov.nih.nci.pa.iso.convert.StudyRelationshipConverter;
+import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
- * The Class StudyRelationshipDTO.
- * 
- * @author Anupama Sharma
- * @since 04/10/2009
+ * @author Naveen Amiruddin
+ * @since 04/01/2009
  */
-public class StudyRelationshipDTO extends BaseDTO {
-    
-    private static final long serialVersionUID = 1234567890L;
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class StudyRelationshipServiceBean extends 
+    AbstractBaseIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>  
+    implements StudyRelationshipServiceLocal , StudyRelationshipServiceRemote {
 
-    /** The type code. */
-    private Cd typeCode;  
-    
-    /** The description text. */
-    private St descriptionText;
-    
-    /** The comment text. */
-    private St commentText;
-    
-    /** The Sequence number. */
-    private Int sequenceNumber;
-    
-    /** The source study protocol identifier. */
-    private Ii sourceStudyProtocolIdentifier;
-    
-    /** The target study protocol identifier. */
-    private Ii targetStudyProtocolIdentifier;
-    
-    /**
-    * Gets the type code.
-    * @return the type code
-    */
-    public Cd getTypeCode() {
-        return typeCode;
-    }
-    
-    /**
-    * Sets the type code.
-    * 
-    * @param typeCode the new type code
-    */
-    public void setTypeCode(Cd typeCode) {
-        this.typeCode = typeCode;
-    }
-    
-    /**
-    * Gets the description text.
-    * @return the description text
-    */
-    public St getDescriptionText() {
-        return descriptionText;
-    }
-    
-    /**
-    * Sets the description text.
-    * @param descriptionText the new description text
-    */
-    public void setDescriptionText(St descriptionText) {
-        this.descriptionText = descriptionText;
-    }
-    
-    /**
-    * Gets the comment text.
-    * @return the comment text
-    */
-    public St getCommentText() {
-        return commentText;
-    }
-    
-    /**
-    * Sets the comment text.
-    * @param commentText the new comment text
-    */
-    public void setCommentText(St commentText) {
-        this.commentText = commentText;
-    }
-    
-    /**
-    * Gets the sequence number.
-    * @return the sequence number
-    */
-    public Int getSequenceNumber() {
-        return sequenceNumber;
-    }
-    
-    /**
-    * Sets the sequence number.
-    * @param sequenceNumber the new sequence number
-    */
-    public void setSequenceNumber(Int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
-    
-    /**
-    * Gets the source study protocol identifier.
-    * @return the source study protocol identifier
-    */
-    public Ii getSourceStudyProtocolIdentifier() {
-        return sourceStudyProtocolIdentifier;
-    }
-    
-    /**
-    * Sets the source study protocol identifier.
-    * @param sourceStudyProtocolIdentifier the new source study protocol identifier
-    */
-    public void setSourceStudyProtocolIdentifier(Ii sourceStudyProtocolIdentifier) {
-        this.sourceStudyProtocolIdentifier = sourceStudyProtocolIdentifier;
-    }
-    
-    /**
-    * Gets the target study protocol identifier.
-    * @return the target study protocol identifier
-    */
-    public Ii getTargetStudyProtocolIdentifier() {
-        return targetStudyProtocolIdentifier;
-    }
-    
-    /**
-    * Sets the target study protocol identifier.
-    * @param targetStudyProtocolIdentifier the from (old) study protocol identifier
-    */
-    public void setTargetStudyProtocolIdentifier(Ii targetStudyProtocolIdentifier) {
-        this.targetStudyProtocolIdentifier = targetStudyProtocolIdentifier;
-    }
 }

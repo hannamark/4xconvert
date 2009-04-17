@@ -110,9 +110,11 @@ public class Converters {
     private static StudyContactConverter studyContactConverter = new StudyContactConverter();
     private static StudyOverallStatusConverter studyOverallStatusConverter = new StudyOverallStatusConverter();
     private static StudyRecruitmentStatusConverter studyRecruitmentStatusConverter =
-    new StudyRecruitmentStatusConverter();
+        new StudyRecruitmentStatusConverter();
     private static StudyParticipationContactConverter studyParticipationContactConverter =
         new StudyParticipationContactConverter();
+    private static StudyRelationshipConverter studyRelationshipConverter = new StudyRelationshipConverter();
+
     /**
      * @param clazz class
      * @param <TYPE> the converter type to get
@@ -177,6 +179,9 @@ public class Converters {
         }
         if (clazz.equals(StudyParticipationContactConverter.class)) {
             return (TYPE) studyParticipationContactConverter;
+        }
+        if (clazz.equals(StudyRelationshipConverter.class)) {
+            return (TYPE) studyRelationshipConverter;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

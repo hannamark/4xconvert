@@ -99,4 +99,10 @@ public class PAConstants {
     /** Organization Type- Participating Site. */
     public static final String PARTICIPATING_SITE = "Participating Site";
 
+    /** Email. **/
+    public static final String EMAIL = "EMAIL";
+
+    /** PHONE. **/
+    public static final String PHONE = "PHONE";
+
 }

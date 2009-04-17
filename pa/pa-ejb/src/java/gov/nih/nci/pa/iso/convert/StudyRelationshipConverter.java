@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
@@ -86,29 +87,27 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
-import java.util.Date;
-
 /**
  * 
- *
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI. 
+ *@author NAmiruddin 
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
-public class StudyRelationshipConverter {
+public class StudyRelationshipConverter extends AbstractConverter<StudyRelationshipDTO, StudyRelationship> {
     /**
      * @param sr StudyRelationship
      * @return StudyRelationshipDTO
      */
+    @Override
     public StudyRelationshipDTO convertFromDomainToDto(StudyRelationship sr) {
-    StudyRelationshipDTO srDTO = new StudyRelationshipDTO();
+        StudyRelationshipDTO srDTO = new StudyRelationshipDTO();
         srDTO.setIdentifier(IiConverter.converToStudyRelationshipIi(sr.getId()));
         srDTO.setCommentText(StConverter.convertToSt(sr.getCommentText()));
         srDTO.setDescriptionText(StConverter.convertToSt(sr.getDescriptionText()));
         srDTO.setSequenceNumber(IntConverter.convertToInt(sr.getSequenceNumber()));
-        srDTO.setSourceStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sr.getSourceStudyProtocolId()));
-        srDTO.setTargetStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sr.getTargetStudyProtocolId()));
+        srDTO.setSourceStudyProtocolIdentifier(
+                IiConverter.converToStudyProtocolIi(sr.getSourceStudyProtocol().getId()));
+        srDTO.setTargetStudyProtocolIdentifier(
+                IiConverter.converToStudyProtocolIi(sr.getTargetStudyProtocol().getId()));
         srDTO.setTypeCode(CdConverter.convertToCd(sr.getTypeCode()));
         
         return srDTO;
@@ -119,32 +118,35 @@ public class StudyRelationshipConverter {
      * @param srDTO StudyRelationshipDTO
      * @return StudyRelationship
      */
+    @Override
     public  StudyRelationship convertFromDtoToDomain(StudyRelationshipDTO srDTO) {
-    StudyRelationship sr = new StudyRelationship();
-    sr.setDateLastUpdated(new Date());
-    
-    if (srDTO.getIdentifier() != null) {
-        sr.setId(IiConverter.convertToLong(srDTO.getIdentifier()));
-    }
-    if (srDTO.getCommentText() != null) {
-        sr.setCommentText(srDTO.getCommentText().getValue());
-    }
-    if (srDTO.getDescriptionText() != null) {
-        sr.setDescriptionText(srDTO.getDescriptionText().getValue());
-    }
-    if (srDTO.getSequenceNumber() != null) {
-        sr.setSequenceNumber(srDTO.getSequenceNumber().getValue());
-    }
-    if (srDTO.getSourceStudyProtocolIdentifier() != null) {
-        sr.setSourceStudyProtocolId(IiConverter.convertToLong(srDTO.getSourceStudyProtocolIdentifier()));
-    }
-    if (srDTO.getTargetStudyProtocolIdentifier() != null) {
-        sr.setTargetStudyProtocolId(IiConverter.convertToLong(srDTO.getTargetStudyProtocolIdentifier()));
-    }
-    if (srDTO.getTypeCode() != null) {
-        sr.setTypeCode(StudyRelationshipTypeCode.getByCode(CdConverter.convertCdToString(srDTO.getTypeCode())));
-    }
+        StudyRelationship sr = new StudyRelationship();
+        StudyProtocol spSoruce = new StudyProtocol();
+        spSoruce.setId(IiConverter.convertToLong(srDTO.getSourceStudyProtocolIdentifier()));    
+        StudyProtocol spTarget = new StudyProtocol();
+        spTarget.setId(IiConverter.convertToLong(srDTO.getTargetStudyProtocolIdentifier()));    
+        
+        if (srDTO.getIdentifier() != null) {
+            sr.setId(IiConverter.convertToLong(srDTO.getIdentifier()));
+        }
+        if (srDTO.getCommentText() != null) {
+            sr.setCommentText(srDTO.getCommentText().getValue());
+        }
+        if (srDTO.getDescriptionText() != null) {
+            sr.setDescriptionText(srDTO.getDescriptionText().getValue());
+        }
+        if (srDTO.getSequenceNumber() != null) {
+            sr.setSequenceNumber(srDTO.getSequenceNumber().getValue());
+        }
+        if (srDTO.getSourceStudyProtocolIdentifier() != null) {
+            sr.setSourceStudyProtocol(spSoruce);
+        }
+        if (srDTO.getTargetStudyProtocolIdentifier() != null) {
+            sr.setTargetStudyProtocol(spTarget);
+        }
+        if (srDTO.getTypeCode() != null) {
+            sr.setTypeCode(StudyRelationshipTypeCode.getByCode(CdConverter.convertCdToString(srDTO.getTypeCode())));
+        }
         return sr;
     }
-
 }

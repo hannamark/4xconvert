@@ -225,7 +225,6 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            //session.beginTransaction();
             bo = convertFromDtoToDomain(dto);
             bo.setUserLastUpdated((ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
