@@ -325,8 +325,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     
             deepCopy(fromStudyProtocolii , toStudyProtocolIi);
             deepCopyParticipation(fromStudyProtocolii , toStudyProtocolIi);
-            Ii i = null;
-            i.getExtension();
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
