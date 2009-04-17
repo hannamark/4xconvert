@@ -86,6 +86,10 @@ public class StudyOnholdServiceAuthorization implements PDP {
 	public void authorizeDelete(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
+	   				
+	public void authorizeIsOnhold(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -117,6 +121,9 @@ public class StudyOnholdServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("delete")){
 			authorizeDelete(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("isOnhold")){
+			authorizeIsOnhold(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

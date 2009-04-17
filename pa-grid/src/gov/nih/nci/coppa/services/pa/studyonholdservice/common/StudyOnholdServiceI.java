@@ -14,6 +14,8 @@ import java.rmi.RemoteException;
  */
 public interface StudyOnholdServiceI {
 
+  public gov.nih.nci.coppa.services.pa.BL isOnhold(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
   public gov.nih.nci.coppa.services.pa.StudyOnhold[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   /**

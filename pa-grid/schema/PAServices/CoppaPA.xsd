@@ -12,7 +12,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="Bl">
+    <xs:element name="BL">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="ISO:BL" />

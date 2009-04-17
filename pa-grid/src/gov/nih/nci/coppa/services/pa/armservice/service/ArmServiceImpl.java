@@ -18,7 +18,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
- * Implementation of the ArmService.  Dispatches to the remote EJBs and the Transformers.
+ * Implementation of the ArmService. Dispatches to the remote EJBs and the Transformers.
  */
 public class ArmServiceImpl extends ArmServiceImplBase {
 
@@ -27,67 +27,68 @@ public class ArmServiceImpl extends ArmServiceImplBase {
 
     /**
      * Simple constructor.
+     *
      * @throws RemoteException on error
      */
     public ArmServiceImpl() throws RemoteException {
         super();
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Arm get(Id id) throws RemoteException, PAFault {
-	    try {
-	        Ii iiDto = IITransformer.INSTANCE.toDto(id);
-	        ArmDTO armDto = armService.get(iiDto);
-	        return ArmTransformer.INSTANCE.toXml(armDto);
-	    } catch (Exception e) {
-	        logger.error(e.getMessage(), e);
-	        throw FaultUtil.reThrowRemote(e);
-	    }
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Arm get(Id id) throws RemoteException, PAFault {
+        try {
+            Ii iiDto = IITransformer.INSTANCE.toDto(id);
+            ArmDTO armDto = armService.get(iiDto);
+            return ArmTransformer.INSTANCE.toXml(armDto);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
-	public Arm[] getByPlannedActivity(Id id) throws RemoteException, PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          List<ArmDTO> armDto = armService.getByPlannedActivity(iiDto);
-          return convert(armDto);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
-	}
+    public Arm[] getByPlannedActivity(Id id) throws RemoteException, PAFault {
+        try {
+            Ii iiDto = IITransformer.INSTANCE.toDto(id);
+            List<ArmDTO> armDto = armService.getByPlannedActivity(iiDto);
+            return convert(armDto);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Arm[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
-	    try {
-	        Ii iiDto = IITransformer.INSTANCE.toDto(id);
-	        List<ArmDTO> armDto = armService.getByStudyProtocol(iiDto);
-	        return convert(armDto);
-	    } catch (Exception e) {
-	        logger.error(e.getMessage(), e);
-	        throw FaultUtil.reThrowRemote(e);
-	    }
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Arm[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
+        try {
+            Ii iiDto = IITransformer.INSTANCE.toDto(id);
+            List<ArmDTO> armDto = armService.getByStudyProtocol(iiDto);
+            return convert(armDto);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Arm[] getCurrentByStudyProtocol(Id studyProtocolId) throws RemoteException, PAFault {
-	    try {
+    /**
+     * {@inheritDoc}
+     */
+    public Arm[] getCurrentByStudyProtocol(Id studyProtocolId) throws RemoteException, PAFault {
+        try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<ArmDTO> armDto = armService.getCurrentByStudyProtocol(iiDto);
             return convert(armDto);
-	    } catch (Exception e) {
-	        logger.error(e.getMessage(), e);
-	        throw FaultUtil.reThrowRemote(e);
-	    }
-	}
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -99,23 +100,23 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     /**
      * {@inheritDoc}
      */
-	public Arm create(Arm arm) throws RemoteException, PAFault {
+    public Arm create(Arm arm) throws RemoteException, PAFault {
         throw new RemoteException("Not yet implemented");
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public Arm update(Arm arm) throws RemoteException, PAFault {
+    public Arm update(Arm arm) throws RemoteException, PAFault {
         throw new RemoteException("Not yet implemented");
-	}
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    public void delete(Id id) throws RemoteException, PAFault {
         throw new RemoteException("Not yet implemented");
-	}
+    }
 
     private static Arm[] convert(List<ArmDTO> armDto) throws DtoTransformException {
         Arm[] result = new Arm[armDto.size()];
@@ -125,4 +126,3 @@ public class ArmServiceImpl extends ArmServiceImplBase {
         return result;
     }
 }
-

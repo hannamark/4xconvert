@@ -183,6 +183,26 @@
           <sequence />
         </complexType>
       </element>
+      <element name="IsOnholdRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="IsOnholdResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:BL" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="StudyOnholdServiceResourceProperties">
         <complexType>
           <sequence />
@@ -233,6 +253,12 @@
   <message name="DeleteResponse">
     <part name="parameters" element="tns:DeleteResponse" />
   </message>
+  <message name="IsOnholdRequest">
+    <part name="parameters" element="tns:IsOnholdRequest" />
+  </message>
+  <message name="IsOnholdResponse">
+    <part name="parameters" element="tns:IsOnholdResponse" />
+  </message>
   <message name="PAFaultFaultMessage">
     <part name="fault" element="ns2:PAFault" />
   </message>
@@ -275,6 +301,11 @@
     <operation name="delete">
       <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/DeleteRequest" />
       <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/DeleteResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="isOnhold">
+      <input message="tns:IsOnholdRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/IsOnholdRequest" />
+      <output message="tns:IsOnholdResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/IsOnholdResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/PAFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
