@@ -155,7 +155,7 @@ public class StudyProtocol extends AbstractEntity {
     private Timestamp amendmentDate;
     private AmendmentReasonCode amendmentReasonCode;
     private Integer submissionNumber;
-    private String parentProtocolIdentifier;
+    
     
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
@@ -813,19 +813,7 @@ return submissionNumber;
 public void setSubmissionNumber(Integer submissionNumber) {
 this.submissionNumber = submissionNumber;
 }
-/**
- * @return the parentProtocolIdentifier
- */
-@Column(name = "PARENT_PROTOCOL_IDENTIFIER")
-public String getParentProtocolIdentifier() {
-return parentProtocolIdentifier;
-}
-/**
- * @param parentProtocolIdentifier the parentProtocolIdentifier to set
- */
-public void setParentProtocolIdentifier(String parentProtocolIdentifier) {
-this.parentProtocolIdentifier = parentProtocolIdentifier;
-}
+
 
 }
 
