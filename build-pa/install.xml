@@ -359,14 +359,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <if>
                 <isset property="jboss.file.is.zip"/>
                 <then>
-                    <unzip dest="${application.base.path}" src="${tools.dir}/${jboss.binaries.file}" />
+                    <unzip dest="@{application.base.path}" src="@{jboss.binaries.file}" />
                 </then>
             </if>
             <if>
                 <isset property="jboss.file.is.jar"/>
                 <then>
         			<echo message="Using -installGroup @{jems.install.option} installpath=@{jboss.home}"/>
-                    <java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
+                    <java jar="@{jboss.binaries.file}" fork="true">
                         <arg line="-installGroup @{jems.install.option} installpath=@{jboss.home}"/>
                     </java>
                 </then>
@@ -392,7 +392,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 </then>                 
             </if>           
         </sequential>
-    </macrodef>	
+    </macrodef>		
 	
 	<target name="install:jboss:binaries:pa-ear" unless="exclude.pa-ear">
 		<jboss-install-binaries2 

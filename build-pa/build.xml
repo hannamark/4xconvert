@@ -224,7 +224,64 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <delete dir="${temp.dir}"/>
     	<delete dir="${pa-grid.artifact.dir}"/>
     </target>
+	
+    <macrodef name="jboss-install-binaries2" description="Added params to support different types of installations, should be pulled up into BDA-utils">
+        <attribute name="application.base.path" default="${application.base.path}"/>
+        <attribute name="jboss.binaries.file" default="${tools.dir}/${jboss.binaries.file}" />
+        <attribute name="jboss.server.name" default="${jboss.server.name}" />
+        <attribute name="jems.install.option" default="ejb3" />
+    	<attribute name="jboss.home" default="${jboss.home}" />
+        <sequential>
+			<var name="jboss.file.is.zip" unset="true"/>
+            <propertyregex property="jboss.file.is.zip"
+                input="@{jboss.binaries.file}"
+                regexp=".*.zip"
+                select="true"
+                />
+			<var name="jboss.file.is.jar" unset="true"/>				
+            <propertyregex property="jboss.file.is.jar"
+                input="@{jboss.binaries.file}"
+                regexp=".*.jar"
+                select="true"
+                />
+            <if>
+                <isset property="jboss.file.is.zip"/>
+                <then>
+                    <unzip dest="@{application.base.path}" src="@{jboss.binaries.file}" />
+                </then>
+            </if>
+            <if>
+                <isset property="jboss.file.is.jar"/>
+                <then>
+        			<echo message="Using -installGroup @{jems.install.option} installpath=@{jboss.home}"/>
+                    <java jar="@{jboss.binaries.file}" fork="true">
+                        <arg line="-installGroup @{jems.install.option} installpath=@{jboss.home}"/>
+                    </java>
+                </then>
+            </if>
 
+            <!-- make sure default server is renamed if applicable -->
+            <if>            
+                <not>                   
+                    <equals arg1="@{jboss.server.name}" arg2="default"/>
+                </not>                  
+                <then>                  
+                    <move todir="@{jboss.home}/server/@{jboss.server.name}">
+                        <fileset dir="@{jboss.home}/server/default"/>
+                    </move>                         
+                </then>                 
+            </if>           
+
+            <if>            
+                <os family="unix"/>     
+                <then>                  
+                    <chmod dir="@{jboss.home}/bin" perm="ugo+rx" 
+                        includes="**/*.sh"/>                    
+                </then>                 
+            </if>           
+        </sequential>
+    </macrodef>	
+	
     <target name="init" >
         <!-- work around missing dirs for first time build in sub-project build.xmls -->
         <!--
@@ -266,9 +323,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                     <then>
                         <echo message="LOCAL_JBOSS_HOME not found downloading."/>
                         <antcall target="dist:tools:retrieve:jboss"/>
-                        <java jar="${jboss.dest.file}" fork="true">
-                            <arg line="-installGroup ejb3 installpath=${local.jboss.home}"/>
-                        </java> 
+						<jboss-install-binaries2 
+						    application.base.path="${local.jboss.home}"
+							jboss.server.name="${jboss.server.name}" 
+							jems.install.option="ejb3" 
+							jboss.binaries.file="${jboss.dest.file}"
+							jboss.home="${local.jboss.home}"
+						 />                        
                     </then>
                     <else>
                         <echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
