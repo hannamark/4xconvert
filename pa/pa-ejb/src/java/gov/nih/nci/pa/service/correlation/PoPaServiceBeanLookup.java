@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
@@ -441,5 +442,15 @@ public class PoPaServiceBeanLookup  {
       return (PAPersonServiceRemote)
       JNDIUtil.lookup("pa/PAPersonServiceBean/remote");
     }
+
+    /**
+     * @return DocumentWorkflowStatusServiceRemote
+     * @throws PAException on error
+     */
+    public static DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() throws PAException {
+      return (DocumentWorkflowStatusServiceRemote)
+      JNDIUtil.lookup("pa/DocumentWorkflowStatusServiceBean/remote");
+    }
+    
     
 }

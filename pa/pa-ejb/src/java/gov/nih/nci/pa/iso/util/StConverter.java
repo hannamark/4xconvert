@@ -123,7 +123,7 @@ public class StConverter {
         if (st.getValue() == null) {
             return str;
         }
-        return st.getValue();
+        return st.getValue().trim();
          
     }
 

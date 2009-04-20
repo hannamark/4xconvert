@@ -104,6 +104,8 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,9 +139,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     List<AbstractionCompletionDTO> abstractionList = new ArrayList<AbstractionCompletionDTO>();
     StudyProtocolDTO studyProtocolDTO = PoPaServiceBeanLookup.getStudyProtocolService()
                         .getStudyProtocol(studyProtocolIi);
+    enforceIdentifierLength(studyProtocolDTO, abstractionList);
     enforceGeneralTrailDetails(studyProtocolDTO, abstractionList);
 
-   enforceNCISpecificInfo(studyProtocolDTO, abstractionList);
+    enforceNCISpecificInfo(studyProtocolDTO, abstractionList);
 
     enforceRegulatoryInfo(studyProtocolIi, abstractionList);
 
@@ -200,6 +203,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceEligibility(studyProtocolIi, abstractionList);
     return abstractionList;
   }
+  
   private void enforceDisease(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) throws PAException {
       boolean leadExist = false;
       List<StudyDiseaseDTO> sdDtos =
@@ -246,22 +250,26 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
 
   private void enforceArmGroup(Ii studyProtocolIi,
-      StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) throws PAException {
-    if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
-      List<ArmDTO> aList = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-      if (aList.isEmpty()) {
-       abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design "
-            + "under Scientific Data menu.", "No Arm exists for the trial."));
+          StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) throws PAException {
+      List<ArmDTO> dtos = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
+      if (dtos.isEmpty()) { 
+          if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
+              abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design " 
+              + "under Scientific Data menu.", "No Arm exists for the trial."));
+          } else if (studyProtocolDTO.getStudyProtocolType().getValue().
+              equalsIgnoreCase("ObservationalStudyProtocol")) {
+              abstractionList.add(createError("Error", "Select Groups from Observational Trial Design " 
+              + "under Scientific Data menu.", "No Groups exists for the trial."));
+          }
+      } else {
+          for (ArmDTO dto : dtos) {
+              if (PAUtil.isGreatenThan(dto.getName() , PAAttributeMaxLen.ARM_NAME)) {
+              abstractionList.add(createError("Error", "Select Arm/Group under Scientific Data menu.", 
+              dto.getName().getValue() + "  must not be more than 62 characters  "));
+              }
+          }
       }
-    } else if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("ObservationalStudyProtocol")) {
-      List<ArmDTO> aList = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-      if (aList.isEmpty()) {
-       abstractionList.add(createError("Error", "Select Groups from Observational Trial Design "
-            + "under Scientific Data menu.", "No Groups exists for the trial."));
-      }
-    }
   }
-
 
   private void enforceTrialStatus(Ii studyProtocolIi,
       StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) throws PAException {
@@ -410,36 +418,55 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
   }
 
-  private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO,
-      List<AbstractionCompletionDTO> abstractionList) {
-    if (studyProtocolDTO.getAssignedIdentifier().getExtension() == null) {
-     abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
-          "NCI Trial Identifier must be Entered"));
-    }
-    if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
-      abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
-          "Official Title must be Entered"));
-    }
-   /* if (studyProtocolDTO.getPublicTitle().getValue() == null) {
-     abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
-          "Brief Title must be Entered"));
-    }
-    if (studyProtocolDTO.getPublicDescription().getValue() == null) {
-      abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
-          "Brief Summary must be Entered"));
-    }*/
-  }
+  private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO, 
+          List<AbstractionCompletionDTO> abstractionList) {
+        if (studyProtocolDTO.getAssignedIdentifier().getExtension() == null) {
+         abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+              "NCI Trial Identifier must be Entered"));
+        }
+        if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
+          abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+              "Official Title must be Entered"));
+        } else if (PAUtil.isGreatenThan(studyProtocolDTO.getOfficialTitle(), 
+                PAAttributeMaxLen.LEN_600)) {
+            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+                "Official Title cannot be more than 600 chracters "));
+        }
+        if (PAUtil.isGreatenThan(studyProtocolDTO.getAcronym(), PAAttributeMaxLen.ACRONYM)) {
+            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            "Acronym must not be more than 14 characters "));
+        }
+        if (PAUtil.isGreatenThan(studyProtocolDTO.getScientificDescription(), PAAttributeMaxLen.LEN_32000)) {
+            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            "Detailed Description must not be more than 32000 characters "));
+        }
+        if (PAUtil.isGreatenThan(studyProtocolDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD)) {
+            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            "Keywords must not be more than 160 characters "));
+        }
+      }
+
+
   private void enforceTrailDescriptionDetails(StudyProtocolDTO studyProtocolDTO,
-List<AbstractionCompletionDTO> abstractionList) {
-if (studyProtocolDTO.getPublicTitle().getValue() == null) {
-abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
-"Brief Title must be Entered"));
-}
-if (studyProtocolDTO.getPublicDescription().getValue() == null) {
-abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
-"Brief Summary must be Entered"));
-}
-}
+          List<AbstractionCompletionDTO> abstractionList) {
+      if (studyProtocolDTO.getPublicTitle().getValue() == null) {
+          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          "Brief Title must be Entered"));
+      } else if (!PAUtil.isWithinRange(studyProtocolDTO.getPublicTitle(), 
+          PAAttributeMaxLen.LEN_18, PAAttributeMaxLen.LEN_300)) {
+          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          "Brief Title must be between 18 and 300 characters "));
+      }
+      if (studyProtocolDTO.getPublicDescription().getValue() == null) {
+          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          "Brief Summary must be Entered"));
+      } else if (PAUtil.isGreatenThan(studyProtocolDTO.getPublicDescription(), 
+          PAAttributeMaxLen.LEN_5000)) {
+          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          "Brief Summary must not be more than 5000 characters "));
+      }
+
+  }
 
   private void enforceNCISpecificInfo(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList)
   {
@@ -619,7 +646,36 @@ abstractionList.add(createError("Error", "Select Trial Description from Scientif
 
   }
 
+  private void enforceIdentifierLength(StudyProtocolDTO spDto, List<AbstractionCompletionDTO> abstractionList) 
+  throws PAException {
+      List<StudyParticipationDTO> sParts = new ArrayList<StudyParticipationDTO>();
+      StudyParticipationDTO spartDTO = new StudyParticipationDTO();
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+      sParts.add(spartDTO);
+      spartDTO = new StudyParticipationDTO();
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
+      sParts.add(spartDTO);
+      List<StudyParticipationDTO> dtos = PoPaServiceBeanLookup.
+          getStudyParticipationService().getByStudyProtocol(spDto.getIdentifier(), sParts);   
+          for (StudyParticipationDTO dto : dtos) {
+              if (PAUtil.isGreatenThan(dto.getLocalStudyProtocolIdentifier(), 
+                      PAAttributeMaxLen.LEN_30)) {
+                  if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode().equals(
+                          dto.getFunctionalCode().getCode())) {
+                      abstractionList.add(createError("Error" , 
+                              "Select General Trial Details from Administrative Data menu." , 
+                              "Lead Organization Trial Identifier  cannot be more than 30 characters"));
+                  } else if (StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equals(
+                          dto.getFunctionalCode().getCode())) {
+                      abstractionList.add(createError("Error" , 
+                              "Select General Trial Details from Administrative Data menu." , 
+                              "NCT Number cannot be more than 30 characters"));
+                  }
 
+              }
+          }
+      
+  }
   private AbstractionCompletionDTO createError(String errorType, String comment, String errorDescription) {
       AbstractionCompletionDTO acDto = new AbstractionCompletionDTO();
       acDto.setErrorType(errorType);

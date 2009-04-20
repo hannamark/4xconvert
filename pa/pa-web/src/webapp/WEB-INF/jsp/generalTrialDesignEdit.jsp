@@ -143,7 +143,7 @@ function manageRespPartyLookUp(){
            </label>
          </td>
          <td class="value">
-        <s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="12"/> 
+        <s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="14"/> 
         </td>
     </tr>
      <tr>

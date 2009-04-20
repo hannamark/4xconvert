@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
@@ -102,7 +103,7 @@ import java.util.regex.Pattern;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({  "PMD.TooManyMethods" })
 public class PAUtil {
     /**
      * checks if Ii is null.
@@ -119,7 +120,7 @@ public class PAUtil {
             }
         }
         try {
-            new Long(ii.getExtension());
+            Long.valueOf(ii.getExtension());
         } catch (NumberFormatException nfe) {
             // if cannot be converted, consider as null
             isNull = true;
@@ -343,12 +344,17 @@ public class PAUtil {
      * @return null if empty, otherwise a string no longer than maxlegth
      */
     public static String stringSetter(String value, int maxLength) {
+        String ret = null;
         if (isEmpty(value)) {
-            return null;
+            ret = null;
+        } else if (maxLength < 0) {
+            ret = value;
+        } else {
+        ret =  (value.length() > maxLength) ? value.substring(0, maxLength) : value;
         }
-        return (value.length() > maxLength) ? value.substring(0, maxLength) : value;
+        return ret;
     }
-
+    
     /**
      * Method designed for string setters to concatenate rather then cause exceptions.
      * @param value a string
@@ -365,11 +371,12 @@ public class PAUtil {
      * @return boolean whether email is valid or not
      */
     public static boolean isValidEmail(String email) {
-      if (email != null) {
-        email = email.trim();
+        String match = email;
+        if (match != null) {
+            match = match.trim();
        }
        Pattern p = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
-       Matcher m = p.matcher(email);
+       Matcher m = p.matcher(match);
        return  m.matches();
     }
 
@@ -395,9 +402,53 @@ public class PAUtil {
      * @return not null sting with * converted to %
      */
     public static String wildcardCriteria(String data) {
-        if (data == null) {
-            data = "";
+        String criteria = data;
+        if (criteria == null) {
+            criteria = "";
         }
-        return data.replace('*', '%');
+        return criteria.replace('*', '%');
     }
+    /**
+     * util method to find if the lenght is more than len parameter.
+     * @param st String data
+     * @param len length to trim
+     * @return trimmed data
+     */
+    public static boolean isGreatenThan(St st , int len) {
+        boolean ret = false;
+        String str = null;
+        if (st == null) {
+            ret = false;
+        }
+        str = StConverter.convertToString(st);
+        if (str == null) {
+            ret = false;
+        } else if (str.length() > len) {
+            ret = true;
+        }
+        return ret;
+    }
+    
+    /**
+     * util method to find if the length is between min and max.
+     * @param st String data
+     * @param min minimum numbers of characters
+     * @param max maximim numbers of characters
+     * @return trimmed data
+     */
+    public static boolean isWithinRange(St st , int min , int max) {
+        boolean ret = false;
+        String str = null;
+        if (st == null) {
+            ret = true;
+        }
+        str = StConverter.convertToString(st);
+        if (str == null) {
+            ret = true;
+        } else if (str.length() >= min && str.length() <= max) {
+            ret = true;
+        }
+        return ret;
+    }
+
 }

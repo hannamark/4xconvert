@@ -98,4 +98,37 @@ public class PAAttributeMaxLen {
     public static final int DISPLAY_OFFICIAL_TITLE = 200;
     /** Standard max length for text columns. **/
     public static final int LONG_TEXT_LENGTH = 200;
+    /** acronym  max. **/
+    public static final int ACRONYM = 300;
+    /** LEN 2. **/
+    public static final int LEN_2 = 2;
+
+    /** Arm Name. **/
+    public static final int ARM_NAME = 16;
+    /** public title min. **/
+    public static final int LEN_18 = 18;
+    /*** length 62. **/
+    public static final int LEN_62 = 62;
+    /*** cut of Phone length. **/
+    public static final int LEN_30 = 30;
+    /*** cut of length. **/
+    public static final int LEN_160 = 160;
+    /*** cut of Email length. **/
+    public static final int LEN_254 = 254;
+    /** public title max. **/
+    public static final int LEN_300 = 300;
+    /** 600 length. **/
+    public static final int LEN_600 = 600;
+    /** Len 5000. **/
+    public static final int LEN_5000 = 5000;
+    /*** length 1000. **/
+    public static final int LEN_1000 = 1000;
+    /*** length 15000. **/
+    public static final int LEN_15000 = 15000;
+    /** len 32000. **/
+    public static final int LEN_32000 = 32000;
+
+    /*** length -1. **/
+    public static final int LEN_MIN_1 = -1;
+
 }
