@@ -129,6 +129,7 @@ import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
+import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -190,6 +191,7 @@ public class TestSchema {
             Configuration config = new AnnotationConfiguration().
 
             addAnnotatedClass(StudyProtocol.class).
+            addAnnotatedClass(StudyRelationship.class).
             addAnnotatedClass(InterventionalStudyProtocol.class).
             addAnnotatedClass(Organization.class).
             addAnnotatedClass(StudyCoordinatingCenter.class).
@@ -271,6 +273,7 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     statement.executeUpdate("delete from STUDY_ONHOLD");
+                    statement.executeUpdate("delete from STUDY_RELATIONSHIP");
                     statement.executeUpdate("delete from STUDY_MILESTONE");
                     statement.executeUpdate("delete from STUDY_CONTACT");
                     statement.executeUpdate("delete from STUDY_REGULATORY_AUTHORITY");
