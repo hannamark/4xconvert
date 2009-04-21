@@ -123,12 +123,16 @@ import org.apache.log4j.Logger;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
 public class MailManagerServiceBean implements MailManagerServiceRemote,
                             MailManagerServiceLocal {
     
     private static final Logger LOG = Logger.getLogger(MailManagerServiceBean.class);
     private static final String TSR = "TSR_";
     private static final String HTML = ".html";
+    private final String currentDate = "${CurrentDate}";
+    private final String nciTrialIdentifier = "${nciTrialIdentifier}";
+    private final String  submitterName = "${SubmitterName}";
     
     @EJB
     ProtocolQueryServiceLocal protocolQueryService;
@@ -145,7 +149,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
      * @param studyProtocolIi studyProtocolIi
      * @throws PAException PAException
      */
-    @SuppressWarnings({ "PMD.StringInstantiation", "PMD.ExcessiveMethodLength", "PMD.SimpleDateFormatNeedsLocale" })
+    @SuppressWarnings({ "PMD.StringInstantiation", "PMD.ExcessiveMethodLength" })
     public void sendTSREmail(Ii studyProtocolIi) throws PAException {
         LOG.info("Entering sendTSREmail");
         try {
@@ -154,15 +158,13 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
 
           RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
 
-          DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-
           String body = lookUpTableService.getPropertyValue("tsr.body");
-          body = body.replace("${CurrentDate}", getFormatedCurrentDate());
-          body = body.replace("${SubmitterName}", 
+          body = body.replace(currentDate, getFormatedCurrentDate());
+          body = body.replace(submitterName, 
                   registryUser.getFirstName() + " " + registryUser.getLastName());
           body = body.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
           body = body.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
-          body = body.replace("${receiptDate}", format.format(spDTO.getDateLastCreated()));
+          body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
           body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
           body = body.replace("${fileName}", TSR 
                                              + spDTO.getNciIdentifier().toString() + HTML);
@@ -294,23 +296,20 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
      * @param studyProtocolIi ii
      * @throws PAException ex 
      */
-    @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
     public void sendAmendNotificationMail(Ii studyProtocolIi) throws PAException {
         
         StudyProtocolQueryDTO spDTO = protocolQueryService
         .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
         RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
-        DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-       
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.body");
         
-        mailBody = mailBody.replace("${SubmitterName}", 
+        mailBody = mailBody.replace(submitterName, 
                 user.getFirstName() + " " + user.getLastName());
-        mailBody = mailBody.replace("${CurrentDate}", getFormatedCurrentDate());
-        mailBody = mailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
+        mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
+        mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
-        mailBody = mailBody.replace("${amendmentDate}", format.format(spDTO.getAmendmentDate()));
+        mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
         
 
         sendMail(spDTO.getUserLastCreated(), 
@@ -324,7 +323,6 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
-    @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
     public void sendAmendAcceptEmail(Ii studyProtocolIi) throws PAException {
         LOG.info("Entering send Amend Accept Email");
         StudyProtocolQueryDTO spDTO = protocolQueryService
@@ -332,16 +330,15 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
 
         RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
 
-        DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.accept.body");
           
-        mailBody = mailBody.replace("${SubmitterName}", 
+        mailBody = mailBody.replace(submitterName, 
                   user.getFirstName() + " " + user.getLastName());
-        mailBody = mailBody.replace("${CurrentDate}", getFormatedCurrentDate());
-        mailBody = mailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
+        mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
+        mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
         mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
-        mailBody = mailBody.replace("${amendmentDate}", format.format(spDTO.getAmendmentDate()));
+        mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
 
         sendMail(spDTO.getUserLastCreated(), 
                   lookUpTableService.getPropertyValue("trial.amend.accept.subject"), 
@@ -360,7 +357,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         String submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
         submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ", 
                 spDTO.getLocalStudyProtocolIdentifier());
-        submissionMailBody = submissionMailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
+        submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
 
         sendMail(spDTO.getUserLastCreated(), 
                     lookUpTableService.getPropertyValue("trial.register.subject"), 
@@ -378,18 +375,17 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
 
         RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
 
-         DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-         String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
+        String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
           
-         mailBody = mailBody.replace("${SubmitterName}", 
+        mailBody = mailBody.replace(submitterName, 
                   user.getFirstName() + " " + user.getLastName());
-         mailBody = mailBody.replace("${CurrentDate}", getFormatedCurrentDate());
-         mailBody = mailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
-         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
-         mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
-         mailBody = mailBody.replace("${amendmentDate}", format.format(spDTO.getAmendmentDate()));
+        mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
+        mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
+        mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
+        mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
+        mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
 
-         sendMail(spDTO.getUserLastCreated(), 
+        sendMail(spDTO.getUserLastCreated(), 
                   lookUpTableService.getPropertyValue("trial.amend.reject.subject"), 
                   mailBody);
         LOG.info("Leaving sendAmendAcceptEmail");
@@ -401,5 +397,9 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         return format.format(date);
     }
-
+    @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
+    private String getFormatedDate(Date date) {
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        return format.format(date);
+    }
 }
