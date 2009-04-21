@@ -9,9 +9,9 @@ import gov.nih.nci.coppa.iso.EdText;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.coppa.iso.UncertaintyType;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 import org.iso._21090.ED;
 import org.iso._21090.EDText;
@@ -25,14 +25,13 @@ import org.junit.Test;
  */
 public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer, TS, Ts>{
 
-
-    public Date VALUE_DATE = new Date();
     private SimpleDateFormat sdf = new SimpleDateFormat(TSTransformer.FORMAT_STRING);
+    public final String VALUE_DATE = "19800928023033.555[-0400EDT]";
 
     @Override
     public TS makeXmlSimple() {
         TS x = new TS();
-        x.setValue(sdf.format(VALUE_DATE));
+        x.setValue(VALUE_DATE);
         EDText edText = new EDText();
         ED ed = new EDTransformerTest().makeXmlSimple();
         edText.setCharset(ed.getCharset());
@@ -44,7 +43,7 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
         edText.setNullFlavor(ed.getNullFlavor());
         x.setOriginalText(edText);
         TS uncert = new TS();
-        uncert.setValue(sdf.format(VALUE_DATE));
+        uncert.setValue(VALUE_DATE);
         uncert.setUncertainty(null);
         uncert.setUncertaintyType(null);
         x.setUncertainty(uncert);
@@ -54,30 +53,35 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
 
     @Override
     public Ts makeDtoSimple() {
+
         Ts x = new Ts();
-        x.setValue(VALUE_DATE);
-        EdText edText = new EdText();
-        Ed ed = new EDTransformerTest().makeDtoSimple();
-        edText.setCharset(ed.getCharset());
-        edText.setData(ed.getData());
-        edText.setMediaType(ed.getMediaType());
-        edText.setReference(ed.getReference());
-        edText.setXml(ed.getXml());
-        edText.setValue(ed.getValue());
-        edText.setNullFlavor(ed.getNullFlavor());
-        x.setOriginalText(edText);
-        Ts uncert = new Ts();
-        uncert.setValue(VALUE_DATE);
-        uncert.setUncertainty(null);
-        uncert.setUncertaintyType(null);
-        x.setUncertainty(uncert);
-        x.setUncertaintyType(UncertaintyType.B);
+        try {
+            x.setValue(sdf.parse(VALUE_DATE));
+            EdText edText = new EdText();
+            Ed ed = new EDTransformerTest().makeDtoSimple();
+            edText.setCharset(ed.getCharset());
+            edText.setData(ed.getData());
+            edText.setMediaType(ed.getMediaType());
+            edText.setReference(ed.getReference());
+            edText.setXml(ed.getXml());
+            edText.setValue(ed.getValue());
+            edText.setNullFlavor(ed.getNullFlavor());
+            x.setOriginalText(edText);
+            Ts uncert = new Ts();
+            uncert.setValue(sdf.parse(VALUE_DATE));
+            uncert.setUncertainty(null);
+            uncert.setUncertaintyType(null);
+            x.setUncertainty(uncert);
+            x.setUncertaintyType(UncertaintyType.B);
+        } catch (ParseException pe) {
+            throw new RuntimeException(pe);
+        }
         return x;
     }
 
     @Override
     public void verifyXmlSimple(TS x) {
-        assertEquals(sdf.format(VALUE_DATE), x.getValue());
+        assertEquals(VALUE_DATE, x.getValue());
         ED ed = new EDTransformerTest().makeXmlSimple();
         assertEquals(ed.getValue(), x.getOriginalText().getValue());
         assertEquals(ed.getNullFlavor(), x.getOriginalText().getNullFlavor());
@@ -87,30 +91,34 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
         assertEquals(ed.getReference().getValue(), x.getOriginalText().getReference().getValue());
         assertEquals(ed.getXml(), x.getOriginalText().getXml());
 
-        assertEquals(sdf.format(VALUE_DATE), ((TS) x.getUncertainty()).getValue());
+        assertEquals(VALUE_DATE, ((TS) x.getUncertainty()).getValue());
         assertNotNull(x.getUncertainty());
         assertEquals(org.iso._21090.UncertaintyType.B, x.getUncertaintyType());
     }
 
     @Override
     public void verifyDtoSimple(Ts x) {
-        assertEquals(VALUE_DATE, x.getValue());
-        EdText edText = new EdText();
-        Ed ed = new EDTransformerTest().makeDtoSimple();
-        edText.setCharset(ed.getCharset());
-        edText.setData(ed.getData());
-        edText.setMediaType(ed.getMediaType());
-        edText.setReference(ed.getReference());
-        edText.setXml(ed.getXml());
-        edText.setValue(ed.getValue());
-        edText.setNullFlavor(ed.getNullFlavor());
-        assertEquals(edText, x.getOriginalText());
-        Ts uncert = new Ts();
-        uncert.setValue(VALUE_DATE);
-        uncert.setUncertainty(null);
-        uncert.setUncertaintyType(null);
-        assertEquals(uncert, x.getUncertainty());
-        assertEquals(UncertaintyType.B, x.getUncertaintyType());
+        try {
+            assertEquals(VALUE_DATE, sdf.format(x.getValue()));
+            EdText edText = new EdText();
+            Ed ed = new EDTransformerTest().makeDtoSimple();
+            edText.setCharset(ed.getCharset());
+            edText.setData(ed.getData());
+            edText.setMediaType(ed.getMediaType());
+            edText.setReference(ed.getReference());
+            edText.setXml(ed.getXml());
+            edText.setValue(ed.getValue());
+            edText.setNullFlavor(ed.getNullFlavor());
+            assertEquals(edText, x.getOriginalText());
+            Ts uncert = new Ts();
+            uncert.setValue(sdf.parse(VALUE_DATE));
+            uncert.setUncertainty(null);
+            uncert.setUncertaintyType(null);
+            assertEquals(uncert, x.getUncertainty());
+            assertEquals(UncertaintyType.B, x.getUncertaintyType());
+        } catch (ParseException pe) {
+            throw new RuntimeException(pe);
+        }
     }
 
     public TS makeXmlNullFlavored() {
