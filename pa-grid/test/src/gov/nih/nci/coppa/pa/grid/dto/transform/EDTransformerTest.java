@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.Compression;
 import gov.nih.nci.coppa.iso.Ed;
 import gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.services.pa.grid.dto.EDTransformer;
 
 import java.net.URI;
 import java.net.URISyntaxException;

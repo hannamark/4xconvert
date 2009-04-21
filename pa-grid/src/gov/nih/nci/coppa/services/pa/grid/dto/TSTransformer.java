@@ -21,7 +21,7 @@ public final class TSTransformer extends QTYTransformer<TS, Ts> implements Trans
     /**
      * Format of iso data type value.
      */
-    public static final String FORMAT_STRING = "yyyyMMddHHmmss.SSSS[+|-ZZzz]";
+    public static final String FORMAT_STRING = "yyyyMMddHHmmss.S[ZZzz]";
 
     private TSTransformer() {
         super();
