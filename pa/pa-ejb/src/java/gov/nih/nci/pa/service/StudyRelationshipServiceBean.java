@@ -94,7 +94,7 @@ import javax.ejb.TransactionAttributeType;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class StudyRelationshipServiceBean extends 
-    AbstractBaseIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>  
+    AbstractStudyIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>  
     implements StudyRelationshipServiceLocal , StudyRelationshipServiceRemote {
 
 }

@@ -234,6 +234,7 @@ public class TestSchema {
             addAnnotatedClass(NIHinstitute.class).
             addAnnotatedClass(PAProperties.class).
             addAnnotatedClass(RegistryUser.class).
+            addAnnotatedClass(StudyRelationship.class).
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
             setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").

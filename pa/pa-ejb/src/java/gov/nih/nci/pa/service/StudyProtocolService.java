@@ -168,5 +168,12 @@ public interface StudyProtocolService {
      * @throws PAException exception
      */
     Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO) throws PAException; 
+    
+    /**
+     * deletes protocol and all of its related classes.
+     * @param ii ii of study Protocol
+     * @throws PAException on any error
+     */
+    void deleteStudyProtocol(Ii ii) throws PAException;
 
 }

@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.service;
 
-//import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -94,12 +93,15 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -114,21 +116,65 @@ public class StudyProtocolServiceBeanTest {
     private StudyProtocolServiceRemote remoteEjb = bean;
     private DocumentWorkflowStatusServiceBean dwf = new DocumentWorkflowStatusServiceBean();
     private StudyMilestoneServiceBean milestone = new StudyMilestoneServiceBean();
-
+    private StudyRelationshipServiceBean srb = new StudyRelationshipServiceBean();
     @Before
     public void setUp() throws Exception {
         bean.setDocumentWorkflowStatusService(dwf);
         dwf.setStudyMilestoneService(milestone);
+        bean.studyRelationshipService = srb;
         milestone.documentWorkflowStatusService = dwf;
         TestSchema.reset();
     }
 
     @Test(expected=PAException.class)
-    public void nullParameter() throws Exception {
-        //InterventionalStudyProtocolDTO ispDTO ;
+    public void nullParameter1() throws Exception {
         remoteEjb.createInterventionalStudyProtocol(null);
     }
+    
+    @Test(expected=PAException.class)
+    public void nullParameter2() throws Exception {
+        remoteEjb.getStudyProtocol(null);
+    }
 
+    @Test(expected=PAException.class)
+    public void nullParameter3() throws Exception {
+        remoteEjb.search(null);
+    }
+
+    @Test(expected=PAException.class)
+    public void nullParameter4() throws Exception {
+        remoteEjb.updateStudyProtocol(null);
+    }
+    @Test(expected=PAException.class)
+    public void nullParameter6() throws Exception {
+        remoteEjb.getInterventionalStudyProtocol(null);
+    }    
+
+    @Test(expected=PAException.class)
+    public void nullParameter7() throws Exception {
+        remoteEjb.updateInterventionalStudyProtocol(null);
+    }    
+    
+    @Test(expected=PAException.class)
+    public void nullParameter8() throws Exception {
+        remoteEjb.getObservationalStudyProtocol(null);
+    }    
+
+    @Test(expected=PAException.class)
+    public void nullParameter9() throws Exception {
+        remoteEjb.updateObservationalStudyProtocol(null);
+    }    
+
+    @Test(expected=PAException.class)
+    public void nullParameter10() throws Exception {
+        ObservationalStudyProtocolDTO dto = new ObservationalStudyProtocolDTO();
+        dto.setIdentifier(IiConverter.convertToIi("111"));
+        remoteEjb.createObservationalStudyProtocol(dto);
+    }    
+    @Test(expected=PAException.class)
+    public void nullParameter11() throws Exception {
+        remoteEjb.createObservationalStudyProtocol(null);
+    } 
     @Test(expected=PAException.class)
     public void nullExtension() throws Exception {
         InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
@@ -137,6 +183,62 @@ public class StudyProtocolServiceBeanTest {
         ispDTO.setIdentifier(ii);
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+    @Test(expected=PAException.class)
+    public void businessRulesException1() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setStartDateTypeCode(null);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+    @Test(expected=PAException.class)
+    public void businessRulesException2() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryCompletionDateTypeCode(null);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+    
+    @Test(expected=PAException.class)
+    public void businessRulesException3() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/9999")));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+
+    @Test(expected=PAException.class)
+    public void businessRulesException4() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/9999")));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+    @Test(expected=PAException.class)
+    public void businessRulesException5() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ANTICIPATED.getCode()));
+        ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+
+    @Test(expected=PAException.class)
+    public void businessRulesException6() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+    @Test(expected=PAException.class)
+    public void businessRulesException7() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2001" +
+        		"")));
+        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+
     @Test
     public void createInterventionalStudyProtocol() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -144,6 +246,39 @@ public class StudyProtocolServiceBeanTest {
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
         assertNotNull(ii.getExtension());
     }
+
+    @Test
+    public void deleteStudyProtocol() throws Exception {
+        try {
+        InterventionalStudyProtocolDTO ispDTO =
+                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        assertNotNull(ii.getExtension());
+        StudyProtocolDTO sp = remoteEjb.getStudyProtocol(ii);
+        assertNotNull(sp);
+        
+        List<StudyProtocolDTO> sps = remoteEjb.search(sp);
+        assertNotNull(sps);
+        assertEquals(sps.size() , 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }    
+
+    @Test
+    public void search() throws Exception {
+        try {
+        InterventionalStudyProtocolDTO ispDTO =
+                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        assertNotNull(ii.getExtension());
+        remoteEjb.deleteStudyProtocol(ii);
+        StudyProtocolDTO sp = remoteEjb.getStudyProtocol(ii);
+        assertEquals(sp , null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }    
 
     @Test
     public void getInterventionalStudyProtocol() throws Exception {
@@ -267,6 +402,7 @@ public class StudyProtocolServiceBeanTest {
             // expected behavior
         }
     }
+
     @Test 
     public void iiRootTest() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =

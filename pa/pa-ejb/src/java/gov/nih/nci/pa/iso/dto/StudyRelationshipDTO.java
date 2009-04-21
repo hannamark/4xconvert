@@ -89,7 +89,7 @@ import gov.nih.nci.coppa.iso.St;
  * @author Anupama Sharma
  * @since 04/10/2009
  */
-public class StudyRelationshipDTO extends BaseDTO {
+public class StudyRelationshipDTO extends StudyDTO {
     
     private static final long serialVersionUID = 1234567890L;
 

@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -132,7 +133,8 @@ import org.hibernate.criterion.Example;
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
     private static final int FIVE_5 = 5;
-
+    @EJB
+    StudyRelationshipServiceLocal studyRelationshipService = null;
     private SessionContext ejbContext;
 
     @Resource
@@ -197,7 +199,7 @@ import org.hibernate.criterion.Example;
     * @return List StudyProtocolDTO
     * @throws PAException PAException
     */
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+   @TransactionAttribute(TransactionAttributeType.SUPPORTS)
    public List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException {
        if (dto == null) {
            LOG.error(" StudyProtocolDTO should not be null ");
@@ -570,6 +572,49 @@ import org.hibernate.criterion.Example;
 
     }
 
+    /**
+     * deletes protocol and all of its related classes.
+     * @param ii ii of study Protocol
+     * @throws PAException on any error
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteStudyProtocol(Ii ii) throws PAException {
+        if (PAUtil.isIiNull(ii)) {
+            LOG.error(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
+        }
+        LOG.info("Entering getStudyProtocol");
+        Session session = null;
+        StudyProtocol studyProtocol = null;
+        Ii targetSpIi = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            studyProtocol = (StudyProtocol)
+                session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
+            List<StudyRelationshipDTO> dtos = studyRelationshipService.getByStudyProtocol(ii);
+           
+            for (StudyRelationshipDTO dto : dtos) {
+                targetSpIi = dto.getTargetStudyProtocolIdentifier();
+                break;
+            }
+            session.delete(studyProtocol);
+            if (targetSpIi != null) {
+                StudyProtocol spTarget = (StudyProtocol)
+                session.load(StudyProtocol.class, Long.valueOf(targetSpIi.getExtension()));
+                spTarget.setStatusCode(ActStatusCode.ACTIVE);
+                spTarget.setStatusDate(new Timestamp(spTarget.getDateLastCreated().getTime()));
+                session.update(spTarget);
+            }
+        } catch (HibernateException hbe) {
+            ejbContext.setRollbackOnly();
+            LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + ii.getExtension() , hbe);
+            throw new PAException(" Hibernate exception while retrieving "
+                    + "StudyProtocol for id = " + ii.getExtension() , hbe);
+        } catch (Exception e) {
+            ejbContext.setRollbackOnly();
+            throw new PAException(e);
+        }
+    }
 
     private void createDocumentWorkFlowStatus(StudyProtocol sp) throws PAException {
         LOG.debug("Entering createDocumentWorkFlowStatus().");
@@ -643,10 +688,16 @@ import org.hibernate.criterion.Example;
     private void enForceDateRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
         Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
-        ActualAnticipatedTypeCode sCode = ActualAnticipatedTypeCode.getByCode(
+        ActualAnticipatedTypeCode sCode =  null;
+        ActualAnticipatedTypeCode cCode = null;
+        if (studyProtocolDTO.getStartDateTypeCode() != null) {
+            sCode = ActualAnticipatedTypeCode.getByCode(
                 studyProtocolDTO.getStartDateTypeCode().getCode());
-        ActualAnticipatedTypeCode cCode = ActualAnticipatedTypeCode.getByCode(
-                studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
+        }
+        if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() != null) {
+            cCode = ActualAnticipatedTypeCode.getByCode(
+                    studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
+        }
         Timestamp now = new Timestamp((new Date()).getTime());
         if (sDate == null) {
             throw new PAException("Start date must be set.  ");

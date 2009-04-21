@@ -85,6 +85,6 @@ import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
  * @author Naveen Amiruddin
  * @since 04/01/2009
  */
-public interface StudyRelationshipService extends BasePaService<StudyRelationshipDTO> {
+public interface StudyRelationshipService extends StudyPaService<StudyRelationshipDTO> {
 
 }

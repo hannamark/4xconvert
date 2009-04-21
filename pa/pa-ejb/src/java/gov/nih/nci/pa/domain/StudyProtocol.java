@@ -733,86 +733,86 @@ public class StudyProtocol extends AbstractEntity {
         this.studyOnholds = studyOnholds;
     }
   
-/**
- * @return the statusCode
- */
-@Column(name = "STATUS_CODE")
-@Enumerated(EnumType.STRING)
-public ActStatusCode getStatusCode() {
-return statusCode;
-}
-/**
- * @param statusCode the statusCode to set
- */
-public void setStatusCode(ActStatusCode statusCode) {
-this.statusCode = statusCode;
-}
-/**
- * @return the statusDate
- */
-@Column(name = "STATUS_DATE")
-public Timestamp getStatusDate() {
-return statusDate;
-}
-/**
- * @param statusDate the statusDate to set
- */
-public void setStatusDate(Timestamp statusDate) {
-this.statusDate = statusDate;
-}
-/**
- * @return the amendmentNumber
- */
-@Column(name = "AMENDMENT_NUMBER")
-public String getAmendmentNumber() {
-return amendmentNumber;
-}
-/**
- * @param amendmentNumber the amendmentNumber to set
- */
-public void setAmendmentNumber(String amendmentNumber) {
-this.amendmentNumber = amendmentNumber;
-}
-/**
- * @return the amendmentDate
- */
-@Column(name = "AMENDMENT_DATE")
-public Timestamp getAmendmentDate() {
-return amendmentDate;
-}
-/**
- * @param amendmentDate the amendmentDate to set
- */
-public void setAmendmentDate(Timestamp amendmentDate) {
-this.amendmentDate = amendmentDate;
-}
-/**
- * @return the amendmentReasonCode
- */
-@Column(name = "AMENDMENT_REASON_CODE")
-@Enumerated(EnumType.STRING)
-public AmendmentReasonCode getAmendmentReasonCode() {
-return amendmentReasonCode;
-}
-/**
- * @param amendmentReasonCode the amendmentReasonCode to set
- */
-public void setAmendmentReasonCode(AmendmentReasonCode amendmentReasonCode) {
-this.amendmentReasonCode = amendmentReasonCode;
-}
-/**
- * @return the submissionNumber
- */
-@Column(name = "SUBMISSION_NUMBER")
-public Integer getSubmissionNumber() {
-return submissionNumber;
-}
-/**
- * @param submissionNumber the submissionNumber to set
- */
-public void setSubmissionNumber(Integer submissionNumber) {
-this.submissionNumber = submissionNumber;
-}
+    /**
+     * @return the statusCode
+     */
+    @Column(name = "STATUS_CODE")
+    @Enumerated(EnumType.STRING)
+    public ActStatusCode getStatusCode() {
+    return statusCode;
+    }
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(ActStatusCode statusCode) {
+    this.statusCode = statusCode;
+    }
+    /**
+     * @return the statusDate
+     */
+    @Column(name = "STATUS_DATE")
+    public Timestamp getStatusDate() {
+    return statusDate;
+    }
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Timestamp statusDate) {
+    this.statusDate = statusDate;
+    }
+    /**
+     * @return the amendmentNumber
+     */
+    @Column(name = "AMENDMENT_NUMBER")
+    public String getAmendmentNumber() {
+    return amendmentNumber;
+    }
+    /**
+     * @param amendmentNumber the amendmentNumber to set
+     */
+    public void setAmendmentNumber(String amendmentNumber) {
+    this.amendmentNumber = amendmentNumber;
+    }
+    /**
+     * @return the amendmentDate
+     */
+    @Column(name = "AMENDMENT_DATE")
+    public Timestamp getAmendmentDate() {
+    return amendmentDate;
+    }
+    /**
+     * @param amendmentDate the amendmentDate to set
+     */
+    public void setAmendmentDate(Timestamp amendmentDate) {
+    this.amendmentDate = amendmentDate;
+    }
+    /**
+     * @return the amendmentReasonCode
+     */
+    @Column(name = "AMENDMENT_REASON_CODE")
+    @Enumerated(EnumType.STRING)
+    public AmendmentReasonCode getAmendmentReasonCode() {
+    return amendmentReasonCode;
+    }
+    /**
+     * @param amendmentReasonCode the amendmentReasonCode to set
+     */
+    public void setAmendmentReasonCode(AmendmentReasonCode amendmentReasonCode) {
+    this.amendmentReasonCode = amendmentReasonCode;
+    }
+    /**
+     * @return the submissionNumber
+     */
+    @Column(name = "SUBMISSION_NUMBER")
+    public Integer getSubmissionNumber() {
+    return submissionNumber;
+    }
+    /**
+     * @param submissionNumber the submissionNumber to set
+     */
+    public void setSubmissionNumber(Integer submissionNumber) {
+    this.submissionNumber = submissionNumber;
+    }
 
 
 }
