@@ -92,7 +92,6 @@ public class EDTransformerTest extends AbstractTransformerTestBase<EDTransformer
         assertTrue(Arrays.equals(DATA_BYTES, x.getData()));
         assertTrue(Arrays.equals(DATA_BYTES, x.getIntegrityCheck()));
         assertEquals(org.iso._21090.IntegrityCheckAlgorithm.SHA_1, x.getIntegrityCheckAlgorithm());
-        assertEquals(org.iso._21090.Compression.DF, x.getCompression());
         assertEquals(MEDIA_TYPE, x.getMediaType());
         assertEquals(URL, x.getReference().getValue());
         assertNull(x.getThumbnail().getThumbnail());
@@ -107,7 +106,6 @@ public class EDTransformerTest extends AbstractTransformerTestBase<EDTransformer
         assertTrue(Arrays.equals(DATA_BYTES, x.getData()));
         assertTrue(Arrays.equals(DATA_BYTES, x.getIntegrityCheck()));
         assertEquals(IntegrityCheckAlgorithm.SHA1.name(), x.getIntegrityCheckAlgorithm().name());
-        assertEquals(Compression.DF, x.getCompression());
         assertEquals(MEDIA_TYPE, x.getMediaType());
         try {
             assertEquals(new URI(URL), x.getReference().getValue());
