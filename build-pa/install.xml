@@ -547,6 +547,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 </category>
                 ]]>
             </insert>
+        	<xmlcatalog refid="bda.xml.catalog"/>
         </xmltask>
         <validate-log4j
             />
