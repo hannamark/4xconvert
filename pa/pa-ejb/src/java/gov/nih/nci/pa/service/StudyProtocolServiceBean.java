@@ -126,6 +126,7 @@ import org.hibernate.criterion.Example;
  * @since 08/13/2008
  */
 @Stateless
+@Interceptors({ HibernateSessionInterceptor.class})
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.TooManyMethods" })
     public class StudyProtocolServiceBean
