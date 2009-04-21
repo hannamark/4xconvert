@@ -82,23 +82,29 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.services.pa.StudyProtocol;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
+import gov.nih.nci.coppa.services.pa.grid.dto.CDTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.DSETCDTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.DtoTransformException;
+import gov.nih.nci.coppa.services.pa.grid.dto.INTTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 
 /**
- * Transforms StudyProtocol instances.
+ * Transforms InterventionalStudyProtocol instances.
  */
-public final class StudyProtocolTransformer extends AbstractStudyProtocolTransformer<StudyProtocol, StudyProtocolDTO>
-    implements Transformer<StudyProtocol, StudyProtocolDTO> {
+public final class InterventionalStudyProtocolTransformer
+    extends AbstractStudyProtocolTransformer<InterventionalStudyProtocol, InterventionalStudyProtocolDTO>
+    implements Transformer<InterventionalStudyProtocol, InterventionalStudyProtocolDTO> {
 
     /**
      * Public singleton.
      */
-    public static final StudyProtocolTransformer INSTANCE = new StudyProtocolTransformer();
+    public static final InterventionalStudyProtocolTransformer INSTANCE = new InterventionalStudyProtocolTransformer();
 
-    private StudyProtocolTransformer() {
+    private InterventionalStudyProtocolTransformer() {
         super();
     }
 
@@ -106,27 +112,33 @@ public final class StudyProtocolTransformer extends AbstractStudyProtocolTransfo
      * {@inheritDoc}
      */
     @Override
-    protected StudyProtocol newXml() {
-        return new StudyProtocol();
+    protected InterventionalStudyProtocol newXml() {
+        return new InterventionalStudyProtocol();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected StudyProtocolDTO newDto() {
-        return new StudyProtocolDTO();
+    protected InterventionalStudyProtocolDTO newDto() {
+        return new InterventionalStudyProtocolDTO();
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyProtocolDTO toDto(StudyProtocol input) throws DtoTransformException {
+    public InterventionalStudyProtocolDTO toDto(InterventionalStudyProtocol input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
 
-        StudyProtocolDTO result = transformBaseDto(input);
+        InterventionalStudyProtocolDTO result = transformBaseDto(input);
+        result.setBlindingSchemaCode(CDTransformer.INSTANCE.toDto(input.getBlindingSchemaCode()));
+        result.setAllocationCode(CDTransformer.INSTANCE.toDto(input.getAllocationCode()));
+        result.setDesignConfigurationCode(CDTransformer.INSTANCE.toDto(input.getDesignConfigurationCode()));
+        result.setStudyClassificationCode(CDTransformer.INSTANCE.toDto(input.getStudyClassificationCode()));
+        result.setNumberOfInterventionGroups(INTTransformer.INSTANCE.toDto(input.getNumberOfInterventionGroups()));
+        result.setBlindedRoleCode(DSETCDTransformer.INSTANCE.toDto(input.getBlindedRoleCode()));
 
         return result;
     }
@@ -134,11 +146,18 @@ public final class StudyProtocolTransformer extends AbstractStudyProtocolTransfo
     /**
      * {@inheritDoc}
      */
-    public StudyProtocol toXml(StudyProtocolDTO input) throws DtoTransformException {
+    public InterventionalStudyProtocol toXml(InterventionalStudyProtocolDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        StudyProtocol result = transformBaseXml(input);
+        InterventionalStudyProtocol result = transformBaseXml(input);
+        result.setBlindingSchemaCode(CDTransformer.INSTANCE.toXml(input.getBlindingSchemaCode()));
+        result.setAllocationCode(CDTransformer.INSTANCE.toXml(input.getAllocationCode()));
+        result.setDesignConfigurationCode(CDTransformer.INSTANCE.toXml(input.getDesignConfigurationCode()));
+        result.setStudyClassificationCode(CDTransformer.INSTANCE.toXml(input.getStudyClassificationCode()));
+        result.setNumberOfInterventionGroups(INTTransformer.INSTANCE.toXml(input.getNumberOfInterventionGroups()));
+        result.setBlindedRoleCode(DSETCDTransformer.INSTANCE.toXml(input.getBlindedRoleCode()));
+
         return result;
     }
 }

@@ -80,65 +80,75 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.grid.dto.pa;
+package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
-import gov.nih.nci.coppa.services.pa.StudyProtocol;
-import gov.nih.nci.coppa.services.pa.grid.dto.DtoTransformException;
-import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.coppa.pa.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.pa.grid.dto.transform.CDTransformerTest;
+import gov.nih.nci.coppa.pa.grid.dto.transform.INTTransformerTest;
+import gov.nih.nci.coppa.pa.grid.dto.transform.STTransformerTest;
+import gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.ObservationalStudyProtocolTransformer;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 
-/**
- * Transforms StudyProtocol instances.
- */
-public final class StudyProtocolTransformer extends AbstractStudyProtocolTransformer<StudyProtocol, StudyProtocolDTO>
-    implements Transformer<StudyProtocol, StudyProtocolDTO> {
+public class ObservationalStudyProtocolTransformerTest
+    extends AbstractTransformerTestBase<ObservationalStudyProtocolTransformer, ObservationalStudyProtocol, ObservationalStudyProtocolDTO> {
 
-    /**
-     * Public singleton.
-     */
-    public static final StudyProtocolTransformer INSTANCE = new StudyProtocolTransformer();
-
-    private StudyProtocolTransformer() {
-        super();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected StudyProtocol newXml() {
-        return new StudyProtocol();
-    }
+    public ObservationalStudyProtocolDTO makeDtoSimple() {
+        ObservationalStudyProtocolDTO result = new ObservationalStudyProtocolDTO();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected StudyProtocolDTO newDto() {
-        return new StudyProtocolDTO();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyProtocolDTO toDto(StudyProtocol input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-
-        StudyProtocolDTO result = transformBaseDto(input);
+        result.setBiospecimenDescription(new STTransformerTest().makeDtoSimple());
+        result.setBiospecimenRetentionCode(new CDTransformerTest().makeDtoSimple());
+        result.setNumberOfGroups(new INTTransformerTest().makeDtoSimple());
+        result.setSamplingMethodCode(new CDTransformerTest().makeDtoSimple());
+        result.setStudyModelCode(new CDTransformerTest().makeDtoSimple());
+        result.setStudyModelOtherText(new STTransformerTest().makeDtoSimple());
+        result.setTimePerspectiveCode(new CDTransformerTest().makeDtoSimple());
+        result.setTimePerspectiveOtherText(new STTransformerTest().makeDtoSimple());
+        result.setStudyPopulationDescription(new STTransformerTest().makeDtoSimple());
 
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public StudyProtocol toXml(StudyProtocolDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        StudyProtocol result = transformBaseXml(input);
+    @Override
+    public ObservationalStudyProtocol makeXmlSimple() {
+        ObservationalStudyProtocol result = new ObservationalStudyProtocol();
+        result.setBiospecimenDescription(new STTransformerTest().makeXmlSimple());
+        result.setBiospecimenRetentionCode(new CDTransformerTest().makeXmlSimple());
+        result.setNumberOfGroups(new INTTransformerTest().makeXmlSimple());
+        result.setSamplingMethodCode(new CDTransformerTest().makeXmlSimple());
+        result.setStudyModelCode(new CDTransformerTest().makeXmlSimple());
+        result.setStudyModelOtherText(new STTransformerTest().makeXmlSimple());
+        result.setTimePerspectiveCode(new CDTransformerTest().makeXmlSimple());
+        result.setTimePerspectiveOtherText(new STTransformerTest().makeXmlSimple());
+        result.setStudyPopulationDescription(new STTransformerTest().makeXmlSimple());
+
         return result;
+    }
+
+    @Override
+    public void verifyDtoSimple(ObservationalStudyProtocolDTO x) {
+        new STTransformerTest().verifyDtoSimple(x.getBiospecimenDescription());
+        new CDTransformerTest().verifyDtoSimple(x.getBiospecimenRetentionCode());
+        new INTTransformerTest().verifyDtoSimple(x.getNumberOfGroups());
+        new CDTransformerTest().verifyDtoSimple(x.getSamplingMethodCode());
+        new CDTransformerTest().verifyDtoSimple(x.getStudyModelCode());
+        new STTransformerTest().verifyDtoSimple(x.getStudyModelOtherText());
+        new CDTransformerTest().verifyDtoSimple(x.getTimePerspectiveCode());
+        new STTransformerTest().verifyDtoSimple(x.getTimePerspectiveOtherText());
+        new STTransformerTest().verifyDtoSimple(x.getStudyPopulationDescription());
+    }
+
+    @Override
+    public void verifyXmlSimple(ObservationalStudyProtocol x) {
+        new STTransformerTest().verifyXmlSimple(x.getBiospecimenDescription());
+        new CDTransformerTest().verifyXmlSimple(x.getBiospecimenRetentionCode());
+        new INTTransformerTest().verifyXmlSimple(x.getNumberOfGroups());
+        new CDTransformerTest().verifyXmlSimple(x.getSamplingMethodCode());
+        new CDTransformerTest().verifyXmlSimple(x.getStudyModelCode());
+        new STTransformerTest().verifyXmlSimple(x.getStudyModelOtherText());
+        new CDTransformerTest().verifyXmlSimple(x.getTimePerspectiveCode());
+        new STTransformerTest().verifyXmlSimple(x.getTimePerspectiveOtherText());
+        new STTransformerTest().verifyXmlSimple(x.getStudyPopulationDescription());
     }
 }

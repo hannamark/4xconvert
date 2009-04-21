@@ -305,7 +305,7 @@
             </batchtest>
         </junit>
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="81" totallinerate="85" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="81" totallinerate="86" />
         <!-- Increase these as unit tests are written -->
     </target>
     <!--

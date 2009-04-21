@@ -80,65 +80,61 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.grid.dto.pa;
+package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
-import gov.nih.nci.coppa.services.pa.StudyProtocol;
-import gov.nih.nci.coppa.services.pa.grid.dto.DtoTransformException;
-import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.coppa.pa.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.pa.grid.dto.transform.CDTransformerTest;
+import gov.nih.nci.coppa.pa.grid.dto.transform.DSETCDTransformerTest;
+import gov.nih.nci.coppa.pa.grid.dto.transform.INTTransformerTest;
+import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 
-/**
- * Transforms StudyProtocol instances.
- */
-public final class StudyProtocolTransformer extends AbstractStudyProtocolTransformer<StudyProtocol, StudyProtocolDTO>
-    implements Transformer<StudyProtocol, StudyProtocolDTO> {
+public class InterventionalStudyProtocolTransformerTest
+    extends AbstractTransformerTestBase<InterventionalStudyProtocolTransformer, InterventionalStudyProtocol, InterventionalStudyProtocolDTO> {
 
-    /**
-     * Public singleton.
-     */
-    public static final StudyProtocolTransformer INSTANCE = new StudyProtocolTransformer();
-
-    private StudyProtocolTransformer() {
-        super();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected StudyProtocol newXml() {
-        return new StudyProtocol();
-    }
+    public InterventionalStudyProtocolDTO makeDtoSimple() {
+        InterventionalStudyProtocolDTO result = new InterventionalStudyProtocolDTO();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected StudyProtocolDTO newDto() {
-        return new StudyProtocolDTO();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyProtocolDTO toDto(StudyProtocol input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-
-        StudyProtocolDTO result = transformBaseDto(input);
+        result.setBlindingSchemaCode(new CDTransformerTest().makeDtoSimple());
+        result.setAllocationCode(new CDTransformerTest().makeDtoSimple());
+        result.setDesignConfigurationCode(new CDTransformerTest().makeDtoSimple());
+        result.setStudyClassificationCode(new CDTransformerTest().makeDtoSimple());
+        result.setNumberOfInterventionGroups(new INTTransformerTest().makeDtoSimple());
+        result.setBlindedRoleCode(new DSETCDTransformerTest().makeDtoSimple());
 
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public StudyProtocol toXml(StudyProtocolDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        StudyProtocol result = transformBaseXml(input);
+    @Override
+    public InterventionalStudyProtocol makeXmlSimple() {
+        InterventionalStudyProtocol result = new InterventionalStudyProtocol();
+        result.setBlindingSchemaCode(new CDTransformerTest().makeXmlSimple());
+        result.setAllocationCode(new CDTransformerTest().makeXmlSimple());
+        result.setDesignConfigurationCode(new CDTransformerTest().makeXmlSimple());
+        result.setStudyClassificationCode(new CDTransformerTest().makeXmlSimple());
+        result.setNumberOfInterventionGroups(new INTTransformerTest().makeXmlSimple());
+        result.setBlindedRoleCode(new DSETCDTransformerTest().makeXmlSimple());
+
         return result;
+    }
+
+    @Override
+    public void verifyDtoSimple(InterventionalStudyProtocolDTO x) {
+        new CDTransformerTest().verifyDtoSimple(x.getBlindingSchemaCode());
+        new CDTransformerTest().verifyDtoSimple(x.getAllocationCode());
+        new CDTransformerTest().verifyDtoSimple(x.getDesignConfigurationCode());
+        new INTTransformerTest().verifyDtoSimple(x.getNumberOfInterventionGroups());
+        new DSETCDTransformerTest().verifyDtoSimple(x.getBlindedRoleCode());
+    }
+
+    @Override
+    public void verifyXmlSimple(InterventionalStudyProtocol x) {
+        new CDTransformerTest().verifyXmlSimple(x.getBlindingSchemaCode());
+        new CDTransformerTest().verifyXmlSimple(x.getAllocationCode());
+        new CDTransformerTest().verifyXmlSimple(x.getDesignConfigurationCode());
+        new INTTransformerTest().verifyXmlSimple(x.getNumberOfInterventionGroups());
+        new DSETCDTransformerTest().verifyXmlSimple(x.getBlindedRoleCode());
     }
 }

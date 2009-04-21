@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 import java.util.Properties;
@@ -55,6 +56,15 @@ public class JNDIServiceLocator implements ServiceLocator {
         ArmServiceRemote result = (ArmServiceRemote) lookup("pa/ArmServiceBean/remote");
         return result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolServiceRemote getStudyProtocolService() throws NamingException {
+        StudyProtocolServiceRemote result = (StudyProtocolServiceRemote) lookup("pa/StudyProtocolServiceBean/remote");
+        return result;
+    }
+
 
     /**
      * {@inheritDoc}
