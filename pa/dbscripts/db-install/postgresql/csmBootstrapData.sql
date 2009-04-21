@@ -27,12 +27,12 @@ COMMIT
 --  The following entry is for your application. 
 --  Replace <<application_context_name>> with your application name.
 -- 
---	password is ctods
+--  password is ctods
 INSERT INTO CSM_APPLICATION(
 APPLICATION_NAME, APPLICATION_DESCRIPTION, DECLARATIVE_FLAG, ACTIVE_FLAG,UPDATE_DATE,
 DATABASE_URL, DATABASE_USER_NAME,DATABASE_PASSWORD, DATABASE_DIALECT, DATABASE_DRIVER)
-VALUES ('pa','pa','0','0',current_date, 'jdbc:postgresql:;;localhost:5432;ctods', 'ctods',
-'e40AokJP9qk=', 'org.hibernate.dialect.PostgreSQLDialect', 'org.postgresql.Driver' )
+VALUES ('pa','pa','0','0',current_date, 'jdbc:postgresql://localhost:5432/ctods_pa', 'pauser',
+'BmJz1l2ghRU=', 'org.hibernate.dialect.PostgreSQLDialect', 'org.postgresql.Driver' )
 ;
 INSERT INTO CSM_PROTECTION_ELEMENT(
 PROTECTION_ELEMENT_NAME, PROTECTION_ELEMENT_DESCRIPTION, OBJECT_ID, APPLICATION_ID,UPDATE_DATE)
@@ -114,4 +114,11 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'firebird-nci'), (select group_id from csm_group where group_name = 'Subscriber'))
 ;
 COMMIT
+;
+-- Password is pass
+INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('submitter', 'Test', 'Submitter','BtM2GNbiAxg=',current_date)
+;
+INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID, UPDATE_DATE) VALUES ((select protection_element_id from csm_protection_element where protection_element_name = 'pa'), (select user_id from csm_user where login_name = 'submitter'),current_date)
+;
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'submitter'), (select group_id from csm_group where group_name = 'Submitter'))
 ;
