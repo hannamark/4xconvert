@@ -12,7 +12,7 @@ import org.iso._21090.NullFlavor;
 import org.iso._21090.TEL;
 
 /**
- * Transforms sets of tels.  Note that there is a small amount of asymetry here w.r.t.
+ * Transforms sets of tels.  Note that there is a small amount of asymmetry here w.r.t.
  * empty or null sets:
  * <ol>
  * <li><b>DTO -> XML</b>: According to the ISO XSD, the XML can never be null.  It must

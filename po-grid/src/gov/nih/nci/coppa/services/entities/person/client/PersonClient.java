@@ -14,6 +14,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
+import org.iso._21090.ENPN;
+import org.iso._21090.ENXP;
+import org.iso._21090.EntityNamePartType;
 import org.iso._21090.II;
 
 /**
@@ -24,10 +27,10 @@ import org.iso._21090.II;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.2
  */
-public class PersonClient extends PersonClientBase implements PersonI {	
+public class PersonClient extends PersonClientBase implements PersonI {
     /**
      * The identifier name for person ii's.
      */
@@ -37,52 +40,55 @@ public class PersonClient extends PersonClientBase implements PersonI {
      * The ii root value for people.
      */
     public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
-    
-	public PersonClient(String url) throws MalformedURIException, RemoteException {
-		this(url,null);	
-	}
 
-	public PersonClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(url,proxy);
-	}
-	
-	public PersonClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-	   	this(epr,null);
-	}
-	
-	public PersonClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(epr,proxy);
-	}
+    public PersonClient(String url) throws MalformedURIException, RemoteException {
+        this(url,null);
+    }
 
-	public static void usage(){
-		System.out.println(PersonClient.class.getName() + " -url <service url>");
-	}
-	
-	public static void main(String [] args){
-	    System.out.println("Running the Grid Service Client");
-		try{
-		if(!(args.length < 2)){
-			if(args[0].equals("-url")){
-			  PersonClient client = new PersonClient(args[1]);
-			  // place client calls here if you want to use this main as a
-			  // test....
-			  
+    public PersonClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(url,proxy);
+    }
+
+    public PersonClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
+           this(epr,null);
+    }
+
+    public PersonClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(epr,proxy);
+    }
+
+    public static void usage(){
+        System.out.println(PersonClient.class.getName() + " -url <service url>");
+    }
+
+    public static void main(String [] args){
+        System.out.println("Running the Grid Service Client");
+        try{
+        if(!(args.length < 2)){
+            if(args[0].equals("-url")){
+              PersonClient client = new PersonClient(args[1]);
+              // place client calls here if you want to use this main as a
+              // test....
+
+              System.out.println("Getting Person");
               getPerson(client);
+              System.out.println("Getting Nullified Person");
               getNullifiedPerson(client);
+              System.out.println("Searching for Persons");
               searchPersons(client);
-			} else {
-				usage();
-				System.exit(1);
-			}
-		} else {
-			usage();
-			System.exit(1);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
+            } else {
+                usage();
+                System.exit(1);
+            }
+        } else {
+            usage();
+            System.exit(1);
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
     private static void print(gov.nih.nci.coppa.po.Person person) {
         print(person.getIdentifier());
@@ -91,12 +97,18 @@ public class PersonClient extends PersonClientBase implements PersonI {
     private static void print(II identifier) {
         System.out.println(ToStringBuilder.reflectionToString(identifier));
     }
-    
+
     private static void searchPersons(PersonClient client) throws RemoteException {
         Person criteria = new Person();
         CD statusCode = new CD();
         statusCode.setCode("active");
         criteria.setStatusCode(statusCode);
+        ENPN enpn = new ENPN();
+        ENXP enxp = new ENXP();
+        enxp.setValue("Jones");
+        enxp.setType(EntityNamePartType.FAM);
+        enpn.getPart().add(enxp);
+        criteria.setName(enpn);
         gov.nih.nci.coppa.po.Person[] results = client.search(criteria);
         if (results == null) {
             System.out.println("Search Persons Results was null!");
@@ -116,13 +128,13 @@ public class PersonClient extends PersonClientBase implements PersonI {
         Person result = client.getById(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
-    
+
     private static void getNullifiedPerson(PersonClient client) throws RemoteException {
         try {
             Id id = new Id();
             id.setRoot(PERSON_ROOT);
             id.setIdentifierName(PERSON_IDENTIFIER_NAME);
-            id.setExtension("1140");
+            id.setExtension("499");
             Person result = client.getById(id);
             System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
         } catch (NullifiedEntityFault e) {
@@ -132,7 +144,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
             throw e;
         }
     }
-    
+
 
   public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
     synchronized(portTypeMutex){

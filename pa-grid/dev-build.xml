@@ -14,38 +14,38 @@
     <property name="service.hostname" value="localhost"/>
     <property name="service.port" value="8080"/>
 
-      <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory"/>
-      <property name="java.naming.provider.url.host" value="localhost"/>
-      <property name="java.naming.provider.url.port" value="1099"/>
-      <property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}"/>
-      <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces"/>
-      <property name="java.naming.security.principal" value="ejbclient"/>
-      <property name="java.naming.security.credentials" value="pass"/>
-      <property name="cobertura.dir" value="tools/cobertura" />
+    <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory"/>
+    <property name="java.naming.provider.url.host" value="localhost"/>
+    <property name="java.naming.provider.url.port" value="1099"/>
+    <property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}"/>
+    <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces"/>
+    <property name="java.naming.security.principal" value="ejbclient"/>
+    <property name="java.naming.security.credentials" value="pass"/>
+    <property name="cobertura.dir" value="tools/cobertura" />
 
-      <path id="cobertura.classpath">
-          <fileset dir="${cobertura.dir}">
-              <include name="cobertura.jar" />
-              <include name="lib/**/*.jar" />
-          </fileset>
-      </path>
+    <path id="cobertura.classpath">
+        <fileset dir="${cobertura.dir}">
+            <include name="cobertura.jar" />
+            <include name="lib/**/*.jar" />
+        </fileset>
+    </path>
 
-      <path id="checkstyle.classpath">
-          <fileset dir="${basedir}">
-              <include name="tools/checkstyle/*.jar" />
-          </fileset>
-      </path>
+    <path id="checkstyle.classpath">
+        <fileset dir="${basedir}">
+            <include name="tools/checkstyle/*.jar" />
+        </fileset>
+    </path>
 
-      <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
-      <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
+    <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+    <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
 
-      <patternset id="dependent.schema.folders.ps">
-          <include name="core/**/*"/>
-          <include name="pkgdata/**/*"/>
-          <include name="ws/**/*"/>
-          <include name="wsrf/**/*"/>
-      </patternset>
-      <property name="gar.name" value="${service.deployment.dir.name}.gar" />
+    <patternset id="dependent.schema.folders.ps">
+        <include name="core/**/*"/>
+        <include name="pkgdata/**/*"/>
+        <include name="ws/**/*"/>
+        <include name="wsrf/**/*"/>
+    </patternset>
+    <property name="gar.name" value="${service.deployment.dir.name}.gar" />
 
     <!-- ============================================================== -->
     <!-- Create any extended Classpaths here                            -->
@@ -106,11 +106,13 @@
                 <pathelement location="${basedir}/lib/activation.jar"/>
                 <pathelement location="${basedir}/lib/jsr173_1.0_api.jar"/>
             </classpath>
-          <arg value="-xmlschema"/>
+            <arg value="-xmlschema"/>
             <arg file="${basedir}/schema/PAServices/CoppaPA.xsd"/>
             <arg file="${basedir}/schema/PAServices/ISO_datatypes_Narrative.xsd"/>
-            <arg value="-d"/><arg file="${stubs.src}"/>
-            <arg value="-b"/><arg file="${basedir}/schema/PAServices/jaxb-config.xjb"/>
+            <arg value="-d"/>
+            <arg file="${stubs.src}"/>
+            <arg value="-b"/>
+            <arg file="${basedir}/schema/PAServices/jaxb-config.xjb"/>
             <arg value="-nv"/>
             <arg value="-verbose"/>
         </java>
@@ -145,24 +147,24 @@
     </target>
 
     <target name="compile-quick" depends="compileStubs-quick, init">
-          <runtarget target="preCompile" />
-          <javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+        <runtarget target="preCompile" />
+        <javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
 
-          <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
-          <copy toDir="${build.dest}">
-              <fileset dir="${src.dir}">
-                  <include name="**/*" />
-              </fileset>
-          </copy>
-          <runtarget target="postCompile" />
+        <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
+        <copy toDir="${build.dest}">
+            <fileset dir="${src.dir}">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <runtarget target="postCompile" />
     </target>
-      <target name="compileStubs-quick" depends="init">
-          <runtarget target="preCompileStubs" />
-          <javac srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
-              <include name="**/*.java" />
-          </javac>
-          <runtarget target="postCompileStubs" />
-      </target>
+    <target name="compileStubs-quick" depends="init">
+        <runtarget target="preCompileStubs" />
+        <javac srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
+            <include name="**/*.java" />
+        </javac>
+        <runtarget target="postCompileStubs" />
+    </target>
     <!-- ============================================================== -->
     <!-- Pre Compile Build Target                                       -->
     <!-- ============================================================== -->
@@ -174,7 +176,7 @@
     <!-- Post Compile Build Target                                       -->
     <!-- ============================================================== -->
     <target name="postCompile">
-      <runtarget target="checkstyle"/>
+        <runtarget target="checkstyle"/>
         <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
         <copy toDir="${build.dest}" filtering="true" overwrite="true">
             <filterset begintoken="$${" endtoken="}" >
@@ -286,101 +288,95 @@
         </cobertura-instrument>
 
         <echo message="Test results dir: ${junit.results.dir}" />
-      <mkdir dir="${junit.results.dir}" />
-      <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="yes">
-          <sysproperty key="net.sourceforge.cobertura.datafile"
-              file="${basedir}/build/cobertura.ser" />
-          <classpath location="${build.dir}/intrumented" />
-          <classpath refid="test.run.classpath" />
-          <classpath refid="cobertura.classpath" />
-          <formatter type="xml" />
-              <formatter type="plain" />
-        <batchtest fork="yes" todir="${junit.results.dir}">
-          <fileset dir="${test.src.dir}">
-            <include name="**/Test*.java" />
-                                          <include name="**/*Test.java" />
-            <include name="**/*TestCase.java" />
-          </fileset>
-        </batchtest>
-      </junit>
-        <cobertura-report datafile="${basedir}/build/cobertura.ser"
-                     format="html"
-                    destdir="${build.dir}/cobertura"
-                    srcdir="${src.dir}" />
-        <cobertura-check datafile="${basedir}/build/cobertura.ser"
-            totalbranchrate="75"
-                   totallinerate="75"/> <!-- Increase these as unit tests are written -->
+        <mkdir dir="${junit.results.dir}" />
+        <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="no">
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/build/cobertura.ser" />
+            <classpath location="${build.dir}/intrumented" />
+            <classpath refid="test.run.classpath" />
+            <classpath refid="cobertura.classpath" />
+            <formatter type="xml" />
+            <formatter type="plain" />
+            <batchtest fork="yes" todir="${junit.results.dir}">
+                <fileset dir="${test.src.dir}">
+                    <include name="**/Test*.java" />
+                    <include name="**/*Test.java" />
+                    <include name="**/*TestCase.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="81" totallinerate="85" />
+        <!-- Increase these as unit tests are written -->
     </target>
-      <!--
+    <!--
           A note about this target: Checkstyle has a bug that requires exception classes to be on the execution
           classpath (http://jira.codehaus.org/browse/MPCHECKSTYLE-20).  Thus, in reality, this target should depend
           on the compile target.  However, compile takes a long time, and in typical use this shouldn't be needed.
 
           If you get an error about invalid classpath, run 'ant compile checkstyle' and it should resolve.
       -->
-      <target name="checkstyle" description="Verify coding styles and conventions.">
-          <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
-              <classpath>
-                  <path location="${basedir}/build/classes"/>
-                 <path refid="checkstyle.classpath" />
-              </classpath>
-              <!-- ADD PATHS FOR CHECKING HERE -->
-              <fileset dir="src/gov/nih/nci/coppa/services/pa/grid/ser" includes="**/*.java"/>
+    <target name="checkstyle" description="Verify coding styles and conventions.">
+        <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
+            <classpath>
+                <path location="${basedir}/build/classes"/>
+                <path refid="checkstyle.classpath" />
+            </classpath>
+            <!-- ADD PATHS FOR CHECKING HERE -->
+            <fileset dir="src/gov/nih/nci/coppa/services/pa/grid/ser" includes="**/*.java"/>
             <formatter type="plain"/>
             <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
-          </checkstyle>
-      </target>
+        </checkstyle>
+    </target>
 
-      <!-- Create a JAR file with the implementation classes -->
-      <target name="jar-quick" depends="compile-quick">
-          <runtarget target="preJar" />
-          <jar jarfile="${build.lib.dir}/${client.jar.name}" basedir="${build.dest}">
-              <include name="**/client/**" />
-          </jar>
-          <jar jarfile="${build.lib.dir}/${service.jar.name}" basedir="${build.dest}">
-              <include name="**/service/**" />
-          </jar>
-          <jar jarfile="${build.lib.dir}/${common.jar.name}" basedir="${build.dest}">
-              <include name="**/*" />
-              <exclude name="**/client/**" />
-              <exclude name="**/service/**" />
-          </jar>
-          <runtarget target="postJar" />
-      </target>
-
-
-      <!-- Create a JAR file with the test implementation classes -->
-      <target name="jarTests-quick" depends="jar-quick,compileTests-quick">
-          <runtarget target="preJarTests" />
-          <jar jarfile="${build.lib.dir}/${test.jar.name}" basedir="${test.build.dest}" />
-          <runtarget target="postJarTests" />
-      </target>
+    <!-- Create a JAR file with the implementation classes -->
+    <target name="jar-quick" depends="compile-quick">
+        <runtarget target="preJar" />
+        <jar jarfile="${build.lib.dir}/${client.jar.name}" basedir="${build.dest}">
+            <include name="**/client/**" />
+        </jar>
+        <jar jarfile="${build.lib.dir}/${service.jar.name}" basedir="${build.dest}">
+            <include name="**/service/**" />
+        </jar>
+        <jar jarfile="${build.lib.dir}/${common.jar.name}" basedir="${build.dest}">
+            <include name="**/*" />
+            <exclude name="**/client/**" />
+            <exclude name="**/service/**" />
+        </jar>
+        <runtarget target="postJar" />
+    </target>
 
 
-      <!-- Create a JAR file with the stub classes -->
-      <target name="jarStubs-quick" depends="compileStubs-quick">
-          <runtarget target="preJarStubs" />
-          <jar destfile="${build.lib.dir}/${stubs.jar.name}" basedir="${stubs.dest}" />
-          <runtarget target="postJarStubs" />
-      </target>
+    <!-- Create a JAR file with the test implementation classes -->
+    <target name="jarTests-quick" depends="jar-quick,compileTests-quick">
+        <runtarget target="preJarTests" />
+        <jar jarfile="${build.lib.dir}/${test.jar.name}" basedir="${test.build.dest}" />
+        <runtarget target="postJarTests" />
+    </target>
 
 
-      <!-- Empty target, in case we simply want to generate the JAR files -->
-      <target name="jars-quick" depends="jarStubs-quick, jar-quick, jarTests-quick" />
+    <!-- Create a JAR file with the stub classes -->
+    <target name="jarStubs-quick" depends="compileStubs-quick">
+        <runtarget target="preJarStubs" />
+        <jar destfile="${build.lib.dir}/${stubs.jar.name}" basedir="${stubs.dest}" />
+        <runtarget target="postJarStubs" />
+    </target>
 
-      <target name="all-quick" depends="jars-quick" description="RE-COMPILE, RE-JAR QUICKLY"/>
+    <!-- Empty target, in case we simply want to generate the JAR files -->
+    <target name="jars-quick" depends="jarStubs-quick, jar-quick, jarTests-quick" />
 
-      <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY"/>
+    <target name="all-quick" depends="jars-quick" description="RE-COMPILE, RE-JAR QUICKLY"/>
+
+    <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY"/>
 
     <macrodef name="run-client">
-       <attribute name="class" default="gov.nih.nci.coppa.services.pa.client.PaServicesClient"/>
-       <attribute name="serviceenpointname" default="PaServices"/>
-       <attribute name="hostname" default="${service.hostname}"/>
-       <attribute name="port" default="${service.port}"/>
-       <attribute name="debug-suspend" default="n"/>
-      <sequential>
-        <var name="run-client.service.url" unset="true"/>
-            <var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceEnpointName}" />
+        <attribute name="class" default="gov.nih.nci.coppa.services.pa.client.PaServicesClient"/>
+        <attribute name="serviceendpointname" default="PaServices"/>
+        <attribute name="hostname" default="${service.hostname}"/>
+        <attribute name="port" default="${service.port}"/>
+        <attribute name="debug-suspend" default="n"/>
+        <sequential>
+            <var name="run-client.service.url" unset="true"/>
+            <var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceendpointname}" />
             <property name="runclasspath" refid="run.classpath"/>
             <echo message="Connecting to service: ${run-client.service.url}" />
             <java failonerror="true" classname="@{class}" classpathref="run.classpath" fork="yes">
@@ -390,10 +386,14 @@
                 <arg value="-url" />
                 <arg value="${run-client.service.url}" />
             </java>
-      </sequential>
+        </sequential>
     </macrodef>
 
-      <target name="runArmClient" depends="checkGlobus, defineClasspaths" description="Run the sample Arm Client">
-        <run-client serviceenpointname="Person" class="gov.nih.nci.coppa.services.pa.armservice.client.ArmServiceClient" debug-suspend="n"/>
-      </target>
+    <target name="runArmClient" depends="checkGlobus, defineClasspaths" description="Run the sample Arm Client">
+        <run-client serviceendpointname="ArmService" class="gov.nih.nci.coppa.services.pa.armservice.client.ArmServiceClient" debug-suspend="n" />
+    </target>
+
+    <target name="runStudyResourcingClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyResourcingService Client">
+        <run-client serviceendpointname="StudyResourcingService" class="gov.nih.nci.coppa.services.pa.studyresourcingservice.client.StudyResourcingServiceClient" debug-suspend="n"/>
+    </target>
 </project>

@@ -23,9 +23,9 @@ import java.util.Map;
 
 /**
  * A registry of Transformer(s).
- * 
+ *
  * @author smatyas
- * 
+ *
  */
 public final class TransformerRegistry {
 

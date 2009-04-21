@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 import java.util.Properties;
 
@@ -36,12 +37,12 @@ public class JNDIServiceLocator implements ServiceLocator {
         Object object = null;
         int i = 0;
         while (object == null && i < MAX_RETRIES) {
-             try {
-                 object = context.lookup(name);
-             } catch (CommunicationException com) {
-                 instance = new JNDIServiceLocator();
-             }
-             i++;
+            try {
+                object = context.lookup(name);
+            } catch (CommunicationException com) {
+                instance = new JNDIServiceLocator();
+            }
+            i++;
         }
 
         return object;
@@ -51,7 +52,16 @@ public class JNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public ArmServiceRemote getArmService() throws NamingException {
-        ArmServiceRemote result = (ArmServiceRemote) lookup("pa/ArmServiceBean/remote"); // FIXME: check
+        ArmServiceRemote result = (ArmServiceRemote) lookup("pa/ArmServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyResourcingServiceRemote getStudyResourcingService() throws NamingException {
+        StudyResourcingServiceRemote result =
+            (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
         return result;
     }
 }

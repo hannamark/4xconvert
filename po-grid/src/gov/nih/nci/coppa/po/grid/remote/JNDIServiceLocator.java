@@ -95,62 +95,61 @@ public class JNDIServiceLocator implements ServiceLocator {
     }
 
     public PersonEntityServiceRemote getPersonService() throws NamingException {
-        PersonEntityServiceRemote object = (PersonEntityServiceRemote)
-        lookup("po/PersonEntityServiceBean/remote");
+        PersonEntityServiceRemote object = (PersonEntityServiceRemote) lookup("po/PersonEntityServiceBean/remote");
         return object;
     }
 
     public OrganizationEntityServiceRemote getOrganizationService() throws NamingException {
         OrganizationEntityServiceRemote object = (OrganizationEntityServiceRemote)
-        lookup("po/OrganizationEntityServiceBean/remote");
+            lookup("po/OrganizationEntityServiceBean/remote");
         return object;
     }
 
     public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityService() throws NamingException {
         HealthCareFacilityCorrelationServiceRemote object = (HealthCareFacilityCorrelationServiceRemote)
-        lookup("po/HealthCareFacilityCorrelationServiceBean/remote");
+            lookup("po/HealthCareFacilityCorrelationServiceBean/remote");
         return object;
     }
 
     public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffService() throws NamingException {
         ClinicalResearchStaffCorrelationServiceRemote object = (ClinicalResearchStaffCorrelationServiceRemote)
-        lookup("po/ClinicalResearchStaffCorrelationServiceBean/remote");
+            lookup("po/ClinicalResearchStaffCorrelationServiceBean/remote");
         return object;
     }
 
     public HealthCareProviderCorrelationServiceRemote getHealthCareProviderService() throws NamingException {
         HealthCareProviderCorrelationServiceRemote object = (HealthCareProviderCorrelationServiceRemote)
-        lookup("po/HealthCareProviderCorrelationServiceBean/remote");
+            lookup("po/HealthCareProviderCorrelationServiceBean/remote");
         return object;
     }
 
     public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationService() throws NamingException {
         IdentifiedOrganizationCorrelationServiceRemote object = (IdentifiedOrganizationCorrelationServiceRemote)
-        lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+            lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
         return object;
     }
 
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonService() throws NamingException {
         IdentifiedPersonCorrelationServiceRemote object = (IdentifiedPersonCorrelationServiceRemote)
-        lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
+            lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
         return object;
     }
 
     public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationService() throws NamingException {
         ResearchOrganizationCorrelationServiceRemote object = (ResearchOrganizationCorrelationServiceRemote)
-        lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
+            lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
         return object;
     }
 
     public OversightCommitteeCorrelationServiceRemote getOversightCommitteeService() throws NamingException {
         OversightCommitteeCorrelationServiceRemote object = (OversightCommitteeCorrelationServiceRemote)
-        lookup("po/OversightCommitteeCorrelationServiceBean/remote");
+            lookup("po/OversightCommitteeCorrelationServiceBean/remote");
         return object;
     }
 
     public OrganizationalContactCorrelationServiceRemote getOrganizationalContactService() throws NamingException {
         OrganizationalContactCorrelationServiceRemote object = (OrganizationalContactCorrelationServiceRemote)
-        lookup("po/OrganizationalContactCorrelationServiceBean/remote");
+            lookup("po/OrganizationalContactCorrelationServiceBean/remote");
         return object;
     }
 

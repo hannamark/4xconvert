@@ -1,17 +1,28 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 import javax.naming.NamingException;
 
 /**
  * Locator interface for PA services.
  */
+/**
+ * @author Steve Lustbader
+ */
 public interface ServiceLocator {
 
     /**
      * @return the remote Arm service
-     * @throws NamingException if unbale to lookup
+     * @throws NamingException if unable to lookup
      */
     ArmServiceRemote getArmService() throws NamingException;
+
+    /**
+     * Gets the StudyResourcing service.
+     * @return the remote StudyResourcingService
+     * @throws NamingException if unable to lookup
+     */
+    StudyResourcingServiceRemote getStudyResourcingService() throws NamingException;
 }

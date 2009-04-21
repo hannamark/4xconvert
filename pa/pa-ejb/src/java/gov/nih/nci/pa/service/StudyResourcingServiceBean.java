@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -100,6 +101,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -114,6 +116,7 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
+@Interceptors({ HibernateSessionInterceptor.class })
 @SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals",
   "PMD.CyclomaticComplexity" })
 public class StudyResourcingServiceBean
@@ -395,8 +398,8 @@ public class StudyResourcingServiceBean
 
 
         }  catch (HibernateException hbe) {
-            session.flush();
             LOG.error(" Hibernate exception while retrieving getStudyResourceByID" , hbe);
+            session.flush();
             throw new PAException(" Hibernate exception while retrieving getStudyResourceByID "  , hbe);
         }
 

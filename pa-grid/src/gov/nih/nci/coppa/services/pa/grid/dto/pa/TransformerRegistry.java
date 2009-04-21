@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public final class TransformerRegistry {
 
     static {
         values.put(ArmDTO.class, ArmTransformer.INSTANCE);
+        values.put(StudyResourcingDTO.class, StudyResourcingTransformer.INSTANCE);
     }
 
     /**
