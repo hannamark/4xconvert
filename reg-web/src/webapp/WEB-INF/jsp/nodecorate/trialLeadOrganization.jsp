@@ -5,6 +5,6 @@
             
  <span class="formErrorMsg"> 
      <s:fielderror>
-     <s:param>LeadOrgNotSelected</s:param>
+     <s:param>trialDTO.leadOrganizationIdentifier</s:param>
     </s:fielderror>                            
   </span>

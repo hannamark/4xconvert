@@ -15,13 +15,33 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
-<c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="amendProtocol"/>
+<c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="amendProtocol"/>
+<c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="submitProtocol"/>
 <script language="javascript">
-function amendProtocol (){   
-    var action = "amendTrialamend.action";   
-    document.forms[0].action=action;
-    document.forms[0].submit();
-    showPopWin('${amendProtocol}', 600, 200, '', 'Amend Trial');
+function submitTrial(){
+	var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
+	if (assignedId != '') {
+		document.forms[0].action="amendTrialamend.action";
+		document.forms[0].submit();
+		showPopWin('${amendProtocol}', 600, 200, '', 'Amend Trial');	
+	} else {
+        document.forms[0].action = "submitTrialcreate.action";
+        document.forms[0].submit();
+        showPopWin('${submitProtocol}', 600, 200, '', 'Submit Register Trial');  
+	}
+}
+function editTrial() {
+	var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
+	alert("some" +assignedId+"some");
+    if (assignedId != '') {
+        document.forms[0].action="amendTrialedit.action";
+        document.forms[0].submit();
+    } else {
+        document.forms[0].action = "submitTrialedit.action";
+        document.forms[0].submit();
+    }
+    
+    
 }
 function printProtocol (){   
 	var sOption="toolbar=no,location=no,directories=no,menubar=yes,"; 
@@ -42,9 +62,11 @@ var winprint=window.open("","",sOption);
  <h1><fmt:message key="review.trial.view.page.title" /></h1>
  
 <div class="box">
-    <s:form > <s:actionerror/>          
+    <s:form > <s:actionerror/>
+    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
     <div id="contentprint">        
     <table class="form">
+    <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
           <tr>
             <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
           </tr>
@@ -68,9 +90,11 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.amendmentDate}"/> 
                 </td>
           </tr>
+    </c:if>
           <tr>
             <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
           </tr>
+          <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
           <tr>     
                 <td scope="row" class="label">
                     <label for="Assigned NCI Identifier">
@@ -81,6 +105,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.assignedIdentifier}"/> 
                 </td>
           </tr>
+          </c:if>
           <tr>     
                 <td scope="row" class="label">
                     <label for="Lead Organization Trial Identifier">
@@ -366,10 +391,10 @@ var winprint=window.open("","",sOption);
         <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
-                <li><a href="amendTrialedit.action"                
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Edit</span></span></a></li>
+                <li><a href="#"                
+                    class="btn" onclick="editTrial();"><span class="btn_img"><span class="back">Edit</span></span></a></li>
                <li><a href="#"                
-                    class="btn" onclick="amendProtocol();"><span class="btn_img"><span class="back">Submit</span></span></a></li>
+                    class="btn" onclick="submitTrial();"><span class="btn_img"><span class="back">Submit</span></span></a></li>
                <li><a href="#"                
                     class="btn" onclick="printProtocol();"><span class="btn_img"><span class="back">Print</span></span></a></li>          
             </ul>   

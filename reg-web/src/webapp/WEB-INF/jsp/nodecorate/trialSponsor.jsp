@@ -3,6 +3,6 @@
 <input type="button" value="Look Up" onclick="lookup4sponsor();" title="Opens a popup form to select Sponsor"/>
 <span class="formErrorMsg"> 
      <s:fielderror>
-     <s:param>SponsorNotSelected</s:param>
+     <s:param>trialDTO.sponsorIdentifier</s:param>
     </s:fielderror>                            
 </span>

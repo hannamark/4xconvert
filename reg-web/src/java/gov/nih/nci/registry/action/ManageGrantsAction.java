@@ -70,4 +70,13 @@ public class ManageGrantsAction extends ActionSupport {
     }
 
 
+    /**
+     * Keeps the user looking at the spinning wheel until a SUCCESS/EXCEPTION
+     * occurs.
+     * 
+     * @return res
+     */
+    public String showWaitDialog() {
+        return "show_ok_create";
+    }
 }

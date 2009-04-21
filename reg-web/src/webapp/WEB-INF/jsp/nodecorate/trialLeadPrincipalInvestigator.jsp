@@ -3,6 +3,6 @@
 <input type="button" value="Look Up" onclick="lookup4loadleadpers();" title="Opens a popup form to select Principal Investigator"/>
  <span class="formErrorMsg"> 
      <s:fielderror>
-     <s:param>LeadPINotSelected</s:param>
+     <s:param>trialDTO.piIdentifier</s:param>
     </s:fielderror>                            
   </span>

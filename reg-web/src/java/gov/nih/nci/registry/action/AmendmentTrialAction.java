@@ -18,7 +18,6 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
-import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
@@ -41,23 +40,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
-import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * 
  * @author Vrushali
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
-    "PMD.TooManyFields" })
-@Validation
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "ExcessiveClassLength", "PMD.TooManyFields" })
 public class AmendmentTrialAction extends ActionSupport implements ServletResponseAware {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private HttpServletResponse servletResponse;
     private static final Logger LOG = Logger.getLogger(AmendmentTrialAction.class);
@@ -110,7 +101,6 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * 
      * @return res
      */
-    @SkipValidation
     public String view() {
         //clear the session
         TrialValidator.removeSessionAttributes();
@@ -134,15 +124,12 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     /**
      * @return the trialDTO
      */
-    @VisitorFieldValidator(message = "",
-            shortCircuit = true, context = "action alias", appendPrefix = false)
     public TrialDTO getTrialDTO() {
         return trialDTO;
     }
     /**
      * @param trialDTO the trialDTO to set
      */
-    @VisitorFieldValidator(message = "")
     public void setTrialDTO(TrialDTO trialDTO) {
         this.trialDTO = trialDTO;
     }
@@ -161,6 +148,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
 
     public String review() {
         try {
+            
             clearErrorsAndMessages();
             enforceBusinessRules();
             if (hasFieldErrors()) {
@@ -241,7 +229,6 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * 
      * @return s
      */
-    @SkipValidation
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
@@ -251,25 +238,25 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * 
      * @return s
      */
-    @SkipValidation
     public String amend() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         if (trialDTO == null) {
            return ERROR; 
         }
         TrialUtil util = new TrialUtil();
+        Ii amendId = null;
         try {
-            StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
+            StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
-            OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
+            OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
-            OrganizationDTO sponsorOrganizationDTO = util.convertToSponsorOrgDTO(trialDTO);
-            StudyParticipationDTO leadOrganizationParticipationIdDTO = util.convertToStudyParticipationDTO(trialDTO);
+            OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
+            StudyParticipationDTO leadOrgParticipationIdDTO = util.convertToStudyParticipationDTO(trialDTO);
             StudyParticipationDTO nctIdentifierParticipationIdDTO = util.convertToNCTStudyParticipationDTO(trialDTO);
             StudyContactDTO studyContactDTO = null;
             StudyParticipationContactDTO studyParticipationContactDTO = null;
-            OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
+            OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
             PersonDTO responsiblePartyContactDTO = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
@@ -280,38 +267,30 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
-            
-            Ii amendId = RegistryServiceLocator.getTrialRegistrationService().
-             amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                    studyResourcingDTOs, documentDTOs, leadOrganizationDTO, 
-                    principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationParticipationIdDTO, 
-                    nctIdentifierParticipationIdDTO, studyContactDTO, studyParticipationContactDTO, 
-                    summary4organizationDTO, summary4studyResourcingDTO, responsiblePartyContactDTO);  
-            ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());    
+            amendId = RegistryServiceLocator.getTrialRegistrationService().
+            amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, 
+                    leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgParticipationIdDTO, 
+                    nctIdentifierParticipationIdDTO, studyContactDTO, studyParticipationContactDTO, summary4orgDTO, 
+                    summary4studyResourcingDTO, responsiblePartyContactDTO);  
+            TrialValidator.removeSessionAttributes();
+            //send mail
+            RegistryServiceLocator.getMailManagerService().sendAmendNotificationMail(amendId);
+            ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());
+            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", amendId);
         } catch (PAException e) {
-            // TODO Auto-generated catch block
             LOG.error(e.getMessage());
             addActionError(e.getMessage());
             TrialValidator.addSessionAttributes(trialDTO);
             return ERROR;
         }
-        final MailManager mailManager = new MailManager();
-        mailManager.sendAmendNotificationMail(ServletActionContext.getRequest().getRemoteUser(), // remote user
-                trialDTO.getAssignedIdentifier(), trialDTO.getAmendmentDate(), trialDTO.getLocalAmendmentNumber());
-        TrialValidator.removeSessionAttributes();
         setTrialAction("amend");
      return "redirect_to_search";   
     }
-  
     /**
      * validate the submit trial form elements.
      * @throws PAException 
      */
     private void enforceBusinessRules() throws PAException {
-        if (!(trialDTO.getResponsiblePartyType().equals("pi"))
-                && (trialDTO.getResponsiblePersonIdentifier() == null)) {
-                addFieldError("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibelParty"));
-        }
         if (PAUtil.isEmpty(trialDTO.getAmendmentDate())) {
             addFieldError("trialDTO.amendmentDate",
                     getText("error.submit.amendmentDate"));
@@ -321,7 +300,6 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                     addFieldError("trialDTO.amendmentDate", 
                             getText("error.submit.invalidDate"));
         }
-
         Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
         if (PAUtil.isNotEmpty(trialDTO.getAmendmentDate())
                 && currentTimeStamp.before(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate()))) {
@@ -330,28 +308,24 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> err = new HashMap<String, String>();
-        err = validator.validatePhaseAndPurposeCode(trialDTO);
+        err = validator.validateTrialDTO(trialDTO);
         addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDateAndFormat(trialDTO);
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateTrialStatusReason(trialDTO);
-        addErrors(err);
-        // validate trial status and dates
-        if (validator.isStatusOrDateChanged(trialDTO)) {
+        // validate trial status and dates specific for amendment
+        if (PAUtil.isNotEmpty(trialDTO.getStatusCode())
+                && PAUtil.isNotEmpty(trialDTO.getStatusDate())
+                && PAUtil.isNotEmpty(trialDTO.getCompletionDate())
+                && PAUtil.isNotEmpty(trialDTO.getStartDate())
+                && validator.isStatusOrDateChanged(trialDTO)) {
             Collection<String> errDate = validator.enforceBusinessRulesForDates(trialDTO);
             if (!errDate.isEmpty()) {
                 for (String msg : errDate) {
                     addActionError(msg);
                 }
-                
             }
         }
         //validate the docs
         validateAmendmentDocuments();
     }
-
     /**
      * @param err
      */
@@ -362,112 +336,96 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
         }
     }
-
     /**
      * @return the protocolDoc
      */
     public File getProtocolDoc() {
         return protocolDoc;
     }
-
     /**
      * @param protocolDoc the protocolDoc to set
      */
     public void setProtocolDoc(File protocolDoc) {
         this.protocolDoc = protocolDoc;
     }
-
     /**
      * @return the protocolDocFileName
      */
     public String getProtocolDocFileName() {
         return protocolDocFileName;
     }
-
     /**
      * @param protocolDocFileName the protocolDocFileName to set
      */
     public void setProtocolDocFileName(String protocolDocFileName) {
         this.protocolDocFileName = protocolDocFileName;
     }
-
     /**
      * @return the irbApproval
      */
     public File getIrbApproval() {
         return irbApproval;
     }
-
     /**
      * @param irbApproval the irbApproval to set
      */
     public void setIrbApproval(File irbApproval) {
         this.irbApproval = irbApproval;
     }
-
     /**
      * @return the irbApprovalFileName
      */
     public String getIrbApprovalFileName() {
         return irbApprovalFileName;
     }
-
     /**
      * @param irbApprovalFileName the irbApprovalFileName to set
      */
     public void setIrbApprovalFileName(String irbApprovalFileName) {
         this.irbApprovalFileName = irbApprovalFileName;
     }
-
     /**
      * @return the participatingSites
      */
     public File getParticipatingSites() {
         return participatingSites;
     }
-
     /**
      * @param participatingSites the participatingSites to set
      */
     public void setParticipatingSites(File participatingSites) {
         this.participatingSites = participatingSites;
     }
-
     /**
      * @return the participatingSitesFileName
      */
     public String getParticipatingSitesFileName() {
         return participatingSitesFileName;
     }
-
     /**
      * @param participatingSitesFileName the participatingSitesFileName to set
      */
     public void setParticipatingSitesFileName(String participatingSitesFileName) {
         this.participatingSitesFileName = participatingSitesFileName;
     }
-
     /**
      * @return the informedConsentDocument
      */
     public File getInformedConsentDocument() {
         return informedConsentDocument;
     }
-
     /**
      * @param informedConsentDocument the informedConsentDocument to set
      */
     public void setInformedConsentDocument(File informedConsentDocument) {
         this.informedConsentDocument = informedConsentDocument;
     }
-
     /**
      * @return the informedConsentDocumentFileName
      */
     public String getInformedConsentDocumentFileName() {
         return informedConsentDocumentFileName;
     }
-
     /**
      * @param informedConsentDocumentFileName the informedConsentDocumentFileName to set
      */
@@ -475,35 +433,30 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             String informedConsentDocumentFileName) {
         this.informedConsentDocumentFileName = informedConsentDocumentFileName;
     }
-
     /**
      * @return the otherDocument
      */
     public File getOtherDocument() {
         return otherDocument;
     }
-
     /**
      * @param otherDocument the otherDocument to set
      */
     public void setOtherDocument(File otherDocument) {
         this.otherDocument = otherDocument;
     }
-
     /**
      * @return the otherDocumentFileName
      */
     public String getOtherDocumentFileName() {
         return otherDocumentFileName;
     }
-
     /**
      * @param otherDocumentFileName the otherDocumentFileName to set
      */
     public void setOtherDocumentFileName(String otherDocumentFileName) {
         this.otherDocumentFileName = otherDocumentFileName;
     }
-
     /**
      * @return the changeMemoDoc
      */
@@ -517,14 +470,12 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     public void setChangeMemoDoc(File changeMemoDoc) {
         this.changeMemoDoc = changeMemoDoc;
     }
-
     /**
      * @return the changeMemoDocFileName
      */
     public String getChangeMemoDocFileName() {
         return changeMemoDocFileName;
     }
-
     /**
      * @param changeMemoDocFileName the changeMemoDocFileName to set
      */
@@ -558,33 +509,29 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 "error.submit.changeMemo");
         addErrors(err);
     }
-
     /**
      * @return the trialAction
      */
     public String getTrialAction() {
         return trialAction;
     }
-
     /**
      * @param trialAction the trialAction to set
      */
     public void setTrialAction(String trialAction) {
         this.trialAction = trialAction;
     }
-
     /**
      * @return the studyProtocolId
      */
     public String getStudyProtocolId() {
         return studyProtocolId;
     }
-
     /**
      * @param studyProtocolId the studyProtocolId to set
      */
     public void setStudyProtocolId(String studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
-   
+
 }

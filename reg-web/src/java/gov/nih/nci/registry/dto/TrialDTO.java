@@ -6,10 +6,8 @@ package gov.nih.nci.registry.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.RegexFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
-import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
+import org.hibernate.validator.NotEmpty;
+
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
@@ -56,7 +54,7 @@ public class TrialDTO {
     private List<TrialFundingWebDTO> fundingDtos;
     private List<TrialDocumentWebDTO> docDtos;
     private List <TrialIndIdeDTO> indIdeDtos;
-    private static final String TRIAL_TITLE_MAX_LENGTH = "4000";
+    private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     /**
      * 
      */
@@ -93,7 +91,7 @@ public class TrialDTO {
     /**
      * @return the phaseCode
      */
-    @RequiredStringValidator(message = "", key = "error.submit.trialPhase")
+    @NotEmpty(message = "error.submit.trialPhase")
     public String getPhaseCode() {
         return phaseCode;
     }
@@ -118,7 +116,7 @@ public class TrialDTO {
     /**
      * @return the primaryPurposeCode
      */
-    @RequiredStringValidator(message = "", key = "error.submit.trialPurpose")
+    @NotEmpty(message = "error.submit.trialPurpose")
     public String getPrimaryPurposeCode() {
         return primaryPurposeCode;
     }
@@ -143,7 +141,7 @@ public class TrialDTO {
     /**
      * @return the localProtocolIdentifier
      */
-    @RequiredStringValidator(message = "", key = "error.submit.localProtocolIdentifier")
+    @NotEmpty(message = "error.submit.localProtocolIdentifier")
     public String getLocalProtocolIdentifier() {
         return localProtocolIdentifier;
     }
@@ -156,7 +154,7 @@ public class TrialDTO {
     /**
      * @return the leadOrganizationIdentifier
      */
-    @RequiredStringValidator (message = "", key = "error.submit.leadOrganization")
+    @NotEmpty (message = "error.submit.leadOrganization")
     public String getLeadOrganizationIdentifier() {
         return leadOrganizationIdentifier;
     }
@@ -181,7 +179,7 @@ public class TrialDTO {
     /**
      * @return the piIdentifier
      */
-    @RequiredStringValidator (message = "", key = "error.submit.leadPrincipalInvestigator")
+    @NotEmpty (message = "error.submit.leadPrincipalInvestigator")
     public String getPiIdentifier() {
         return piIdentifier;
     }
@@ -255,7 +253,7 @@ public class TrialDTO {
     /**
      * @return the sponsorIdentifier
      */
-    @RequiredStringValidator (message = "", key = "error.submit.sponsor")
+    @NotEmpty (message = "error.submit.sponsor")
     public String getSponsorIdentifier() {
         return sponsorIdentifier;
     }
@@ -304,9 +302,9 @@ public class TrialDTO {
     /**
      * @return the contactPhone
      */
-    @RequiredStringValidator (message = "", key = "error.submit.contactPhone")
-    @RegexFieldValidator(expression = "^([\\w\\s\\-\\.\\+\\(\\)])*$", message = "",
-            key = "error.register.invalidPhoneNumber")
+    @NotEmpty (message = "error.submit.contactPhone")
+    @org.hibernate.validator.Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
+            message = "error.register.invalidPhoneNumber")
     public String getContactPhone() {
         return contactPhone;
     }
@@ -319,8 +317,8 @@ public class TrialDTO {
     /**
      * @return the contactEmail
      */
-    @RequiredStringValidator (message = "", key = "error.submit.contactEmail")
-    @EmailValidator (message = "", key = "error.submit.invalidContactEmailAddress")
+    @NotEmpty (message = "error.submit.contactEmail")
+    @org.hibernate.validator.Email (message = "error.submit.invalidContactEmailAddress")
     public String getContactEmail() {
         return contactEmail;
     }
@@ -345,7 +343,7 @@ public class TrialDTO {
     /**
      * @return the statusCode
      */
-    @RequiredStringValidator (message = "", key = "error.submit.statusCode")
+    @NotEmpty (message = "error.submit.statusCode")
     public String getStatusCode() {
         return statusCode;
     }
@@ -358,7 +356,7 @@ public class TrialDTO {
     /**
      * @return the statusDate
      */
-    @RequiredStringValidator (message = "", key = "error.submit.statusDate")
+    @NotEmpty (message = "error.submit.statusDate")
     public String getStatusDate() {
         return statusDate;
     }
@@ -383,9 +381,8 @@ public class TrialDTO {
     /**
      * @return the officialTitle
      */
-    @RequiredStringValidator (message = "", key = "error.submit.trialTitle")
-    @StringLengthFieldValidator(message = "" , key = "error.submit.trialTitleLength", 
-            trim = true, minLength = "1", maxLength = TRIAL_TITLE_MAX_LENGTH)
+    @NotEmpty (message = "error.submit.trialTitle")
+    @org.hibernate.validator.Length(message = "error.submit.trialTitleLength", max = TRIAL_TITLE_MAX_LENGTH)
     public String getOfficialTitle() {
         return officialTitle;
     }
@@ -398,7 +395,7 @@ public class TrialDTO {
     /**
      * @return the startDate
      */
-    @RequiredStringValidator (message = "", key = "error.submit.startDate")
+    @NotEmpty (message = "error.submit.startDate")
     public String getStartDate() {
         return startDate;
     }
@@ -411,7 +408,7 @@ public class TrialDTO {
     /**
      * @return the completionDate
      */
-    @RequiredStringValidator(message = "", key = "error.submit.completionDate")
+    @NotEmpty(message = "error.submit.completionDate")
     public String getCompletionDate() {
         return completionDate;
     }
@@ -424,7 +421,7 @@ public class TrialDTO {
     /**
      * @return the startDateType
      */
-    @RequiredStringValidator (message = "", key = "error.submit.dateType")
+    @NotEmpty (message = "error.submit.dateType")
     public String getStartDateType() {
         return startDateType;
     }
@@ -437,7 +434,7 @@ public class TrialDTO {
     /**
      * @return the completionDateType
      */
-    @RequiredStringValidator (message = "", key = "error.submit.dateType")
+    @NotEmpty (message = "error.submit.dateType")
     public String getCompletionDateType() {
         return completionDateType;
     }
@@ -450,7 +447,7 @@ public class TrialDTO {
     /**
      * @return the trialType
      */
-    @RequiredStringValidator (message = "", key = "error.submit.trialType")
+    @NotEmpty (message = "error.submit.trialType")
     public String getTrialType() {
         return trialType;
     }

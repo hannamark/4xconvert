@@ -299,11 +299,11 @@ public class SearchTrialAction extends ActionSupport {
         }
         if (criteria.getOrganizationId() != null 
                 && criteria.getOrganizationId().trim().length() > 0) {
-            queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
+            queryCriteria.setLeadOrganizationId(criteria.getOrganizationId().toString());
         } 
         if (criteria.getParticipatingSiteId() != null
                 && criteria.getParticipatingSiteId().trim().length() > 0) {
-            queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId());            
+            queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId().toString());            
         }
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
         queryCriteria.setMyTrialsOnly(new Boolean(criteria.getMyTrialsOnly()));

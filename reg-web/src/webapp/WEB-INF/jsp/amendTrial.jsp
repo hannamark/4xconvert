@@ -18,10 +18,10 @@
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
-        addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "submitTrial");
-        addCalendar("Cal2", "Select Date", "trialDTO.startDate", "submitTrial");
-        addCalendar("Cal3", "Select Date", "trialDTO.completionDate", "submitTrial");
-        addCalendar("Cal4", "Select Date", "trialDTO.amendmentDate", "submitTrial");
+        addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "amendTrial");
+        addCalendar("Cal2", "Select Date", "trialDTO.startDate", "amendTrial");
+        addCalendar("Cal3", "Select Date", "trialDTO.completionDate", "amendTrial");
+        addCalendar("Cal4", "Select Date", "trialDTO.amendmentDate", "amendTrial");
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
@@ -30,7 +30,7 @@
 
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
-<c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="reviewProtocol"/>
+<c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocol"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
 var chosenname;
@@ -262,7 +262,7 @@ function toggledisplay2 (it) {
             	</label>
           </td>
           <td class="value">
-          	<c:out value="${requestScope.trialDTO.assignedIdentifier}"/> 
+          	<c:out value="${trialDTO.assignedIdentifier}"/> 
           </td>
           </tr>
           <tr>

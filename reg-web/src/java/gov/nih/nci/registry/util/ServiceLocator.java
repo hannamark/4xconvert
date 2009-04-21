@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -244,5 +245,11 @@ public interface ServiceLocator {
      * @throws PAException e
      */
     TrialRegistrationServiceRemote getTrialRegistrationService() throws PAException;
+    /**
+     * 
+     * @return MailManagerServiceRemote
+     * @throws PAException ex
+     */
+    MailManagerServiceRemote getMailManagerService() throws PAException;
 
 }

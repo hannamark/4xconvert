@@ -16,6 +16,7 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -300,7 +301,7 @@ public class TrialUtil {
      * @return isoDto
      * @throws PAException on error 
      */
-    public StudyProtocolDTO convertToStudyProtocolDTO(TrialDTO trialDTO) throws PAException {
+    public StudyProtocolDTO convertToStudyProtocolDTOForAmendment(TrialDTO trialDTO) throws PAException {
         StudyProtocolDTO isoDto = null;
         
         if (trialDTO.getTrialType().equalsIgnoreCase("Observational")) {
@@ -310,7 +311,19 @@ public class TrialUtil {
             isoDto  = RegistryServiceLocator.getStudyProtocolService().getInterventionalStudyProtocol(
                     IiConverter.convertToIi(trialDTO.getIdentifier()));
         }
+        isoDto = convertToStudyProtocolDTO(trialDTO, isoDto);
         isoDto.setAssignedIdentifier(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));
+        isoDto.setAmendmentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate())));
+        isoDto.setAmendmentNumber(StConverter.convertToSt(trialDTO.getLocalAmendmentNumber()));
+        return isoDto;
+    }
+
+    /**
+     * @param trialDTO
+     * @param isoDto
+     */
+    private StudyProtocolDTO convertToStudyProtocolDTO(TrialDTO trialDTO,
+            StudyProtocolDTO isoDto) {
         isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
         if (PAUtil.isNotEmpty(trialDTO.getPhaseOtherText())) {
@@ -331,8 +344,6 @@ public class TrialUtil {
         isoDto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode
                 .getByCode(trialDTO.getCompletionDateType())));
         isoDto.setStudyProtocolType(StConverter.convertToSt(trialDTO.getTrialType()));
-        isoDto.setAmendmentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate())));
-        isoDto.setAmendmentNumber(StConverter.convertToSt(trialDTO.getLocalAmendmentNumber()));
         return isoDto;
     }
     /**
@@ -628,4 +639,16 @@ public class TrialUtil {
        }
        return trialDTO;
    }
+   /**
+    * 
+    * @param trialDTO dtotoConvert
+    * @return isoDto
+    * @throws PAException on error 
+    */
+   public InterventionalStudyProtocolDTO convertToInterventionalStudyProtocolDTO(TrialDTO trialDTO) throws PAException {
+       InterventionalStudyProtocolDTO isoDto =  new InterventionalStudyProtocolDTO();       
+       isoDto = (InterventionalStudyProtocolDTO) convertToStudyProtocolDTO(trialDTO, isoDto);
+       return isoDto;
+   }
+
 }

@@ -74,11 +74,12 @@
 		<result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
         </action>
         <action name="submitTrial*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}">
-		<interceptor-ref name="fileUpload"/>
-		<interceptor-ref name="nci-commonsParams" />
-		<result>/WEB-INF/jsp/submitTrial.jsp</result>
+        <interceptor-ref name="methodValidationStack" />
+		<result name="success">/WEB-INF/jsp/submitTrial.jsp</result>
+		<result name="input">/WEB-INF/jsp/submitTrial.jsp</result>
 		<result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
-		<result name="view">/WEB-INF/jsp/viewTrial.jsp</result>
+		<result name="edit">/WEB-INF/jsp/submitTrial.jsp</result>
+		<result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
         <result name="redirect_to_search" type="redirect-action">
              <param name="actionName">searchTrial.action</param>
              <param name="parse">true</param>
@@ -108,18 +109,6 @@
         <result name="display_ideind">/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp</result>
         <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
     </action>
-        
-	<action name="ajaxSubmitTrialAction*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}"> 
-		<result name="display_lead_org">/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp</result> 
-		<result name="display_lead_prinicipal_inv">/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp</result>
-		<result name="display_selected_sponsor">/WEB-INF/jsp/nodecorate/displaySelectedSponsor.jsp</result>
-		<result name="display_responsible_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
-		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
-		<result name="display_ideind">/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp</result>
-		<result name="display_grants">/WEB-INF/jsp/nodecorate/addGrant.jsp</result>
-		<result name="display_summary4funding_sponsor">/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp</result>
-		<result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
-	</action>
     <action name="popup*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
 		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
 		<result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>

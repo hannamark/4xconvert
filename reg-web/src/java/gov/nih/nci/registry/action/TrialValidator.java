@@ -30,6 +30,8 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.validator.ClassValidator;
+import org.hibernate.validator.InvalidValue;
 
 /**
  * 
@@ -78,10 +80,23 @@ public class TrialValidator {
      * @param trialDto dto
      * @return map
      */
-    public Map<String, String> validatePhaseAndPurposeCode(TrialDTO trialDto) {
+    @SuppressWarnings({"PMD", "PMD.AvoidDeeplyNestedIfStmts" })
+    public Map<String, String> validateTrialDTO(TrialDTO trialDto) {
         Map<String, String> addFieldError = new HashMap<String, String>(); 
-        if (PAUtil.isNotEmpty(trialDto.getPhaseCode()) 
-                && (PhaseCode.OTHER.getCode().equals(trialDto.getPhaseCode()) 
+        InvalidValue[] invalidValues = null;
+        ClassValidator<TrialDTO> classValidator = new ClassValidator(trialDto.getClass());
+                invalidValues = classValidator.getInvalidValues(trialDto);
+                for (int i = 0; i < invalidValues.length; i++) {
+                    addFieldError.put("trialDTO." + invalidValues[i].getPropertyName(), 
+                            getText(invalidValues[i].getMessage().trim()));
+        }
+        if (!(trialDto.getResponsiblePartyType().equals("pi"))
+             && (trialDto.getResponsiblePersonIdentifier().trim().equals(""))) {
+            addFieldError.put("ResponsiblePartyNotSelected", 
+                    getText("error.submit.sponsorResponsibelParty"));
+        }
+        //validate Phase and Purpose when Selected value is OTHER
+        if (PAUtil.isNotEmpty(trialDto.getPhaseCode()) && (PhaseCode.OTHER.getCode().equals(trialDto.getPhaseCode()) 
                         && PAUtil.isEmpty(trialDto.getPhaseOtherText()))) {
                 addFieldError.put("trialDTO.phaseOtherText", 
                         getText("error.submit.otherPhaseText"));
@@ -92,63 +107,31 @@ public class TrialValidator {
                 addFieldError.put("trialDTO.primaryPurposeOtherText", 
                         getText("error.submit.otherPurposeText"));
         }
-        return addFieldError;
-    }
-    /**
-     *     
-     * @param trialDto dto
-     * @return map
-     */
-    public Map<String, String> validateDateAndFormat(TrialDTO trialDto) {
-        String err = "error.submit.invalidDate";
-        Map<String, String> addFieldError = new HashMap<String, String>();
+        String err = "error.submit.invalidDate";      // validate date and its format
         if (PAUtil.isNotEmpty(trialDto.getStatusDate())
                 && !RegistryUtil.isValidDate(trialDto.getStatusDate())) {
-                    addFieldError.put("trialDTO.statusDate", 
-                            getText(err));
+                    addFieldError.put("trialDTO.statusDate", getText(err));
         }
         if (PAUtil.isNotEmpty(trialDto.getStartDate())
                 && !RegistryUtil.isValidDate(trialDto.getStartDate())) {
-                    addFieldError.put("trialDTO.startDate", 
-                            getText(err));
+                    addFieldError.put("trialDTO.startDate", getText(err));
         }
         if (PAUtil.isNotEmpty(trialDto.getCompletionDate())
                 && !RegistryUtil.isValidDate(trialDto.getCompletionDate())) {
-                    addFieldError.put("trialDTO.completionDate", 
-                            getText(err));
+                    addFieldError.put("trialDTO.completionDate", getText(err));
         }
-        return addFieldError;
-    }
-    /**
-     * 
-     * @param trialDTO dto
-     * @return map
-     */
-    public Map<String, String> validateTrialStatusReason(TrialDTO trialDTO) {
-        Map<String, String> addFieldError = new HashMap<String, String>();
-        if (PAUtil.isNotEmpty(trialDTO.getStatusCode())) {
-            // check if reason entered for these trial statuses
-            if (TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().
-                    equals(trialDTO.getStatusCode())
-              || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode().
-                    equals(trialDTO.getStatusCode())
-              || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode().
-                    equals(trialDTO.getStatusCode())) {                
-                    if (PAUtil.isEmpty(trialDTO.getReason())) {
-                        addFieldError.put("trialDTO.reason", 
-                                getText("error.submit.trialStatusReason")); 
-                        
-                    }                
-            } else {
-                if (PAUtil.isNotEmpty(trialDTO.getReason())) {
-                    trialDTO.setReason(null);
-                }                 
+        if (PAUtil.isNotEmpty(trialDto.getStatusCode())) {
+            if ((TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(trialDto.getStatusCode())
+                 || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode().equals(trialDto.getStatusCode())
+                 || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode().
+                 equals(trialDto.getStatusCode())) && PAUtil.isEmpty(trialDto.getReason())) {
+                addFieldError.put("trialDTO.reason", getText("error.submit.trialStatusReason"));
             }
         }
         return addFieldError;
     }
     /**
-     * 
+     *  
      * @param trialDto dto
      * @return t
      * @throws PAException ex
@@ -198,6 +181,7 @@ public class TrialValidator {
      * @return b
      * @throws PAException ex
      */
+    @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts" })
     public Collection<String> enforceBusinessRulesForDates(TrialDTO trialDto) throws PAException {
         Collection<String> addActionError = new HashSet<String>();
         StudyStatusCode newCode = StudyStatusCode.getByCode(trialDto.getStatusCode());
@@ -313,6 +297,5 @@ public class TrialValidator {
         } catch (PAException e) {
             LOG.error("exception in edit" + e.getMessage());
         }
-
     }
 }
