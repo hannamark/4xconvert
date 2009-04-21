@@ -96,6 +96,9 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
 /**
  * @author hreinhart
  *
@@ -202,4 +205,13 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
         // TODO Auto-generated method stub
         return null;
     }    
+    
+    /**
+     * deletes protocol and all of its related classes.
+     * @param ii ii of study Protocol
+     * @throws PAException on any error
+     */
+    public void deleteStudyProtocol(Ii ii) throws PAException {    
+     // TODO Auto-generated method stub
+    }
 }
