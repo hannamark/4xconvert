@@ -515,7 +515,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             studyTypeCode = StudyTypeCode.OBSERVATIONAL;
         }
         newSpDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
-        createStudyRelationship(studyProtocolIi , oldIdentifier , newSpDto);
+        if (isAmend) {
+            createStudyRelationship(studyProtocolIi , oldIdentifier , newSpDto);
+        }
         overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
         if (isAmend) {
             createOverallStatuses(studyProtocolIi, oldIdentifier , overallStatusDTO);
