@@ -78,6 +78,13 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -105,13 +112,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
-
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 /**
  * @author Bala Nair
@@ -154,12 +154,10 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
 
           RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
 
-          Calendar calendar = new GregorianCalendar();
-          Date date = calendar.getTime();
           DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 
           String body = lookUpTableService.getPropertyValue("tsr.body");
-          body = body.replace("${CurrentDate}", format.format(date));
+          body = body.replace("${CurrentDate}", getFormatedCurrentDate());
           body = body.replace("${SubmitterName}", 
                   registryUser.getFirstName() + " " + registryUser.getLastName());
           body = body.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
@@ -195,7 +193,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
           File[] attachments = {new File(inputFile), new File(outputFile)};
 
           // Send Message
-          sendMail(spDTO.getUserLastCreated(), //Mail Recipient
+          sendMailWithAttachment(spDTO.getUserLastCreated(), //Mail Recipient
                   lookUpTableService.getPropertyValue("tsr.subject"), // Mail Subject
                   body, // Mail Body
                   attachments); // Mail Attachments if any
@@ -218,7 +216,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
      * @param mailBody mailBody
      * @param attachments File attachments
      */
-    private  void sendMail(String mailTo, String subject, 
+    private  void sendMailWithAttachment(String mailTo, String subject, 
                               String mailBody, File [] attachments) {
         try {
             // get system properties
@@ -258,6 +256,150 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         } catch (Exception e) {
             LOG.error("Send Mail error", e);
         } // catch
+    }
+    
+    private  void sendMail(String mailTo, String subject, String mailBody) {
+        try {
+            // get system properties
+            Properties props = System.getProperties();
+            
+            // Set up mail server
+            props.put("mail.smtp.host", 
+              lookUpTableService.getPropertyValue("smtp"));
+            // Get session
+            Session session = Session.getDefaultInstance(props, null);
+            
+            // Define Message
+            MimeMessage message = new MimeMessage(session);
+            // body
+            Multipart multipart = new MimeMultipart();
+            
+            message.setFrom(new InternetAddress(lookUpTableService.getPropertyValue("fromaddress")));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
+            message.setSentDate(new java.util.Date());            
+            message.setSubject(subject);
+            
+            BodyPart msgPart = new MimeBodyPart();            
+            msgPart.setText(mailBody);
+            multipart.addBodyPart(msgPart);
+            message.setContent(multipart);
+            // Send Message
+            Transport.send(message);
+        } catch (Exception e) {
+            LOG.error("Send Mail error", e);
+        } // catch
+    }
+    /**
+     * Sends an email notifying the submitter that the protocol is amended in the system.
+     * @param studyProtocolIi ii
+     * @throws PAException ex 
+     */
+    @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
+    public void sendAmendNotificationMail(Ii studyProtocolIi) throws PAException {
+        
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+        .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+
+        RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+       
+        String mailBody = lookUpTableService.getPropertyValue("trial.amend.body");
+        
+        mailBody = mailBody.replace("${SubmitterName}", 
+                user.getFirstName() + " " + user.getLastName());
+        mailBody = mailBody.replace("${CurrentDate}", getFormatedCurrentDate());
+        mailBody = mailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
+        mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
+        mailBody = mailBody.replace("${amendmentDate}", format.format(spDTO.getAmendmentDate()));
+        
+
+        sendMail(spDTO.getUserLastCreated(), 
+                lookUpTableService.getPropertyValue("trial.amend.subject"),
+                mailBody);
+
+        }
+
+    /**
+     * send mail to submitter when amended trial is accepted by CTRO staff.  
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
+    public void sendAmendAcceptEmail(Ii studyProtocolIi) throws PAException {
+        LOG.info("Entering send Amend Accept Email");
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+                      .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+
+        RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
+
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String mailBody = lookUpTableService.getPropertyValue("trial.amend.accept.body");
+          
+        mailBody = mailBody.replace("${SubmitterName}", 
+                  user.getFirstName() + " " + user.getLastName());
+        mailBody = mailBody.replace("${CurrentDate}", getFormatedCurrentDate());
+        mailBody = mailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
+        mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
+        mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
+        mailBody = mailBody.replace("${amendmentDate}", format.format(spDTO.getAmendmentDate()));
+
+        sendMail(spDTO.getUserLastCreated(), 
+                  lookUpTableService.getPropertyValue("trial.amend.accept.subject"), 
+                  mailBody);
+        LOG.info("Leaving sendAmendAcceptEmail");
+      }
+    /**
+     * Sends an email notifying the submitter that the protocol is registered in the system.
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    public void sendNotificationMail(Ii studyProtocolIi) throws PAException  {
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+            .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+
+        String submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
+        submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ", 
+                spDTO.getLocalStudyProtocolIdentifier());
+        submissionMailBody = submissionMailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
+
+        sendMail(spDTO.getUserLastCreated(), 
+                    lookUpTableService.getPropertyValue("trial.register.subject"), 
+                    submissionMailBody);
+     }
+    /**
+     * Sends an email to submitter when Amendment to trial is rejected by CTRO staff.
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    public void sendAmendRejectEmail(Ii studyProtocolIi) throws PAException {
+        LOG.info("Entering send Amend reject Email");
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+                      .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+
+        RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
+
+         DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+         String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
+          
+         mailBody = mailBody.replace("${SubmitterName}", 
+                  user.getFirstName() + " " + user.getLastName());
+         mailBody = mailBody.replace("${CurrentDate}", getFormatedCurrentDate());
+         mailBody = mailBody.replace("${nciTrialIdentifier}", spDTO.getNciIdentifier());
+         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
+         mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
+         mailBody = mailBody.replace("${amendmentDate}", format.format(spDTO.getAmendmentDate()));
+
+         sendMail(spDTO.getUserLastCreated(), 
+                  lookUpTableService.getPropertyValue("trial.amend.reject.subject"), 
+                  mailBody);
+        LOG.info("Leaving sendAmendAcceptEmail");
+      }
+    @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
+    private String getFormatedCurrentDate() {
+        Calendar calendar = new GregorianCalendar();
+        Date date = calendar.getTime();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        return format.format(date);
     }
 
 }

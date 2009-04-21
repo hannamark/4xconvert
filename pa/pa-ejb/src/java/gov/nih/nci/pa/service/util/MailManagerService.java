@@ -95,5 +95,29 @@ public interface MailManagerService {
      * @throws PAException PAException
      */
     void sendTSREmail(Ii studyProtocolIi) throws PAException; 
-
+    /**
+     * 
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    void sendAmendAcceptEmail(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * 
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    void sendAmendNotificationMail(Ii studyProtocolIi) throws PAException;
+    /**
+     * 
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    void sendNotificationMail(Ii studyProtocolIi) throws PAException;
+    /**
+     * 
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    void sendAmendRejectEmail(Ii studyProtocolIi) throws PAException;
 }
