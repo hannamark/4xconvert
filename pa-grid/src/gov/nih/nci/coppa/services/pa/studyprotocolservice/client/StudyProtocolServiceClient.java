@@ -55,10 +55,14 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         if(!(args.length < 2)){
             if(args[0].equals("-url")){
               StudyProtocolServiceClient client = new StudyProtocolServiceClient(args[1]);
-              // place client calls here if you want to use this main as a
-              // test....
+
+              System.out.println("Getting study protocol");
               getStudyProtocol(client);
+
+              System.out.println("Getting interventional study protocol");
               getInterventionalStudyProtocol(client);
+
+              System.out.println("Getting observational study protocol");
               getObservationalStudyProtocol(client);
             } else {
                 usage();
@@ -78,6 +82,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        id.setExtension("27426");
         StudyProtocol result = client.getStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
@@ -86,6 +91,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        id.setExtension("27426");
         InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
@@ -94,6 +100,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        id.setExtension("27427");
         ObservationalStudyProtocol result = client.getObservationalStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }

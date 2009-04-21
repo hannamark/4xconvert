@@ -97,7 +97,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
  *
  * @author Steve Lustbader
  */
-public class StudyResourcingTransformer implements Transformer<StudyResourcing, StudyResourcingDTO> {
+public final class StudyResourcingTransformer implements Transformer<StudyResourcing, StudyResourcingDTO> {
 
     /**
      * Public singleton.

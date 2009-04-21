@@ -396,4 +396,8 @@
     <target name="runStudyResourcingClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyResourcingService Client">
         <run-client serviceendpointname="StudyResourcingService" class="gov.nih.nci.coppa.services.pa.studyresourcingservice.client.StudyResourcingServiceClient" debug-suspend="n"/>
     </target>
+
+    <target name="runStudyProtocolClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyProtocolService Client">
+        <run-client serviceendpointname="StudyProtocolService" class="gov.nih.nci.coppa.services.pa.studyprotocolservice.client.StudyProtocolServiceClient" debug-suspend="n"/>
+    </target>
 </project>
