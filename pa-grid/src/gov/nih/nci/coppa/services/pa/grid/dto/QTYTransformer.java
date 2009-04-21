@@ -1,23 +1,21 @@
 package gov.nih.nci.coppa.services.pa.grid.dto;
 
-import gov.nih.nci.coppa.iso.Ed;
-import gov.nih.nci.coppa.iso.EdText;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Pqv;
 import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.coppa.iso.UncertaintyType;
 
-import org.iso._21090.ED;
-import org.iso._21090.EDText;
 import org.iso._21090.INT;
 import org.iso._21090.PQ;
 import org.iso._21090.QTY;
 import org.iso._21090.TS;
 
 /**
- * Transforms base QTY fields.
- * @author mshestopalov
+ *
+ * DO NOT EDIT!!! COPY/PASTE FROM PO-GRID.  See PO-927 for refactoring task.
+ * If you need to modify this file (bug?), change in po-grid and re-import to this location.
+ *
  *
  * @param <QTYX> extends QTY.
  * @param <Qtyx> extends Qtyx.
@@ -55,16 +53,7 @@ public abstract class QTYTransformer<QTYX extends QTY, Qtyx extends Qty> impleme
 
 
         if (input.getOriginalText() != null) {
-            EDText edText = new EDText();
-            ED ed = EDTransformer.INSTANCE.toXml(input.getOriginalText());
-            edText.setCharset(ed.getCharset());
-            edText.setData(ed.getData());
-            edText.setMediaType(ed.getMediaType());
-            edText.setReference(ed.getReference());
-            edText.setXml(ed.getXml());
-            edText.setValue(ed.getValue());
-            edText.setNullFlavor(ed.getNullFlavor());
-            x.setOriginalText(edText);
+            x.setOriginalText(EDTextTransformer.INSTANCE.toXml(input.getOriginalText()));
         }
 
         if (input.getUncertainty() != null) {
@@ -101,16 +90,7 @@ public abstract class QTYTransformer<QTYX extends QTY, Qtyx extends Qty> impleme
 
         //QTY fields.
         if (input.getOriginalText() != null) {
-            EdText edText = new EdText();
-            Ed ed = EDTransformer.INSTANCE.toDto(input.getOriginalText());
-            edText.setCharset(ed.getCharset());
-            edText.setData(ed.getData());
-            edText.setMediaType(ed.getMediaType());
-            edText.setReference(ed.getReference());
-            edText.setXml(ed.getXml());
-            edText.setValue(ed.getValue());
-            edText.setNullFlavor(ed.getNullFlavor());
-            x.setOriginalText(edText);
+            x.setOriginalText(EDTextTransformer.INSTANCE.toDto(input.getOriginalText()));
         }
 
         if (input.getUncertainty() != null) {
