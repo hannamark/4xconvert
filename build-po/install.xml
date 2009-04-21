@@ -3,102 +3,102 @@
 $Id: install.xml 4757 2008-05-15 20:43:31Z zengje $
 $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 -->
-<project name="po-ear-po-ear-installer" default="upgrade" basedir="." 
-	xmlns:ivy="antlib:org.apache.ivy.ant"
-	>
-	<description>
-		This build file is part of the COPPA-PO project. This is the master install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is run by typing "ant" from the master project build.xml or from command line. This script has two flows install and upgrade.
-		Install will do the following
-		* Install binaries
-		* Configure binaries
-		* Install application
-		* Configure application
-		* Re-create database
-		* Upgrade database
-		Upgrade will do the following
-		* Install application
-		* Configure application
-		* Upgrade database
-		The script includes target that may not be used by all projects, but are included in here becaue it is a template. This script has targets to deal with the following, you can delete targets you don't want to work with
-		Application servers (option for grid services also)
-		* JBoss
-		Databases
-		* PostgreSQL
-		This script requires java and ant to run. Every thing else it needs is included in the distribution.
-	</description>
+<project name="po-ear-po-ear-installer" default="upgrade" basedir="."
+  xmlns:ivy="antlib:org.apache.ivy.ant"
+  >
+  <description>
+    This build file is part of the COPPA-PO project. This is the master install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is run by typing "ant" from the master project build.xml or from command line. This script has two flows install and upgrade.
+    Install will do the following
+    * Install binaries
+    * Configure binaries
+    * Install application
+    * Configure application
+    * Re-create database
+    * Upgrade database
+    Upgrade will do the following
+    * Install application
+    * Configure application
+    * Upgrade database
+    The script includes target that may not be used by all projects, but are included in here becaue it is a template. This script has targets to deal with the following, you can delete targets you don't want to work with
+    Application servers (option for grid services also)
+    * JBoss
+    Databases
+    * PostgreSQL
+    This script requires java and ant to run. Every thing else it needs is included in the distribution.
+  </description>
 
-	<!-- Properties file related properties and tasks -->
-	<property environment="env" />
-	<property file="project.properties"/>
-	<property name="properties.file" value="${basedir}/install.properties"/>
-	<echo message="Using properties file of ${properties.file}."/>
-	<available file="${properties.file}" property="properties.file.exists" />
-	<fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
-	<replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
-	<replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
-	<property file="${properties.file}" />
-	
-	<!-- Set application.base.path based on platform -->
-	<condition property="application.base.path" value="${application.base.path.linux}">
-		<or>
-			<os family="unix" />
-			<os family="mac" />
-		</or>
-	</condition>
+  <!-- Properties file related properties and tasks -->
+  <property environment="env" />
+  <property file="project.properties"/>
+  <property name="properties.file" value="${basedir}/install.properties"/>
+  <echo message="Using properties file of ${properties.file}."/>
+  <available file="${properties.file}" property="properties.file.exists" />
+  <fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
+  <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
+  <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
+  <property file="${properties.file}" />
 
-	<condition property="application.base.path" value="${application.base.path.windows}">
-		<os family="windows" />
-	</condition>
-	<echo message="application.base.path=${application.base.path}"/>
-	<property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
+  <!-- Set application.base.path based on platform -->
+  <condition property="application.base.path" value="${application.base.path.linux}">
+    <or>
+      <os family="unix" />
+      <os family="mac" />
+    </or>
+  </condition>
 
-	<!-- Generic properties -->
-	<property name="log.dir" value="${basedir}/logs" />
-	<property name="working.dir" value="${basedir}/working" />
-	<property name="temp.dir" value="${working.dir}/temp" />
+  <condition property="application.base.path" value="${application.base.path.windows}">
+    <os family="windows" />
+  </condition>
+  <echo message="application.base.path=${application.base.path}"/>
+  <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
 
-	<!--OS Temp dir -->
-	<condition property="os.temp.dir" value="/tmp">
-		<or>
-			<os family="unix" />
-			<os family="mac" />
-		</or>
-	</condition>
+  <!-- Generic properties -->
+  <property name="log.dir" value="${basedir}/logs" />
+  <property name="working.dir" value="${basedir}/working" />
+  <property name="temp.dir" value="${working.dir}/temp" />
 
-	<condition property="os.temp.dir" value="c:/temp">
-		<os family="windows" />
-	</condition>
-	<property name="project.name" value="po"/>
+  <!--OS Temp dir -->
+  <condition property="os.temp.dir" value="/tmp">
+    <or>
+      <os family="unix" />
+      <os family="mac" />
+    </or>
+  </condition>
 
-	<!-- Install Time properties -->
-	<!-- Source and target directories -->
-	<property name="bda-utils.dir" value="bda-utils" />
-	<property name="tools.dir" value="${basedir}/${tools.dist.relative.dir}" />
-	<property name="common.dir.src" value="${basedir}/${common.dist.relative.dir}" />
-	<property name="common.dir.dest" value="${working.dir}/${common.dist.relative.dir}" />
-	<property name="jboss-conf.dir.dest" value="${working.dir}/${jboss-conf.dist.relative.dir}" />
-	<property name="db.dir.src" value="${basedir}/${db.dist.relative.dir}" />
-	<property name="db.dir.dest" value="${working.dir}/${db.dist.relative.dir}" />
-	<property name="db-install.dir.dest" value="${working.dir}/${db-install.dist.relative.dir}" />
-	<property name="db-upgrade.dir.dest" value="${working.dir}/${db-upgrade.dist.relative.dir}" />
+  <condition property="os.temp.dir" value="c:/temp">
+    <os family="windows" />
+  </condition>
+  <property name="project.name" value="po"/>
 
-	<!-- Jboss configurtion related properties -->
-	<property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
-	<property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
+  <!-- Install Time properties -->
+  <!-- Source and target directories -->
+  <property name="bda-utils.dir" value="bda-utils" />
+  <property name="tools.dir" value="${basedir}/${tools.dist.relative.dir}" />
+  <property name="common.dir.src" value="${basedir}/${common.dist.relative.dir}" />
+  <property name="common.dir.dest" value="${working.dir}/${common.dist.relative.dir}" />
+  <property name="jboss-conf.dir.dest" value="${working.dir}/${jboss-conf.dist.relative.dir}" />
+  <property name="db.dir.src" value="${basedir}/${db.dist.relative.dir}" />
+  <property name="db.dir.dest" value="${working.dir}/${db.dist.relative.dir}" />
+  <property name="db-install.dir.dest" value="${working.dir}/${db-install.dist.relative.dir}" />
+  <property name="db-upgrade.dir.dest" value="${working.dir}/${db-upgrade.dist.relative.dir}" />
 
-	<!-- *-ds.xml and WAR -->
-	<property name="po-ear.dir.dist" value="${basedir}/${po-ear.dist.relative.dir}" />
-	<property name="po-ear.ds.file" value="po-ds.xml" />
-	<property name="po-ear.app-sec-conf.file" value="ApplicationSecurityConfig.xml" />
-	<property name="po-ear.hibernate.file" value="hibernate.cfg.xml" />
-	<property name="po-ear.ear.file" value="po.ear" />
+  <!-- Jboss configurtion related properties -->
+  <property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
+  <property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
 
-	<!-- Default to false, properties can override -->
-	<property name="grid.secure.enable" value="false"/>
-	<property name="jboss.ssl.enable" value="false"/>
-	<property name="tomcat.ssl.enable" value="false"/>
-	
-	<property name="po-grid.dir.dist" value="${basedir}/${po-grid.dist.relative.dir}" />
+  <!-- *-ds.xml and WAR -->
+  <property name="po-ear.dir.dist" value="${basedir}/${po-ear.dist.relative.dir}" />
+  <property name="po-ear.ds.file" value="po-ds.xml" />
+  <property name="po-ear.app-sec-conf.file" value="ApplicationSecurityConfig.xml" />
+  <property name="po-ear.hibernate.file" value="hibernate.cfg.xml" />
+  <property name="po-ear.ear.file" value="po.ear" />
+
+  <!-- Default to false, properties can override -->
+  <property name="grid.secure.enable" value="false"/>
+  <property name="jboss.ssl.enable" value="false"/>
+  <property name="tomcat.ssl.enable" value="false"/>
+
+  <property name="po-grid.dir.dist" value="${basedir}/${po-grid.dist.relative.dir}" />
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
     <property name="grid.resource.dir" value="${working.dir}/${grid.dist.relative.dir}" />
@@ -106,226 +106,226 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
     <property name="po-grid.dir.src" value="${basedir}/${po-grid.dist.relative.dir}" />
     <property name="po-grid.dir.target" value="wsrf.war" />
-	<property name="po-grid.introduce.skeleton.service.name" value="CoreServices"/>
-	
-	<!-- Paths -->
-	<path id="bda-utils.classpath">
-		<fileset dir="${bda-utils.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-	<!-- Task definitions -->
-	<taskdef uri="antlib:org.apache.ant.antunit" resource="org/apache/ant/antunit/antlib.xml">
-		<classpath>
-			<pathelement location="${bda-utils.dir}/antunit-1.0.jar" />
-		</classpath>
-	</taskdef>
-	<taskdef name="xmlconfig" classname="com.xmlconfig.anttask.XmlConfig" classpathref="bda-utils.classpath" />
-	<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
-		<classpath>
-			<pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-		<classpath>
-			<pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
-			<pathelement location="${bda-utils.dir}/bcel-5.1.jar"/>
-			<pathelement location="${bda-utils.dir}/commons-httpclient-3.0.1.jar"/>
-			<pathelement location="${bda-utils.dir}/commons-logging-1.0.4.jar"/>
-			<pathelement location="${bda-utils.dir}/ivy-1.3.1.jar"/>
-		</classpath>
-	</taskdef>
-	<taskdef resource="liquibasetasks.properties" classpathref="bda-utils.classpath"/>
-	<taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath"/>
+  <property name="po-grid.introduce.skeleton.service.name" value="CoreServices"/>
 
-	<!-- Conditionals -->
-	<available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
-	<!-- po-ear can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
-	<switch value="${database.type}">
-		<case value="postgresql">
-			<property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-			<property name="database.driver.file" value="${bda-utils.dir}/postgresql-jdbc3-8.3-603.jar"/>
-			<property name="database.driver" value="org.postgresql.Driver"/>
-			<property name="database.xa.driver" value="org.postgresql.xa.PGXADataSource"/>
-		</case>
-		<default>
-			<fail message="Invalid database type ${database.type}"/>
-		</default>
-	</switch>
+  <!-- Paths -->
+  <path id="bda-utils.classpath">
+    <fileset dir="${bda-utils.dir}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+  <!-- Task definitions -->
+  <taskdef uri="antlib:org.apache.ant.antunit" resource="org/apache/ant/antunit/antlib.xml">
+    <classpath>
+      <pathelement location="${bda-utils.dir}/antunit-1.0.jar" />
+    </classpath>
+  </taskdef>
+  <taskdef name="xmlconfig" classname="com.xmlconfig.anttask.XmlConfig" classpathref="bda-utils.classpath" />
+  <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
+    <classpath>
+      <pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
+      <pathelement location="${bda-utils.dir}/bcel-5.1.jar"/>
+      <pathelement location="${bda-utils.dir}/commons-httpclient-3.0.1.jar"/>
+      <pathelement location="${bda-utils.dir}/commons-logging-1.0.4.jar"/>
+      <pathelement location="${bda-utils.dir}/ivy-1.3.1.jar"/>
+    </classpath>
+  </taskdef>
+  <taskdef resource="liquibasetasks.properties" classpathref="bda-utils.classpath"/>
+  <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath"/>
 
-	<!-- figure out whether to use install-properties.template or upgrade-proprties.template based on the name of the properties file -->
-	<propertyregex property="properties.file.type"
-		input="${properties.file}"
-		regexp=".*(install|upgrade).*"
-		select="\1"
-		/>
-	<echo message="Properties file type = ${properties.file.type}"/>
-	<switch value="${properties.file.type}">
-		<case value="install">
-			<property name="properties.template.file" value="install-properties.template" />
-		</case>
-		<case value="upgrade">
-			<property name="properties.template.file" value="upgrade-properties.template" />
-		</case>
-		<default>
-			<fail message="Property file name must include 'install' or 'upgrade' so it can be determined which properties template should be used. If you are not certain include 'upgrade' in the name of your proeprties file."/>
-		</default>
-	</switch>
+  <!-- Conditionals -->
+  <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
+  <!-- po-ear can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
+  <switch value="${database.type}">
+    <case value="postgresql">
+      <property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+      <property name="database.driver.file" value="${bda-utils.dir}/postgresql-jdbc3-8.3-603.jar"/>
+      <property name="database.driver" value="org.postgresql.Driver"/>
+      <property name="database.xa.driver" value="org.postgresql.xa.PGXADataSource"/>
+    </case>
+    <default>
+      <fail message="Invalid database type ${database.type}"/>
+    </default>
+  </switch>
 
-	<!-- Includes-->
-	<import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
+  <!-- figure out whether to use install-properties.template or upgrade-proprties.template based on the name of the properties file -->
+  <propertyregex property="properties.file.type"
+    input="${properties.file}"
+    regexp=".*(install|upgrade).*"
+    select="\1"
+    />
+  <echo message="Properties file type = ${properties.file.type}"/>
+  <switch value="${properties.file.type}">
+    <case value="install">
+      <property name="properties.template.file" value="install-properties.template" />
+    </case>
+    <case value="upgrade">
+      <property name="properties.template.file" value="upgrade-properties.template" />
+    </case>
+    <default>
+      <fail message="Property file name must include 'install' or 'upgrade' so it can be determined which properties template should be used. If you are not certain include 'upgrade' in the name of your proeprties file."/>
+    </default>
+  </switch>
+
+  <!-- Includes-->
+  <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
 
 
-	<!-- Read db configs from existing ds.xml if it exists for use in upgrade installs, if already set in properties file values from properties file will be used -->
-	<available file="${jboss.home}/server/${jboss.server.name}/deploy/${po-ear.ds.file}" property="ds.exists"/>
-	<if>
-		<isset property="ds.exists"/>
-		<then>
-			<jboss-read-dbconfig
-				jboss.ds-xml.file="${po-ear.ds.file}"
-				/>
-		</then>
-		<else>
-			<echo message="Warning- could not find ${jboss.home}/server/${jboss.server.name}/deploy/${po-ear.ds.file}"/>
-		</else>
-	</if>
+  <!-- Read db configs from existing ds.xml if it exists for use in upgrade installs, if already set in properties file values from properties file will be used -->
+  <available file="${jboss.home}/server/${jboss.server.name}/deploy/${po-ear.ds.file}" property="ds.exists"/>
+  <if>
+    <isset property="ds.exists"/>
+    <then>
+      <jboss-read-dbconfig
+        jboss.ds-xml.file="${po-ear.ds.file}"
+        />
+    </then>
+    <else>
+      <echo message="Warning- could not find ${jboss.home}/server/${jboss.server.name}/deploy/${po-ear.ds.file}"/>
+    </else>
+  </if>
 
-	<!-- Added to convert location to file and path -->
-	<basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
-	<dirname file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.dir"/>
-	<basename file="${grid.secure.cert.location}" property="grid.secure.cert.file"/>
-	<dirname file="${grid.secure.cert.location}" property="grid.secure.dir"/>
-	<basename file="${grid.secure.key.location}" property="grid.secure.key.file"/>
+  <!-- Added to convert location to file and path -->
+  <basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
+  <dirname file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.dir"/>
+  <basename file="${grid.secure.cert.location}" property="grid.secure.cert.file"/>
+  <dirname file="${grid.secure.cert.location}" property="grid.secure.dir"/>
+  <basename file="${grid.secure.key.location}" property="grid.secure.key.file"/>
 
-	<!-- There is any issue with copying files with a filtersfile, any properties with a value of
-		another property do not get expanded (xx=${yy} @xx@ will be replaced with ${yy} not the
-		value).  I have defined a filter set below for these properties, I then two two copies
-		one to the resource.dir.temp using the filterset and then one to the desired directory 
-		with the filter file.  If you add new properties that refer to other properties in the
-		properties file please add them to the filterset-pre below.
-	     Also you should include properties that are declared in this file, like database info below.
-	-->
-	<property name="resource.dir.temp" value="${working.dir}/tmp" />
-	<filterset id="filterset.pre">
-		<filter token="application.base.path" value="${application.base.path}"/>
-		<filter token="application.url" value="${application.url}"/>
-		<filter token="database.url" value="${database.url}"/>
-		<filter token="database.system.url" value="${database.system.url}"/>
-		<filter token="jboss.home" value="${jboss.home}"/>
-		<!-- added internal properties that may be used in a filtered copy -->
-		<filter token="database.driver" value="${database.driver}"/>
-		<filter token="database.xa.driver" value="${database.xa.driver}"/>
-		<filter token="database.dialect" value="${database.dialect}"/>
-		<filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
+  <!-- There is any issue with copying files with a filtersfile, any properties with a value of
+    another property do not get expanded (xx=${yy} @xx@ will be replaced with ${yy} not the
+    value).  I have defined a filter set below for these properties, I then two two copies
+    one to the resource.dir.temp using the filterset and then one to the desired directory
+    with the filter file.  If you add new properties that refer to other properties in the
+    properties file please add them to the filterset-pre below.
+       Also you should include properties that are declared in this file, like database info below.
+  -->
+  <property name="resource.dir.temp" value="${working.dir}/tmp" />
+  <filterset id="filterset.pre">
+    <filter token="application.base.path" value="${application.base.path}"/>
+    <filter token="application.url" value="${application.url}"/>
+    <filter token="database.url" value="${database.url}"/>
+    <filter token="database.system.url" value="${database.system.url}"/>
+    <filter token="jboss.home" value="${jboss.home}"/>
+    <!-- added internal properties that may be used in a filtered copy -->
+    <filter token="database.driver" value="${database.driver}"/>
+    <filter token="database.xa.driver" value="${database.xa.driver}"/>
+    <filter token="database.dialect" value="${database.dialect}"/>
+    <filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
         <!-- added for liquibase -->
         <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
-		<filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
-		<filter token="ctep.url" value="${ctep.url}"/>
-		<filter token="ctep.username" value="${ctep.username}"/>
-		<filter token="ctep.password" value="${ctep.password}"/>
+    <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+    <filter token="ctep.url" value="${ctep.url}"/>
+    <filter token="ctep.username" value="${ctep.username}"/>
+    <filter token="ctep.password" value="${ctep.password}"/>
         <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
         <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
         <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
-	</filterset>
-	
-
-	<!-- Start logging --> 
-	<mkdir dir="${log.dir}" />
-	<tstamp>
-		<format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
-	</tstamp>
-	<record name="${log.dir}/install-${install.time}.log" action="start"/>
+  </filterset>
 
 
-	<!-- Installer section -->
-	<target name="diag">
-		<echoproperties/>
-	</target>
+  <!-- Start logging -->
+  <mkdir dir="${log.dir}" />
+  <tstamp>
+    <format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
+  </tstamp>
+  <record name="${log.dir}/install-${install.time}.log" action="start"/>
 
-	<!-- Clean up destination directory -->
-	<target name="install:clean" description="Removes all files from the local filesystem" depends="install:clean:jboss"/>
 
-	<target name="install:clean:jboss" unless="exclude.jboss">
-		<sleep seconds="5" />
-		<property name="backup.count" value="5"/>
+  <!-- Installer section -->
+  <target name="diag">
+    <echoproperties/>
+  </target>
 
-		<if>
-			<not>
-				<equals arg1="${exclude.jboss.backup}" arg2="true"/>
-			</not>
-			<then>
-				<!-- Jboss backup, do not compress until install is finished -->
-				<property name="backup.jboss.base.dir" location="${application.base.path}/backup/jboss"/>
+  <!-- Clean up destination directory -->
+  <target name="install:clean" description="Removes all files from the local filesystem" depends="install:clean:jboss"/>
 
-				<!-- So these directories won't be included in the backup, they are not needed to use jboss --> 
-				<delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
-				<delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+  <target name="install:clean:jboss" unless="exclude.jboss">
+    <sleep seconds="5" />
+    <property name="backup.count" value="5"/>
+
+    <if>
+      <not>
+        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+      </not>
+      <then>
+        <!-- Jboss backup, do not compress until install is finished -->
+        <property name="backup.jboss.base.dir" location="${application.base.path}/backup/jboss"/>
                 <delete dir="${jboss.home}/server/${jboss.server.name.grid}/work"/>
                 <delete dir="${jboss.home}/server/${jboss.server.name.grid}/tmp"/>
 
-				<backup-dir
-					src.dir="${jboss.home}"
-					backup.base.dir="${backup.jboss.base.dir}"
-					backup.count="${backup.count}"
-					/>
-			</then>
-		</if>
-		<delete dir="${jboss.home}"/>
-	</target>
+        <!-- So these directories won't be included in the backup, they are not needed to use jboss -->
+        <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
+        <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
 
-	<!-- Does directory management and copy some files with filtering to ensure token expansion -->
-	<target name="install:init" description="Does directory management to initialize install">
-		<mkdir dir="${working.dir}" />
-		<delete dir="${working.dir}"/>
-		<mkdir dir="${working.dir}" />
-		<mkdir dir="${resource.dir.temp}"/>
-		<!-- Copy files to ensure values containing variables are expanded, such properties are stored in filterset.pre and then copy with filter files -->
-		<copy todir="${common.dir.dest}" filtering="true">
-			<fileset dir="${common.dir.src}">
-				<include name="**/*"/>
-			</fileset>
-			<filterset refid="filterset.pre"/>
-			<filterset>
-				<filtersfile file="${properties.file}"/>
-				<filtersfile file="project.properties"/>
-			</filterset>
-		</copy> 
-		<delete dir="${resource.dir.temp}"/>
-	</target>
+        <backup-dir
+          src.dir="${jboss.home}"
+          backup.base.dir="${backup.jboss.base.dir}"
+          backup.count="${backup.count}"
+          />
+      </then>
+    </if>
+    <delete dir="${jboss.home}"/>
+  </target>
 
-	<target name="install:database:prep" description="Copies db files with filtering" unless="exclude.database" depends="install:init">
-		<echoproperties prefix="database"/>
-		<property name="db.dir.temp" value="${working.dir}/tmp"/>
-		<mkdir dir="${db.dir.temp}"/>
-		<copy todir="${db.dir.dest}" filtering="true">
-			<fileset dir="${db.dir.src}">
-				<include name="**/*"/>
-			</fileset>
-			<filterset refid="filterset.pre"/>
-			<filterset>
-				<filtersfile file="${properties.file}"/>
-				<filtersfile file="project.properties"/>
-			</filterset>
-		</copy> 
-		<mkdir dir="${os.temp.dir}/${project.name}"/>
-		<copy todir="${os.temp.dir}/${project.name}" filtering="true" flatten="true" overwrite="true">
-			<fileset dir="${db.dir.dest}">
-				<include name="**/db-upgrade.xml"/>
-			</fileset>
-		    <filterset begintoken="$${" endtoken="}">
+  <!-- Does directory management and copy some files with filtering to ensure token expansion -->
+  <target name="install:init" description="Does directory management to initialize install">
+    <mkdir dir="${working.dir}" />
+    <delete dir="${working.dir}"/>
+    <mkdir dir="${working.dir}" />
+    <mkdir dir="${resource.dir.temp}"/>
+    <!-- Copy files to ensure values containing variables are expanded, such properties are stored in filterset.pre and then copy with filter files -->
+    <copy todir="${common.dir.dest}" filtering="true">
+      <fileset dir="${common.dir.src}">
+        <include name="**/*"/>
+      </fileset>
+      <filterset refid="filterset.pre"/>
+      <filterset>
+        <filtersfile file="${properties.file}"/>
+        <filtersfile file="project.properties"/>
+      </filterset>
+    </copy>
+    <delete dir="${resource.dir.temp}"/>
+  </target>
+
+  <target name="install:database:prep" description="Copies db files with filtering" unless="exclude.database" depends="install:init">
+    <echoproperties prefix="database"/>
+    <property name="db.dir.temp" value="${working.dir}/tmp"/>
+    <mkdir dir="${db.dir.temp}"/>
+    <copy todir="${db.dir.dest}" filtering="true">
+      <fileset dir="${db.dir.src}">
+        <include name="**/*"/>
+      </fileset>
+      <filterset refid="filterset.pre"/>
+      <filterset>
+        <filtersfile file="${properties.file}"/>
+        <filtersfile file="project.properties"/>
+      </filterset>
+    </copy>
+    <mkdir dir="${os.temp.dir}/${project.name}"/>
+    <copy todir="${os.temp.dir}/${project.name}" filtering="true" flatten="true" overwrite="true">
+      <fileset dir="${db.dir.dest}">
+        <include name="**/db-upgrade.xml"/>
+      </fileset>
+        <filterset begintoken="$${" endtoken="}">
                 <filtersfile file="${properties.file}"/>
                 <filtersfile file="project.properties"/>
                 <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
             </filterset>
-		</copy>
-	</target>
-	
+    </copy>
+  </target>
 
-	<target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
-		depends="
-		install:init,
-		install:database:prep
-		">
+
+  <target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
+    depends="
+    install:init,
+    install:database:prep
+    ">
         <!-- Drop all schema objects or re-create the db -->
         <database-clean/>
         <!-- Run baseline scripts stored in db.install.create.${database.type}.file.list variable -->
@@ -336,32 +336,32 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                     sql.delimiter="/"
                     sql.delimitertype="row"
                     />
-			<if>
-			<isset property="database.csm.sample"/>
-			<then>
-				<echo message="Found database.csm.sample=${database.csm.sample}."/>
+      <if>
+      <isset property="database.csm.sample"/>
+      <then>
+        <echo message="Found database.csm.sample=${database.csm.sample}."/>
                         <echo message="Looking for: ${db-install.dir.dest}/${database.type}/${database.csm.sample}"/>
-					<run-sql-script database.url="${database.url}"
-						database.user="${database.user}" 
-						database.password="${database.password}" 
-						sql.delimiter="/" 
-						sql.delimitertype="row"
-						sql.file="${db-install.dir.dest}/${database.type}/${database.csm.sample}"
-						onerror="continue"/>
-			</then>
-			<else>
-				<echo message="No database.csm.sample property set."/>
-			</else>
-			</if>
+          <run-sql-script database.url="${database.url}"
+            database.user="${database.user}"
+            database.password="${database.password}"
+            sql.delimiter="/"
+            sql.delimitertype="row"
+            sql.file="${db-install.dir.dest}/${database.type}/${database.csm.sample}"
+            onerror="continue"/>
+      </then>
+      <else>
+        <echo message="No database.csm.sample property set."/>
+      </else>
+      </if>
             </case>
         </switch>
-	<database-upgrade
-		database.changelog.file="${os.temp.dir}/${project.name}/db-upgrade.xml"
-		/>
-	<database-tag/>
+  <database-upgrade
+    database.changelog.file="${os.temp.dir}/${project.name}/db-upgrade.xml"
+    />
+  <database-tag/>
 
-	</target>
-	
+  </target>
+
     <macrodef name="jboss-install-binaries2" description="Added params to support different types of installations, should be pulled up into BDA-utils">
         <attribute name="application.base.path" default="${application.base.path}"/>
         <attribute name="jboss.binaries.file" default="${tools.dir}/${jboss.binaries.file}" />
@@ -387,7 +387,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <if>
                 <isset property="jboss.file.is.jar"/>
                 <then>
-        			<echo message="Using -installGroup @{jboss.installGroup.option} installpath=${jboss.home}"/>
+              <echo message="Using -installGroup @{jboss.installGroup.option} installpath=${jboss.home}"/>
                     <java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
                         <arg line="-installGroup @{jboss.installGroup.option} installpath=${jboss.home}"/>
                     </java>
@@ -395,67 +395,67 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             </if>
 
             <!-- make sure default server is renamed if applicable -->
-            <if>            
-                <not>                   
+            <if>
+                <not>
                     <equals arg1="@{jboss.server.name}" arg2="default"/>
-                </not>                  
-                <then>                  
+                </not>
+                <then>
                     <move todir="${jboss.home}/server/@{jboss.server.name}">
                         <fileset dir="${jboss.home}/server/default"/>
-                    </move>                         
-                </then>                 
-            </if>           
+                    </move>
+                </then>
+            </if>
 
-            <if>            
-                <os family="unix"/>     
-                <then>                  
-                    <chmod dir="${jboss.home}/bin" perm="ugo+rx" 
-                        includes="**/*.sh"/>                    
-                </then>                 
-            </if>           
+            <if>
+                <os family="unix"/>
+                <then>
+                    <chmod dir="${jboss.home}/bin" perm="ugo+rx"
+                        includes="**/*.sh"/>
+                </then>
+            </if>
         </sequential>
     </macrodef>
-	
-	<target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
-		<antcall target="install:jboss:binaries:po-ear"/>
-		<antcall target="install:jboss:binaries:po-grid"/>
-	</target>
-	
-	<target name="install:jboss:binaries:po-ear" unless="exclude.po-ear">
-		<jboss-install-binaries2 
-			jboss.server.name="${jboss.server.name}"
-			/>
-	</target>
-	<target name="install:jboss:binaries:po-grid" unless="exclude.po-grid">
-		<jboss-install-binaries2 
-			jboss.installGroup.option="default"
-			jboss.server.name="${jboss.server.name.grid}"
+
+  <target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
+    <antcall target="install:jboss:binaries:po-ear"/>
+    <antcall target="install:jboss:binaries:po-grid"/>
+  </target>
+
+  <target name="install:jboss:binaries:po-ear" unless="exclude.po-ear">
+    <jboss-install-binaries2
+      jboss.server.name="${jboss.server.name}"
+      />
+  </target>
+  <target name="install:jboss:binaries:po-grid" unless="exclude.po-grid">
+    <jboss-install-binaries2
+      jboss.installGroup.option="default"
+      jboss.server.name="${jboss.server.name.grid}"
             />
-	</target>
-	
+  </target>
 
-	<target name="install:jboss:po-ear" description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" unless="exclude.po-ear">
-		<!-- added to ensure working.dirs are fresh for our install -->
-		<delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
-		<delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
 
-		<copy file="${po-ear.dir.dist}/${po-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-		<copy file="${bda-utils.dir}/clm-3.2.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
-		<copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
-		
-		<!-- Replace this with file from ivy when project is ivy'fied -->
-	</target>
+  <target name="install:jboss:po-ear" description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" unless="exclude.po-ear">
+    <!-- added to ensure working.dirs are fresh for our install -->
+    <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+    <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
 
-	<target name="install:jboss:po-ear:configure" description="Configure po-ear application" unless="exclude.po-ear">
-		<!-- Not needed being done inside of ear
-		<copy file="${jboss-conf.dir.dest}/${po-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-		-->
-	</target>
-	
+    <copy file="${po-ear.dir.dist}/${po-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+    <copy file="${bda-utils.dir}/clm-3.2.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+    <copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+
+    <!-- Replace this with file from ivy when project is ivy'fied -->
+  </target>
+
+  <target name="install:jboss:po-ear:configure" description="Configure po-ear application" unless="exclude.po-ear">
+    <!-- Not needed being done inside of ear
+    <copy file="${jboss-conf.dir.dest}/${po-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+    -->
+  </target>
+
     <!-- Installs the po-grid application to JBOSS -->
     <target name="install:po-grid:application" description="Deploy Coppa PO Grid application to JBOSS" unless="exclude.po-grid">
-    	<echo message="Entirely removing existing wsrf.war deployment"/>
-    	<delete dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}"/>
+      <echo message="Entirely removing existing wsrf.war deployment"/>
+      <delete dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}"/>
         <mkdir dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}"/>
 
         <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
@@ -467,40 +467,40 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <!-- Configures installed po-grid application -->
     <target name="install:po-grid:configure" description="Configure po-grid service based on properties" unless="exclude.po-grid">
         <grid-appserver-configure
-        	appserver.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
-        	appserver.webapp.dir="${jboss.home}/server/${jboss.server.name.grid}/deploy"
-        	appserver.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
-        	appserver.server-xml.service.name="jboss.web"
-        	appserver.port.http="${jboss.server.grid.port}"
-        	appserver.port.ssl=""
-        	appserver.hostname="${jboss.server.hostname}"
-        	search.host="localhost"
-        	search.port="8080"
-        	grid.application.name="${po-grid.introduce.skeleton.service.name}"
-        	grid.application.relative.dir="${po-grid.dir.target}"
-        	grid.secure.enable="false"   
-        	appserver.external.http.host="${jboss.external.grid.http.host}"
+          appserver.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
+          appserver.webapp.dir="${jboss.home}/server/${jboss.server.name.grid}/deploy"
+          appserver.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
+          appserver.server-xml.service.name="jboss.web"
+          appserver.port.http="${jboss.server.grid.port}"
+          appserver.port.ssl=""
+          appserver.hostname="${jboss.server.hostname}"
+          search.host="localhost"
+          search.port="8080"
+          grid.application.name="${po-grid.introduce.skeleton.service.name}"
+          grid.application.relative.dir="${po-grid.dir.target}"
+          grid.secure.enable="false"
+          appserver.external.http.host="${jboss.external.grid.http.host}"
         />
     </target>
 
-	<!-- Wrapper target to configure jboss container, not deployed application -->
-	<target name="install:jboss:configure" description="Configure po-ear" unless="exclude.jboss" >
-	    <antcall target="install:jboss:configure:po-ear"/>		
-	    <antcall target="install:jboss:configure:po-grid"/>		
-	</target>
+  <!-- Wrapper target to configure jboss container, not deployed application -->
+  <target name="install:jboss:configure" description="Configure po-ear" unless="exclude.jboss" >
+      <antcall target="install:jboss:configure:po-ear"/>
+      <antcall target="install:jboss:configure:po-grid"/>
+  </target>
 
-	<target name="install:jboss:configure:po-ear" unless="exclude.po-ear">
+  <target name="install:jboss:configure:po-ear" unless="exclude.po-ear">
         <!-- Calls the following macros
         jboss-bindings - configures ports for jboss
         jboss-login-config - sets up authentication
         secure-jboss-console - adds password to jboss console apps
-        jboss-update-shutdown - updates shutdown.jar with correct jndi port so no args need to used 4 shutdown 
+        jboss-update-shutdown - updates shutdown.jar with correct jndi port so no args need to used 4 shutdown
         appserver-ssl-configure -  enables ssl
-        appserver-configure-external-hostname - configures jboss for use through a reverse proxy 
+        appserver-configure-external-hostname - configures jboss for use through a reverse proxy
         grid-secure-configure-connector - configures secure grid
         -->
         <!-- Use below if you are defining all the ports in your install.xml not the NCICB port configuraitons-->
-        <!-- configure the po-ear instance --> 
+        <!-- configure the po-ear instance -->
         <jboss-configure
             jboss.home="${jboss.home}"
             jboss.server.name="${jboss.server.name}"
@@ -513,7 +513,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
             jboss.web.user="${jboss.web.user}"
             jboss.web.password="${jboss.web.password}"
-            jboss.server.jndi.port="${jboss.server.jndi.port}" 
+            jboss.server.jndi.port="${jboss.server.jndi.port}"
             jboss.conf.dir="${jboss.home}/server/${jboss.server.name}/conf"
             jboss.server-xml.file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
             jboss.server-xml.service.name="jboss.web"
@@ -537,100 +537,100 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             grid.secure.dir="${grid.secure.dir}"
             grid.secure.enable="${grid.secure.enable}"
             grid.secure.port="${grid.secure.port}"
-            grid.secure.key.file="${grid.secure.key.file}" 
-            grid.secure.cert.file="${grid.secure.cert.file}" 
-            jboss.java.opts="${jboss.java.opts}"            
-            />		
-	</target>
-	<target name="install:jboss:configure:po-grid" unless="exclude.po-grid">
-	      <!-- create a new template bindings file from template (using ports for po-grid -->
-	            <copy file="${bda-utils.resource.dir}/template-binding.xml" 
-	                tofile="${bda-utils.resource.dir}/template-binding2.xml" 
-	                filtering="true"
-	                overwrite="true">
-	                <filterset begintoken="@" endtoken="@">
-	                    <filter token="jboss.server.port" value="@jboss.server.grid.port@"/>
-	                    <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
-	                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-	                    <filter token="jboss.server.jndi.port" value="@jboss.server.grid.jndi.port@"/>
-	                    <filter token="jboss.cobraorb.port" value="@jboss.grid.cobraorb.port@"/>
-	                    <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
-	                    <filter token="jboss.hajndi.port" value="@jboss.grid.hajndi.port@"/>
-	                    <filter token="jboss.hajrmi.port" value="@jboss.grid.hajrmi.port@"/>
-	                    <filter token="jboss.jms.port" value="@jboss.grid.jms.port@"/>
-	                    <filter token="jboss.jmx-rmi.port" value="@jboss.grid.jmx-rmi.port@"/>
-	                    <filter token="jboss.messaging.port" value="@jboss.grid.messaging.port@"/>
-	                    <filter token="jboss.pooledha.port" value="@jboss.grid.pooledha.port@"/>
-	                    <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
-	                    <filter token="jboss.server.bind.port" value="@jboss.grid.server.bind.port@"/>
-	                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-	                    <filter token="jboss.service.rmiobject.port" value="@jboss.grid.service.rmiobject.port@"/>
-	                    <filter token="jboss.snmp.port" value="@jboss.grid.snmp.port@"/>
-	                    <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
-	                    <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
-	                </filterset>
-	            </copy>
-	        
-	           <!-- configure the po-grid instance --> 
-	            <jboss-configure
-	                jboss.home="${jboss.home}"
-	                jboss.server.name="${jboss.server.name.grid}"
-	                jboss.server.ports.name="bda-ports"
-	                jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name.grid}/conf/bindings.xml"
-	                jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
-	                jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
-	                authentication.type="${authentication.type}"
-	                login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
-	                login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
-	                jboss.web.user="${jboss.web.user}"
-	                jboss.web.password="${jboss.web.password}"
-	                jboss.server.jndi.port="${jboss.server.grid.jndi.port}" 
-	                jboss.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
-	                jboss.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
-	                jboss.server-xml.service.name="jboss.web"
-	                jboss.ssl.enable="${jboss.ssl.enable}"
-	                jboss.ssl.port="8443"
-	                jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
-	                jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
-	                jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
-	                jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
-	                jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
-	                jboss.external.ssl.host="${jboss.external.ssl.host}"
-	                jboss.external.ssl.port="${jboss.external.ssl.port}"
-	                proxy.update.connector.port.ssl="8443"
-	                jboss.external.http.host="${jboss.external.grid.http.host}"
-	                jboss.external.http.port="${jboss.external.grid.http.port}"
-	                proxy.update.connector.port.http="8080"
-	                grid.external.secure.host="${grid.external.secure.host}"
-	                grid.external.secure.port="${grid.external.secure.port}"
-	                jboss.server.hostname="${jboss.server.hostname}"
-	                jboss.grid.configure="false"
-	                grid.secure.dir="${grid.secure.dir}"
-	                grid.secure.enable="${grid.secure.enable}"
-	                grid.secure.port="${grid.secure.port}"
-	                grid.secure.key.file="${grid.secure.key.file}" 
-	                grid.secure.cert.file="${grid.secure.cert.file}" 
-	                jboss.java.opts="${jboss.java.opts}"            
-	                />  		
-	</target>
+            grid.secure.key.file="${grid.secure.key.file}"
+            grid.secure.cert.file="${grid.secure.cert.file}"
+            jboss.java.opts="${jboss.java.opts}"
+            />
+  </target>
+  <target name="install:jboss:configure:po-grid" unless="exclude.po-grid">
+        <!-- create a new template bindings file from template (using ports for po-grid -->
+              <copy file="${bda-utils.resource.dir}/template-binding.xml"
+                  tofile="${bda-utils.resource.dir}/template-binding2.xml"
+                  filtering="true"
+                  overwrite="true">
+                  <filterset begintoken="@" endtoken="@">
+                      <filter token="jboss.server.port" value="@jboss.server.grid.port@"/>
+                      <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
+                      <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+                      <filter token="jboss.server.jndi.port" value="@jboss.server.grid.jndi.port@"/>
+                      <filter token="jboss.cobraorb.port" value="@jboss.grid.cobraorb.port@"/>
+                      <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
+                      <filter token="jboss.hajndi.port" value="@jboss.grid.hajndi.port@"/>
+                      <filter token="jboss.hajrmi.port" value="@jboss.grid.hajrmi.port@"/>
+                      <filter token="jboss.jms.port" value="@jboss.grid.jms.port@"/>
+                      <filter token="jboss.jmx-rmi.port" value="@jboss.grid.jmx-rmi.port@"/>
+                      <filter token="jboss.messaging.port" value="@jboss.grid.messaging.port@"/>
+                      <filter token="jboss.pooledha.port" value="@jboss.grid.pooledha.port@"/>
+                      <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
+                      <filter token="jboss.server.bind.port" value="@jboss.grid.server.bind.port@"/>
+                      <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+                      <filter token="jboss.service.rmiobject.port" value="@jboss.grid.service.rmiobject.port@"/>
+                      <filter token="jboss.snmp.port" value="@jboss.grid.snmp.port@"/>
+                      <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
+                      <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
+                  </filterset>
+              </copy>
 
-	<!-- Calls to bda macros for basic functionality -->
-	<target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
-		<antcall target="install:jboss:stop:po-grid"/>
-		<antcall target="install:jboss:stop:po-ear"/>
-	</target>
-	
-	<target name="install:jboss:stop:po-ear" unless="exclude.po-ear">
-		<jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
-	</target>
-	<target name="install:jboss:stop:po-grid" unless="exclude.po-grid">
-		<jboss-stop-jboss jboss.server.jndi.port="${jboss.server.grid.jndi.port}" jboss.server.name="${jboss.server.name.grid}"/>
-	</target>
-	
-    <!-- 
+             <!-- configure the po-grid instance -->
+              <jboss-configure
+                  jboss.home="${jboss.home}"
+                  jboss.server.name="${jboss.server.name.grid}"
+                  jboss.server.ports.name="bda-ports"
+                  jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name.grid}/conf/bindings.xml"
+                  jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
+                  jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+                  authentication.type="${authentication.type}"
+                  login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+                  login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+                  jboss.web.user="${jboss.web.user}"
+                  jboss.web.password="${jboss.web.password}"
+                  jboss.server.jndi.port="${jboss.server.grid.jndi.port}"
+                  jboss.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
+                  jboss.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
+                  jboss.server-xml.service.name="jboss.web"
+                  jboss.ssl.enable="${jboss.ssl.enable}"
+                  jboss.ssl.port="8443"
+                  jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+                  jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+                  jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+                  jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+                  jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+                  jboss.external.ssl.host="${jboss.external.ssl.host}"
+                  jboss.external.ssl.port="${jboss.external.ssl.port}"
+                  proxy.update.connector.port.ssl="8443"
+                  jboss.external.http.host="${jboss.external.grid.http.host}"
+                  jboss.external.http.port="${jboss.external.grid.http.port}"
+                  proxy.update.connector.port.http="8080"
+                  grid.external.secure.host="${grid.external.secure.host}"
+                  grid.external.secure.port="${grid.external.secure.port}"
+                  jboss.server.hostname="${jboss.server.hostname}"
+                  jboss.grid.configure="false"
+                  grid.secure.dir="${grid.secure.dir}"
+                  grid.secure.enable="${grid.secure.enable}"
+                  grid.secure.port="${grid.secure.port}"
+                  grid.secure.key.file="${grid.secure.key.file}"
+                  grid.secure.cert.file="${grid.secure.cert.file}"
+                  jboss.java.opts="${jboss.java.opts}"
+                  />
+  </target>
+
+  <!-- Calls to bda macros for basic functionality -->
+  <target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
+    <antcall target="install:jboss:stop:po-grid"/>
+    <antcall target="install:jboss:stop:po-ear"/>
+  </target>
+
+  <target name="install:jboss:stop:po-ear" unless="exclude.po-ear">
+    <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
+  </target>
+  <target name="install:jboss:stop:po-grid" unless="exclude.po-grid">
+    <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.grid.jndi.port}" jboss.server.name="${jboss.server.name.grid}"/>
+  </target>
+
+    <!--
     jboss-start-jboss macro will start the jboss instance
     usage:  <jboss-start-jboss jboss.home="${jboss.home}"/>
-        jboss.home is the location where Jboss is installed     
+        jboss.home is the location where Jboss is installed
     -->
     <macrodef name="jboss-start-jboss2" description="Starts a local JBoss instance">
         <attribute name="jboss.home" default="${jboss.home}" />
@@ -650,7 +650,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                         <arg file="@{jboss.home}/bin/run.sh" />
                         <arg file="@{jboss.home}/bin/shutdown.sh" />
                     </exec>
-        
+
                     <exec executable="sh" osfamily="unix" dir="@{jboss.home}/bin" spawn="true">
                         <env key="NOPAUSE" value="true" />
                         <arg line="run.sh -c @{jboss.server.name}" />
@@ -664,181 +664,181 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                 </else>
             </if>
         </sequential>
-    </macrodef>	
-	
-	<target name="install:jboss:start"  unless="exclude.jboss">
-		<if>
-			<not>
-				<isset property="exclude.start.servers"/>
-			</not>
-			<then>
-				<antcall target="install:jboss:start:po-ear"/>
-				<antcall target="install:jboss:start:po-grid"/>
-				<sleep seconds="15"/>
-			</then>
-		</if>
-	</target>
+    </macrodef>
+
+  <target name="install:jboss:start"  unless="exclude.jboss">
+    <if>
+      <not>
+        <isset property="exclude.start.servers"/>
+      </not>
+      <then>
+        <antcall target="install:jboss:start:po-ear"/>
+        <antcall target="install:jboss:start:po-grid"/>
+        <sleep seconds="15"/>
+      </then>
+    </if>
+  </target>
     <target name="install:jboss:start:po-ear" unless="exclude.po-ear">
-		<jboss-start-jboss2 jboss.server.name="${jboss.server.name}"/>
+    <jboss-start-jboss2 jboss.server.name="${jboss.server.name}"/>
     </target>
     <target name="install:jboss:start:po-grid" unless="exclude.po-grid">
-		<jboss-start-jboss2 jboss.server.name="${jboss.server.name.grid}"/>
-    </target>	
-	
-	<target name="install:validation:pre-install">
-		<validate-pre-install
-			ant.check.version="${ant.minimum.version}"
-			java.check.version.major="${java.major.version}"
-			java.check.version.minor="${java.minor.version}"
-			database.version="${mysql.minimum.version}"
-			/>
-	</target>
-	<target name="install:validation:pre-install:ports">
-		<validate-ports-preinstall />
-	</target>
-	<target name="install:validation:post-install">
-		<if>
-			<not>
-				<isset property="exclude.start.servers"/>
-			</not>
-			<then>
-				<validate-post-install propertyfile.backup.location="${user.home}"/>
-			</then>
-		</if>
-	</target>
+    <jboss-start-jboss2 jboss.server.name="${jboss.server.name.grid}"/>
+    </target>
 
-	<!-- Wrapper target to deploy JBOSS container -->
-	<target name="install:jboss" unless="exclude.jboss"
-		depends="
-		install:validation:pre-install,
-		install:jboss:stop,
-		install:validation:pre-install:ports,
-		install:clean:jboss,
-		install:init,
-		install:jboss:binaries,
-		install:jboss:po-ear:pre-configure,
-		install:jboss:po-ear,
-		install:jboss:po-ear:configure,
-		install:jboss:po-grid:pre-configure,
-		install:po-grid:application,
-		install:po-grid:configure,
-		install:jboss:configure,
-		install:post,
-		install:jboss:start
-		" />
+  <target name="install:validation:pre-install">
+    <validate-pre-install
+      ant.check.version="${ant.minimum.version}"
+      java.check.version.major="${java.major.version}"
+      java.check.version.minor="${java.minor.version}"
+      database.version="${mysql.minimum.version}"
+      />
+  </target>
+  <target name="install:validation:pre-install:ports">
+    <validate-ports-preinstall />
+  </target>
+  <target name="install:validation:post-install">
+    <if>
+      <not>
+        <isset property="exclude.start.servers"/>
+      </not>
+      <then>
+        <validate-post-install propertyfile.backup.location="${user.home}"/>
+      </then>
+    </if>
+  </target>
 
-	<!-- Wrapper target to deploy all containers to one server -->
-	<target name="install" description="Installs and configures JBOSS, creates database, and deploys application" 
-		depends="
-		install:validation:pre-install,
-		install:jboss:stop,
-		install:validation:pre-install:ports,
-		install:clean,
-		install:init,
-		install:database,
-		install:jboss,
-		install:jboss:start,
-		install:post,
-		install:validation:post-install
-		"/>
+  <!-- Wrapper target to deploy JBOSS container -->
+  <target name="install:jboss" unless="exclude.jboss"
+    depends="
+    install:validation:pre-install,
+    install:jboss:stop,
+    install:validation:pre-install:ports,
+    install:clean:jboss,
+    install:init,
+    install:jboss:binaries,
+    install:jboss:po-ear:pre-configure,
+    install:jboss:po-ear,
+    install:jboss:po-ear:configure,
+    install:jboss:po-grid:pre-configure,
+    install:po-grid:application,
+    install:po-grid:configure,
+    install:jboss:configure,
+    install:post,
+    install:jboss:start
+    " />
 
-	<!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
-	<target name="install:jboss:po-ear:pre-configure" unless="exclude.po-ear">
-		<mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
-		<delete dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
-		<mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
-		<unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/${po-ear.dist.relative.dir}"/>
-		<unzip src="${temp.dir}/${po-ear.dist.relative.dir}/po-web.war" dest="${temp.dir}/po-web"/>
-		<unzip src="${temp.dir}/${po-ear.dist.relative.dir}/${po-services.jar.name}" dest="${temp.dir}/po-services"/>
+  <!-- Wrapper target to deploy all containers to one server -->
+  <target name="install" description="Installs and configures JBOSS, creates database, and deploys application"
+    depends="
+    install:validation:pre-install,
+    install:jboss:stop,
+    install:validation:pre-install:ports,
+    install:clean,
+    install:init,
+    install:database,
+    install:jboss,
+    install:jboss:start,
+    install:post,
+    install:validation:post-install
+    "/>
 
-		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
-		<var name="file.list" 
-			value="${po-ear.dist.relative.dir}/po-ds.xml,${po-ear.dist.relative.dir}/po-log4j.xml,${po-ear.dist.relative.dir}/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,${po-ear.dist.relative.dir}/jboss-service.xml,po-services/ctep-services.properties"/>
+  <!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
+  <target name="install:jboss:po-ear:pre-configure" unless="exclude.po-ear">
+    <mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <delete dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <unzip src="${temp.dir}/${po-ear.dist.relative.dir}/po-web.war" dest="${temp.dir}/po-web"/>
+    <unzip src="${temp.dir}/${po-ear.dist.relative.dir}/${po-services.jar.name}" dest="${temp.dir}/po-services"/>
 
-		<for list="${file.list}" param="file.relative.name">
-			<sequential>
-				<propertyregex property="file.name"
-					input="@{file.relative.name}"
-					regexp="^.*\/(.*)"
-					select="\1"
-					override="true"
-					/>
-				<propertyregex property="relative.dir"
-					input="@{file.relative.name}"
-					regexp="^(.*)\/.*"
-					select="\1"
-					override="true"
-					/>
-				<echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
-				<replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
-				<copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
-					<filterset>
-						<filter token="database.server" value="${database.server}"/>
-						<filter token="database.port" value="${database.port}"/>
-						<filter token="database.name" value="${database.name}"/>
-						<filter token="database.user" value="${database.user}"/>
-						<filter token="database.password" value="${database.password}"/>
-						<filter token="database.driver" value="${database.driver}"/>
-						<filter token="database.xa.driver" value="${database.xa.driver}"/>
-						<!-- not needed for now
-						<filter token="ldap.url" value="${ldap.url}"/>
-						<filter token="ldap.base.dn" value="${ldap.base.dn}"/>
-						<filter token="ldap.user.field" value="userid"/>
-						-->
-						<filter token="app.log.level" value="${app.log.level}"/>
-						<filter token="app.log.level.default" value="${app.log.level.default}"/>
+    <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+    <var name="file.list"
+      value="${po-ear.dist.relative.dir}/po-ds.xml,${po-ear.dist.relative.dir}/po-log4j.xml,${po-ear.dist.relative.dir}/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,${po-ear.dist.relative.dir}/jboss-service.xml,po-services/ctep-services.properties"/>
+
+    <for list="${file.list}" param="file.relative.name">
+      <sequential>
+        <propertyregex property="file.name"
+          input="@{file.relative.name}"
+          regexp="^.*\/(.*)"
+          select="\1"
+          override="true"
+          />
+        <propertyregex property="relative.dir"
+          input="@{file.relative.name}"
+          regexp="^(.*)\/.*"
+          select="\1"
+          override="true"
+          />
+        <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+        <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+        <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+          <filterset>
+            <filter token="database.server" value="${database.server}"/>
+            <filter token="database.port" value="${database.port}"/>
+            <filter token="database.name" value="${database.name}"/>
+            <filter token="database.user" value="${database.user}"/>
+            <filter token="database.password" value="${database.password}"/>
+            <filter token="database.driver" value="${database.driver}"/>
+            <filter token="database.xa.driver" value="${database.xa.driver}"/>
+            <!-- not needed for now
+            <filter token="ldap.url" value="${ldap.url}"/>
+            <filter token="ldap.base.dn" value="${ldap.base.dn}"/>
+            <filter token="ldap.user.field" value="userid"/>
+            -->
+            <filter token="app.log.level" value="${app.log.level}"/>
+            <filter token="app.log.level.default" value="${app.log.level.default}"/>
                         <filter token="app.log.smtp.host" value="${app.log.smtp.host}"/>
                         <filter token="app.log.smtp.from" value="${app.log.smtp.from}"/>
                         <filter token="app.log.smtp.to" value="${app.log.smtp.to}"/>
-						<filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
-						<filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
-						<filter token="ctep.url" value="${ctep.url}"/>
-						<filter token="ctep.username" value="${ctep.username}"/>
-						<filter token="ctep.password" value="${ctep.password}"/>
+            <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+            <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+            <filter token="ctep.url" value="${ctep.url}"/>
+            <filter token="ctep.username" value="${ctep.username}"/>
+            <filter token="ctep.password" value="${ctep.password}"/>
                         <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
                         <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
                         <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
-						
-						<!-- PO-GRID: reuses the jboss.server.jndi.port -->
+
+            <!-- PO-GRID: reuses the jboss.server.jndi.port -->
                         <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
                         <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
-					</filterset>
-				</copy>
-				<copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
-			</sequential>
-		</for>
+          </filterset>
+        </copy>
+        <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+      </sequential>
+    </for>
 
-		<move file="${po-ear.dir.dist}/${po-ear.ear.file}" tofile="${po-ear.dir.dist}/${po-ear.ear.file}.orig"/>
+    <move file="${po-ear.dir.dist}/${po-ear.ear.file}" tofile="${po-ear.dir.dist}/${po-ear.ear.file}.orig"/>
 
-		<war destfile="${temp.dir}/po-ear/po-web.war"
-			compress="false"  duplicate="preserve"
-			webxml="${temp.dir}/po-web/WEB-INF/web.xml">
+    <war destfile="${temp.dir}/po-ear/po-web.war"
+      compress="false"  duplicate="preserve"
+      webxml="${temp.dir}/po-web/WEB-INF/web.xml">
 
-			<lib dir="${temp.dir}/po-web/WEB-INF/lib"/>
-			<classes dir="${temp.dir}/po-web/WEB-INF/classes"/>
-			<webinf dir="${temp.dir}/po-web/WEB-INF" excludes="web.xml"/>
-			<fileset dir="${temp.dir}/po-web"/>
-		</war>
+      <lib dir="${temp.dir}/po-web/WEB-INF/lib"/>
+      <classes dir="${temp.dir}/po-web/WEB-INF/classes"/>
+      <webinf dir="${temp.dir}/po-web/WEB-INF" excludes="web.xml"/>
+      <fileset dir="${temp.dir}/po-web"/>
+    </war>
 
-	    <jar destfile="${temp.dir}/po-ear/${po-services.jar.name}" 
-	                basedir="${temp.dir}/po-services" compress="false" />
-	            
-	    <ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}" 
-			basedir="${temp.dir}/po-ear" 
-			compress="false" 
-			appxml="${temp.dir}/po-ear/META-INF/application.xml"
-			/>
-		
-	</target>
-	
-	<target name="install:jboss:po-grid:pre-configure" unless="exclude.po-grid">
+      <jar destfile="${temp.dir}/po-ear/${po-services.jar.name}"
+                  basedir="${temp.dir}/po-services" compress="false" />
+
+      <ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}"
+      basedir="${temp.dir}/po-ear"
+      compress="false"
+      appxml="${temp.dir}/po-ear/META-INF/application.xml"
+      />
+
+  </target>
+
+  <target name="install:jboss:po-grid:pre-configure" unless="exclude.po-grid">
         <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
         <delete dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
-        <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>	      
+        <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
         <unzip src="${po-grid.dir.dist}/${po-grid.artifact.file}" dest="${temp.dir}/${po-grid.dist.relative.dir}"/>
         <unzip src="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${po-grid.introduce.skeleton.service.name}-common"/>
-		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
-        <var name="file.list" 
+    <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+        <var name="file.list"
             value="${po-grid.introduce.skeleton.service.name}-common/jndi.properties"/>
 
         <for list="${file.list}" param="file.relative.name">
@@ -867,122 +867,147 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                 <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
             </sequential>
         </for>
-		<move file="${po-grid.dir.dist}/${po-grid.artifact.file}" tofile="${po-grid.dir.dist}/${po-grid.artifact.file}.orig"/>
-	    <jar destfile="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-common.jar" 
-	                basedir="${temp.dir}/${po-grid.introduce.skeleton.service.name}-common" compress="false"/>
-		
-		<zip basedir="${temp.dir}/${po-grid.dist.relative.dir}" compress="true" file="${po-grid.dir.dist}/${po-grid.artifact.file}" update="false"/>
-	</target>
+    <move file="${po-grid.dir.dist}/${po-grid.artifact.file}" tofile="${po-grid.dir.dist}/${po-grid.artifact.file}.orig"/>
+      <jar destfile="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-common.jar"
+                  basedir="${temp.dir}/${po-grid.introduce.skeleton.service.name}-common" compress="false"/>
 
-	<!-- Wrapper target to upgrade jboss container. Does not install or configure binaries -->
-	<target name="upgrade:jboss" unless="exclude.jboss"
-		depends="
-		install:validation:pre-install,
-		install:jboss:stop,
-		install:init,
-		install:jboss:po-ear:pre-configure,
-		install:jboss:po-ear,
-		install:jboss:po-ear:configure,
-		install:jboss:po-grid:pre-configure,
-		install:po-grid:application,
-		install:po-grid:configure,
-		install:jboss:start
-		" />
-		
-	<target name="upgrade:re-install:db" description="Deploys an updated version of application and runs full database install (erases all db data)"
-	depends="
-    	upgrade:init,
-    	install:validation:pre-install,
-    	install:jboss:stop,
-    	install:init,
-    	install:database,
-    	upgrade:jboss,
-    	install:validation:post-install
-    	"/> 
-	
-	<!-- Wrapper target to upgrade all container. Does not install or configure binaries -->
-	<target name="upgrade" description="Deploys application and runs incremental database build" 
-		depends="
-		upgrade:init,
-		install:validation:pre-install,
-		install:jboss:stop,
-		install:init,
-		upgrade:database,
-		upgrade:jboss,
-		install:validation:post-install
-		"/>	
-		
-	<target name="upgrade:init">
-		<echo  message="Checking if database properties exist.  If they do not on an upgrade install then ${jboss.home}/server/${jboss.server.name}/deploy/${po-ear.ds.file} may not exist."/>
-		<property name="db.prop.list" value="database.url,database.user,database.password,database.name"/>
-		<properties-exist properties.list="${db.prop.list}"/>
-	</target>
-	<target name="upgrade:database" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
-		depends="
-		upgrade:init,
-		install:init,
-		install:database:prep
-		">
-		<database-upgrade
-			database.changelog.file="${os.temp.dir}/${project.name}/db-upgrade.xml"
-			/>
-		<database-tag/>
-	</target>
+    <zip basedir="${temp.dir}/${po-grid.dist.relative.dir}" compress="true" file="${po-grid.dir.dist}/${po-grid.artifact.file}" update="false"/>
+  </target>
+
+  <!-- Generic targets to call appropriate upgrade path targets, just change the depends to use alternate upgrade path -->
+  <target name="upgrade:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss" depends="upgrade-ncm:jboss">
+  </target>
+
+  <target name="upgrade" description="Upgrades JBoss and Database" depends="upgrade-ncm">
+  </target>
+
+  <target name="upgrade-with-dbinstall" description="Upgrades JBoss and Database" depends="upgrade-ncm:with-dbinstall">
+  </target>
+
+  <!-- Upgrade with No Container Modification (NCM) -->
+    <target name="upgrade-ncm:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss"
+      depends="
+      install:validation:pre-install,
+      install:jboss:stop,
+      install:validation:pre-install:ports,
+      install:init,
+      install:jboss:po-ear:pre-configure,
+      install:jboss:po-ear,
+      install:jboss:po-ear:configure,
+      install:jboss:po-grid:pre-configure,
+      install:po-grid:application,
+      install:po-grid:configure,
+      install:post:jboss,
+      install:jboss:start
+      ">
+    </target>
+
+    <target name="upgrade-ncm" description="Upgrades JBoss and Database"
+      depends="
+      install:validation:pre-install,
+      install:jboss:stop,
+      upgrade:init,
+      install:init,
+      upgrade:database,
+      upgrade:jboss,
+      install:validation:post-install
+      ">
+    </target>
+
+    <target name="upgrade-ncm:with-dbinstall" description="Upgrades JBoss and Database"
+      depends="
+      install:validation:pre-install,
+      install:jboss:stop,
+      upgrade:init,
+      install:init,
+      install:database,
+      upgrade:jboss,
+      install:validation:post-install
+      ">
+    </target>
+
+  <target name="upgrade:re-install:db" description="Deploys an updated version of application and runs full database install (erases all db data)"
+  depends="
+      upgrade:init,
+      install:validation:pre-install,
+      install:jboss:stop,
+      install:init,
+      install:database,
+      upgrade:jboss,
+      install:validation:post-install
+      "/>
+
+  <target name="upgrade:init">
+    <echo  message="Checking if database properties exist.  If they do not on an upgrade install then ${jboss.home}/server/${jboss.server.name}/deploy/${po-ear.ds.file} may not exist."/>
+    <property name="db.prop.list" value="database.url,database.user,database.password,database.name"/>
+    <properties-exist properties.list="${db.prop.list}"/>
+  </target>
+  <target name="upgrade:database" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
+    depends="
+    upgrade:init,
+    install:init,
+    install:database:prep
+    ">
+    <database-upgrade
+      database.changelog.file="${os.temp.dir}/${project.name}/db-upgrade.xml"
+      />
+    <database-tag/>
+  </target>
 
 
-	<target name="upgrade:database:tag" description="Tags current state of database with a tag to allow for rollback of database to previous versions." unless="exclude.database"
-		depends="
-		upgrade:init,
-		install:init,
-		install:database:prep
-		">
-		<database-tag/>
-	</target>
+  <target name="upgrade:database:tag" description="Tags current state of database with a tag to allow for rollback of database to previous versions." unless="exclude.database"
+    depends="
+    upgrade:init,
+    install:init,
+    install:database:prep
+    ">
+    <database-tag/>
+  </target>
 
-	<target name="upgrade:database:rollback" description="Rolls back database to previous tagged version using rollback scripts." unless="exclude.database"
-		depends="
-		upgrade:init,
-		install:init,
-		install:database:prep
-		">
-		<database-rollback/>
-	</target>
+  <target name="upgrade:database:rollback" description="Rolls back database to previous tagged version using rollback scripts." unless="exclude.database"
+    depends="
+    upgrade:init,
+    install:init,
+    install:database:prep
+    ">
+    <database-rollback/>
+  </target>
 
-	<target name="install:post" depends="install:post:jboss"/>
+  <target name="install:post" depends="install:post:jboss"/>
 
-	<target name="install:post:jboss" unless="exclude.jboss">
+  <target name="install:post:jboss" unless="exclude.jboss">
 
 
-		<if>
-			<not>
-				<equals arg1="${exclude.jboss.backup}" arg2="true"/>
-			</not>
-			<then>
-				<property name="changelogFile" location="${install-logs.dir}/chagneLog-${install.time}.txt"/>
-				<property name="compare1.dir" location="${backup.jboss.base.dir}/backup/${jboss.relative.path}"/>
-				<property name="compare2.dir" location="${jboss.home}"/>
-				<report-dir-diff
-					dir1="${compare1.dir}"
-					dir2="${compare2.dir}"
-					reportFile="${changelogFile}"
-					/>
-				<!-- Copy app server logs -->
-				<mkdir dir="${jboss.home}/server/${jboss.server.name}/log"/>
-				<mkdir dir="${backup.jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log"/>
-				<!-- so the logs wont be included in the zip --> 
-				<move todir="${jboss.home}/server/${jboss.server.name}/log">
-					<fileset dir="${backup.jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log">
-						<include name="*"/>
-					</fileset>
-				</move>
+    <if>
+      <not>
+        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+      </not>
+      <then>
+        <property name="changelogFile" location="${install-logs.dir}/chagneLog-${install.time}.txt"/>
+        <property name="compare1.dir" location="${backup.jboss.base.dir}/backup/${jboss.relative.path}"/>
+        <property name="compare2.dir" location="${jboss.home}"/>
+        <report-dir-diff
+          dir1="${compare1.dir}"
+          dir2="${compare2.dir}"
+          reportFile="${changelogFile}"
+          />
+        <!-- Copy app server logs -->
+        <mkdir dir="${jboss.home}/server/${jboss.server.name}/log"/>
+        <mkdir dir="${backup.jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log"/>
+        <!-- so the logs wont be included in the zip -->
+        <move todir="${jboss.home}/server/${jboss.server.name}/log">
+          <fileset dir="${backup.jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log">
+            <include name="*"/>
+          </fileset>
+        </move>
 
-				<!-- Compress backup and cleanup -->
-				<mkdir dir="${backup.jboss.base.dir}/backup1"/>
-				<zip destfile="${backup.jboss.base.dir}/backup1/${jboss.relative.path}.zip" basedir="${backup.jboss.base.dir}/backup" />
-				<delete dir="${backup.jboss.base.dir}/backup"/>
-			</then>
-		</if>
+        <!-- Compress backup and cleanup -->
+        <mkdir dir="${backup.jboss.base.dir}/backup1"/>
+        <zip destfile="${backup.jboss.base.dir}/backup1/${jboss.relative.path}.zip" basedir="${backup.jboss.base.dir}/backup" />
+        <delete dir="${backup.jboss.base.dir}/backup"/>
+      </then>
+    </if>
 
-	</target>
+  </target>
 
 </project>

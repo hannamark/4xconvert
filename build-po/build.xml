@@ -3,631 +3,634 @@
 $Id: build.xml 4753 2008-05-15 18:24:16Z saksass $
 $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 -->
-<project name="build-po" default="build:all" basedir="." 
-	xmlns:ivy="antlib:org.apache.ivy.ant"
-	xmlns:cs="antlib:com.puppycrawl.tools.checkstyle"
-	>
-	<description>
-		Builds the application.
-	</description>
+<project name="build-po" default="build:all" basedir="."
+  xmlns:ivy="antlib:org.apache.ivy.ant"
+  xmlns:cs="antlib:com.puppycrawl.tools.checkstyle"
+  >
+  <description>
+    Builds the application.
+  </description>
 
-	<!-- Property file related properties and tasks -->
-	<property environment="env" />
-	<!-- The project.properties stores properties that are shared between both build.xml and install.xml. Typically properties that are related to the distribution directories, or files. -->
-	<property file="local.properties" />
-	<property file="project.properties" />
-	<property name="properties.file" value="install.properties"/>
-	<echo message="Using properties file of ${properties.file}."/>
-	<available file="${properties.file}" property="properties.file.exists" />
-	<fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
+  <!-- Property file related properties and tasks -->
+  <property name="cacore-sdk.dir" location="${target.dir}/${cacore-sdk.binaries.relative.dir}"/>
+  <property environment="env" />
+  <!-- The project.properties stores properties that are shared between both build.xml and install.xml. Typically properties that are related to the distribution directories, or files. -->
+  <property file="local.properties" />
+  <property file="project.properties" />
+  <property name="properties.file" value="install.properties"/>
+  <echo message="Using properties file of ${properties.file}."/>
+  <available file="${properties.file}" property="properties.file.exists" />
+  <fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
 
-	<replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
-	<replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
-	<property file="${properties.file}" />
-	<!-- added for remote deployments since file is copied to root of install dir -->
-	<basename property="properties.file.name" file="${properties.file}"/>
-	<condition property="application.base.path" value="${application.base.path.linux}">
-		<or>
-			<os family="unix" />
-			<os family="mac" />
-		</or>
-	</condition>
+  <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
+  <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
+  <property file="${properties.file}" />
+  <!-- added for remote deployments since file is copied to root of install dir -->
+  <basename property="properties.file.name" file="${properties.file}"/>
+  <condition property="application.base.path" value="${application.base.path.linux}">
+    <or>
+      <os family="unix" />
+      <os family="mac" />
+    </or>
+  </condition>
 
-	<condition property="application.base.path" value="${application.base.path.windows}">
-		<os family="windows" />
-	</condition>
-	<property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
-
-
-	<!-- BDA standard structure -->
-	<property name="build.dir" location="."/>
-	<property name="software.dir" location=".." />
-	<property name="common.dir" location="${build.dir}/common" />
-	<property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-	<property name="target.dir" location="${software.dir}/target/po" />
-	<property name="lib.dir" location="${target.dir}/lib" />
-	<property name="temp.dir" location="${target.dir}/temp" />
-	<property name="reports.dir" location="${target.dir}/reports" />
-	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />
-	<property name="bda-download.dir" location="${target.dir}/bda-download" />
-	<property name="log.dir" location="${target.dir}/logs" />
-	<property name="dist.dir" location="${target.dir}/dist" />
-	<property name="download.dir" location="${target.dir}/download" />
-	<property name="pt.dir" location="${target.dir}/persistent-transient" />
-	<property name="ivy.settings.dir" location="${common.dir}/ivy" />
-	<property name="working.dir" location="${target.dir}/working" />
+  <condition property="application.base.path" value="${application.base.path.windows}">
+    <os family="windows" />
+  </condition>
+  <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
 
 
-	<!-- Ivy Related props -->
-	<!-- don't think we will need
-	<property name="ivy.bda.definition.file" value="ivy-bda.xml" />
-	<property name="ivy.bda.settings.file" value="ivy-bda-settings.xml" />
-	<property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
-	<property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
-	-->
-	<property name="ivy.settings.file" value="ivy-settings.xml" />
-	<property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
-	<property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
+  <!-- BDA standard structure -->
+  <property name="build.dir" location="."/>
+  <property name="software.dir" location=".." />
+  <property name="common.dir" location="${build.dir}/common" />
+  <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+  <property name="target.dir" location="${software.dir}/target/po" />
+  <property name="lib.dir" location="${target.dir}/lib" />
+  <property name="temp.dir" location="${target.dir}/temp" />
+  <property name="reports.dir" location="${target.dir}/reports" />
+  <property name="bda-utils.dir" location="${target.dir}/bda-utils" />
+  <property name="bda-download.dir" location="${target.dir}/bda-download" />
+  <property name="log.dir" location="${target.dir}/logs" />
+  <property name="dist.dir" location="${target.dir}/dist" />
+  <property name="download.dir" location="${target.dir}/download" />
+  <property name="pt.dir" location="${target.dir}/persistent-transient" />
+  <property name="ivy.settings.dir" location="${common.dir}/ivy" />
+  <property name="working.dir" location="${target.dir}/working" />
 
 
-	<!-- Used by dist:*:prep to determin list of files to use for incremental build process.
-		Directory and files must be in svn to work.
-	-->
-	<property name="db.src.dir" value="${software.dir}/po/services/src/main/db" />
-	<property name="db-install.src.dir" location="${db.src.dir}/db-install"/>
-	<property name="db-upgrade.src.dir" location="${db.src.dir}/db-upgrade"/>
-	<property name="db-install-dynamic.src.dir" location="${software.dir}/po/services/target/hibernate3/sql/"/>
+  <!-- Ivy Related props -->
+  <!-- don't think we will need
+  <property name="ivy.bda.definition.file" value="ivy-bda.xml" />
+  <property name="ivy.bda.settings.file" value="ivy-bda-settings.xml" />
+  <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
+  <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
+  -->
+  <property name="ivy.settings.file" value="ivy-settings.xml" />
+  <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
+  <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
 
 
-	<!-- Properties that relate to how to call build targets from sub-projects-->
-	<!-- Working directory passed to Ant tasks -->
-	<property name="po.base.dir" location="${software.dir}/po"/>
-	<property name="po-client.base.dir" location="${software.dir}/po/client"/>
-	<property name="po-ear.base.dir" location="${software.dir}/po/ear"/>
-	<property name="po-services.base.dir" location="${software.dir}/po/services"/>
-	<property name="po-web.base.dir" location="${software.dir}/po/web"/>
-	<property name="iso-datatypes.base.dir" location="${software.dir}/iso-datatypes"/>
-
-	<!-- Maven comamnd line arguments, bda profile is inside profiles.xml that gets copied to ear folder before build to override exiting properties -->
-	<property name="po.maven.profile.list" value="local,bda" />
-	<property name="po.maven.goal.list" value="clean install" />
-	<property name="iso-datatypes.maven.goal.list" value="clean install" />
-
-	<!-- Distribution Structure properties, used to copy files into the distribution area.
-       		Use project.propertie relative dir names becasue they are used by install also-->
-	<property name="dist.exploded.dir" location="${dist.dir}/exploded" />
-	<property name="po-ear.dist.dir" location="${dist.exploded.dir}/${po-ear.dist.relative.dir}" />
-	<property name="tools.dist.dir" location="${dist.exploded.dir}/${tools.dist.relative.dir}" />
-	<property name="common.dist.dir" location="${dist.exploded.dir}/${common.dist.relative.dir}" />
-	<property name="jboss-conf.dist.dir" location="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
-	<property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
-	<property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
-	<property name="jboss-conf.dist.dir" value="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
-
-	<property name="po-grid.base.dir" location="${software.dir}/po-grid"/>
-	<property name="po-grid.build.file" location="${po-grid.base.dir}/build.xml"/>
-	<property name="po-grid.dir.target" value="wsrf.war" />
-	<property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
-	<property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-	<property name="po-grid.build.target" value="clean:deployJBoss"/>
-	<property name="po-grid.artifact.dir" value="${po-grid.base.dir}/target" />
-	<property name="po-grid.dist.dir" value="${dist.exploded.dir}/${po-grid.dist.relative.dir}"/>
+  <!-- Used by dist:*:prep to determin list of files to use for incremental build process.
+    Directory and files must be in svn to work.
+  -->
+  <property name="db.src.dir" value="${software.dir}/po/services/src/main/db" />
+  <property name="db-install.src.dir" location="${db.src.dir}/db-install"/>
+  <property name="db-upgrade.src.dir" location="${db.src.dir}/db-upgrade"/>
+  <property name="db-install-dynamic.src.dir" location="${software.dir}/po/services/target/hibernate3/sql/"/>
 
 
-	<!-- Selenium settings -->
-	<property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
-	<property name="selenium.browser" value="*firefox"/>
-	<!--  What you would need for a ci server, recommend setting in local.properties
-	<property name="selenium.browser" value="*firefox /usr/lib64/firefox-1.5.0.12/firefox-bin"/>
-	-->
-	<property name="selenium.proxy.port" value="4444"/>
-	<property name="selenium.report.dir" location="${reports.dir}/selenium"/>
-	<property name="selenium.report.file" value="selenium-rpt.html"/>
-	<property name="selenium.test.dir" location="${software.dir}/test/selenium"/>
-	<property name="selenium.test.suite" value="${selenium.test.dir}/cai2TestSuite.html"/>
-	<property name="selenium.url" value="http://${jboss.server.hostname}:${jboss.server.port}"/>
+  <!-- Properties that relate to how to call build targets from sub-projects-->
+  <!-- Working directory passed to Ant tasks -->
+  <property name="po.base.dir" location="${software.dir}/po"/>
+  <property name="po-client.base.dir" location="${software.dir}/po/client"/>
+  <property name="po-ear.base.dir" location="${software.dir}/po/ear"/>
+  <property name="po-services.base.dir" location="${software.dir}/po/services"/>
+  <property name="po-web.base.dir" location="${software.dir}/po/web"/>
+  <property name="iso-datatypes.base.dir" location="${software.dir}/iso-datatypes"/>
 
-	<!-- Where to write files retrieved by get, into the distribution area.  The file names come from project.properties  -->
-	<property name="jboss.dest.file" location="${download.dir}/${jboss.binaries.file}"/>
+  <!-- Maven comamnd line arguments, bda profile is inside profiles.xml that gets copied to ear folder before build to override exiting properties -->
+  <property name="po.maven.profile.list" value="local,bda" />
+  <property name="po.maven.goal.list" value="clean install" />
+  <property name="iso-datatypes.maven.goal.list" value="clean install" />
 
-	<!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
-	<property name="install.target" value="install"/>
-	<property name="upgrade.target" value="upgrade"/>
+  <!-- Distribution Structure properties, used to copy files into the distribution area.
+           Use project.propertie relative dir names becasue they are used by install also-->
+  <property name="dist.exploded.dir" location="${dist.dir}/exploded" />
+  <property name="po-ear.dist.dir" location="${dist.exploded.dir}/${po-ear.dist.relative.dir}" />
+  <property name="tools.dist.dir" location="${dist.exploded.dir}/${tools.dist.relative.dir}" />
+  <property name="common.dist.dir" location="${dist.exploded.dir}/${common.dist.relative.dir}" />
+  <property name="jboss-conf.dist.dir" location="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
+  <property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
+  <property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
+  <property name="jboss-conf.dist.dir" value="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
 
-	<!-- Where grand stores it's outputed pdf reports of build files -->
-	<property name="grand.rpt.dir" value="${common.dir}/grand"/>
-
-	<!-- Hot deploy variables -->
-	<property name="jboss.deploy.dir"  value="${jboss.home}/server/${jboss.server.name}/deploy"/>
-	<property name="bda-blueprints-webapp.name"  value="bda-blueprints-webapp"/>
-	<property name="bda-blueprints-webapp.file.name"  value="${bda-blueprints-webapp.name}.war"/>
-	<property name="bda-blueprints-webapp.src.dir" value="${bda-blueprints-webapp.base.dir}/src/web"/>
-
-	<!-- retrive ivy files then retrieve bda files and librarires -->
-	<mkdir dir="${bda-download.dir}" />
-	<property name="bda-download.file" value="bda-ivy-build.xml"/>
-	<property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}"/>
-	<get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}"/>
-
-	<ant inheritAll="false" inheritRefs="false"
-		antfile="bda-ivy-build.xml"
-		target="retrieve-bda"
-		dir="${bda-download.dir}"
-		>
-		<property name="bda.version" value="${bda.version}" />
-		<property name="bda-utils.dir" location="${bda-utils.dir}" />
-		<property name="lib.dir" location="${lib.dir}" />
-		<property name="software.dir" location="${software.dir}" />
-	</ant>
+  <property name="po-grid.base.dir" location="${software.dir}/po-grid"/>
+  <property name="po-grid.build.file" location="${po-grid.base.dir}/build.xml"/>
+  <property name="po-grid.dir.target" value="wsrf.war" />
+  <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+  <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+  <property name="po-grid.build.target" value="clean:deployJBoss"/>
+  <property name="po-grid.artifact.dir" value="${po-grid.base.dir}/target" />
+  <property name="po-grid.dist.dir" value="${dist.exploded.dir}/${po-grid.dist.relative.dir}"/>
 
 
-	<!-- Paths -->
-	<path id="bda-utils.classpath">
-		<fileset dir="${bda-utils.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-	<path id="ivy.classpath">
-		<fileset dir="${lib.dir}">
-			<include name="${ivy.file}" />
-			<include name="${ivy-core.file}" />
-		</fileset>
-	</path>
+  <!-- Selenium settings -->
+  <property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
+  <property name="selenium.browser" value="*firefox"/>
+  <!--  What you would need for a ci server, recommend setting in local.properties
+  <property name="selenium.browser" value="*firefox /usr/lib64/firefox-1.5.0.12/firefox-bin"/>
+  -->
+  <property name="selenium.proxy.port" value="4444"/>
+  <property name="selenium.report.dir" location="${reports.dir}/selenium"/>
+  <property name="selenium.report.file" value="selenium-rpt.html"/>
+  <property name="selenium.test.dir" location="${software.dir}/test/selenium"/>
+  <property name="selenium.test.suite" value="${selenium.test.dir}/cai2TestSuite.html"/>
+  <property name="selenium.url" value="http://${jboss.server.hostname}:${jboss.server.port}"/>
 
-	<!-- Task definitions -->
-	<taskdef name="xmlconfig" classname="com.xmlconfig.anttask.XmlConfig" classpathref="bda-utils.classpath" />
-	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
-	<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
-		<classpath>
-			<pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
+  <!-- Where to write files retrieved by get, into the distribution area.  The file names come from project.properties  -->
+  <property name="jboss.dest.file" location="${download.dir}/${jboss.binaries.file}"/>
+
+  <!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
+  <property name="install.target" value="install"/>
+  <property name="upgrade.target" value="upgrade"/>
+
+  <!-- Where grand stores it's outputed pdf reports of build files -->
+  <property name="grand.rpt.dir" value="${common.dir}/grand"/>
+
+  <!-- Hot deploy variables -->
+  <property name="jboss.deploy.dir"  value="${jboss.home}/server/${jboss.server.name}/deploy"/>
+  <property name="bda-blueprints-webapp.name"  value="bda-blueprints-webapp"/>
+  <property name="bda-blueprints-webapp.file.name"  value="${bda-blueprints-webapp.name}.war"/>
+  <property name="bda-blueprints-webapp.src.dir" value="${bda-blueprints-webapp.base.dir}/src/web"/>
+
+  <!-- retrive ivy files then retrieve bda files and librarires -->
+  <mkdir dir="${bda-download.dir}" />
+  <property name="bda-download.file" value="bda-ivy-build.xml"/>
+  <property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}"/>
+  <get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}"/>
+
+  <ant inheritAll="false" inheritRefs="false"
+    antfile="bda-ivy-build.xml"
+    target="retrieve-bda"
+    dir="${bda-download.dir}"
+    >
+    <property name="bda.version" value="${bda.version}" />
+    <property name="bda-utils.dir" location="${bda-utils.dir}" />
+    <property name="lib.dir" location="${lib.dir}" />
+    <property name="software.dir" location="${software.dir}" />
+  </ant>
 
 
-	<!-- Includes- include BDA marcos -->
-	<import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
+  <!-- Paths -->
+  <path id="bda-utils.classpath">
+    <fileset dir="${bda-utils.dir}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+  <path id="ivy.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="${ivy.file}" />
+      <include name="${ivy-core.file}" />
+    </fileset>
+  </path>
 
-	<!-- Start logging -->
-	<mkdir dir="${log.dir}" />
-	<tstamp>
-		<format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
-	</tstamp>
-	<record name="${log.dir}/install-${install.time}.log" action="start"/>
+  <!-- Task definitions -->
+  <taskdef name="xmlconfig" classname="com.xmlconfig.anttask.XmlConfig" classpathref="bda-utils.classpath" />
+  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
+  <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
+    <classpath>
+      <pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
 
-	<switch value="${database.type}">
-		<case value="postgresql">
-			<property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-			<property name="database.driver.file" value="${bda-utils.dir}/postgresql-jdbc3-8.3-603.jar"/>
-			<property name="database.driver" value="org.postgresql.Driver"/>
-			<property name="database.schema" value="public"/>
-		</case>
-		<default>
-			<fail message="Invalid database type ${database.type}"/>
-		</default>
-	</switch>
 
-	<!-- Targets -->
-	<target name="diagnostics" description="diagnostics">
-		<echoproperties/>
-		<diagnostics/>
-	</target>
+  <!-- Includes- include BDA marcos -->
+  <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
 
-	<target name="clean">
-		<delete dir="${dist.dir}"/>
-		<delete dir="${temp.dir}"/>
-		<delete dir="${po-grid.artifact.dir}"/>
-	</target>
+  <!-- Start logging -->
+  <mkdir dir="${log.dir}" />
+  <tstamp>
+    <format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
+  </tstamp>
+  <record name="${log.dir}/install-${install.time}.log" action="start"/>
 
-	<target name="init" >
-		<echo message=" ______   ______   _______ " />
-		<echo message="(____  \ (______) (_______)" />
-		<echo message=" ____)  ) _     _  _______ " />
-		<echo message="|  __  ( | |   | ||  ___  |" />
-		<echo message="| |__)  )| |__/ / | |   | |" />
-		<echo message="|______/ |_____/  |_|   |_|" />
-		<mkdir dir="${target.dir}"/>
-		<mkdir dir="${dist.dir}"/>
-		<mkdir dir="${dist.exploded.dir}"/>
-		<mkdir dir="${po-ear.dist.dir}"/>
-		<mkdir dir="${common.dist.dir}"/>
-		<mkdir dir="${tools.dist.dir}"/>
-		<mkdir dir="${temp.dir}"/>
-		<mkdir dir="${download.dir}"/>
-		<mkdir dir="${pt.dir}"/>
-		<mkdir dir="${po-grid.artifact.dir}"/>
-		<mkdir dir="${po-grid.dist.dir}"/>
-		<available file="${jboss.dest.file}" property="jboss.tools.exists"/>
+  <switch value="${database.type}">
+    <case value="postgresql">
+      <property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+      <property name="database.driver.file" value="${bda-utils.dir}/postgresql-jdbc3-8.3-603.jar"/>
+      <property name="database.driver" value="org.postgresql.Driver"/>
+      <property name="database.schema" value="public"/>
+    </case>
+    <default>
+      <fail message="Invalid database type ${database.type}"/>
+    </default>
+  </switch>
 
-		<!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
-		<available file="${jboss.home}/lib/commons-httpclient.jar" property="rt.jboss.exists"/>
-		<if>
-			<isset property="rt.jboss.exists"/>
-			<then>
-				<property name="local.jboss.home" location="${jboss.home}"/>
-				<echo message="JBOSS_HOME exists ${jboss.home}"/>
-			</then>
-			<else>
-				<property name="local.jboss.home" location="${pt.dir}/${jboss.binaries.relative.dir}"/>
-				<available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
-				<echo message="JBOSS_HOME does not exist checking for LOCAL_JBOSS_HOME ${local.jboss.home}"/>
-				<if>
-					<not>
-						<isset property="local.jboss.exists"/>
-					</not>
-					<then>
-						<echo message="LOCAL_JBOSS_HOME not found downloading."/>
-						<antcall target="dist:tools:retrieve:jboss"/>
-						<java jar="${jboss.dest.file}" fork="true">
-							<arg line="-installGroup ejb3 installpath=${local.jboss.home}"/>
-						</java>
-					</then>
-					<else>
-						<echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
-					</else>
-				</if>
-			</else>
-		</if>
-		<echoproperties prefix="env"/>
-	</target>
+  <!-- Targets -->
+  <target name="diagnostics" description="diagnostics">
+    <echoproperties/>
+    <diagnostics/>
+  </target>
 
-	<target name="ivy:clean" description="Clean">
-		<ivy:settings file="${bda-download.dir}/${ivy.bda.settings.file}" />
-		<ivy:cleancache />
-		<ant inheritAll="false" inheritRefs="false"
-			antfile="bda-ivy-build.xml"
-			target="ivy-cleancache"
-			dir="${bda-download.dir}">
-			<property name="bda-utils.dir" location="${bda-utils.dir}" />
-			<property name="lib.dir" location="${lib.dir}" />
-			<property name="software.dir" location="${software.dir}" />
-		</ant>
-		<!-- NOT REALLY NEEDED FOR US, we're using MVN
-		<ant inheritAll="false" inheritRefs="false" 
-			antfile="${pa-web.build.file}" 
-			target="ivy-clean" 
-			dir="${pa-web.base.dir}" /> -->
-	</target>
-	<target name="validate:pre:build">
-		<validate-pre-build
-			/>
-	</target>
+  <target name="clean">
+    <delete dir="${dist.dir}"/>
+    <delete dir="${temp.dir}"/>
+    <delete dir="${po-grid.artifact.dir}"/>
+  </target>
 
-	<!-- Wrapper build target, call appropriate builds for sub-projects -->
-	<target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
-		depends="
-		validate:pre:build,
-		clean,
-		init,
-		build:po
-		"/>
+  <target name="init" >
+    <echo message=" ______   ______   _______ " />
+    <echo message="(____  \ (______) (_______)" />
+    <echo message=" ____)  ) _     _  _______ " />
+    <echo message="|  __  ( | |   | ||  ___  |" />
+    <echo message="| |__)  )| |__/ / | |   | |" />
+    <echo message="|______/ |_____/  |_|   |_|" />
+    <mkdir dir="${target.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.exploded.dir}"/>
+    <mkdir dir="${po-ear.dist.dir}"/>
+    <mkdir dir="${common.dist.dir}"/>
+    <mkdir dir="${tools.dist.dir}"/>
+    <mkdir dir="${temp.dir}"/>
+    <mkdir dir="${download.dir}"/>
+    <mkdir dir="${pt.dir}"/>
+    <mkdir dir="${po-grid.artifact.dir}"/>
+    <mkdir dir="${po-grid.dist.dir}"/>
+    <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
-	<!-- First Maven Target -->
-	<target name="build:po" depends="init">
-		<delete>
-			<fileset dir="${po.base.dir}">
-				<include name="**/profiles.xml" />
-			</fileset>
-		</delete>
-		<copy todir="${po-client.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
-				<filter token="db.po.generate.drop" value="false"/>
-				<filter token="db.po.generate.create" value="true"/>
-			</filterset>
-		</copy>
-		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
-				<filter token="db.po.generate.drop" value="false"/>
-				<filter token="db.po.generate.create" value="true"/>
-			</filterset>
-		</copy>
-		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
-				<filter token="db.po.generate.drop" value="false"/>
-				<filter token="db.po.generate.create" value="true"/>
-			</filterset>
-		</copy>
-		<copy todir="${po-web.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
-				<filter token="db.po.generate.drop" value="false"/>
-				<filter token="db.po.generate.create" value="true"/>
-			</filterset>
-		</copy>
-		<maven
-			maven.profile.list="-P ${po.maven.profile.list} -Dskip-liquibase"
-			maven.goal.list="${po.maven.goal.list}"
-			maven.dir="${po.base.dir}"
-			/>
-		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
+    <!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
+    <available file="${jboss.home}/lib/commons-httpclient.jar" property="rt.jboss.exists"/>
+    <if>
+      <isset property="rt.jboss.exists"/>
+      <then>
+        <property name="local.jboss.home" location="${jboss.home}"/>
+        <echo message="JBOSS_HOME exists ${jboss.home}"/>
+      </then>
+      <else>
+        <property name="local.jboss.home" location="${pt.dir}/${jboss.binaries.relative.dir}"/>
+        <available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
+        <echo message="JBOSS_HOME does not exist checking for LOCAL_JBOSS_HOME ${local.jboss.home}"/>
+        <if>
+          <not>
+            <isset property="local.jboss.exists"/>
+          </not>
+          <then>
+            <echo message="LOCAL_JBOSS_HOME not found downloading."/>
+            <antcall target="dist:tools:retrieve:jboss"/>
+            <java jar="${jboss.dest.file}" fork="true">
+              <arg line="-installGroup ejb3 installpath=${local.jboss.home}"/>
+            </java>
+          </then>
+          <else>
+            <echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
+          </else>
+        </if>
+      </else>
+    </if>
+    <echoproperties prefix="env"/>
+  </target>
 
-		<antcall target="build:po-grid"/>
-	</target>
-	<!-- Build po-grid sub-project produces project level artifact -->
-	<target name="build:po-grid" depends="init">
-		<fail unless="jboss.server.hostname"/>
-		<fail unless="jboss.server.port"/>
+  <target name="ivy:clean" description="Clean">
+    <ivy:settings file="${bda-download.dir}/${ivy.bda.settings.file}" />
+    <ivy:cleancache />
+    <ant inheritAll="false" inheritRefs="false"
+      antfile="bda-ivy-build.xml"
+      target="ivy-cleancache"
+      dir="${bda-download.dir}">
+      <property name="bda-utils.dir" location="${bda-utils.dir}" />
+      <property name="lib.dir" location="${lib.dir}" />
+      <property name="software.dir" location="${software.dir}" />
+    </ant>
+    <!-- NOT REALLY NEEDED FOR US, we're using MVN
+    <ant inheritAll="false" inheritRefs="false"
+      antfile="${pa-web.build.file}"
+      target="ivy-clean"
+      dir="${pa-web.base.dir}" /> -->
+  </target>
 
-		<echo message="Copying po-grid dependencies from po-services and iso-datatypes"/>
-		<copy todir="${po-grid.base.dir}/lib" file="${po-services.base.dir}/target/${po-services-client.jar.name}" overwrite="true"/>
+  <!-- Wrapper build target, call appropriate builds for sub-projects -->
+  <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
+    depends="
+    validate:pre:build,
+    clean,
+    init,
+    build:po
+    "/>
 
-		<ant inheritAll="false" inheritRefs="false" antfile="${po-grid.build.file}"
+  <!-- First Maven Target -->
+  <target name="build:po" depends="init">
+    <delete>
+      <fileset dir="${po.base.dir}">
+        <include name="**/profiles.xml" />
+      </fileset>
+    </delete>
+    <copy todir="${po-client.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+      <filterset>
+        <filter token="jboss.home" value="${local.jboss.home}"/>
+        <filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+        <filter token="db.po.generate.drop" value="false"/>
+        <filter token="db.po.generate.create" value="true"/>
+      </filterset>
+    </copy>
+    <copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+      <filterset>
+        <filter token="jboss.home" value="${local.jboss.home}"/>
+        <filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+        <filter token="db.po.generate.drop" value="false"/>
+        <filter token="db.po.generate.create" value="true"/>
+      </filterset>
+    </copy>
+    <copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+      <filterset>
+        <filter token="jboss.home" value="${local.jboss.home}"/>
+        <filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+        <filter token="db.po.generate.drop" value="false"/>
+        <filter token="db.po.generate.create" value="true"/>
+      </filterset>
+    </copy>
+    <copy todir="${po-web.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+      <filterset>
+        <filter token="jboss.home" value="${local.jboss.home}"/>
+        <filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+        <filter token="db.po.generate.drop" value="false"/>
+        <filter token="db.po.generate.create" value="true"/>
+      </filterset>
+    </copy>
+    <maven
+      maven.profile.list="-P ${po.maven.profile.list} -Dskip-liquibase"
+      maven.goal.list="${po.maven.goal.list}"
+      maven.dir="${po.base.dir}"
+      />
+    <copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
+
+    <antcall target="build:po-grid"/>
+  </target>
+  <!-- Build po-grid sub-project produces project level artifact -->
+  <target name="build:po-grid" depends="init">
+    <fail unless="jboss.server.hostname"/>
+    <fail unless="jboss.server.port"/>
+
+    <echo message="Copying po-grid dependencies from po-services and iso-datatypes"/>
+    <copy todir="${po-grid.base.dir}/lib" file="${po-services.base.dir}/target/${po-services-client.jar.name}" overwrite="true"/>
+
+    <ant inheritAll="false" inheritRefs="false" antfile="${po-grid.build.file}"
             target="${po-grid.build.target}"
             dir="${po-grid.base.dir}" >
-			<property name="project.name" value="${project.name}"/>
-			<property name="jboss.dir" value="target"/>
-			<property name="jboss.serverinstance.name" value="${jboss.server.name.grid}"/>
-			<property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
-			<property name="java.naming.provider.url.host" value="localhost"/>
-			<property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
-			<property name="java.naming.security.principal" value="%%pogrid.jndi.principal%%"/>
-			<property name="java.naming.security.credentials" value="%%pogrid.jndi.credentials%%"/>
-		</ant>
+      <property name="project.name" value="${project.name}"/>
+      <property name="jboss.dir" value="target"/>
+      <property name="jboss.serverinstance.name" value="${jboss.server.name.grid}"/>
+      <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
+      <property name="java.naming.provider.url.host" value="localhost"/>
+      <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
+      <property name="java.naming.security.principal" value="%%pogrid.jndi.principal%%"/>
+      <property name="java.naming.security.credentials" value="%%pogrid.jndi.credentials%%"/>
+    </ant>
 
-		<zip update="false" destfile="${po-grid.dist.dir}/${po-grid.artifact.file}">
-			<zipfileset dir="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/" />
-		</zip>
-		<delete dir="${po-grid.artifact.dir}/server" />
-	</target>
-
-
-	<macrodef name="maven">
-		<attribute name="maven.profile.list"/>
-		<attribute name="maven.goal.list"/>
-		<attribute name="maven.dir"/>
-		<sequential>
-			<condition property="mvn.cmd" value="mvn">
-				<or>
-					<os family="unix" />
-					<os family="mac" />
-				</or>
-			</condition>
-			<condition property="mvn.cmd" value="mvn.bat">
-				<os family="windows" />
-			</condition>
-			<exec executable="${mvn.cmd}" dir="@{maven.dir}" failonerror="true">
-				<arg line="@{maven.profile.list} @{maven.goal.list}"/>
-			</exec>
-		</sequential>
-	</macrodef>
-
-	<!-- Produces all distributions: installer, upgrader and source -->
-	<target name="dist" description="Makes all distributions: installer, upgrader and source"
-		depends="
-		build:all,
-		dist:installer,
-		dist:upgrader,
-		dist:src,
-		dist:gui-installer"
-	      	/>
-
-	<target name="dist:src">
-		<!-- Add tasks here to zip up src into a distribution, may require some additoinal properties for distribution name" -->
-	</target>
-
-	<target name="dist:gui-installer" description="Makes Gui-Installer distribution">
-		<!--
-		<delete>
-			<fileset dir="${dist.dir}">
-				<include name="*.jar"/>
-			</fileset>
-		</delete>
-		<gui-installer-prep
-			/>
-		<ant inheritAll="false" inheritRefs="false" 
-			antfile="install.xml"
-			target="build:installer"
-			dir="${build.dir}/gui-installer"
-			>
-			<property name="compile.jar.dir" value="${target.dir}/izpack-4.0.1"/>
-		</ant>
-		-->
-	</target>
+    <zip update="false" destfile="${po-grid.dist.dir}/${po-grid.artifact.file}">
+      <zipfileset dir="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/" />
+    </zip>
+    <delete dir="${po-grid.artifact.dir}/server" />
+  </target>
 
 
-	<!-- Wrapper target that downloads all required binaries from Common Tools Repository -->
-	<target name="dist:tools:retrieve" description="Downloads binary support tools form common tools repository"
-		depends="
-		init,
-		dist:tools:retrieve:jboss,
-		dist:tools:retrieve:jboss-bindings
-		" />
+  <macrodef name="maven">
+    <attribute name="maven.profile.list"/>
+    <attribute name="maven.goal.list"/>
+    <attribute name="maven.dir"/>
+    <sequential>
+      <condition property="mvn.cmd" value="mvn">
+        <or>
+          <os family="unix" />
+          <os family="mac" />
+        </or>
+      </condition>
+      <condition property="mvn.cmd" value="mvn.bat">
+        <os family="windows" />
+      </condition>
+      <exec executable="${mvn.cmd}" dir="@{maven.dir}" failonerror="true">
+        <arg line="@{maven.profile.list} @{maven.goal.list}"/>
+      </exec>
+    </sequential>
+  </macrodef>
 
-	<target name="dist:tools:retrieve:jboss-bindings"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
-		<get src="${jboss-bindings.src.url}" dest="${dist.exploded.dir}/${jboss-bindings.file}" />
-	</target>
+  <!-- Produces all distributions: installer, upgrader and source -->
+  <target name="dist" description="Makes all distributions: installer, upgrader and source"
+    depends="
+    build:all,
+    dist:installer,
+    dist:upgrader,
+    dist:src,
+    dist:gui-installer"
+          />
 
-	<!-- Downloads jboss from tools repository and compares checksum, based on properties set in project.properties -->
-	<target name="dist:tools:retrieve:jboss" unless="jboss.tools.exists">
-		<get src="${jboss.src.url}"
-			dest="${jboss.dest.file}"/>
-		<get src="${jboss.src.url}.MD5"
-			dest="${jboss.dest.file}.MD5"/>
-		<checksum file="${jboss.dest.file}" verifyProperty="jboss.cksum.ok"/>
-		<if>
-			<equals arg1="${jboss.cksum.ok}" arg2="true"/>
-			<then>
-				<echo message="Downloaded jboss sucessfully"/>
-			</then>
-			<else>
-				<fail message="Failed to download jboss file sucessfully."/>
-			</else>
-		</if>
-	</target>
+  <target name="dist:src">
+    <!-- Add tasks here to zip up src into a distribution, may require some additoinal properties for distribution name" -->
+  </target>
 
-	<!-- Copies install time resources into distribution tree -->
-	<target name="dist:installer:prep" depends="dist:tools:retrieve">
-		<!-- added for incremental database build -->
-		<!-- Need to call database-build-filelist once for each type of database you support.
-			db-upgrade.* propertes are stored in project.properties because they are used in both
-			install.xml and build.xml
-		-->
-
-		<!-- Copy po database scripts -->
-		<copy todir="${dist.exploded.dir}/${db.dist.relative.dir}" overwrite="true">
-			<fileset dir="${db.src.dir}">
-				<include name="**/*"/>
-			</fileset>
-		</copy>
-		<copy todir="${db-install.dist.dir}/${database.type}" overwrite="true">
-			<fileset dir="${db-install.src.dir}/${database.type}">
-				<include name="**/*"/>
-			</fileset>
-		</copy>
-		<dist-prep />
-	</target>
-
-	<!-- Creates the installer distribution used by automated or manual remote installations -->
-	<target name="dist:installer" depends="dist:installer:prep">
-		<delete file="${dist.dir}/${po-ear.install.zip.file}"/>
-		<!-- Set environment name to external -->
-		<replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-		<obfuscate-properties-file
-			properties.file="${dist.exploded.dir}/install.properties"
-			required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-			optional.property.list="ldap.url,ldap.basedn"
-			delete.property.list="exclude.jboss.backup"
-			/>
-		<zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}"/>
-	</target>
-
-	<!-- Copies install time resources into distribution tree -->
-	<target name="dist:upgrader:prep">
-		<!-- Copy po database scripts -->
-		<copy todir="${dist.exploded.dir}/${db.dist.relative.dir}" overwrite="true">
-			<fileset dir="${db.src.dir}">
-				<include name="**/*"/>
-			</fileset>
-		</copy>
-		<copy todir="${db-upgrade.dist.dir}/${database.type}" overwrite="true">
-			<fileset dir="${db-upgrade.src.dir}/${database.type}">
-				<include name="**/*"/>
-			</fileset>
-		</copy>
-		<dist-prep
-			copy.tools.flag="N"
-			default.target="upgrade"
-			/>
-	</target>
-
-	<!-- Creates upgrader distribution -->
-	<target name="dist:upgrader" depends="dist:upgrader:prep">
-		<delete file="${dist.dir}/${po-ear.upgrade.zip.file}"/>
-		<delete file="${dist.dir}/${po-grid.upgrade.zip.file}"/>
-		<!-- Set environment name to external -->
-		<replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-
-		<obfuscate-properties-file
-			properties.file="${dist.exploded.dir}/install.properties"
-			required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-			optional.property.list="ldap.url,ldap.basedn"
-			delete.property.list="exclude.jboss.backup"
-			/>
-		<copy todir="${dist.exploded.dir}" overwrite="true">
-			<fileset dir="${build.dir}">
-				<include name="upgrade.properties" />
-			</fileset>
-		</copy>
-
-		<zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid.dist.relative.dir}/**"/>
-		<zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db-upgrade.dist.relative.dir}/**"/>
-	</target>
+  <target name="dist:gui-installer" description="Makes Gui-Installer distribution">
+    <!--
+    <delete>
+      <fileset dir="${dist.dir}">
+        <include name="*.jar"/>
+      </fileset>
+    </delete>
+    <gui-installer-prep
+      />
+    <ant inheritAll="false" inheritRefs="false"
+      antfile="install.xml"
+      target="build:installer"
+      dir="${build.dir}/gui-installer"
+      >
+      <property name="compile.jar.dir" value="${target.dir}/izpack-4.0.1"/>
+    </ant>
+    -->
+  </target>
 
 
-	<!-- Installs the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-	<target name="deploy:local:install" depends="build:all,local:install" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
-	</target>
+  <!-- Wrapper target that downloads all required binaries from Common Tools Repository -->
+  <target name="dist:tools:retrieve" description="Downloads binary support tools form common tools repository"
+    depends="
+    init,
+    dist:tools:retrieve:jboss,
+    dist:tools:retrieve:jboss-bindings
+    " />
 
-	<target name="local:install" depends="dist:installer:prep">
-		<!--
-		* Requires a database installation.
-		* Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
-		* If you want properties to be used at install time they must be included in a proeprties file.
-		* Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
-		* This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
-		* It only supports using those properties files for now, so if you want to change install time properites edit these files.
-		-->
-		<deploy-local
-	            target.name="${install.target}"
-	            />
-	</target>
+  <target name="dist:tools:retrieve:jboss-bindings"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
+    <get src="${jboss-bindings.src.url}" dest="${dist.exploded.dir}/${jboss-bindings.file}" />
+  </target>
+
+  <!-- Downloads jboss from tools repository and compares checksum, based on properties set in project.properties -->
+  <target name="dist:tools:retrieve:jboss" unless="jboss.tools.exists">
+    <get src="${jboss.src.url}"
+      dest="${jboss.dest.file}"/>
+    <get src="${jboss.src.url}.MD5"
+      dest="${jboss.dest.file}.MD5"/>
+    <checksum file="${jboss.dest.file}" verifyProperty="jboss.cksum.ok"/>
+    <if>
+      <equals arg1="${jboss.cksum.ok}" arg2="true"/>
+      <then>
+        <echo message="Downloaded jboss sucessfully"/>
+      </then>
+      <else>
+        <fail message="Failed to download jboss file sucessfully."/>
+      </else>
+    </if>
+  </target>
+
+  <!-- Copies install time resources into distribution tree -->
+  <target name="dist:installer:prep" depends="dist:tools:retrieve">
+    <!-- added for incremental database build -->
+    <!-- Need to call database-build-filelist once for each type of database you support.
+      db-upgrade.* propertes are stored in project.properties because they are used in both
+      install.xml and build.xml
+    -->
+
+    <!-- Copy po database scripts -->
+    <copy todir="${dist.exploded.dir}/${db.dist.relative.dir}" overwrite="true">
+      <fileset dir="${db.src.dir}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+    <copy todir="${db-install.dist.dir}/${database.type}" overwrite="true">
+      <fileset dir="${db-install.src.dir}/${database.type}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+    <dist-prep />
+  </target>
+
+  <!-- Creates the installer distribution used by automated or manual remote installations -->
+  <target name="dist:installer" depends="dist:installer:prep">
+    <delete file="${dist.dir}/${po-ear.install.zip.file}"/>
+    <!-- Set environment name to external -->
+    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+    <obfuscate-properties-file
+      properties.file="${dist.exploded.dir}/install.properties"
+      required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+      optional.property.list="ldap.url,ldap.basedn"
+      delete.property.list="exclude.jboss.backup"
+      />
+    <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}"/>
+  </target>
+
+  <!-- Copies install time resources into distribution tree -->
+  <target name="dist:upgrader:prep">
+    <!-- Copy po database scripts -->
+    <copy todir="${dist.exploded.dir}/${db.dist.relative.dir}" overwrite="true">
+      <fileset dir="${db.src.dir}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+    <copy todir="${db-upgrade.dist.dir}/${database.type}" overwrite="true">
+      <fileset dir="${db-upgrade.src.dir}/${database.type}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+    <dist-prep
+      copy.tools.flag="N"
+      default.target="upgrade"
+      />
+  </target>
+
+  <!-- Creates upgrader distribution -->
+  <target name="dist:upgrader" depends="dist:upgrader:prep">
+    <delete file="${dist.dir}/${po-ear.upgrade.zip.file}"/>
+    <delete file="${dist.dir}/${po-grid.upgrade.zip.file}"/>
+    <!-- Set environment name to external -->
+    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+
+    <obfuscate-properties-file
+      properties.file="${dist.exploded.dir}/install.properties"
+      required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+      optional.property.list="ldap.url,ldap.basedn"
+      delete.property.list="exclude.jboss.backup"
+      />
+    <copy todir="${dist.exploded.dir}" overwrite="true">
+      <fileset dir="${build.dir}">
+        <include name="upgrade.properties" />
+      </fileset>
+    </copy>
+
+    <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db-upgrade.dist.relative.dir}/**"/>
+  </target>
 
 
-	<!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-	<target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
-		<!--
-		* Requires a database installation.
-		* Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
-		* Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
-		* This target will use differnt properties based on linux (linux-upgrade.properties) or windows (windows-upgrade.properties) installs.
-		* It only supports using those properties files for now, so if you want to change install time properites edit these files.
-		-->
-		<deploy-local
-			target.name="${upgrade.target}"
-			/>
+  <!-- Installs the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
+  <target name="deploy:local:install" depends="build:all,local:install" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
+  </target>
 
-	</target>
-	<macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
-		<attribute name="ssh.user" default="${ssh.server.username}" />
-		<attribute name="ssh.host" default="${ssh.server.hostname}" />
-		<attribute name="remote.directory.property.name" default="ssh.dir.temp" />
-		<attribute name="properties.file" default="${properties.file}" />
-		<attribute name="dist.dir" default="${dist.dir}" />
-		<attribute name="dist.file" />
-		<attribute name="ssh.port" default="22"/>
-		<attribute name="ssh.key.file" default="${ssh.key.file}"/>
-		<sequential>
-			<!-- Validate remote directory is valid -->
-			<propertycopy name="remote.dir" from="@{remote.directory.property.name}" override="true"/>
-			<check-valid-directory-name directory.property="remote.dir" />
-			<!-- Delete/re-create remote directory -->
-			<remote-ssh 
+  <target name="local:install" depends="dist:installer:prep">
+    <!--
+    * Requires a database installation.
+    * Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
+    * If you want properties to be used at install time they must be included in a proeprties file.
+    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
+    * This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
+    * It only supports using those properties files for now, so if you want to change install time properites edit these files.
+    -->
+    <deploy-local
+              target.name="${install.target}"
+              />
+  </target>
+
+
+  <!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
+  <target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
+    <!--
+    * Requires a database installation.
+    * Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
+    * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
+    * This target will use differnt properties based on linux (linux-upgrade.properties) or windows (windows-upgrade.properties) installs.
+    * It only supports using those properties files for now, so if you want to change install time properites edit these files.
+    -->
+    <deploy-local
+      target.name="${upgrade.target}"
+      />
+
+  </target>
+  <macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
+    <attribute name="ssh.user" default="${ssh.server.username}" />
+    <attribute name="ssh.host" default="${ssh.server.hostname}" />
+    <attribute name="remote.directory.property.name" default="ssh.dir.temp" />
+    <attribute name="properties.file" default="${properties.file}" />
+    <attribute name="dist.dir" default="${dist.dir}" />
+    <attribute name="dist.file" />
+    <attribute name="ssh.port" default="22"/>
+    <attribute name="ssh.key.file" default="${ssh.key.file}"/>
+    <sequential>
+      <!-- Validate remote directory is valid -->
+      <propertycopy name="remote.dir" from="@{remote.directory.property.name}" override="true"/>
+      <check-valid-directory-name directory.property="remote.dir" />
+      <!-- Delete/re-create remote directory -->
+      <remote-ssh
                 remoteSshHost="@{ssh.host}"
                 remoteSshUser="@{ssh.user}"
                 remotesshcommand="rm -rf ${remote.dir};mkdir -p ${remote.dir}" />
-			<!-- work around for issue where basedir is required but is not currently used -->
-			<remote-ssh 
+      <!-- work around for issue where basedir is required but is not currently used -->
+      <remote-ssh
                 remoteSshHost="@{ssh.host}"
                 remoteSshUser="@{ssh.user}"
                 remotesshcommand="mkdir -p ${remote.dir}/lib" />
 
-			<!-- copy distribution and prop file to remote system -->
-			<remote-scp 
+      <!-- copy distribution and prop file to remote system -->
+      <remote-scp
                 remoteScpFileToCopy="@{dist.dir}/@{dist.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
-			<remote-scp 
+      <remote-scp
                 remoteScpFileToCopy="@{properties.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
-			<!-- Extract zip file -->
-			<remote-ssh 
+      <!-- Extract zip file -->
+      <remote-ssh
                 remoteSshHost="@{ssh.host}"
                 remoteSshUser="@{ssh.user}"
                 remotesshcommand="cd ${remote.dir}; unzip -q @{dist.file}" />
-		</sequential>
-	</macrodef>
-	<!-- Install the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into -->
-	<target name="deploy:remote:install"
-		depends="
-		build:all,
-		dist:installer,
-		remote:install
-		">
-	</target>
 
-	<target name="remote:install" depends="remote:install:po-ear, remote:install:po-grid"/>
-	<target name="remote:install:po-ear">
-		<deploy-files2
-	            dist.file="${po-ear.install.zip.file}"
-	            />
-		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
-	</target>
-	<target name="remote:install:po-grid">
-		<!-- install po-grid only-->
-		<deploy-files2
+    </sequential>
+  </macrodef>
+  <!-- Install the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into -->
+  <target name="deploy:remote:install"
+    depends="
+    build:all,
+    dist:installer,
+    remote:install
+    ">
+    <deploy-files2
+      dist.file="${po-ear.install.zip.file}"
+      />
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
+  </target>
+
+
+  <target name="remote:install" depends="remote:install:po-ear, remote:install:po-grid"/>
+  <target name="remote:install:po-ear">
+    <deploy-files2
+              dist.file="${po-ear.install.zip.file}"
+              />
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
+  </target>
+  <target name="remote:install:po-grid">
+    <!-- install po-grid only-->
+    <deploy-files2
          ssh.user="${pogrid.ssh.server.username}"
          ssh.host="${pogrid.ssh.server.hostname}"
          ssh.port="${pogrid.ssh.port}"
@@ -635,38 +638,38 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
          remote.directory.property.name="pogrid.ssh.dir.temp"
          dist.file="${po-grid.upgrade.zip.file}"
          />
-		<remote-ssh 
-			remoteSshUser="${pogrid.ssh.server.username}" 
-			remoteSshHost="${pogrid.ssh.server.hostname}" 
-			remoteSshPort="${pogrid.ssh.port}" 
-			remoteSshKeyfile="${pogrid.ssh.key.file}" 
-			remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${install.target}" />
-	</target>
-	
-	
-	<!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
-	<target name="deploy:remote:upgrade"
-		depends="
-		build:all,
-		dist:upgrader,
-		remote:upgrade
-		">
-	</target>
+    <remote-ssh
+      remoteSshUser="${pogrid.ssh.server.username}"
+      remoteSshHost="${pogrid.ssh.server.hostname}"
+      remoteSshPort="${pogrid.ssh.port}"
+      remoteSshKeyfile="${pogrid.ssh.key.file}"
+      remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${install.target}" />
+  </target>
 
-	<target name="remote:upgrade" depends="remote:upgrade:po-ear,remote:upgrade:po-grid">
-	</target>
 
-	<target name="remote:upgrade:po-ear">
-		<!-- install po-ear only-->
-		<deploy-files2
+  <!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
+  <target name="deploy:remote:upgrade"
+    depends="
+    build:all,
+    dist:upgrader,
+    remote:upgrade
+    ">
+  </target>
+
+  <target name="remote:upgrade" depends="remote:upgrade:po-ear,remote:upgrade:po-grid">
+  </target>
+
+  <target name="remote:upgrade:po-ear">
+    <!-- install po-ear only-->
+    <deploy-files2
              dist.file="${po-ear.upgrade.zip.file}"
              />
-		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true ${upgrade.target}" />
-	</target>
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true ${upgrade.target}" />
+  </target>
 
-	<target name="remote:upgrade:po-grid">
-		<!-- install po-grid only-->
-		<deploy-files2
+  <target name="remote:upgrade:po-grid">
+    <!-- install po-grid only-->
+    <deploy-files2
              ssh.user="${pogrid.ssh.server.username}"
              ssh.host="${pogrid.ssh.server.hostname}"
              ssh.port="${pogrid.ssh.port}"
@@ -674,160 +677,160 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remote.directory.property.name="pogrid.ssh.dir.temp"
              dist.file="${po-grid.upgrade.zip.file}"
              />
-		<remote-ssh
-         	remoteSshUser="${pogrid.ssh.server.username}"
-         	remoteSshHost="${pogrid.ssh.server.hostname}"
+    <remote-ssh
+           remoteSshUser="${pogrid.ssh.server.username}"
+           remoteSshHost="${pogrid.ssh.server.hostname}"
             remoteSshPort="${pogrid.ssh.port}"
-         	remoteSshKeyfile="${pogrid.ssh.key.file}"
-         	remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${upgrade.target}" />
-	</target>
+           remoteSshKeyfile="${pogrid.ssh.key.file}"
+           remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${upgrade.target}" />
+  </target>
 
-	<target name="usage" description="Explains how to use this build script">
-		<echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
-	</target>
+  <target name="usage" description="Explains how to use this build script">
+    <echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
+  </target>
 
-	<!-- this target generates visio like diagrams of the build files -->
-	<target name="report:grand" depends="dist:installer:prep" description="Generates grand graphs for build.xml files">
-		<!-- Temporary fix to make grand work for install.xml -->
-		<report-grand
-			build.file.location="build.xml"
-			output.file.dir="${grand.rpt.dir}"
-			output.file.name="master-build.xml"
-			/>
-		<report-grand
-			build.file.location="${dist.exploded.dir}/install.xml"
-			output.file.dir="${grand.rpt.dir}"
-			output.file.name="master-install.xml"
-			/>
-	</target>
+  <!-- this target generates visio like diagrams of the build files -->
+  <target name="report:grand" depends="dist:installer:prep" description="Generates grand graphs for build.xml files">
+    <!-- Temporary fix to make grand work for install.xml -->
+    <report-grand
+      build.file.location="build.xml"
+      output.file.dir="${grand.rpt.dir}"
+      output.file.name="master-build.xml"
+      />
+    <report-grand
+      build.file.location="${dist.exploded.dir}/install.xml"
+      output.file.dir="${grand.rpt.dir}"
+      output.file.name="master-install.xml"
+      />
+  </target>
 
-	<!-- Beginning static-analysis and testing section of build script -->
+  <!-- Beginning static-analysis and testing section of build script -->
 
-	<!-- Wrapper target to call download ivy projects for static analysis tools.  The ivy:retrieves are done separately to ensure that there is on library conflicts among the static analysis tools.  The retrieved files are written to separate directories because the conf names are defined uniquely in projectroot/software/static-analysis:ivy-bda-testing.xml. -->
+  <!-- Wrapper target to call download ivy projects for static analysis tools.  The ivy:retrieves are done separately to ensure that there is on library conflicts among the static analysis tools.  The retrieved files are written to separate directories because the conf names are defined uniquely in projectroot/software/static-analysis:ivy-bda-testing.xml. -->
 
-	<!-- Wrapper test target, call appropriate test for sub-projects -->
-	<target name="test:all" description="Runs test target for all sub-projects"
-		depends="
-		clean,
-		init,
-		test:po
-		"/>
+  <!-- Wrapper test target, call appropriate test for sub-projects -->
+  <target name="test:all" description="Runs test target for all sub-projects"
+    depends="
+    clean,
+    init,
+    test:po
+    "/>
 
-	<target name="test:po" depends="init" description="Runs test targets on all sub-projects">
-		<maven
-			maven.profile.list="-P local"
-			maven.goal.list="site verify"
-			maven.dir="${po.base.dir}"
-			/>
-	</target>
+  <target name="test:po" depends="init" description="Runs test targets on all sub-projects">
+    <maven
+      maven.profile.list="-P local"
+      maven.goal.list="site verify"
+      maven.dir="${po.base.dir}"
+      />
+  </target>
 
-	<!-- Since static-analysis and testing cannot be called separately , just have SA depend on test. -->
-	<target name="static-analysis:all" description="Runs static-analysis target for all sub-projects" depends="test:all" />
+  <!-- Since static-analysis and testing cannot be called separately , just have SA depend on test. -->
+  <target name="static-analysis:all" description="Runs static-analysis target for all sub-projects" depends="test:all" />
 
-	<target name="continuous-integration" description="calls wrapper targets for continuous integration build"
-		depends="
-		build:all,
-		static-analysis:all,
-		test:all
-		"/>
+  <target name="continuous-integration" description="calls wrapper targets for continuous integration build"
+    depends="
+    build:all,
+    static-analysis:all,
+    test:all
+    "/>
 
 
-	<target name="init:ivy">
-		<mkdir dir="${local.repo.dir}"/>
-		<property name="ivy.dep.file" value="${bda-download.dir}/ivy-bda.xml"/>
-		<ivy:settings file="${bda-download.dir}/ivy-bda-settings.xml" />
-	</target>
+  <target name="init:ivy">
+    <mkdir dir="${local.repo.dir}"/>
+    <property name="ivy.dep.file" value="${bda-download.dir}/ivy-bda.xml"/>
+    <ivy:settings file="${bda-download.dir}/ivy-bda-settings.xml" />
+  </target>
 
-	<target name="ivy-test-selenium" depends="init:ivy" description="Updates the local ivy repository">
-		<ivy:resolve refresh="true" conf="test-selenium" />
-		<ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test-selenium" />
-		<path id="project.test.selenium.classpath">
-			<fileset dir="${lib.dir}/test-selenium">
-				<include name="*.jar" />
-			</fileset>
-		</path>
-	</target>
+  <target name="ivy-test-selenium" depends="init:ivy" description="Updates the local ivy repository">
+    <ivy:resolve refresh="true" conf="test-selenium" />
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test-selenium" />
+    <path id="project.test.selenium.classpath">
+      <fileset dir="${lib.dir}/test-selenium">
+        <include name="*.jar" />
+      </fileset>
+    </path>
+  </target>
 
-	<target name="test:seleniumrc:stop">
-		<get taskname="selenium-shutdown"
-			src="http://localhost:${selenium.proxy.port}/selenium-server/driver/?cmd=shutDown"
-			dest="${temp.dir}/reslut.txt" ignoreerrors="true"/>
-	</target>
+  <target name="test:seleniumrc:stop">
+    <get taskname="selenium-shutdown"
+      src="http://localhost:${selenium.proxy.port}/selenium-server/driver/?cmd=shutDown"
+      dest="${temp.dir}/reslut.txt" ignoreerrors="true"/>
+  </target>
 
-	<target name="test:selenium:init">
-		<mkdir dir="${selenium.report.dir}"/>
+  <target name="test:selenium:init">
+    <mkdir dir="${selenium.report.dir}"/>
 
-		<if>
-			<not>
-				<socket server="${jboss.server.hostname}" port="${jboss.server.port}" />
-			</not>
-			<then>
-				<jboss-start-jboss />
-			</then>
-		</if>
-	</target>
+    <if>
+      <not>
+        <socket server="${jboss.server.hostname}" port="${jboss.server.port}" />
+      </not>
+      <then>
+        <jboss-start-jboss />
+      </then>
+    </if>
+  </target>
 
-	<target name="test:selenium"
-		depends="
-		ivy-test-selenium,
-		test:selenium:init,
-		test:selenium:run,
-		test:seleniumrc:stop
-		"
-		/>
+  <target name="test:selenium"
+    depends="
+    ivy-test-selenium,
+    test:selenium:init,
+    test:selenium:run,
+    test:seleniumrc:stop
+    "
+    />
 
-	<target name="test:selenium:run">
-		<!--
-		<java jar="${selenium.jar}" fork="true">
-			<arg line=" -htmlSuite &quot;${selenium.browser}&quot;"/>
-			<arg line=" &quot;${selenium.url}&quot;"/>
-			<arg line=" &quot;${selenium.test.suite}&quot;"/>
-			<arg line=" &quot;${selenium.report.dir}/${selenium.report.file}&quot;"/>
-			<arg line=" -timeout 30"/>
-			<arg line=" -log ${temp.dir}/selenium-debug.log"/>
-		</java> 
-		-->
-		<osfamily property="os.family"/>
-		<if>
-			<equals arg1="${os.family}" arg2="unix"/>
-			<then>
-				<echo message="To be able to selenium tests on Unix platforms you need to meet the following conditions."/>
-				<echo message="You need to be logged in on the console running X (developer linux or mac workstation)."/>
-				<echo message=" If you are running it from a server that does not have a console (like a CI server) you need to be running at runlevel 3, running and xframe buffer ('Xvfb :1 -screen 0 1024x768x24', should be setup on a CI server) and have your DISPLAY environment variable sto to match your frame buffer ('DISPLAY=:1.0', should be set in .bash_profile on CI server)."/>
-				<fail unless="env.DISPLAY" message="DISPLAY environment variable not set, please set it as outlined above and run again."/>
-			</then>
-		</if>
-		<taskdef resource="selenium-ant.properties"  classpathref="project.test.selenium.classpath"/>
-		<selenese 
-			suite="${selenium.test.suite}"
-			browser="${selenium.browser}"
-			results="${selenium.report.dir}/${selenium.report.file}"
-			multiWindow="falsE"
-			timeoutInSeconds="60"
-			port="${selenium.proxy.port}"
-			startURL="${selenium.url}"
-		      	/>
-	</target>
+  <target name="test:selenium:run">
+    <!--
+    <java jar="${selenium.jar}" fork="true">
+      <arg line=" -htmlSuite &quot;${selenium.browser}&quot;"/>
+      <arg line=" &quot;${selenium.url}&quot;"/>
+      <arg line=" &quot;${selenium.test.suite}&quot;"/>
+      <arg line=" &quot;${selenium.report.dir}/${selenium.report.file}&quot;"/>
+      <arg line=" -timeout 30"/>
+      <arg line=" -log ${temp.dir}/selenium-debug.log"/>
+    </java>
+    -->
+    <osfamily property="os.family"/>
+    <if>
+      <equals arg1="${os.family}" arg2="unix"/>
+      <then>
+        <echo message="To be able to selenium tests on Unix platforms you need to meet the following conditions."/>
+        <echo message="You need to be logged in on the console running X (developer linux or mac workstation)."/>
+        <echo message=" If you are running it from a server that does not have a console (like a CI server) you need to be running at runlevel 3, running and xframe buffer ('Xvfb :1 -screen 0 1024x768x24', should be setup on a CI server) and have your DISPLAY environment variable sto to match your frame buffer ('DISPLAY=:1.0', should be set in .bash_profile on CI server)."/>
+        <fail unless="env.DISPLAY" message="DISPLAY environment variable not set, please set it as outlined above and run again."/>
+      </then>
+    </if>
+    <taskdef resource="selenium-ant.properties"  classpathref="project.test.selenium.classpath"/>
+    <selenese
+      suite="${selenium.test.suite}"
+      browser="${selenium.browser}"
+      results="${selenium.report.dir}/${selenium.report.file}"
+      multiWindow="falsE"
+      timeoutInSeconds="60"
+      port="${selenium.proxy.port}"
+      startURL="${selenium.url}"
+            />
+  </target>
 
-	<target name="ivy:publish:artifacts" description="Use to publish PO artifacts to the CBIIT IVY repository" 
-	   depends="ivy:publish:artifact:po-services-client">
-	</target>
+  <target name="ivy:publish:artifacts" description="Use to publish PO artifacts to the CBIIT IVY repository"
+     depends="ivy:publish:artifact:po-services-client">
+  </target>
 
-	<target name="ivy:publish:artifact:po-services-client" description="Use to publish PO SERVICES CLIENT artifact to the CBIIT IVY repository">
-		<available file="${po-services.base.dir}/target/${po-services-client.jar.name}" property="po-services-client.jar.available"/>
-		<fail unless="po-services-client.jar.available" message="${po-services.base.dir}/target/${po-services-client.jar.name} not found!"/>
+  <target name="ivy:publish:artifact:po-services-client" description="Use to publish PO SERVICES CLIENT artifact to the CBIIT IVY repository">
+    <available file="${po-services.base.dir}/target/${po-services-client.jar.name}" property="po-services-client.jar.available"/>
+    <fail unless="po-services-client.jar.available" message="${po-services.base.dir}/target/${po-services-client.jar.name} not found!"/>
 
-		<mkdir dir="${temp.dir}/po-ivy-modules/po-services-client"/>
-		<copy file="${common.dir}/po-ivy-modules/po-services-client.xml" 
-			tofile="${temp.dir}/po-ivy-modules/po-services-client/ivy.xml" 
-			filtering="true">
-			<filterset>
-				<filter token="revision" value="${po-services-client.version}"/>
-			</filterset>
-		</copy>
-		<copy file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" 
-	    	tofile="${iso-datatypes.base.dir}/target/iso-datatypes-${po-iso-datatypes.version}.jar"/>
-		<ivy-module-add2repo
+    <mkdir dir="${temp.dir}/po-ivy-modules/po-services-client"/>
+    <copy file="${common.dir}/po-ivy-modules/po-services-client.xml"
+      tofile="${temp.dir}/po-ivy-modules/po-services-client/ivy.xml"
+      filtering="true">
+      <filterset>
+        <filter token="revision" value="${po-services-client.version}"/>
+      </filterset>
+    </copy>
+    <copy file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}"
+        tofile="${iso-datatypes.base.dir}/target/iso-datatypes-${po-iso-datatypes.version}.jar"/>
+    <ivy-module-add2repo
              ivy-repo.base.dir="${local.repo.dir}"
              ivy.add.org="ncicb"
              ivy.add.module="po-services-client"
@@ -835,67 +838,102 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              ivy.add.module.src.dir="${software.dir}/po/services/target"
              ivy.add.module.src.file.list="iso-datatypes-${po-iso-datatypes.version}.jar"
              ivy.add.xml.src.location="${temp.dir}/po-ivy-modules/po-services-client/ivy.xml" />
-	</target>
-	<target name="database:prep" description="Copies db files with filtering">
-		<echoproperties prefix="database"/>
-		<copy todir="${working.dir}/" filtering="true"  overwrite="true">
-			<fileset dir="${db.src.dir}">
-				<include name="**/db-upgrade/**/*"/>
-			</fileset>
-			<filterset begintoken="$${" endtoken="}">
-				<filtersfile file="${properties.file}"/>
-				<filtersfile file="project.properties"/>
-				<filter token="db-upgrade.run.dir" value="${working.dir}/db-upgrade/${database.type}"/>
-			</filterset>
-		</copy>
-	</target>
+  </target>
+  <target name="database:prep" description="Copies db files with filtering">
+    <echoproperties prefix="database"/>
+    <copy todir="${working.dir}/" filtering="true"  overwrite="true">
+      <fileset dir="${db.src.dir}">
+        <include name="**/db-upgrade/**/*"/>
+      </fileset>
+      <filterset begintoken="$${" endtoken="}">
+        <filtersfile file="${properties.file}"/>
+        <filtersfile file="project.properties"/>
+        <filter token="db-upgrade.run.dir" value="${working.dir}/db-upgrade/${database.type}"/>
+      </filterset>
+    </copy>
+  </target>
 
-	<target name="database:gencl" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
-		depends="
-		database:prep
-		">
-		<database-genchangelog
-			database.changelog.file="${target.dir}/generated-change-log.xml"
-			/>
-	</target>
-	<target name="database:diff" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
-		depends="
-		database:prep
-		">
-		<database-diff
-			output.file.txt="${target.dir}/generated-diff-log.txt"
-			output.file.xml="${target.dir}/generated-diff-log.xml"
-			/>
-	</target>
-	<target name="database:doc" description="Generates database documentation." unless="exclude.database"
-		depends="
-		database:prep
-		">
-		<mkdir dir="${reports.dir}/db"/>
-		<database-doc
-			output.dir="${reports.dir}/db"
-			database.changelog.file="${working.dir}/db-upgrade/db-upgrade.xml"
-			/>
-	</target>
-	<target name="report:erd">
-		<generate-erd   
-			schemaspy.jar="schemaspy-3.1.1.jar"
-			database.driver.jar="mysql-connector-java-5.0.5.jar"
-			/>
-	</target>
+  <target name="database:gencl" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
+    depends="
+    database:prep
+    ">
+    <database-genchangelog
+      database.changelog.file="${target.dir}/generated-change-log.xml"
+      />
+  </target>
+  <target name="database:diff" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
+    depends="
+    database:prep
+    ">
+    <database-diff
+      output.file.txt="${target.dir}/generated-diff-log.txt"
+      output.file.xml="${target.dir}/generated-diff-log.xml"
+      />
+  </target>
+  <target name="database:doc" description="Generates database documentation." unless="exclude.database"
+    depends="
+    database:prep
+    ">
+    <mkdir dir="${reports.dir}/db"/>
+    <database-doc
+      output.dir="${reports.dir}/db"
+      database.changelog.file="${working.dir}/db-upgrade/db-upgrade.xml"
+      />
+  </target>
+  <target name="report:erd">
+    <generate-erd
+      schemaspy.jar="schemaspy-3.1.1.jar"
+      database.driver.jar="mysql-connector-java-5.0.5.jar"
+      />
+  </target>
 
-	<target name="report:uml">
-		<property name="uml.dir" value="${reports.dir}/uml"/>
-		<path id="bda-blueprints.classpath.ref">
-			<fileset dir="${lib.dir}/runtime">
-				<include name="**/*.jar" />
-			</fileset>
-		</path>
-		<generate-uml   
-			uml.dir="${uml.dir}"    
-			src.java.dir="${bda-blueprints-webapp.base.dir}/src/java"
-			uml.source.path="bda-blueprints.classpath.ref"
-			/>
-	</target>
+  <target name="report:uml">
+    <property name="uml.dir" value="${reports.dir}/uml"/>
+    <path id="bda-blueprints.classpath.ref">
+      <fileset dir="${lib.dir}/runtime">
+        <include name="**/*.jar" />
+      </fileset>
+    </path>
+    <generate-uml
+      uml.dir="${uml.dir}"
+      src.java.dir="${bda-blueprints-webapp.base.dir}/src/java"
+      uml.source.path="bda-blueprints.classpath.ref"
+      />
+  </target>
+
+  <target name="build:retrieve:cacore-sdk">
+    <if>
+      <and>
+        <equals arg1="${cacore-sdk.required}" arg2="true"/>
+        <not>
+          <available file="${download.dir}/${cacore-sdk.binaries.file}"/>
+        </not>
+      </and>
+    <then>
+      <get src="${cacore-sdk.src.url}" dest="${download.dir}/${cacore-sdk.binaries.file}" />
+    </then>
+    </if>
+  </target>
+
+  <target name="build:extract:cacore-sdk">
+    <if>
+      <and>
+        <equals arg1="${cacore-sdk.required}" arg2="true"/>
+      <not>
+        <available file="${cacore-sdk.dir}"/>
+      </not>
+      </and>
+    <then>
+      <unzip src="${download.dir}/${cacore-sdk.binaries.file}" dest="${target.dir}"/>
+    </then>
+    </if>
+  </target>
+
+  <target name="validate:pre:build"
+    depends="
+    build:retrieve:cacore-sdk,
+    build:extract:cacore-sdk">
+    <validate-pre-build/>
+  </target>
 
 </project>
