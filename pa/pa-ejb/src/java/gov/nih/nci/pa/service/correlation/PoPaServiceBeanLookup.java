@@ -452,5 +452,13 @@ public class PoPaServiceBeanLookup  {
       JNDIUtil.lookup("pa/DocumentWorkflowStatusServiceBean/remote");
     }
     
-    
+    /**
+     * 
+     * @return MailManagerServiceRemote
+     * @throws PAException ex
+     */
+    public static MailManagerServiceRemote getMailManagerService() throws PAException {
+        return (MailManagerServiceRemote)
+        JNDIUtil.lookup("pa/MailManagerServiceBean/remote");
+      }
 }
