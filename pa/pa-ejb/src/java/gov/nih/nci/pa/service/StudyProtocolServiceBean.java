@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -114,6 +115,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -126,7 +128,7 @@ import org.hibernate.criterion.Example;
  * @since 08/13/2008
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class})
+@Interceptors({ HibernateSessionInterceptor.class })
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.TooManyMethods" })
     public class StudyProtocolServiceBean
@@ -193,7 +195,7 @@ import org.hibernate.criterion.Example;
     }
 
 
-  
+
     /**
     *
     * @param dto of StudyProtocolDTO
@@ -224,7 +226,7 @@ import org.hibernate.criterion.Example;
        }
 
        LOG.info("Leaving getStudyProtocol");
-       
+
        List<StudyProtocolDTO> studyProtocolDTOList = null;
        if (studyProtocolList != null) {
     studyProtocolDTOList = new ArrayList<StudyProtocolDTO>();
@@ -593,7 +595,7 @@ import org.hibernate.criterion.Example;
             studyProtocol = (StudyProtocol)
                 session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
             List<StudyRelationshipDTO> dtos = studyRelationshipService.getByStudyProtocol(ii);
-           
+
             for (StudyRelationshipDTO dto : dtos) {
                 targetSpIi = dto.getTargetStudyProtocolIdentifier();
                 break;

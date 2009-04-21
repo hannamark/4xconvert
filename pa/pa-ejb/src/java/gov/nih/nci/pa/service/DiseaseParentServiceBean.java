@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.DiseaseParent;
 import gov.nih.nci.pa.iso.convert.DiseaseParentConverter;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -90,6 +91,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -103,6 +105,7 @@ import org.hibernate.Session;
 * copyright holder, NCI.
 */
 @Stateless
+@Interceptors(HibernateSessionInterceptor.class)
 public class DiseaseParentServiceBean
         extends AbstractBaseIsoService<DiseaseParentDTO, DiseaseParent, DiseaseParentConverter>
         implements DiseaseParentServiceRemote {

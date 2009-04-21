@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -105,6 +107,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@Interceptors(HibernateSessionInterceptor.class)
 public class PAPersonServiceBean implements PAPersonServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(PAPersonServiceBean.class);

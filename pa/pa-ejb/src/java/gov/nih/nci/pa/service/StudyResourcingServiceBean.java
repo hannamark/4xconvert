@@ -116,9 +116,9 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
 @SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals",
   "PMD.CyclomaticComplexity" })
+@Interceptors(HibernateSessionInterceptor.class)
 public class StudyResourcingServiceBean
             implements StudyResourcingServiceRemote, StudyResourcingServiceLocal {
 

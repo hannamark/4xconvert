@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -98,6 +99,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -109,6 +111,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity" })
+@Interceptors(HibernateSessionInterceptor.class)
 public class DocumentWorkflowStatusServiceBean extends
     AbstractStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus, DocumentWorkflowStatusConverter>
     implements DocumentWorkflowStatusServiceRemote, DocumentWorkflowStatusServiceLocal {

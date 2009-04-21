@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -108,6 +110,7 @@ import org.hibernate.Session;
 */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@Interceptors(HibernateSessionInterceptor.class)
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
     private static final String UNCHECKED = "unchecked";

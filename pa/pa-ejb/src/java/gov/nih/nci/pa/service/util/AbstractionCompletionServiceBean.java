@@ -104,6 +104,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -112,6 +113,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 /**
 * service bean for validating the Abstraction.
@@ -125,6 +127,7 @@ import javax.ejb.Stateless;
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods",
   "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 @Stateless
+@Interceptors(HibernateSessionInterceptor.class)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
   /**
@@ -203,7 +206,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceEligibility(studyProtocolIi, abstractionList);
     return abstractionList;
   }
-  
+
   private void enforceDisease(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) throws PAException {
       boolean leadExist = false;
       List<StudyDiseaseDTO> sdDtos =
@@ -252,19 +255,19 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   private void enforceArmGroup(Ii studyProtocolIi,
           StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) throws PAException {
       List<ArmDTO> dtos = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-      if (dtos.isEmpty()) { 
+      if (dtos.isEmpty()) {
           if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
-              abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design " 
+              abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design "
               + "under Scientific Data menu.", "No Arm exists for the trial."));
           } else if (studyProtocolDTO.getStudyProtocolType().getValue().
               equalsIgnoreCase("ObservationalStudyProtocol")) {
-              abstractionList.add(createError("Error", "Select Groups from Observational Trial Design " 
+              abstractionList.add(createError("Error", "Select Groups from Observational Trial Design "
               + "under Scientific Data menu.", "No Groups exists for the trial."));
           }
       } else {
           for (ArmDTO dto : dtos) {
               if (PAUtil.isGreatenThan(dto.getName() , PAAttributeMaxLen.ARM_NAME)) {
-              abstractionList.add(createError("Error", "Select Arm/Group under Scientific Data menu.", 
+              abstractionList.add(createError("Error", "Select Arm/Group under Scientific Data menu.",
               dto.getName().getValue() + "  must not be more than 62 characters  "));
               }
           }
@@ -418,7 +421,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
   }
 
-  private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO, 
+  private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO,
           List<AbstractionCompletionDTO> abstractionList) {
         if (studyProtocolDTO.getAssignedIdentifier().getExtension() == null) {
          abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
@@ -427,7 +430,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
           abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
               "Official Title must be Entered"));
-        } else if (PAUtil.isGreatenThan(studyProtocolDTO.getOfficialTitle(), 
+        } else if (PAUtil.isGreatenThan(studyProtocolDTO.getOfficialTitle(),
                 PAAttributeMaxLen.LEN_600)) {
             abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
                 "Official Title cannot be more than 600 chracters "));
@@ -452,7 +455,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       if (studyProtocolDTO.getPublicTitle().getValue() == null) {
           abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
           "Brief Title must be Entered"));
-      } else if (!PAUtil.isWithinRange(studyProtocolDTO.getPublicTitle(), 
+      } else if (!PAUtil.isWithinRange(studyProtocolDTO.getPublicTitle(),
           PAAttributeMaxLen.LEN_18, PAAttributeMaxLen.LEN_300)) {
           abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
           "Brief Title must be between 18 and 300 characters "));
@@ -460,7 +463,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       if (studyProtocolDTO.getPublicDescription().getValue() == null) {
           abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
           "Brief Summary must be Entered"));
-      } else if (PAUtil.isGreatenThan(studyProtocolDTO.getPublicDescription(), 
+      } else if (PAUtil.isGreatenThan(studyProtocolDTO.getPublicDescription(),
           PAAttributeMaxLen.LEN_5000)) {
           abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
           "Brief Summary must not be more than 5000 characters "));
@@ -646,7 +649,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
   }
 
-  private void enforceIdentifierLength(StudyProtocolDTO spDto, List<AbstractionCompletionDTO> abstractionList) 
+  private void enforceIdentifierLength(StudyProtocolDTO spDto, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
       List<StudyParticipationDTO> sParts = new ArrayList<StudyParticipationDTO>();
       StudyParticipationDTO spartDTO = new StudyParticipationDTO();
@@ -656,25 +659,25 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
       sParts.add(spartDTO);
       List<StudyParticipationDTO> dtos = PoPaServiceBeanLookup.
-          getStudyParticipationService().getByStudyProtocol(spDto.getIdentifier(), sParts);   
+          getStudyParticipationService().getByStudyProtocol(spDto.getIdentifier(), sParts);
           for (StudyParticipationDTO dto : dtos) {
-              if (PAUtil.isGreatenThan(dto.getLocalStudyProtocolIdentifier(), 
+              if (PAUtil.isGreatenThan(dto.getLocalStudyProtocolIdentifier(),
                       PAAttributeMaxLen.LEN_30)) {
                   if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode().equals(
                           dto.getFunctionalCode().getCode())) {
-                      abstractionList.add(createError("Error" , 
-                              "Select General Trial Details from Administrative Data menu." , 
+                      abstractionList.add(createError("Error" ,
+                              "Select General Trial Details from Administrative Data menu." ,
                               "Lead Organization Trial Identifier  cannot be more than 30 characters"));
                   } else if (StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equals(
                           dto.getFunctionalCode().getCode())) {
-                      abstractionList.add(createError("Error" , 
-                              "Select General Trial Details from Administrative Data menu." , 
+                      abstractionList.add(createError("Error" ,
+                              "Select General Trial Details from Administrative Data menu." ,
                               "NCT Number cannot be more than 30 characters"));
                   }
 
               }
           }
-      
+
   }
   private AbstractionCompletionDTO createError(String errorType, String comment, String errorDescription) {
       AbstractionCompletionDTO acDto = new AbstractionCompletionDTO();

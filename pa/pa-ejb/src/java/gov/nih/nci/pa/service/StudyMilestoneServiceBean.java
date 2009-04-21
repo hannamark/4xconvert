@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -101,6 +102,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 /**
 * @author Hugh Reinhart
@@ -108,6 +110,7 @@ import javax.ejb.Stateless;
 */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
+@Interceptors(HibernateSessionInterceptor.class)
 public class StudyMilestoneServiceBean
         extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
         implements StudyMilestoneServiceRemote, StudyMilestoneServicelocal {

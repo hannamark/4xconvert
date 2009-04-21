@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
@@ -90,6 +91,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -104,6 +106,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
+@Interceptors(HibernateSessionInterceptor.class)
 public class RegistryUserServiceBean implements RegistryUserServiceRemote {
 
     private static final Logger LOG = Logger

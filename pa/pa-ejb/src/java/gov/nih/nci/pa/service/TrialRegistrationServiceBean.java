@@ -108,6 +108,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -127,6 +128,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Naveen Amiruddin
@@ -137,9 +139,9 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" , 
+@SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" ,
     "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" , "PMD.ExcessiveMethodLength" , "PMD.TooManyFields" })
-
+@Interceptors(HibernateSessionInterceptor.class)
 public class TrialRegistrationServiceBean implements TrialRegistrationServiceRemote {
 
     @EJB
@@ -174,7 +176,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
     @EJB
     OrganizationCorrelationServiceRemote ocsr = null;
-    
+
     private SessionContext ejbContext;
 
     @Resource
@@ -232,7 +234,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     throws PAException {
 
         Ii studyProtocolIi = null;
-        try { 
+        try {
         studyProtocolIi = createStudyProtocolObjs(
                 studyProtocolDTO ,
                 overallStatusDTO ,
@@ -254,7 +256,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             throw new PAException(e);
         }
         return studyProtocolIi;
-        
+
 
     }
 
@@ -303,7 +305,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     throws PAException {
         Ii fromStudyProtocolii = null;
         Ii toStudyProtocolIi = null;
-        
+
         try {
             fromStudyProtocolii = studyProtocolDTO.getIdentifier();
             toStudyProtocolIi = createStudyProtocolObjs(
@@ -322,7 +324,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     summary4organizationDTO ,
                     summary4studyResourcingDTO ,
                     responsiblePartyContactDTO , true);
-    
+
             deepCopy(fromStudyProtocolii , toStudyProtocolIi);
             deepCopyParticipation(fromStudyProtocolii , toStudyProtocolIi);
         } catch (Exception e) {
@@ -543,14 +545,14 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO, responsiblePartyContactDTO,
                     studyParticipationContactDTO);
         }
-        
+
         createNCTidentifier(studyProtocolIi , nctIdentifierDTO);
         return studyProtocolIi;
     }
-    
+
     private void createNCTidentifier(Ii studyProtocolIi , StudyParticipationDTO nctIdentifierDTO)
     throws PAException {
-        if (nctIdentifierDTO == null || nctIdentifierDTO.getLocalStudyProtocolIdentifier() == null 
+        if (nctIdentifierDTO == null || nctIdentifierDTO.getLocalStudyProtocolIdentifier() == null
                 ||  PAUtil.isEmpty(nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue())) {
             return;
         }
@@ -564,7 +566,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         studyParticipationService.create(spDto);
     }
 
-    private void createStudyRelationship(Ii newStudyProtocolIi , Ii oldStudyProtocolIi , StudyProtocolDTO spDto) 
+    private void createStudyRelationship(Ii newStudyProtocolIi , Ii oldStudyProtocolIi , StudyProtocolDTO spDto)
     throws PAException {
         StudyRelationshipDTO srDto = new StudyRelationshipDTO();
         srDto.setSequenceNumber(spDto.getSubmissionNumber());
@@ -595,7 +597,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         Collections.reverse(sosList);
         if (!statusFound) {
             sosList.add(currentStatus);
-            
+
         }
 
         for (StudyOverallStatusDTO sos : sosList) {
@@ -752,9 +754,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     ? "Phone cannot be null , " : "");
         }
         if (studyParticipationContactDTO != null) {
-            sb.append(DSetConverter.getFirstElement(studyParticipationContactDTO.getTelecomAddresses(), 
+            sb.append(DSetConverter.getFirstElement(studyParticipationContactDTO.getTelecomAddresses(),
                     PAConstants.EMAIL) == null ? "Email cannot be null , " : "");
-            sb.append(DSetConverter.getFirstElement(studyParticipationContactDTO.getTelecomAddresses(), 
+            sb.append(DSetConverter.getFirstElement(studyParticipationContactDTO.getTelecomAddresses(),
                     PAConstants.PHONE) == null  ? "Phone cannot be null , " : "");
 
         }

@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.convert.StudySiteAccrualStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -93,6 +94,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -107,6 +109,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
+@Interceptors(HibernateSessionInterceptor.class)
 public class StudySiteAccrualStatusServiceBean implements
     StudySiteAccrualStatusServiceRemote , StudySiteAccrualStatusServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudySiteAccrualStatusServiceBean.class);

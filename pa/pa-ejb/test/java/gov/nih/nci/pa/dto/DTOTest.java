@@ -17,9 +17,9 @@ import org.junit.Test;
 
 
 public class DTOTest {
-	
-	private static Map DEFAULT_ARGUMENTS = new HashMap(); 
-	
+
+	private static final Map DEFAULT_ARGUMENTS = new HashMap();
+
 	@Test
 	public void testProperties() {
 		createDefaultArguments();
@@ -73,31 +73,31 @@ public class DTOTest {
 	            if (DEFAULT_ARGUMENTS.containsKey(type.getName())) {
 	                arg = DEFAULT_ARGUMENTS.get(type.getName());
 	            }
-	        }    
+	        }
    	        writeMethod.invoke(target, arg);
 	        Object propertyValue = readMethod.invoke(target);
 	        assertSame(property + " getter/setter test passed", arg, propertyValue);
-	        
+
 	    }
 	    catch (IntrospectionException e) {
 	        String msg = "Error creating PropertyDescriptor for property [" + property +
 	                "]. Do you have a getter and a setter?";
-	      
+
 	        fail(msg);
 	    }
 	    catch (IllegalAccessException e) {
 	        String msg = "Error accessing property. Are the getter and setter both accessible?";
-	       
+
 	        fail(msg);
 	    }
 	    catch (InvocationTargetException e) {
 	        String msg = "Error invoking method on target";
 	        fail(msg);
-	       
+
 	    }
 	}
-	
-	
+
+
 	/**
 	 * creates default types and arguments.
 	 */

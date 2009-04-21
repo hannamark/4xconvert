@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.iso.convert.InterventionConverter;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -89,6 +90,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -102,6 +104,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
+@Interceptors(HibernateSessionInterceptor.class)
 public class InterventionServiceBean
         extends AbstractBaseIsoService<InterventionDTO, Intervention, InterventionConverter>
         implements InterventionServiceRemote {

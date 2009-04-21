@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -104,6 +105,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -119,6 +121,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({ "PMD.TooManyMethods" })
+@Interceptors(HibernateSessionInterceptor.class)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(PersonSynchronizationServiceBean.class);

@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.iso.convert.StudyRegulatoryAuthorityConverter;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -98,6 +99,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -115,6 +117,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.AvoidDuplicateLiterals" })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@Interceptors(HibernateSessionInterceptor.class)
 public class StudyRegulatoryAuthorityServiceBean
     implements StudyRegulatoryAuthorityServiceRemote , StudyRegulatoryAuthorityServiceLocal {
     private static final Logger LOG = Logger.getLogger(StudyRegulatoryAuthorityServiceBean.class);

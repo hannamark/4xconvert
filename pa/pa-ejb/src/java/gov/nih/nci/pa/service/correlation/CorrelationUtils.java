@@ -97,12 +97,15 @@ import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -117,6 +120,7 @@ import org.hibernate.Session;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
+@Interceptors(HibernateSessionInterceptor.class)
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity",
         "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 public class CorrelationUtils implements CorrelationUtilsRemote {

@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 
@@ -93,6 +94,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -111,6 +113,7 @@ import org.hibernate.Session;
 */
 @Stateless
 @SuppressWarnings({  "PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
+@Interceptors(HibernateSessionInterceptor.class)
 public class PAOrganizationServiceBean implements
     PAOrganizationServiceRemote {
 

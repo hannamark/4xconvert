@@ -83,12 +83,14 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -103,6 +105,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
+@Interceptors(HibernateSessionInterceptor.class)
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
     private static final Logger LOG = Logger.getLogger(PAHealthCareProviderServiceBean.class);
     private static final int THREE = 3;

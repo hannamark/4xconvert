@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -112,6 +113,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -128,6 +130,7 @@ import org.hibernate.Session;
     "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@Interceptors(HibernateSessionInterceptor.class)
 public class OrganizationCorrelationServiceBean implements OrganizationCorrelationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
@@ -446,7 +449,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return o;
     }
-    
+
     /**
      * returns the id of the Ct.gov Po id.
      * @return po identifier
@@ -490,6 +493,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         return identifier;
 
     }
-    
+
 
 }

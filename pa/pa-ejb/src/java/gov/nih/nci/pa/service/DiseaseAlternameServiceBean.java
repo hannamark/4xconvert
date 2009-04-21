@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.iso.convert.DiseaseAlternameConverter;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -90,6 +91,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -103,6 +105,7 @@ import org.hibernate.Session;
 * copyright holder, NCI.
 */
 @Stateless
+@Interceptors(HibernateSessionInterceptor.class)
 public class DiseaseAlternameServiceBean
         extends AbstractBaseIsoService<DiseaseAlternameDTO, DiseaseAltername, DiseaseAlternameConverter>
         implements DiseaseAlternameServiceRemote {

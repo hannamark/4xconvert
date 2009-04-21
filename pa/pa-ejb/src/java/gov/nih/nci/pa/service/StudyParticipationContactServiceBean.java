@@ -84,6 +84,7 @@ import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyParticipationContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -93,6 +94,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -108,6 +110,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({"PMD.ExcessiveMethodLength" , "PMD.CyclomaticComplexity" })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@Interceptors(HibernateSessionInterceptor.class)
 public class StudyParticipationContactServiceBean extends
 AbstractRoleIsoService<StudyParticipationContactDTO, StudyParticipationContact, StudyParticipationContactConverter>
 implements StudyParticipationContactServiceRemote , StudyParticipationContactServiceLocal {

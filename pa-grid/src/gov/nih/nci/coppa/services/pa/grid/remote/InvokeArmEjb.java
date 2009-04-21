@@ -29,56 +29,64 @@ public class InvokeArmEjb implements ArmServiceRemote {
     /**
      * {@inheritDoc}
      */
+    public List<ArmDTO> getByStudyProtocol(Ii ii) throws PAException {
+        try {
+            List<ArmDTO> result = locator.getArmService().getByStudyProtocol(ii);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<ArmDTO> getCurrentByStudyProtocol(Ii ii) throws PAException {
+        try {
+            List<ArmDTO> result = locator.getArmService().getCurrentByStudyProtocol(ii);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ArmDTO get(Ii ii) throws PAException {
+        try {
+            ArmDTO result = locator.getArmService().get(ii);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void copy(Ii arg0, Ii arg1) throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<ArmDTO> getByStudyProtocol(Ii arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<ArmDTO> getCurrentByStudyProtocol(Ii arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new PAException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
     public ArmDTO create(ArmDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new PAException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
     public void delete(Ii arg0) throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ArmDTO get(Ii arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new PAException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
     public ArmDTO update(ArmDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new PAException("Not yet implemented");
     }
 }
