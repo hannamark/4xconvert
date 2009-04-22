@@ -120,4 +120,11 @@ public interface MailManagerService {
      * @throws PAException ex
      */
     void sendAmendRejectEmail(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * 
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    void sendRejectionEmail(Ii studyProtocolIi) throws PAException;
 }

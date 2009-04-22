@@ -105,6 +105,7 @@ import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -349,5 +350,10 @@ public interface ServiceLocator {
      * @return StudyOnholdService
      */
     StudyOnholdServiceRemote getStudyOnholdService();
+    
+    /**
+     * @return MailManagerService
+     */
+    MailManagerServiceRemote getMailManagerService();
 }
 

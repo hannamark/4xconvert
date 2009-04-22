@@ -28,7 +28,9 @@ insert into pa_properties(IDENTIFIER,name,value) VALUES(5,'rejection.subject',
 'NCI Clinical Trials Reporting Program (CTRP) Trial Registration Rejection Notice.');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(6,'rejection.body',
-'The following trial was submitted for registration to the NCI Clinical Trials Reporting Office (CTRO): 
+'Dear ${SubmitterName}
+
+The following trial was submitted for registration to the NCI Clinical Trials Reporting Office (CTRO): 
 
 Lead Organization Trial Identifier ${leadorgid} 
 
@@ -43,7 +45,9 @@ insert into pa_properties(IDENTIFIER,name,value) VALUES(7,'allowed.uploadfile.ty
 insert into pa_properties(IDENTIFIER,name,value) VALUES(8,'trial.register.subject',
 'NCI Clinical Trials Reporting Program (CTRP) Trial Registration Acknowledgement');
 insert into pa_properties(IDENTIFIER,name,value) VALUES(9,'trial.register.body',
-'You have successfully registered the following trial with the National Cancer Institute (NCI) Clinical Trials Reporting Program (CTRP):
+'Dear ${SubmitterName}
+
+You have successfully registered the following trial with the National Cancer Institute (NCI) Clinical Trials Reporting Program (CTRP):
 Lead Organization Trial Identifier ${leadOrgTrialIdentifier}   
  
 Your trial has been assigned a unique NCI identification number for tracking that you will need to reference in future correspondence with the Clinical Trials Reporting Office (CTRO): 

@@ -81,7 +81,10 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -94,6 +97,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -147,6 +151,8 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
     TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     @EJB
     LookUpTableServiceRemote lookUpTableService;
+    @EJB
+    DocumentWorkflowStatusServiceLocal docWorkflowStatusService;
 
     /**
      * @param studyProtocolIi studyProtocolIi
@@ -356,8 +362,11 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
     public void sendNotificationMail(Ii studyProtocolIi) throws PAException  {
         StudyProtocolQueryDTO spDTO = protocolQueryService
             .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+        RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
 
         String submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
+        submissionMailBody = submissionMailBody.replace(submitterName, 
+                registryUser.getFirstName() + " " + registryUser.getLastName());
         submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ",
                 spDTO.getLocalStudyProtocolIdentifier());
         submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
@@ -393,6 +402,35 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
                   mailBody);
         LOG.info("Leaving sendAmendAcceptEmail");
       }
+    
+    /**
+     * Sends an email notifying the submitter that the protocol is rejected by CTRO.
+     * @param studyProtocolIi studyProtocolIi
+     * @throws PAException ex
+     */
+    public void sendRejectionEmail(Ii studyProtocolIi) throws PAException {
+        String commentText = "";
+        StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                                         IiConverter.convertToLong(studyProtocolIi));
+        RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
+        List<DocumentWorkflowStatusDTO> dtoList = docWorkflowStatusService.getByStudyProtocol(
+                                                    studyProtocolIi);
+        for (DocumentWorkflowStatusDTO dto : dtoList) {
+            if (dto.getStatusCode().getCode().equalsIgnoreCase(DocumentWorkflowStatusCode.REJECTED.getCode())
+                    && dto.getCommentText() != null) {
+                commentText = dto.getCommentText().getValue();
+            }
+        }
+        String body = lookUpTableService.getPropertyValue("rejection.body");
+        body = body.replace(submitterName, 
+                registryUser.getFirstName() + " " + registryUser.getLastName());
+        body = body.replace("${leadorgid}", spDTO.getLeadOrganizationId().toString());
+        body = body.replace("${reasoncode}", commentText);
+        // Send Message
+        sendMail(spDTO.getUserLastCreated(), 
+                lookUpTableService.getPropertyValue("rejection.subject"), 
+                body);
+    }
     @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
     private String getFormatedCurrentDate() {
         Calendar calendar = new GregorianCalendar();
