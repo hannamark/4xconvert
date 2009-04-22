@@ -44,15 +44,17 @@ function handlePopup(a,b,c)  // write corresponding content to the popup window
                 <display:column property="submissionNumber" sortable="false" titleKey="trialHistory.submissionNumber"/>
                 <display:column property="type" sortable="false" titleKey="trialHistory.type"/>
                 <display:column property="amendmentNumber" sortable="false" titleKey="trialHistory.amendmentNumber"/>
-                <display:column property="amendmentDate" sortable="false" titleKey="trialHistory.amendmentDate" format="{0,date,dd-MMM-yyyy HH:mm}"/>
-                <display:column property="submissionDate" sortable="false" titleKey="trialHistory.submissionDate" format="{0,date,dd-MMM-yyyy HH:mm}"/>
+                <display:column property="amendmentDate" sortable="false" titleKey="trialHistory.amendmentDate" format="{0,date,MM/dd/yyyy}" />
+                <display:column property="submissionDate" sortable="false" titleKey="trialHistory.submissionDate" format="{0,date,MM/dd/yyyy}" />
                 <display:column property="amendmentReasonCode" sortable="false" titleKey="trialHistory.amendmentReasonCode"/>
                 <display:column property="documents" sortable="false" titleKey="trialHistory.documents"/>
                 <display:column title="Action" headerClass="centered" class="action">
+                <s:if test="%{#attr.row.submissionNumber != 1}">
                      <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
+                </s:if>    
                     </display:column>
              </display:table>
         </td></tr>

@@ -262,7 +262,7 @@ public class StudyProtocolTest  {
         sp.setDateLastCreated(now);
         sp.setUserLastCreated("Abstractor");
         sp.setStatusCode(ActStatusCode.ACTIVE);
-        sp.setAmendmentReasonCode(AmendmentReasonCode.OTHER);
+        sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
         sp.setStatusDate(now);
         sp.setAmendmentDate(now);
         return sp;

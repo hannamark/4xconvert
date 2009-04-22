@@ -32,36 +32,53 @@ function handleAction(){
    <pa:failureMessage/>
     <s:form name="editForm"><s:actionerror/>
     <h2><fmt:message key="trialHistory.edittitle" /></h2>
-    <s:set name="reasonCodeValues" value="@gov.nih.nci.pa.enums.AmendmentReasonCode@getDisplayNames()" />	
+    <s:set name="reasonCodeValues" value="@gov.nih.nci.pa.enums.AmendmentReasonCode@getDisplayNames()" />   
      <s:hidden name="trialHistoryWbDto.identifier"/> 
-    <table class="form">   
-  		<tr>
-						<td scope="row"  class="label"><label>
-							<fmt:message key="trialHistory.amendmentReasonCode"/>:<span class="required">*</span></label>
-						</td>
-						<td class="value">		
-						  <s:select headerKey="" headerValue="--Select--" name="trialHistoryWbDto.amendmentReasonCode" list="#reasonCodeValues"/>
-						  <span class="formErrorMsg"> 
+    <table class="form">  
+            <tr>
+                        <td scope="row"  class="label"><label>
+                            <fmt:message key="trialHistory.submissionNumber"/></label>
+                        </td>
+                        <td class="value">      
+                          <c:out value="${trialHistoryWbDto.submissionNumber}"/>
+                          
+                          </td>
+                    </tr>
+                    <tr>
+                        <td scope="row"  class="label"><label>
+                            <fmt:message key="trialHistory.submissionDate"/></label>
+                        </td>
+                        <td class="value">      
+                           <c:out value="${trialHistoryWbDto.submissionDate}"/>
+                          </td>
+                    </tr> 
+        <tr>
+                        <td scope="row"  class="label"><label>
+                            <fmt:message key="trialHistory.amendmentReasonCode"/>:<span class="required">*</span></label>
+                        </td>
+                        <td class="value">      
+                          <s:select headerKey="" headerValue="--Select--" name="trialHistoryWbDto.amendmentReasonCode" list="#reasonCodeValues"/>
+                          <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialHistoryWbDTO.amendmentReasonCode</s:param>
                                </s:fielderror>                            
                          </span>
-						  </td>
-					</tr>
-					<tr>
-						<td scope="row"  class="label"><label>
-							<fmt:message key="trialHistory.amendmentNumber"/></label>
-						</td>
-						<td class="value">
-							<s:textfield  name="trialHistoryWbDto.amendmentNumber" maxlength="10" cssStyle="width:150px"/>
-							<span class="formErrorMsg"> 
+                          </td>
+                    </tr>
+                    <tr>
+                        <td scope="row"  class="label"><label>
+                            <fmt:message key="trialHistory.amendmentNumber"/></label>
+                        </td>
+                        <td class="value">
+                            <s:textfield  name="trialHistoryWbDto.amendmentNumber" maxlength="10" cssStyle="width:150px"/>
+                            <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialHistoryWbDTO.amendmentNumber</s:param>
                                </s:fielderror>                            
                          </span>
-						</td>
-					</tr>
-					 <tr>
+                        </td>
+                    </tr>
+                     <tr>
                       <td class="label"><s:label><fmt:message key="trialHistory.amendmentDate"/></s:label><span class="required">*</span></td>
                       <td class="value">
                         <s:textfield name="trialHistoryWbDto.amendmentDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>

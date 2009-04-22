@@ -137,12 +137,14 @@ public class TrialHistoryWebDTO {
         this.amendmentNumber = StConverter.convertToString(isoDto.getAmendmentNumber());
         this.amendmentReasonCode = CdConverter.convertCdToString(isoDto.getAmendmentReasonCode());
         if (isoDto.getAmendmentDate() != null && isoDto.getAmendmentDate().getValue() != null) {
-          this.amendmentDate = TsConverter.convertToTimestamp(isoDto.getAmendmentDate()).toString();
+           this.amendmentDate = PAUtil.normalizeDateString(
+                 TsConverter.convertToTimestamp(isoDto.getAmendmentDate()).toString());
         } else {
           this.amendmentDate = "";
         }
         if (isoDto.getStatusDate() != null && isoDto.getStatusDate().getValue() != null) {
-          this.submissionDate = TsConverter.convertToTimestamp(isoDto.getStatusDate()).toString();
+          this.submissionDate = PAUtil.normalizeDateString(
+                  TsConverter.convertToTimestamp(isoDto.getStatusDate()).toString());
          } else {
             this.submissionDate = "";
             }

@@ -109,7 +109,7 @@ public class InterventionalStudyProtocolDTOTest {
         assertEquals(ispDTO.getOfficialTitle().getValue(),"Phase Ii trial");
         assertEquals(ispDTO.getPhaseCode().getCode(),PhaseCode.I.getCode());
         assertEquals(ispDTO.getStatusCode().getCode(),ActStatusCode.ACTIVE.getCode());
-        assertEquals(ispDTO.getAmendmentReasonCode().getCode(),AmendmentReasonCode.OTHER.getCode());
+        assertEquals(ispDTO.getAmendmentReasonCode().getCode(),AmendmentReasonCode.BOTH.getCode());
     }
     
     public static InterventionalStudyProtocolDTO createInterventionalStudyProtocolDTOObj() {
@@ -128,7 +128,7 @@ public class InterventionalStudyProtocolDTOTest {
         ispDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
         ispDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.I.getCode()));
         ispDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
-        ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.OTHER.getCode()));
+        ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
         return ispDTO;
     }
 

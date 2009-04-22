@@ -87,14 +87,19 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 02/11/2009
  */
 public enum AmendmentReasonCode implements CodedEnum<String> {
+
   /**
-   * SUBMISSION_INCOM.
+   * ADMINISTRATIVE.
    */
-  SUBMISSION_INCOM("Submission Incomplete"),
+  ADMINISTRATIVE("Administrative"),
    /**
-   * OTHER.
+   * SCIENTIFIC.
    */
-  OTHER("Other");
+  SCIENTIFIC("Scientific"),
+  /**
+   * BOTH.
+   */
+  BOTH("Both");
 
   private String code;
   /**
