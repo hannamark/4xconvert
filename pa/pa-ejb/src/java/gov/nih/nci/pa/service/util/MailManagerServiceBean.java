@@ -84,8 +84,9 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
@@ -151,8 +152,8 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
     TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     @EJB
     LookUpTableServiceRemote lookUpTableService;
-    @EJB
-    DocumentWorkflowStatusServiceLocal docWorkflowStatusService;
+//    @EJB
+//    DocumentWorkflowStatusServiceRemote docWorkflowStatusService;
 
     /**
      * @param studyProtocolIi studyProtocolIi
@@ -413,7 +414,8 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
                                          IiConverter.convertToLong(studyProtocolIi));
         RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
-        List<DocumentWorkflowStatusDTO> dtoList = docWorkflowStatusService.getByStudyProtocol(
+        List<DocumentWorkflowStatusDTO> dtoList = 
+            PoPaServiceBeanLookup.getDocumentWorkflowStatusService().getByStudyProtocol(
                                                     studyProtocolIi);
         for (DocumentWorkflowStatusDTO dto : dtoList) {
             if (dto.getStatusCode().getCode().equalsIgnoreCase(DocumentWorkflowStatusCode.REJECTED.getCode())
