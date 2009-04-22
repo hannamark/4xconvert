@@ -594,7 +594,10 @@ import org.hibernate.criterion.Example;
             session = HibernateUtil.getCurrentSession();
             studyProtocol = (StudyProtocol)
                 session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            List<StudyRelationshipDTO> dtos = studyRelationshipService.getByStudyProtocol(ii);
+            
+            StudyRelationshipDTO srDto = new StudyRelationshipDTO();
+            srDto.setSourceStudyProtocolIdentifier(IiConverter.convertToIi(studyProtocol.getId()));
+            List<StudyRelationshipDTO> dtos = studyRelationshipService.search(srDto);
 
             for (StudyRelationshipDTO dto : dtos) {
                 targetSpIi = dto.getTargetStudyProtocolIdentifier();

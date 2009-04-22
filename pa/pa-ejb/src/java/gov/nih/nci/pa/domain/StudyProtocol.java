@@ -168,6 +168,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyMilestone> studyMilestones = new ArrayList<StudyMilestone>();
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
 
+
     /** 
      * @return accrualReportingMethodCode
      */
@@ -813,7 +814,5 @@ public class StudyProtocol extends AbstractEntity {
     public void setSubmissionNumber(Integer submissionNumber) {
     this.submissionNumber = submissionNumber;
     }
-
-
 }
 

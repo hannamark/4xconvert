@@ -81,10 +81,21 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 
+import java.util.List;
+
 /**
  * @author Naveen Amiruddin
  * @since 04/01/2009
  */
-public interface StudyRelationshipService extends StudyPaService<StudyRelationshipDTO> {
+public interface StudyRelationshipService extends BasePaService<StudyRelationshipDTO> {
+    
+    /**
+    *
+    * @param dto of StudyRelationshipDTO
+    * @return List StudyRelationshipDTOs
+    * @throws PAException on error
+    */
+   List<StudyRelationshipDTO> search(final StudyRelationshipDTO dto) throws PAException;
+
 
 }

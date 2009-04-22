@@ -79,15 +79,25 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.iso.convert.StudyRelationshipConverter;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Example;
 
 /**
  * @author Naveen Amiruddin
@@ -96,8 +106,50 @@ import javax.interceptor.Interceptors;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class StudyRelationshipServiceBean extends
-    AbstractStudyIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>
+    AbstractBaseIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>
     implements StudyRelationshipServiceLocal , StudyRelationshipServiceRemote {
+    private final transient StudyRelationshipConverter srConverter = new StudyRelationshipConverter();
+
+    /**
+    *
+    * @param dto of StudyRelationshipDTO
+    * @return List StudyRelationshipDTOs
+    * @throws PAException on error
+    */
+   @TransactionAttribute(TransactionAttributeType.REQUIRED)
+   public List<StudyRelationshipDTO> search(final StudyRelationshipDTO dto) throws PAException {
+       if (dto == null) {
+           throw new PAException(" StudyRelationship should not be null ");
+       }
+
+       List <StudyRelationship> srList = null;
+       try {
+           Session session = HibernateUtil.getCurrentSession();
+           StudyRelationship exampleDO = new StudyRelationship();
+           if (IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier()) != null) {
+               StudyProtocol sp = new StudyProtocol();
+               sp.setId(IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier()));
+               exampleDO.setSourceStudyProtocol(sp);
+           }
+           Example example = Example.create(exampleDO);
+           srList = session.createCriteria(StudyRelationship.class).add(example).list();
+       }  catch (HibernateException hbe) {
+           throw new PAException(" Hibernate exception while retrieving "
+                   + "studyRelationship for dto = " +  hbe);
+       }
+
+
+       List<StudyRelationshipDTO> srDTOList = null;
+       
+       if (srList != null) {
+           srDTOList = new ArrayList<StudyRelationshipDTO>();
+           for (StudyRelationship sp : srList) {
+               srDTOList.add(srConverter.convertFromDomainToDto(sp));
+           }
+       }
+       return srDTOList;
+   }
 
 }

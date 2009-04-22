@@ -86,6 +86,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
+import gov.nih.nci.pa.domain.StudyRelationship;
+import gov.nih.nci.pa.domain.StudyRelationshipTest;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -103,6 +105,7 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -252,14 +255,26 @@ public class StudyProtocolServiceBeanTest {
         try {
         InterventionalStudyProtocolDTO ispDTO =
                 InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO target =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        Ii targetIi = remoteEjb.createInterventionalStudyProtocol(target);
+        
         assertNotNull(ii.getExtension());
         StudyProtocolDTO sp = remoteEjb.getStudyProtocol(ii);
         assertNotNull(sp);
+        StudyProtocol spd  = new StudyProtocol();
+        StudyProtocol targetD  = new StudyProtocol();
+        targetD.setId(IiConverter.convertToLong(targetIi));
         
-        List<StudyProtocolDTO> sps = remoteEjb.search(sp);
-        assertNotNull(sps);
-        assertEquals(sps.size() , 1);
+        spd.setId(IiConverter.convertToLong(ii));
+        StudyRelationship srd = StudyRelationshipTest.createStudyRelationshipObj(spd);
+        srd.setTargetStudyProtocol(targetD);
+        Session session  = TestSchema.getSession();
+        session.save(srd);
+        
+        remoteEjb.deleteStudyProtocol(ii);
         } catch (Exception e) {
             e.printStackTrace();
         }
