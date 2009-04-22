@@ -32,10 +32,16 @@
 			document.getElementById('programcodeid').style.display = '';
 		}
 	}
-	function callAddIndIde(){	
-		var indIde = getIndIdeRadioValue(document.forms[0].group3.length);
-		var number = document.getElementById('indidenumber').value;
+	function callAddIndIde(){
+	    var indide = getIndIdeRadioValue(document.forms[0].group3.length);
+	    var number = document.getElementById('indidenumber').value;
+	    var grantor = document.getElementById('SubCat').value;
+	    var holder = document.getElementById('holderType').value;	
 		number = trim(number);
+	    if (indide == null || indide.length == 0) {
+            alert("Please choose an IND/IDE Type")
+            return false;    
+	    }
 		if( number == "") {
 			alert("Please enter an IND/IDE number")
 			return false;
@@ -72,7 +78,7 @@
 			return false;
 		}
 		var expandedaccesstype = document.getElementById('expanded_status').value;
-		addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccesstype,expandedaccess);
+		addIndIde(indide,number,grantor,holdertype,programcode,expandedaccesstype,expandedaccess);
 	}
 	function resetValues(){
 		document.getElementById('indidenumber').value='';
@@ -89,7 +95,6 @@
 		document.forms[0].group4[1].checked = true;
 		document.getElementById('expanded_status').value='';
 		document.getElementById('expanded_status').disabled=true;
-		document.getElementById('addbtn').disabled=true;
 	}
 	function clearRadios( radioname ){
 	   for( i = 0; i < document.forms[0][radioname].length; i++ )
@@ -176,41 +181,41 @@
 		
 			<tr>
 				<td style="white-space:nowrap;">							
-					<input type="radio" name="group3" value="IND" onclick="SelectSubCat(this);" onblur="enableAddButton();"/>IND<br/>
-					<input type="radio" name="group3" value="IDE" onclick="SelectSubCat(this);" onblur="enableAddButton();"/>IDE
+					<input type="radio" name="group3" value="IND" onclick="SelectSubCat(this);" />IND<br/>
+					<input type="radio" name="group3" value="IDE" onclick="SelectSubCat(this);" />IDE
 				</td>
 				<td>
-					<input id="indidenumber" name="indidenumber" onblur="enableAddButton();" type="text" size="10" /> 
+					<input id="indidenumber" name="indidenumber"  type="text" size="10" /> 
 				</td>
 				<td>
-					<SELECT id="SubCat" name="SubCat" onblur="enableAddButton(); cssStyle="width:150px">
+					<SELECT id="SubCat" name="SubCat" style="width:75px">
 						<Option value="">-Select-</option>
 					</SELECT>
 				</td>	
 				 					
 				<td>
-					<s:select id="holderType" name="holderType" headerKey="" headerValue="-Select-" onblur="enableAddButton();setProgramCodes(this);bindNIHToolTipOnLoad();bindNCIToolTipOnLoad();" cssStyle="width:75px" onclick="setProgramCodes(this);"
+					<s:select id="holderType" name="holderType" headerKey="" headerValue="-Select-" onblur="setProgramCodes(this);bindNIHToolTipOnLoad();bindNCIToolTipOnLoad();" cssStyle="width:75px" onclick="setProgramCodes(this);"
 					list="#{'Investigator':'Investigator','Organization':'Organization','Industry':'Industry','NIH':'NIH','NCI':'NCI'}"/>
 					
 				</td>
 				<td>
 				<div id="programcodeid" style="display:''">
-					<s:select id="programcodenoneselected" list="#{'-Select-':'-Select-'}" onblur="enableAddButton();" cssStyle="width:300px"/>
+					<s:select id="programcodenoneselected" list="#{'-Select-':'-Select-'}"  cssStyle="width:300px"/>
 					</div>
-				<div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="programcodenihselectedvalue" list="#phaseCodeValuesNIH" onmouseover="enableTooltip('nih');" onblur="enableAddButton();" cssStyle="width:300px"/></div>
-				<div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="programcodenciselectedvalue" list="#phaseCodeValuesNCI" onmouseover="enableTooltip('nci');" onblur="enableAddButton();" cssStyle="width:300px"/></div>
+				<div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="programcodenihselectedvalue" list="#phaseCodeValuesNIH" onmouseover="enableTooltip('nih');"  cssStyle="width:300px"/></div>
+				<div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="programcodenciselectedvalue" list="#phaseCodeValuesNCI" onmouseover="enableTooltip('nci');"  cssStyle="width:300px"/></div>
 				</td>
 				<td>
-					<input type="radio" name="group4" id="group4" value="true" onclick="document.getElementById('expanded_status').disabled=false;document.getElementById('addbtn').disabled=true;" onblur="enableAddButton();" /> Yes<br />
-					<input type="radio" name="group4" id="group4" value="false" checked="checked" onclick="document.getElementById('expanded_status').value='';document.getElementById('expanded_status').disabled=true;" onblur="enableAddButton();"/> No
+					<input type="radio" name="group4" id="group4" value="true" onclick="document.getElementById('expanded_status').disabled=false;"  /> Yes<br />
+					<input type="radio" name="group4" id="group4" value="false" checked="checked" onclick="document.getElementById('expanded_status').value='';document.getElementById('expanded_status').disabled=true;"/> No
 				</td>
 				<td>
-					<s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true" onblur="enableAddButton();"
+					<s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true" 
 					list="#expandedAccessStatusCodeValues"/>
 					
 				</td>
 				<td>
-					<input type="button" id="addbtn" onclick="callAddIndIde();" value="Add IND/IDE.." disabled="disabled">
+					<input type="button" id="addbtn" onclick="callAddIndIde();" value="Add IND/IDE" >
 				</td>
 			</tr>
 			<tr>

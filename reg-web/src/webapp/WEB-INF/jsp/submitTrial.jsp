@@ -111,20 +111,50 @@ function manageRespPartyLookUp(){
                 document.getElementById('rpcid').style.display='';
     }
 }
+function trim(val) {
+    var ret = val.replace(/^\s+/, '');
+    ret = ret.replace(/\s+$/, '');
+      return ret;
+}
 function addGrant(){
-    var serialNumber = document.getElementById('serialNumber').value;
-    var b = serialNumber.length;
-    if (isNaN(serialNumber)){
-        alert("Serial Number must be numeric");
-        return false;
-    }
-    if (b < 5 || b > 6){
-        alert("Serial Number must be 5 or 6 digits");
-        return false;
-    }
-    var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;
+    var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;   
     var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
     var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
+    var serialNumber = document.getElementById('serialNumber').value;
+    serialNumber=trim(serialNumber);
+    var isValidGrant;
+    var isSerialEmpty=false;
+    var alertMessage="";
+
+    if(fundingMechanismCode.length == 0 || fundingMechanismCode == null) {
+        isValidGrant = false;
+        alertMessage="Please select a Funding Mechanism";
+    }
+    if(nihInstitutionCode.length == 0 || nihInstitutionCode == null) {
+        isValidGrant = false;
+        alertMessage=alertMessage+ "\n Please select an Institute Code";
+    }
+    if(serialNumber.length == 0 || serialNumber == null) {
+        isValidGrant = false;
+        isSerialEmpty = true;
+        alertMessage=alertMessage+ "\n Please enter a Serial Number";
+    }
+    if(nciDivisionProgramCode.length == 0 || nciDivisionProgramCode == null) {
+        isValidGrant = false;
+        alertMessage=alertMessage+ "\n Please select a NCI Division/Program Code";
+    }
+    if (isSerialEmpty == false && isNaN(serialNumber)){
+        isValidGrant = false;
+        alertMessage=alertMessage+ "\n Serial Number must be numeric";
+    }
+    if (isSerialEmpty == false && (serialNumber.length < 5 || serialNumber.length > 6)){
+        isValidGrant = false;
+        alertMessage=alertMessage+ "\n Serial Number must be 5 or 6 digits";
+    }
+    if (isValidGrant == false) {
+        alert(alertMessage);
+        return false;
+    }
     var  url = '/registry/protected/ajaxManageGrantsActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;    
     var div = document.getElementById('grantdiv');   
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
@@ -137,25 +167,12 @@ function deleteGrantRow(rowid){
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
     callAjax(url, div);             
 }
-function enableGrantAddButton(){    
-    var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;   
-    var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
-    var serialNumber;
-    serialNumber = document.getElementById('serialNumber').value;
-    var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
-    //alert("fundingMechanismCode "+fundingMechanismCode+"+"+nihInstitutionCode+"+"+serialNumber+"+"+nciDivisionProgramCode);
-    if(fundingMechanismCode != '' && nihInstitutionCode != '' && serialNumber != '' && nciDivisionProgramCode != '') {
-        document.getElementById('grantbtnid').disabled = false;
-    } else {
-        document.getElementById('grantbtnid').disabled = true;
-    }
-}
+
 function resetGrantRow(){
     document.getElementById('fundingMechanismCode').value = '';
     document.getElementById('nihInstitutionCode').value = '';
     document.getElementById('serialNumber').value = '';
     document.getElementById('nciDivisionProgramCode').value = '';
-    document.getElementById('grantbtnid').disabled = true;
 }
 function deleteIndIde(rowid){
     
@@ -502,7 +519,7 @@ function toggledisplay2 (it) {
                                      listValue="fundingMechanismCode" 
                                      id="fundingMechanismCode"
                                      value="trialFundingDTO.fundingMechanismCode" 
-                                     cssStyle="width:150px" onblur="enableGrantAddButton();"/>
+                                     cssStyle="width:150px" />
                             </td>
                             <s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
                             <td>                                             
@@ -513,7 +530,7 @@ function toggledisplay2 (it) {
                                      listValue="nihInstituteCode"
                                      id="nihInstitutionCode"
                                      value="trialFundingDTO.nihInstitutionCode" 
-                                     cssStyle="width:150px" onblur="enableGrantAddButton();" />
+                                     cssStyle="width:150px"  />
                                      <span class="formErrorMsg" >
                                         <s:fielderror>
                                         <s:param>trialFundingDTO.nihInstitutionCode</s:param>
@@ -521,7 +538,7 @@ function toggledisplay2 (it) {
                                      </span>
                             </td>
                             <td>
-                                <s:textfield name="trialFundingDTO.serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px" onblur="enableGrantAddButton();" />
+                                <s:textfield name="trialFundingDTO.serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
                                 <span class="formErrorMsg"> 
                                     <s:fielderror>
                                     <s:param>trialFundingDTO.serialNumber</s:param>
@@ -530,14 +547,14 @@ function toggledisplay2 (it) {
                             </td>
                             <s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
                             <td>                                             
-                                <s:select headerKey="" headerValue="--Select--" name="trialFundingDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
+                                <s:select headerKey="" headerValue="--Select--" name="trialFundingDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingDTO.nciDivisionProgramCode" cssStyle="width:150px" />
                                 <span class="formErrorMsg"> 
                                    <s:fielderror>
                                    <s:param>trialFundingDTO.nciDivisionProgramCode</s:param>
                                   </s:fielderror>                            
                                 </span>
                             </td>
-                            <td> <input type="button" id="grantbtnid" value="Add Grant.." onclick="addGrant();" disabled="disabled"/></td>
+                            <td> <input type="button" id="grantbtnid" value="Add Grant" onclick="addGrant();" /></td>
                             <td> &nbsp;</td><td> &nbsp;</td><td> &nbsp;</td>
                       </tr>
                       </tbody>
