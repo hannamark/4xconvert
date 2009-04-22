@@ -557,7 +557,8 @@ A.btn SPAN.person
 { background:url("../images/ico_person.gif") no-repeat; }
 A.btn SPAN.organization
 { background:url("../images/ico_organization.gif") no-repeat; }
-
+A.btn SPAN.print
+{ background:url("../images/ico_print.gif") no-repeat; }
 
 /* Footer */
 

@@ -32,7 +32,6 @@ function submitTrial(){
 }
 function editTrial() {
 	var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
-	alert("some" +assignedId+"some");
     if (assignedId != '') {
         document.forms[0].action="amendTrialedit.action";
         document.forms[0].submit();
@@ -392,11 +391,11 @@ var winprint=window.open("","",sOption);
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li><a href="#"                
-                    class="btn" onclick="editTrial();"><span class="btn_img"><span class="back">Edit</span></span></a></li>
+                    class="btn" onclick="editTrial();"><span class="btn_img"> <span class="edit">Edit</span></span></a></li>
                <li><a href="#"                
-                    class="btn" onclick="submitTrial();"><span class="btn_img"><span class="back">Submit</span></span></a></li>
+                    class="btn" onclick="submitTrial();"><span class="btn_img"><span class="save">Submit</span></span></a></li>
                <li><a href="#"                
-                    class="btn" onclick="printProtocol();"><span class="btn_img"><span class="back">Print</span></span></a></li>          
+                    class="btn" onclick="printProtocol();"><span class="btn_img"><span class="print">Print</span></span></a></li>          
             </ul>   
         </del>
         </div>
