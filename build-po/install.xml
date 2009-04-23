@@ -693,7 +693,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       database.version="${mysql.minimum.version}"
       />
   </target>
-  <target name="install:validation:pre-install:ports">
+  <target name="install:validation:pre-install:ports" unless="exclude.po-ear">
   	<runtarget target="install:validation:pre-install:ports:poear"/>
   	<runtarget target="install:validation:pre-install:ports:pogrid"/>
   </target>
@@ -707,7 +707,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	 <runtarget target="install:validation:post-install:poear"/>
 	 <runtarget target="install:validation:post-install:pogrid"/>
   </target>
-  <target name="install:validation:post-install:poear">
+  <target name="install:validation:post-install:poear" unless="exclude.po-ear">
     <if>
       <not>
         <isset property="exclude.start.servers"/>
