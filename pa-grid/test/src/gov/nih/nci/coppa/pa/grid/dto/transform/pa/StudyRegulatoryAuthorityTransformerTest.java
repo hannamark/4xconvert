@@ -80,83 +80,46 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.grid.dto.pa;
+package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
-import gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol;
-import gov.nih.nci.coppa.services.pa.grid.dto.CDTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.DtoTransformException;
-import gov.nih.nci.coppa.services.pa.grid.dto.INTTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.STTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.coppa.pa.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.pa.grid.dto.transform.IITransformerTest;
+import gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRegulatoryAuthorityTransformer;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 
-/**
- * Transforms ObservationalStudyProtocol instances.
- */
-public final class ObservationalStudyProtocolTransformer extends
-        AbstractStudyProtocolTransformer<ObservationalStudyProtocol, ObservationalStudyProtocolDTO> implements
-        Transformer<ObservationalStudyProtocol, ObservationalStudyProtocolDTO> {
+public class StudyRegulatoryAuthorityTransformerTest extends
+        AbstractTransformerTestBase<StudyRegulatoryAuthorityTransformer, StudyRegulatoryAuthority, StudyRegulatoryAuthorityDTO> {
 
-    /**
-     * Public singleton.
-     */
-    public static final ObservationalStudyProtocolTransformer INSTANCE = new ObservationalStudyProtocolTransformer();
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected ObservationalStudyProtocol newXml() {
-        return new ObservationalStudyProtocol();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ObservationalStudyProtocolDTO newDto() {
-        return new ObservationalStudyProtocolDTO();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ObservationalStudyProtocolDTO toDto(ObservationalStudyProtocol input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-
-        ObservationalStudyProtocolDTO result = transformBaseDto(input);
-        result.setBiospecimenDescription(STTransformer.INSTANCE.toDto(input.getBiospecimenDescription()));
-        result.setBiospecimenRetentionCode(CDTransformer.INSTANCE.toDto(input.getBiospecimenRetentionCode()));
-        result.setNumberOfGroups(INTTransformer.INSTANCE.toDto(input.getNumberOfGroups()));
-        result.setSamplingMethodCode(CDTransformer.INSTANCE.toDto(input.getSamplingMethodCode()));
-        result.setStudyModelCode(CDTransformer.INSTANCE.toDto(input.getStudyModelCode()));
-        result.setStudyModelOtherText(STTransformer.INSTANCE.toDto(input.getStudyModelOtherText()));
-        result.setTimePerspectiveCode(CDTransformer.INSTANCE.toDto(input.getTimePerspectiveCode()));
-        result.setTimePerspectiveOtherText(STTransformer.INSTANCE.toDto(input.getTimePerspectiveOtherText()));
-        result.setStudyPopulationDescription(STTransformer.INSTANCE.toDto(input.getStudyPopulationDescription()));
-
+    public StudyRegulatoryAuthorityDTO makeDtoSimple() {
+        StudyRegulatoryAuthorityDTO result = new StudyRegulatoryAuthorityDTO();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setRegulatoryAuthorityIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ObservationalStudyProtocol toXml(ObservationalStudyProtocolDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        ObservationalStudyProtocol result = transformBaseXml(input);
-        result.setBiospecimenDescription(STTransformer.INSTANCE.toXml(input.getBiospecimenDescription()));
-        result.setBiospecimenRetentionCode(CDTransformer.INSTANCE.toXml(input.getBiospecimenRetentionCode()));
-        result.setNumberOfGroups(INTTransformer.INSTANCE.toXml(input.getNumberOfGroups()));
-        result.setSamplingMethodCode(CDTransformer.INSTANCE.toXml(input.getSamplingMethodCode()));
-        result.setStudyModelCode(CDTransformer.INSTANCE.toXml(input.getStudyModelCode()));
-        result.setStudyModelOtherText(STTransformer.INSTANCE.toXml(input.getStudyModelOtherText()));
-        result.setTimePerspectiveCode(CDTransformer.INSTANCE.toXml(input.getTimePerspectiveCode()));
-        result.setTimePerspectiveOtherText(STTransformer.INSTANCE.toXml(input.getTimePerspectiveOtherText()));
-        result.setStudyPopulationDescription(STTransformer.INSTANCE.toXml(input.getStudyPopulationDescription()));
+    @Override
+    public StudyRegulatoryAuthority makeXmlSimple() {
+        StudyRegulatoryAuthority result = new StudyRegulatoryAuthority();
+        result.setIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setRegulatoryAuthorityIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
         return result;
+    }
+
+    @Override
+    public void verifyDtoSimple(StudyRegulatoryAuthorityDTO x) {
+        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
+        new IITransformerTest().verifyDtoSimple(x.getRegulatoryAuthorityIdentifier());
+        new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
+    }
+
+    @Override
+    public void verifyXmlSimple(StudyRegulatoryAuthority x) {
+        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
+        new IITransformerTest().verifyXmlSimple(x.getRegulatoryAuthorityIdentifier());
+        new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
     }
 }

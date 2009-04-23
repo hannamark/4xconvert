@@ -5,6 +5,7 @@ import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 
 import java.util.Collections;
@@ -27,6 +28,7 @@ public final class TransformerRegistry {
         values.put(StudyProtocolDTO.class, StudyProtocolTransformer.INSTANCE);
         values.put(InterventionalStudyProtocolDTO.class, InterventionalStudyProtocolTransformer.INSTANCE);
         values.put(ObservationalStudyProtocolDTO.class, ObservationalStudyProtocolTransformer.INSTANCE);
+        values.put(StudyRegulatoryAuthorityDTO.class, StudyRegulatoryAuthorityTransformer.INSTANCE);
     }
 
     /**

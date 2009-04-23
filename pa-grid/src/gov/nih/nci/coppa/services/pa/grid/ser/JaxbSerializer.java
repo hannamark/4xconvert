@@ -17,6 +17,7 @@ import org.xml.sax.Attributes;
 
 /**
  * JAXB based serializer.
+ *
  * @author gax
  */
 public class JaxbSerializer implements Serializer {
@@ -27,10 +28,7 @@ public class JaxbSerializer implements Serializer {
     /**
      * {@inheritDoc}
      */
-    public void serialize(QName name,
-                          Attributes attributes,
-                          Object value,
-                          SerializationContext context)
+    public void serialize(QName name, Attributes attributes, Object value, SerializationContext context)
             throws IOException {
         try {
             Marshaller marshaller = MAP.get(value.getClass().getPackage().getName());
@@ -38,7 +36,7 @@ public class JaxbSerializer implements Serializer {
                 JAXBContext jaxbContext = JAXBContext.newInstance(value.getClass().getPackage().getName());
                 marshaller = jaxbContext.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-//                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                // marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
                 MAP.put(value.getClass().getPackage().getName(), marshaller);
             }
 

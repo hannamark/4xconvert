@@ -1,4 +1,3 @@
-
 package gov.nih.nci.coppa.services.pa.grid.ser;
 
 import java.util.HashMap;
@@ -16,11 +15,10 @@ import org.xml.sax.SAXException;
 
 /**
  * JAXB based deserializer.
+ *
  * @author gax
  */
-public class JaxbDeserializer
-        extends DeserializerImpl
-        implements Deserializer {
+public class JaxbDeserializer extends DeserializerImpl implements Deserializer {
 
     private static final long serialVersionUID = 6701906739176588187L;
 
@@ -41,11 +39,7 @@ public class JaxbDeserializer
      * Return something even if no characters were found.
      */
     @Override
-    public void onEndElement(
-            String namespace,
-            String localName,
-            DeserializationContext context)
-            throws SAXException {
+    public void onEndElement(String namespace, String localName, DeserializationContext context) throws SAXException {
         try {
             MessageElement msgElem = context.getCurElement();
             if (msgElem != null) {

@@ -8,16 +8,26 @@ public class InvokeCoppaServiceException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param message
+     */
     public InvokeCoppaServiceException(String message) {
-		super(message);
-	}
+        super(message);
+    }
 
-	public InvokeCoppaServiceException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param cause
+     */
+    public InvokeCoppaServiceException(Throwable cause) {
+        super(cause);
+    }
 
-	public InvokeCoppaServiceException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public InvokeCoppaServiceException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

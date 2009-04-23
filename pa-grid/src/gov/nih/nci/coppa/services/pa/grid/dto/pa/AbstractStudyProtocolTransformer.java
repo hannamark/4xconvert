@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.services.pa.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.StudyProtocolType;
 import gov.nih.nci.coppa.services.pa.grid.dto.BLTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.CDTransformer;
@@ -96,16 +95,14 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 /**
  * Transforms StudyProtocol instances.
+ *
  * @author mshestopalov
  *
  * @param <STDP> xml
  * @param <Stdp> dto
  */
 public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtocolType, Stdp extends StudyProtocolDTO>
-    implements Transformer<STDP, Stdp> {
-
-
-    protected AbstractStudyProtocolTransformer() { }
+        implements Transformer<STDP, Stdp> {
 
     /**
      * @return newly constructed xml object.
@@ -129,7 +126,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         }
 
         Stdp result = newDto();
-        //ST
+        // ST
         result.setAcronym(STTransformer.INSTANCE.toDto(input.getAcronym()));
         result.setAmendmentNumber(STTransformer.INSTANCE.toDto(input.getAmendmentNumber()));
         result.setKeywordText(STTransformer.INSTANCE.toDto(input.getKeywordText()));
@@ -141,15 +138,18 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setScientificDescription(STTransformer.INSTANCE.toDto(input.getScientificDescription()));
         result.setStudyProtocolType(STTransformer.INSTANCE.toDto(input.getStudyProtocolType()));
         result.setUserLastCreated(STTransformer.INSTANCE.toDto(input.getUserLastCreated()));
-        //BL
-        result.setAcceptHealthyVolunteersIndicator(BLTransformer.INSTANCE.toDto(input.getAcceptHealthyVolunteersIndicator()));
-        result.setDataMonitoringCommitteeAppointedIndicator(BLTransformer.INSTANCE.toDto(input.getDataMonitoringCommitteeAppointedIndicator()));
+        // BL
+        result.setAcceptHealthyVolunteersIndicator(BLTransformer.INSTANCE.toDto(input
+                .getAcceptHealthyVolunteersIndicator()));
+        result.setDataMonitoringCommitteeAppointedIndicator(BLTransformer.INSTANCE.toDto(input
+                .getDataMonitoringCommitteeAppointedIndicator()));
         result.setDelayedpostingIndicator(BLTransformer.INSTANCE.toDto(input.getDelayedpostingIndicator()));
         result.setExpandedAccessIndicator(BLTransformer.INSTANCE.toDto(input.getExpandedAccessIndicator()));
         result.setFdaRegulatedIndicator(BLTransformer.INSTANCE.toDto(input.getFdaRegulatedIndicator()));
-        result.setReviewBoardApprovalRequiredIndicator(BLTransformer.INSTANCE.toDto(input.getReviewBoardApprovalRequiredIndicator()));
+        result.setReviewBoardApprovalRequiredIndicator(BLTransformer.INSTANCE.toDto(input
+                .getReviewBoardApprovalRequiredIndicator()));
         result.setSection801Indicator(BLTransformer.INSTANCE.toDto(input.getSection801Indicator()));
-        //CD
+        // CD
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toDto(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toDto(input.getAmendmentReasonCode()));
         result.setPhaseCode(CDTransformer.INSTANCE.toDto(input.getPhaseCode()));
@@ -157,16 +157,16 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toDto(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
-        //II
+        // II
         result.setAssignedIdentifier(IITransformer.INSTANCE.toDto(input.getAssignedIdentifier()));
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
-        //TS
+        // TS
         result.setAmendmentDate(TSTransformer.INSTANCE.toDto(input.getAmendmentDate()));
         result.setPrimaryCompletionDate(TSTransformer.INSTANCE.toDto(input.getPrimaryCompletionDate()));
         result.setRecordVerificationDate(TSTransformer.INSTANCE.toDto(input.getRecordVerificationDate()));
         result.setStartDate(TSTransformer.INSTANCE.toDto(input.getStartDate()));
         result.setStatusDate(TSTransformer.INSTANCE.toDto(input.getStatusDate()));
-        //INT
+        // INT
         result.setMaximumTargetAccrualNumber(INTTransformer.INSTANCE.toDto(input.getMaximumTargetAccrualNumber()));
         result.setSubmissionNumber(INTTransformer.INSTANCE.toDto(input.getSubmissionNumber()));
 
@@ -183,7 +183,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
             return null;
         }
         STDP result = newXml();
-        //ST
+        // ST
         result.setAcronym(STTransformer.INSTANCE.toXml(input.getAcronym()));
         result.setAmendmentNumber(STTransformer.INSTANCE.toXml(input.getAmendmentNumber()));
         result.setKeywordText(STTransformer.INSTANCE.toXml(input.getKeywordText()));
@@ -195,15 +195,18 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setScientificDescription(STTransformer.INSTANCE.toXml(input.getScientificDescription()));
         result.setStudyProtocolType(STTransformer.INSTANCE.toXml(input.getStudyProtocolType()));
         result.setUserLastCreated(STTransformer.INSTANCE.toXml(input.getUserLastCreated()));
-        //BL
-        result.setAcceptHealthyVolunteersIndicator(BLTransformer.INSTANCE.toXml(input.getAcceptHealthyVolunteersIndicator()));
-        result.setDataMonitoringCommitteeAppointedIndicator(BLTransformer.INSTANCE.toXml(input.getDataMonitoringCommitteeAppointedIndicator()));
+        // BL
+        result.setAcceptHealthyVolunteersIndicator(BLTransformer.INSTANCE.toXml(input
+                .getAcceptHealthyVolunteersIndicator()));
+        result.setDataMonitoringCommitteeAppointedIndicator(BLTransformer.INSTANCE.toXml(input
+                .getDataMonitoringCommitteeAppointedIndicator()));
         result.setDelayedpostingIndicator(BLTransformer.INSTANCE.toXml(input.getDelayedpostingIndicator()));
         result.setExpandedAccessIndicator(BLTransformer.INSTANCE.toXml(input.getExpandedAccessIndicator()));
         result.setFdaRegulatedIndicator(BLTransformer.INSTANCE.toXml(input.getFdaRegulatedIndicator()));
-        result.setReviewBoardApprovalRequiredIndicator(BLTransformer.INSTANCE.toXml(input.getReviewBoardApprovalRequiredIndicator()));
+        result.setReviewBoardApprovalRequiredIndicator(BLTransformer.INSTANCE.toXml(input
+                .getReviewBoardApprovalRequiredIndicator()));
         result.setSection801Indicator(BLTransformer.INSTANCE.toXml(input.getSection801Indicator()));
-        //CD
+        // CD
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toXml(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toXml(input.getAmendmentReasonCode()));
         result.setPhaseCode(CDTransformer.INSTANCE.toXml(input.getPhaseCode()));
@@ -211,16 +214,16 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toXml(input.getPrimaryPurposeCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toXml(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
-        //II
+        // II
         result.setAssignedIdentifier(IITransformer.INSTANCE.toXml(input.getAssignedIdentifier()));
         result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
-        //TS
+        // TS
         result.setAmendmentDate(TSTransformer.INSTANCE.toXml(input.getAmendmentDate()));
         result.setPrimaryCompletionDate(TSTransformer.INSTANCE.toXml(input.getPrimaryCompletionDate()));
         result.setRecordVerificationDate(TSTransformer.INSTANCE.toXml(input.getRecordVerificationDate()));
         result.setStartDate(TSTransformer.INSTANCE.toXml(input.getStartDate()));
         result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
-        //INT
+        // INT
         result.setMaximumTargetAccrualNumber(INTTransformer.INSTANCE.toXml(input.getMaximumTargetAccrualNumber()));
         result.setSubmissionNumber(INTTransformer.INSTANCE.toXml(input.getSubmissionNumber()));
         return result;

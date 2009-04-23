@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 import java.util.Properties;
@@ -13,7 +14,7 @@ import javax.naming.NamingException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class JNDIServiceLocator implements ServiceLocator {
+public final class JNDIServiceLocator implements ServiceLocator {
     private static final Logger logger = LogManager.getLogger(JNDIServiceLocator.class);
     private static final int MAX_RETRIES = 2;
     private static JNDIServiceLocator instance = new JNDIServiceLocator();
@@ -65,13 +66,21 @@ public class JNDIServiceLocator implements ServiceLocator {
         return result;
     }
 
-
     /**
      * {@inheritDoc}
      */
     public StudyResourcingServiceRemote getStudyResourcingService() throws NamingException {
         StudyResourcingServiceRemote result =
             (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
+        StudyRegulatoryAuthorityServiceRemote result =
+            (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
         return result;
     }
 }

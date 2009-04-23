@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
 import gov.nih.nci.coppa.services.pa.grid.dto.CDTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.DSETCDTransformer;
@@ -95,18 +93,14 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 /**
  * Transforms InterventionalStudyProtocol instances.
  */
-public final class InterventionalStudyProtocolTransformer
-    extends AbstractStudyProtocolTransformer<InterventionalStudyProtocol, InterventionalStudyProtocolDTO>
-    implements Transformer<InterventionalStudyProtocol, InterventionalStudyProtocolDTO> {
+public final class InterventionalStudyProtocolTransformer extends
+        AbstractStudyProtocolTransformer<InterventionalStudyProtocol, InterventionalStudyProtocolDTO> implements
+        Transformer<InterventionalStudyProtocol, InterventionalStudyProtocolDTO> {
 
     /**
      * Public singleton.
      */
     public static final InterventionalStudyProtocolTransformer INSTANCE = new InterventionalStudyProtocolTransformer();
-
-    private InterventionalStudyProtocolTransformer() {
-        super();
-    }
 
     /**
      * {@inheritDoc}

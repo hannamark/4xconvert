@@ -305,7 +305,7 @@
             </batchtest>
         </junit>
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="81" totallinerate="86" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="81" totallinerate="87" />
         <!-- Increase these as unit tests are written -->
     </target>
     <!--
@@ -322,7 +322,7 @@
                 <path refid="checkstyle.classpath" />
             </classpath>
             <!-- ADD PATHS FOR CHECKING HERE -->
-            <fileset dir="src/gov/nih/nci/coppa/services/pa/grid/ser" includes="**/*.java"/>
+            <fileset dir="src/gov/nih/nci/coppa/services/pa/grid" includes="**/*.java"/>
             <formatter type="plain"/>
             <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
         </checkstyle>
@@ -399,5 +399,9 @@
 
     <target name="runStudyProtocolClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyProtocolService Client">
         <run-client serviceendpointname="StudyProtocolService" class="gov.nih.nci.coppa.services.pa.studyprotocolservice.client.StudyProtocolServiceClient" debug-suspend="n"/>
+    </target>
+
+    <target name="runStudyRegulatoryAuthorityClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRegulatoryAuthorityService Client">
+        <run-client serviceendpointname="StudyRegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.client.StudyRegulatoryAuthorityServiceClient" debug-suspend="n"/>
     </target>
 </project>

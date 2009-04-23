@@ -91,16 +91,12 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
  * Transforms StudyProtocol instances.
  */
 public final class StudyProtocolTransformer extends AbstractStudyProtocolTransformer<StudyProtocol, StudyProtocolDTO>
-    implements Transformer<StudyProtocol, StudyProtocolDTO> {
+        implements Transformer<StudyProtocol, StudyProtocolDTO> {
 
     /**
      * Public singleton.
      */
     public static final StudyProtocolTransformer INSTANCE = new StudyProtocolTransformer();
-
-    private StudyProtocolTransformer() {
-        super();
-    }
 
     /**
      * {@inheritDoc}

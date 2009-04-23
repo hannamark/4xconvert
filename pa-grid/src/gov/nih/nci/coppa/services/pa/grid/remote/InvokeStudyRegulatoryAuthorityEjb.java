@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The PA Grid
+ * source code form and machine readable, binary, object code form. The PAServices
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This PA Grid Software License (the License) is between NCI and You. You (or
+ * This PAServices Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the PA Grid Software to (i) use, install, access, operate,
+ * its rights in the PAServices Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the PA Grid Software; (ii) distribute and
- * have distributed to and by third parties the PA Grid Software and any
+ * and prepare derivative works of the PAServices Software; (ii) distribute and
+ * have distributed to and by third parties the PAServices Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,83 +80,68 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.grid.dto.pa;
+package gov.nih.nci.coppa.services.pa.grid.remote;
 
-import gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol;
-import gov.nih.nci.coppa.services.pa.grid.dto.CDTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.DtoTransformException;
-import gov.nih.nci.coppa.services.pa.grid.dto.INTTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.STTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 
 /**
- * Transforms ObservationalStudyProtocol instances.
+ * Wrapper class for invoking the StudyRegulatoryAuthorityService remote EJB.
+ * @author Steve Lustbader
  */
-public final class ObservationalStudyProtocolTransformer extends
-        AbstractStudyProtocolTransformer<ObservationalStudyProtocol, ObservationalStudyProtocolDTO> implements
-        Transformer<ObservationalStudyProtocol, ObservationalStudyProtocolDTO> {
+public class InvokeStudyRegulatoryAuthorityEjb implements StudyRegulatoryAuthorityServiceRemote {
 
-    /**
-     * Public singleton.
-     */
-    public static final ObservationalStudyProtocolTransformer INSTANCE = new ObservationalStudyProtocolTransformer();
+    ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected ObservationalStudyProtocol newXml() {
-        return new ObservationalStudyProtocol();
+    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+        try {
+            locator.getStudyRegulatoryAuthorityService().copy(fromStudyProtocolIi, toStudyProtocolIi);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected ObservationalStudyProtocolDTO newDto() {
-        return new ObservationalStudyProtocolDTO();
+    public StudyRegulatoryAuthorityDTO create(StudyRegulatoryAuthorityDTO sraDTO) throws PAException {
+        try {
+            StudyRegulatoryAuthorityDTO result = locator.getStudyRegulatoryAuthorityService().create(sraDTO);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public ObservationalStudyProtocolDTO toDto(ObservationalStudyProtocol input) throws DtoTransformException {
-        if (input == null) {
-            return null;
+    public StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        try {
+            StudyRegulatoryAuthorityDTO result = locator.getStudyRegulatoryAuthorityService().getByStudyProtocol(
+                    studyProtocolIi);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
         }
 
-        ObservationalStudyProtocolDTO result = transformBaseDto(input);
-        result.setBiospecimenDescription(STTransformer.INSTANCE.toDto(input.getBiospecimenDescription()));
-        result.setBiospecimenRetentionCode(CDTransformer.INSTANCE.toDto(input.getBiospecimenRetentionCode()));
-        result.setNumberOfGroups(INTTransformer.INSTANCE.toDto(input.getNumberOfGroups()));
-        result.setSamplingMethodCode(CDTransformer.INSTANCE.toDto(input.getSamplingMethodCode()));
-        result.setStudyModelCode(CDTransformer.INSTANCE.toDto(input.getStudyModelCode()));
-        result.setStudyModelOtherText(STTransformer.INSTANCE.toDto(input.getStudyModelOtherText()));
-        result.setTimePerspectiveCode(CDTransformer.INSTANCE.toDto(input.getTimePerspectiveCode()));
-        result.setTimePerspectiveOtherText(STTransformer.INSTANCE.toDto(input.getTimePerspectiveOtherText()));
-        result.setStudyPopulationDescription(STTransformer.INSTANCE.toDto(input.getStudyPopulationDescription()));
-
-        return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public ObservationalStudyProtocol toXml(ObservationalStudyProtocolDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
+    public StudyRegulatoryAuthorityDTO update(StudyRegulatoryAuthorityDTO sraDTO) throws PAException {
+        try {
+            StudyRegulatoryAuthorityDTO result = locator.getStudyRegulatoryAuthorityService().update(sraDTO);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
         }
-        ObservationalStudyProtocol result = transformBaseXml(input);
-        result.setBiospecimenDescription(STTransformer.INSTANCE.toXml(input.getBiospecimenDescription()));
-        result.setBiospecimenRetentionCode(CDTransformer.INSTANCE.toXml(input.getBiospecimenRetentionCode()));
-        result.setNumberOfGroups(INTTransformer.INSTANCE.toXml(input.getNumberOfGroups()));
-        result.setSamplingMethodCode(CDTransformer.INSTANCE.toXml(input.getSamplingMethodCode()));
-        result.setStudyModelCode(CDTransformer.INSTANCE.toXml(input.getStudyModelCode()));
-        result.setStudyModelOtherText(STTransformer.INSTANCE.toXml(input.getStudyModelOtherText()));
-        result.setTimePerspectiveCode(CDTransformer.INSTANCE.toXml(input.getTimePerspectiveCode()));
-        result.setTimePerspectiveOtherText(STTransformer.INSTANCE.toXml(input.getTimePerspectiveOtherText()));
-        result.setStudyPopulationDescription(STTransformer.INSTANCE.toXml(input.getStudyPopulationDescription()));
-        return result;
     }
+
 }

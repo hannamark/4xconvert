@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 import javax.naming.NamingException;
@@ -22,7 +23,7 @@ public interface ServiceLocator {
 
     /**
      * @return the remote StudyProtocol service
-     * @throws NamingException if unbale to lookup
+     * @throws NamingException if unable to lookup
      */
     StudyProtocolServiceRemote getStudyProtocolService() throws NamingException;
 
@@ -32,4 +33,13 @@ public interface ServiceLocator {
      * @throws NamingException if unable to lookup
      */
     StudyResourcingServiceRemote getStudyResourcingService() throws NamingException;
+
+    /**
+     * Gets the StudyRegulatoryAuthority service.
+     * @return the remote StudyRegulatoryAuthorityService
+     * @throws NamingException if unable to lookup
+     */
+    StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException;
+
+
 }

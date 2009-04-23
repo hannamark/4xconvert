@@ -79,11 +79,11 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
 
     private static void getById(StudyResourcingServiceClient client) throws RemoteException, PAFault {
         Id id = new Id();
-          id.setRoot(IiConverter.STUDY_RESOURCING_ROOT);
-          id.setIdentifierName(IiConverter.STUDY_RESOURCING_IDENTIFIER_NAME);
-          id.setExtension("27445");
-          StudyResourcing result = client.getStudyResourceByID(id);
-          System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        id.setRoot(IiConverter.STUDY_RESOURCING_ROOT);
+        id.setIdentifierName(IiConverter.STUDY_RESOURCING_IDENTIFIER_NAME);
+        id.setExtension("27445");
+        StudyResourcing result = client.getStudyResourceByID(id);
+        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
     private static void getSummaryByProtocolId(StudyResourcingServiceClient client) throws RemoteException, PAFault {
