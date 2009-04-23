@@ -84,6 +84,9 @@
    <pa:failureMessage/>
     <s:form >
     <s:actionerror/> 
+     <s:hidden name="gtdDTO.submissionNumber" id="gtdDTO.submissionNumber"/>
+     <s:hidden name="gtdDTO.studyProtocolId" id="gtdDTO.studyProtocolId"/>
+
      <h2>Trial Details</h2>
     <table class="form">
     <tr>
@@ -200,8 +203,33 @@
         </td>
         
     </tr>
+    <c:if test="${gtdDTO.submissionNumber > 1}">
+    <tr>
+        <th colspan="2"> Amendment Information </th>
+    </tr>
 
-    
+     <tr>
+          <td scope="row" class="label">
+               <label for="amendmentReasonCode">
+                <fmt:message key="studyProtocol.amendmentReasonCodeValues"/>
+                <span class="required">*</span>
+               </label>
+          </td>
+          <s:set name="amendmentReasonCodeValues" value="@gov.nih.nci.pa.enums.AmendmentReasonCode@getDisplayNames()" />
+          <td class="value">
+            <s:select headerKey="" headerValue="" 
+                name="gtdDTO.amendmentReasonCode" 
+                list="#amendmentReasonCodeValues"  
+                value="gtdDTO.amendmentReasonCode" 
+                cssStyle="width:206px" />
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                        <s:param>gtdDTO.amendmentReasonCode</s:param>
+                    </s:fielderror>                            
+                </span>
+          </td>                                 
+     </tr>    
+</c:if>    
     </table>  
          <div class="actionsrow">
             <del class="btnwrapper">

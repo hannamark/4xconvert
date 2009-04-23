@@ -117,9 +117,10 @@ public interface MailManagerService {
     /**
      * 
      * @param studyProtocolIi ii
+     * @param rejectReason re
      * @throws PAException ex
      */
-    void sendAmendRejectEmail(Ii studyProtocolIi) throws PAException;
+    void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason) throws PAException;
     
     /**
      * 

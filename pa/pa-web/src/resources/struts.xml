@@ -214,6 +214,9 @@
         <action name="trialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
           <result name="edit">/WEB-INF/jsp/trialValidation.jsp</result>
           <result name="rejectReason">/WEB-INF/jsp/trialValidationReject.jsp</result>
+          <result name="amend_reject" type="redirect-action">
+            <param name="actionName">studyProtocol.action</param>
+          </result>
         </action>
         <action name="ajaxTrialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
           <result name="display_lead_org">/WEB-INF/jsp/nodecorate/leadOrg.jsp</result>

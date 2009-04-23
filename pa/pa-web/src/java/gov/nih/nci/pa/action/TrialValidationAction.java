@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -108,6 +109,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -116,6 +118,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -193,9 +196,15 @@ public class TrialValidationAction extends ActionSupport {
     /**
      *
      * @return String
+     * @throws PAException ex
      */
-    public String accept() {
+    public String accept() throws PAException {
         enforceBusinessRules();
+        //check if submission number is greater than 1 then it is amend
+        if (isTrialForAmendment(gtdDTO.getSubmissionNumber())
+                && PAUtil.isEmpty(gtdDTO.getAmendmentReasonCode())) {
+           addFieldError("gtdDTO.amendmentReasonCode", "Amendment Reason Code is Required.");
+        }
         if (hasFieldErrors()) {
             return EDIT;
         }
@@ -204,6 +213,12 @@ public class TrialValidationAction extends ActionSupport {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
         ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                 setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
+        //send mail only if the trial is Amended
+        if (isTrialForAmendment(gtdDTO.getSubmissionNumber())) {
+            //send mail
+            PoPaServiceBeanLookup.getMailManagerService()
+            .sendAmendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
+        }
         return EDIT;
     }
 
@@ -217,24 +232,42 @@ public class TrialValidationAction extends ActionSupport {
             return EDIT;
         }
         save();
+        ServletActionContext.getRequest().getSession().setAttribute("submissionNumber", gtdDTO.getSubmissionNumber());
         return "rejectReason";
     }
 
     /**
      *  @return String
+     * @throws PAException ex
      */
-    public String rejectReason() {
+    public String rejectReason() throws PAException {
         if (PAUtil.isEmpty(gtdDTO.getCommentText())) {
             addFieldError("gtdDTO.commentText", getText("Rejection Reason must be Entered"));
         }
         if (hasFieldErrors()) {
             return "rejectReason";
         }
+        String submissionNo = "submissionNumber";
+        Integer intSubNo = (Integer) ServletActionContext.getRequest().getSession().getAttribute(submissionNo); 
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                Constants.STUDY_PROTOCOL_II);
+        //if trial is amend then hard delete 
+        if (isTrialForAmendment(intSubNo)) {
+            //send mail
+            PoPaServiceBeanLookup.getMailManagerService()
+            .sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
+            //
+            PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
+            ServletActionContext.getRequest().getSession().removeAttribute(submissionNo);
+            ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
+            ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PROTOCOL_II);
+            ServletActionContext.getRequest().getSession().removeAttribute(Constants.DOC_WFS_MENU); 
+            return "amend_reject"; 
+        } else {
         createDocumentWfStatus(DocumentWorkflowStatusCode.REJECTED);
         ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                 setMenuLinks(DocumentWorkflowStatusCode.REJECTED));
-        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                Constants.STUDY_PROTOCOL_II);
+        
         try {
             PaRegistry.getMailManagerService().sendRejectionEmail(studyProtocolIi);
         } catch (PAException e) {
@@ -242,7 +275,9 @@ public class TrialValidationAction extends ActionSupport {
         }
         query();
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Rejected");
+        ServletActionContext.getRequest().getSession().removeAttribute(submissionNo);
         return EDIT;
+        }
     }
 
 
@@ -392,10 +427,13 @@ public class TrialValidationAction extends ActionSupport {
         gtdDTO.setPhaseOtherText(spDTO.getPhaseOtherText().getValue());
         gtdDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         gtdDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
+        gtdDTO.setSubmissionNumber(IntConverter.convertToInteger(spDTO.getSubmissionNumber()));
+        gtdDTO.setAmendmentReasonCode(CdConverter.convertCdToString(spDTO.getAmendmentReasonCode()));
     }
 
     private void copy(StudyProtocolQueryDTO spqDTO) {
         gtdDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
+        gtdDTO.setStudyProtocolId(spqDTO.getStudyProtocolId().toString());
     }
 
     private void copyLO(Organization o) {
@@ -493,6 +531,8 @@ public class TrialValidationAction extends ActionSupport {
         spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO
                 .getPrimaryPurposeOtherText(), OTHER_TEXT)));
         spDTO.setPhaseOtherText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPhaseOtherText(), OTHER_TEXT)));
+        spDTO.setAmendmentReasonCode(CdConverter.convertToCd(AmendmentReasonCode.getByCode(
+                gtdDTO.getAmendmentReasonCode())));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
 
@@ -824,5 +864,11 @@ public class TrialValidationAction extends ActionSupport {
      */
     public void setCountryList(List<Country> countryList) {
         this.countryList = countryList;
+    }
+    private boolean isTrialForAmendment(Integer submissionNumber) {
+        if (submissionNumber > 1) {
+            return true;
+        }
+        return false;
     }
 }

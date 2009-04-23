@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.dto;
 
 
+
 /**
  * this class holds the general information of protocol.
  * @author Naveen Amiruddin
@@ -124,7 +125,11 @@ public class GeneralTrialDesignWebDTO {
     private String centralContactIdentifier;
     private String nctIdentifier;
     private String commentText;
-    
+    private String amendmentNumber;
+    private String amendmentDate;
+    private String amendmentReasonCode;
+    private Integer submissionNumber;
+    private String studyProtocolId;
     /**
      * 
      * @return acronym acronym
@@ -593,6 +598,67 @@ public class GeneralTrialDesignWebDTO {
      */
     public void setCommentText(String commentText) {
       this.commentText = commentText;
+    }
+    /**
+     * @return the amendmentNumber
+     */
+    public String getAmendmentNumber() {
+        return amendmentNumber;
+    }
+    /**
+     * @param amendmentNumber the amendmentNumber to set
+     */
+    public void setAmendmentNumber(String amendmentNumber) {
+        this.amendmentNumber = amendmentNumber;
+    }
+    /**
+     * @return the amendmentDate
+     */
+    public String getAmendmentDate() {
+        return amendmentDate;
+    }
+    /**
+     * @param amendmentDate the amendmentDate to set
+     */
+    public void setAmendmentDate(String amendmentDate) {
+        this.amendmentDate = amendmentDate;
+    }
+    /**
+     * @return the amendmentReasonCode
+     */
+    public String getAmendmentReasonCode() {
+        return amendmentReasonCode;
+    }
+    /**
+     * @param amendmentReasonCode the amendmentReasonCode to set
+     */
+    public void setAmendmentReasonCode(String amendmentReasonCode) {
+        this.amendmentReasonCode = amendmentReasonCode;
+    }
+  
+    /**
+     * @return the submissionNumber
+     */
+    public Integer getSubmissionNumber() {
+        return submissionNumber;
+    }
+    /**
+     * @param submissionNumber the submissionNumber to set
+     */
+    public void setSubmissionNumber(Integer submissionNumber) {
+        this.submissionNumber = submissionNumber;
+    }
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
     
 }

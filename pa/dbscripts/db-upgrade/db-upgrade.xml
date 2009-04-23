@@ -56,11 +56,7 @@
         <comment>execute studyProtocolUpdate.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyProtocolUpdate.sql"/>
     </changeSet>
-    <changeSet id="12" author="Vrushali">
-        <comment>execute pa_properties.sql</comment>
-        <sqlFile path="@db-upgrade.run.dir@/pa_properties.sql"/>
-    </changeSet>    
-    <changeSet id="13" author="Naveen">
+    <changeSet id="12" author="Naveen">
         <comment>execute studyRelationship.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyRelationship.sql"/>
     </changeSet>    

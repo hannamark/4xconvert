@@ -338,13 +338,16 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
 
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.accept.body");
-
+        String amendNumber = "";
+        if (spDTO.getAmendmentNumber() != null) {
+            amendNumber = spDTO.getAmendmentNumber();
+        }
         mailBody = mailBody.replace(submitterName,
                   user.getFirstName() + " " + user.getLastName());
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
-        mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
+        mailBody = mailBody.replace("${amendmentNumber}", amendNumber);
         mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
 
         sendMail(spDTO.getUserLastCreated(),
@@ -376,9 +379,10 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
     /**
      * Sends an email to submitter when Amendment to trial is rejected by CTRO staff.
      * @param studyProtocolIi ii
+     * @param rejectReason rr
      * @throws PAException ex
      */
-    public void sendAmendRejectEmail(Ii studyProtocolIi) throws PAException {
+    public void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason) throws PAException {
         LOG.info("Entering send Amend reject Email");
         StudyProtocolQueryDTO spDTO = protocolQueryService
                       .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
@@ -386,15 +390,18 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
 
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
-
+        String amendNumber = "";
+        if (spDTO.getAmendmentNumber() != null) {
+            amendNumber = spDTO.getAmendmentNumber();
+        }
         mailBody = mailBody.replace(submitterName,
                   user.getFirstName() + " " + user.getLastName());
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
-        mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
+        mailBody = mailBody.replace("${amendmentNumber}", amendNumber);
         mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
-
+        mailBody = mailBody.replace("${reasonForRejection}", rejectReason);
         sendMail(spDTO.getUserLastCreated(),
                   lookUpTableService.getPropertyValue("trial.amend.reject.subject"),
                   mailBody);

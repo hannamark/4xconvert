@@ -78,3 +78,74 @@ Please see attached report for more details.
 Total Trials Submitted: ${totalCount}
 Successfully Registered: ${successCount}
 Failed: ${failedCount}');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(14,'trial.amend.subject',
+'NCI Clinical Trials Reporting Program (CTRP) Trial Amendment Acknowledgement');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(15,'trial.amend.body',
+'Date: ${CurrentDate}
+
+Dear ${SubmitterName},
+
+The amendment for NCI Trial Identifier ${nciTrialIdentifier} has been submitted.
+
+Amendment Information 
+Amendment Number: ${amendmentNumber}
+Amendment Date:   ${amendmentDate}
+
+The amendment will be processed by CTRO staff. You will be notified about the result of this submission once our staff has reviewed the amendment.
+
+If you have questions on this or other CTRP topics, please contact us at ncictro@mail.nih.gov
+ 
+Thank you for submitting your trial amendment to CTRP.');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(16,'trial.amend.accept.subject',
+'NCI Clinical Trials Reporting Program (CTRP) Trial  Amendment Acceptance');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(17,'trial.amend.accept.body',
+'Date: ${CurrentDate}
+
+Dear ${SubmitterName},
+
+The amendment for the following trial was accepted by the NCI Clinical Trials Reporting Office (CTRO)
+
+NCI Trial Identifier: ${nciTrialIdentifier}
+
+Title: ${title}
+
+Amendment Number: ${amendmentNumber}
+
+Amendment Date: ${amendmentDate}.
+
+Amendment will now be abstracted by the CTRO staff. Upon completion, the CTRO will e-mail you a new Trial Summary Report listing key data elements that have been abstracted from the amended trial protocol or other supported documents.  
+At that time, the CTRO will request that you review the Trial Summary Report for accuracy and respond with any changes that may be required. 
+ 
+If you have questions on this or other CTRP topics, please contact us at ncictro@mail.nih.gov
+ 
+Thank you for registering amendment to your trial with NCI Clinical Trials Reporting Program (CTRP).
+');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(18,'trial.amend.reject.subject',
+'NCI Clinical Trials Reporting Program (CTRP) Trial Amendment Rejection Notice.');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(19,'trial.amend.reject.body',
+'Date: ${CurrentDate}
+
+Dear ${SubmitterName},
+
+The amendment for the following trial was submitted to the NCI Clinical Trials Reporting Office (CTRO) 
+
+NCI Trial Identifier:  ${nciTrialIdentifier}
+
+Title: ${title}
+
+Amendment Number: ${amendmentNumber}
+
+Amendment Date: ${amendmentDate}.
+
+This amendment cannot be accepted by the CTRO for the following reasons: ${reasonForRejection}
+
+If you feel there has been an error in rejecting this trial amendment, or if you have additional questions on this or other CTRP topics, please contact us at ncictro@mail.nih.gov
+
+Thank you for your participation in NCI Clinical Trials Reporting Program (CTRP).
+');
