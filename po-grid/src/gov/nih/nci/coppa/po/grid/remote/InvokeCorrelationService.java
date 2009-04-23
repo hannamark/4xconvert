@@ -10,14 +10,25 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ * @param <DTO> correlation DTO type
+ */
 public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationService<DTO> {
-    ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
     private final Class<DTO> type;
 
+    /**
+     * @param type correlation DTO class
+     */
     public InvokeCorrelationService(Class<DTO> type) {
         this.type = type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public Ii createCorrelation(DTO dto) throws EntityValidationException {
         try {
             Ii result = getLocator().getService(type).createCorrelation(dto);
@@ -29,6 +40,10 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public DTO getCorrelation(Ii id) throws NullifiedRoleException {
         try {
             DTO result = (DTO) getLocator().getService(type).getCorrelation(id);
@@ -40,6 +55,10 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public List<DTO> getCorrelations(Ii[] ids) throws NullifiedRoleException {
         try {
             List<DTO> results = getLocator().getService(type).getCorrelations(ids);
@@ -51,6 +70,10 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public List<DTO> search(DTO dto) {
         try {
             List<DTO> results = getLocator().getService(type).search(dto);
@@ -60,6 +83,10 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public void updateCorrelation(DTO proposedState) throws EntityValidationException {
         try {
             getLocator().getService(type).updateCorrelation(proposedState);
@@ -70,6 +97,9 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void updateCorrelationStatus(Ii target, Cd status) throws EntityValidationException {
         try {
             getLocator().getService(type).updateCorrelationStatus(target, status);
@@ -81,6 +111,10 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public Map<String, String[]> validate(DTO dto) {
         try {
             Map<String, String[]> results = getLocator().getService(type).validate(dto);
@@ -90,6 +124,9 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ServiceLocator getLocator() {
         return locator;
     }

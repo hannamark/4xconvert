@@ -33,12 +33,14 @@ import javax.naming.NamingException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class JNDIServiceLocator implements ServiceLocator {
-    private static final Logger logger = LogManager.getLogger(JNDIServiceLocator.class);
+/**
+ * Service locator that uses JNDI to look up services.
+ */
+public final class JNDIServiceLocator implements ServiceLocator {
+    private static final Logger LOG = LogManager.getLogger(JNDIServiceLocator.class);
     private static final int MAX_RETRIES = 2;
     private static JNDIServiceLocator instance = new JNDIServiceLocator();
     private InitialContext context;
-    @SuppressWarnings("unchecked")
     private static Map<Class<?>, Method> values = new HashMap<Class<?>, Method>();
 
     static {
@@ -70,11 +72,15 @@ public class JNDIServiceLocator implements ServiceLocator {
             props.load(JNDIServiceLocator.class.getClassLoader().getResourceAsStream("jndi.properties"));
             context = new InitialContext(props);
         } catch (Exception e) {
-            logger.error("Unable to load jndi properties.", e);
+            LOG.error("Unable to load jndi properties.", e);
             throw new RuntimeException("Unable to load jndi properties.", e);
         }
     }
 
+    /**
+     * Get the singleton instance of the service locator.
+     * @return the singleton locator
+     */
     public static JNDIServiceLocator getInstance() {
         return instance;
     }
@@ -94,65 +100,98 @@ public class JNDIServiceLocator implements ServiceLocator {
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public PersonEntityServiceRemote getPersonService() throws NamingException {
         PersonEntityServiceRemote object = (PersonEntityServiceRemote) lookup("po/PersonEntityServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public OrganizationEntityServiceRemote getOrganizationService() throws NamingException {
         OrganizationEntityServiceRemote object = (OrganizationEntityServiceRemote)
             lookup("po/OrganizationEntityServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityService() throws NamingException {
         HealthCareFacilityCorrelationServiceRemote object = (HealthCareFacilityCorrelationServiceRemote)
             lookup("po/HealthCareFacilityCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffService() throws NamingException {
         ClinicalResearchStaffCorrelationServiceRemote object = (ClinicalResearchStaffCorrelationServiceRemote)
             lookup("po/ClinicalResearchStaffCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public HealthCareProviderCorrelationServiceRemote getHealthCareProviderService() throws NamingException {
         HealthCareProviderCorrelationServiceRemote object = (HealthCareProviderCorrelationServiceRemote)
             lookup("po/HealthCareProviderCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationService() throws NamingException {
         IdentifiedOrganizationCorrelationServiceRemote object = (IdentifiedOrganizationCorrelationServiceRemote)
             lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonService() throws NamingException {
         IdentifiedPersonCorrelationServiceRemote object = (IdentifiedPersonCorrelationServiceRemote)
             lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationService() throws NamingException {
         ResearchOrganizationCorrelationServiceRemote object = (ResearchOrganizationCorrelationServiceRemote)
             lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public OversightCommitteeCorrelationServiceRemote getOversightCommitteeService() throws NamingException {
         OversightCommitteeCorrelationServiceRemote object = (OversightCommitteeCorrelationServiceRemote)
             lookup("po/OversightCommitteeCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public OrganizationalContactCorrelationServiceRemote getOrganizationalContactService() throws NamingException {
         OrganizationalContactCorrelationServiceRemote object = (OrganizationalContactCorrelationServiceRemote)
             lookup("po/OrganizationalContactCorrelationServiceBean/remote");
         return object;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     public <Z extends PoDto> CorrelationService getService(Class<Z> type) throws NamingException {
         Method serviceMethod = values.get(type);

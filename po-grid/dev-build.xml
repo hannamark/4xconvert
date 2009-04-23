@@ -175,7 +175,7 @@
     <!-- Post Compile Build Target                                       -->
     <!-- ============================================================== -->
     <target name="postCompile">
-      <runtarget target="checkstyle"/>
+        <runtarget target="checkstyle"/>
         <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
         <copy toDir="${build.dest}" filtering="true" overwrite="true">
             <filterset begintoken="$${" endtoken="}" >
@@ -287,30 +287,28 @@
       </cobertura-instrument>
 
       <echo message="Test results dir: ${junit.results.dir}" />
-    <mkdir dir="${junit.results.dir}" />
-    <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="yes">
-        <sysproperty key="net.sourceforge.cobertura.datafile"
-            file="${basedir}/build/cobertura.ser" />
-        <classpath location="${build.dir}/intrumented" />
-        <classpath refid="test.run.classpath" />
-        <classpath refid="cobertura.classpath" />
-        <formatter type="xml" />
-            <formatter type="plain" />
-      <batchtest fork="yes" todir="${junit.results.dir}">
-        <fileset dir="${test.src.dir}">
-          <include name="**/Test*.java" />
-                                        <include name="**/*Test.java" />
-          <include name="**/*TestCase.java" />
-        </fileset>
-      </batchtest>
-    </junit>
+      <mkdir dir="${junit.results.dir}" />
+      <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="yes">
+          <sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/build/cobertura.ser" />
+          <classpath location="${build.dir}/intrumented" />
+          <classpath refid="test.run.classpath" />
+          <classpath refid="cobertura.classpath" />
+          <formatter type="xml" />
+          <formatter type="plain" />
+          <batchtest fork="yes" todir="${junit.results.dir}">
+              <fileset dir="${test.src.dir}">
+                  <include name="**/Test*.java" />
+                  <include name="**/*Test.java" />
+                  <include name="**/*TestCase.java" />
+              </fileset>
+          </batchtest>
+      </junit>
       <cobertura-report datafile="${basedir}/build/cobertura.ser"
-                   format="html"
-                  destdir="${build.dir}/cobertura"
-                  srcdir="${src.dir}" />
-      <cobertura-check datafile="${basedir}/build/cobertura.ser"
-          totalbranchrate="82"
-                 totallinerate="90"/> <!-- Increase these as unit tests are written -->
+                        format="html"
+                        destdir="${build.dir}/cobertura"
+                        srcdir="${src.dir}" />
+      <!-- Increase these as unit tests are written -->
+      <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="86" totallinerate="93"/>
   </target>
     <!--
         A note about this target: Checkstyle has a bug that requires exception classes to be on the execution
@@ -323,11 +321,12 @@
         <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
             <classpath>
                 <path location="${basedir}/build/classes"/>
-               <path refid="checkstyle.classpath" />
+                <path refid="checkstyle.classpath" />
             </classpath>
-            <fileset dir="src/gov/nih/nci/coppa/po/grid/dto/transform" includes="**/*.java"/>
-          <formatter type="plain"/>
-          <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
+            <!-- the above "ant compile checkstyle" trick doesn't seem to work for exception classes outside of this project, so exclude a few classes with that problem -->
+            <fileset dir="src/gov/nih/nci/coppa/po/grid" includes="**/*.java" excludes="remote/InvokeCorrelationService.java, remote/InvokeOrganizationEjb.java, remote/InvokePersonEjb.java, services/CorrelationGridService.java"/>
+            <formatter type="plain"/>
+            <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
         </checkstyle>
     </target>
 

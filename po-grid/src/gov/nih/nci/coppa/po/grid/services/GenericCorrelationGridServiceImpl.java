@@ -4,8 +4,6 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.StringMap;
-import gov.nih.nci.coppa.po.faults.EntityValidationFault;
-import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.dto.transform.CDTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.IITransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
@@ -26,7 +24,7 @@ import java.util.Map;
 
 /**
  * @author smatyas
- * 
+ *
  * @param <DTO> represents the xml element type
  * @param <XML> represents the DTO (remote-ejb) type
  */
@@ -75,7 +73,8 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     /**
      * {@inheritDoc}
      */
-    public Id create(XML object) throws RemoteException, EntityValidationFault {
+    @SuppressWarnings("unchecked")
+    public Id create(XML object) throws RemoteException {
         try {
             DTO dto = (DTO) getTransformer().toDto(object);
             Ii ii = getService().createCorrelation(dto);
@@ -90,10 +89,10 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public XML getById(Id id) throws RemoteException, NullifiedRoleFault {
+    public XML getById(Id id) throws RemoteException {
         try {
-            Ii ii_iso = IITransformer.INSTANCE.toDto(id);
-            DTO dto = (DTO) getService().getCorrelation(ii_iso);
+            Ii iiIso = IITransformer.INSTANCE.toDto(id);
+            DTO dto = (DTO) getService().getCorrelation(iiIso);
             XML result = (XML) getTransformer().toXml(dto);
             return result;
         } catch (Exception e) {
@@ -104,7 +103,8 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     /**
      * {@inheritDoc}
      */
-    public XML[] getByIds(Id[] id) throws RemoteException, NullifiedRoleFault {
+    @SuppressWarnings("unchecked")
+    public XML[] getByIds(Id[] id) throws RemoteException {
         try {
             Ii[] iis = IdArrayTransformer.INSTANCE.toDto(id);
             List<DTO> dtos = getService().getCorrelations(iis);
@@ -146,7 +146,8 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     /**
      * {@inheritDoc}
      */
-    public void update(XML object) throws RemoteException, EntityValidationFault {
+    @SuppressWarnings("unchecked")
+    public void update(XML object) throws RemoteException {
         try {
             DTO dto = (DTO) getTransformer().toDto(object);
             getService().updateCorrelation(dto);
@@ -159,7 +160,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
      * {@inheritDoc}
      */
     public void updateStatus(gov.nih.nci.coppa.po.Id targetId, gov.nih.nci.coppa.po.Cd statusCode)
-            throws RemoteException, EntityValidationFault {
+            throws RemoteException {
         try {
             Ii iiDto = IdTransformer.INSTANCE.toDto(targetId);
             Cd cdDto = CDTransformer.INSTANCE.toDto(statusCode);
@@ -172,6 +173,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public StringMap validate(XML object) throws RemoteException {
         try {
             DTO dto = (DTO) getTransformer().toDto(object);

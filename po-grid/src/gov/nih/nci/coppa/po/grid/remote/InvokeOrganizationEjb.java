@@ -10,13 +10,15 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
+/**
+ * Wrapper class to call the OrganizationService remote EJB.
+ */
 public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
-    static Logger logger = LogManager.getLogger(InvokeOrganizationEjb.class);
-    ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
+    /**
+     * {@inheritDoc}
+     */
     public List<OrganizationDTO> search(OrganizationDTO org) {
         try {
             return locator.getOrganizationService().search(org);
@@ -25,6 +27,9 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public OrganizationDTO getOrganization(Ii ii) throws NullifiedEntityException {
         try {
             return locator.getOrganizationService().getOrganization(ii);
@@ -35,6 +40,9 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Ii createOrganization(OrganizationDTO org) throws EntityValidationException {
         try {
             return locator.getOrganizationService().createOrganization(org);
@@ -45,6 +53,9 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
         try {
             locator.getOrganizationService().updateOrganization(proposedState);
@@ -55,6 +66,9 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         try {
             locator.getOrganizationService().updateOrganizationStatus(targetOrg, statusCode);
@@ -65,6 +79,9 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String[]> validate(OrganizationDTO org) {
         try {
             return locator.getOrganizationService().validate(org);

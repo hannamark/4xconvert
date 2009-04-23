@@ -10,14 +10,16 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
+/**
+ * Wrapper to call remote Person EJB.
+ */
 public class InvokePersonEjb implements PersonEntityServiceRemote {
 
-    static Logger logger = LogManager.getLogger(InvokePersonEjb.class);
-    ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
+    /**
+     * {@inheritDoc}
+     */
     public List<PersonDTO> search(PersonDTO person) {
         try {
             List<PersonDTO> persons = locator.getPersonService().search(person);
@@ -27,6 +29,9 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public PersonDTO getPerson(Ii ii) throws NullifiedEntityException {
         try {
             PersonDTO person = locator.getPersonService().getPerson(ii);
@@ -38,6 +43,9 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Ii createPerson(PersonDTO person) throws EntityValidationException {
         try {
             return locator.getPersonService().createPerson(person);
@@ -48,6 +56,9 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void updatePerson(PersonDTO proposedState) throws EntityValidationException {
         try {
             locator.getPersonService().updatePerson(proposedState);
@@ -58,6 +69,9 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void updatePersonStatus(Ii targetPer, Cd statusCode) throws EntityValidationException {
         try {
             locator.getPersonService().updatePersonStatus(targetPer, statusCode);
@@ -68,6 +82,9 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String[]> validate(PersonDTO person) {
         try {
             return locator.getPersonService().validate(person);
