@@ -94,6 +94,8 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,19 +105,35 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+// TODO: Auto-generated Javadoc
 /**
-* @author Anupama Sharma
-* @since 04/16/2009
-*/
+ * The Class TrialHistoryAction.
+ * 
+ * @author Anupama Sharma
+ * @since 04/16/2009
+ */
 public final class TrialHistoryAction extends AbstractListEditAction  implements
 ServletResponseAware {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1876567890L;
   
+    /** The trial history web dto. */
     private List<TrialHistoryWebDTO> trialHistoryWebDTO;
+    
+    /** The trial history wb dto. */
     private TrialHistoryWebDTO trialHistoryWbDto;
+    
+    /** The study protocolii. */
     private String studyProtocolii;
+    
+    /** The docii. */
     private String docii;
+    
+    /** The doc file name. */
     private String docFileName;
+    
+    /** The servlet response. */
     private HttpServletResponse servletResponse;
     
    
@@ -123,8 +141,10 @@ ServletResponseAware {
 
 
 /**
-* @return the studyProtocolii
-*/
+ * Gets the study protocolii.
+ * 
+ * @return the studyProtocolii
+ */
 public String getStudyProtocolii() {
 return studyProtocolii;
 }
@@ -132,8 +152,10 @@ return studyProtocolii;
 
 
 /**
-* @param studyProtocolii the studyProtocolii to set
-*/
+ * Sets the study protocolii.
+ * 
+ * @param studyProtocolii the studyProtocolii to set
+ */
 public void setStudyProtocolii(String studyProtocolii) {
 this.studyProtocolii = studyProtocolii;
 }
@@ -141,8 +163,10 @@ this.studyProtocolii = studyProtocolii;
 
 
 /**
-* @return the docii
-*/
+ * Gets the docii.
+ * 
+ * @return the docii
+ */
 public String getDocii() {
 return docii;
 }
@@ -150,8 +174,10 @@ return docii;
 
 
 /**
-* @param docii the docii to set
-*/
+ * Sets the docii.
+ * 
+ * @param docii the docii to set
+ */
 public void setDocii(String docii) {
 this.docii = docii;
 }
@@ -159,8 +185,10 @@ this.docii = docii;
 
 
 /**
-* @return the docFileName
-*/
+ * Gets the doc file name.
+ * 
+ * @return the docFileName
+ */
 public String getDocFileName() {
 return docFileName;
 }
@@ -168,8 +196,10 @@ return docFileName;
 
 
 /**
-* @param docFileName the docFileName to set
-*/
+ * Sets the doc file name.
+ * 
+ * @param docFileName the docFileName to set
+ */
 public void setDocFileName(String docFileName) {
 this.docFileName = docFileName;
 }
@@ -177,8 +207,10 @@ this.docFileName = docFileName;
 
 
 /**
-* @return the servletResponse
-*/
+ * Gets the servlet response.
+ * 
+ * @return the servletResponse
+ */
 public HttpServletResponse getServletResponse() {
 return servletResponse;
 }
@@ -186,6 +218,8 @@ return servletResponse;
 
 
    /**
+    * Sets the servlet response.
+    * 
     * @param servletResponse the servletResponse to set
     */
     public void setServletResponse(HttpServletResponse servletResponse) {
@@ -195,6 +229,8 @@ return servletResponse;
 
 
     /**
+     * Load list form.
+     * 
      * @throws PAException exception
      */
     @Override
@@ -218,9 +254,13 @@ return servletResponse;
     
     
     /**
-     * @param sp
-     * @return
-     * @throws PAException
+     * Gets the documents.
+     * 
+     * @param sp the sp
+     * 
+     * @return the documents
+     * 
+     * @throws PAException the PA exception
      */
     private String getDocuments(StudyProtocolDTO sp)throws PAException {
     StringBuffer documents = new StringBuffer();
@@ -295,7 +335,10 @@ return servletResponse;
     }
    
     /**
+     * Update.
+     * 
      * @return action result
+     * 
      * @throws PAException exception
      */
     @Override
@@ -319,6 +362,8 @@ return servletResponse;
     }
 
     /**
+     * Load edit form.
+     * 
      * @throws PAException exception
      */
     @Override
@@ -332,6 +377,9 @@ return servletResponse;
     }
 
 
+    /**
+     * Enforce business rules.
+     */
     private void enforceBusinessRules() {
         if (PAUtil.isEmpty(trialHistoryWbDto.getAmendmentDate())) {
           addFieldError("trialHistoryWbDto.amendmentDate", getText("Amendment Date must be Entered/Selected"));
@@ -339,23 +387,64 @@ return servletResponse;
         if (PAUtil.isEmpty(trialHistoryWbDto.getAmendmentReasonCode())) {
           addFieldError("trialHistoryWbDTO.amendmentReasonCode", getText("Reason code must be Selected"));
         }
-    } 
+        if (!isValidDate(trialHistoryWbDto.getAmendmentDate())) {
+           addFieldError("trialHistoryWbDto.amendmentDate", 
+                  getText("Please enter the Date in the correct format MM/dd/yyyy"));
+        }
+    }
+    
+    
+    /**
+     * Checks if String is valid date.
+     * 
+     * @param dateStr the date str
+     * 
+     * @return true, if is valid date
+     */
+    private boolean isValidDate(String dateStr){
+    {
+      if (dateStr == null) {
+         return false;
+      }
+      //set the format to use as a constructor argument
+      SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+      if (dateStr.trim().length() != dateFormat.toPattern().length()) {
+        return false;
+      }
+      dateFormat.setLenient(false);
+      try {
+        //parse the dateStr parameter
+        dateFormat.parse(dateStr.trim());
+        }
+       catch (ParseException pe) {
+         return false;
+       }
+         return true;
+    }
+    }
+
 /**
-* @return the trialHistoryWebDTO
-*/
+ * Gets the trial history web dto.
+ * 
+ * @return the trialHistoryWebDTO
+ */
 public List<TrialHistoryWebDTO> getTrialHistoryWebDTO() {
 return trialHistoryWebDTO;
 }
 
 
 /**
-* @param trialHistoryWebDTO the trialHistoryWebDTO to set
-*/
+ * Sets the trial history web dto.
+ * 
+ * @param trialHistoryWebDTO the trialHistoryWebDTO to set
+ */
 public void setTrialHistoryWebDTO(List<TrialHistoryWebDTO> trialHistoryWebDTO) {
 this.trialHistoryWebDTO = trialHistoryWebDTO;
 }
 
 /**
+ * Gets the trial history wb dto.
+ * 
  * @return the trialHistoryWbDto
  */
 public TrialHistoryWebDTO getTrialHistoryWbDto() {
@@ -364,6 +453,8 @@ return trialHistoryWbDto;
 
 
 /**
+ * Sets the trial history wb dto.
+ * 
  * @param trialHistoryWbDto the trialHistoryWbDto to set
  */
 public void setTrialHistoryWbDto(TrialHistoryWebDTO trialHistoryWbDto) {
