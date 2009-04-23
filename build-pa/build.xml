@@ -484,7 +484,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 	
 	<!-- Build pa-grid sub-project produces project level artifact -->
-	<target name="build:pa-grid" depends="init">
+	<target name="build:pa-grid" depends="init" unless="exclude.pa-grid">
 		<fail unless="jboss.server.hostname"/>
 		<fail unless="jboss.server.port"/>
 
@@ -600,15 +600,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Creates the installer distribution used by automated or manual remote installations -->
     <target name="dist:installer" depends="dist:installer:prep">
         <delete file="${dist.dir}/${pa-ear.install.zip.file}"/>
-    <!-- Set environment name to external -->
-    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-    <obfuscate-properties-file
-        properties.file="${dist.exploded.dir}/install.properties"
-        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-        optional.property.list="ldap.url,ldap.basedn"
-        delete.property.list="exclude.jboss.backup"
-        />
+        <delete file="${dist.dir}/${pa-grid.install.zip.file}"/>
+	    <!-- Set environment name to external -->
+	    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+	    <obfuscate-properties-file
+	        properties.file="${dist.exploded.dir}/install.properties"
+	        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+	        optional.property.list="ldap.url,ldap.basedn"
+	        delete.property.list="exclude.jboss.backup"
+	        />
         <zip destfile="${dist.dir}/${pa-ear.install.zip.file}" basedir="${dist.exploded.dir}"/>
+    	<zip destfile="${dist.dir}/${pa-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**, ${db.dist.relative.dir}/**"/>
     </target>
 
     <!-- Copies install time resources into distribution tree -->
@@ -661,7 +663,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	    <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
     	
         <zip destfile="${dist.dir}/${pa-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}"/>
-    	<zip destfile="${dist.dir}/${pa-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db-upgrade.dist.relative.dir}/**"/>
+    	<zip destfile="${dist.dir}/${pa-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
     </target>
 
 
@@ -712,7 +714,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	            />
 		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
 	</target>
-	<target name="remote:install:pa-grid">
+	<target name="remote:install:pa-grid" unless="exclude.pa-grid">
 		<!-- install pa-grid only-->
 		<deploy-files2
          ssh.user="${pagrid.ssh.server.username}"
@@ -739,33 +741,33 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		">
 	</target>
 
-	<target name="remote:upgrade" depends="remote:upgrade:po-ear,remote:upgrade:po-grid">
+	<target name="remote:upgrade" depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid">
 	</target>
 
-	<target name="remote:upgrade:po-ear">
-		<!-- install po-ear only-->
+	<target name="remote:upgrade:pa-ear">
+		<!-- install pa-ear only-->
 		<deploy-files2
-             dist.file="${po-ear.upgrade.zip.file}"
+             dist.file="${pa-ear.upgrade.zip.file}"
              />
-		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true ${upgrade.target}" />
+		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-grid=true ${upgrade.target}" />
 	</target>
 
-	<target name="remote:upgrade:po-grid">
-		<!-- install po-grid only-->
+	<target name="remote:upgrade:pa-grid" unless="exclude.pa-grid">
+		<!-- install pa-grid only-->
 		<deploy-files2
              ssh.user="${pagrid.ssh.server.username}"
              ssh.host="${pagrid.ssh.server.hostname}"
              ssh.port="${pagrid.ssh.port}"
              ssh.key.file="${pagrid.ssh.key.file}"
              remote.directory.property.name="pagrid.ssh.dir.temp"
-             dist.file="${po-grid.upgrade.zip.file}"
+             dist.file="${pa-grid.upgrade.zip.file}"
              />
 		<remote-ssh
          	remoteSshUser="${pagrid.ssh.server.username}"
          	remoteSshHost="${pagrid.ssh.server.hostname}"
             remoteSshPort="${pagrid.ssh.port}"
          	remoteSshKeyfile="${pagrid.ssh.key.file}"
-         	remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${upgrade.target}" />
+         	remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${upgrade.target}" />
 	</target>
     <target name="usage" description="Explains how to use this build script">
         <echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
