@@ -1,10 +1,16 @@
 package gov.nih.nci.coppa.services.pa.grid.dto;
 
 /**
- * DO NOT EDIT!!! COPY/PASTE FROM PO-GRID.  See PO-927 for refactoring task.
- * If you need to modify this file (bug?), change in po-grid and re-import to this location.
+ * Interface for transforming from XML representations to DTO representations, and vice versa.
+ *
+ * @param <XML> XML class to transform to/from.
+ * @param <DTO> DTO class to transform to/from.
  */
 public interface Transformer<XML, DTO> {
+    /**
+     * DO NOT EDIT!!! COPY/PASTE FROM PO-GRID.  See PO-927 for refactoring task.
+     * If you need to modify this file (bug?), change in po-grid and re-import to this location.
+     */
 
     /**
      * Convert a PO DTO into a XML(JAXB) object.

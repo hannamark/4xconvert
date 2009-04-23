@@ -14,8 +14,11 @@ import javax.naming.NamingException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+/**
+ * Service locator that uses JNDI to look up services.
+ */
 public final class JNDIServiceLocator implements ServiceLocator {
-    private static final Logger logger = LogManager.getLogger(JNDIServiceLocator.class);
+    private static final Logger LOG = LogManager.getLogger(JNDIServiceLocator.class);
     private static final int MAX_RETRIES = 2;
     private static JNDIServiceLocator instance = new JNDIServiceLocator();
     private InitialContext context;
@@ -26,11 +29,15 @@ public final class JNDIServiceLocator implements ServiceLocator {
             props.load(JNDIServiceLocator.class.getClassLoader().getResourceAsStream("jndi.properties"));
             context = new InitialContext(props);
         } catch (Exception e) {
-            logger.error("Unable to load jndi properties.", e);
+            LOG.error("Unable to load jndi properties.", e);
             throw new RuntimeException("Unable to load jndi properties.", e);
         }
     }
 
+    /**
+     * Get the singleton instance of the service locator.
+     * @return the singleton locator
+     */
     public static JNDIServiceLocator getInstance() {
         return instance;
     }

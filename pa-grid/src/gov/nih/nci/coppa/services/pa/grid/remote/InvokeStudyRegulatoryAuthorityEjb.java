@@ -89,11 +89,12 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 
 /**
  * Wrapper class for invoking the StudyRegulatoryAuthorityService remote EJB.
+ *
  * @author Steve Lustbader
  */
 public class InvokeStudyRegulatoryAuthorityEjb implements StudyRegulatoryAuthorityServiceRemote {
 
-    ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}

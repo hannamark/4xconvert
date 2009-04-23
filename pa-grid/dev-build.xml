@@ -320,6 +320,11 @@
             <classpath>
                 <path location="${basedir}/build/classes"/>
                 <path refid="checkstyle.classpath" />
+                <path>
+                    <fileset dir="${lib.dir}">
+                        <include name="pa-ejb-client-*.jar" />
+                    </fileset>
+                </path>
             </classpath>
             <!-- ADD PATHS FOR CHECKING HERE -->
             <fileset dir="src/gov/nih/nci/coppa/services/pa/grid" includes="**/*.java"/>

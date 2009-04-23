@@ -93,7 +93,8 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
  *
  * @author Steve Lustbader
  */
-public final class StudyRegulatoryAuthorityTransformer implements Transformer<StudyRegulatoryAuthority, StudyRegulatoryAuthorityDTO> {
+public final class StudyRegulatoryAuthorityTransformer implements
+        Transformer<StudyRegulatoryAuthority, StudyRegulatoryAuthorityDTO> {
 
     /**
      * Public singleton.

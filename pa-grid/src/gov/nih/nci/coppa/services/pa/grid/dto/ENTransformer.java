@@ -13,10 +13,16 @@ import org.iso._21090.ENPN;
 import org.iso._21090.ENXP;
 
 /**
- * DO NOT EDIT!!! COPY/PASTE FROM PO-GRID.  See PO-927 for refactoring task.
- * If you need to modify this file (bug?), change in po-grid and re-import to this location.
+ * Transformer for EN and subtypes.
+ *
+ * @param <ENXX> exact EN subtype.
+ * @param <EnXx> associated DTO type.
  */
 public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements Transformer<ENXX, EnXx> {
+    /**
+     * DO NOT EDIT!!! COPY/PASTE FROM PO-GRID.  See PO-927 for refactoring task.
+     * If you need to modify this file (bug?), change in po-grid and re-import to this location.
+     */
 
     /**
      * Public singleton.

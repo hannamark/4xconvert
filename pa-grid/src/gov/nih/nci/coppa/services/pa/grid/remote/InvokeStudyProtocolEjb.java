@@ -8,54 +8,54 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 /**
- * Wrapper class for invoking the StudyProtocol remote ejb.
+ * Wrapper class for invoking the StudyProtocol remote EJB.
  */
 public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
-    ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}
      */
-    public Ii createInterventionalStudyProtocol(
-            InterventionalStudyProtocolDTO arg0) throws PAException {
+    public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO arg0) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
+
     /**
      * {@inheritDoc}
      */
-    public Ii createObservationalStudyProtocol(
-            ObservationalStudyProtocolDTO arg0) throws PAException {
+    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
+
     /**
      * {@inheritDoc}
      */
-    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii arg0)
-            throws PAException {
-         try {
-             InterventionalStudyProtocolDTO result =
-                locator.getStudyProtocolService().getInterventionalStudyProtocol(arg0);
-             return result;
-         } catch (Exception e) {
-             throw new InvokeCoppaServiceException(e.toString(), e);
-         }
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii arg0)
-            throws PAException {
+    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii arg0) throws PAException {
         try {
-            ObservationalStudyProtocolDTO result =
-                locator.getStudyProtocolService().getObservationalStudyProtocol(arg0);
+            InterventionalStudyProtocolDTO result = locator.getStudyProtocolService().getInterventionalStudyProtocol(
+                    arg0);
             return result;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii arg0) throws PAException {
+        try {
+            ObservationalStudyProtocolDTO result = locator.getStudyProtocolService()
+                    .getObservationalStudyProtocol(arg0);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -67,30 +67,31 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
     /**
      * {@inheritDoc}
      */
-    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
-            InterventionalStudyProtocolDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
-            ObservationalStudyProtocolDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO arg0)
+    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(InterventionalStudyProtocolDTO arg0)
             throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO arg0) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

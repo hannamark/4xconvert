@@ -8,11 +8,11 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import java.util.List;
 
 /**
- * Wrapper class for invoking the StudyResourcing remote ejb.
+ * Wrapper class for invoking the StudyResourcing remote EJB.
  */
 public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
 
-    ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}

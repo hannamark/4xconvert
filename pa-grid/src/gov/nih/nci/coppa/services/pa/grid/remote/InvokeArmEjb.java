@@ -8,11 +8,11 @@ import gov.nih.nci.pa.service.PAException;
 import java.util.List;
 
 /**
- * Wrapper class for invoking the Arm remote ejb.
+ * Wrapper class for invoking the Arm remote EJB.
  */
 public class InvokeArmEjb implements ArmServiceRemote {
 
-    ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}
