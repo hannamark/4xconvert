@@ -694,15 +694,42 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       />
   </target>
   <target name="install:validation:pre-install:ports">
+  	<runtarget target="install:validation:pre-install:ports:poear"/>
+  	<runtarget target="install:validation:pre-install:ports:pogrid"/>
+  </target>
+  <target name="install:validation:pre-install:ports:poear">
     <validate-ports-preinstall />
   </target>
+  <target name="install:validation:pre-install:ports:pogrid" unless="exclude.po-grid">
+    <validate-ports-preinstall validation.pre.port.list="${validation.pre.port.pogrid.list}" />
+  </target>
   <target name="install:validation:post-install">
+	 <runtarget target="install:validation:post-install:poear"/>
+	 <runtarget target="install:validation:post-install:pogrid"/>
+  </target>
+  <target name="install:validation:post-install:poear">
     <if>
       <not>
         <isset property="exclude.start.servers"/>
       </not>
       <then>
         <validate-post-install propertyfile.backup.location="${user.home}"/>
+      </then>
+    </if>
+  </target>
+  <target name="install:validation:post-install:pogrid" unless="exclude.po-grid">
+    <if>
+      <not>
+        <isset property="exclude.start.servers"/>
+      </not>
+      <then>
+        <validate-post-install
+        	validation.post.socket.list="${validation.post.socket.pogrid.list}"
+        	validation.post.http.list="${validation.post.http.pogrid.list}"
+        	propertyfile.backup.location="${user.home}" 
+        	jboss.server.name="${jboss.server.name.grid}" 
+        	application.url="${application.pogrid.url}"
+        	/>
       </then>
     </if>
   </target>
