@@ -317,14 +317,15 @@
 
         If you get an error about invalid classpath, run 'ant compile checkstyle' and it should resolve.
     -->
-    <target name="checkstyle" description="Verify coding styles and conventions.">
+    <target name="checkstyle" description="Verify coding styles and conventions." depends="defineClasspaths">
         <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
             <classpath>
-                <path location="${basedir}/build/classes"/>
+                <path location="${build.dest}"/>
+                <path location="${stubs.dest}"/>
                 <path refid="checkstyle.classpath" />
+                <path refid="base.classpath"/>
             </classpath>
-            <!-- the above "ant compile checkstyle" trick doesn't seem to work for exception classes outside of this project, so exclude a few classes with that problem -->
-            <fileset dir="src/gov/nih/nci/coppa/po/grid" includes="**/*.java" excludes="remote/InvokeCorrelationService.java, remote/InvokeOrganizationEjb.java, remote/InvokePersonEjb.java, services/CorrelationGridService.java"/>
+            <fileset dir="src/gov/nih/nci/coppa/po/grid" includes="**/*.java"/>
             <formatter type="plain"/>
             <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
         </checkstyle>
