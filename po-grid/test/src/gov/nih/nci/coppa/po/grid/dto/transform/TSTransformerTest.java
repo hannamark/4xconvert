@@ -12,6 +12,7 @@ import gov.nih.nci.coppa.iso.UncertaintyType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.iso._21090.ED;
 import org.iso._21090.EDText;
@@ -25,8 +26,8 @@ import org.junit.Test;
  */
 public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer, TS, Ts>{
 
-    private SimpleDateFormat sdf = new SimpleDateFormat(TSTransformer.FORMAT_STRING);
-    public final String VALUE_DATE = "19800928023033.555[-0400EDT]";
+    public final String VALUE_DATE = "19800928023033.0978-0000";
+    public final String OVERFLOW_VALUE_DATE = "20090229000000.0000-0000";
 
     @Override
     public TS makeXmlSimple() {
@@ -53,7 +54,8 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
 
     @Override
     public Ts makeDtoSimple() {
-
+        SimpleDateFormat sdf = new SimpleDateFormat(TSTransformer.FORMAT_STRING);
+        sdf.setLenient(false);
         Ts x = new Ts();
         try {
             x.setValue(sdf.parse(VALUE_DATE));
@@ -81,25 +83,39 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
 
     @Override
     public void verifyXmlSimple(TS x) {
-        assertEquals(VALUE_DATE, x.getValue());
-        ED ed = new EDTransformerTest().makeXmlSimple();
-        assertEquals(ed.getValue(), x.getOriginalText().getValue());
-        assertEquals(ed.getNullFlavor(), x.getOriginalText().getNullFlavor());
-        assertEquals(ed.getCharset(), x.getOriginalText().getCharset());
-        assertTrue(Arrays.equals(ed.getData(), x.getOriginalText().getData()));
-        assertEquals(ed.getMediaType(), x.getOriginalText().getMediaType());
-        assertEquals(ed.getReference().getValue(), x.getOriginalText().getReference().getValue());
-        assertEquals(ed.getXml(), x.getOriginalText().getXml());
+        SimpleDateFormat sdf = new SimpleDateFormat(TSTransformer.FORMAT_STRING);
+        sdf.setLenient(false);
+        try {
+            Date number1 = sdf.parse(VALUE_DATE);
+            Date number2 = sdf.parse(x.getValue());
+            assertEquals(number1.getTime(), number2.getTime());
+            ED ed = new EDTransformerTest().makeXmlSimple();
+            assertEquals(ed.getValue(), x.getOriginalText().getValue());
+            assertEquals(ed.getNullFlavor(), x.getOriginalText().getNullFlavor());
+            assertEquals(ed.getCharset(), x.getOriginalText().getCharset());
+            assertTrue(Arrays.equals(ed.getData(), x.getOriginalText().getData()));
+            assertEquals(ed.getMediaType(), x.getOriginalText().getMediaType());
+            assertEquals(ed.getReference().getValue(), x.getOriginalText().getReference().getValue());
+            assertEquals(ed.getXml(), x.getOriginalText().getXml());
 
-        assertEquals(VALUE_DATE, ((TS) x.getUncertainty()).getValue());
-        assertNotNull(x.getUncertainty());
-        assertEquals(org.iso._21090.UncertaintyType.B, x.getUncertaintyType());
+            number1 = sdf.parse(VALUE_DATE);
+            number2 = sdf.parse(((TS) x.getUncertainty()).getValue());
+            assertEquals(number1.getTime(), number2.getTime());
+
+
+            assertNotNull(x.getUncertainty());
+            assertEquals(org.iso._21090.UncertaintyType.B, x.getUncertaintyType());
+        } catch (ParseException pe) {
+            throw new RuntimeException(pe);
+        }
     }
 
     @Override
     public void verifyDtoSimple(Ts x) {
+        SimpleDateFormat sdf = new SimpleDateFormat(TSTransformer.FORMAT_STRING);
+        sdf.setLenient(false);
         try {
-            assertEquals(VALUE_DATE, sdf.format(x.getValue()));
+            assertEquals(sdf.parse(VALUE_DATE).getTime(), x.getValue().getTime());
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
             edText.setCharset(ed.getCharset());
@@ -140,5 +156,16 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
         assertNotNull(result);
         assertEquals(NullFlavor.ASKU, result.getNullFlavor());
         assertNull(result.getValue());
+    }
+
+    @Test(expected = ParseException.class)
+    public void testOverflow() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat(TSTransformer.FORMAT_STRING);
+        sdf.setLenient(false);
+        Ts ts = new Ts();
+        ts.setValue(sdf.parse(OVERFLOW_VALUE_DATE));
+
+        TS result = TSTransformer.INSTANCE.toXml(ts);
+        assertNotNull(result);
     }
 }
