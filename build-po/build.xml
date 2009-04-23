@@ -295,7 +295,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     validate:pre:build,
     clean,
     init,
-    build:po
+    build:po, 
+  	build:po-grid
     "/>
 
   <!-- First Maven Target -->
@@ -347,7 +348,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <antcall target="build:po-grid"/>
   </target>
   <!-- Build po-grid sub-project produces project level artifact -->
-  <target name="build:po-grid" depends="init">
+  <target name="build:po-grid" depends="init" unless="exclude.po-grid">
     <fail unless="jboss.server.hostname"/>
     <fail unless="jboss.server.port"/>
 
@@ -483,6 +484,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <!-- Creates the installer distribution used by automated or manual remote installations -->
   <target name="dist:installer" depends="dist:installer:prep">
     <delete file="${dist.dir}/${po-ear.install.zip.file}"/>
+  	<delete file="${dist.dir}/${po-grid.install.zip.file}"/>
     <!-- Set environment name to external -->
     <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
     <obfuscate-properties-file
@@ -492,6 +494,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       delete.property.list="exclude.jboss.backup"
       />
     <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}"/>
+    <zip destfile="${dist.dir}/${po-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
   </target>
 
   <!-- Copies install time resources into distribution tree -->
@@ -533,7 +536,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </copy>
 
     <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db-upgrade.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
   </target>
 
 
@@ -628,7 +631,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
               />
     <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
   </target>
-  <target name="remote:install:po-grid">
+  <target name="remote:install:po-grid" unless="exclude.po-grid">
     <!-- install po-grid only-->
     <deploy-files2
          ssh.user="${pogrid.ssh.server.username}"
@@ -667,7 +670,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true ${upgrade.target}" />
   </target>
 
-  <target name="remote:upgrade:po-grid">
+  <target name="remote:upgrade:po-grid" unless="exclude.po-grid">
     <!-- install po-grid only-->
     <deploy-files2
              ssh.user="${pogrid.ssh.server.username}"
