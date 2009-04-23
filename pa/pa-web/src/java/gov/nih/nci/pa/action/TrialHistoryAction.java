@@ -98,6 +98,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -105,7 +106,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TrialHistoryAction.
  * 
@@ -136,90 +136,80 @@ ServletResponseAware {
     /** The servlet response. */
     private HttpServletResponse servletResponse;
     
-   
- 
+    /**
+     * Gets the study protocolii.
+     * 
+     * @return the studyProtocolii
+     */
+    public String getStudyProtocolii() {
+        return studyProtocolii;
+    }
 
-
-/**
- * Gets the study protocolii.
- * 
- * @return the studyProtocolii
- */
-public String getStudyProtocolii() {
-return studyProtocolii;
-}
-
-
-
-/**
- * Sets the study protocolii.
- * 
- * @param studyProtocolii the studyProtocolii to set
- */
-public void setStudyProtocolii(String studyProtocolii) {
-this.studyProtocolii = studyProtocolii;
-}
+    /**
+     * Sets the study protocolii.
+     * 
+     * @param studyProtocolii the studyProtocolii to set
+     */
+    public void setStudyProtocolii(String studyProtocolii) {
+        this.studyProtocolii = studyProtocolii;
+    }
 
 
 
-/**
- * Gets the docii.
- * 
- * @return the docii
- */
-public String getDocii() {
-return docii;
-}
+    /**
+     * Gets the docii.
+     * 
+     * @return the docii
+     */
+    public String getDocii() {
+        return docii;
+    }
 
 
 
-/**
- * Sets the docii.
- * 
- * @param docii the docii to set
- */
-public void setDocii(String docii) {
-this.docii = docii;
-}
+    /**
+     * Sets the docii.
+     * 
+     * @param docii the docii to set
+     */
+    public void setDocii(String docii) {
+        this.docii = docii;
+    }
 
 
 
-/**
- * Gets the doc file name.
- * 
- * @return the docFileName
- */
-public String getDocFileName() {
-return docFileName;
-}
+    /**
+     * Gets the doc file name.
+     * @return the docFileName
+     */
+    public String getDocFileName() {
+        return docFileName;
+    }
 
 
 
-/**
- * Sets the doc file name.
- * 
- * @param docFileName the docFileName to set
- */
-public void setDocFileName(String docFileName) {
-this.docFileName = docFileName;
-}
+    /**
+     * Sets the doc file name.
+     * @param docFileName the docFileName to set
+     */
+    public void setDocFileName(String docFileName) {
+    this.docFileName = docFileName;
+    }
 
 
 
-/**
- * Gets the servlet response.
- * 
- * @return the servletResponse
- */
-public HttpServletResponse getServletResponse() {
-return servletResponse;
-}
+    /**
+     * Gets the servlet response.
+     * @return the servletResponse
+     */
+    public HttpServletResponse getServletResponse() {
+    return servletResponse;
+    }
 
 
 
    /**
     * Sets the servlet response.
-    * 
     * @param servletResponse the servletResponse to set
     */
     public void setServletResponse(HttpServletResponse servletResponse) {
@@ -230,7 +220,6 @@ return servletResponse;
 
     /**
      * Load list form.
-     * 
      * @throws PAException exception
      */
     @Override
@@ -255,11 +244,8 @@ return servletResponse;
     
     /**
      * Gets the documents.
-     * 
      * @param sp the sp
-     * 
      * @return the documents
-     * 
      * @throws PAException the PA exception
      */
     private String getDocuments(StudyProtocolDTO sp)throws PAException {
@@ -336,9 +322,7 @@ return servletResponse;
    
     /**
      * Update.
-     * 
      * @return action result
-     * 
      * @throws PAException exception
      */
     @Override
@@ -396,18 +380,15 @@ return servletResponse;
     
     /**
      * Checks if String is valid date.
-     * 
      * @param dateStr the date str
-     * 
      * @return true, if is valid date
      */
-    private boolean isValidDate(String dateStr){
-    {
+    private boolean isValidDate(String dateStr) {
       if (dateStr == null) {
          return false;
       }
       //set the format to use as a constructor argument
-      SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+      SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy" , Locale.getDefault());
       if (dateStr.trim().length() != dateFormat.toPattern().length()) {
         return false;
       }
@@ -415,50 +396,48 @@ return servletResponse;
       try {
         //parse the dateStr parameter
         dateFormat.parse(dateStr.trim());
-        }
-       catch (ParseException pe) {
+        }  catch (ParseException pe) {
          return false;
        }
          return true;
     }
+
+    /**
+     * Gets the trial history web dto.
+     * 
+     * @return the trialHistoryWebDTO
+     */
+    public List<TrialHistoryWebDTO> getTrialHistoryWebDTO() {
+        return trialHistoryWebDTO;
     }
 
-/**
- * Gets the trial history web dto.
- * 
- * @return the trialHistoryWebDTO
- */
-public List<TrialHistoryWebDTO> getTrialHistoryWebDTO() {
-return trialHistoryWebDTO;
-}
+
+    /**
+     * Sets the trial history web dto.
+     * 
+     * @param trialHistoryWebDTO the trialHistoryWebDTO to set
+     */
+    public void setTrialHistoryWebDTO(List<TrialHistoryWebDTO> trialHistoryWebDTO) {
+        this.trialHistoryWebDTO = trialHistoryWebDTO;
+    }
+
+    /**
+     * Gets the trial history wb dto.
+     * 
+     * @return the trialHistoryWbDto
+     */
+    public TrialHistoryWebDTO getTrialHistoryWbDto() {
+        return trialHistoryWbDto;
+    }
 
 
-/**
- * Sets the trial history web dto.
- * 
- * @param trialHistoryWebDTO the trialHistoryWebDTO to set
- */
-public void setTrialHistoryWebDTO(List<TrialHistoryWebDTO> trialHistoryWebDTO) {
-this.trialHistoryWebDTO = trialHistoryWebDTO;
-}
-
-/**
- * Gets the trial history wb dto.
- * 
- * @return the trialHistoryWbDto
- */
-public TrialHistoryWebDTO getTrialHistoryWbDto() {
-return trialHistoryWbDto;
-}
-
-
-/**
- * Sets the trial history wb dto.
- * 
- * @param trialHistoryWbDto the trialHistoryWbDto to set
- */
-public void setTrialHistoryWbDto(TrialHistoryWebDTO trialHistoryWbDto) {
-this.trialHistoryWbDto = trialHistoryWbDto;
-}
+    /**
+     * Sets the trial history wb dto.
+     * 
+     * @param trialHistoryWbDto the trialHistoryWbDto to set
+     */
+    public void setTrialHistoryWbDto(TrialHistoryWebDTO trialHistoryWbDto) {
+        this.trialHistoryWbDto = trialHistoryWbDto;
+    }
    
 }
