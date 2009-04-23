@@ -55,7 +55,6 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
@@ -71,7 +70,6 @@ public class StudyRecruitmentStatusDTO extends StudyDTO {
     
     Cd statusCode;
     Ts statusDate;
-    Ii studyProtocolIi;
     
     /**
      * @return the statusCode
@@ -97,17 +95,4 @@ public class StudyRecruitmentStatusDTO extends StudyDTO {
     public void setStatusDate(Ts statusDate) {
         this.statusDate = statusDate;
     }
-    /**
-     * @return the studyProtocolidentifier
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    /**
-     * @param studyProtocolidentifier the studyProtocolidentifier to set
-     */
-    public void setStudyProtocolIi(Ii studyProtocolidentifier) {
-        this.studyProtocolIi = studyProtocolidentifier;
-    }
-
 }

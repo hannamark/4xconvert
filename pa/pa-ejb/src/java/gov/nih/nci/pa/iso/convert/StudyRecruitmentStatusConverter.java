@@ -119,7 +119,7 @@ public StudyRecruitmentStatusDTO convertFromDomainToDto(
        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
        dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-       dto.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+       dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
        return dto;
    }
 
@@ -130,16 +130,16 @@ public StudyRecruitmentStatusDTO convertFromDomainToDto(
     * @throws PAException PAException
     */
    @Override
-public StudyRecruitmentStatus convertFromDtoToDomain(
+   public StudyRecruitmentStatus convertFromDtoToDomain(
            StudyRecruitmentStatusDTO dto) throws PAException {
-       if (PAUtil.isIiNull(dto.getStudyProtocolIi())) {
-           String errmsg = " StudyOverallStatus.studyProtocol cannot be null. ";
+       if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+           String errmsg = " StudyRecruitmentStatus.studyProtocol cannot be null. ";
            LOG.error(errmsg);
            throw new PAException(errmsg);
        }
 
        StudyProtocol spBo = new StudyProtocol();
-       spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
+       spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
        StudyRecruitmentStatus bo = new StudyRecruitmentStatus();
        if (dto.getIdentifier() != null) {
