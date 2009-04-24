@@ -736,19 +736,46 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             database.version="${mysql.minimum.version}"
             />
     </target>
-    <target name="install:validation:pre-install:ports">
-        <validate-ports-preinstall />
-    </target>
-    <target name="install:validation:post-install">
-        <if>
-            <not>
-                <isset property="exclude.start.servers"/>
-            </not>
-            <then>
-            <validate-post-install propertyfile.backup.location="${user.home}"/>
-            </then>
-        </if>
-    </target>
+	  <target name="install:validation:pre-install:ports" >
+	  	<runtarget target="install:validation:pre-install:ports:paear"/>
+	  	<runtarget target="install:validation:pre-install:ports:pagrid"/>
+	  </target>
+	  <target name="install:validation:pre-install:ports:paear" unless="exclude.pa-ear">
+	    <validate-ports-preinstall />
+	  </target>
+	  <target name="install:validation:pre-install:ports:pagrid" unless="exclude.pa-grid">
+	    <validate-ports-preinstall validation.pre.port.list="${validation.pre.port.pagrid.list}" />
+	  </target>
+	  <target name="install:validation:post-install">
+		 <runtarget target="install:validation:post-install:paear"/>
+		 <runtarget target="install:validation:post-install:pagrid"/>
+	  </target>
+	  <target name="install:validation:post-install:paear" unless="exclude.pa-ear">
+	    <if>
+	      <not>
+	        <isset property="exclude.start.servers"/>
+	      </not>
+	      <then>
+	        <validate-post-install propertyfile.backup.location="${user.home}"/>
+	      </then>
+	    </if>
+	  </target>
+	  <target name="install:validation:post-install:pagrid" unless="exclude.pa-grid">
+	    <if>
+	      <not>
+	        <isset property="exclude.start.servers"/>
+	      </not>
+	      <then>
+	        <validate-post-install
+	        	validation.post.socket.list="${validation.post.socket.pagrid.list}"
+	        	validation.post.http.list="${validation.post.http.pagrid.list}"
+	        	propertyfile.backup.location="${user.home}" 
+	        	jboss.server.name="${jboss.server.name.grid}" 
+	        	application.url="${application.pagrid.url}"
+	        	/>
+	      </then>
+	    </if>
+	  </target>	
 
     <!-- Wrapper target to deploy JBOSS container -->
     <target name="install:jboss" unless="exclude.jboss"
