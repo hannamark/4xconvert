@@ -60,7 +60,7 @@
                   <table class="form">
                   <tr>
                       <s:set name="onholdCodeValues" value="@gov.nih.nci.pa.enums.OnholdReasonCode@getDisplayNames()" />
-                      <td class="label"><s:label><fmt:message key="onhold.reason.code"/></s:label></td>
+                      <td class="label"><s:label><fmt:message key="onhold.reason.code"/></s:label><span class="required">*</span></td>
                       <td class="value" style="width: 250px">
                         <s:if test="%{currentAction == 'create'}">
                             <s:select headerKey="" headerValue="--Select--" name="onhold.reasonCode" list="#onholdCodeValues"/>

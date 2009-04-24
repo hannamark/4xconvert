@@ -192,7 +192,7 @@ implements StudyOnholdServiceRemote {
             }
             if (high.before(low)) {
                 throw new PAFieldException(FN_DATE_HIGH,
-                        "Off-hold date must be bigger than on-hold date for the same ‘on-hold’ record.");
+                        "Off-hold date must be bigger than on-hold date for the same on-hold record.");
             }
         }
     }

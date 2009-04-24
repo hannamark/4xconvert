@@ -108,6 +108,10 @@ public enum OnholdReasonCode implements CodedEnum<String> {
    */
   PENDING_ORG_CUR("Pending Organization Curation"),
   /**
+   * PENDING_INTERVENTION_CUR.
+   */
+  PENDING_INTERVENTION_CUR("Pending Intervention Curation"),
+  /**
    * OTHER.
    */
   OTHER("Other");
