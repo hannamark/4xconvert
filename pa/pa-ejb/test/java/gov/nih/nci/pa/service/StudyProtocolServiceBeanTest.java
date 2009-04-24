@@ -122,7 +122,6 @@ public class StudyProtocolServiceBeanTest {
     private StudyRelationshipServiceBean srb = new StudyRelationshipServiceBean();
     @Before
     public void setUp() throws Exception {
-        bean.setDocumentWorkflowStatusService(dwf);
         dwf.setStudyMilestoneService(milestone);
         bean.studyRelationshipService = srb;
         milestone.documentWorkflowStatusService = dwf;

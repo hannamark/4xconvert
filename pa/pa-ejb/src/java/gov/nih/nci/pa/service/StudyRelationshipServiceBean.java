@@ -79,11 +79,9 @@
 
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.iso.convert.StudyRelationshipConverter;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -97,7 +95,6 @@ import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Example;
 
 /**
  * @author Naveen Amiruddin
@@ -124,32 +121,27 @@ public class StudyRelationshipServiceBean extends
            throw new PAException(" StudyRelationship should not be null ");
        }
 
-       List <StudyRelationship> srList = null;
        try {
            Session session = HibernateUtil.getCurrentSession();
-           StudyRelationship exampleDO = new StudyRelationship();
-           if (IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier()) != null) {
-               StudyProtocol sp = new StudyProtocol();
-               sp.setId(IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier()));
-               exampleDO.setSourceStudyProtocol(sp);
+           String hql = " select sr from StudyRelationship sr  join sr.sourceStudyProtocol sp "
+                   + " where sp.id = " + dto.getSourceStudyProtocolIdentifier().getExtension();
+           List <StudyRelationship> srList = session.createQuery(hql).list();
+
+
+           List<StudyRelationshipDTO> srDTOList = null;
+           
+           if (srList != null) {
+               srDTOList = new ArrayList<StudyRelationshipDTO>();
+               for (StudyRelationship sp : srList) {
+                   srDTOList.add(srConverter.convertFromDomainToDto(sp));
+               }
            }
-           Example example = Example.create(exampleDO);
-           srList = session.createCriteria(StudyRelationship.class).add(example).list();
+           return srDTOList;
        }  catch (HibernateException hbe) {
            throw new PAException(" Hibernate exception while retrieving "
                    + "studyRelationship for dto = " +  hbe);
        }
 
-
-       List<StudyRelationshipDTO> srDTOList = null;
-       
-       if (srList != null) {
-           srDTOList = new ArrayList<StudyRelationshipDTO>();
-           for (StudyRelationship sp : srList) {
-               srDTOList.add(srConverter.convertFromDomainToDto(sp));
-           }
-       }
-       return srDTOList;
    }
 
 }
