@@ -740,7 +740,45 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		remote:upgrade
 		">
 	</target>
+	
+	  <macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
+	    <attribute name="ssh.user" default="${ssh.server.username}" />
+	    <attribute name="ssh.host" default="${ssh.server.hostname}" />
+	    <attribute name="remote.directory.property.name" default="ssh.dir.temp" />
+	    <attribute name="properties.file" default="${properties.file}" />
+	    <attribute name="dist.dir" default="${dist.dir}" />
+	    <attribute name="dist.file" />
+	    <attribute name="ssh.port" default="22"/>
+	    <attribute name="ssh.key.file" default="${ssh.key.file}"/>
+	    <sequential>
+	      <!-- Validate remote directory is valid -->
+	      <propertycopy name="remote.dir" from="@{remote.directory.property.name}" override="true"/>
+	      <check-valid-directory-name directory.property="remote.dir" />
+	      <!-- Delete/re-create remote directory -->
+	      <remote-ssh
+	                remoteSshHost="@{ssh.host}"
+	                remoteSshUser="@{ssh.user}"
+	                remotesshcommand="rm -rf ${remote.dir};mkdir -p ${remote.dir}" />
+	      <!-- work around for issue where basedir is required but is not currently used -->
+	      <remote-ssh
+	                remoteSshHost="@{ssh.host}"
+	                remoteSshUser="@{ssh.user}"
+	                remotesshcommand="mkdir -p ${remote.dir}/lib" />
 
+	      <!-- copy distribution and prop file to remote system -->
+	      <remote-scp
+	                remoteScpFileToCopy="@{dist.dir}/@{dist.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
+	      <remote-scp
+	                remoteScpFileToCopy="@{properties.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
+	      <!-- Extract zip file -->
+	      <remote-ssh
+	                remoteSshHost="@{ssh.host}"
+	                remoteSshUser="@{ssh.user}"
+	                remotesshcommand="cd ${remote.dir}; unzip -q @{dist.file}" />
+
+	    </sequential>
+	  </macrodef>
+	
 	<target name="remote:upgrade" depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid">
 	</target>
 
