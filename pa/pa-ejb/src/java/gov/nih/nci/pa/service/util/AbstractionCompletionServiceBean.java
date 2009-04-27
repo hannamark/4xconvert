@@ -453,19 +453,19 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   private void enforceTrailDescriptionDetails(StudyProtocolDTO studyProtocolDTO,
           List<AbstractionCompletionDTO> abstractionList) {
       if (studyProtocolDTO.getPublicTitle().getValue() == null) {
-          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
           "Brief Title must be Entered"));
       } else if (!PAUtil.isWithinRange(studyProtocolDTO.getPublicTitle(),
           PAAttributeMaxLen.LEN_18, PAAttributeMaxLen.LEN_300)) {
-          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
           "Brief Title must be between 18 and 300 characters "));
       }
       if (studyProtocolDTO.getPublicDescription().getValue() == null) {
-          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
           "Brief Summary must be Entered"));
       } else if (PAUtil.isGreatenThan(studyProtocolDTO.getPublicDescription(),
           PAAttributeMaxLen.LEN_5000)) {
-          abstractionList.add(createError("Error", "Select Trial Description from Administrative Data menu.",
+          abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
           "Brief Summary must not be more than 5000 characters "));
       }
 

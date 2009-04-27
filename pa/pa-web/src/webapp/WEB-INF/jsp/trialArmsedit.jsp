@@ -64,7 +64,7 @@
                 <tr>
                     <td class="label"><s:label for="armName">Label:</s:label><span class="required">*</span></td>
                     <td class="value">
-                        <s:textfield name="armName"maxlength="62" size="62" cssStyle="width:280px;float:left"/> 
+                        <s:textfield name="armName" maxlength="62" size="62" cssStyle="width:280px;float:left"/> 
                     </td>
                 </tr>
                 <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">

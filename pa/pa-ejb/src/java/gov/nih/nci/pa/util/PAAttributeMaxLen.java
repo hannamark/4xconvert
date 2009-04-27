@@ -104,7 +104,7 @@ public class PAAttributeMaxLen {
     public static final int LEN_2 = 2;
 
     /** Arm Name. **/
-    public static final int ARM_NAME = 16;
+    public static final int ARM_NAME = 62;
     /** public title min. **/
     public static final int LEN_18 = 18;
     /*** length 62. **/
