@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 
 import java.util.Properties;
 
@@ -88,6 +89,16 @@ public final class JNDIServiceLocator implements ServiceLocator {
     public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
         StudyRegulatoryAuthorityServiceRemote result =
             (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService()
+    throws NamingException {
+        StudySiteAccrualStatusServiceRemote result =
+            (StudySiteAccrualStatusServiceRemote) lookup("pa/StudySiteAccrualStatusServiceBean/remote");
         return result;
     }
 }

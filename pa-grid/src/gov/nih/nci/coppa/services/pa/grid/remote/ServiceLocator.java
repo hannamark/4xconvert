@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 
 import javax.naming.NamingException;
 
@@ -41,5 +42,10 @@ public interface ServiceLocator {
      */
     StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException;
 
-
+    /**
+     * Gets the StudySiteAccrualStatus service.
+     * @return the remote StudySiteAccrualStatusService
+     * @throws NamingException if unable to lookup
+     */
+    StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() throws NamingException;
 }
