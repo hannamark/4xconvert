@@ -75,7 +75,7 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27432");
+        id.setExtension("27426");
         StudyRegulatoryAuthority result = client.getByStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
