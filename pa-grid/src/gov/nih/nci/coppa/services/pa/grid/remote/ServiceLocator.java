@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
@@ -43,9 +44,17 @@ public interface ServiceLocator {
     StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException;
 
     /**
+     * Gets the StudyRecruitmentStatusService.
+     * @return the remote StudyRecruitmentStatusService.
+     * @throws NamingException if unable to lookup.
+     */
+    StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws NamingException;
+
+    /**
      * Gets the StudySiteAccrualStatus service.
      * @return the remote StudySiteAccrualStatusService
      * @throws NamingException if unable to lookup
      */
     StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() throws NamingException;
+
 }

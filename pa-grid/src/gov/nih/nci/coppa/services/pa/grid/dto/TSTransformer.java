@@ -9,8 +9,8 @@ import java.util.Date;
 import org.iso._21090.TS;
 
 /**
- * Transforms strings.
- * @author mshestopalov
+ * DO NOT EDIT!!! COPY/PASTE FROM PO-GRID.  See PO-927 for refactoring task.
+ * If you need to modify this file (bug?), change in po-grid and re-import to this location.
  */
 public final class TSTransformer extends QTYTransformer<TS, Ts> implements Transformer<TS, Ts> {
 
@@ -21,7 +21,7 @@ public final class TSTransformer extends QTYTransformer<TS, Ts> implements Trans
     /**
      * Format of iso data type value.
      */
-    public static final String FORMAT_STRING = "yyyyMMddHHmmss.S[ZZzz]";
+    public static final String FORMAT_STRING = "yyyyMMddHHmmss.SSSSZ";
 
     private TSTransformer() {
         super();
@@ -51,6 +51,7 @@ public final class TSTransformer extends QTYTransformer<TS, Ts> implements Trans
             return null;
         }
         SimpleDateFormat sDf = new SimpleDateFormat(FORMAT_STRING);
+        sDf.setLenient(false);
         TS x = (TS) transformBaseXml(input);
 
         Date v = input.getValue();
@@ -72,6 +73,7 @@ public final class TSTransformer extends QTYTransformer<TS, Ts> implements Trans
         }
         Ts d = (Ts) transformBaseDto(input);
         SimpleDateFormat sDf = new SimpleDateFormat(FORMAT_STRING);
+        sDf.setLenient(false);
         String v = input.getValue();
         if (v != null) {
             try {

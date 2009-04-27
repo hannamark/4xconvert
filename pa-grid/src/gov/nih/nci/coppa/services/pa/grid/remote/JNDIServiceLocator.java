@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
@@ -89,6 +90,15 @@ public final class JNDIServiceLocator implements ServiceLocator {
     public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
         StudyRegulatoryAuthorityServiceRemote result =
             (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws NamingException {
+        StudyRecruitmentStatusServiceRemote result =
+            (StudyRecruitmentStatusServiceRemote) lookup("pa/StudyRecruitmentStatusServiceBean/remote");
         return result;
     }
 
