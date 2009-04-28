@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- ant script for CTRP Viewer Services                                    -->
+<!-- ====================================================================== -->
+
+<project name="viewer.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
+    <property file="${pa.dir}/build.properties"/>
+    <property name="resourceDir" value="${basedir}/../resources"/>
+    <property name="pmdFile" value="${resourceDir}/viewerPmd.xml"/>
+    <property name="checkstyleFile" value="${resourceDir}/viewerCheckstyle.xml"/>
+
+    <property name="lib.dir" value="${software.dir}/target/pa/lib/viewer/services"/>
+    <property name="reportDir" value="${pa.report.dir}/viewer/services"/>
+
+    <property name="viewer.build.finalName" value="viewer-services"/>
+    <property name="viewer.build.dir" value="${basedir}/target"/>
+    <property name="viewer.build.outputDir" value="${viewer.build.dir}/classes"/>
+    <property name="viewer.build.srcDir.0" value="${basedir}/src/java"/>
+    <property name="viewer.build.resourceDir.0" value="${basedir}/src/resources"/>
+    <property name="viewer.build.testOutputDir" value="${viewer.build.dir}/test-classes"/>
+    <property name="viewer.build.testDir.0" value="${basedir}/test/java"/>
+    <property name="viewer.build.testResourceDir.0" value="${basedir}/test/resources"/>
+    <property name="viewer.test.reports" value="${reportDir}/test-reports"/>
+    <property name="viewer.coverage.reports" value="${reportDir}/coverage-reports"/>
+    <property name="viewer.reporting.outputDirectory" value="${reportDir}/site"/>
+    <property name="viewer.jar" value="${viewer.build.finalName}.jar"/>
+    <property name="viewer.build.coberturaOutputDir" value="${viewer.build.dir}/generated-classes"/>
+    
+    <property name="ivy.lib.dir" value="${software.dir}/target/pa/lib"/>
+    <property name="common.dir" value="${software.dir}/build-pa/common"/>
+    <property name="ivy.file" value="ivy-2.0.0-beta2.jar"/>
+    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar"/>
+    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml"/>
+    <property name="ivy.def.file" location="ivy-viewer-services.xml"/>
+    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo"/>
+
+    <property name="bda-utils" value="${software.dir}/target/pa/bda-utils"/>
+
+
+    <!-- ====================================================================== -->
+    <!-- Defining classpaths                                                    -->
+    <!-- ====================================================================== -->
+
+    <path id="jboss.classpath">
+        <fileset dir="${jboss.deploy.directory}/../lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="jboss.client.classpath">
+        <fileset dir="${jboss.deploy.directory}/../../../client">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="ejb.package.classpath">
+         <fileset dir="${pa.dir}/pa-ejb/target">
+            <include name="*.jar"/>
+         </fileset>
+    </path> 
+
+    <property name="compile.jar.dir" location="${lib.dir}/compile"/>
+    <path id="compile.classpath">
+        <fileset dir="${compile.jar.dir}"/>
+    </path>
+
+    <property name="test.jar.dir" location="${lib.dir}/test"/>
+    <path id="test.classpath">
+        <fileset dir="${test.jar.dir}"/>
+    </path>
+
+    <property name="test-simian.jar.dir" location="${lib.dir}/test-simian"/>
+    <path id="test-simian.classpath">
+        <fileset dir="${test-simian.jar.dir}"/>
+    </path>
+
+    <property name="test-cobertura.jar.dir" location="${lib.dir}/test-cobertura"/>
+    <path id="test-cobertura.classpath">
+        <fileset dir="${test-cobertura.jar.dir}"/>
+    </path>
+
+    <property name="test-checkstyle.jar.dir" location="${lib.dir}/test-checkstyle"/>
+    <path id="test-checkstyle.classpath">
+        <fileset dir="${test-checkstyle.jar.dir}"/>
+    </path>
+
+    <property name="test-pmd.jar.dir" location="${lib.dir}/test-pmd"/>
+    <path id="test-pmd.classpath">
+        <fileset dir="${test-pmd.jar.dir}"/>
+    </path>
+    <path id="ivy.classpath">
+        <fileset dir="${ivy.lib.dir}">
+            <include name="${ivy.file}"/>
+            <include name="${ivy-core.file}"/>
+        </fileset>
+    </path>
+
+    <!-- ====================================================================== -->
+    <!-- Task definitions                                                       -->
+    <!-- ====================================================================== -->
+    
+    <mkdir dir="${lib.dir}"/>
+    <mkdir dir="${reportDir}"/>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
+    <path id="macrodef">
+        <fileset dir="${bda-utils}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
+
+    <!-- ====================================================================== -->
+    <!-- Cleaning target                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="pre-clean" 
+            description="Deletes subproject's classes and other target directories which should not exist before starting the build">
+        <delete dir="${viewer.build.dir}"/>
+        <delete dir="${reportDir}"/>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Compile target                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="compile" description="Compiles the subproject">
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <mkdir dir="${viewer.build.outputDir}"/>
+        <javac destdir="${viewer.build.outputDir}" 
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
+            <src>
+                <pathelement location="${viewer.build.srcDir.0}"/>
+            </src>
+            <classpath>
+                <path refid="compile.classpath"/> 
+                <path refid="ejb.package.classpath"/>
+                <path refid="jboss.classpath"/>
+                <path refid="jboss.client.classpath"/>
+            </classpath>
+        </javac>
+        <copy todir="${viewer.build.outputDir}">
+            <fileset dir="${viewer.build.resourceDir.0}"/>
+        </copy>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Test-compilation target                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="compile-tests"
+      depends="compile" 
+      description="Compile the test code"> 
+        <mkdir dir="${viewer.build.testOutputDir}"/>
+        <javac destdir="${viewer.build.testOutputDir}" 
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
+            <src>
+                <pathelement location="${viewer.build.testDir.0}"/>
+            </src>
+            <classpath>
+                <pathelement location="${viewer.build.outputDir}"/> 
+                <path refid="test.classpath"/>
+                <path refid="ejb.package.classpath"/>
+                <path refid="jboss.classpath"/>  
+                <path refid="jboss.client.classpath"/>
+            </classpath>
+        </javac>
+        <copy todir="${viewer.build.testOutputDir}">
+            <fileset dir="${viewer.build.testResourceDir.0}"/>
+        </copy>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run checkstyle                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="test-checkstyle">
+        <taskdef resource="checkstyletask.properties" 
+             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
+             
+        <checkstyle config="${checkstyleFile}" failOnViolation="true">
+            <classpath>
+                <path refid="jboss.classpath"/>  
+                <path refid="jboss.client.classpath"/>  
+                <path refid="ejb.package.classpath"/> 
+
+            </classpath>
+            <fileset dir="src" includes="**/*.java"/>
+            <formatter type="plain"/>
+            <formatter type="plain" toFile="${reportDir}/checkstyle.txt"/>
+            <formatter type="xml" toFile="${reportDir}/checkstyle.xml"/>
+        </checkstyle>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run PMD                                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-pmd">
+        <taskdef name="pmd" 
+             classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
+             classname="net.sourceforge.pmd.ant.PMDTask"/>
+             
+        <pmd shortFilenames="true" failOnRuleViolation="true" 
+                                   rulesetfiles="${pmdFile}">
+            <formatter type="text" toConsole="true"/>
+            <formatter type="text" toFile="${reportDir}/pmd.txt"/>
+            <formatter type="xml"  toFile="${reportDir}/pmd.xml"/>
+            <fileset dir="src">
+                <include name="**/*.java"/>
+            </fileset>
+         </pmd>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run Simian                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-simian">
+       <taskdef resource="simiantask.properties" 
+             classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
+       <simian>
+            <fileset dir="src" includes="**/*.java"/>
+            <formatter type="plain" toFile="${reportDir}/simian.txt"/>
+            <formatter type="xml" toFile="${reportDir}/simian.xml"/>
+            <formatter type="plain"/>
+        </simian>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Static analysis target                                                 -->
+    <!-- ====================================================================== -->
+
+    <target name="inspect" depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
+            description="Runs various static analysis tools such as PMD, Checkstyle, Simian">
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- JUnit/Cobertura target                                                 -->
+    <!-- ====================================================================== -->
+
+    <target name="test" depends="ivy-get,compile,compile-tests,test-cobertura"
+            description="Runs various tests in the subproject">
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Package targets                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="create-jar">
+        <jar jarfile="${viewer.build.dir}/${viewer.jar}" 
+             compress="true" 
+             index="false" 
+             basedir="${viewer.build.outputDir}"/>
+    </target>
+    
+    <target name="jar" depends="ivy-get, compile, inspect, test, create-jar" 
+            description="Makes services jar">
+    </target>
+    
+    <target name="jar-notest-noivy" depends="ivy-compile, compile, create-jar"
+            description="Makes services jar, doesn't run tests">
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-cobertura" depends="compile-tests">
+        
+        <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties"/>
+
+        <delete file="${viewer.build.dir}/cobertura.ser"/>
+
+        <cobertura-instrument datafile="${viewer.build.dir}/cobertura.ser"
+                              toDir="${viewer.build.coberturaOutputDir}">
+            <fileset dir="${viewer.build.outputDir}">
+                <include name="**/*.class"/>
+            </fileset>
+        </cobertura-instrument>   
+
+        <mkdir dir="${viewer.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <sysproperty key="basedir" value="."/>
+            <sysproperty key="net.sourceforge.cobertura.datafile"
+                    file="${viewer.build.dir}/cobertura.ser"/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${viewer.build.coberturaOutputDir}"/>
+            <classpath location="${viewer.build.outputDir}"/>
+            <classpath location="${viewer.build.testOutputDir}"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+            <classpath refid="jboss.client.classpath"/>
+        	<classpath refid="ejb.package.classpath"/>
+            <batchtest todir="${viewer.test.reports}">
+                <fileset dir="${viewer.build.testDir.0}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>                    
+                    <exclude name="**/*SeleniumTest.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        
+        <cobertura-report datafile="${viewer.build.dir}/cobertura.ser"
+                          destdir="${viewer.coverage.reports}" 
+                          srcdir="${viewer.build.srcDir.0}"/>
+        
+        <cobertura-report datafile="${viewer.build.dir}/cobertura.ser"
+                          format="xml"        
+                          destdir="${viewer.coverage.reports}" 
+                          srcdir="${viewer.build.srcDir.0}"/>
+        
+        <cobertura-check datafile="${viewer.build.dir}/cobertura.ser"
+                         totalbranchrate="10" 
+                         totallinerate="10"
+                         haltonfailure="false"/>
+     </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Ivy targets                                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="init:ivy">
+        <mkdir dir="${local.repo.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <property name="ivy.dep.file" value="${ivy.def.file}"/>
+        <ivy:settings file="${ivy.settings.file}"/>
+    </target>
+    
+    <target name="ivy-test-cobertura" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-cobertura"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura"/>
+    </target>
+    
+    <target name="ivy-test-pmd" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-pmd"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test-pmd"/>
+    </target>
+
+    <target name="ivy-test-checkstyle" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-checkstyle"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle"/>
+    </target>
+
+    <target name="ivy-test-simian" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-simian"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test-simian"/>
+    </target>
+    
+    <target name="ivy-compile" depends="init:ivy" 
+            description="Resolves and retrieves the JARs needed to compile the subproject">
+        <ivy:resolve refresh="true" conf="compile"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="compile"/>
+    </target>
+
+    <target name="ivy-test" 
+            depends="ivy-test-cobertura,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian" 
+            description="Resolves and retrieves the JARs needed to test the subproject">
+        <ivy:resolve refresh="true" conf="test"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test"/>
+    </target>
+
+    <target name="ivy-get" 
+            depends="ivy-compile, ivy-test" 
+            description="Updates the local ivy repository">
+    </target>
+    
+    <target name="ivy-clean" description="Delete jars.">
+        <delete dir="${lib.dir}"/>
+    </target>
+
+</project>

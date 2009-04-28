@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ========================================================================== -->
+<!-- master ant script for CTRP Viewer                                          -->
+<!-- ========================================================================== -->
+
+<project name="viewer" default="deploy-notest" basedir=".">
+    <property name="softwareDir" value="${basedir}/.."/>
+    <property name="paDir" value="${softwareDir}/pa"/>
+    <property name="paEarFile" value="${softwareDir}/pa/pa-ear/target/pa.ear"/>
+    
+    <property file="${paDir}/build.properties"/>
+    <property name="resourceDir" value="${basedir}/resources"/>
+    <property name="viewerEarDir" value="${basedir}/target/ear"/>
+    <property name="viewerEarFile" value="${viewerEarDir}/pa.ear"/>
+    <property name="webDir" value="${basedir}/web"/>
+    <property name="webWar" value="${webDir}/target/viewer.war"/>
+    <property name="servicesDir" value="${basedir}/services"/>
+    <property name="servicesJar" value="${servicesDir}/target/viewer-services.jar"/>
+
+    <!-- ====================================================================== -->
+    <!-- Cleaning target                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="pre-clean"
+            description="Deletes subproject's classes and other target directories which should not exist before starting the build">
+        <ant target="pre-clean" dir="${webDir}" inheritAll="false"/>
+        <ant target="pre-clean" dir="${servicesDir}" inheritAll="false"/>
+        <delete dir="${viewerEarDir}"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Package targets                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="package" depends="pre-clean">
+        <ant target="jar" dir="${servicesDir}"/>
+        <ant target="war" dir="${webDir}"/>
+    </target>
+
+    <target name="package-notest-noivy" depends="pre-clean">
+        <ant target="jar-notest-noivy" dir="${servicesDir}"/>
+        <ant target="war-notest-noivy" dir="${webDir}"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Deploy targets                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="ear">
+        <available file="${paEarFile}" type="file" property="paEarPresent"/>
+        <fail unless="paEarPresent" message="File pa.ear not available(should be at ${paEarFile}).  Please build pa first before viewer."/>
+        <available file="${webWar}" type="file" property="viewerWarPresent"/>
+        <fail unless="viewerWarPresent" message="File viewer.war (web application) not available."/>
+        <available file="${servicesJar}" type="file" property="viewerJarPresent"/>
+        <fail unless="viewerJarPresent" message="File viewer.jar (services jar) not available."/>
+        
+        <delete dir="${viewerEarDir}"/>
+        <unjar src="${paEarFile}" dest="${viewerEarDir}"/>
+        <copy file="${servicesJar}" todir="${viewerEarDir}"/>
+        <copy file="${webWar}" todir="${viewerEarDir}"/>
+        
+        <delete file="${viewerEarDir}/pa-ejb.jar"/>
+        <delete file="${viewerEarDir}/pa-web.war"/>
+        <delete file="${viewerEarDir}/reg-web.war"/>
+        <delete file="${viewerEarDir}/META-INF/application.xml"/>
+        <copy file="${resourceDir}/application.xml" todir="${viewerEarDir}/META-INF"/>
+        <copy file="${softwareDir}/target/pa/lib/viewer/services/compile/pa-ejb-client-1.1.jar" todir="${viewerEarDir}"/>
+        <ear destfile="${viewerEarFile}" 
+             basedir="${viewerEarDir}" 
+             compress="false" 
+             appxml="${viewerEarDir}/META-INF/application.xml"/>
+    </target>
+    
+    <target name="deploy-ear">
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+        <available file="${viewerEarFile}" property="viewerEarPresent"/>
+        <fail unless="viewerEarPresent" message="Ear file not found."/>
+        <copy todir="${jboss.deploy.directory}" file="${viewerEarFile}"/>
+    </target>
+    
+    <target name="deploy" depends="package, ear, deploy-ear" 
+            description="Build test and deploy."/>
+            
+    <target name="deploy-notest" depends="package-notest-noivy, ear, deploy-ear" 
+            description="Build and deploy without testing or getting dependencies."/>
+
+    <!-- ====================================================================== -->
+    <!-- Ivy targets                                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="ivy-get"> 
+        <ant target="ivy-get" dir="${webDir}"/>
+        <ant target="ivy-get" dir="${servicesDir}"/>
+    </target>
+    
+    <target name="ivy-clean" description="Delete jars.">
+        <ant target="ivy-clean" dir="${webDir}"/>
+        <ant target="ivy-clean" dir="${servicesDir}"/>
+    </target>
+    
+
+    <!-- ====================================================================== -->
+    <!-- Copies JSP to the tmp folder                                           -->
+    <!-- ====================================================================== -->
+        
+    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
+        <ant target="copy-jsp" dir="${webDir}"/>
+    </target> 
+    
+</project>
