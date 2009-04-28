@@ -231,11 +231,13 @@ ServletResponseAware {
         StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
         List<StudyProtocolDTO>spList = studyProtocolSvc.search(spDTO);
         List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
-        for (StudyProtocolDTO sp : spList) {
-            TrialHistoryWebDTO dto =  new TrialHistoryWebDTO(sp);
-            dto.setDocuments(getDocuments(sp));
-            trialHistoryWebdtos.add(dto);
-        }
+        if (spList != null) {
+            for (StudyProtocolDTO sp : spList) {
+                TrialHistoryWebDTO dto =  new TrialHistoryWebDTO(sp);
+                dto.setDocuments(getDocuments(sp));
+                trialHistoryWebdtos.add(dto);
+            }
+        } 
         setTrialHistoryWebDTO(trialHistoryWebdtos);
            
         }

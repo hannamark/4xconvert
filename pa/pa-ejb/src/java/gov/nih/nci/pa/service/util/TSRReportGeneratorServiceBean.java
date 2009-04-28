@@ -1036,6 +1036,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * 
    * @throws PAException the PA exception
    */
+  @SuppressWarnings({"PMD" })
   private void appendOrgsAndPersons(StringBuffer html , Ii studyProtocolIi) throws PAException {
       Organization sponsor = PoPaServiceBeanLookup.getOrganizationCorrelationService().getOrganizationByFunctionRole(
               studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
@@ -1092,28 +1093,53 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
       scDtos = PoPaServiceBeanLookup.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
       Person rp = null;
+      Organization sponsorResponsible = null;
       if (scDtos != null && !scDtos.isEmpty()) {
           scDto = scDtos.get(0);
           rp = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
                   Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
           dset = scDto.getTelecomAddresses();
+          
+          StudyParticipationDTO spartDTO = new StudyParticipationDTO();
+          spartDTO.setFunctionalCode(
+                  CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+          List<StudyParticipationDTO> sParts = PoPaServiceBeanLookup.
+              getStudyParticipationService().getByStudyProtocol(studyProtocolIi, spartDTO);
+          for (StudyParticipationDTO spart : sParts) {
+              sponsorResponsible = correlationUtils.getPAOrganizationByPAResearchOrganizationId(
+                      Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+          }
+          
       } else {
           StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
           spart.setRoleCode(CdConverter.convertToCd(
                   StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
           List<StudyParticipationContactDTO> spDtos = PoPaServiceBeanLookup.getStudyParticipationContactService()
               .getByStudyProtocol(studyProtocolIi, spart);
+          
           if (spDtos != null && !spDtos.isEmpty()) {
               rp = correlationUtils.getPAPersonByPAOrganizationalContactId((
                       Long.valueOf(spDtos.get(0).getOrganizationalContactIi().getExtension())));
               dset = spDtos.get(0).getTelecomAddresses();
+              
+              StudyParticipationDTO spDto = new StudyParticipationDTO();
+              spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
+              List<StudyParticipationDTO> spartDtos =
+                  PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, spDto);
+              if (spartDtos != null && !spartDtos.isEmpty()) {
+                  spDto = spartDtos.get(0);
+                  sponsorResponsible = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
+                              Long.valueOf(spDto.getResearchOrganizationIi().getExtension()));
+              }
+
           }
       }
       html.append(DL_B  + DT_B);
       html.append(appendData("Responsible Party" , rp.getFullName() , false , true));
       html.append(DT_E + DT_B);
-      html.append(appendData("Organization" , 
-              rp.getHealthCareProviders().get(0).getOrganization().getName(), false , true));
+      
+      // get the organization
+      html.append(appendData("Organization" , sponsorResponsible.getName(), false , true));
       html.append(DT_E);
       emails = DSetConverter.convertDSetToList(dset, "EMAIL");
       if (emails != null && !emails.isEmpty()) {
