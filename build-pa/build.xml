@@ -79,20 +79,27 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-ejb.base.dir" location="${software.dir}/pa/pa-ejb"/>
     <property name="pa-web.base.dir" location="${software.dir}/pa/pa-web"/>
     <property name="reg-web.base.dir" location="${software.dir}/reg-web"/>
+    <property name="viewer-services.base.dir" location="${software.dir}/viewer/services"/>
+    <property name="viewer-web.base.dir" location="${software.dir}/viewer/web"/>
 
     <!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
+    <property name="pa-ear.build.file" value="build.xml"/>
     <property name="pa-ejb.build.file" value="build.xml"/>
     <property name="pa-web.build.file" value="build.xml"/>
     <property name="reg-web.build.file" value="build.xml"/>
-    <property name="pa-ear.build.file" value="build.xml"/>
+    <property name="viewer-services.build.file" value="build.xml"/>
+    <property name="viewer-web.build.file" value="build.xml"/>
     
     <!-- The target name that should be called from the sub-project build file -->
     <property name="pa-clean.build.target" value="clean"/>
+    <property name="viewer-clean.build.target" value="pre-clean"/>
     <property name="pa-ivy-clean.build.target" value="ivy-clean"/>
     <property name="pa-ear.build.target" value="package"/>
+    <property name="pa-ejb.build.target" value="package-notest"/>
     <property name="pa-web.build.target" value="package-notest"/>
     <property name="reg-web.build.target" value="package-notest"/>
-    <property name="pa-ejb.build.target" value="package-notest"/>
+    <property name="viewer-services.build.target" value="jar-notest"/>
+    <property name="viewer-web.build.target" value="war-notest"/>
     
     <!-- Distribution Structure properties, used to copy files into the distribution area.
             Use project.propertie relative dir names becasue they are used by install also-->
@@ -101,6 +108,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-ejb.dist.dir" location="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
     <property name="pa-web.dist.dir" location="${dist.exploded.dir}/${pa-web.dist.relative.dir}" />
     <property name="reg-web.dist.dir" location="${dist.exploded.dir}/${reg-web.dist.relative.dir}" />
+    <property name="viewer-services.dist.dir" location="${dist.exploded.dir}/${viewer-services.dist.relative.dir}" />
+    <property name="viewer-web.dist.dir" location="${dist.exploded.dir}/${viewer-web.dist.relative.dir}" />
     <property name="pa-container-jar.dist.dir" location="${dist.exploded.dir}/${pa-container-jar.dist.relative.dir}" />
     <property name="tools.dist.dir" location="${dist.exploded.dir}/${tools.dist.relative.dir}" />
     <property name="common.dist.dir" location="${dist.exploded.dir}/${common.dist.relative.dir}" />
@@ -108,15 +117,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
     <property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
 
-	<property name="pa-grid.base.dir" location="${software.dir}/pa-grid"/>
-	<property name="pa-grid.build.file" location="${pa-grid.base.dir}/build.xml"/>
-	<property name="pa-grid.dir.target" value="wsrf.war" />
-	<property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
-	<property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-	<property name="pa-grid.build.target" value="clean:deployJBoss"/>
-	<property name="pa-grid.artifact.dir" value="${pa-grid.base.dir}/target" />
-	<property name="pa-grid.dist.dir" value="${dist.exploded.dir}/${pa-grid.dist.relative.dir}"/>
-	
+    <property name="pa-grid.base.dir" location="${software.dir}/pa-grid"/>
+    <property name="pa-grid.build.file" location="${pa-grid.base.dir}/build.xml"/>
+    <property name="pa-grid.dir.target" value="wsrf.war" />
+    <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+    <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+    <property name="pa-grid.build.target" value="clean:deployJBoss"/>
+    <property name="pa-grid.artifact.dir" value="${pa-grid.base.dir}/target" />
+    <property name="pa-grid.dist.dir" value="${dist.exploded.dir}/${pa-grid.dist.relative.dir}"/>
+    
     <!-- Selenium settings -->
     <property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
     <property name="selenium.browser" value="*firefox"/>
@@ -222,23 +231,23 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="clean">
         <delete dir="${dist.dir}"/>
         <delete dir="${temp.dir}"/>
-    	<delete dir="${pa-grid.artifact.dir}"/>
+        <delete dir="${pa-grid.artifact.dir}"/>
     </target>
-	
+    
     <macrodef name="jboss-install-binaries2" description="Added params to support different types of installations, should be pulled up into BDA-utils">
         <attribute name="application.base.path" default="${application.base.path}"/>
         <attribute name="jboss.binaries.file" default="${tools.dir}/${jboss.binaries.file}" />
         <attribute name="jboss.server.name" default="${jboss.server.name}" />
         <attribute name="jems.install.option" default="ejb3" />
-    	<attribute name="jboss.home" default="${jboss.home}" />
+        <attribute name="jboss.home" default="${jboss.home}" />
         <sequential>
-			<var name="jboss.file.is.zip" unset="true"/>
+            <var name="jboss.file.is.zip" unset="true"/>
             <propertyregex property="jboss.file.is.zip"
                 input="@{jboss.binaries.file}"
                 regexp=".*.zip"
                 select="true"
                 />
-			<var name="jboss.file.is.jar" unset="true"/>				
+            <var name="jboss.file.is.jar" unset="true"/>                
             <propertyregex property="jboss.file.is.jar"
                 input="@{jboss.binaries.file}"
                 regexp=".*.jar"
@@ -253,7 +262,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <if>
                 <isset property="jboss.file.is.jar"/>
                 <then>
-        			<echo message="Using -installGroup @{jems.install.option} installpath=@{jboss.home}"/>
+                    <echo message="Using -installGroup @{jems.install.option} installpath=@{jboss.home}"/>
                     <java jar="@{jboss.binaries.file}" fork="true">
                         <arg line="-installGroup @{jems.install.option} installpath=@{jboss.home}"/>
                     </java>
@@ -280,16 +289,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 </then>                 
             </if>           
         </sequential>
-    </macrodef>	
-	
-    <target name="init" >
-        <!-- work around missing dirs for first time build in sub-project build.xmls -->
-        <!--
-        <mkdir dir="${pa-ejb.base.dir}/lib"/>
-        <mkdir dir="${pa-web.base.dir}/lib"/>
-        <mkdir dir="${software.dir}/client"/>
-        -->
-        <!-- end work around -->
+    </macrodef>
+    
+    <target name="init">
         <mkdir dir="${target.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${dist.exploded.dir}"/>
@@ -300,8 +302,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <mkdir dir="${temp.dir}"/>
         <mkdir dir="${download.dir}"/>
         <mkdir dir="${pt.dir}"/>
-		<mkdir dir="${pa-grid.artifact.dir}"/>
-		<mkdir dir="${pa-grid.dist.dir}"/>
+        <mkdir dir="${pa-grid.artifact.dir}"/>
+        <mkdir dir="${pa-grid.dist.dir}"/>
         <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
         <!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
@@ -323,13 +325,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                     <then>
                         <echo message="LOCAL_JBOSS_HOME not found downloading."/>
                         <antcall target="dist:tools:retrieve:jboss"/>
-						<jboss-install-binaries2 
-						    application.base.path="${local.jboss.home}"
-							jboss.server.name="${jboss.server.name}" 
-							jems.install.option="ejb3" 
-							jboss.binaries.file="${jboss.dest.file}"
-							jboss.home="${local.jboss.home}"
-						 />                        
+                        <jboss-install-binaries2 
+                            application.base.path="${local.jboss.home}"
+                            jboss.server.name="${jboss.server.name}" 
+                            jems.install.option="ejb3" 
+                            jboss.binaries.file="${jboss.dest.file}"
+                            jboss.home="${local.jboss.home}"
+                         />                        
                     </then>
                     <else>
                         <echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
@@ -359,13 +361,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         clean,
         init,
         build:pa-ear,
-    	build:pa-grid
+        build:pa-grid
         "/>
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
-    <target name="build:pa-ear" depends="init,build:pa-ejb, build:pa-web, build:reg-web">
+    <target name="build:pa-ear" depends="init,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
+            <property name="exclude.viewer" value="${exclude.viewer}"/>
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/> 
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
@@ -482,31 +485,47 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <target name="${pa-ejb.build.target}"/>
         </ant>
     </target>
-	
-	<!-- Build pa-grid sub-project produces project level artifact -->
-	<target name="build:pa-grid" depends="init" unless="exclude.pa-grid">
-		<fail unless="jboss.server.hostname"/>
-		<fail unless="jboss.server.port"/>
+    
+    <target name="build:viewer-services" depends="init" unless="exclude.viewer">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+            dir="${viewer-services.base.dir}" >
+            <target name="${viewer-clean.build.target}"/>
+            <target name="${viewer-services.build.target}"/>
+        </ant>
+    </target>
 
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-grid.build.file}"
+    <target name="build:viewer-web" depends="init" unless="exclude.viewer">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
+            dir="${viewer-web.base.dir}" >
+            <target name="${viewer-clean.build.target}"/>
+            <target name="${viewer-web.build.target}"/>
+        </ant>
+    </target>
+    
+    <!-- Build pa-grid sub-project produces project level artifact -->
+    <target name="build:pa-grid" depends="init" unless="exclude.pa-grid">
+        <fail unless="jboss.server.hostname"/>
+        <fail unless="jboss.server.port"/>
+
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-grid.build.file}"
             target="${pa-grid.build.target}"
             dir="${pa-grid.base.dir}" >
-			<property name="project.name" value="${project.name}"/>
-			<property name="jboss.dir" value="target"/>
-			<property name="jboss.serverinstance.name" value="${jboss.server.name.grid}"/>
-			<property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
-			<property name="java.naming.provider.url.host" value="localhost"/>
-			<property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
-			<property name="java.naming.security.principal" value="%%pagrid.jndi.principal%%"/>
-			<property name="java.naming.security.credentials" value="%%pagrid.jndi.credentials%%"/>
-			<property name="no.deployment.validation" value="true"/>
-		</ant>
+            <property name="project.name" value="${project.name}"/>
+            <property name="jboss.dir" value="target"/>
+            <property name="jboss.serverinstance.name" value="${jboss.server.name.grid}"/>
+            <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
+            <property name="java.naming.provider.url.host" value="localhost"/>
+            <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
+            <property name="java.naming.security.principal" value="%%pagrid.jndi.principal%%"/>
+            <property name="java.naming.security.credentials" value="%%pagrid.jndi.credentials%%"/>
+            <property name="no.deployment.validation" value="true"/>
+        </ant>
 
-		<zip update="false" destfile="${pa-grid.dist.dir}/${pa-grid.artifact.file}">
-			<zipfileset dir="${pa-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}/" />
-		</zip>
-		<delete dir="${pa-grid.artifact.dir}/server" />
-	</target>	
+        <zip update="false" destfile="${pa-grid.dist.dir}/${pa-grid.artifact.file}">
+            <zipfileset dir="${pa-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}/" />
+        </zip>
+        <delete dir="${pa-grid.artifact.dir}/server" />
+    </target>   
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="validate:pre:build">
         <validate-pre-build
@@ -601,16 +620,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="dist:installer" depends="dist:installer:prep">
         <delete file="${dist.dir}/${pa-ear.install.zip.file}"/>
         <delete file="${dist.dir}/${pa-grid.install.zip.file}"/>
-	    <!-- Set environment name to external -->
-	    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-	    <obfuscate-properties-file
-	        properties.file="${dist.exploded.dir}/install.properties"
-	        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-	        optional.property.list="ldap.url,ldap.basedn"
-	        delete.property.list="exclude.jboss.backup"
-	        />
+        <!-- Set environment name to external -->
+        <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+        <obfuscate-properties-file
+            properties.file="${dist.exploded.dir}/install.properties"
+            required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+            optional.property.list="ldap.url,ldap.basedn"
+            delete.property.list="exclude.jboss.backup"
+            />
         <zip destfile="${dist.dir}/${pa-ear.install.zip.file}" basedir="${dist.exploded.dir}"/>
-    	<zip destfile="${dist.dir}/${pa-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**, ${db.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**, ${db.dist.relative.dir}/**"/>
     </target>
 
     <!-- Copies install time resources into distribution tree -->
@@ -644,48 +663,48 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Creates upgrader distribution -->
     <target name="dist:upgrader" depends="dist:upgrader:prep">
         <delete file="${dist.dir}/${pa-ear.upgrade.zip.file}"/>
-    	<delete file="${dist.dir}/${pa-grid.upgrade.zip.file}"/>
-    	
-	    <!-- Set environment name to external -->
-	    <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-	
-	    <obfuscate-properties-file
-	        properties.file="${dist.exploded.dir}/install.properties"
-	        required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
-	        optional.property.list="ldap.url,ldap.basedn"
-	        delete.property.list="exclude.jboss.backup"
-	        />
-	    <copy todir="${dist.exploded.dir}" overwrite="true">
-	        <fileset dir="${build.dir}">
-	            <include name="upgrade.properties" />
-	        </fileset>
-	    </copy>
-	    <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
-    	
+        <delete file="${dist.dir}/${pa-grid.upgrade.zip.file}"/>
+        
+        <!-- Set environment name to external -->
+        <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+    
+        <obfuscate-properties-file
+            properties.file="${dist.exploded.dir}/install.properties"
+            required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
+            optional.property.list="ldap.url,ldap.basedn"
+            delete.property.list="exclude.jboss.backup"
+            />
+        <copy todir="${dist.exploded.dir}" overwrite="true">
+            <fileset dir="${build.dir}">
+                <include name="upgrade.properties" />
+            </fileset>
+        </copy>
+        <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
+        
         <zip destfile="${dist.dir}/${pa-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}"/>
-    	<zip destfile="${dist.dir}/${pa-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
     </target>
 
 
     <target name="deploy:local:install" depends="build:all,local:install" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" />
     
-	<target name="local:install" depends="dist:installer:prep">
-		<!--
-		* Requires a database installation.
-		* Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
-		* If you want properties to be used at install time they must be included in a proeprties file.
-		* Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
-		* This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
-		* It only supports using those properties files for now, so if you want to change install time properites edit these files.
-		-->
-		<deploy-local
-	            target.name="${install.target}"
-	            />
-	</target>	
+    <target name="local:install" depends="dist:installer:prep">
+        <!--
+        * Requires a database installation.
+        * Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).
+        * If you want properties to be used at install time they must be included in a proeprties file.
+        * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install.
+        * This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
+        * It only supports using those properties files for now, so if you want to change install time properites edit these files.
+        -->
+        <deploy-local
+                target.name="${install.target}"
+                />
+    </target>   
 
     <target name="deploy:local:upgrade" depends="build:all,local:upgrade" description="Upgrades the application on the local machine, used for developer desktops and ci environments" />
 
-	<target name="local:upgrade" depends="dist:upgrader:prep">
+    <target name="local:upgrade" depends="dist:upgrader:prep">
         <!--
         * Requires a database installation.
         * Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
@@ -695,28 +714,28 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         -->
         <deploy-local
             target.name="${upgrade.target}"
-            />	
-	</target>
+            />  
+    </target>
 
-	<!-- Install the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into -->
-	<target name="deploy:remote:install"
-		depends="
-		build:all,
-		dist:installer,
-		remote:install
-		">
-	</target>
+    <!-- Install the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into -->
+    <target name="deploy:remote:install"
+        depends="
+        build:all,
+        dist:installer,
+        remote:install
+        ">
+    </target>
 
-	<target name="remote:install" depends="remote:install:pa-ear, remote:install:pa-grid"/>
-	<target name="remote:install:pa-ear">
-		<deploy-files2
-	            dist.file="${pa-ear.install.zip.file}"
-	            />
-		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
-	</target>
-	<target name="remote:install:pa-grid" unless="exclude.pa-grid">
-		<!-- install pa-grid only-->
-		<deploy-files2
+    <target name="remote:install" depends="remote:install:pa-ear, remote:install:pa-grid"/>
+    <target name="remote:install:pa-ear">
+        <deploy-files2
+                dist.file="${pa-ear.install.zip.file}"
+                />
+        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
+    </target>
+    <target name="remote:install:pa-grid" unless="exclude.pa-grid">
+        <!-- install pa-grid only-->
+        <deploy-files2
          ssh.user="${pagrid.ssh.server.username}"
          ssh.host="${pagrid.ssh.server.hostname}"
          ssh.port="${pagrid.ssh.port}"
@@ -724,75 +743,75 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
          remote.directory.property.name="pagrid.ssh.dir.temp"
          dist.file="${pa-grid.upgrade.zip.file}"
          />
-		<remote-ssh 
-			remoteSshUser="${pagrid.ssh.server.username}" 
-			remoteSshHost="${pagrid.ssh.server.hostname}" 
-			remoteSshPort="${pagrid.ssh.port}" 
-			remoteSshKeyfile="${pagrid.ssh.key.file}" 
-			remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${install.target}" />
-	</target>
-	
-	<!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
-	<target name="deploy:remote:upgrade"
-		depends="
-		build:all,
-		dist:upgrader,
-		remote:upgrade
-		">
-	</target>
-	
-	  <macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
-	    <attribute name="ssh.user" default="${ssh.server.username}" />
-	    <attribute name="ssh.host" default="${ssh.server.hostname}" />
-	    <attribute name="remote.directory.property.name" default="ssh.dir.temp" />
-	    <attribute name="properties.file" default="${properties.file}" />
-	    <attribute name="dist.dir" default="${dist.dir}" />
-	    <attribute name="dist.file" />
-	    <attribute name="ssh.port" default="22"/>
-	    <attribute name="ssh.key.file" default="${ssh.key.file}"/>
-	    <sequential>
-	      <!-- Validate remote directory is valid -->
-	      <propertycopy name="remote.dir" from="@{remote.directory.property.name}" override="true"/>
-	      <check-valid-directory-name directory.property="remote.dir" />
-	      <!-- Delete/re-create remote directory -->
-	      <remote-ssh
-	                remoteSshHost="@{ssh.host}"
-	                remoteSshUser="@{ssh.user}"
-	                remotesshcommand="rm -rf ${remote.dir};mkdir -p ${remote.dir}" />
-	      <!-- work around for issue where basedir is required but is not currently used -->
-	      <remote-ssh
-	                remoteSshHost="@{ssh.host}"
-	                remoteSshUser="@{ssh.user}"
-	                remotesshcommand="mkdir -p ${remote.dir}/lib" />
+        <remote-ssh 
+            remoteSshUser="${pagrid.ssh.server.username}" 
+            remoteSshHost="${pagrid.ssh.server.hostname}" 
+            remoteSshPort="${pagrid.ssh.port}" 
+            remoteSshKeyfile="${pagrid.ssh.key.file}" 
+            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${install.target}" />
+    </target>
+    
+    <!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
+    <target name="deploy:remote:upgrade"
+        depends="
+        build:all,
+        dist:upgrader,
+        remote:upgrade
+        ">
+    </target>
+    
+      <macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
+        <attribute name="ssh.user" default="${ssh.server.username}" />
+        <attribute name="ssh.host" default="${ssh.server.hostname}" />
+        <attribute name="remote.directory.property.name" default="ssh.dir.temp" />
+        <attribute name="properties.file" default="${properties.file}" />
+        <attribute name="dist.dir" default="${dist.dir}" />
+        <attribute name="dist.file" />
+        <attribute name="ssh.port" default="22"/>
+        <attribute name="ssh.key.file" default="${ssh.key.file}"/>
+        <sequential>
+          <!-- Validate remote directory is valid -->
+          <propertycopy name="remote.dir" from="@{remote.directory.property.name}" override="true"/>
+          <check-valid-directory-name directory.property="remote.dir" />
+          <!-- Delete/re-create remote directory -->
+          <remote-ssh
+                    remoteSshHost="@{ssh.host}"
+                    remoteSshUser="@{ssh.user}"
+                    remotesshcommand="rm -rf ${remote.dir};mkdir -p ${remote.dir}" />
+          <!-- work around for issue where basedir is required but is not currently used -->
+          <remote-ssh
+                    remoteSshHost="@{ssh.host}"
+                    remoteSshUser="@{ssh.user}"
+                    remotesshcommand="mkdir -p ${remote.dir}/lib" />
 
-	      <!-- copy distribution and prop file to remote system -->
-	      <remote-scp
-	                remoteScpFileToCopy="@{dist.dir}/@{dist.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
-	      <remote-scp
-	                remoteScpFileToCopy="@{properties.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
-	      <!-- Extract zip file -->
-	      <remote-ssh
-	                remoteSshHost="@{ssh.host}"
-	                remoteSshUser="@{ssh.user}"
-	                remotesshcommand="cd ${remote.dir}; unzip -q @{dist.file}" />
+          <!-- copy distribution and prop file to remote system -->
+          <remote-scp
+                    remoteScpFileToCopy="@{dist.dir}/@{dist.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
+          <remote-scp
+                    remoteScpFileToCopy="@{properties.file}" remoteScpToDir="@{ssh.user}@@@{ssh.host}:${remote.dir}" />
+          <!-- Extract zip file -->
+          <remote-ssh
+                    remoteSshHost="@{ssh.host}"
+                    remoteSshUser="@{ssh.user}"
+                    remotesshcommand="cd ${remote.dir}; unzip -q @{dist.file}" />
 
-	    </sequential>
-	  </macrodef>
-	
-	<target name="remote:upgrade" depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid">
-	</target>
+        </sequential>
+      </macrodef>
+    
+    <target name="remote:upgrade" depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid">
+    </target>
 
-	<target name="remote:upgrade:pa-ear">
-		<!-- install pa-ear only-->
-		<deploy-files2
+    <target name="remote:upgrade:pa-ear">
+        <!-- install pa-ear only-->
+        <deploy-files2
              dist.file="${pa-ear.upgrade.zip.file}"
              />
-		<remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-grid=true ${upgrade.target}" />
-	</target>
+        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-grid=true ${upgrade.target}" />
+    </target>
 
-	<target name="remote:upgrade:pa-grid" unless="exclude.pa-grid">
-		<!-- install pa-grid only-->
-		<deploy-files2
+    <target name="remote:upgrade:pa-grid" unless="exclude.pa-grid">
+        <!-- install pa-grid only-->
+        <deploy-files2
              ssh.user="${pagrid.ssh.server.username}"
              ssh.host="${pagrid.ssh.server.hostname}"
              ssh.port="${pagrid.ssh.port}"
@@ -800,13 +819,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remote.directory.property.name="pagrid.ssh.dir.temp"
              dist.file="${pa-grid.upgrade.zip.file}"
              />
-		<remote-ssh
-         	remoteSshUser="${pagrid.ssh.server.username}"
-         	remoteSshHost="${pagrid.ssh.server.hostname}"
+        <remote-ssh
+            remoteSshUser="${pagrid.ssh.server.username}"
+            remoteSshHost="${pagrid.ssh.server.hostname}"
             remoteSshPort="${pagrid.ssh.port}"
-         	remoteSshKeyfile="${pagrid.ssh.key.file}"
-         	remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${upgrade.target}" />
-	</target>
+            remoteSshKeyfile="${pagrid.ssh.key.file}"
+            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${upgrade.target}" />
+    </target>
     <target name="usage" description="Explains how to use this build script">
         <echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
     </target>

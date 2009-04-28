@@ -51,13 +51,13 @@
         </fileset>
     </path>
 
-	<path id="jboss.client.classpath">
+    <path id="jboss.client.classpath">
         <fileset dir="${jboss.deploy.directory}/../../../client">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-	<path id="ejb.package.classpath">
+    <path id="ejb.package.classpath">
         <fileset dir="${pa.dir}/pa-ejb/target">
            <include name="*.jar"/>
         </fileset>
@@ -96,7 +96,7 @@
         <fileset dir="${test-pmd.jar.dir}"/>
     </path>
 
-	<path id="ivy.classpath">
+    <path id="ivy.classpath">
         <fileset dir="${ivy.lib.dir}">
             <include name="${ivy.file}"/>
             <include name="${ivy-core.file}"/>
@@ -118,7 +118,7 @@
     </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
 
-	
+    
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -160,7 +160,7 @@
         </copy>
     </target>
 
-	
+    
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
@@ -193,7 +193,7 @@
         </copy>
     </target>
 
-	
+    
     <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
@@ -216,7 +216,7 @@
         </checkstyle>
     </target>
 
-	
+    
     <!-- ====================================================================== -->
     <!-- Run PMD                                                                -->
     <!-- ====================================================================== -->
@@ -237,7 +237,7 @@
          </pmd>
     </target>
 
-	
+    
     <!-- ====================================================================== -->
     <!-- Run Simian                                                             -->
     <!-- ====================================================================== -->
@@ -296,7 +296,7 @@
 
     <target name="war" depends="ivy-get, compile, inspect, test, create-war"/>
 
-    <target name="war-notest-noivy" depends="ivy-compile, ivy-runtime, compile, create-war"
+    <target name="war-notest" depends="ivy-compile, ivy-runtime, compile, create-war"
             description="Package the application.  Do not run tests."/>
 
 

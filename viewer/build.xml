@@ -39,8 +39,8 @@
     </target>
 
     <target name="package-notest-noivy" depends="pre-clean">
-        <ant target="jar-notest-noivy" dir="${servicesDir}"/>
-        <ant target="war-notest-noivy" dir="${webDir}"/>
+        <ant target="jar-notest" dir="${servicesDir}"/>
+        <ant target="war-notest" dir="${webDir}"/>
     </target>
 
     <!-- ====================================================================== -->

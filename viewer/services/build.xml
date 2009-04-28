@@ -283,7 +283,7 @@
             description="Makes services jar">
     </target>
     
-    <target name="jar-notest-noivy" depends="ivy-compile, compile, create-jar"
+    <target name="jar-notest" depends="ivy-compile, compile, create-jar"
             description="Makes services jar, doesn't run tests">
     </target>
 
@@ -318,7 +318,7 @@
             <classpath refid="test.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="jboss.client.classpath"/>
-        	<classpath refid="ejb.package.classpath"/>
+            <classpath refid="ejb.package.classpath"/>
             <batchtest todir="${viewer.test.reports}">
                 <fileset dir="${viewer.build.testDir.0}">
                     <include name="**/*Test.java"/>

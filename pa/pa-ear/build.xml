@@ -5,7 +5,6 @@
 <!-- ====================================================================== -->
 
 <project name="pa-ear" default="test-all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property name="exclude.viewer" value="false"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
@@ -195,12 +194,9 @@
         <available file="${reg-web.package}" property="reg-web.present"/>
         <fail unless="reg-web.present" message="Protocol regestry war not found."/>
         <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
-        <condition property="omit.viewer">
-            <istrue value="${exclude.viewer}"/>
-        </condition>        
     </target>
 
-    <target name="package-inc-viewer" unless="omit.viewer">
+    <target name="package-inc-viewer" unless="exclude.viewer">
         <echo message="Including viewer application"/>
         <available file="${viewer.war.package}" property="viewer.war.present"/>
         <fail unless="viewer.war.present" message="Report viewer war not found."/> 
@@ -213,14 +209,12 @@
         <property name="appxml.viewer.dd" value="${viewer.deployment.descriptor}"/>
     </target>
     
-    <target name="package-exc-viewer" if="omit.viewer">
+    <target name="package-exc-viewer" if="exclude.viewer">
         <echo message="Excluding viewer application"/>
         <property name="appxml.viewer.dd" value=""/>
     </target>
     
-    <target name="package-viewer" depends="package-inc-viewer,package-exc-viewer">
-        <echo>Viewer deployment descriptor:  ${viewer.deployment.descriptor}</echo>
-    </target>
+    <target name="package-viewer" depends="package-inc-viewer,package-exc-viewer"/>
     
     <target name="package" depends="ivy-get,compile,package-setup,package-viewer" description="Package the application">
         <copy file="${pa-ejb.package}" 
@@ -242,7 +236,6 @@
                      includes="**/*" 
                      excludes="**/application.xml"/>
         </copy>
-        <echo>${appxml.viewer.dd}</echo>
         <copy file="${pa-ear.build.resourceDir.0}/META-INF/application.xml" 
               todir="${pa-ear.build.dir}/classes/META-INF"
               overwrite="true">
