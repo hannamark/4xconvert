@@ -1,0 +1,14 @@
+<profiles>
+    <profile>
+        <id>quick</id>
+        <activation>
+            <activeByDefault>false</activeByDefault>
+        </activation>
+        <properties>
+            <cobertura.check.haltOnFailure>false</cobertura.check.haltOnFailure>
+            <maven.test.skip>true</maven.test.skip>
+            <pmd.skip>true</pmd.skip>
+            <checkstyle.skip>true</checkstyle.skip>
+        </properties>
+    </profile>
+</profiles>
