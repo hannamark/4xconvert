@@ -1,3 +1,4 @@
+include.viewer=false
 jboss.deploy.directory=D:/jboss-4.0.5.GAJEMS/server/default/deploy
 jboss.port=8280
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
@@ -8,7 +9,7 @@ jdbc.url=jdbc:postgresql://localhost:5432/ctods
 test.schema.showsql=false
 test.java.naming.provider=localhost
 po.server.name=localhost
-po.port.number=1099
+po.port.number=21499
 po.username=ejbclient
 po.pass=pass
 doc.upload.filepath.loc=D://doc
@@ -21,7 +22,7 @@ batch.upload.filepath.loc=D://batch_docs
 # Po Server name to look up
 po.topic.serverName=localhost
 # Po Server port number for the look up 
-po.topic.port=11099
+po.topic.port=21499
 # The user name for the secured topic 'topic/POTopic', this user name will be provisioned by PO team, they will creating the CSM user and providing the principla/credentials to log in.
 po.topic.userName=subscriber
 # The password for the secured user

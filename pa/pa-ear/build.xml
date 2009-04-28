@@ -5,6 +5,7 @@
 <!-- ====================================================================== -->
 
 <project name="pa-ear" default="test-all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="exclude.viewer" value="false"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
@@ -26,6 +27,11 @@
     <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>   
     <property name="reg-web.output.dir" value="${software.dir}/reg-web/target"/>
     <property name="reg-web.package" value="${reg-web.output.dir}/reg-web.war"/>   
+    <property name="viewer.war.output.dir" value="${software.dir}/viewer/web/target"/>
+    <property name="viewer.war.package" value="${viewer.war.output.dir}/viewer.war"/>   
+    <property name="viewer.jar.output.dir" value="${software.dir}/viewer/services/target"/>
+    <property name="viewer.jar.package" value="${viewer.jar.output.dir}/viewer-services.jar"/>   
+    <property file="${software.dir}/viewer/resources/deployment.descriptor.properties"/>
     <property name="serverName" value="default"/>
     
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
@@ -181,8 +187,7 @@
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="package" depends="ivy-get,compile" description="Package the application">
-        <!-- package pa.ear -->
+    <target name="package-setup">
         <available file="${pa-ejb.package}" property="pa-ejb.present"/>
         <fail unless="pa-ejb.present" message="EJB jar file not found."/>
         <available file="${pa-web.package}" property="pa-web.present"/>
@@ -190,6 +195,34 @@
         <available file="${reg-web.package}" property="reg-web.present"/>
         <fail unless="reg-web.present" message="Protocol regestry war not found."/>
         <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <condition property="omit.viewer">
+            <istrue value="${exclude.viewer}"/>
+        </condition>        
+    </target>
+
+    <target name="package-inc-viewer" unless="omit.viewer">
+        <echo message="Including viewer application"/>
+        <available file="${viewer.war.package}" property="viewer.war.present"/>
+        <fail unless="viewer.war.present" message="Report viewer war not found."/> 
+        <available file="${viewer.jar.package}" property="viewer.jar.present"/>
+        <fail unless="viewer.jar.present" message="Report viewer services jar not found."/> 
+        <copy file="${viewer.jar.package}" 
+             todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <copy file="${viewer.war.package}" 
+             todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <property name="appxml.viewer.dd" value="${viewer.deployment.descriptor}"/>
+    </target>
+    
+    <target name="package-exc-viewer" if="omit.viewer">
+        <echo message="Excluding viewer application"/>
+        <property name="appxml.viewer.dd" value=""/>
+    </target>
+    
+    <target name="package-viewer" depends="package-inc-viewer,package-exc-viewer">
+        <echo>Viewer deployment descriptor:  ${viewer.deployment.descriptor}</echo>
+    </target>
+    
+    <target name="package" depends="ivy-get,compile,package-setup,package-viewer" description="Package the application">
         <copy file="${pa-ejb.package}" 
              todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
         <copy file="${pa-web.package}" 
@@ -202,13 +235,21 @@
                 <filter token="jdbc.url" value="${jdbc.url}"/>
                 <filter token="db.username" value="${db.username}"/>
                 <filter token="db.password" value="${db.password}"/>
-            	<filter token="po.topic.serverName" value="${po.topic.serverName}"/>
-            	<filter token="po.topic.port" value="${po.topic.port}"/>
+                <filter token="po.topic.serverName" value="${po.topic.serverName}"/>
+                <filter token="po.topic.port" value="${po.topic.port}"/>
             </filterset>
             <fileset dir="${pa-ear.build.resourceDir.0}" 
                      includes="**/*" 
                      excludes="**/application.xml"/>
-        </copy>     
+        </copy>
+        <echo>${appxml.viewer.dd}</echo>
+        <copy file="${pa-ear.build.resourceDir.0}/META-INF/application.xml" 
+              todir="${pa-ear.build.dir}/classes/META-INF"
+              overwrite="true">
+            <filterset>
+                <filter token="viewer.deployment.descriptor" value="${appxml.viewer.dd}"/>
+            </filterset>
+        </copy>
         <copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>

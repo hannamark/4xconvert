@@ -5,23 +5,19 @@
 <application>
     <display-name>pa-ear</display-name>
     <module>
-        <web>
-            <web-uri>reg-web.war</web-uri>
-            <context-root>/registry</context-root>
-        </web>
-    </module>
-    <module>
-        <web>
-            <web-uri>pa-web.war</web-uri>
-            <context-root>/pa</context-root>
-        </web>
-    </module>
-    @viewer.deployment.descriptor@
-    <module>
         <java>jboss-service.xml</java>
     </module>   
     <module>
-        <ejb>pa-ejb.jar</ejb>
+        <java>viewer-services.jar</java>
+    </module>
+    <module>
+        <web>
+            <web-uri>viewer.war</web-uri>
+            <context-root>/viewer</context-root>
+        </web>
+    </module>
+    <module>
+        <java>pa-ejb-client-1.1.jar</java>
     </module>
     <module>
         <java>po-services-client-1.1.0.rc1.jar</java>
@@ -32,7 +28,6 @@
     <module>
         <java>iso-datatypes-1.1.0.rc1.jar</java>
     </module>
-    <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>Submitter</role-name></security-role>
-    <security-role><role-name>ReportViewer</role-name></security-role>
+    <security-role><role-name>Abstractor</role-name></security-role>
 </application>
