@@ -489,6 +489,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="build:viewer-services" depends="init" unless="exclude.viewer">
         <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
             dir="${viewer-services.base.dir}" >
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+
             <target name="${viewer-clean.build.target}"/>
             <target name="${viewer-services.build.target}"/>
         </ant>
@@ -497,6 +499,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="build:viewer-web" depends="init" unless="exclude.viewer">
         <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
             dir="${viewer-web.base.dir}" >
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+
             <target name="${viewer-clean.build.target}"/>
             <target name="${viewer-web.build.target}"/>
         </ant>
