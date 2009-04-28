@@ -194,9 +194,12 @@
         <available file="${reg-web.package}" property="reg-web.present"/>
         <fail unless="reg-web.present" message="Protocol regestry war not found."/>
         <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <condition property="omit.viewer">
+            <istrue value="${exclude.viewer}"/>
+        </condition>        
     </target>
 
-    <target name="package-inc-viewer" unless="exclude.viewer">
+    <target name="package-inc-viewer" unless="omit.viewer">
         <echo message="Including viewer application"/>
         <available file="${viewer.war.package}" property="viewer.war.present"/>
         <fail unless="viewer.war.present" message="Report viewer war not found."/> 
@@ -209,7 +212,7 @@
         <property name="appxml.viewer.dd" value="${viewer.deployment.descriptor}"/>
     </target>
     
-    <target name="package-exc-viewer" if="exclude.viewer">
+    <target name="package-exc-viewer" if="omit.viewer">
         <echo message="Excluding viewer application"/>
         <property name="appxml.viewer.dd" value=""/>
     </target>
