@@ -401,6 +401,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
     <target name="install:jboss:binaries:pa-grid" unless="exclude.pa-grid">
         <jboss-install-binaries2
+			jems.install.option="default"
             jboss.server.name="${jboss.server.name.grid}"
             />
     </target>
