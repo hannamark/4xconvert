@@ -859,6 +859,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:jboss:pa-ear:re-configure,
         install:jboss:pa-ear,
         install:jboss:pa-ear:configure,
+        install:jboss:pa-grid:pre-configure,
+        install:pa-grid:application,
+        install:pa-grid:configure,
         install:jboss:start
         " />
 
