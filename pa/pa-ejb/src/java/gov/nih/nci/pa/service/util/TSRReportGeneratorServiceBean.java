@@ -249,7 +249,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   
   /** The Constant CENTER_E. */
   private static final String CENTER_E = "</CENTER>";
-  
+ 
+  /** The Constant NBSP. */
+  private static final String NBSP = "&nbsp;&nbsp;&nbsp;";
   
   /** The Constant LOG. */
   private static final Logger LOG  = Logger.getLogger(TSRReportGeneratorServiceBean.class);
@@ -381,7 +383,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       if (first) {
         first = false;
-        html.append(appendData("Investigator(s)", "", true , true));
+        html.append(appendLabel("Investigator(s)", "", true , true));
         html.append(TBL_B);
         html.append(TR_B);
         appendTDAndData(html, appendTRBold("First Name"));
@@ -438,8 +440,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     for (StudyOutcomeMeasureDTO smDTO : somDtos) {
       if (!smDTO.getPrimaryIndicator().getValue().booleanValue()) {
     appendTitle(html, appendBoldData("Secondary Outcome Measures"));
-        html.append(appendData("Description", getData(smDTO.getName(), true), true , true));
-        html.append(appendData("TimeFrame", getData(smDTO.getTimeFrame(), true), true , true));
+        html.append(appendData("Description", getInfo(smDTO.getName(), true), true , true));
+        html.append(appendData("TimeFrame", getInfo(smDTO.getTimeFrame(), true), true , true));
         html.append(appendData("Safety Issue", convertBLToString((smDTO.getSafetyIndicator()), false), true , true));
         html.append(BR);
       }
@@ -458,8 +460,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       if (smDTO.getPrimaryIndicator().getValue().booleanValue()) {
     appendTitle(html, appendBoldData("Primary Outcome Measures"));
         html.append(BR);
-        html.append(appendData("Description", getData(smDTO.getName(), true), true , true));
-        html.append(appendData("TimeFrame", getData(smDTO.getTimeFrame(), true), true , true));
+        html.append(appendData("Description", getInfo(smDTO.getName(), true), true , true));
+        html.append(appendData("TimeFrame", getInfo(smDTO.getTimeFrame(), true), true , true));
         html.append(appendData("Safety Issue?", convertBLToString((smDTO.getSafetyIndicator()), false), true , true));
         html.append(BR);
       }
@@ -478,10 +480,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     for (ArmDTO armDTO : arms) {
       appendTitle(html, appendBoldData("Arm/Group(s)"));
       html.append(BR);
-      html.append(appendData("Label", getData(armDTO.getName(), true), true , true));
+      html.append(appendData("Label", getInfo(armDTO.getName(), true), true , true));
       html.append(appendData("Type", getData(armDTO.getTypeCode(), true), true , true));
-      html.append(appendData("Description", getData(armDTO.getDescriptionText(), true), true , true));
-      html.append(appendData("Intervention(s)", "" , true, true));
+      html.append(appendData("Description", getInfo(armDTO.getDescriptionText(), true), true , true));
+      html.append(appendLabel("Intervention(s)", "" , true, true));
       List<PlannedActivityDTO> paList = PoPaServiceBeanLookup.getPlannedActivityService()
                                                 .getByArm(armDTO.getIdentifier());
       html.append(TBL_B);
@@ -602,13 +604,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       html.append(BR);
       html.append(BR);
       if (nullCrit.length() > 0) {
-          html.append(appendBoldData("Other Criteria")).append(nullCrit);
+          html.append(NBSP).append(appendBoldData("Other Criteria")).append(nullCrit);
       }
       if (incCrit.length() > 0) {
-            html.append(appendBoldData("Inclusion Criteria")).append(incCrit);
+            html.append(NBSP).append(appendBoldData("Inclusion Criteria")).append(incCrit);
       }
       if (exCrit.length() > 0) {
-            html.append(appendBoldData("Exclusion Criteria")).append(exCrit);
+            html.append(NBSP).append(appendBoldData("Exclusion Criteria")).append(exCrit);
       }
   }
 
@@ -754,8 +756,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       Organization o = new Organization();
       o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
       org = PoPaServiceBeanLookup.getPAOrganizationService().getOrganizationByIndetifers(o);
-      html.append(appendData("Funding Sponsor/Source", org.getName(), true , true));
-    }
+     }
+     if (org != null) {
+         html.append(appendData("Funding Sponsor/Source", org.getName(), true , true));
+     } else {
+         html.append(appendData("Funding Sponsor/Source", "", true , true)); 
+     }
   }
 
   /**
@@ -833,9 +839,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           appendTDAndData(html, getData(indDto.getIndldeNumber() , true));
           appendTDAndData(html, getData(indDto.getHolderTypeCode() , true));
           if (HolderTypeCode.ORGANIZATION.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html, "Lead Organization");
+              appendTDAndData(html, "  ");
           } else if (HolderTypeCode.INVESTIGATOR.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html, "Principal Investigator");
+              appendTDAndData(html, "  ");
           } else if (HolderTypeCode.NIH.getCode().equals(indDto.getHolderTypeCode().getCode())) {
               appendTDAndData(html , getData(indDto.getNihInstHolderCode(), true));
           } else if (HolderTypeCode.NCI.getCode().equals(indDto.getHolderTypeCode().getCode())) {
@@ -872,7 +878,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   html.append(appendData("Board Approval Status" , getData(part.getReviewBoardApprovalStatusCode(),
                       true),  true , true));
                   html.append(appendData("Board Approval Number" ,
-                          getData(part.getReviewBoardApprovalNumber() , true) ,    true , true));
+                          getInfo(part.getReviewBoardApprovalNumber() , true) ,    true , true));
                   Organization paOrg = correlationUtils.getPAOrganizationByPAOversightCommitteeId(
                           IiConverter.convertToLong(part.getOversightCommitteeIi()));
                   if (paOrg != null) {
@@ -986,7 +992,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       if (!sParts.isEmpty()) {
       for (StudyParticipationDTO spart : sParts) {
           html.append(appendData("Lead Organization Identifier" , 
-                  getData(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
+                  getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
           break;
       }
       spartDTO = new StudyParticipationDTO();
@@ -995,7 +1001,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           getStudyParticipationService().getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
       for (StudyParticipationDTO spart : sParts) {
           html.append(appendData("NCT Number" ,
-                  getData(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
+                  getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
           break;
        }
       } 
@@ -1241,6 +1247,22 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * 
    * @return the info
    */
+  private String getInfo(String st , boolean appendNoData) {
+      if (st == null || st.equalsIgnoreCase("")  && appendNoData) {
+          return NO_INFO;
+      }
+      return st;
+  }
+
+  
+  /**
+   * Gets the info.
+   * 
+   * @param st the st
+   * @param appendNoData the append no data
+   * 
+   * @return the info
+   */
   private String getInfo(St st , boolean appendNoData) {
       if (st.getValue() == null || st.getValue().equalsIgnoreCase("")  && appendNoData) {
           return NO_INFO;
@@ -1291,7 +1313,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       if (data != null) {
           return data;
       } else if (appendNoData) {
-          return NO_DATA;
+          return NO_INFO;
       } else {
           return null;
       }
@@ -1332,9 +1354,24 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private String appendData(String column , String data, boolean newLine , boolean bold) {
       return (newLine ? BR : EMPTY) + (bold ? BLD_B : EMPTY) + FONT_LABEL
           + column + ": " + FONT_END + (bold ? BLD_E : EMPTY) 
-          + FONT_TEXT + (!("".equals(data)) ? data : EMPTY) + FONT_END;
+          + FONT_TEXT + getInfo(data, true) + FONT_END;
   }
   
+  /**
+   * Append Label.
+   * 
+   * @param column the column
+   * @param data the data
+   * @param newLine the new line
+   * @param bold the bold
+   * 
+   * @return the string
+   */
+  private String appendLabel(String column , String data, boolean newLine , boolean bold) {
+      return (newLine ? BR : EMPTY) + (bold ? BLD_B : EMPTY) + FONT_LABEL
+          + column + ": " + FONT_END + (bold ? BLD_E : EMPTY) 
+          + FONT_TEXT + data + FONT_END;
+  }
   /**
    * Append title.
    * 
