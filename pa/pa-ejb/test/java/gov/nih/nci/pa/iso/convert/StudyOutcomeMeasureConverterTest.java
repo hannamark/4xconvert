@@ -115,7 +115,7 @@ public class StudyOutcomeMeasureConverterTest {
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getName(), dto.getName().getValue());
         assertEquals(bo.getPrimaryIndicator(), dto.getPrimaryIndicator().getValue());
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
 
     @Test
@@ -125,12 +125,12 @@ public class StudyOutcomeMeasureConverterTest {
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setName(StConverter.convertToSt("Description"));
         dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
         StudyOutcomeMeasure bo = studyOutcomeMeasureConverter.convertFromDtoToDomain(dto);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getName(), dto.getName().getValue());
         assertEquals(bo.getPrimaryIndicator(), dto.getPrimaryIndicator().getValue());
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
 }

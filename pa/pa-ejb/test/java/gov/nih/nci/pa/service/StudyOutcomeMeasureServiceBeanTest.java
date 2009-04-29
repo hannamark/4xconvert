@@ -133,7 +133,7 @@ public class StudyOutcomeMeasureServiceBeanTest {
     public void create() throws Exception {
         StudyOutcomeMeasureDTO dto = new StudyOutcomeMeasureDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
-        dto.setStudyProtocolIi(pid);
+        dto.setStudyProtocolIdentifier(pid);
         dto.setName(StConverter.convertToSt("StudyOutcomeMeasure"));
         dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
         StudyOutcomeMeasureDTO dto2 = null;
@@ -155,7 +155,7 @@ public class StudyOutcomeMeasureServiceBeanTest {
     public void delete() throws Exception {
     	StudyOutcomeMeasureDTO dto = new StudyOutcomeMeasureDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
-        dto.setStudyProtocolIi(pid);
+        dto.setStudyProtocolIdentifier(pid);
         dto.setName(StConverter.convertToSt("StudyOutcomeMeasure secondary"));
         dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.FALSE));
         StudyOutcomeMeasureDTO dto2 = null;
@@ -178,6 +178,6 @@ public class StudyOutcomeMeasureServiceBeanTest {
         StudyOutcomeMeasureDTO dto = dtoList.get(0);
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OUTCOME_MEASURE_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
-        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

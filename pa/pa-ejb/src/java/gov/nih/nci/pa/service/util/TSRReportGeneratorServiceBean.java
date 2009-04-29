@@ -1001,8 +1001,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       } 
       if (studyProtocolDto.getAmendmentNumber() != null) {
           html.append(appendData("Amendment Number" , studyProtocolDto.getAmendmentNumber().getValue() , true, true));
+      }
+      if (studyProtocolDto.getAmendmentDate() != null && studyProtocolDto.getAmendmentDate().getValue() != null) {
           html.append(appendData("Amendment Date" , PAUtil.normalizeDateString(
-               TsConverter.convertToTimestamp(studyProtocolDto.getAmendmentDate()).toString()) , true, true));
+                   TsConverter.convertToTimestamp(studyProtocolDto.getAmendmentDate()).toString()) , true, true));
       }
       html.append(TBL_E);
     }

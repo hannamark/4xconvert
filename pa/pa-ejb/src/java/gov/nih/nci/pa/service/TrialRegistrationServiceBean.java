@@ -83,14 +83,12 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -107,7 +105,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
@@ -117,10 +114,8 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -181,8 +176,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
     @EJB
     OrganizationCorrelationServiceRemote ocsr = null;
-    @EJB
-    DocumentWorkflowStatusServiceLocal dwsService = null;
+//    @EJB
+//    DocumentWorkflowStatusServiceLocal dwsService = null;
     private SessionContext ejbContext;
 
     @Resource
@@ -522,7 +517,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     (ObservationalStudyProtocolDTO) studyProtocolDTO);
             studyTypeCode = StudyTypeCode.OBSERVATIONAL;
         }
-        createDocumentWorkFlowStatus(studyProtocolIi);
+        ////// todo : when batch upload is changed to use the business service 
+        /// createDocumentWorkFlowStatus(studyProtocolIi);
         newSpDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
         if (isAmend) {
             createStudyRelationship(studyProtocolIi , oldIdentifier , newSpDto);
@@ -556,13 +552,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         createNCTidentifier(studyProtocolIi , nctIdentifierDTO);
         return studyProtocolIi;
     }
-    private void createDocumentWorkFlowStatus(Ii studyProtocolIi) throws PAException {
-        DocumentWorkflowStatusDTO dwDto = new DocumentWorkflowStatusDTO();
-        dwDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
-        dwDto.setStatusDateRange(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
-        dwDto.setStudyProtocolIdentifier(studyProtocolIi);
-        dwsService.create(dwDto);
-    }
+//    private void createDocumentWorkFlowStatus(Ii studyProtocolIi) throws PAException {
+//        DocumentWorkflowStatusDTO dwDto = new DocumentWorkflowStatusDTO();
+//        dwDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
+//        dwDto.setStatusDateRange(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
+//        dwDto.setStudyProtocolIdentifier(studyProtocolIi);
+//        dwsService.create(dwDto);
+//    }
 
     private void createNCTidentifier(Ii studyProtocolIi , StudyParticipationDTO nctIdentifierDTO)
     throws PAException {

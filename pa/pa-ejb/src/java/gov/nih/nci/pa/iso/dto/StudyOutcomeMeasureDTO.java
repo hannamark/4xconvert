@@ -55,7 +55,6 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 
 /**
@@ -72,7 +71,6 @@ public class StudyOutcomeMeasureDTO extends StudyDTO {
     private St timeFrame;
     private Bl primaryIndicator;
     private Bl safetyIndicator;
-    private Ii studyProtocolIi;
     
     /**
      * @return name
@@ -122,18 +120,4 @@ public class StudyOutcomeMeasureDTO extends StudyDTO {
     public void setSafetyIndicator(Bl safetyIndicator) {
         this.safetyIndicator = safetyIndicator;
     }
-    /**
-     * @return studyProtocolIi
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    
-    /**
-     * @param studyProtocolIi studyProtocolIi
-     */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
-    }
-    
 }

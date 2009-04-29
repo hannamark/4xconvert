@@ -109,7 +109,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcom
         somDTO.setIdentifier(IiConverter.converToStudyOutcomeMeasureIi(som.getId()));
         somDTO.setName(StConverter.convertToSt(som.getName()));
         somDTO.setTimeFrame(StConverter.convertToSt(som.getTimeFrame()));
-        somDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(som.getStudyProtocol().getId()));
+        somDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(som.getStudyProtocol().getId()));
         somDTO.setPrimaryIndicator(BlConverter.convertToBl(som.getPrimaryIndicator()));
         somDTO.setSafetyIndicator(BlConverter.convertToBl(som.getSafetyIndicator()));
         
@@ -126,7 +126,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcom
         StudyOutcomeMeasure som = new StudyOutcomeMeasure();
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(somDTO.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(somDTO.getStudyProtocolIdentifier()));
         som.setDateLastUpdated(new Date());
         som.setStudyProtocol(spBo);
         if (somDTO.getIdentifier() != null) {

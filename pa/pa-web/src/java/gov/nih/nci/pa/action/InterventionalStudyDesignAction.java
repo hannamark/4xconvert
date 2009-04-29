@@ -366,7 +366,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyOutcomeMeasureDTO sgDTO = new StudyOutcomeMeasureDTO();
-            sgDTO.setStudyProtocolIi(studyProtocolIi);
+            sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
             sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
             updateBooleanValues();
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
@@ -409,7 +409,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyOutcomeMeasureDTO  sgDTO = new StudyOutcomeMeasureDTO();
             sgDTO.setIdentifier(IiConverter.convertToIi(id));
-            sgDTO.setStudyProtocolIi(studyProtocolIi);
+            sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
             sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
             updateBooleanValues();
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
