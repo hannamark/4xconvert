@@ -85,17 +85,7 @@
     <path id="test-pmd.classpath">
         <fileset dir="${test-pmd.jar.dir}"/>
     </path>
-    
-    <path id="jboss.classpath">       
-        <fileset dir="${jboss.deploy.directory}/../lib">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-    <path id="jboss.client.classpath">       
-        <fileset dir="${jboss.deploy.directory}/../../../client">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
+
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}" />
@@ -154,8 +144,6 @@
             </src>
             <classpath>
                 <path refid="compile.classpath"/> 
-                <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>
                 <path refid="ejb.package.classpath"/>    
             </classpath>
         </javac>
@@ -193,7 +181,6 @@
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="compile.classpath"/>  
-                <path refid="jboss.classpath"/>  
             </classpath>
         </javac>
         <copy todir="${reg-web.build.testOutputDir}">
@@ -211,10 +198,8 @@
              
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
-                <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>  
                 <path refid="ejb.package.classpath"/> 
-
+                <path refid="compile.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
@@ -377,7 +362,6 @@
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
-            <classpath refid="jboss.client.classpath"/>
             <batchtest todir="${reg-web.test.reports}">
                 <fileset dir="${reg-web.build.testDir.0}">
                     <include name="**/*Test.java"/>

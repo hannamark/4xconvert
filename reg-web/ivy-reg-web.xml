@@ -40,10 +40,16 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jakarta"                name="commons-fileupload"      rev="1.2.1"           conf="compile->master"/>
     <dependency org="jakarta"                name="commons-io"              rev="1.4"             conf="compile->master"/>
     <dependency org="jakarta"                name="commons-lang"            rev="2.4"             conf="compile->master"/>
+    <dependency org="javax.activation"       name="activation"              rev="1.1"             conf="compile->master"/>
     <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
     <dependency org="javax.transaction"      name="jta"                     rev="1.0.1B"          conf="compile->master"/>
+    <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="3.0_RC9_Patch_1" conf="compile->master"/>
+    <dependency org="jboss"                  name="javax.servlet"           rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="javax.servlet.jsp"       rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.0.7"           conf="compile->master"/>
