@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -275,6 +276,13 @@ public class StudyResourcingServiceBean
             LOG.error(" studyResourcingDTO should not be null ");
             throw new PAException(" studyResourcingDTO should not be null ");
         }
+        if (studyResourcingDTO.getSummary4ReportedResourceIndicator() != null 
+                && studyResourcingDTO.getSummary4ReportedResourceIndicator().getValue() != null 
+                && studyResourcingDTO.getSummary4ReportedResourceIndicator().getValue().equals(Boolean.FALSE)) {
+                
+                enforceNoDuplicate(studyResourcingDTO);
+        }
+        
         LOG.debug("Entering createStudyResourcing ");
         Session session = null;
 
@@ -462,4 +470,27 @@ public class StudyResourcingServiceBean
         LOG.debug("Leaving deleteStudyResourceByID ");
         return result;
     }
+    
+
+    @SuppressWarnings({"PMD" })
+        private void enforceNoDuplicate(StudyResourcingDTO dto) throws PAException {
+          Integer newSerialNumber = dto.getSerialNumber().getValue();
+          String newFundingMech = dto.getFundingMechanismCode().getCode();
+          String newNciDivCode = dto.getNciDivisionProgramCode().getCode();
+          String newNihInstCode = dto.getNihInstitutionCode().getCode();
+          List<StudyResourcingDTO> spList = getstudyResourceByStudyProtocol(dto.getStudyProtocolIi());
+          for (StudyResourcingDTO sp : spList) {
+              boolean sameSerialNumber = newSerialNumber.equals(sp.getSerialNumber().getValue());
+              boolean sameFundingMech = newFundingMech.equals(sp.getFundingMechanismCode().getCode());
+              boolean sameNciDivCode = newNciDivCode.equals(sp.getNciDivisionProgramCode().getCode());
+              boolean sameNihInstCode = newNihInstCode.equals(sp.getNihInstitutionCode().getCode());
+              
+              if (sameSerialNumber && sameFundingMech && sameNciDivCode && sameNihInstCode) {
+                  if (dto.getIdentifier() == null
+                      || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension()))) {
+                    throw new PADuplicateException("Duplicate Grants are not allowed.");
+                  }
+              }
+          }
+      }
 }
