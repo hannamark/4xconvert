@@ -3,7 +3,12 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 import gov.nih.nci.coppa.iso.Ed;
 import gov.nih.nci.coppa.iso.TelUrl;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.iso._21090.ED;
+import org.iso._21090.TEL;
+import org.iso._21090.TELUrl;
 
 /**
  * Transforms strings.
@@ -80,10 +85,30 @@ public final class EDTransformer implements Transformer<ED, Ed> {
             d.setIntegrityCheckAlgorithm(
                     gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm.valueOf(input.getIntegrityCheckAlgorithm().value()));
         }
-        TelUrl t = (TelUrl) TELTransformer.INSTANCE.toDto(input.getReference());
+
+        // Work-around until PO-995 is resolved
+        // should just be TelUrl t = (TelUrl) TELTransformer.INSTANCE.toDto(input.getReference());
+        TelUrl t = workAroundPO995(input);
         d.setReference(t);
         d.setThumbnail(this.toDto(input.getThumbnail()));
 
         return d;
+    }
+
+    private TelUrl workAroundPO995(ED input) throws DtoTransformException {
+        TelUrl t = null;
+        TEL reference = input.getReference();
+        if (reference != null) {
+            TELUrl convertedRef = new TELUrl();
+            try {
+                BeanUtils.copyProperties(convertedRef, reference);
+            } catch (IllegalAccessException e) {
+                throw new DtoTransformException(e);
+            } catch (InvocationTargetException e) {
+                throw new DtoTransformException(e);
+            }
+            t = (TelUrl) TELTransformer.INSTANCE.toDto(convertedRef);
+        }
+        return t;
     }
 }

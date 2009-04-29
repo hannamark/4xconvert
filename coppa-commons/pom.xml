@@ -6,7 +6,7 @@
     <artifactId>coppa-commons</artifactId>
     <packaging>jar</packaging>
     <name>coppa-commons</name>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <nci-commons.version>1.0.23</nci-commons.version>
@@ -276,8 +276,8 @@
                         </excludes>
                     </instrumentation>
                     <check>
-                        <totalBranchRate>100</totalBranchRate>
-                        <totalLineRate>97</totalLineRate>
+                        <totalBranchRate>99</totalBranchRate>
+                        <totalLineRate>93</totalLineRate>
                     </check>
                     <formats>
                         <format>html</format>
