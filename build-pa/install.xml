@@ -813,7 +813,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         "/>
 
     <!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
-    <target name="install:jboss:pa-ear:re-configure" unless="exclude.jboss">
+    <target name="install:jboss:pa-ear:re-configure" unless="exclude.pa-ear">
         <mkdir dir="${temp.dir}/pa-ear"/>
         <delete dir="${temp.dir}/pa-ear"/>
         <mkdir dir="${temp.dir}/pa-ear"/>
