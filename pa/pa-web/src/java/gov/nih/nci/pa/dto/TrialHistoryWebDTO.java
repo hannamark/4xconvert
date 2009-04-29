@@ -90,8 +90,8 @@ import gov.nih.nci.pa.util.PAUtil;
 /**
  * The Class TrialHistoryWebDTO.
  * 
- * @author Hugh Reinhart
- * @since 2/19/2009
+ * @author Anupama Sharma
+ * @since 4/21/2009
  */
 public class TrialHistoryWebDTO {
     
