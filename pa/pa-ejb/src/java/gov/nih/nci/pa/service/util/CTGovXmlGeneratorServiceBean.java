@@ -484,6 +484,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
         List<StudyParticipationDTO> spDTOs =
             PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(spDTO.getIdentifier(), dtos);
+        CorrelationUtils cUtils = new CorrelationUtils();
         for (StudyParticipationDTO spart : spDTOs) {
             if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
                         spart.getReviewBoardApprovalStatusCode().getCode())
@@ -493,7 +494,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 appendElement(irbInfo , createElement("approval_status" ,
                         spart.getReviewBoardApprovalStatusCode() , doc));
 
-                CorrelationUtils cUtils = new CorrelationUtils();
+                appendElement(irbInfo , createElement("approval_number" ,
+                        spart.getReviewBoardApprovalNumber() , doc));
+                
                 Organization paOrg = cUtils.getPAOrganizationByPAOversightCommitteeId(
                         IiConverter.convertToLong(spart.getOversightCommitteeIi()));
                 if (paOrg != null) {
