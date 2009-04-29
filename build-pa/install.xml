@@ -501,12 +501,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             grid.application.name="${pa-grid.introduce.skeleton.service.name}"
             grid.application.relative.dir="${pa-grid.dir.target}"
             grid.secure.enable="false"
-
+        	appserver.external.http.host="${jboss.external.grid.http.host}"
         />
-        <!-- TODO: We need support within v0.10.3+ for
-                    appserver.external.http.host="${jboss.external.grid.http.host}"
-                this within <grid-appserver-configure > macrodef
-                -->
     </target>
 
 
