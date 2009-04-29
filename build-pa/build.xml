@@ -358,6 +358,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
         depends="
+    	validate:pre:build,
         clean,
         init,
         build:pa-ear,
