@@ -74,21 +74,12 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
-import org.apache.struts2.ServletActionContext;
+package gov.nih.nci.pa.report.service.criteria;
 
-import com.opensymphony.xwork2.Action;
 /**
- * @author Bala Nair
+ * @author Hugh Reinhart
+ * @since 04/29/2009
  */
-public class Logout {
-    /**
-     * {@inheritDoc}
-     */
-    public String logout() {
-        if (ServletActionContext.getRequest().getSession() != null) {
-            ServletActionContext.getRequest().getSession().invalidate();
-        }
-        return Action.SUCCESS;
-    }
+public class TrialCountsCriteriaDto {
+
 }

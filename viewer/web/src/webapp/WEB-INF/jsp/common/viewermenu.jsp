@@ -12,58 +12,46 @@
         <c:choose>
             <c:when test="${pageContext.request.remoteUser != null}">                    
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'my_account'}">
-                       <li><a href="registerUsershowMyAccount.action" class="selected">My Account</a></li> 
+                    <c:when test="${requestScope.topic == 'trial_list'}">
+                       <li><a href="trialList.action" class="selected">Trial List Report</a></li> 
                     </c:when>
                     <c:otherwise>
-                       <li><a href="registerUsershowMyAccount.action" >My Account</a></li>
+                       <li><a href="trialList.action" >Trial List Report</a></li>
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'submit_trial'}">
-                       <li><a href="/viewer/protected/submitTrial.action" class="selected">Register Trial</a></li>
+                    <c:when test="${requestScope.topic == 'trial_counts'}">
+                       <li><a href="trialCounts.action" class="selected">Trial Counts Report</a></li> 
                     </c:when>
                     <c:otherwise>
-                       <li><a href="/viewer/protected/submitTrial.action" >Register Trial</a></li>
+                       <li><a href="trialCounts.action" >Trial Counts Report</a></li>
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'search_trials'}">
-                       <li><a href="/viewer/protected/searchTrial.action" class="selected">Search Trials</a></li>
-                    </c:when>
-                    <c:when test="${requestScope.topic == 'search_results'}">
-                       <li><a href="/viewer/protected/searchTrial.action" class="selected">Search Trials</a></li>
+                    <c:when test="${requestScope.topic == 'milestones'}">
+                       <li><a href="milestones.action" class="selected">Milestones Report</a></li> 
                     </c:when>
                     <c:otherwise>
-                       <li><a href="/viewer/protected/searchTrial.action" >Search Trials</a></li>
+                       <li><a href="milestones.action" >Milestones Report</a></li>
                     </c:otherwise>
-                </c:choose>                                   
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'summary_sent'}">
+                       <li><a href="summarySent.action" class="selected">Summary Sent Report</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="summarySent.action" >Summary Sent Report</a></li>
+                    </c:otherwise>
+                </c:choose>
                 <li><a href="/viewer/logout.action" >Log Out</a></li>
             </c:when>
             <c:otherwise>
                <c:choose>
-                   <c:when test="${requestScope.topic == 'register'}">
-                      <li><a href="/viewer/registerUser.action" class="selected">Create Account</a></li>
-                   </c:when>
-                   <c:otherwise>
-                       <c:choose>
-                         <c:when test="${requestScope.topic == 'my_account'}">
-                            <li><a href="/viewer/registerUser.action" class="selected">Create Account</a></li>
-                         </c:when>
-                         <c:otherwise>
-                            <li><a href="/viewer/registerUser.action" >Create Account</a></li>
-                         </c:otherwise>
-                       </c:choose> 
-                   </c:otherwise>
-               </c:choose>                                 
-               <li><a href="/viewer/protected/submitTrial.action" >Register Trial</a></li>
-               <li><a href="/viewer/protected/searchTrial.action" >Search Trials</a></li>
-               <c:choose>
                    <c:when test="${requestScope.topic == 'login'}">
-                      <li><a href="/viewer/protected/searchTrial.action" class="selected">Log In</a></li>
+                      <li><a href="/viewer/public/welcome.action" class="selected">Log In</a></li>
                    </c:when>
                    <c:otherwise>
-                      <li><a href="/viewer/protected/searchTrial.action" >Log In</a></li>
+                      <li><a href="/viewer/public/welcome.action" >Log In</a></li>
                    </c:otherwise>
                </c:choose>
             </c:otherwise>

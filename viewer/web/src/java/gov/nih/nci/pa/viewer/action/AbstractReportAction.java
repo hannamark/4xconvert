@@ -75,20 +75,29 @@
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package gov.nih.nci.pa.viewer.action;
-import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.Action;
+import java.util.List;
+
 /**
- * @author Bala Nair
+ * Base class for report actions.
+ *
+ * @author hreinhart
+ * @since 04/29/2009
+ *
+ * @param <CRITERIA> criteria dto used to generate report
+ * @param <RESULT> dto used to return results
  */
-public class Logout {
+public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractViewerAction {
+
+    private static final long serialVersionUID = 5350758217530734916L;
+
+    /** Criteria used to generate report. */
+    protected CRITERIA criteria;
+
     /**
-     * {@inheritDoc}
+     * Method used get the report.
+     *
+     * @return report result set
      */
-    public String logout() {
-        if (ServletActionContext.getRequest().getSession() != null) {
-            ServletActionContext.getRequest().getSession().invalidate();
-        }
-        return Action.SUCCESS;
-    }
+    protected abstract List<RESULT> getReport();
 }

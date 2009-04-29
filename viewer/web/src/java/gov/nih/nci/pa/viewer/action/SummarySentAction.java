@@ -75,20 +75,27 @@
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package gov.nih.nci.pa.viewer.action;
-import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.Action;
+import gov.nih.nci.pa.report.service.criteria.SummarySentCriteriaDto;
+import gov.nih.nci.pa.report.service.result.SummarySentResultDto;
+
+import java.util.List;
+
 /**
- * @author Bala Nair
+ * @author hreinhart
+ * @since 04/29/2009
  */
-public class Logout {
+public class SummarySentAction extends AbstractReportAction
+        <SummarySentCriteriaDto, SummarySentResultDto> {
+
+    private static final long serialVersionUID = 1753836643932684365L;
+
     /**
      * {@inheritDoc}
      */
-    public String logout() {
-        if (ServletActionContext.getRequest().getSession() != null) {
-            ServletActionContext.getRequest().getSession().invalidate();
-        }
-        return Action.SUCCESS;
+    @Override
+    protected List<SummarySentResultDto> getReport() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
