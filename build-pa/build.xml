@@ -340,6 +340,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 </if>
             </else>
         </if>
+    	<echoproperties prefix="env"/>
     </target>
 
     <target name="ivy:clean" description="Clean">
