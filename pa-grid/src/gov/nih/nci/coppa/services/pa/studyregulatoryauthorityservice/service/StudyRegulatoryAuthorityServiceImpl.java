@@ -1,11 +1,11 @@
 package gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority;
 import gov.nih.nci.coppa.services.pa.armservice.service.ArmServiceImpl;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
-import gov.nih.nci.coppa.services.pa.grid.dto.IITransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRegulatoryAuthorityTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyRegulatoryAuthorityEjb;
@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 
 /**
  * Implementation of the StudyRegulatoryAuthorityService. Dispatches to the remote EJBs and the Transformers.
- *
  */
 public class StudyRegulatoryAuthorityServiceImpl extends StudyRegulatoryAuthorityServiceImplBase {
 

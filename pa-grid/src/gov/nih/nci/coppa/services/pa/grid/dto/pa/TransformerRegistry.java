@@ -1,6 +1,6 @@
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.Transformer;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;

@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.Transformer;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
-import gov.nih.nci.coppa.services.pa.grid.dto.DtoTransformException;
-import gov.nih.nci.coppa.services.pa.grid.dto.Transformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 /**

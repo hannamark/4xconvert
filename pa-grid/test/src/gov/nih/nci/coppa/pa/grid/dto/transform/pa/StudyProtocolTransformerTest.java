@@ -82,13 +82,13 @@
  */
 package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
-import gov.nih.nci.coppa.pa.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.pa.grid.dto.transform.BLTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.CDTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.IITransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.INTTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.STTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.TSTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;

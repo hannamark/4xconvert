@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
-import gov.nih.nci.coppa.pa.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.pa.grid.dto.transform.IITransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRegulatoryAuthorityTransformer;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;

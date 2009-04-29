@@ -1,7 +1,7 @@
 package gov.nih.nci.coppa.services.pa.studyprotocolservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.pa.grid.dto.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.ObservationalStudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;

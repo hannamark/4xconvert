@@ -82,13 +82,13 @@
  */
 package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
-import gov.nih.nci.coppa.pa.grid.dto.transform.ADTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.pa.grid.dto.transform.BLTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.CDTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.DSETTelTransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.IITransformerTest;
-import gov.nih.nci.coppa.pa.grid.dto.transform.TSTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyParticipationContact;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationContactTransformer;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -141,10 +141,10 @@ public class StudyParticipationContactTransformerTest
         result.setRoleCode(new CDTransformerTest().makeXmlSimple());
 
         //TS
-        result.setStatusDateRangeLow(new TSTransformerTest().makeXmlNull());
+        result.setStatusDateRangeLow(new TSTransformerTest().makeXmlSimple());
 
         //AD
-        result.setPostalAddress(new ADTransformerTest().makeXmlNull());
+        result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
 
         //BL
         result.setPrimaryIndicator(new BLTransformerTest().makeXmlSimple());

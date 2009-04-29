@@ -10,17 +10,17 @@
     <!-- ============================================================== -->
     <!-- Place any other properties you will need here                  -->
     <!-- ============================================================== -->
-    <property file="local.properties"/>
-    <property name="service.hostname" value="localhost"/>
-    <property name="service.port" value="8080"/>
+    <property file="local.properties" />
+    <property name="service.hostname" value="localhost" />
+    <property name="service.port" value="8080" />
 
-    <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory"/>
-    <property name="java.naming.provider.url.host" value="localhost"/>
-    <property name="java.naming.provider.url.port" value="1099"/>
-    <property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}"/>
-    <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces"/>
-    <property name="java.naming.security.principal" value="ejbclient"/>
-    <property name="java.naming.security.credentials" value="pass"/>
+    <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory" />
+    <property name="java.naming.provider.url.host" value="localhost" />
+    <property name="java.naming.provider.url.port" value="1099" />
+    <property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}" />
+    <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces" />
+    <property name="java.naming.security.principal" value="ejbclient" />
+    <property name="java.naming.security.credentials" value="pass" />
     <property name="cobertura.dir" value="tools/cobertura" />
 
     <path id="cobertura.classpath">
@@ -37,13 +37,13 @@
     </path>
 
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
-    <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
+    <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
 
     <patternset id="dependent.schema.folders.ps">
-        <include name="core/**/*"/>
-        <include name="pkgdata/**/*"/>
-        <include name="ws/**/*"/>
-        <include name="wsrf/**/*"/>
+        <include name="core/**/*" />
+        <include name="pkgdata/**/*" />
+        <include name="ws/**/*" />
+        <include name="wsrf/**/*" />
     </patternset>
     <property name="gar.name" value="${service.deployment.dir.name}.gar" />
 
@@ -74,7 +74,7 @@
     <target name="preInit">
         <copy todir="${schema.dir}">
             <fileset dir="${ext.globus.dir}/schema">
-                <patternset refid="dependent.schema.folders.ps"/>
+                <patternset refid="dependent.schema.folders.ps" />
             </fileset>
         </copy>
     </target>
@@ -100,22 +100,23 @@
     <target name="postStubs">
         <java classname="com.sun.tools.xjc.XJCFacade" fork="true" failonerror="true">
             <classpath>
-                <pathelement location="${basedir}/tools/lib/jaxb-xjc.jar"/>
-                <pathelement location="${basedir}/lib/jaxb-api.jar"/>
-                <pathelement location="${basedir}/lib/jaxb-impl.jar"/>
-                <pathelement location="${basedir}/lib/activation.jar"/>
-                <pathelement location="${basedir}/lib/jsr173_1.0_api.jar"/>
+                <pathelement location="${basedir}/tools/lib/jaxb-xjc.jar" />
+                <pathelement location="${basedir}/lib/jaxb-api.jar" />
+                <pathelement location="${basedir}/lib/jaxb-impl.jar" />
+                <pathelement location="${basedir}/lib/activation.jar" />
+                <pathelement location="${basedir}/lib/jsr173_1.0_api.jar" />
             </classpath>
-            <arg value="-xmlschema"/>
-            <arg file="${basedir}/schema/PAServices/CoppaPA.xsd"/>
-            <arg file="${basedir}/schema/PAServices/ISO_datatypes_Narrative.xsd"/>
-            <arg value="-d"/>
-            <arg file="${stubs.src}"/>
-            <arg value="-b"/>
-            <arg file="${basedir}/schema/PAServices/jaxb-config.xjb"/>
-            <arg value="-nv"/>
-            <arg value="-verbose"/>
+            <arg value="-xmlschema" />
+            <arg file="${basedir}/schema/PAServices/CoppaPA.xsd" />
+            <arg file="${basedir}/schema/PAServices/ISO_datatypes_Narrative.xsd" />
+            <arg value="-d" />
+            <arg file="${stubs.src}" />
+            <arg value="-b" />
+            <arg file="${basedir}/schema/PAServices/jaxb-config.xjb" />
+            <arg value="-nv" />
+            <arg value="-verbose" />
         </java>
+        <delete dir="${stubs.src}/org" />
     </target>
 
     <!-- ============================================================== -->
@@ -176,17 +177,17 @@
     <!-- Post Compile Build Target                                       -->
     <!-- ============================================================== -->
     <target name="postCompile">
-        <runtarget target="checkstyle"/>
+        <runtarget target="checkstyle" />
         <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
         <copy toDir="${build.dest}" filtering="true" overwrite="true">
-            <filterset begintoken="$${" endtoken="}" >
-                <filter token="java.naming.factory.initial" value="${java.naming.factory.initial}"/>
-                <filter token="java.naming.provider.url.host" value="${java.naming.provider.url.host}"/>
-                <filter token="java.naming.provider.url.port" value="${java.naming.provider.url.port}"/>
-                <filter token="java.naming.provider.url" value="${java.naming.provider.url}"/>
-                <filter token="java.naming.factory.url.pkgs" value="${java.naming.factory.url.pkgs}"/>
-                <filter token="java.naming.security.principal" value="${java.naming.security.principal}"/>
-                <filter token="java.naming.security.credentials" value="${java.naming.security.credentials}"/>
+            <filterset begintoken="$${" endtoken="}">
+                <filter token="java.naming.factory.initial" value="${java.naming.factory.initial}" />
+                <filter token="java.naming.provider.url.host" value="${java.naming.provider.url.host}" />
+                <filter token="java.naming.provider.url.port" value="${java.naming.provider.url.port}" />
+                <filter token="java.naming.provider.url" value="${java.naming.provider.url}" />
+                <filter token="java.naming.factory.url.pkgs" value="${java.naming.factory.url.pkgs}" />
+                <filter token="java.naming.security.principal" value="${java.naming.security.principal}" />
+                <filter token="java.naming.security.credentials" value="${java.naming.security.credentials}" />
             </filterset>
             <fileset dir="${src.dir}">
                 <include name="**/*" />
@@ -242,13 +243,13 @@
     <target name="preClean">
         <delete>
             <fileset dir="${schema.dir}">
-                <patternset refid="dependent.schema.folders.ps"/>
+                <patternset refid="dependent.schema.folders.ps" />
             </fileset>
         </delete>
         <delete>
             <dirset dir="${schema.dir}">
-                <include name="**/*"/>
-                <exclude name="${introduce.skeleton.service.name}/**"/>
+                <include name="**/*" />
+                <exclude name="${introduce.skeleton.service.name}/**" />
             </dirset>
         </delete>
     </target>
@@ -271,12 +272,12 @@
     <!-- ============================================================== -->
     <!-- Call any tests.                                                -->
     <!-- ============================================================== -->
-    <target name="test-quick" depends="checkGlobus, compileTests-quick, -test" description="Runs the service's tests (without recompiling the stubs)."/>
+    <target name="test-quick" depends="checkGlobus, compileTests-quick, -test" description="Runs the service's tests (without recompiling the stubs)." />
 
     <!-- ============================================================== -->
     <!-- Call any tests.                                                -->
     <!-- ============================================================== -->
-    <target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests."/>
+    <target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests." />
     <target name="-test" depends="checkstyle">
         <delete file="build/cobertura.ser" />
 
@@ -289,7 +290,7 @@
 
         <echo message="Test results dir: ${junit.results.dir}" />
         <mkdir dir="${junit.results.dir}" />
-        <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="no">
+        <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="no" failureproperty="junit.failure">
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/build/cobertura.ser" />
             <classpath location="${build.dir}/intrumented" />
             <classpath refid="test.run.classpath" />
@@ -304,10 +305,22 @@
                 </fileset>
             </batchtest>
         </junit>
+
+        <junitreport todir="${junit.results.dir}">
+            <fileset dir="${junit.results.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${junit.results.dir}" />
+        </junitreport>
+
+        <fail if="junit.failure" message="There were JUnit failures." />
+
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="81" totallinerate="87" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="75" totallinerate="90" />
         <!-- Increase these as unit tests are written -->
     </target>
+
+
     <!--
           A note about this target: Checkstyle has a bug that requires exception classes to be on the execution
           classpath (http://jira.codehaus.org/browse/MPCHECKSTYLE-20).  Thus, in reality, this target should depend
@@ -318,18 +331,16 @@
     <target name="checkstyle" description="Verify coding styles and conventions.">
         <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
             <classpath>
-                <path location="${basedir}/build/classes"/>
+                <path location="${basedir}/build/classes" />
                 <path refid="checkstyle.classpath" />
                 <path>
-                    <fileset dir="${lib.dir}">
-                        <include name="pa-ejb-client-*.jar" />
-                    </fileset>
+                    <fileset dir="${lib.dir}" includes="pa-ejb-client-*.jar coppa-commons-*.jar" />
                 </path>
             </classpath>
             <!-- ADD PATHS FOR CHECKING HERE -->
-            <fileset dir="src/gov/nih/nci/coppa/services/pa/grid" includes="**/*.java"/>
-            <formatter type="plain"/>
-            <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
+            <fileset dir="src/gov/nih/nci/coppa/services/pa/grid" includes="**/*.java" />
+            <formatter type="plain" />
+            <formatter type="xml" toFile="build/checkstyle_errors.xml" />
         </checkstyle>
     </target>
 
@@ -369,24 +380,24 @@
     <!-- Empty target, in case we simply want to generate the JAR files -->
     <target name="jars-quick" depends="jarStubs-quick, jar-quick, jarTests-quick" />
 
-    <target name="all-quick" depends="jars-quick" description="RE-COMPILE, RE-JAR QUICKLY"/>
+    <target name="all-quick" depends="jars-quick" description="RE-COMPILE, RE-JAR QUICKLY" />
 
-    <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY"/>
+    <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY" />
 
     <macrodef name="run-client">
-        <attribute name="class" default="gov.nih.nci.coppa.services.pa.client.PaServicesClient"/>
-        <attribute name="serviceendpointname" default="PaServices"/>
-        <attribute name="hostname" default="${service.hostname}"/>
-        <attribute name="port" default="${service.port}"/>
-        <attribute name="debug-suspend" default="n"/>
+        <attribute name="class" default="gov.nih.nci.coppa.services.pa.client.PaServicesClient" />
+        <attribute name="serviceendpointname" default="PaServices" />
+        <attribute name="hostname" default="${service.hostname}" />
+        <attribute name="port" default="${service.port}" />
+        <attribute name="debug-suspend" default="n" />
         <sequential>
-            <var name="run-client.service.url" unset="true"/>
+            <var name="run-client.service.url" unset="true" />
             <var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceendpointname}" />
-            <property name="runclasspath" refid="run.classpath"/>
+            <property name="runclasspath" refid="run.classpath" />
             <echo message="Connecting to service: ${run-client.service.url}" />
             <java failonerror="true" classname="@{class}" classpathref="run.classpath" fork="yes">
-                <jvmarg value="-Xdebug"/>
-                <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=@{debug-suspend}"/>
+                <jvmarg value="-Xdebug" />
+                <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=@{debug-suspend}" />
                 <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
                 <arg value="-url" />
                 <arg value="${run-client.service.url}" />
@@ -399,28 +410,28 @@
     </target>
 
     <target name="runStudyResourcingClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyResourcingService Client">
-        <run-client serviceendpointname="StudyResourcingService" class="gov.nih.nci.coppa.services.pa.studyresourcingservice.client.StudyResourcingServiceClient" debug-suspend="n"/>
+        <run-client serviceendpointname="StudyResourcingService" class="gov.nih.nci.coppa.services.pa.studyresourcingservice.client.StudyResourcingServiceClient" debug-suspend="n" />
     </target>
 
     <target name="runStudyProtocolClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyProtocolService Client">
-        <run-client serviceendpointname="StudyProtocolService" class="gov.nih.nci.coppa.services.pa.studyprotocolservice.client.StudyProtocolServiceClient" debug-suspend="n"/>
+        <run-client serviceendpointname="StudyProtocolService" class="gov.nih.nci.coppa.services.pa.studyprotocolservice.client.StudyProtocolServiceClient" debug-suspend="n" />
     </target>
 
     <target name="runStudyRegulatoryAuthorityClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRegulatoryAuthorityService Client">
-        <run-client serviceendpointname="StudyRegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.client.StudyRegulatoryAuthorityServiceClient" debug-suspend="n"/>
+        <run-client serviceendpointname="StudyRegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.client.StudyRegulatoryAuthorityServiceClient" debug-suspend="n" />
     </target>
 
 
     <target name="runStudyRecruitmentStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRecruitmentStatusService Client">
-          <run-client serviceendpointname="StudyRecruitmentStatusService" class="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.client.StudyRecruitmentStatusServiceClient" debug-suspend="n"/>
+        <run-client serviceendpointname="StudyRecruitmentStatusService" class="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.client.StudyRecruitmentStatusServiceClient" debug-suspend="n" />
     </target>
 
     <target name="runStudySiteAccrualStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudySiteAccrualStatusService Client">
         <run-client serviceendpointname="StudySiteAccrualStatusService" class="gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.client.StudySiteAccrualStatusServiceClient" debug-suspend="n" />
     </target>
 
-  <target name="runStudyParticipationContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyParticipationContactService Client">
-          <run-client serviceendpointname="StudyParticipationContactService" class="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.client.StudyParticipationContactServiceClient" debug-suspend="n" />
-  </target>
+    <target name="runStudyParticipationContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyParticipationContactService Client">
+        <run-client serviceendpointname="StudyParticipationContactService" class="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.client.StudyParticipationContactServiceClient" debug-suspend="n" />
+    </target>
 
 </project>

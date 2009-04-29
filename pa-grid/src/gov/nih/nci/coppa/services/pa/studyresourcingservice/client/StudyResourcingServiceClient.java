@@ -113,7 +113,7 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
 
     }
 
-    public gov.nih.nci.coppa.services.pa.StudyResourcing getSummaryForReportedResource(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing getSummaryForReportedResource(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getSummaryForReportedResource");
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceRequest params = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceRequest();

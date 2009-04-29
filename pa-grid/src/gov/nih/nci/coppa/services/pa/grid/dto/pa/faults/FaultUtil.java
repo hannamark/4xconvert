@@ -1,6 +1,6 @@
 package gov.nih.nci.coppa.services.pa.grid.dto.pa.faults;
 
-import gov.nih.nci.coppa.services.pa.grid.dto.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DtoTransformException;
 import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;

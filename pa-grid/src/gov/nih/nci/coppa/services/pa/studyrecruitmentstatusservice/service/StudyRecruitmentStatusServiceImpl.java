@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus;
-import gov.nih.nci.coppa.services.pa.grid.dto.IITransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRecruitmentStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyRecruitmentStatusEjb;

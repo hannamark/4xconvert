@@ -117,7 +117,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestToStudyProtocolId();
     toStudyProtocolIdContainer.setId(toStudyProtocolId);
     params.setToStudyProtocolId(toStudyProtocolIdContainer);
-    portType.copy(params);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CopyResponse boxedResult = portType.copy(params);
     }
   }
 
@@ -164,7 +164,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequestId();
     idContainer.setId(id);
     params.setId(idContainer);
-    portType.delete(params);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
   }
 
