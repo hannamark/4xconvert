@@ -22,11 +22,5 @@ public interface StudyProtocolServiceI {
 
   public gov.nih.nci.coppa.services.pa.Id createInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol interventionalStudyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol getObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
-
-  public gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol updateObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol observationalStudyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
-
-  public gov.nih.nci.coppa.services.pa.Id createObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol observationalStudyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
-
 }
 

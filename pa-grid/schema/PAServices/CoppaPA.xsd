@@ -202,26 +202,6 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="ObservationalStudyProtocol">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyProtocolType">
-                    <xs:sequence>
-                        <xs:element name="biospecimenDescription" type="ISO:ST" />
-                        <xs:element name="biospecimenRetentionCode" type="ISO:CD" />
-                        <xs:element name="numberOfGroups" type="ISO:INT" />
-                        <xs:element name="samplingMethodCode" type="ISO:CD" />
-                        <xs:element name="studyModelCode" type="ISO:CD" />
-                        <xs:element name="studyModelOtherText" type="ISO:ST" />
-                        <xs:element name="timePerspectiveCode" type="ISO:CD" />
-                        <xs:element name="timePerspectiveOtherText" type="ISO:ST" />
-                        <xs:element name="studyPopulationDescription" type="ISO:ST" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="OrganizationFunctionalRole">
         <xs:complexType>
             <xs:complexContent>

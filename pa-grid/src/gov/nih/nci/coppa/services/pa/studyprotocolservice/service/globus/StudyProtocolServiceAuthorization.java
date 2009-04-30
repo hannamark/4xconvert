@@ -78,18 +78,6 @@ public class StudyProtocolServiceAuthorization implements PDP {
 	public void authorizeCreateInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
-	   				
-	public void authorizeGetObservationalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-	}
-	   				
-	public void authorizeUpdateObservationalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-	}
-	   				
-	public void authorizeCreateObservationalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -115,15 +103,6 @@ public class StudyProtocolServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("createInterventionalStudyProtocol")){
 			authorizeCreateInterventionalStudyProtocol(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("getObservationalStudyProtocol")){
-			authorizeGetObservationalStudyProtocol(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("updateObservationalStudyProtocol")){
-			authorizeUpdateObservationalStudyProtocol(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("createObservationalStudyProtocol")){
-			authorizeCreateObservationalStudyProtocol(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

@@ -56,22 +56,4 @@ public class StudyProtocolServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolResponse getObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolResponse();
-    boxedResult.setObservationalStudyProtocol(impl.getObservationalStudyProtocol(params.getId().getId()));
-    return boxedResult;
-  }
-
-    public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolResponse updateObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolResponse();
-    boxedResult.setObservationalStudyProtocol(impl.updateObservationalStudyProtocol(params.getObservationalStudyProtocol().getObservationalStudyProtocol()));
-    return boxedResult;
-  }
-
-    public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolResponse createObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolResponse();
-    boxedResult.setId(impl.createObservationalStudyProtocol(params.getObservationalStudyProtocol().getObservationalStudyProtocol()));
-    return boxedResult;
-  }
-
 }

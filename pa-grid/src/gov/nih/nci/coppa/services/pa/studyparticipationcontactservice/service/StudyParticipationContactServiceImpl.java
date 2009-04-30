@@ -33,7 +33,7 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact[] getByStudyParticipation(Id studyParticipationId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         StudyParticipationContact[] result = null;
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyParticipationId);
@@ -55,8 +55,7 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact[] getByStudyProtocolAndRole(Id studyProtocolId,
-            StudyParticipationContact studyParticipationContact) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipationContact studyParticipationContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         StudyParticipationContact[] result = null;
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
@@ -80,8 +79,7 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact[] getByStudyProtocolAndRoles(Id studyProtocolId,
-            StudyParticipationContact studyParticipationContact) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipationContact studyParticipationContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
 
         StudyParticipationContact[] result = null;
         try {
@@ -105,7 +103,7 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         StudyParticipationContact[] result = null;
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
@@ -126,14 +124,14 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-    public void copy(Id fromStudyProtocolId, Id toStudyProtocolId) throws RemoteException, PAFault {
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact[] getCurrentByStudyProtocol(Id studyProtocolId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         StudyParticipationContact[] result = null;
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
@@ -154,7 +152,7 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact get(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             StudyParticipationContactDTO result = studyParContService.get(iiDto);
@@ -169,23 +167,21 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact create(StudyParticipationContact studyParticipationContact)
-            throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact create(gov.nih.nci.coppa.services.pa.StudyParticipationContact studyParticipationContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact update(StudyParticipationContact studyParticipationContact)
-            throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact update(gov.nih.nci.coppa.services.pa.StudyParticipationContact studyParticipationContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public void delete(Id id) throws RemoteException, PAFault {
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 

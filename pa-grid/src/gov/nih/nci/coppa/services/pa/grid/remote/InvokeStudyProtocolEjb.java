@@ -25,31 +25,10 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii arg0) throws PAException {
         try {
             InterventionalStudyProtocolDTO result = locator.getStudyProtocolService().getInterventionalStudyProtocol(
                     arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii arg0) throws PAException {
-        try {
-            ObservationalStudyProtocolDTO result = locator.getStudyProtocolService()
-                    .getObservationalStudyProtocol(arg0);
             return result;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -80,18 +59,39 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO arg0) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * ObservationalStudyProtocol methods are not implemented!
+     * @param arg0 ignored
+     * @return always throws exception!
+     * @exception PAException always thrown
+     */
+    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0) throws PAException {
+        throw new PAException("ObservationStudyProtocal methods are not implemented!");
+    }
+
+    /**
+     * ObservationalStudyProtocol methods are not implemented!
+     * @param arg0 ignored
+     * @return always throws exception!
+     * @exception PAException always thrown
+     */
+    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii arg0) throws PAException {
+        throw new PAException("ObservationStudyProtocal methods are not implemented!");
+    }
+
+    /**
+     * ObservationalStudyProtocol methods are not implemented!
+     * @param arg0 ignored
+     * @return always throws exception!
+     * @exception PAException always thrown
+     */
+    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0)
+            throws PAException {
+        throw new PAException("ObservationStudyProtocal methods are not implemented!");
+    }
 }

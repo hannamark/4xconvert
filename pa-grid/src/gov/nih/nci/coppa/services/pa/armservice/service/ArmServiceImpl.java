@@ -37,7 +37,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     /**
      * {@inheritDoc}
      */
-    public Arm get(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             ArmDTO armDto = armService.get(iiDto);
@@ -51,7 +51,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     /**
      * {@inheritDoc}
      */
-    public Arm[] getByPlannedActivity(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm[] getByPlannedActivity(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             List<ArmDTO> armDto = armService.getByPlannedActivity(iiDto);
@@ -65,7 +65,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     /**
      * {@inheritDoc}
      */
-    public Arm[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             List<ArmDTO> armDto = armService.getByStudyProtocol(iiDto);
@@ -79,7 +79,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     /**
      * {@inheritDoc}
      */
-    public Arm[] getCurrentByStudyProtocol(Id studyProtocolId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<ArmDTO> armDto = armService.getCurrentByStudyProtocol(iiDto);
@@ -93,28 +93,28 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     /**
      * {@inheritDoc}
      */
-    public void copy(Id fromStudyProtocolId, Id toStudyProtocolId) throws RemoteException, PAFault {
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public Arm create(Arm arm) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm create(gov.nih.nci.coppa.services.pa.Arm arm) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public Arm update(Arm arm) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm update(gov.nih.nci.coppa.services.pa.Arm arm) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public void delete(Id id) throws RemoteException, PAFault {
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 

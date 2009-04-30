@@ -2,7 +2,6 @@ package gov.nih.nci.coppa.services.pa.studyprotocolservice.client;
 
 import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
-import gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.studyprotocolservice.common.StudyProtocolServiceI;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -61,9 +60,6 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
 
               System.out.println("Getting interventional study protocol");
               getInterventionalStudyProtocol(client);
-
-              System.out.println("Getting observational study protocol");
-              getObservationalStudyProtocol(client);
             } else {
                 usage();
                 System.exit(1);
@@ -93,15 +89,6 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
         id.setExtension("27426");
         InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
-    }
-
-    private static void getObservationalStudyProtocol(StudyProtocolServiceClient client) throws RemoteException {
-        Id id = new Id();
-        id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27427");
-        ObservationalStudyProtocol result = client.getObservationalStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
@@ -161,42 +148,6 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
     interventionalStudyProtocolContainer.setInterventionalStudyProtocol(interventionalStudyProtocol);
     params.setInterventionalStudyProtocol(interventionalStudyProtocolContainer);
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateInterventionalStudyProtocolResponse boxedResult = portType.createInterventionalStudyProtocol(params);
-    return boxedResult.getId();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol getObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getObservationalStudyProtocol");
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetObservationalStudyProtocolResponse boxedResult = portType.getObservationalStudyProtocol(params);
-    return boxedResult.getObservationalStudyProtocol();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol updateObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol observationalStudyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"updateObservationalStudyProtocol");
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolRequestObservationalStudyProtocol observationalStudyProtocolContainer = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolRequestObservationalStudyProtocol();
-    observationalStudyProtocolContainer.setObservationalStudyProtocol(observationalStudyProtocol);
-    params.setObservationalStudyProtocol(observationalStudyProtocolContainer);
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.UpdateObservationalStudyProtocolResponse boxedResult = portType.updateObservationalStudyProtocol(params);
-    return boxedResult.getObservationalStudyProtocol();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.Id createObservationalStudyProtocol(gov.nih.nci.coppa.services.pa.ObservationalStudyProtocol observationalStudyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"createObservationalStudyProtocol");
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolRequestObservationalStudyProtocol observationalStudyProtocolContainer = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolRequestObservationalStudyProtocol();
-    observationalStudyProtocolContainer.setObservationalStudyProtocol(observationalStudyProtocol);
-    params.setObservationalStudyProtocol(observationalStudyProtocolContainer);
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateObservationalStudyProtocolResponse boxedResult = portType.createObservationalStudyProtocol(params);
     return boxedResult.getId();
     }
   }

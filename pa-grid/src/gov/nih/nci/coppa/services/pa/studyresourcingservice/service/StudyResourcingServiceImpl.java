@@ -30,7 +30,7 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
         super();
     }
 
-    public StudyResourcing getSummaryForReportedResource(Id studyProtocolId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing getSummaryForReportedResource(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             StudyResourcingDTO studyResourcingDto = srService.getsummary4ReportedResource(iiDto);
@@ -41,15 +41,15 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
         }
     }
 
-    public StudyResourcing updateStudyResourcing(StudyResourcing studyResourcing) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing updateStudyResourcing(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
-    public StudyResourcing createStudyResourcing(StudyResourcing studyResourcing) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing createStudyResourcing(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
-    public StudyResourcing[] getStudyResourceByStudyProtocol(Id studyProtocolId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing[] getStudyResourceByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<StudyResourcingDTO> studyResourcingDto = srService.getstudyResourceByStudyProtocol(iiDto);
@@ -60,7 +60,7 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
         }
     }
 
-    public StudyResourcing getStudyResourceByID(Id studyResourceId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing getStudyResourceByID(gov.nih.nci.coppa.services.pa.Id studyResourceId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyResourceId);
             StudyResourcingDTO studyResourcingDto = srService.getStudyResourceByID(iiDto);
@@ -71,7 +71,7 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
         }
     }
 
-    public void deleteStudyResourceByID(StudyResourcing studyResourcing) throws RemoteException, PAFault {
+  public void deleteStudyResourceByID(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
