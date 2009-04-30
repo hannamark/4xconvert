@@ -487,7 +487,7 @@ public class TrialValidationAction extends ActionSupport {
                 Person p = cUtils.getPAPersonByPAOrganizationalContactId((Long.valueOf(spart
                         .getOrganizationalContactIi().getExtension())));
                 gtdDTO.setResponsiblePersonIdentifier(p.getIdentifier());
-                gtdDTO.setResponsiblePersonName(p.getFirstName());
+                gtdDTO.setResponsiblePersonName(p.getFullName());
             }
         }
         copy(dset);
