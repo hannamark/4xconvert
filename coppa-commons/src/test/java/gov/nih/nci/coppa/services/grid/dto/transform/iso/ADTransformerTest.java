@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 import java.util.ArrayList;
 import java.util.List;

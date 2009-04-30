@@ -1,4 +1,5 @@
-package gov.nih.nci.coppa.services.grid.dto.transform.iso;
+package gov.nih.nci.coppa.services.grid.dto.transform;
+
 
 /**
  * Interface for transforming from XML representations to DTO representations, and vice versa.

@@ -31,6 +31,7 @@ import gov.nih.nci.coppa.iso.AdxpSttyp;
 import gov.nih.nci.coppa.iso.AdxpUnid;
 import gov.nih.nci.coppa.iso.AdxpUnit;
 import gov.nih.nci.coppa.iso.AdxpZip;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.HashMap;
 import java.util.Map;

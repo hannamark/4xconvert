@@ -1,7 +1,8 @@
 package gov.nih.nci.coppa.services.pa.grid.dto.pa.faults;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.pa.service.PAException;
 
@@ -31,6 +32,6 @@ public final class PAFaultTransformer implements Transformer<PAFault, PAExceptio
         if (input == null) {
             return null;
         }
-        return POFaultHelper.toFault(new PAFault(), input);
+        return CoppaFaultHelper.toFault(new PAFault(), input);
     }
 }

@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 import org.iso._21090.NullFlavor;
 

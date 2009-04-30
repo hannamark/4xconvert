@@ -316,10 +316,9 @@
         <fail if="junit.failure" message="There were JUnit failures." />
 
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="75" totallinerate="90" />
         <!-- Increase these as unit tests are written -->
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="81" totallinerate="86" />
     </target>
-
 
     <!--
           A note about this target: Checkstyle has a bug that requires exception classes to be on the execution

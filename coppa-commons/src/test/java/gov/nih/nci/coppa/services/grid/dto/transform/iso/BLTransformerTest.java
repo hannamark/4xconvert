@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 import org.iso._21090.BL;
 import org.iso._21090.NullFlavor;

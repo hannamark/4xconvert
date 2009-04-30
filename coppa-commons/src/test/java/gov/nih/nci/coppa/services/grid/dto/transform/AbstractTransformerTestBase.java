@@ -1,8 +1,9 @@
-package gov.nih.nci.coppa.services.grid.dto.transform.iso;
+package gov.nih.nci.coppa.services.grid.dto.transform;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -22,15 +23,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * To write a converter test, extend this class and follow public method pairs to generate data, and verify the converted value.
- * The methods are paired by their name patters:
- *  - makeXmlZZZ and verifyDtoZZZ, or
- *  - makeDtoZZZ and verifyXmlZZZ.
+ * To write a converter test, extend this class and follow public method pairs to generate data, and verify the
+ * converted value. The methods are paired by their name patters: - makeXmlZZZ and verifyDtoZZZ, or - makeDtoZZZ and
+ * verifyXmlZZZ.
  *
  * @author gax
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractTransformerTestBase <T extends Transformer<XML, DTO>, XML, DTO>{
+public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO>, XML, DTO> {
 
     protected final Class<T> tClass;
     protected final Class<XML> xmlClass;
@@ -75,21 +75,24 @@ public abstract class AbstractTransformerTestBase <T extends Transformer<XML, DT
             } else if (e.getKey().startsWith("Dto")) {
                 vn = "Xml" + e.getKey().substring(3);
             } else {
-                fail("method name should be makeXml* or makeDto*, but was make"+e.getKey());
+                fail("method name should be makeXml* or makeDto*, but was make" + e.getKey());
             }
             verifiers[i] = verifierMap.remove(vn);
-            assertNotNull("make"+e.getKey()+"() needs a matching verify"+vn+"()", verifiers[i]);
+            assertNotNull("make" + e.getKey() + "() needs a matching verify" + vn + "()", verifiers[i]);
             // System.out.println("matched "+makers[i]+" to "+verifiers[i]);
             i++;
-          }
+        }
         if (!verifierMap.isEmpty()) {
-            fail(" found verifier(s) w/o matching makers : "+verifierMap.toString());
+            fail(" found verifier(s) w/o matching makers : " + verifierMap.toString());
         }
     }
 
     public abstract XML makeXmlSimple();
+
     public abstract DTO makeDtoSimple();
+
     public abstract void verifyXmlSimple(XML x);
+
     public abstract void verifyDtoSimple(DTO x);
 
     public XML makeXmlNull() {
@@ -134,19 +137,20 @@ public abstract class AbstractTransformerTestBase <T extends Transformer<XML, DT
             testRoudTripDto(make, verify);
         }
     }
+
     private void testConversion(Method make, Method verify) {
         try {
             Object o = make.invoke(this);
             Object converted;
             if (make.getName().startsWith("makeXml")) {
-                converted = transformer.toDto((XML)o);
+                converted = transformer.toDto((XML) o);
             } else {
-                converted = transformer.toXml((DTO)o);
+                converted = transformer.toXml((DTO) o);
             }
             verify.invoke(this, converted);
         } catch (InvocationTargetException ex) {
             if (ex.getTargetException() instanceof Error) {
-                throw (Error)ex.getTargetException();
+                throw (Error) ex.getTargetException();
             } else {
                 throw new RuntimeException(make.getName(), ex.getTargetException());
             }
@@ -165,16 +169,15 @@ public abstract class AbstractTransformerTestBase <T extends Transformer<XML, DT
             StringWriter sw = new StringWriter();
             jaxbContext.createMarshaller().marshal(new JAXBElement(new QName("foo"), xmlClass, x), sw);
             String xml = sw.getBuffer().toString();
-            // System.out.println(xml);
             StreamSource s = new StreamSource(new StringReader(xml));
             XML x2 = jaxbContext.createUnmarshaller().unmarshal(s, xmlClass).getValue();
 
-            DTO d =  transformer.toDto(x2);
+            DTO d = transformer.toDto(x2);
             verify.invoke(this, d);
 
         } catch (InvocationTargetException ex) {
             if (ex.getTargetException() instanceof Error) {
-                throw (Error)ex.getTargetException();
+                throw (Error) ex.getTargetException();
             } else {
                 throw new RuntimeException(make.getName(), ex.getTargetException());
             }
@@ -187,14 +190,13 @@ public abstract class AbstractTransformerTestBase <T extends Transformer<XML, DT
     private void testRoudTripDto(Method make, Method verify) {
         try {
             DTO d = (DTO) make.invoke(this);
-            XML x =  transformer.toXml(d);
+            XML x = transformer.toXml(d);
 
             JAXBContext jaxbContext = JAXBContext.newInstance(xmlClass.getPackage().getName());
 
             StringWriter sw = new StringWriter();
             jaxbContext.createMarshaller().marshal(new JAXBElement(new QName("foo"), xmlClass, x), sw);
             String xml = sw.getBuffer().toString();
-            // System.out.println(xml);
             StreamSource s = new StreamSource(new StringReader(xml));
             XML x2 = jaxbContext.createUnmarshaller().unmarshal(s, xmlClass).getValue();
 
@@ -202,7 +204,7 @@ public abstract class AbstractTransformerTestBase <T extends Transformer<XML, DT
 
         } catch (InvocationTargetException ex) {
             if (ex.getTargetException() instanceof Error) {
-                throw (Error)ex.getTargetException();
+                throw (Error) ex.getTargetException();
             } else {
                 throw new RuntimeException(make.getName(), ex.getTargetException());
             }

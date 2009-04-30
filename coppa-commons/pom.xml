@@ -212,11 +212,41 @@
             <version>1.2rc1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>globus</groupId>
+            <artifactId>cog-jglobus</artifactId>
+            <version>4.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>globus</groupId>
+            <artifactId>wsrf_core</artifactId>
+            <version>4.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>globus</groupId>
+            <artifactId>wsrf_core_stubs</artifactId>
+            <version>4.0.3</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Testing only jars -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>globus</groupId>
+            <artifactId>saaj</artifactId>
+            <version>4.0.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -276,8 +306,8 @@
                         </excludes>
                     </instrumentation>
                     <check>
-                        <totalBranchRate>99</totalBranchRate>
-                        <totalLineRate>93</totalLineRate>
+                        <totalBranchRate>97</totalBranchRate>
+                        <totalLineRate>92</totalLineRate>
                     </check>
                     <formats>
                         <format>html</format>

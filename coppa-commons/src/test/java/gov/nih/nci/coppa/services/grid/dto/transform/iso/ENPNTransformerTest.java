@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENTransformer.ENPNTransformer;
 
 import org.iso._21090.ENPN;

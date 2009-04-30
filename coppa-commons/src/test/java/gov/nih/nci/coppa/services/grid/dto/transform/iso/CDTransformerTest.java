@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 import org.iso._21090.CD;
 import org.junit.Test;

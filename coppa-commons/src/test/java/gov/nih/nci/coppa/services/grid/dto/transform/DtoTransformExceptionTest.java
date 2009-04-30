@@ -1,6 +1,7 @@
-package gov.nih.nci.coppa.services.grid.dto.transform.iso;
+package gov.nih.nci.coppa.services.grid.dto.transform;
 
 import static org.junit.Assert.*;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 
 import org.junit.Test;
 

@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 /**
  * Transforms null flavors.

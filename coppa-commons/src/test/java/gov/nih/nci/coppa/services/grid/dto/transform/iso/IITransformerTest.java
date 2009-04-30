@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 import org.iso._21090.II;
 import org.iso._21090.NullFlavor;

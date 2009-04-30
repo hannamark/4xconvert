@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.HashSet;
 import java.util.List;

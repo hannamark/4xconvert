@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.Ed;
 import gov.nih.nci.coppa.iso.EdText;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.UncertaintyType;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 import java.util.Arrays;
 import java.util.Date;

@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 public class AddressPartTypeTransformerTest extends AbstractTransformerTestBase<AddressPartTypeTransformer,org.iso._21090.AddressPartType,AddressPartType>{
 
