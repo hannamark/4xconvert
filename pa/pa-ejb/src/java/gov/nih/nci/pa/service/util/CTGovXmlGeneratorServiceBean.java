@@ -141,6 +141,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.PoPaRegistry;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -221,9 +222,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         StudyProtocolDTO spDTO = null;
         try {
-
-            spDTO = getStudyProtocol(studyProtocolIi);
-
+            //HJ test PO lookups uncomment this
+            OrganizationDTO org = PoPaRegistry.getOrganizationEntityService().getOrganization(studyProtocolIi);
+            spDTO = getStudyProtocol(studyProtocolIi); 
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             //create the root element
@@ -1164,11 +1165,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
     private static StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        //HJ- Uncomment this to test the PA lookups
+        //StudyProtocolDTO spDTO = PoPaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         if (spDTO == null) {
             throw new PAException("Study Protocol is not available for given id = " + studyProtocolIi.getExtension());
         }
         return spDTO;
     }
+    
 
     ///  utilitiy methods
     private static String convertBLToString(Bl bl) {

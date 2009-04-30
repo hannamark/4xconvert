@@ -106,6 +106,7 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PoPaServiceLocator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -121,7 +122,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
  *
  */
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals" })
-public class PoPaServiceBeanLookup  {
+public class PoPaServiceBeanLookup implements PoPaServiceLocator {
 
     /**
      * @return PersonEntityServiceRemote
@@ -462,4 +463,24 @@ public class PoPaServiceBeanLookup  {
         return (MailManagerServiceRemote)
         JNDIUtil.lookup("pa/MailManagerServiceBean/remote");
       }
+    
+    /**
+     * @return StudyProtocolServiceRemote
+     * @throws PAException on error
+     */
+    public StudyProtocolServiceRemote
+        getStudyProtocolServiceJU() throws PAException {
+        return (StudyProtocolServiceRemote) JNDIUtil.lookup("/pa/StudyProtocolServiceBean/remote");
+    }     
+    
+    /** 
+     * @return OrganizationEntityServiceRemote
+     * @throws PAException on error
+     */
+    public OrganizationEntityServiceRemote getOrganizationEntityServiceJU() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                + "/po/OrganizationEntityServiceBean/remote";
+        return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
 }
