@@ -90,11 +90,15 @@ import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.po.service.CorrelationSortCriterion;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.CorrelationDto;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
+import gov.nih.nci.services.Utils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -105,11 +109,12 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-
 
 /**
  * Generic superclass for correlation services.
+ * 
  * @param <T> type
  * @param <CR> the CR type for T
  * @param <DTO> the dto type for T
@@ -123,12 +128,27 @@ public abstract class AbstractCorrelationServiceBean
     protected static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
 
     private static final String UNCHECKED = "unchecked";
+
+    private static int maxResults = Utils.MAX_SEARCH_RESULTS;
+
     abstract GenericStructrualRoleServiceLocal<T> getLocalService();
+
     abstract GenericStructrualRoleCRServiceLocal<CR> getLocalCRService();
+
     abstract IdConverter getIdConverter();
 
     /**
+     * @param max set the maximum 
+     * @deprecated only for testing
+     */
+    @Deprecated
+    public static void setMaxResultsReturnedLimit(int max) {
+        maxResults = max;
+    }
+    
+    /**
      * Get the search criteria.
+     * 
      * @param example the example to search based off of.
      * @return the criteria
      */
@@ -138,6 +158,7 @@ public abstract class AbstractCorrelationServiceBean
 
     /**
      * TODO.
+     * 
      * @param dto dto
      * @return identifier
      * @throws EntityValidationException on error
@@ -148,7 +169,6 @@ public abstract class AbstractCorrelationServiceBean
         T po = (T) PoXsnapshotHelper.createModel(dto);
         return getIdConverter().convertToIi(getLocalService().create(po));
     }
-
 
     /**
      * {@inheritDoc}
@@ -192,12 +212,33 @@ public abstract class AbstractCorrelationServiceBean
      * @param dto query by example dto
      * @return list of matching dtos
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public List<DTO> search(DTO dto) {
         T model = (T) PoXsnapshotHelper.createModel(dto);
         List<T> search = getLocalService().search(getSearchCriteria(model));
+        return PoXsnapshotHelper.createSnapshotList(search);
+    }
+
+    /**
+     * @param dto query by example dto
+     * @param pagination the settings for control pagination of results
+     * @return list of matching dtos
+     * @throws TooManyResultsException when the system's limit is exceeded
+     */
+    @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public List<DTO> search(DTO dto, LimitOffset pagination) throws TooManyResultsException {
+        T model = (T) PoXsnapshotHelper.createModel(dto);
+        int maxLimit = Math.min(pagination.getLimit(), maxResults + 1);
+        PageSortParams params = new PageSortParams(maxLimit, pagination.getOffset(),
+                CorrelationSortCriterion.ID, false);
+        List<T> search = getLocalService().search(getSearchCriteria(model), params);
+        if (search.size() > maxResults) {
+            throw new TooManyResultsException(maxResults);
+        }
         return PoXsnapshotHelper.createSnapshotList(search);
     }
 
@@ -220,7 +261,7 @@ public abstract class AbstractCorrelationServiceBean
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateCorrelationStatus(Ii targetHCP, Cd statusCode) throws EntityValidationException {
@@ -236,6 +277,7 @@ public abstract class AbstractCorrelationServiceBean
     }
 
     abstract CR newCR(T t);
+
     abstract void copyIntoAbstractModel(DTO proposedState, CR cr);
 
 }

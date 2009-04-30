@@ -135,6 +135,19 @@ public interface CorrelationService<T extends PoDto> {
      * @return list of matching dto
      */
     List<T> search(T dto);
+    
+    /**
+     * This method is an extension of the existing search method. The key difference being the support for paginated
+     * results (similar to SQL LIMIT OFFSET queries).
+     * 
+     * @see #search(T) for general search behavior
+     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
+     * @param dto criteria used to find matching dtos
+     * @param pagination the settings for control pagination of results
+     * @return list of matching organizations
+     * @throws TooManyResultsException when the system's limit is exceeded
+     */
+    List<T> search(T dto, LimitOffset pagination) throws TooManyResultsException;
 
     /**
      * Propose a new entity value to the curator.

@@ -10,7 +10,10 @@ import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.AdxpAdl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.EnOn;
+import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
@@ -33,9 +36,12 @@ import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -183,30 +189,31 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         return org;
     }
 
-    public void testSearch() throws Exception {
+    @Test
+    public void quickSearch() throws Exception {
         Organization o1 = createOrg("oRg1", "1 HaPPy StreEt", "aPt 1", "HaPPyville",
                 "Happyland", "11111", getDefaultCountry(),
                 new String[] { "admin@org1.com", "sAlEs@org1.com" },
                 new String[] { "111-222-3333", "444-555-6666" },
                 new String[] { "999-888-7777", "666-777-8888" },
-                null,
-                new String[] { "www.org1.com", "www.orG1.NET" });
+                new String[] { "123-456-7890", "012-345-6789" },
+                new String[] { "http://www.org1.com", "http://www.orG1.NET" });
 
-        createOrg("oRg2", "2 HaPPy StreEt", "aPt 2", "HaPPyburb",
+        Organization o2 = createOrg("oRg2", "2 HaPPy StreEt", "aPt 2", "HaPPyburb",
                 "Happycomonwealth", "11112", getDefaultCountry(),
                 new String[] { "admin@org2.com", "sAlEs@org2.com" },
                 new String[] { "111-222-4444", "444-555-7777" },
                 new String[] { "999-888-6666", "666-777-9999" },
-                null,
-                new String[] { "www.org2.com", "www.orG2.NET" });
+                new String[] { "123-456-7890", "012-345-6789" },
+                new String[] { "http://www.org2.com", "http://www.orG2.NET" });
 
-        createOrg("oRg3", "3 HaPPy StreEt", "aPt 3", "HaPPytown",
+        Organization o3 = createOrg("oRg3", "3 HaPPy StreEt", "aPt 3", "HaPPytown",
                 "Happystate", "11113", getDefaultCountry(),
                 new String[] { "admin@org3.com", "sAlEs@org3.com" },
                 new String[] { "111-222-5555", "444-555-8888" },
                 new String[] { "999-888-5555", "666-777-0000" },
-                null,
-                new String[] { "www.org3.com", "www.orG3.NET" });
+                new String[] { "123-456-7890", "012-345-6789" },
+                new String[] { "http://www.org3.com", "http://www.orG3.NET" });
 
 
         try {
@@ -241,66 +248,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
 
         sc.setName(null);
 
-        // search by ad
-        sc.setPostalAddress(AddressConverterUtil.create("1 hAp", null, null, null, null, null, null));
-        results = remote.search(sc);
-        assertEquals(1, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create("%pp", null, null, null, null, null, null));
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, "apt ", null, null, null, null, null));
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, "%3", null, null, null, null, null));
-        results = remote.search(sc);
-        assertEquals(1, results.size());
-
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happy", null, null, null, null));
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb", null, null, null, null));
-        results = remote.search(sc);
-        assertEquals(1, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb invalid", null, null, null, null));
-        results = remote.search(sc);
-        assertEquals(0, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happy", null, null, null));
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happyville", null, null, null));
-        results = remote.search(sc);
-        assertEquals(1, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "noresults", null, null, null));
-        results = remote.search(sc);
-        assertEquals(0, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "111", null, null));
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "11112", null, null));
-        results = remote.search(sc);
-        assertEquals(1, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "2", null, null));
-        results = remote.search(sc);
-        assertEquals(0, results.size());
-
-        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, null,
-                getDefaultCountry().getAlpha3(), getDefaultCountry().getName()));
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.setPostalAddress(null);
     }
 
     @Test
@@ -401,5 +348,130 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         OrganizationCR cr = l.get(0);
         assertEquals(cr.getStatusCode(), EntityStatus.INACTIVE);
     }
+    public static EnOn convertToEnOn(String value) {
+        EnOn iso = new EnOn();
+        if (value == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            Enxp e = new Enxp(null);
+            e.setValue(value);
+            iso.getPart().add(e);
+        }
+        return iso;
+    }
 
+    @Test
+    public void search() throws TooManyResultsException {
+        createOrg("oRg1", "1 HaPPy StreEt", "aPt 1", "HaPPyville",
+                "Happyland", "11111", getDefaultCountry(),
+                new String[] { "admin@org1.com", "sAlEs@org1.com" },
+                new String[] { "111-222-3333", "444-555-6666" },
+                new String[] { "999-888-7777", "666-777-8888" },
+                new String[] { "123-456-7890", "012-345-6789" },
+                new String[] { "http://www.org1.com", "http://www.orG1.NET" });
+
+        createOrg("oRg2", "2 HaPPy StreEt", "aPt 2", "HaPPyburb",
+                "Happycomonwealth", "11112", getDefaultCountry(),
+                new String[] { "admin@org2.com", "sAlEs@org2.com" },
+                new String[] { "111-222-4444", "444-555-7777" },
+                new String[] { "999-888-6666", "666-777-9999" },
+                new String[] { "123-456-7890", "012-345-6789" },
+                new String[] { "http://www.org2.com", "http://www.orG2.NET" });
+
+        createOrg("oRg3", "3 HaPPy StreEt", "aPt 3", "HaPPytown",
+                "Happystate", "11113", getDefaultCountry(),
+                new String[] { "admin@org3.com", "sAlEs@org3.com" },
+                new String[] { "111-222-5555", "444-555-8888" },
+                new String[] { "999-888-5555", "666-777-0000" },
+                new String[] { "123-456-7890", "012-345-6789" },
+                new String[] { "http://www.org3.com", "http://www.orG3.NET" });
+        
+        OrganizationDTO sc = new OrganizationDTO();
+        sc.setName(convertToEnOn("OrG"));
+        
+        LimitOffset limitOffset = new LimitOffset(1,0);
+        List<OrganizationDTO> results;
+        
+        results = remote.search(sc, limitOffset);
+        assertEquals(0, limitOffset.getOffset());
+        assertEquals("Expected to find 1 entry", 1, results.size());
+        
+        results = remote.search(sc, limitOffset.next());
+        assertEquals(1, limitOffset.getOffset());
+        assertEquals("Expected to find 1 entry", 1, results.size());
+        
+        results = remote.search(sc, limitOffset.next());
+        assertEquals(2, limitOffset.getOffset());
+        assertEquals("Expected to find 1 entry", 1, results.size());
+        
+        
+        results = remote.search(sc, limitOffset.next());
+        assertEquals(3, limitOffset.getOffset());
+        assertEquals("Expected to find 0 entry", 0, results.size());
+        
+        
+        results = remote.search(sc, limitOffset.previous());
+        assertEquals("Expected to find 1 entry", 1, results.size());
+        assertEquals(2, limitOffset.getOffset());
+        
+        results = remote.search(sc, limitOffset.previous());
+        assertEquals("Expected to find 1 entry", 1, results.size());
+        assertEquals(1, limitOffset.getOffset());
+        
+        results = remote.search(sc, limitOffset.previous());
+        assertEquals(0, limitOffset.getOffset());
+        assertEquals("Expected to find 1 entry", 1, results.size());
+        
+        
+        //First page is always returned even when offset is < 0
+        results = remote.search(sc, limitOffset.previous());
+        assertEquals(-1, limitOffset.getOffset());
+        assertEquals("Expected to find 1 entry", 1, results.size());
+        
+        results = remote.search(sc, limitOffset.previous());
+        assertEquals(-2, limitOffset.getOffset());
+        assertEquals("Expected to find 0 entry", 1, results.size());
+
+    }
+    
+    /**
+     * Numerous test cases are combined to speed up the test (only perform the insert once)
+     * @throws TooManyResultsException
+     */
+    @Test 
+    public void verifySearchThrowsTooManyResultsException() throws TooManyResultsException {
+        int max = 7;
+        OrganizationEntityServiceBean.setMaxResultsReturnedLimit(max-2);
+        
+        for (int i = 0; i < max; i++) {
+            createOrg("oRg" + i, "" + i + " HaPPy StreEt", "aPt " + i, "HaPPyville",
+                    "Happyland", "11111", getDefaultCountry(),
+                    new String[] { "admin@org" + i + ".com", "sAlEs@org" + i + ".com" },
+                    new String[] { "111-222-3333", "444-555-6666" },
+                    new String[] { "999-888-7777", "666-777-8888" },
+                    new String[] { "123-456-7890", "012-345-6789" },
+                    new String[] { "http://www.org" + i + ".com", "http://www.orG" + i + ".NET" });
+        }
+        OrganizationDTO sc = new OrganizationDTO();
+        sc.setName(convertToEnOn("OrG"));
+        
+        try {
+            remote.search(sc, new LimitOffset(max, 0));
+            fail();
+        } catch (TooManyResultsException e) {
+        }
+        
+        try {
+            remote.search(sc, new LimitOffset(max-1, 0));
+            fail();
+        } catch (TooManyResultsException e) {
+        }
+        
+        List<OrganizationDTO> results;
+        results = remote.search(sc, new LimitOffset(max-2, 0));
+        assertEquals(max-2, results.size());
+        results = remote.search(sc, new LimitOffset(max-3, 0));
+        assertEquals(max-3, results.size());
+    }
+    
 }

@@ -103,11 +103,16 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.util.Collections;
@@ -191,9 +196,6 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
     }
 
     protected abstract void modifySubClassSpecificFieldsForCorrelation2(T correlation2);
-
-    protected abstract T getEmptySearchCriteria();
-
 
     @Override
     @SuppressWarnings("unchecked")
@@ -374,4 +376,5 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
 
     abstract protected void testSearchOnSubClassSpecificFields(T correlation1, Ii id2, T searchCriteria)
             throws NullifiedRoleException;
+    
 }

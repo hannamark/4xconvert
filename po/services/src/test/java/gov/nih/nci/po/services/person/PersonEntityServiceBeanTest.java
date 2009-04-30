@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.AdxpAdl;
@@ -33,8 +34,11 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceBean;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.net.URI;
@@ -85,11 +89,16 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         p.setFirstName("Dixie");
         p.setLastName("Tavela");
 
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        Address a = makeAddress();
         p.setPostalAddress(a);
         p.getEmail().add(new Email("abc@example.com"));
         p.getUrl().add(new URL("http://example.com"));
         return p;
+    }
+
+    private Address makeAddress() {
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        return a;
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -112,9 +121,10 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         part = new Enxp(EntityNamePartType.FAM);
         part.setValue("McGillicutty");
         dto.getName().getPart().add(part);
-        Address a = makePerson().getPostalAddress();
+        Address a = makeAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
         dto.setPostalAddress(AddressConverter.SimpleConverter.convertToAd(a));
+        
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         Tel t = new Tel();
@@ -239,7 +249,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals("m", p.getMiddleName());
         assertEquals("c", p.getPrefix());
         assertEquals("d", p.getSuffix());
-        Address a = makePerson().getPostalAddress();
+        Address a = makeAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
         dto.setPostalAddress(AddressConverter.SimpleConverter.convertToAd(a));
         DSet<Tel> telco = new DSet<Tel>();
@@ -332,5 +342,60 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(1, l.size());
         PersonCR cr = l.get(0);
         assertEquals(cr.getStatusCode(), EntityStatus.INACTIVE);
+    }
+    
+    @Test 
+    public void search() throws TooManyResultsException, EntityValidationException {
+        int max = 7;
+        PersonEntityServiceBean.setMaxResultsReturnedLimit(max-2);
+        for(int i = 0 ; i < max; i++) {
+            createPerson();
+        }
+        
+        PersonDTO sc = new PersonDTO();
+        sc.setName(PersonNameConverterUtil.convertToEnPn("fName", null, null, null, null));
+        List<PersonDTO> results;
+        //verify walking forward with a page size of 1
+        LimitOffset page = new LimitOffset(1,-1);
+        for (int j = 0 ; j < max; j++) {
+            results = remote.search(sc, page.next());
+            assertEquals(1, results.size());
+        }
+        //walk past the last record
+        results = remote.search(sc, page.next());
+        assertEquals(0, results.size());
+        
+        //walk back to first record
+        for (int j = 0 ; j < max; j++) {
+            results = remote.search(sc, page.previous());
+            assertEquals(1, results.size());
+        }
+        //try to walk before first record, first record always returned 
+        results = remote.search(sc, page.previous());
+        assertEquals(1, results.size());
+        
+        //verify TooManyResultsException is thrown
+        try {
+            remote.search(sc, new LimitOffset(max, 0));
+            fail();
+        } catch (TooManyResultsException e) {
+        }
+        
+        //verify TooManyResultsException is thrown
+        try {
+            remote.search(sc, new LimitOffset(max-1, 0));
+            fail();
+        } catch (TooManyResultsException e) {
+        }
+        
+        //verify results are returned
+        page = new LimitOffset(max-2, 0);
+        results = remote.search(sc, page);
+        assertEquals(page.getLimit(), results.size());
+        
+        //verify results are returned
+        page = new LimitOffset(max-3, 0);
+        results = remote.search(sc, page);
+        assertEquals(page.getLimit(), results.size());
     }
 }

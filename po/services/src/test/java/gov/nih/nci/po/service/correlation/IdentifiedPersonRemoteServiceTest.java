@@ -331,4 +331,8 @@ public class IdentifiedPersonRemoteServiceTest
         searchCriteria.setScoperIdentifier(null);
         testNullifiedRoleNotFoundInSearch(correlation1Id, searchCriteria, IdentifiedPerson.class);
     }
+
+    protected IdentifiedPersonDTO getEmptySearchCriteria() {
+        return new IdentifiedPersonDTO();
+    }
 }

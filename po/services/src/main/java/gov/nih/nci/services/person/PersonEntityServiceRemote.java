@@ -85,6 +85,8 @@ package gov.nih.nci.services.person;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.util.List;
@@ -145,8 +147,22 @@ public interface PersonEntityServiceRemote {
      * </pre>
      * @param person criteria used to find matching people
      * @return list of matching people
+     * @deprecated
      */
+    @Deprecated
     List<PersonDTO> search(PersonDTO person);
+    /**
+     * This method is an extension of the existing search method. The key difference being the support for paginated
+     * results (similar to SQL LIMIT OFFSET queries).
+     * 
+     * @see #search(PersonDTO) for general search behavior
+     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
+     * @param person criteria used to find matching people
+     * @param pagination the settings for control pagination of results
+     * @return list of matching people
+     * @throws TooManyResultsException when the system's limit is exceeded
+     */
+    List<PersonDTO> search(PersonDTO person, LimitOffset pagination) throws TooManyResultsException;
     
      /**
      * Propose a new entity value to the curator.

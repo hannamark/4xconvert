@@ -251,4 +251,8 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
 
         testNullifiedRoleNotFoundInSearch(id2, searchCriteria, HealthCareFacility.class);
     }
+
+    protected HealthCareFacilityDTO getEmptySearchCriteria() {
+        return new HealthCareFacilityDTO();
+    }
 }

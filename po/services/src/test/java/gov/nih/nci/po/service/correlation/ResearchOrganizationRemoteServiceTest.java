@@ -281,4 +281,8 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         searchCriteria.setTypeCode(null);
         testNullifiedRoleNotFoundInSearch(correlation2Id, searchCriteria, ResearchOrganization.class);
     }
+
+    protected ResearchOrganizationDTO getEmptySearchCriteria() {
+        return new ResearchOrganizationDTO();
+    }
 }

@@ -318,6 +318,7 @@
                         <clientInclude>gov/nih/nci/po/service/SearchCriteriaValidationException.class</clientInclude>
                     </clientIncludes>
                     <clientExcludes>
+                        <clientExclude>gov/nih/nci/services/Utils*</clientExclude>
                         <clientExclude>gov/nih/nci/services/**/*Helper*</clientExclude>
                         <clientExclude>gov/nih/nci/services/**/*Bean*</clientExclude>
                         <clientExclude>gov/nih/nci/services/**/*Interceptor*</clientExclude>

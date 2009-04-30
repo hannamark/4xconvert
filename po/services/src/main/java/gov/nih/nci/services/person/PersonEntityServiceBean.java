@@ -94,8 +94,12 @@ import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.PersonSortCriterion;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
+import gov.nih.nci.services.Utils;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
 
@@ -111,6 +115,8 @@ import javax.interceptor.Interceptors;
 
 import org.jboss.annotation.security.SecurityDomain;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+
 /**
 *
 * @author lpower
@@ -124,7 +130,16 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     private PersonServiceLocal perService;
     private PersonCRServiceLocal perCRService;
     private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
-
+    private static int maxResults = Utils.MAX_SEARCH_RESULTS;
+    
+    /**
+     * @param max set the maximum 
+     * @deprecated only for testing
+     */
+    @Deprecated
+    public static void setMaxResultsReturnedLimit(int max) {
+        maxResults = max;
+    }
     /**
      * @param svc service, injected
      */
@@ -182,9 +197,27 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @Deprecated
     public List<PersonDTO> search(PersonDTO person) {
         Person personBO = (Person) PoXsnapshotHelper.createModel(person);
-        List<Person> listBOs = getPersonServiceBean().search(new AnnotatedBeanSearchCriteria<Person>(personBO));
+        List<Person> listBOs = getPersonServiceBean().search(new AnnotatedBeanSearchCriteria<Person>(personBO), null);
+        return PoXsnapshotHelper.createSnapshotList(listBOs);
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public List<PersonDTO> search(PersonDTO person, LimitOffset pagination) throws TooManyResultsException {
+        Person personBO = (Person) PoXsnapshotHelper.createModel(person);
+        int maxLimit = Math.min(pagination.getLimit(), maxResults + 1);
+        PageSortParams<Person> params = new PageSortParams<Person>(maxLimit, pagination.getOffset(), 
+                PersonSortCriterion.PERSON_ID, false);
+        List<Person> listBOs = getPersonServiceBean().search(new AnnotatedBeanSearchCriteria<Person>(personBO), params);
+        if (listBOs.size() > maxResults) {
+            throw new TooManyResultsException(maxResults);
+        }
         return PoXsnapshotHelper.createSnapshotList(listBOs);
     }
 

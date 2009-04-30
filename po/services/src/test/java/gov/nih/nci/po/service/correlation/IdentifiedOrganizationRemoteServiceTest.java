@@ -318,4 +318,8 @@ public class IdentifiedOrganizationRemoteServiceTest
 
         testNullifiedRoleNotFoundInSearch(correlation1Id, searchCriteria, IdentifiedOrganization.class);
     }
+
+    protected IdentifiedOrganizationDTO getEmptySearchCriteria() {
+        return new IdentifiedOrganizationDTO();
+    }
 }

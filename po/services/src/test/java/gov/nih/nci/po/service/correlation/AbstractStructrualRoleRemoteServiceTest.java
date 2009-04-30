@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -100,6 +101,9 @@ import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
+import gov.nih.nci.services.correlation.AbstractCorrelationServiceBean;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 
 import java.lang.reflect.ParameterizedType;
@@ -193,7 +197,63 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     @Test
     public abstract void testSearch() throws Exception;
 
-
+    @Test
+    public void testSearch2() throws Exception {
+        CorrelationService<T> correlationService = getCorrelationService();
+        int max = 7;
+        AbstractCorrelationServiceBean.setMaxResultsReturnedLimit(max-2);
+        for(int i = 0; i < max; i++) {
+            T correlation1 = getSampleDto();
+            Ii id1 = correlationService.createCorrelation(correlation1);
+        }
+        T sc = getEmptySearchCriteria();
+        sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.PENDING));
+        
+        List<T> results;
+        //verify walking forward with a page size of 1
+        LimitOffset page = new LimitOffset(1,-1);
+        for (int j = 0 ; j < max; j++) {
+            results = correlationService.search(sc, page.next());
+            assertEquals(1, results.size());
+        }
+        //walk past the last record
+        results = correlationService.search(sc, page.next());
+        assertEquals(0, results.size());
+        
+        //walk back to first record
+        for (int j = 0 ; j < max; j++) {
+            results = correlationService.search(sc, page.previous());
+            assertEquals(1, results.size());
+        }
+        //try to walk before first record, first record always returned 
+        results = correlationService.search(sc, page.previous());
+        assertEquals(1, results.size());
+        
+        //verify TooManyResultsException is thrown
+        try {
+            correlationService.search(sc, new LimitOffset(max, 0));
+            fail();
+        } catch (TooManyResultsException e) {
+        }
+        
+        //verify TooManyResultsException is thrown
+        try {
+            correlationService.search(sc, new LimitOffset(max-1, 0));
+            fail();
+        } catch (TooManyResultsException e) {
+        }
+        
+        //verify results are returned
+        page = new LimitOffset(max-2, 0);
+        results = correlationService.search(sc, page);
+        assertEquals(page.getLimit(), results.size());
+        
+        //verify results are returned
+        page = new LimitOffset(max-3, 0);
+        results = correlationService.search(sc, page);
+        assertEquals(page.getLimit(), results.size());
+        
+    }   
 
     protected void verifyPersonRoleDto(AbstractPersonRoleDTO e, AbstractPersonRoleDTO a) {
         assertEquals(e.getScoperIdentifier().getExtension(), a.getScoperIdentifier().getExtension());
@@ -264,4 +324,6 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         results = getCorrelationService().search(searchCriteria);
         assertEquals(0, results.size());
     }
+
+    protected abstract T getEmptySearchCriteria();
 }

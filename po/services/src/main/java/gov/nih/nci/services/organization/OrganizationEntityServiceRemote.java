@@ -85,13 +85,14 @@ package gov.nih.nci.services.organization;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Remote;
-
 /**
  *
  * @author gax
@@ -134,8 +135,24 @@ public interface OrganizationEntityServiceRemote {
      * </pre>
      * @param organization criteria used to find matching organizations
      * @return list of matching organizations
+     * @deprecated 
      */
+    @Deprecated
     List<OrganizationDTO> search(OrganizationDTO organization);
+    
+    /**
+     * This method is an extension of the existing search method. The key difference being the support for paginated
+     * results (similar to SQL LIMIT OFFSET queries).
+     * 
+     * @see #search(OrganizationDTO) for general search behavior
+     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
+     * @param organization criteria used to find matching organizations
+     * @param pagination the settings for control pagination of results
+     * @return list of matching organizations
+     * @throws TooManyResultsException when the system's limit is exceeded
+     */
+    List<OrganizationDTO> search(OrganizationDTO organization, LimitOffset pagination) 
+        throws TooManyResultsException;
 
     /**
      * Propose a new entity value to the curator.

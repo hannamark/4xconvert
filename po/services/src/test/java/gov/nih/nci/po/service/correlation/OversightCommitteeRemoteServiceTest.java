@@ -269,4 +269,8 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
 
         testNullifiedRoleNotFoundInSearch(id2, searchCriteria, OversightCommittee.class);
     }
+
+    protected OversightCommitteeDTO getEmptySearchCriteria() {
+        return new OversightCommitteeDTO();
+    }
 }
