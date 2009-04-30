@@ -92,10 +92,6 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 */
 public enum NihInstituteCode implements CodedEnum<String> {
   /**
-   * National Cancer Institute.
-   */
-  NCI("NCI-National Cancer Institute"),
-  /**
    * National Eye Institute.
    */
   NEI("NEI-National Eye Institute"),

@@ -116,7 +116,7 @@
                 <s:radio name="completionDateType" list="dateTypeList" /></td>
         </tr>
     </table>
-    </td><td width="100%"/></tr></table>
+    </td></tr></table>
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">

@@ -366,9 +366,6 @@ public class IrbAction extends ActionSupport implements Preparable {
                 if (PAUtil.isEmpty(ct.getCity())) {
                     addActionError("City must be set; use PO Curation tool.  ");
                 }
-                if (PAUtil.isEmpty(ct.getState())) {
-                    addActionError("State must be set; use PO Curation tool.  ");
-                }
                 if (PAUtil.isEmpty(ct.getZip())) {
                     addActionError("Zip/postal code must be set; use PO Curation tool.  ");
                 }

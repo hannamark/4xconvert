@@ -619,7 +619,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         for (StudyIndldeDTO studyIndldeDTO : studyIndldeDTOs) {
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
             studyIndldeDTO.setIdentifier(null);
-            studyIndldeService.create(studyIndldeDTO);
+            try {
+                studyIndldeService.create(studyIndldeDTO);
+            } catch (PADuplicateException pad) {
+                continue;
+            }
         }
     }
 

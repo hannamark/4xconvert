@@ -81,7 +81,6 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyIndldeWebDTO;
 import gov.nih.nci.pa.enums.HolderTypeCode;
-import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -171,14 +170,8 @@ public class TrialIndideAction extends ActionSupport {
             studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getHolderType()));
             studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(studyIndldeWebDTO.getIndldeNumber()));
             if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
-              if (studyIndldeWebDTO.getNihInstHolder().equalsIgnoreCase(NihInstituteCode.NCI.getCode().toString())) {
-                studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd("NCI"));
-                studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
-                    studyIndldeWebDTO.getNciDivProgHolder()));
-              } else {
                 studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
                     studyIndldeWebDTO.getNihInstHolder()));
-              }
             }
             if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
                 studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
@@ -224,14 +217,8 @@ public class TrialIndideAction extends ActionSupport {
             studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getHolderType()));
             studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(studyIndldeWebDTO.getIndldeNumber()));
             if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
-              if (studyIndldeWebDTO.getNihInstHolder().equalsIgnoreCase(NihInstituteCode.NCI.getCode().toString())) {
-                studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd("NCI"));
-                studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
-                    studyIndldeWebDTO.getNciDivProgHolder()));
-              } else {
                 studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
                     studyIndldeWebDTO.getNihInstHolder()));
-              }
              }
             if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
                 studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(

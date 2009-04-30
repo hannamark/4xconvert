@@ -91,8 +91,6 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * copyright holder, NCI. 
  */
 public enum NihInstHolderCode implements CodedEnum<String> {
-    /** NCI-National Cancer Institute. */
-    NCI("NCI-National Cancer Institute"),
     /** NEI-National Eye Institute. */
     NEI("NEI-National Eye Institute"),
     /** NHLBI-National Heart, Lung, and Blood Institute. */
