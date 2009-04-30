@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -262,8 +263,10 @@ ServletResponseAware {
         documents.append("','");
         documents.append(docDto.getFileName().getValue());
         documents.append("')\">");
+        documents.append(CdConverter.convertCdToString(docDto.getTypeCode()));
+        documents.append("&nbsp;- <B>");
         documents.append(fileName);
-        documents.append("</a>&nbsp;");
+        documents.append("</B></a><br>");
                 
       } 
       return documents.toString();

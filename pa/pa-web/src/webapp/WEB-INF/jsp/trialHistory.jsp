@@ -47,7 +47,7 @@ function handlePopup(a,b,c)  // write corresponding content to the popup window
                 <display:column property="amendmentDate" sortable="false" titleKey="trialHistory.amendmentDate" format="{0,date,MM/dd/yyyy}" />
                 <display:column property="submissionDate" sortable="false" titleKey="trialHistory.submissionDate" format="{0,date,MM/dd/yyyy}" />
                 <display:column property="amendmentReasonCode" sortable="false" titleKey="trialHistory.amendmentReasonCode"/>
-                <display:column property="documents" sortable="false" titleKey="trialHistory.documents"/>
+                <display:column property="documents" sortable="false" style="word-wrap: break-word"  titleKey="trialHistory.documents"/>
                 <display:column title="Action" headerClass="centered" class="action">
                 <s:if test="%{#attr.row.submissionNumber != 1}">
                      <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
