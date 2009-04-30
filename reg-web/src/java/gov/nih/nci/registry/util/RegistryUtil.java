@@ -4,6 +4,8 @@
 package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
@@ -73,7 +75,10 @@ public class RegistryUtil {
      * @param dateString dateString
      * @return boolean
      */
-    public static boolean isValidDate(String dateString) { 
+    public static boolean isValidDate(String dateString) {
+        if (PAUtil.isEmpty(dateString)) {
+            return false;
+        }
         //set the format to use as a constructor argument   
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");        
         if (dateString.trim().length() != dateFormat.toPattern().length())  {    

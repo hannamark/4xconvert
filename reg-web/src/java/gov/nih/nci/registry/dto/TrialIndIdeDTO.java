@@ -33,12 +33,12 @@ public class TrialIndIdeDTO {
     public TrialIndIdeDTO(StudyIndldeDTO isoDto) {
         super();
         this.indIdeId = IiConverter.convertToString(isoDto.getIdentifier());
-        this.expandedAccess = CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode());
+        this.expandedAccessType = CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode());
         if (isoDto.getExpandedAccessIndicator().getValue() != null) {
             if (isoDto.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
-              this.expandedAccessType = "Yes";
+              this.expandedAccess = "Yes";
             } else {
-              this.expandedAccessType = "No";
+              this.expandedAccess = "No";
             } 
           }
         this.grantor = CdConverter.convertCdToString(isoDto.getGrantorCode());

@@ -41,6 +41,7 @@ public class TrialBatchDataValidator {
     private static List<String> countryList = null;
     private final int serialNumMin = 5;
     private final int serialNumMax = 6;
+    private final int ausStateCodeLen = 3;
 
 /**
  * 
@@ -273,7 +274,8 @@ public class TrialBatchDataValidator {
         // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
         // Current Trial Status Date and have ‘actual’ type. New Rule added-01/15/09 if start date is smaller 
         //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.            
-        if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus())
+        //Commenting this rule in pa2.0 as part of release
+        /*if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus())
                 && PAUtil.isNotEmpty(dto.getCurrentTrialStatusDate())
                         && PAUtil.isNotEmpty(dto.getStudyStartDate())
                          && PAUtil.isNotEmpty(dto.getStudyStartDateType())) {
@@ -290,7 +292,7 @@ public class TrialBatchDataValidator {
                   }
               }                
           }            
-        }        
+        }*/        
         // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
         //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
         if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus()) && PAUtil.isNotEmpty(dto.getStudyStartDateType())) {
@@ -619,10 +621,17 @@ public class TrialBatchDataValidator {
                     || batchDto.getCountry().equalsIgnoreCase("AUS")) {
                 if (PAUtil.isEmpty(batchDto.getState())) {
                     fieldErr.append(fieldName + " State/Province is mandatory for US/Canada/Australia. \n");
-                }
-                if (PAUtil.isNotEmpty(batchDto.getState())
+                } else {
+                    if ((batchDto.getCountry().equalsIgnoreCase("USA")
+                            || batchDto.getCountry().equalsIgnoreCase("CAN"))
+                            && PAUtil.isNotEmpty(batchDto.getState())
                         && batchDto.getState().length() > 2) {
-                    fieldErr.append(fieldName + " State code should be two character. \n");
+                            fieldErr.append(fieldName + " 2-letter State/Province Code required for USA/Canada. \n");
+                    }
+                    if (batchDto.getCountry().equalsIgnoreCase("AUS")
+                            && batchDto.getState().length() > ausStateCodeLen) {
+                              fieldErr.append(fieldName + " 2/3-letter State/Province Code required for Australia. \n");
+                        }
                 }
             }
         }
@@ -673,13 +682,18 @@ public class TrialBatchDataValidator {
                         || batchDto.getCountry().equalsIgnoreCase("AUS")) {
                     if (PAUtil.isEmpty(batchDto.getState())) {
                         fieldErr.append(message + " State/Province is mandatory for US/Canada/Australia. \n");
-                    }
-                    if (PAUtil.isNotEmpty(batchDto.getState())
+                    } else {
+                        if ((batchDto.getCountry().equalsIgnoreCase("USA")
+                            || batchDto.getCountry().equalsIgnoreCase("CAN"))
                             && batchDto.getState().length() > 2) {
-                        fieldErr.append(message + " State code should be two character. \n");
+                                fieldErr.append(message + " 2-letter State/Province Code required for USA/Canada. \n");
+                        }
+                        if (batchDto.getCountry().equalsIgnoreCase("AUS")
+                            && batchDto.getState().length() > ausStateCodeLen) {
+                                fieldErr.append(message + " 2/3-letter State/Province Code required for Australia. \n");
+                        }
                     }
-                }
-                
+                }       
         }
         if (PAUtil.isEmpty(batchDto.getEmail())) {
             fieldErr.append(message + " Email is required. \n");

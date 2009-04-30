@@ -38,8 +38,45 @@
     <s:form > <s:actionerror/>          
     	
     <table class="form">
-    <c:if test="${requestScope.trialSummary.amendmentDate.value != null}">
-      <tr>
+         <tr>
+            <th colspan="2"><fmt:message key="view.trial.trialIDs"/></th>
+          </tr>
+          <tr>     
+                <td scope="row" class="label">
+                    <strong>
+                    <label for="Identifier">
+                        <fmt:message key="view.trial.identifier"/>                
+                    </label></strong>
+                </td>
+                <td class="value">
+                     <strong><c:out value="${requestScope.trialSummary.assignedIdentifier.extension}"/></strong> 
+                </td>
+                
+          </tr>
+          <tr>     
+                <td scope="row" class="label">
+                    <label for="Lead Organization Trial Identifier">
+                        <fmt:message key="view.trial.leadOrgTrialIdentifier"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <c:out value="${requestScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
+                </td>
+          </tr>
+          <c:if test="${requestScope.studyNCTNumber != null}">
+              <tr>     
+                    <td scope="row" class="label">
+                        <label for="NCT Number">
+                            <fmt:message key="view.trial.nctNumber"/>                
+                            </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${requestScope.studyNCTNumber }"/> 
+                    </td>
+              </tr>
+          </c:if>
+        <c:if test="${requestScope.trialSummary.amendmentDate.value != null}">
+        <tr>
            <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
           </tr>
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
@@ -55,42 +92,20 @@
               </c:if>
            </td>
           </tr>
+          <tr>     
+               <td scope="row" class="label">
+                    <label for="Amendment Date">
+                        <fmt:message key="view.trial.amendmentDate"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <fmt:formatDate value="${requestScope.trialSummary.amendmentDate.value}"/> 
+                </td>
+          </tr>
         </c:if>
     	  <tr>
     	  	<th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
     	  </tr>
-    	  <tr>     
-          		<td scope="row" class="label">
-          			<label for="Identifier">
-          				<fmt:message key="view.trial.identifier"/>                
-                  	</label>
-                </td>
-                <td class="value">
-                	<c:out value="${requestScope.trialSummary.assignedIdentifier.extension}"/> 
-                </td>
-          </tr>
-          <tr>     
-        		<td scope="row" class="label">
-            		<label for="Lead Organization Trial Identifier">
-            			<fmt:message key="view.trial.leadOrgTrialIdentifier"/>                
-            			</label>
-            	</td>
-            	<td class="value">
-            		<c:out value="${requestScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
-            	</td>
-          </tr>
-          <c:if test="${requestScope.studyNCTNumber != null}">
-	          <tr>     
-	                <td scope="row" class="label">
-	                    <label for="NCT Number">
-	                        <fmt:message key="view.trial.nctNumber"/>                
-	                        </label>
-	                </td>
-	                <td class="value">
-	                    <c:out value="${requestScope.studyNCTNumber }"/> 
-	                </td>
-	          </tr>
-          </c:if>
           <tr>     
             	<td scope="row" class="label">
                 	<label for="officialTitle">

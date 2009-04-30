@@ -14,7 +14,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
-import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
@@ -91,7 +90,7 @@ public class TrialValidator {
                             getText(invalidValues[i].getMessage().trim()));
         }
         if (!(trialDto.getResponsiblePartyType().equals("pi"))
-             && (trialDto.getResponsiblePersonIdentifier().trim().equals(""))) {
+             && (PAUtil.isEmpty(trialDto.getResponsiblePersonIdentifier()))) {
             addFieldError.put("ResponsiblePartyNotSelected", 
                     getText("error.submit.sponsorResponsibelParty"));
         }
@@ -108,23 +107,22 @@ public class TrialValidator {
                         getText("error.submit.otherPurposeText"));
         }
         String err = "error.submit.invalidDate";      // validate date and its format
-        if (PAUtil.isNotEmpty(trialDto.getStatusDate())
-                && !RegistryUtil.isValidDate(trialDto.getStatusDate())) {
+        if (!RegistryUtil.isValidDate(trialDto.getStatusDate())) {
                     addFieldError.put("trialDTO.statusDate", getText(err));
         }
-        if (PAUtil.isNotEmpty(trialDto.getStartDate())
-                && !RegistryUtil.isValidDate(trialDto.getStartDate())) {
+        if (!RegistryUtil.isValidDate(trialDto.getStartDate())) {
                     addFieldError.put("trialDTO.startDate", getText(err));
         }
-        if (PAUtil.isNotEmpty(trialDto.getCompletionDate())
-                && !RegistryUtil.isValidDate(trialDto.getCompletionDate())) {
+        if (!RegistryUtil.isValidDate(trialDto.getCompletionDate())) {
                     addFieldError.put("trialDTO.completionDate", getText(err));
         }
         if (PAUtil.isNotEmpty(trialDto.getStatusCode())) {
-            if ((TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(trialDto.getStatusCode())
-                 || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode().equals(trialDto.getStatusCode())
-                 || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode().
-                 equals(trialDto.getStatusCode())) && PAUtil.isEmpty(trialDto.getReason())) {
+            if ((StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(trialDto.getStatusCode())
+                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode().equals(trialDto.getStatusCode())
+                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode().
+                 equals(trialDto.getStatusCode())
+                 || StudyStatusCode.WITHDRAWN.getCode().equals(trialDto.getStatusCode()))
+                 && PAUtil.isEmpty(trialDto.getReason())) {
                 addFieldError.put("trialDTO.reason", getText("error.submit.trialStatusReason"));
             }
         }

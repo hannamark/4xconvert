@@ -266,6 +266,7 @@ public class TrialDTO {
     /**
      * @return the responsiblePartyType
      */
+    @NotEmpty (message = "error.submit.ResponsibelParty")
     public String getResponsiblePartyType() {
         return responsiblePartyType;
     }

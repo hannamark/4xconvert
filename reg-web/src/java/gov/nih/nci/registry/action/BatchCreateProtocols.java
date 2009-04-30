@@ -283,24 +283,24 @@ public class BatchCreateProtocols {
             createStudyResources(studyProtocolIi, dto); // create the Study Grants One- times*
            
             if (PAUtil.isNotEmpty(dto.getProtcolDocumentFileName())) {
-                uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), 
+                uploadDocument(studyProtocolIi, DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
                           dto.getProtcolDocumentFileName(), folderPath);
             }
             if (PAUtil.isNotEmpty(dto.getIrbApprovalDocumentFileName())) {
-                uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(),
+                uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(),
                          dto.getIrbApprovalDocumentFileName(), folderPath);
             }            
             if (PAUtil.isNotEmpty(dto.getInformedConsentDocumentFileName())) {
-                uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
+                uploadDocument(studyProtocolIi, DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
                         dto.getInformedConsentDocumentFileName(), folderPath);
             }            
             if (PAUtil.isNotEmpty(dto.getParticipatinSiteDocumentFileName())) {
                 uploadDocument(studyProtocolIi,
-                        DocumentTypeCode.Participating_sites.getCode(),
+                        DocumentTypeCode.PARTICIPATING_SITES.getCode(),
                         dto.getParticipatinSiteDocumentFileName(), folderPath);
             }            
             if (PAUtil.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
-                uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
+                uploadDocument(studyProtocolIi, DocumentTypeCode.OTHER.getCode(), 
                          dto.getOtherTrialRelDocumentFileName(), folderPath);  
             }
                 if (selectedSummary4Sponsor != null) {

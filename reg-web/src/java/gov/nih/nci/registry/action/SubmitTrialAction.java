@@ -100,6 +100,7 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -183,7 +184,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             Organization paOrg = new Organization();
             paOrg.setIdentifier(trialDTO.getLeadOrganizationIdentifier());
             paOrg = RegistryServiceLocator.getPAOrganizationService().getOrganizationByIndetifers(paOrg);
-            if (paOrg != null && paOrg.getId() != null) {            
+            if (paOrg == null) {
+                return ERROR;
+            } else {
                 StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
                 criteria.setLeadOrganizationTrialIdentifier(trialDTO.getLocalProtocolIdentifier());
                 criteria.setLeadOrganizationId(paOrg.getId().toString());
@@ -261,7 +264,14 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         Map<String, String> err = new HashMap<String, String>();
         err = validator.validateTrialDTO(trialDTO);
         addErrors(err);
-        validateTrialDates(trialDTO);
+        if (PAUtil.isNotEmpty(trialDTO.getStatusCode())
+                && RegistryUtil.isValidDate(trialDTO.getStatusDate())
+                && PAUtil.isNotEmpty(trialDTO.getCompletionDateType())
+                && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
+                && PAUtil.isNotEmpty(trialDTO.getStartDateType())
+                && RegistryUtil.isValidDate(trialDTO.getStartDate())) {
+            validateTrialDates(trialDTO);
+        }
         err = new HashMap<String, String>();
         err = validator.validateDcoument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName",
                 "error.submit.protocolDocument");
@@ -336,7 +346,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }        
         // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
         // Current Trial Status Date and have ‘actual’ type.
-        if (PAUtil.isNotEmpty(trialDto.getStatusCode())
+        //Commenting this rule in pa2.0 release
+        /*if (PAUtil.isNotEmpty(trialDto.getStatusCode())
             && PAUtil.isNotEmpty(trialDto.getStatusDate())
             && PAUtil.isNotEmpty(trialDto.getStartDate())
             && PAUtil.isNotEmpty(trialDto.getStartDateType())
@@ -348,7 +359,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                                   ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                   addFieldError(startDateFieldName, getText("error.submit.invalidStartDate"));
               }                
-          }            
+          }*/            
         // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
         //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
         if (PAUtil.isNotEmpty(trialDto.getStatusCode())
@@ -652,23 +663,23 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         TrialUtil util = new TrialUtil();
         List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
         if (PAUtil.isNotEmpty(protocolDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Protocol_Document.getCode(), 
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
                     protocolDocFileName, protocolDoc));
         }
         if (PAUtil.isNotEmpty(irbApprovalFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_Approval_Document.getCode(), 
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), 
                         irbApprovalFileName, irbApproval));
         }
         if (PAUtil.isNotEmpty(informedConsentDocumentFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Informed_Consent_Document.getCode(),
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
                         informedConsentDocumentFileName, informedConsentDocument));
         }
         if (PAUtil.isNotEmpty(participatingSitesFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Participating_sites.getCode(),
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
                         participatingSitesFileName, participatingSites));
          }
          if (PAUtil.isNotEmpty(otherDocumentFileName)) {
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Other.getCode(), 
+             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), 
                         otherDocumentFileName, otherDocument));  
          }
         return docDTOList;
@@ -685,10 +696,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 ServletActionContext.getRequest().setAttribute(
                         "failureMessage" , "The form has errors and could not be submitted, "
                         + "please check the fields highlighted below");
-                TrialValidator.addSessionAttributes(trialDTO);
-                return ERROR;
-            }
-            if (hasActionErrors()) {
                 TrialValidator.addSessionAttributes(trialDTO);
                 return ERROR;
             }

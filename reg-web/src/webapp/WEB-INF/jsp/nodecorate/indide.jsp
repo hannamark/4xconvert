@@ -77,8 +77,13 @@
 			alert("Please select a Expanded Access Type ");
 			return false;
 		}
+		if (expandedaccess =='true') {
+			expandedaccess ='Yes';
+		} else {
+			expandedaccess ='No';
+		}
 		var expandedaccesstype = document.getElementById('expanded_status').value;
-		addIndIde(indide,number,grantor,holdertype,programcode,expandedaccesstype,expandedaccess);
+		addIndIde(indide,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype);
 	}
 	function resetValues(){
 		document.getElementById('indidenumber').value='';

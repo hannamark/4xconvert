@@ -65,43 +65,18 @@ var winprint=window.open("","",sOption);
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
     <div id="contentprint">        
     <table class="form">
-    <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
-          <tr>
-            <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
-          </tr>
-          <tr>     
-                <td scope="row" class="label">
-                    <label for="Amendment Number">
-                        <fmt:message key="view.trial.amendmentNumber"/>                
-                        </label>
-                </td>
-                <td class="value">
-                    <c:out value="${trialDTO.localAmendmentNumber}"/> 
-                </td>
-          </tr>
-          <tr>     
-                <td scope="row" class="label">
-                    <label for="Amendment Date">
-                        <fmt:message key="view.trial.amendmentDate"/>                
-                        </label>
-                </td>
-                <td class="value">
-                    <c:out value="${trialDTO.amendmentDate}"/> 
-                </td>
-          </tr>
-    </c:if>
-          <tr>
-            <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
+         <tr>
+            <th colspan="2"><fmt:message key="view.trial.trialIDs"/></th>
           </tr>
           <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
           <tr>     
                 <td scope="row" class="label">
                     <label for="Assigned NCI Identifier">
-                        <fmt:message key="view.trial.nciAccessionNumber"/>                
+                        <strong><fmt:message key="view.trial.nciAccessionNumber"/></strong>                
                         </label>
                 </td>
                 <td class="value">
-                    <c:out value="${trialDTO.assignedIdentifier}"/> 
+                    <strong><c:out value="${trialDTO.assignedIdentifier}"/></strong> 
                 </td>
           </tr>
           </c:if>
@@ -127,6 +102,34 @@ var winprint=window.open("","",sOption);
                     </td>
               </tr>
           </c:if>
+        <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
+          <tr>
+            <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
+          </tr>
+          <tr>     
+                <td scope="row" class="label">
+                    <label for="Amendment Number">
+                        <fmt:message key="view.trial.amendmentNumber"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <c:out value="${trialDTO.localAmendmentNumber}"/> 
+                </td>
+          </tr>
+          <tr>     
+                <td scope="row" class="label">
+                    <label for="Amendment Date">
+                        <fmt:message key="view.trial.amendmentDate"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <c:out value="${trialDTO.amendmentDate}"/> 
+                </td>
+          </tr>
+        </c:if>
+        <tr>
+            <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
+          </tr>
           <tr>     
                 <td scope="row" class="label">
                     <label for="officialTitle">

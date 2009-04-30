@@ -53,7 +53,6 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     private HttpServletResponse servletResponse;
     private static final Logger LOG = Logger.getLogger(AmendmentTrialAction.class);
     private TrialDTO trialDTO;
-    private TrialFundingWebDTO trialFundingDTO = new TrialFundingWebDTO();
     private File protocolDoc;
     private String protocolDocFileName;
     private File irbApproval;
@@ -70,19 +69,6 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     private String studyProtocolId = null;
     private static String sessionTrialDTO = "trialDTO";
 
-    /**
-     * @return the trialFundingDTO
-     */
-    public TrialFundingWebDTO getTrialFundingDTO() {
-        return trialFundingDTO;
-    }
-
-    /**
-     * @param trialFundingDTO the trialFundingDTO to set
-     */
-    public void setTrialFundingDTO(TrialFundingWebDTO trialFundingDTO) {
-        this.trialFundingDTO = trialFundingDTO;
-    }
 
     /**
      * @param response servletResponse
@@ -200,27 +186,27 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         TrialUtil util = new TrialUtil();
         List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
         if (PAUtil.isNotEmpty(protocolDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Protocol_Document.getCode(), 
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.AMENDMENT_PROTOCOL_DOCUMENT.getCode(), 
                     protocolDocFileName, protocolDoc));
         }
         if (PAUtil.isNotEmpty(irbApprovalFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_Approval_Document.getCode(), 
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), 
                         irbApprovalFileName, irbApproval));
         }
         if (PAUtil.isNotEmpty(changeMemoDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Other.getCode(), 
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), 
                        changeMemoDocFileName, changeMemoDoc));  
         }
         if (PAUtil.isNotEmpty(informedConsentDocumentFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Informed_Consent_Document.getCode(),
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
                         informedConsentDocumentFileName, informedConsentDocument));
         }
         if (PAUtil.isNotEmpty(participatingSitesFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Participating_sites.getCode(),
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
                         participatingSitesFileName, participatingSites));
          }
          if (PAUtil.isNotEmpty(otherDocumentFileName)) {
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.Other.getCode(), 
+             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), 
                         otherDocumentFileName, otherDocument));  
          }
         return docDTOList;
@@ -295,16 +281,15 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             addFieldError("trialDTO.amendmentDate",
                     getText("error.submit.amendmentDate"));
         }
-        if (PAUtil.isNotEmpty(trialDTO.getAmendmentDate())
-                && !RegistryUtil.isValidDate(trialDTO.getAmendmentDate())) {
+        if (!RegistryUtil.isValidDate(trialDTO.getAmendmentDate())) {
                     addFieldError("trialDTO.amendmentDate", 
                             getText("error.submit.invalidDate"));
-        }
-        Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-        if (PAUtil.isNotEmpty(trialDTO.getAmendmentDate())
-                && currentTimeStamp.before(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate()))) {
-            addFieldError("trialDTO.amendmentDate", 
+        } else {
+            Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+            if (currentTimeStamp.before(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate()))) {
+                addFieldError("trialDTO.amendmentDate", 
                     getText("error.submit.invalidAmendDate"));                
+            }
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> err = new HashMap<String, String>();
@@ -312,9 +297,9 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         addErrors(err);
         // validate trial status and dates specific for amendment
         if (PAUtil.isNotEmpty(trialDTO.getStatusCode())
-                && PAUtil.isNotEmpty(trialDTO.getStatusDate())
-                && PAUtil.isNotEmpty(trialDTO.getCompletionDate())
-                && PAUtil.isNotEmpty(trialDTO.getStartDate())
+                && RegistryUtil.isValidDate(trialDTO.getStatusDate())
+                && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
+                && RegistryUtil.isValidDate(trialDTO.getStartDate())
                 && validator.isStatusOrDateChanged(trialDTO)) {
             Collection<String> errDate = validator.enforceBusinessRulesForDates(trialDTO);
             if (!errDate.isEmpty()) {

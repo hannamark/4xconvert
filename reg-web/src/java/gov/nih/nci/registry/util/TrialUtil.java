@@ -56,7 +56,7 @@ import java.util.UUID;
  * @author vrushali
  *
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class TrialUtil {
     private static final String SPONSOR = "sponsor";
     private static final int MAXF = 1024;
@@ -73,7 +73,7 @@ public class TrialUtil {
      * @param spDTO sdto
      * @param trialDTO gdto
      */
-    public void copy(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
+    private void copy(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
         trialDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
@@ -95,7 +95,7 @@ public class TrialUtil {
      * @param spqDTO sdto
      * @param trialDTO gdto
     */
-    public void copy(StudyProtocolQueryDTO spqDTO, TrialDTO trialDTO) {
+    private void copy(StudyProtocolQueryDTO spqDTO, TrialDTO trialDTO) {
         trialDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
         trialDTO.setStatusCode(spqDTO.getStudyStatusCode().getCode());
         trialDTO.setStatusDate(PAUtil.normalizeDateString(spqDTO.getStudyStatusDate().toString()));
@@ -105,7 +105,7 @@ public class TrialUtil {
      * @param o o
      * @param trialDTO gdto
      */
-    public void copyLO(Organization o, TrialDTO trialDTO) {
+    private void copyLO(Organization o, TrialDTO trialDTO) {
         trialDTO.setLeadOrganizationIdentifier(o.getIdentifier());
         trialDTO.setLeadOrganizationName(o.getName());
     }
@@ -114,7 +114,7 @@ public class TrialUtil {
      * @param p p
      * @param trialDTO dto
      */
-    public void copyPI(Person p, TrialDTO trialDTO) {
+    private void copyPI(Person p, TrialDTO trialDTO) {
         trialDTO.setPiIdentifier(p.getIdentifier());
         trialDTO.setPiName(p.getFullName());
     }
@@ -124,7 +124,7 @@ public class TrialUtil {
      * @param trialDTO dto
      * @throws PAException ex
      */
-    public void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+    private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos =  RegistryServiceLocator.getStudyContactService()
@@ -161,7 +161,7 @@ public class TrialUtil {
  * @param dset set
  * @param trialDTO dto
  */
-    public void copy(DSet dset, TrialDTO trialDTO) {
+    private void copy(DSet dset, TrialDTO trialDTO) {
         if (dset == null) {
             return;
         }
@@ -180,7 +180,7 @@ public class TrialUtil {
      * @param trialDTO dto
      * @throws PAException ex
      */
-    public void copySponsor(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+    private void copySponsor(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         StudyParticipationDTO spart = new StudyParticipationDTO();
         spart.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
         List<StudyParticipationDTO> spDtos = RegistryServiceLocator.getStudyParticipationService()
@@ -201,7 +201,7 @@ public class TrialUtil {
      * @param trialDTO dto
      * @throws PAException ex
      */
-    public void copyNctNummber(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+    private void copyNctNummber(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi,
                     StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
         if (spDto != null) {
@@ -216,7 +216,7 @@ public class TrialUtil {
      * @return dto
      * @throws PAException ex
      */
-    public StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode)
+    private StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode)
     throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException(" StudyProtocol Ii is null");
@@ -243,7 +243,7 @@ public class TrialUtil {
      * @param trialDTO tdto
      * @throws PAException ex
      */
-    public void copySummaryFour(StudyResourcingDTO srDTO, TrialDTO trialDTO) throws PAException {
+    private void copySummaryFour(StudyResourcingDTO srDTO, TrialDTO trialDTO) throws PAException {
         if (srDTO == null) {
             return;
         }
@@ -265,7 +265,7 @@ public class TrialUtil {
      * @param trialDTO dto
      * @throws PAException ex
      */
-    public void copyINDIDEList(List<StudyIndldeDTO> studyIndldeDTOList, TrialDTO trialDTO) throws PAException {
+    private void copyINDIDEList(List<StudyIndldeDTO> studyIndldeDTOList, TrialDTO trialDTO) throws PAException {
         if (studyIndldeDTOList == null) {
             return;
         }
@@ -281,7 +281,7 @@ public class TrialUtil {
      * @param isoGrantlist iso
      * @param trialDTO dto
      */
-    public void copyGrantList(List<StudyResourcingDTO> isoGrantlist, TrialDTO trialDTO) {
+    private void copyGrantList(List<StudyResourcingDTO> isoGrantlist, TrialDTO trialDTO) {
         if (isoGrantlist == null) {
             return;
         }
@@ -562,7 +562,11 @@ public class TrialUtil {
            if (dto.getHolderType().equalsIgnoreCase("NCI")) {
                isoDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(dto.getProgramCode()));
            }
-           isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(dto.getExpandedAccess())));
+           if (dto.getExpandedAccess().equalsIgnoreCase("Yes")) {
+               isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+           } else {
+               isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
+           }
            isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
            studyIndldeDTOList.add(isoDTO);
        }
@@ -607,6 +611,7 @@ public class TrialUtil {
        copy(spDTO, trialDTO);
        copy(spqDto, trialDTO);
        copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null), trialDTO);
+       //
        copyPI(cUtils.getPAPersonByIndetifers(spqDto.getPiId(), null), trialDTO);
        copyResponsibleParty(studyProtocolIi, trialDTO);
        copySponsor(studyProtocolIi, trialDTO);

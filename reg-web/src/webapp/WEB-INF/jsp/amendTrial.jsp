@@ -260,7 +260,7 @@ function toggledisplay2 (it) {
           <s:textfield name="trialDTO.amendmentDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal4')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                             <s:param>trialDTO.amendmentDate</s:param>
@@ -650,7 +650,7 @@ function toggledisplay2 (it) {
                 <td scope="row" class="label">
                     <label for="submitTrial_overallStatusWebDTO_statusCode"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
                 </td>
-                    <s:set name="statusCodeValues" value="@gov.nih.nci.registry.enums.TrialStatusCode@getDisplayNames()" />
+                    <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                 <td>                                             
                     <s:select headerKey="" headerValue="--Select--" name="trialDTO.statusCode" list="#statusCodeValues"  value="trialDTO.statusCode" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
@@ -680,7 +680,7 @@ function toggledisplay2 (it) {
             <td class="value"><s:textfield name="trialDTO.statusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                             <s:param>trialDTO.statusDate</s:param>
@@ -695,7 +695,7 @@ function toggledisplay2 (it) {
             <td class="value"><s:textfield name="trialDTO.startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal2')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
                 <s:radio name="trialDTO.startDateType" list="#dateTypeList" />
                 <span class="formErrorMsg"> 
                    <s:fielderror>
@@ -716,7 +716,7 @@ function toggledisplay2 (it) {
             <td class="value"><s:textfield name="trialDTO.completionDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal3')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
                 <s:radio name="trialDTO.completionDateType" list="#dateTypeList" />
                 <span class="formErrorMsg"> 
                    <s:fielderror>

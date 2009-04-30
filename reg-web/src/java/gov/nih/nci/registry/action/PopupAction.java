@@ -128,7 +128,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private OrgSearchCriteria createOrg = new OrgSearchCriteria();
     private PaPersonDTO personDTO = new PaPersonDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
-
+    private final int ausStateCodeLen = 3;
     /**
      * @throws Exception on error
      */
@@ -370,12 +370,17 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
         if (countryName != null && (countryName.equalsIgnoreCase("USA")
-                                || countryName.equalsIgnoreCase("CAN")
-                                || countryName.equalsIgnoreCase("AUS"))) {
+                                || countryName.equalsIgnoreCase("CAN"))) {
             if (PAUtil.isEmpty(stateName) || stateName.trim().length() > 2) {
-                addActionError("2-letter State/Province Code required for USA/Canada/Australia");
+                addActionError("2-letter State/Province Code required for USA/Canada");
             }           
         }
+        if (countryName != null && countryName.equalsIgnoreCase("AUS")) {
+            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
+                addActionError("2/3-letter State/Province Code required for Australia");
+            }           
+        }
+
         String email = ServletActionContext.getRequest().getParameter("email");
         if (email != null && !PAUtil.isNotEmpty(email)) {
             addActionError("Email is a required field");
@@ -488,12 +493,17 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
         String state = ServletActionContext.getRequest().getParameter("state");
         if (country != null && (country.equalsIgnoreCase("USA")
-                            || country.equalsIgnoreCase("CAN")
-                            || country.equalsIgnoreCase("AUS"))) {
+                            || country.equalsIgnoreCase("CAN"))) {
             if (PAUtil.isEmpty(state) || state.trim().length() > 2) {
-                addActionError("2-letter State/Province Code required for USA/Canada/Australia");
+                addActionError("2-letter State/Province Code required for USA/Canada");
             }            
         }        
+        if (country != null && country.equalsIgnoreCase("AUS")) {
+            if (PAUtil.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
+                addActionError("2/3-letter State/Province Code required for Australia");
+            }            
+        }        
+
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             Iterator<String> i = getActionErrors().iterator();
