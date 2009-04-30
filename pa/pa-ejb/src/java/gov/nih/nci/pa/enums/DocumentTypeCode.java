@@ -92,15 +92,21 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum DocumentTypeCode implements CodedEnum<String> {
     
     /** Trial_Document.*/
-    Protocol_Document("PROTOCOL DOCUMENT"), 
+    PROTOCOL_DOCUMENT("Protocol Document"), 
     /**IRB_Approval_Document.*/
-    IRB_Approval_Document("IRB APPROVAL DOCUMENT"), 
+    IRB_APPROVAL_DOCUMENT("IRB Approval Document"), 
     /**Participating_sites.*/
-    Participating_sites("PARTICIPATING_SITES"),    
+    PARTICIPATING_SITES("Participating sites"),    
     /**Informed_Consent_Document.*/
-    Informed_Consent_Document("INFORMED CONSENT DOCUMENT"),
+    INFORMED_CONSENT_DOCUMENT("Informed Consent Document"),
     /**Other.*/
-    Other("OTHER");
+    OTHER("Other"),
+    /** Amendment Protocol Document.*/
+    AMENDMENT_PROTOCOL_DOCUMENT("Amendment Protocol Document"),
+    /** Change Memo Document.*/
+    CHANGE_MEMO_DOCUMENT("Change Memo Document"),
+    /**Protocol Highlighted Document.     */
+    PROTOCOL_HIGHLIGHTED_DOCUMENT("Protocol Highlighted Document");
  
     private String code;
 

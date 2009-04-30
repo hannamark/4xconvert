@@ -140,7 +140,7 @@ public class DocumentTest {
         Document create = new Document();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
-        create.setTypeCode(DocumentTypeCode.Protocol_Document);
+        create.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
         create.setActiveIndicator(true);
         create.setFileName("Protocol_Document.doc");
         create.setUserLastUpdated("Abstractor");

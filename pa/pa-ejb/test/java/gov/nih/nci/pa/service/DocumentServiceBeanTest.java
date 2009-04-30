@@ -136,7 +136,7 @@ public class DocumentServiceBeanTest {
     public void create() throws Exception {
         DocumentDTO docDTO = new DocumentDTO();
         docDTO.setStudyProtocolIi(pid);
-        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.Other));
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
         docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
         docDTO.setText(EdConverter.convertToEd("test".getBytes()));
         DocumentDTO docDTO2 = null;

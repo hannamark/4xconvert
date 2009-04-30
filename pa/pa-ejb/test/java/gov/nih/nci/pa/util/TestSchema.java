@@ -467,13 +467,13 @@ public class TestSchema {
             
             Document doc = new Document();
             doc.setStudyProtocol(sp);
-            doc.setTypeCode(DocumentTypeCode.Protocol_Document);
+            doc.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
             doc.setActiveIndicator(true);
             doc.setFileName("Protocol_Document.doc");
             addUpdObject(doc);
             doc = new Document();
             doc.setStudyProtocol(sp);
-            doc.setTypeCode(DocumentTypeCode.IRB_Approval_Document);
+            doc.setTypeCode(DocumentTypeCode.IRB_APPROVAL_DOCUMENT);
             doc.setActiveIndicator(true);
             doc.setFileName("IRB_Approval_Document.doc");
             doc.setInactiveCommentText("Testing");

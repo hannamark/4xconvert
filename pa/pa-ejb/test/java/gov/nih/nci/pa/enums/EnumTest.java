@@ -140,8 +140,8 @@ public class EnumTest {
 		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DocumentTypeCode")){			
 			 String[] x = DocumentTypeCode.getDisplayNames();
 		        assertEquals(DocumentTypeCode.values().length, x.length);
-		        assertEquals("Other", DocumentTypeCode.Other.getName());
-		        assertEquals("OTHER", DocumentTypeCode.Other.getCode());
+		        assertEquals("OTHER", DocumentTypeCode.OTHER.getName());
+		        assertEquals("Other", DocumentTypeCode.OTHER.getCode());
 		}
 		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DocumentWorkflowStatusCode")){			
 			 String[] x = DocumentWorkflowStatusCode.getDisplayNames();

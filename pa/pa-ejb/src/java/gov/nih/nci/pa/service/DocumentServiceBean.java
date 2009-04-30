@@ -357,8 +357,8 @@ public class DocumentServiceBean
         resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIi());
         if (!(resultList.isEmpty())) {
         for (DocumentDTO check : resultList) {
-            if (check.getTypeCode().getCode().equals(DocumentTypeCode.Protocol_Document.getCode())
-                    || check.getTypeCode().getCode().equals(DocumentTypeCode.IRB_Approval_Document.getCode())) {
+            if (check.getTypeCode().getCode().equals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())
+                    || check.getTypeCode().getCode().equals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode())) {
                 if (check.getTypeCode().getCode().equals(docDTO.getTypeCode().getCode())) {
                     result = false;
                     throw new PAException("Document with selected type already exists on the trial. ");

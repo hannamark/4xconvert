@@ -107,7 +107,7 @@ private Session sess;
         StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
         Document bo = new Document();
         bo.setId(123L);
-        bo.setTypeCode(DocumentTypeCode.Protocol_Document);
+        bo.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
         bo.setFileName("Protocol_Document.doc");
         bo.setStudyProtocol(sp);
 
@@ -123,7 +123,7 @@ private Session sess;
         StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
         DocumentDTO dto = new DocumentDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
-        dto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_Approval_Document));
+        dto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
         dto.setFileName(StConverter.convertToSt("IRB_Approval_Document.doc"));
         dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
 

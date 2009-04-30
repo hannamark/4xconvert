@@ -144,7 +144,7 @@ implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {
           if (sameType && sameNumber && sameGrantor) {
               if (dto.getIdentifier() == null
                   || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension()))) {
-                throw new PADuplicateException("Duplicates are not allowed.");
+                throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
               }
           }
       }

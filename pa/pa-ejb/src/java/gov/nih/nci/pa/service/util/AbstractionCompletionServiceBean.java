@@ -160,10 +160,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     if (!(isoList.isEmpty())) {
       for (DocumentDTO dto : isoList) {
         if (dto.getTypeCode().getCode().equalsIgnoreCase(
-            DocumentTypeCode.Protocol_Document.getCode())) {
+            DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())) {
           protocolDoc = dto.getTypeCode().getCode().toString();
         } else if (dto.getTypeCode().getCode().equalsIgnoreCase(
-            DocumentTypeCode.IRB_Approval_Document.getCode())) {
+            DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode())) {
           irbDoc = dto.getTypeCode().getCode().toString();
         }
       }
