@@ -129,22 +129,16 @@ public class LimitOffset implements Serializable {
     /**
      * Jump to the next page. Increments the offset by the limit.
      * Integer.MAX_VALUE.
-     * 
-     * @return this (to perform instance method chaining)
      */
-    public LimitOffset next() {
+    public void next() {
         offset += limit;
-        return this;
     }
 
     /**
      * Jump to the previous page. Decrements the offset by the limit. 
-     * 
-     * @return this (to perform instance method chaining)
      */
-    public LimitOffset previous() {
+    public void previous() {
         offset -= limit;
-        return this;
     }
 
 }

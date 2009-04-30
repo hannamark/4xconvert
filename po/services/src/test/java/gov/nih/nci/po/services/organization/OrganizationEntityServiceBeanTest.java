@@ -389,47 +389,55 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         OrganizationDTO sc = new OrganizationDTO();
         sc.setName(convertToEnOn("OrG"));
         
-        LimitOffset limitOffset = new LimitOffset(1,0);
+        LimitOffset page = new LimitOffset(1,0);
         List<OrganizationDTO> results;
         
-        results = remote.search(sc, limitOffset);
-        assertEquals(0, limitOffset.getOffset());
+        results = remote.search(sc, page);
+        assertEquals(0, page.getOffset());
         assertEquals("Expected to find 1 entry", 1, results.size());
         
-        results = remote.search(sc, limitOffset.next());
-        assertEquals(1, limitOffset.getOffset());
+        page.next();
+        results = remote.search(sc, page);
+        assertEquals(1, page.getOffset());
         assertEquals("Expected to find 1 entry", 1, results.size());
         
-        results = remote.search(sc, limitOffset.next());
-        assertEquals(2, limitOffset.getOffset());
+        page.next();
+        results = remote.search(sc, page);
+        assertEquals(2, page.getOffset());
         assertEquals("Expected to find 1 entry", 1, results.size());
         
         
-        results = remote.search(sc, limitOffset.next());
-        assertEquals(3, limitOffset.getOffset());
+        page.next();
+        results = remote.search(sc, page);
+        assertEquals(3, page.getOffset());
         assertEquals("Expected to find 0 entry", 0, results.size());
         
         
-        results = remote.search(sc, limitOffset.previous());
+        page.previous();
+        results = remote.search(sc, page);
         assertEquals("Expected to find 1 entry", 1, results.size());
-        assertEquals(2, limitOffset.getOffset());
+        assertEquals(2, page.getOffset());
         
-        results = remote.search(sc, limitOffset.previous());
+        page.previous();
+        results = remote.search(sc, page);
         assertEquals("Expected to find 1 entry", 1, results.size());
-        assertEquals(1, limitOffset.getOffset());
+        assertEquals(1, page.getOffset());
         
-        results = remote.search(sc, limitOffset.previous());
-        assertEquals(0, limitOffset.getOffset());
+        page.previous();
+        results = remote.search(sc, page);
+        assertEquals(0, page.getOffset());
         assertEquals("Expected to find 1 entry", 1, results.size());
         
         
         //First page is always returned even when offset is < 0
-        results = remote.search(sc, limitOffset.previous());
-        assertEquals(-1, limitOffset.getOffset());
+        page.previous();
+        results = remote.search(sc, page);
+        assertEquals(-1, page.getOffset());
         assertEquals("Expected to find 1 entry", 1, results.size());
         
-        results = remote.search(sc, limitOffset.previous());
-        assertEquals(-2, limitOffset.getOffset());
+        page.previous();
+        results = remote.search(sc, page);
+        assertEquals(-2, page.getOffset());
         assertEquals("Expected to find 0 entry", 1, results.size());
 
     }

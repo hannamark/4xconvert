@@ -358,20 +358,24 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         //verify walking forward with a page size of 1
         LimitOffset page = new LimitOffset(1,-1);
         for (int j = 0 ; j < max; j++) {
-            results = remote.search(sc, page.next());
+            page.next();
+            results = remote.search(sc, page);
             assertEquals(1, results.size());
         }
         //walk past the last record
-        results = remote.search(sc, page.next());
+        page.next();
+        results = remote.search(sc, page);
         assertEquals(0, results.size());
         
         //walk back to first record
         for (int j = 0 ; j < max; j++) {
-            results = remote.search(sc, page.previous());
+            page.previous();
+            results = remote.search(sc, page);
             assertEquals(1, results.size());
         }
         //try to walk before first record, first record always returned 
-        results = remote.search(sc, page.previous());
+        page.previous();
+        results = remote.search(sc, page);
         assertEquals(1, results.size());
         
         //verify TooManyResultsException is thrown
