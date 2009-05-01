@@ -666,7 +666,7 @@ function toggledisplay2 (it) {
             </td>
             <td>
                 <s:textarea name="trialDTO.reason"  cols="50" rows="2" />
-                <span class="info">Required for Administratively Complete and Temporarily Closed statuses only</span>
+                <span class="info">Required for Administratively Complete ,Withdrawn and Temporarily Closed statuses only</span>
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>trialDTO.reason</s:param>

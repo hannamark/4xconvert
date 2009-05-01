@@ -1,5 +1,6 @@
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -14,6 +15,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
+import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
@@ -21,6 +23,7 @@ import gov.nih.nci.registry.util.RegistryUtil;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -179,15 +182,15 @@ public class TrialValidator {
      * @return b
      * @throws PAException ex
      */
-    @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts" })
+    @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveMethodLength" })
     public Collection<String> enforceBusinessRulesForDates(TrialDTO trialDto) throws PAException {
         Collection<String> addActionError = new HashSet<String>();
         StudyStatusCode newCode = StudyStatusCode.getByCode(trialDto.getStatusCode());
         Timestamp newStatusTimestamp = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
         StudyOverallStatusWebDTO  dto = getStatusDTO(trialDto.getIdentifier());
         StudyStatusCode oldStatusCode = StudyStatusCode.getByCode(dto.getStatusCode());
-        boolean codeChanged = (newCode == null) ? (oldStatusCode != null) : !newCode.equals(oldStatusCode);
-        if (codeChanged && (oldStatusCode != null) && !oldStatusCode.canTransitionTo(newCode)) {
+        //boolean codeChanged = (newCode == null) ? (oldStatusCode != null) : !newCode.equals(oldStatusCode);
+        if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
             addActionError.add("Illegal study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
@@ -227,6 +230,29 @@ public class TrialValidator {
                             + "not 'Complete' or 'Administratively Complete'.");
                 }
             }
+           // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
+           //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
+           if (PAUtil.isNotEmpty(trialDto.getStatusCode()) && PAUtil.isNotEmpty(trialDto.getStartDateType())) {
+              if (TrialStatusCode.APPROVED.getCode().equals(trialDto.getStatusCode())) {
+                  if (!trialDto.getStartDateType().equals(
+                                  ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
+                      addActionError.add(getText("error.submit.invalidStartDateTypeApproved"));
+                  }                
+                  } else {
+                      if (!trialDto.getStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                          addActionError.add(getText("error.submit.invalidStartDateTypeOther"));
+                      }              
+                  }
+           }
+           // Constraint/Rule: 18 Current Trial Status Date must be current or past.
+           if (PAUtil.isNotEmpty(trialDto.getStatusDate())) {
+               Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
+               Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+               if (currentTimeStamp.before(statusDate)) {
+                   addActionError.add(getText("error.submit.invalidStatusDate"));                
+               }
+           }        
+
         }
         return addActionError;
     }

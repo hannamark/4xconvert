@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<h2>Add Person ddd d</h2>
+<h2>Add Person</h2>
 <table  class="form">  
    <tr>   		 	
  		<td scope="row" class="label"><label for="poOrganizations_personDTO_firstName">First Name :</label><span class="required">*</span></td><td><s:textfield name="firstName"  maxlength="50" size="100"  cssStyle="width:200px" /></td>

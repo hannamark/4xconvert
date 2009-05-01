@@ -271,28 +271,25 @@ public class TrialBatchDataValidator {
                 errors.append("Current Trial Status Date cannot be in the future.\n");                
             }
         }        
-        // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
+        // Constraint/Rule:  25 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
         // Current Trial Status Date and have ‘actual’ type. New Rule added-01/15/09 if start date is smaller 
         //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.            
-        //Commenting this rule in pa2.0 as part of release
-        /*if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus())
+        //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
+        if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus())
                 && PAUtil.isNotEmpty(dto.getCurrentTrialStatusDate())
                         && PAUtil.isNotEmpty(dto.getStudyStartDate())
                          && PAUtil.isNotEmpty(dto.getStudyStartDateType())) {
           if (TrialStatusCode.ACTIVE.getCode().equals(dto.getCurrentTrialStatus())) {
               Timestamp statusDate = PAUtil.dateStringToTimestamp(dto.getCurrentTrialStatusDate());
               Timestamp trialStartDate = PAUtil.dateStringToTimestamp(dto.getStudyStartDate());
-              if (!statusDate.equals(trialStartDate) || !dto.getStudyStartDateType().equals(
-                                  ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  if (!statusDate.before(trialStartDate)) {
-                      dto.setCurrentTrialStatusDate(dto.getStudyStartDate());  
-                  } else {
+              if (trialStartDate.after(statusDate) 
+                      || !dto.getStudyStartDateType().equals(
+                         ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                       errors.append("If Current Trial Status is Active, Trial Start Date must be Actual ");
                       errors.append(" and same as Current Trial Status Date.\n");
-                  }
               }                
           }            
-        }*/        
+        }        
         // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
         //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
         if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus()) && PAUtil.isNotEmpty(dto.getStudyStartDateType())) {

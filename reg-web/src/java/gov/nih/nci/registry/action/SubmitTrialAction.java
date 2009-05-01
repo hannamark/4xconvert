@@ -184,9 +184,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             Organization paOrg = new Organization();
             paOrg.setIdentifier(trialDTO.getLeadOrganizationIdentifier());
             paOrg = RegistryServiceLocator.getPAOrganizationService().getOrganizationByIndetifers(paOrg);
-            if (paOrg == null) {
-                return ERROR;
-            } else {
+            if (paOrg != null && paOrg.getId() != null) {
                 StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
                 criteria.setLeadOrganizationTrialIdentifier(trialDTO.getLocalProtocolIdentifier());
                 criteria.setLeadOrganizationId(paOrg.getId().toString());
@@ -346,20 +344,20 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }        
         // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
         // Current Trial Status Date and have ‘actual’ type.
-        //Commenting this rule in pa2.0 release
-        /*if (PAUtil.isNotEmpty(trialDto.getStatusCode())
+        //pa2.0 release adding Trial Start date is smaller or same Current Trial Status Date
+        if (PAUtil.isNotEmpty(trialDto.getStatusCode())
             && PAUtil.isNotEmpty(trialDto.getStatusDate())
             && PAUtil.isNotEmpty(trialDto.getStartDate())
             && PAUtil.isNotEmpty(trialDto.getStartDateType())
             && TrialStatusCode.ACTIVE.getCode().equals(trialDto.getStatusCode())) {
               Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
               Timestamp trialStartDate = PAUtil.dateStringToTimestamp(trialDto.getStartDate());
-              if (!statusDate.equals(trialStartDate) 
+              if (trialStartDate.after(statusDate) 
                               || !trialDto.getStartDateType().equals(
                                   ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                   addFieldError(startDateFieldName, getText("error.submit.invalidStartDate"));
               }                
-          }*/            
+          }            
         // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
         //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
         if (PAUtil.isNotEmpty(trialDto.getStatusCode())
