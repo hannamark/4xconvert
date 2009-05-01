@@ -4,14 +4,14 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>po-ear</artifactId>
     <packaging>ear</packaging>
     <name>po-ear</name>
     <url>../../ear/target/site</url>
-    
+
     <properties>
         <log.level.default>WARN</log.level.default>
         <log.smtp.host>smtp.example.com</log.smtp.host>
@@ -29,21 +29,21 @@
             <version>1.2.8</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>${pom.parent.groupId}</groupId>
             <artifactId>po-web</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
-        
+
         <dependency>
             <groupId>${pom.parent.groupId}</groupId>
             <artifactId>po-services</artifactId>
             <version>${pom.parent.version}</version>
             <type>ejb</type>
         </dependency>
-        
+
         <dependency>
             <groupId>gov.nih.nci</groupId>
             <artifactId>security</artifactId>
@@ -163,7 +163,7 @@
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
 
-                        
+
                         <ejbModule>
                             <groupId>${pom.parent.groupId}</groupId>
                             <artifactId>po-services</artifactId>
@@ -174,7 +174,7 @@
                             <contextRoot>/po-web</contextRoot>
                             <bundleFileName>po-web.war</bundleFileName>
                         </webModule>
-                        
+
                         <jarModule>
                             <groupId>net.sf.ehcache</groupId>
                             <artifactId>ehcache</artifactId>
