@@ -105,6 +105,7 @@ import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
@@ -234,10 +235,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     convertBLToString(spDTO.getFdaRegulatedIndicator()) , doc , root);
             createElement("is_section_801" ,
                     convertBLToString(spDTO.getSection801Indicator()) , doc , root);
-            createElement("delayed_posting" ,
-                    convertBLToString(spDTO.getDelayedpostingIndicator()) , doc , root);
+            if (YES.equalsIgnoreCase(convertBLToString(spDTO.getSection801Indicator())) 
+                    && isDeviceFound(studyProtocolIi)) {
+                createElement("delayed_posting" ,
+                        convertBLToString(spDTO.getDelayedpostingIndicator()) , doc , root);
+            }
             createIndInfo(spDTO , doc , root);
-
             createElement("brief_title" , spDTO.getPublicTitle().getValue() , doc , root);
             createElement("acronym" , spDTO.getAcronym().getValue() , doc , root);
             createElement("official_title" , spDTO.getOfficialTitle().getValue() , doc , root);
@@ -712,6 +715,23 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
     }
 
+    private static boolean isDeviceFound(Ii studyProtocolIi) throws PAException {
+        boolean found = false;
+        List<PlannedActivityDTO> paList = PoPaServiceBeanLookup.getPlannedActivityService()
+        .getByStudyProtocol(studyProtocolIi);
+        for (PlannedActivityDTO pa : paList) {
+            if (pa.getCategoryCode() != null 
+                    && ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
+                    .convertCdToString(pa.getCategoryCode()))) 
+                    &&  pa.getSubcategoryCode() != null && pa.getSubcategoryCode().getCode() != null 
+                        && InterventionTypeCode.DEVICE.getCode().equalsIgnoreCase(pa.getSubcategoryCode().getCode())) {
+                    found = true;
+                    break;
+            }
+        }
+        return found;
+    }
+
     private static void createIntervention(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<PlannedActivityDTO> paList = PoPaServiceBeanLookup.getPlannedActivityService()
                 .getByStudyProtocol(studyProtocolIi);
@@ -720,22 +740,24 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     .convertCdToString(pa.getCategoryCode())))) {
                 Element intervention = doc.createElement("intervention");
                 InterventionDTO i = PoPaServiceBeanLookup.getInterventionService().get(pa.getInterventionIdentifier());
-                appendElement(intervention, createElement("intervention_type" , pa.getSubcategoryCode() , doc));
+                if (pa.getSubcategoryCode() != null && pa.getSubcategoryCode().getCode() != null) {
+                    appendElement(intervention, createElement("intervention_type" , 
+                            pa.getSubcategoryCode().getCode() , doc));
+                }
                 appendElement(intervention,
                         createElement("intervention_name" , i.getName() , PAAttributeMaxLen.LEN_160, doc));
                 createTextBlock("intervention_description", pa.getTextDescription(),
                         PAAttributeMaxLen.LEN_1000 , doc, intervention);
                 List<InterventionAlternateNameDTO> ianList = PoPaServiceBeanLookup
                         .getInterventionAlternateNameService().getByIntervention(i.getIdentifier());
-                StringBuffer onBuff = new StringBuffer("");
+                int cnt = 1; 
                 for (InterventionAlternateNameDTO ian : ianList) {
-                    if (ianList.get(0) !=  ian) {
-                        onBuff.append(", ");
+                    appendElement(intervention,
+                            createElement("intervention_other_name" , ian.getName(), PAAttributeMaxLen.LEN_160 , doc));
+                    if (cnt++ > PAAttributeMaxLen.LEN_5) {
+                        break;
                     }
-                    onBuff.append(StConverter.convertToString(ian.getName()));
                 }
-                appendElement(intervention,
-                        createElement("intervention_other_name" , onBuff.toString(), PAAttributeMaxLen.LEN_160 , doc));
 
                 List<ArmDTO> armDtos = PoPaServiceBeanLookup.getArmService().getByPlannedActivity(pa.getIdentifier());
                 for (ArmDTO armDTO : armDtos) {

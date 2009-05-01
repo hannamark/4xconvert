@@ -102,6 +102,8 @@ public class PAAttributeMaxLen {
     public static final int ACRONYM = 300;
     /** LEN 2. **/
     public static final int LEN_2 = 2;
+    /** LEN 5. **/
+    public static final int LEN_5 = 5;
 
     /** Arm Name. **/
     public static final int ARM_NAME = 62;
