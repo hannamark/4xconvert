@@ -141,7 +141,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
-import gov.nih.nci.pa.service.correlation.PoPaRegistry;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -223,7 +222,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StudyProtocolDTO spDTO = null;
         try {
             //HJ test PO lookups uncomment this
-            OrganizationDTO org = PoPaRegistry.getOrganizationEntityService().getOrganization(studyProtocolIi);
+//            OrganizationDTO org = PoPaRegistry.getOrganizationEntityService().getOrganization(studyProtocolIi);
             spDTO = getStudyProtocol(studyProtocolIi); 
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();

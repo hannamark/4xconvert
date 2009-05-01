@@ -12,13 +12,6 @@ function activate(){
 	var input="webDTO.primaryPurposeCode";
   	var inputElement = document.forms[0].elements[input];
 	
-   		if (inputElement.options[inputElement.selectedIndex].value == "Other")
-		{
-   			document.getElementById("primaryPurposeOtherText").style.display = "";
-   		}else
-   		{
-   			document.getElementById("primaryPurposeOtherText").style.display = "none";
-   		}
 	var input2="webDTO.blindingSchemaCode";
 	var inputElement2 = document.forms[0].elements[input2];
 		if ((inputElement2.options[inputElement2.selectedIndex].value == "Single Blind")
@@ -109,11 +102,11 @@ function tooltip() {
           </span>
         </td>
     </tr>
-    <tr id="primaryPurposeOtherText">
+    <tr >
 		<td   scope="row" class="label"><label>
-	 		<fmt:message key="isdesign.details.primary.purpose.other"/>(Max 200 chars)</label></td>
+	 		Required if Primary Purpose equals 'Other' </label></td>
 		<td>
-			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:150px" rows="2" />
+			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:350px" rows="3" />(Max 200 chars)
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.primaryPurposeOtherText</s:param>
@@ -127,7 +120,7 @@ function tooltip() {
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
         	<s:select headerKey="" headerValue="" name="webDTO.phaseCode" list="#phaseCodeValues" 
-				value="webDTO.phaseCode" cssStyle="width:60px" onchange="showAlert()" />
+				value="webDTO.phaseCode" cssStyle="width:100px"  />
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.phaseCode</s:param>
@@ -137,15 +130,15 @@ function tooltip() {
     </tr>
     <tr>
 		<td   scope="row" class="label"><label>
-	 		<fmt:message key="isdesign.details.phase.comment"/></label></td>
+	 		Required if Phase equals 'Other' </label></td>
 		<td>
-			<s:textarea name="webDTO.phaseOtherText" rows="2" cssStyle="width:150px" readonly="true"/>
+			<s:textarea name="webDTO.phaseOtherText" rows="3" cssStyle="width:350px" />(Max 200 chars)
+			<span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.phaseOtherText</s:param>
+             </s:fielderror>                            
 		</td>
 	</tr>	
-	<tr> 
-       <td/>
-       <td class="info" colspan="2">for 'Other' only</td>
-    </tr> 
     <tr>
 		<td scope="row" class="label"><label>
 	 		<fmt:message key="isdesign.details.intervention.model"/><span class="required">*</span></label></td>

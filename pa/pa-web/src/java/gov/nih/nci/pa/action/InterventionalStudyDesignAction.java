@@ -212,7 +212,8 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         if (PAUtil.isEmpty(webDTO.getPrimaryPurposeCode())) {
             addFieldError("webDTO.primaryPurposeCode", getText("error.primary"));
         }
-        if (webDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other") 
+        
+        if (webDTO.getPrimaryPurposeCode() != null && webDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other") 
                 && PAUtil.isEmpty(webDTO.getPrimaryPurposeOtherText())) {          
             addFieldError("webDTO.primaryPurposeOtherText", getText("error.comment"));
         }
@@ -225,6 +226,15 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         if (PAUtil.isEmpty(webDTO.getPhaseCode())) {
             addFieldError("webDTO.phaseCode", getText("error.phase"));
         }
+        if (webDTO.getPhaseCode() != null && webDTO.getPhaseCode().equalsIgnoreCase("Other") 
+                && PAUtil.isEmpty(webDTO.getPhaseOtherText())) {          
+            addFieldError("webDTO.phaseOtherText", getText("error.comment"));
+        }
+        if (PAUtil.isNotEmpty(webDTO.getPhaseOtherText())
+                && webDTO.getPhaseOtherText().length() > MAXIMUM_CHAR) {
+              addFieldError("webDTO.phaseOtherText", getText("error.spType.other.maximumChar"));        
+        }
+
         if (PAUtil.isEmpty(webDTO.getDesignConfigurationCode())) {
             addFieldError("webDTO.designConfigurationCode", getText("error.intervention"));
         }
