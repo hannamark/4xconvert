@@ -91,7 +91,7 @@ The amendment for NCI Trial Identifier ${nciTrialIdentifier} has been submitted.
 
 Amendment Information 
 Amendment Number: ${amendmentNumber}
-Amendment Date:   ${amendmentDate}
+Amendment Date: ${amendmentDate}
 
 The amendment will be processed by CTRO staff. You will be notified about the status of this submission once it has been reviewed by our staff.
 
