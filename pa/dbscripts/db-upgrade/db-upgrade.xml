@@ -64,4 +64,8 @@
         <comment>execute documentType.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/documentType.sql"/>
     </changeSet>    
+    <changeSet id="14" author="Naveen">
+        <comment>execute documentTypeCode.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/documentTypeCode.sql"/>
+    </changeSet>    
 </databaseChangeLog>
