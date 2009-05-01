@@ -523,7 +523,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         if (isAmend) {
             createStudyRelationship(studyProtocolIi , oldIdentifier , newSpDto);
         }
-        overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
+        overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
         if (isAmend) {
             createOverallStatuses(studyProtocolIi, oldIdentifier , overallStatusDTO);
         } else {
@@ -601,7 +601,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             }
             first = false;
             sos.setIdentifier(null);
-            sos.setStudyProtocolIi(studyProtocolIi);
+            sos.setStudyProtocolIdentifier(studyProtocolIi);
         } // for
 
         Collections.reverse(sosList);

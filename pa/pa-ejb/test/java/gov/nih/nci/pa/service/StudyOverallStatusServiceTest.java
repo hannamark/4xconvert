@@ -151,7 +151,7 @@ public class StudyOverallStatusServiceTest {
         assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
                     , TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals (IiConverter.convertToLong(pid)
-                    , IiConverter.convertToLong(result.getStudyProtocolIi()));
+                    , IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
         
     }
     
@@ -177,7 +177,7 @@ public class StudyOverallStatusServiceTest {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
         Ii initialIi = null;
         dto.setIdentifier(initialIi);
         assertTrue(PAUtil.isIiNull(dto.getIdentifier()));
@@ -194,7 +194,7 @@ public class StudyOverallStatusServiceTest {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(null);
-        dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
         dto.setIdentifier(null);
         try {
             remoteEjb.create(dto);
@@ -220,6 +220,6 @@ public class StudyOverallStatusServiceTest {
         StudyOverallStatusDTO dto = dtoList.get(0);
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OVERALL_STATUS_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
-        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

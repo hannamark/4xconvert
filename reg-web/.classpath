@@ -21,7 +21,7 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-commons-annotations-3.3.0.ga.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-validator-3.0.0.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/itext-2.0.6.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-3.0_RC9_Patch_1.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/jdom-0.9.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/jericho-html-2.4.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
@@ -65,7 +65,7 @@
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/poi-3.2-FINAL-20081019.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
-    <classpathentry kind="var" path="PA_LIB/reg-web/compile/activation-1.1.jar"/>
+    <classpathentry kind="var" path="PA_LIB/reg-web/compile/activation-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/mail-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/log4j-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-logging-4.0.5.GA.jar"/>

@@ -151,7 +151,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
 
             // enforce business rules
             List<StudyOverallStatusDTO> oldStatus = getCurrentByStudyProtocol(
-                    dto.getStudyProtocolIi());
+                    dto.getStudyProtocolIdentifier());
 
             StudyStatusCode oldCode = null;
             Timestamp oldDate = null;

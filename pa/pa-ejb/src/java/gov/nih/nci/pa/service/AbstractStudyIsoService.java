@@ -97,9 +97,7 @@ import org.hibernate.Session;
  * Base class for services which implement the getByStudyProtocol method.
  * @author Hugh Reinhart
  * @since 09/30/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ *
  * @param <DTO> data transfer object
  * @param <BO> domain object
  * @param <CONVERTER> converter class

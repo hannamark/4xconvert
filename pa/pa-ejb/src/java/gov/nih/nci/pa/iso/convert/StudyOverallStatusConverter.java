@@ -121,7 +121,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOverallStatusDTO, StudyOverall
         dto.setReasonText(StConverter.convertToSt(bo.getCommentText()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-        dto.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 
@@ -140,19 +140,19 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOverallStatusDTO, StudyOverall
             LOG.error(errmsg);
             throw new PAException(errmsg);
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolIi())) {
+        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             String errmsg = " StudyOverallStatus.studyProtocol cannot be null. ";
             LOG.error(errmsg);
             throw new PAException(errmsg);
         }
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
         StudyOverallStatus bo = new StudyOverallStatus();
         if (dto.getIdentifier() != null) {
             bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-            }
+        }
         bo.setDateLastUpdated(new Date());
         bo.setCommentText(StConverter.convertToString(dto.getReasonText()));
         bo.setStatusCode(StudyStatusCode.getByCode(dto.getStatusCode().getCode()));

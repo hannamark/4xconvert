@@ -47,11 +47,6 @@
         <fileset dir="${compile.jar.dir}"/>
     </path>
 
-    <property name="runtime.jar.dir" location="${lib.dir}/pa-ejb/runtime" />
-    <path id="runtime.classpath">
-        <fileset dir="${runtime.jar.dir}"/>
-    </path>
-
     <property name="test.jar.dir" location="${lib.dir}/pa-ejb/test" />
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}"/>
@@ -85,17 +80,6 @@
     <property name="test-selenium.jar.dir" location="${lib.dir}/pa-ejb/test-selenium" />
     <path id="test-selenium.classpath">
         <fileset dir="${test-selenium.jar.dir}"/>
-    </path>
-
-    <path id="jboss.classpath">       
-        <fileset dir="${jboss.deploy.directory}/../lib">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-    <path id="jboss.client.classpath">       
-        <fileset dir="${jboss.deploy.directory}/../../../client">
-            <include name="*.jar"/>
-        </fileset>
     </path>
 
     <path id="ivy.classpath">
@@ -191,8 +175,6 @@
             </src>
             <classpath>
                 <path refid="compile.classpath"/>
-                <path refid="jboss.classpath"/>
-                <path refid="jboss.client.classpath"/>
             </classpath>
         </javac>
         
@@ -245,8 +227,6 @@
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="test-selenium.classpath"/>
-                <path refid="compile.classpath"/>  
-                <path refid="jboss.classpath"/>  
             </classpath>
         </javac>
         <copy todir="${pa-ejb.build.testOutputDir}">
@@ -281,12 +261,9 @@
             <classpath location="${pa-ejb.build.coberturaOutputDir}"/>
             <classpath location="${pa-ejb.build.outputDir}"/>
             <classpath location="${pa-ejb.build.testOutputDir}"/>
-            <classpath refid="compile.classpath"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
-            <classpath refid="jboss.classpath"/>  
-            <classpath refid="jboss.client.classpath"/>
             <batchtest todir="${pa-ejb.test.reports}">
                 <fileset dir="${pa-ejb.build.testDir.0}">
                     <include name="**/*Test.java"/>
@@ -319,8 +296,6 @@
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
-                <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>
                 <pathelement location="${pa-ejb.build.outputDir}"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
@@ -473,12 +448,8 @@
             <ivy:resolve refresh="true" conf="test" />
             <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test" />
     </target>
-    <target name="ivy-runtime" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="runtime" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
-    </target>
     <target name="ivy-get" 
-            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime" 
+            depends="init:ivy,ivy-compile,ivy-test" 
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">

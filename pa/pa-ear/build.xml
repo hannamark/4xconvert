@@ -64,12 +64,6 @@
         <fileset dir="${test-junit.jar.dir}"/>
     </path>
 
-    <path id="jboss.client.classpath">       
-        <fileset dir="${jboss.deploy.directory}/../../../client">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}" />
@@ -171,7 +165,6 @@
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>             
             <classpath location="${pa-ear.build.testOutputDir}"/>   
-            <classpath refid="jboss.classpath"/>  
             <classpath refid="build.test.classpath"/>
             <batchtest todir="${pa-ear.test.reports}">
                 <fileset dir="${pa-ear.build.testDir.0}">

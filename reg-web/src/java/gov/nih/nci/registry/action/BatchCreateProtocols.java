@@ -78,10 +78,6 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
-import gov.nih.nci.pa.util.PAUtil;
-
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -93,6 +89,7 @@ import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -100,6 +97,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
@@ -117,6 +115,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
@@ -127,9 +129,6 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -476,7 +475,7 @@ public class BatchCreateProtocols {
             // create study overall status
             StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
             // overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
-            overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
+            overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
             overallStatusDTO.setStatusCode(CdConverter
                     .convertToCd(StudyStatusCode.getByCode(batchDto
                             .getCurrentTrialStatus())));

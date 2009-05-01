@@ -49,9 +49,6 @@
     </path>
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-web/runtime" />
-    <path id="runtime.classpath">
-        <fileset dir="${runtime.jar.dir}"/>
-    </path>
 
     <property name="test.jar.dir" location="${lib.dir}/pa-web/test" />
     <path id="test.classpath">
@@ -88,26 +85,12 @@
         <fileset dir="${test-selenium.jar.dir}"/>
     </path>
 
-    <path id="jboss.classpath">       
-        <fileset dir="${jboss.deploy.directory}/../lib">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-    <path id="jboss.client.classpath">       
-        <fileset dir="${jboss.deploy.directory}/../../../client">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
     <path id="ejb.package.classpath">       
         <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
         </fileset>
-    </path>	
-	<path id="ejb.package.runtime.classpath">       
-	        <fileset dir="${software.dir}/target/pa/lib/pa-ear/runtime">
-	            <include name="*.jar"/>
-	        </fileset>
-	  </path>	
+    </path> 
+
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}" />
@@ -152,10 +135,8 @@
                 <pathelement location="${pa-web.build.srcDir.0}"/>
             </src>
             <classpath>
-                <path refid="ejb.package.classpath"/>           
+                <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/> 
-                <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>
             </classpath>
         </javac>
         <copy todir="${pa-web.build.outputDir}">
@@ -227,7 +208,6 @@
                 <path refid="test-junit.classpath"/>
                 <path refid="test-selenium.classpath"/>
                 <path refid="compile.classpath"/>  
-                <path refid="jboss.classpath"/>  
                 <path refid="ejb.package.classpath"/>           
             </classpath>
         </javac>
@@ -292,10 +272,8 @@
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
-                <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>
-            	<path refid="ejb.package.classpath"/> 
-            	<path refid="ejb.package.runtime.classpath"/>
+                <path refid="ejb.package.classpath"/> 
+                <path refid="compile.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
@@ -424,7 +402,6 @@
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
-            <classpath refid="jboss.client.classpath"/>
             <classpath refid="ejb.package.classpath"/>
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">

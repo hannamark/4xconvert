@@ -8,10 +8,8 @@ This is the definition of a virtual module called bda-download that has a depend
   <info organisation="cbiit" module="pa-ejb"
         />
   <configurations>
-    <conf name="default" />          
-    <conf name="compile" />     
-    <conf name="runtime" />          
-    <conf name="test" extends="runtime" />
+    <conf name="compile"/>
+    <conf name="test" extends="compile"/>
     <conf name="test-pmd"/>
     <conf name="test-junit"/>
     <conf name="test-cobertura"/>
@@ -19,9 +17,6 @@ This is the definition of a virtual module called bda-download that has a depend
     <conf name="test-simian"/>
     <conf name="test-selenium"/>
   </configurations>
-  
-  <publications>    
-  </publications>
   
   <dependencies>
     <!-- compile -->
@@ -42,8 +37,16 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jakarta"                name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
-    <dependency org="javax.transaction"      name="jta"                     rev="1.0.1B"          conf="compile->master"/>
-    <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="3.0_RC9_Patch_1" conf="compile->master"/>
+    <dependency org="jboss"                  name="activation"              rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="javax.servlet"           rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="javax.servlet.jsp"       rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="jboss-ejb3x"             rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.0.7"           conf="compile->master"/>
@@ -64,21 +67,15 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="compile->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="compile->master"/>
 
-    <!-- runtime -->
-    
     <!-- test -->
-    <dependency org="apache"                 name="struts2-core"            rev="2.0.5"           conf="test->master"/>
+    <dependency org="org.antlr"              name="antlr"                   rev="2.7.6"           conf="test->master"/>
     <dependency org="codehaus"               name="cargo-ant"               rev="0.8"             conf="test->master"/>
     <dependency org="codehaus"               name="cargo-core-uberjar"      rev="0.8"             conf="test->master"/>
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
-    <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>    
-    <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="test->master"/>
-    <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="test->master"/>
-    <dependency org="ognl"                   name="ognl"                    rev="2.6.9"           conf="test->master"/>
-    <dependency org="opensymphony"           name="xwork"                   rev="2.0.0"           conf="test->master"/>
-    <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="test->master"/>
-    <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="test->master"/>
-    <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="test->master"/>
+    <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
+    <dependency org="jboss"                  name="jboss"                   rev="4.0.5.GA"        conf="test->master"/>
+    <dependency org="jboss"                  name="jnpserver"               rev="4.0.5.GA"        conf="test->master"/>
+    <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>

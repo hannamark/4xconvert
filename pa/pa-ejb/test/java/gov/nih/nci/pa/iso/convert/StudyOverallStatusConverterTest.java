@@ -120,7 +120,7 @@ public class StudyOverallStatusConverterTest {
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals(bo.getStatusDate(), TsConverter.convertToTimestamp(dto.getStatusDate()));
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
 
     @Test
@@ -130,12 +130,12 @@ public class StudyOverallStatusConverterTest {
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/11/2002")));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
         StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals(bo.getStatusDate(), TsConverter.convertToTimestamp(dto.getStatusDate()));
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
 }

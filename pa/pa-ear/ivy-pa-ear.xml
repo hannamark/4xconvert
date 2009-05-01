@@ -8,11 +8,10 @@ This is the definition of a virtual module called bda-download that has a depend
   <info organisation="cbiit" module="pa-ear"
         />
   <configurations>
-    <conf name="default" />          
-    <conf name="compile" />     
-    <conf name="runtime" />          
-    <conf name="container" />          
-    <conf name="test" extends="runtime" />
+    <conf name="compile"/>
+    <conf name="runtime"/>
+    <conf name="container"/>
+    <conf name="test" extends="runtime"/>
     <conf name="test-junit"/>
   </configurations>
   
@@ -39,7 +38,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
     <dependency org="javax.transaction"      name="jta"                     rev="1.0.1B"          conf="compile->master"/>
-    <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="3.0_RC9_Patch_1" conf="compile->master"/>
+    <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.0.7"           conf="compile->master"/>
