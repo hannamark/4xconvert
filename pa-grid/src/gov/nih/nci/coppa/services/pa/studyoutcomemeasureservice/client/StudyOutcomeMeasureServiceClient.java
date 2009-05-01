@@ -78,10 +78,8 @@ public class StudyOutcomeMeasureServiceClient extends StudyOutcomeMeasureService
             System.out.println("get by ext did not bring back anything");
         } else {
             System.out.println("get by ext brought back a record");
-            System.out.println("out.getStudyProtocolIdentifier.ext = " + out.getStudyProtocolIdentifier().getExtension());
-            if (out.getStudyProtocol() != null) {
-                System.out.println("out.getStudyProtocol.ext = " + out.getStudyProtocol().getExtension());
-            }
+            System.out.println("out.getStudyProtocolIdentifier.ext = "
+                    + out.getStudyProtocolIdentifier().getExtension());
         }
     }
 

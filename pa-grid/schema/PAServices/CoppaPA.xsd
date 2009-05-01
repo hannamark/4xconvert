@@ -257,7 +257,6 @@
                     <xs:sequence>
                         <xs:element name="description" type="ISO:ST" />
                         <xs:element name="groupNumberText" type="ISO:ST" />
-                        <xs:element name="studyProtocol" type="ISO:II" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
@@ -277,7 +276,6 @@
             <xs:complexContent>
                 <xs:extension base="COPPA-PA:PersonFunctionalRoleType">
                     <xs:sequence>
-                        <xs:element name="studyProtocol" type="ISO:II" />
                         <xs:element name="primaryIndicator" type="ISO:BL" />
                         <xs:element name="roleCode" type="ISO:CD" />
                         <xs:element name="postalAddress" type="ISO:AD" />
@@ -306,7 +304,6 @@
             <xs:complexContent>
                 <xs:extension base="COPPA-PA:StudyType">
                     <xs:sequence>
-                        <xs:element name="studyProtocol" type="ISO:II" />
                         <xs:element name="expandedAccessStatusCode" type="ISO:CD" />
                         <xs:element name="expandedAccessIndicator" type="ISO:BL" />
                         <xs:element name="grantorCode" type="ISO:CD" />
@@ -358,7 +355,6 @@
                         <xs:element name="timeFrame" type="ISO:ST" />
                         <xs:element name="primaryIndicator" type="ISO:BL" />
                         <xs:element name="safetyIndicator" type="ISO:BL" />
-                        <xs:element name="studyProtocol" type="ISO:II" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
