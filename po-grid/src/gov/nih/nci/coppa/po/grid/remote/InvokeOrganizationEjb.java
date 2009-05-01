@@ -4,6 +4,8 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -89,5 +91,13 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
