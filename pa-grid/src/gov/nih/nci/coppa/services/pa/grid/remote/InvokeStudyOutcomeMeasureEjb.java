@@ -1,25 +1,28 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+
 import java.util.List;
 
+
 /**
- * Wrapper class for invoking the StudyProtocol remote EJB.
+ * Wrapper class for invoking the StudyParticipantContact remote EJB.
  */
-public class InvokeStudyRecruitmentStatusEjb implements StudyRecruitmentStatusServiceRemote {
+public class InvokeStudyOutcomeMeasureEjb implements StudyOutcomeMeasureServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+
 
     /**
      * {@inheritDoc}
      */
     public void copy(Ii arg0, Ii arg1) throws PAException {
         try {
-            locator.getStudyRecruitmentStatusService().copy(arg0, arg1);
+            locator.getStudyOutcomeMeasureService().copy(arg0, arg1);
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -29,11 +32,11 @@ public class InvokeStudyRecruitmentStatusEjb implements StudyRecruitmentStatusSe
     /**
      * {@inheritDoc}
      */
-    public List<StudyRecruitmentStatusDTO> getByStudyProtocol(Ii arg0)
+    public List<StudyOutcomeMeasureDTO> getByStudyProtocol(Ii arg0)
             throws PAException {
         try {
-            List<StudyRecruitmentStatusDTO> result =
-                locator.getStudyRecruitmentStatusService().getByStudyProtocol(arg0);
+            List<StudyOutcomeMeasureDTO> result =
+                locator.getStudyOutcomeMeasureService().getByStudyProtocol(arg0);
             return result;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -43,26 +46,25 @@ public class InvokeStudyRecruitmentStatusEjb implements StudyRecruitmentStatusSe
     /**
      * {@inheritDoc}
      */
-    public List<StudyRecruitmentStatusDTO> getCurrentByStudyProtocol(Ii arg0)
+    public List<StudyOutcomeMeasureDTO> getCurrentByStudyProtocol(Ii arg0)
             throws PAException {
         try {
-            List<StudyRecruitmentStatusDTO> result =
-                locator.getStudyRecruitmentStatusService().getCurrentByStudyProtocol(arg0);
+            List<StudyOutcomeMeasureDTO> result =
+                locator.getStudyOutcomeMeasureService().getCurrentByStudyProtocol(arg0);
             return result;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
-
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRecruitmentStatusDTO create(StudyRecruitmentStatusDTO arg0)
+    public StudyOutcomeMeasureDTO create(StudyOutcomeMeasureDTO arg0)
             throws PAException {
         try {
-            StudyRecruitmentStatusDTO result =
-                locator.getStudyRecruitmentStatusService().create(arg0);
+            StudyOutcomeMeasureDTO result =
+                locator.getStudyOutcomeMeasureService().create(arg0);
             return result;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -74,19 +76,21 @@ public class InvokeStudyRecruitmentStatusEjb implements StudyRecruitmentStatusSe
      */
     public void delete(Ii arg0) throws PAException {
         try {
-            locator.getStudyRecruitmentStatusService().delete(arg0);
+            locator.getStudyOutcomeMeasureService().delete(arg0);
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRecruitmentStatusDTO get(Ii arg0) throws PAException {
+    public StudyOutcomeMeasureDTO get(Ii arg0) throws PAException {
+
         try {
-            StudyRecruitmentStatusDTO result =
-                locator.getStudyRecruitmentStatusService().get(arg0);
+            StudyOutcomeMeasureDTO result =
+                locator.getStudyOutcomeMeasureService().get(arg0);
             return result;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -96,16 +100,17 @@ public class InvokeStudyRecruitmentStatusEjb implements StudyRecruitmentStatusSe
     /**
      * {@inheritDoc}
      */
-    public StudyRecruitmentStatusDTO update(StudyRecruitmentStatusDTO arg0)
+    public StudyOutcomeMeasureDTO update(StudyOutcomeMeasureDTO arg0)
             throws PAException {
         try {
-            StudyRecruitmentStatusDTO result =
-                locator.getStudyRecruitmentStatusService().update(arg0);
+            StudyOutcomeMeasureDTO result =
+                locator.getStudyOutcomeMeasureService().update(arg0);
             return result;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
 
 
 }

@@ -433,4 +433,8 @@
         <run-client serviceendpointname="StudyParticipationContactService" class="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.client.StudyParticipationContactServiceClient" debug-suspend="n" />
     </target>
 
+  <target name="runStudyOutcomeMeasureClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyOutcomeMeasureService Client">
+            <run-client serviceendpointname="StudyOutcomeMeasureService" class="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.client.StudyOutcomeMeasureServiceClient" debug-suspend="n" />
+    </target>
+
 </project>

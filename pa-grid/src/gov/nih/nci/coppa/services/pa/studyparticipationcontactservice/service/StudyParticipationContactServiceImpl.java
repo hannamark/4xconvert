@@ -17,7 +17,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
- * Implementation of the StudyProtocolService. Dispatches to the remote EJBs and the Transformers.
+ * Implementation of the StudyParticipationContactService. Dispatches to the remote EJBs and the Transformers.
  *
  * @author mshestopalov
  */
