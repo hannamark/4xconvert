@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedperson.service.glob
 
 
 import java.rmi.RemoteException;
+
 import javax.security.auth.Subject;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.MessageContext;

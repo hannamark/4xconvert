@@ -2,7 +2,6 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedOrganization;
-import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClientBase;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.common.IdentifiedOrganizationI;
 
 import java.rmi.RemoteException;

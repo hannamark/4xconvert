@@ -1,7 +1,6 @@
 package gov.nih.nci.coppa.services.structuralroles.identifiedperson.client;
 
 import gov.nih.nci.coppa.po.Id;
-import gov.nih.nci.coppa.po.IdentifiedOrganization;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.coppa.services.structuralroles.identifiedperson.common.IdentifiedPersonI;
 

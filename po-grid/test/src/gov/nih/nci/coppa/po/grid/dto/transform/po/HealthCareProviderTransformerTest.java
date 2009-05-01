@@ -80,13 +80,18 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.po.grid.dto.transform;
+package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareProviderTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 
 import org.iso._21090.II;

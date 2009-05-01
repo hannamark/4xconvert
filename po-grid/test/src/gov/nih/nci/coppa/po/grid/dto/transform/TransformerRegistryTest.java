@@ -11,6 +11,7 @@ import gov.nih.nci.coppa.po.grid.dto.transform.po.IdentifiedPersonTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OversightCommitteeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.ResearchOrganizationTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;

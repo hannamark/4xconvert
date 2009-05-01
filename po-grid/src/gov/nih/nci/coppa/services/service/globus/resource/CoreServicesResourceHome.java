@@ -1,20 +1,19 @@
 package gov.nih.nci.coppa.services.service.globus.resource;
 
+import gov.nih.nci.cagrid.introduce.servicetools.SingletonResourceHomeImpl;
 import gov.nih.nci.coppa.services.common.CoreServicesConstants;
 import gov.nih.nci.coppa.services.stubs.CoreServicesResourceProperties;
 
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.PersistenceCallback;
 import org.globus.wsrf.Resource;
+import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
-import org.globus.wsrf.ResourceContext;
-import gov.nih.nci.cagrid.introduce.servicetools.SingletonResourceHomeImpl;
 import org.globus.wsrf.jndi.Initializable;
 
 

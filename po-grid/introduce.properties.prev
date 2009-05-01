@@ -1,11 +1,11 @@
 #Introduce Properties
-#Wed Apr 01 19:08:18 EDT 2009
+#Thu Apr 30 18:47:44 EDT 2009
 introduce.skeleton.services.list=CoreServices,Person,Organization,HealthCareFacility,ClinicalResearchStaff,HealthCareProvider,IdentifiedOrganization,IdentifiedPerson,OrganizationalContact,OversightCommittee,ResearchOrganization
 introduce.skeleton.extensions=cagrid_metadata
 introduce.skeleton.timestamp=1236739296250
 introduce.skeleton.service.name=CoreServices
 introduce.skeleton.resource.options=main,singleton,identifiable,resourcePropertyManagement
-introduce.skeleton.destination.dir=C\:\\dev\\projects\\coppa\\code\\po-grid
+introduce.skeleton.destination.dir=/Users/slustbader/devo/coppa/code/po-grid
 introduce.skeleton.namespace.domain=http\://enterpriseservices.nci.nih.gov/CoreServices
 introduce.ns.excludes=\ -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata -x uri\:iso.org\:21090 -x http\://po.coppa.nci.nih.gov -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common
 introduce.soap.binding.excludes=\ uri\:iso.org\:21090 http\://po.coppa.nci.nih.gov

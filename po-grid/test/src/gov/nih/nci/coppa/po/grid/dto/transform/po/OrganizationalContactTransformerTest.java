@@ -1,9 +1,14 @@
-package gov.nih.nci.coppa.po.grid.dto.transform;
+package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import org.iso._21090.II;

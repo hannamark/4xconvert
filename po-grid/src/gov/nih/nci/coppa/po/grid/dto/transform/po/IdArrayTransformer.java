@@ -2,8 +2,8 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
-import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 /**
  * Transforms Id[] (XML type) and Ii[] (DTO type) instances.
  * @author smatyas

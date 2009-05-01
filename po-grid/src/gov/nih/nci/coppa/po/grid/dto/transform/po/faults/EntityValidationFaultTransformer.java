@@ -1,8 +1,9 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
-import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 
 /**
@@ -34,7 +35,7 @@ public final class EntityValidationFaultTransformer implements
         if (input == null) {
             return null;
         }
-        EntityValidationFault fault = POFaultHelper.toFault(new EntityValidationFault(), input);
+        EntityValidationFault fault = CoppaFaultHelper.toFault(new EntityValidationFault(), input);
         if (input.getErrors() != null) {
             fault.setErrors(StringMapTypeTransformer.INSTANCE.toXml(input.getErrors()));
         }

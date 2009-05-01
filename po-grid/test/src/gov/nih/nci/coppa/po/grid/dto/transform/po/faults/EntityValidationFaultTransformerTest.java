@@ -1,8 +1,10 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
-import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.HashMap;

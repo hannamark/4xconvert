@@ -8,8 +8,8 @@ import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.po.Id;
-import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.po.grid.dto.transform.IITransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
 
 import org.junit.Test;
 

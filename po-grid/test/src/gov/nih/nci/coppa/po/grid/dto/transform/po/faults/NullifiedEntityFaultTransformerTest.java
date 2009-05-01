@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
-import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.util.HashMap;

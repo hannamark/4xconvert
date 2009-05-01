@@ -4,8 +4,8 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
-import gov.nih.nci.coppa.po.grid.dto.transform.NullFlavorTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.NullFlavorTransformer;
 
 /**
  * Transforms the Id element type (is-a ISO:II).

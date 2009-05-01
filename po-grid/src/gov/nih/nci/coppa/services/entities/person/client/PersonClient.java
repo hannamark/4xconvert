@@ -145,7 +145,6 @@ public class PersonClient extends PersonClientBase implements PersonI {
         }
     }
 
-
   public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");

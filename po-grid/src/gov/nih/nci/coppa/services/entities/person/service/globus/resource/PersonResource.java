@@ -1,9 +1,5 @@
 package gov.nih.nci.coppa.services.entities.person.service.globus.resource;
 
-import org.globus.wsrf.InvalidResourceKeyException;
-import org.globus.wsrf.NoSuchResourceException;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceKey;
 
 
 /** 

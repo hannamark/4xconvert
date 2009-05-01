@@ -2,8 +2,8 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 
 import gov.nih.nci.coppa.po.faults.StringMapType;
 import gov.nih.nci.coppa.po.faults.StringMapTypeEntry;
-import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +13,9 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Transforms axis-based StringMapType types.
- * 
+ *
  * @author smatyas
- * 
+ *
  */
 public final class StringMapTypeTransformer implements Transformer<StringMapType, Map<String, String[]>> {
     /**

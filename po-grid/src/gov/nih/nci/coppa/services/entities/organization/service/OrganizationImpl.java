@@ -4,13 +4,13 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.StringMap;
-import gov.nih.nci.coppa.po.grid.dto.transform.CDTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.IITransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokeOrganizationEjb;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.rmi.RemoteException;

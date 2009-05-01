@@ -1,17 +1,17 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import gov.nih.nci.coppa.po.StringMap;
-import gov.nih.nci.coppa.po.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.po.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.Arrays;
 import java.util.Map;
 
 /**
  * Transforms Map&lt;String, String[]&gt; instances.
- * 
+ *
  * @author smatyas
- * 
+ *
  */
 public final class StringMapTransformer implements Transformer<StringMap, Map<String, String[]>> {
     /**

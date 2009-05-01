@@ -1,13 +1,17 @@
-package gov.nih.nci.coppa.po.grid.dto.transform;
+package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-
-import org.iso._21090.II;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENONTransformerTest;
 import gov.nih.nci.services.organization.OrganizationDTO;
+
+import org.iso._21090.II;
 
 
 public class OrganizationTransformerTest extends 

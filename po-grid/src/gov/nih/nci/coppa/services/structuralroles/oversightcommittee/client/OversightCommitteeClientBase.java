@@ -1,33 +1,19 @@
 package gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client;
 
+import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
+import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.OversightCommitteePortType;
+import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.service.OversightCommitteeServiceAddressingLocator;
+
 import java.io.InputStream;
 import java.rmi.RemoteException;
 
-import javax.xml.namespace.QName;
-
-import java.util.Calendar;
-import java.util.List;
-
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.client.AxisClient;
-import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-
 import org.globus.gsi.GlobusCredential;
-
-import org.globus.wsrf.NotifyCallback;
 import org.globus.wsrf.NotificationConsumerManager;
-import org.globus.wsrf.container.ContainerException;
-
-import org.oasis.wsrf.lifetime.ImmediateResourceTermination;
-import org.oasis.wsrf.lifetime.WSResourceLifetimeServiceAddressingLocator;
-
-import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.OversightCommitteePortType;
-import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.service.OversightCommitteeServiceAddressingLocator;
-import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.common.OversightCommitteeI;
-import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
 
 
 /**
