@@ -92,6 +92,18 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
+  public gov.nih.nci.coppa.services.pa.StudyProtocol[] search(gov.nih.nci.coppa.services.pa.StudyProtocol studyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"search");
+    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest();
+    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequestStudyProtocol studyProtocolContainer = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequestStudyProtocol();
+    studyProtocolContainer.setStudyProtocol(studyProtocol);
+    params.setStudyProtocol(studyProtocolContainer);
+    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse boxedResult = portType.search(params);
+    return boxedResult.getStudyProtocol();
+    }
+  }
+
   public gov.nih.nci.coppa.services.pa.StudyProtocol getStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getStudyProtocol");

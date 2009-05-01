@@ -33,6 +33,7 @@
 			xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
 			xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"
 			xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service"
+			xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types"
 			xmlns:ns24="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types"
 			xmlns:ns25="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types"
 			xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types"

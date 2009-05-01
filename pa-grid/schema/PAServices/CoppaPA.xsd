@@ -486,4 +486,21 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="StudyRelationship">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PA:BaseType">
+                    <xs:sequence>
+                        <xs:element name="typeCode" type="ISO:CD" />
+                        <xs:element name="descriptionText" type="ISO:ST" />
+                        <xs:element name="commentText" type="ISO:ST" />
+                        <xs:element name="sequenceNumber" type="ISO:INT" />
+                        <xs:element name="sourceStudyProtocolIdentifier" type="ISO:II" />
+                        <xs:element name="targetStudyProtocolIdentifier" type="ISO:II" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>

@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:aggr="http://mds.globus.org/aggregator/types" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="defaultServerConfig">
+  <service name="SERVICE-INSTANCE-PREFIX/StudyRelationshipService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.pa.studyrelationshipservice.service.globus.StudyRelationshipServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/StudyRelationshipService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/StudyRelationshipService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/StudyRelationshipService-security-metadata.xml" />
+    <parameter name="studyrelationshipservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="studyrelationshipservice-serviceName" value="StudyRelationshipService" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/DocumentService" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.pa.documentservice.service.globus.DocumentServiceProviderImpl" />
     <wsdlFile>share/schema/PAServices/DocumentService_service.wsdl</wsdlFile>
@@ -285,6 +298,8 @@
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus" qname="ns2:StudyRecruitmentStatus" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority" qname="ns2:StudyRegulatoryAuthority" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudyRelationship" qname="ns2:StudyRelationship" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudyResourcing" qname="ns2:StudyResourcing" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 

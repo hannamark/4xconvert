@@ -115,6 +115,8 @@
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority" qname="ns2:StudyRegulatoryAuthority" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudyRelationship" qname="ns2:StudyRelationship" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudyResourcing" qname="ns2:StudyResourcing" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus" qname="ns2:StudySiteAccrualStatus" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>

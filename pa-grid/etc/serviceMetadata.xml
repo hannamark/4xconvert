@@ -162,6 +162,15 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns32:StudyProtocol" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocol" xmlns:ns32="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns33:StudyProtocol" dimensionality="1" isArray="true" xmlns:ns33="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
      </ns2:operationCollection>
      <ns2:contextPropertyCollection/>
     </ns2:ServiceContext>
@@ -169,28 +178,19 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns32:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns32="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns34:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns34="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getStudySiteAccrualStatus">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns33:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns33="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns34:StudySiteAccrualStatus" dimensionality="1" isArray="false" xmlns:ns34="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="createStudySiteAccrualStatus">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns35:StudySiteAccrualStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studySiteAccrualStatus" xmlns:ns35="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns35:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns35="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns36:StudySiteAccrualStatus" dimensionality="1" isArray="false" xmlns:ns36="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="updateStudySiteAccrualStatus">
+      <ns2:Operation description="" name="createStudySiteAccrualStatus">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns37:StudySiteAccrualStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studySiteAccrualStatus" xmlns:ns37="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -199,20 +199,29 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="updateStudySiteAccrualStatus">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns39:StudySiteAccrualStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studySiteAccrualStatus" xmlns:ns39="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns40:StudySiteAccrualStatus" dimensionality="1" isArray="false" xmlns:ns40="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="getStudySiteAccrualStatusByStudyParticipation">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns39:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns39="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns41:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns41="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns40:StudySiteAccrualStatus" dimensionality="1" isArray="true" xmlns:ns40="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns42:StudySiteAccrualStatus" dimensionality="1" isArray="true" xmlns:ns42="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentStudySiteAccrualStatusByStudyParticipation">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns41:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns41="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns43:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns43="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns42:StudySiteAccrualStatus" dimensionality="1" isArray="true" xmlns:ns42="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns44:StudySiteAccrualStatus" dimensionality="1" isArray="true" xmlns:ns44="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
@@ -224,28 +233,19 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns43:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns43="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns45:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns45="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getSummaryForReportedResource">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns44:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns44="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns45:StudyResourcing" dimensionality="1" isArray="false" xmlns:ns45="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="updateStudyResourcing">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns46:StudyResourcing" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyResourcing" xmlns:ns46="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns46:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns46="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns47:StudyResourcing" dimensionality="1" isArray="false" xmlns:ns47="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="createStudyResourcing">
+      <ns2:Operation description="" name="updateStudyResourcing">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns48:StudyResourcing" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyResourcing" xmlns:ns48="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -254,27 +254,36 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="createStudyResourcing">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns50:StudyResourcing" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyResourcing" xmlns:ns50="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns51:StudyResourcing" dimensionality="1" isArray="false" xmlns:ns51="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="getStudyResourceByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns50:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns50="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns52:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns52="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns51:StudyResourcing" dimensionality="1" isArray="true" xmlns:ns51="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns53:StudyResourcing" dimensionality="1" isArray="true" xmlns:ns53="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getStudyResourceByID">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns52:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyResourceId" xmlns:ns52="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns54:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyResourceId" xmlns:ns54="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns53:StudyResourcing" dimensionality="1" isArray="false" xmlns:ns53="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns55:StudyResourcing" dimensionality="1" isArray="false" xmlns:ns55="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="deleteStudyResourceByID">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns54:StudyResourcing" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyResourcing" xmlns:ns54="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns56:StudyResourcing" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyResourcing" xmlns:ns56="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -287,28 +296,19 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns55:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns55="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns57:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns57="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns56:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns56="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns57:StudyRegulatoryAuthority" dimensionality="1" isArray="false" xmlns:ns57="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns58:StudyRegulatoryAuthority" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRegulatoryAuthority" xmlns:ns58="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns58:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns58="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns59:StudyRegulatoryAuthority" dimensionality="1" isArray="false" xmlns:ns59="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns60:StudyRegulatoryAuthority" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRegulatoryAuthority" xmlns:ns60="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -317,10 +317,19 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns62:StudyRegulatoryAuthority" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRegulatoryAuthority" xmlns:ns62="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns63:StudyRegulatoryAuthority" dimensionality="1" isArray="false" xmlns:ns63="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="Creates a new record of StudyRegulatoryAuthority by changing to new StudyProtocol identifier." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns62:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns62="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns63:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns63="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns64:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns64="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns65:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns65="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -333,22 +342,22 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns64:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns64="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns66:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns66="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns65:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns65="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns67:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns67="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns66:StudyRecruitmentStatus" dimensionality="1" isArray="true" xmlns:ns66="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns68:StudyRecruitmentStatus" dimensionality="1" isArray="true" xmlns:ns68="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyRecruitmentStatuses that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns67:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns67="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns68:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns68="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns69:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns69="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns70:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns70="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -356,32 +365,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns69:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns69="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns71:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns71="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns70:StudyRecruitmentStatus" dimensionality="1" isArray="true" xmlns:ns70="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns72:StudyRecruitmentStatus" dimensionality="1" isArray="true" xmlns:ns72="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns71:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns71="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns72:StudyRecruitmentStatus" dimensionality="1" isArray="false" xmlns:ns72="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns73:StudyRecruitmentStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRecruitmentStatus" xmlns:ns73="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns73:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns73="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns74:StudyRecruitmentStatus" dimensionality="1" isArray="false" xmlns:ns74="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns75:StudyRecruitmentStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRecruitmentStatus" xmlns:ns75="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -390,9 +390,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns77:StudyRecruitmentStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRecruitmentStatus" xmlns:ns77="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns78:StudyRecruitmentStatus" dimensionality="1" isArray="false" xmlns:ns78="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns77:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns77="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns79:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns79="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -405,42 +414,42 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns78:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns78="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns80:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns80="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="Get the StudyParticipations for a given functional role code and study protocol." name="getByStudyProtocolAndRole">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns79:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns79="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns80:StudyParticipation" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyParticipation" xmlns:ns80="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns81:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns81="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns82:StudyParticipation" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyParticipation" xmlns:ns82="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns81:StudyParticipation" dimensionality="1" isArray="true" xmlns:ns81="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns83:StudyParticipation" dimensionality="1" isArray="true" xmlns:ns83="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Get the StudyParticipations for the given functional role codes and study protocol." name="getByStudyProtocolAndRoles">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns82:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns82="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns83:StudyParticipation" dimensionality="1" index="1" isArray="true" isRequired="false" name="studyParticipation" xmlns:ns83="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns84:StudyParticipation" dimensionality="1" isArray="true" xmlns:ns84="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="getByStudyProtocol">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns85:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns85="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns84:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns84="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns85:StudyParticipation" dimensionality="1" index="1" isArray="true" isRequired="false" name="studyParticipation" xmlns:ns85="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns86:StudyParticipation" dimensionality="1" isArray="true" xmlns:ns86="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="getByStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns87:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns87="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns88:StudyParticipation" dimensionality="1" isArray="true" xmlns:ns88="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyParticipations that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns87:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns87="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns88:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns88="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns89:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns89="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns90:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns90="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -448,32 +457,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns89:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns89="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns91:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns91="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns90:StudyParticipation" dimensionality="1" isArray="true" xmlns:ns90="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns92:StudyParticipation" dimensionality="1" isArray="true" xmlns:ns92="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns91:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns91="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns92:StudyParticipation" dimensionality="1" isArray="false" xmlns:ns92="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns93:StudyParticipation" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipation" xmlns:ns93="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns93:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns93="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns94:StudyParticipation" dimensionality="1" isArray="false" xmlns:ns94="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns95:StudyParticipation" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipation" xmlns:ns95="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -482,9 +482,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns97:StudyParticipation" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipation" xmlns:ns97="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns98:StudyParticipation" dimensionality="1" isArray="false" xmlns:ns98="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns97:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns97="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns99:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns99="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -497,51 +506,51 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns98:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns98="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns100:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns100="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyParticipation">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns99:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns99="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns101:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationId" xmlns:ns101="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns100:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns100="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns102:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns102="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Gets the StudyParticipations for a given functional role code and study protocol." name="getByStudyProtocolAndRole">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns101:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns101="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns102:StudyParticipationContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns102="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns103:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns103="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns104:StudyParticipationContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns104="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns103:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns103="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns105:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns105="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Gets the StudyParticipationContacts for the given functional role codes and study protocol." name="getByStudyProtocolAndRoles">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns104:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns104="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns105:StudyParticipationContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns105="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns106:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns106="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="getByStudyProtocol">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns107:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns107="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns106:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns106="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns107:StudyParticipationContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns107="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns108:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns108="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="getByStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns109:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns109="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns110:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns110="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyParticipationContacts that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns109:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns109="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns110:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns110="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns111:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns111="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns112:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns112="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -549,32 +558,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns111:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns111="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns113:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns113="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns112:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns112="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns114:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns114="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns113:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns113="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns114:StudyParticipationContact" dimensionality="1" isArray="false" xmlns:ns114="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns115:StudyParticipationContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns115="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns115:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns115="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns116:StudyParticipationContact" dimensionality="1" isArray="false" xmlns:ns116="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns117:StudyParticipationContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns117="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -583,9 +583,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns119:StudyParticipationContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns119="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns120:StudyParticipationContact" dimensionality="1" isArray="false" xmlns:ns120="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns119:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns119="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns121:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns121="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -598,22 +607,22 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns120:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns120="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns122:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns122="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns121:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns121="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns123:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns123="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns122:StudyOverallStatus" dimensionality="1" isArray="true" xmlns:ns122="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns124:StudyOverallStatus" dimensionality="1" isArray="true" xmlns:ns124="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyOverallStatuses that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns123:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns123="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns124:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns124="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns125:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns125="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns126:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns126="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -621,32 +630,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns125:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns125="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns127:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns127="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns126:StudyOverallStatus" dimensionality="1" isArray="true" xmlns:ns126="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns128:StudyOverallStatus" dimensionality="1" isArray="true" xmlns:ns128="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns127:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns127="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns128:StudyOverallStatus" dimensionality="1" isArray="false" xmlns:ns128="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns129:StudyOverallStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOverallStatus" xmlns:ns129="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns129:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns129="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns130:StudyOverallStatus" dimensionality="1" isArray="false" xmlns:ns130="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns131:StudyOverallStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOverallStatus" xmlns:ns131="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -655,9 +655,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns133:StudyOverallStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOverallStatus" xmlns:ns133="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns134:StudyOverallStatus" dimensionality="1" isArray="false" xmlns:ns134="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns133:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns133="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns135:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns135="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -670,22 +679,22 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns134:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns134="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns136:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns136="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns135:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns135="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns137:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns137="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns136:StudyOutcomeMeasure" dimensionality="1" isArray="true" xmlns:ns136="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns138:StudyOutcomeMeasure" dimensionality="1" isArray="true" xmlns:ns138="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyOutcomeMeasureServices that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns137:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns137="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns138:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns138="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns139:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns139="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns140:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns140="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -693,32 +702,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns139:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns139="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns141:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns141="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns140:StudyOutcomeMeasure" dimensionality="1" isArray="true" xmlns:ns140="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns142:StudyOutcomeMeasure" dimensionality="1" isArray="true" xmlns:ns142="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns141:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns141="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns142:StudyOutcomeMeasure" dimensionality="1" isArray="false" xmlns:ns142="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns143:StudyOutcomeMeasure" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOutcomeMeasure" xmlns:ns143="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns143:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns143="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns144:StudyOutcomeMeasure" dimensionality="1" isArray="false" xmlns:ns144="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns145:StudyOutcomeMeasure" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOutcomeMeasure" xmlns:ns145="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -727,9 +727,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns147:StudyOutcomeMeasure" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOutcomeMeasure" xmlns:ns147="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns148:StudyOutcomeMeasure" dimensionality="1" isArray="false" xmlns:ns148="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns147:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns147="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns149:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns149="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -742,22 +751,22 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns148:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns148="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns150:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns150="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns149:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns149="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns151:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns151="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns150:StudyOnhold" dimensionality="1" isArray="true" xmlns:ns150="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns152:StudyOnhold" dimensionality="1" isArray="true" xmlns:ns152="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyOnholds that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns151:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns151="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns152:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns152="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns153:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns153="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns154:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns154="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -765,32 +774,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns153:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns153="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns155:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns155="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns154:StudyOnhold" dimensionality="1" isArray="true" xmlns:ns154="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns156:StudyOnhold" dimensionality="1" isArray="true" xmlns:ns156="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns155:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns155="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns156:StudyOnhold" dimensionality="1" isArray="false" xmlns:ns156="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns157:StudyOnhold" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOnhold" xmlns:ns157="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns157:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns157="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns158:StudyOnhold" dimensionality="1" isArray="false" xmlns:ns158="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns159:StudyOnhold" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOnhold" xmlns:ns159="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -799,9 +799,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns161:StudyOnhold" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyOnhold" xmlns:ns161="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns162:StudyOnhold" dimensionality="1" isArray="false" xmlns:ns162="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns161:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns161="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns163:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns163="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -809,9 +818,9 @@
       </ns2:Operation>
       <ns2:Operation description="" name="isOnhold">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns162:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns162="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns164:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns164="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns163:BL" dimensionality="1" isArray="false" xmlns:ns163="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns165:BL" dimensionality="1" isArray="false" xmlns:ns165="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
@@ -823,22 +832,22 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns164:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns164="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns166:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns166="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns165:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns165="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns167:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns167="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns166:StudyIndlde" dimensionality="1" isArray="true" xmlns:ns166="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns168:StudyIndlde" dimensionality="1" isArray="true" xmlns:ns168="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyIndldes that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns167:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns167="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns168:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns168="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns169:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns169="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns170:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns170="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -846,32 +855,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns169:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns169="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns171:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns171="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns170:StudyIndlde" dimensionality="1" isArray="true" xmlns:ns170="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns172:StudyIndlde" dimensionality="1" isArray="true" xmlns:ns172="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns171:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns171="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns172:StudyIndlde" dimensionality="1" isArray="false" xmlns:ns172="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns173:StudyIndlde" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyIndlde" xmlns:ns173="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns173:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns173="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns174:StudyIndlde" dimensionality="1" isArray="false" xmlns:ns174="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns175:StudyIndlde" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyIndlde" xmlns:ns175="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -880,9 +880,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns177:StudyIndlde" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyIndlde" xmlns:ns177="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns178:StudyIndlde" dimensionality="1" isArray="false" xmlns:ns178="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns177:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns177="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns179:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns179="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -895,22 +904,22 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns178:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns178="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns180:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns180="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns179:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns179="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns181:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns181="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns180:StudyDisease" dimensionality="1" isArray="true" xmlns:ns180="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns182:StudyDisease" dimensionality="1" isArray="true" xmlns:ns182="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyDiseases that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns181:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns181="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns182:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns182="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns183:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns183="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns184:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns184="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -918,32 +927,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns183:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns183="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns185:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns185="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns184:StudyDisease" dimensionality="1" isArray="true" xmlns:ns184="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns186:StudyDisease" dimensionality="1" isArray="true" xmlns:ns186="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns185:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns185="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns186:StudyDisease" dimensionality="1" isArray="false" xmlns:ns186="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns187:StudyDisease" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyDisease" xmlns:ns187="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns187:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns187="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns188:StudyDisease" dimensionality="1" isArray="false" xmlns:ns188="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns189:StudyDisease" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyDisease" xmlns:ns189="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -952,9 +952,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns191:StudyDisease" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyDisease" xmlns:ns191="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns192:StudyDisease" dimensionality="1" isArray="false" xmlns:ns192="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns191:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns191="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns193:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns193="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -967,42 +976,42 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns192:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns192="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns194:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns194="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="Gets the StudyContacts for a given functional role code and study protocol." name="getByStudyProtocolAndRole">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns193:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns193="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns194:StudyContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyContact" xmlns:ns194="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns195:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns195="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns196:StudyContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyContact" xmlns:ns196="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns195:StudyContact" dimensionality="1" isArray="true" xmlns:ns195="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns197:StudyContact" dimensionality="1" isArray="true" xmlns:ns197="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Gets the StudyContacts for the given functional role codes and study protocol." name="getByStudyProtocolAndRoles">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns196:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns196="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns197:StudyContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyContact" xmlns:ns197="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns198:StudyContact" dimensionality="1" isArray="true" xmlns:ns198="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="getByStudyProtocol">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns199:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns199="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns198:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns198="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns199:StudyContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyContact" xmlns:ns199="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns200:StudyContact" dimensionality="1" isArray="true" xmlns:ns200="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="getByStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns201:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns201="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns202:StudyContact" dimensionality="1" isArray="true" xmlns:ns202="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="Creates copies of the StudyContacts that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns201:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns201="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns202:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns202="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns203:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns203="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns204:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns204="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1010,32 +1019,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns203:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns203="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns205:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns205="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns204:StudyContact" dimensionality="1" isArray="true" xmlns:ns204="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns206:StudyContact" dimensionality="1" isArray="true" xmlns:ns206="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns205:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns205="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns206:StudyContact" dimensionality="1" isArray="false" xmlns:ns206="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns207:StudyContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyContact" xmlns:ns207="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns207:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns207="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns208:StudyContact" dimensionality="1" isArray="false" xmlns:ns208="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns209:StudyContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyContact" xmlns:ns209="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -1044,9 +1044,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns211:StudyContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyContact" xmlns:ns211="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns212:StudyContact" dimensionality="1" isArray="false" xmlns:ns212="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns211:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns211="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns213:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns213="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1059,46 +1068,37 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns212:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns212="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns214:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns214="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getByArm">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns213:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="armId" xmlns:ns213="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns215:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="armId" xmlns:ns215="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns214:PlannedActivity" dimensionality="1" isArray="true" xmlns:ns214="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns216:PlannedActivity" dimensionality="1" isArray="true" xmlns:ns216="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getPlannedEligibilityCriterionByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns215:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns215="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns217:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns217="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns216:PlannedEligibilityCriterion" dimensionality="1" isArray="true" xmlns:ns216="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns218:PlannedEligibilityCriterion" dimensionality="1" isArray="true" xmlns:ns218="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="getPlannedEligibilityCriterion">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns217:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns217="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns218:PlannedEligibilityCriterion" dimensionality="1" isArray="false" xmlns:ns218="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="createPlannedEligibilityCriterion">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns219:PlannedEligibilityCriterion" dimensionality="1" index="0" isArray="false" isRequired="false" name="plannedEligibilityCriterion" xmlns:ns219="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns219:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns219="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns220:PlannedEligibilityCriterion" dimensionality="1" isArray="false" xmlns:ns220="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="updatePlannedEligibilityCriterion">
+      <ns2:Operation description="" name="createPlannedEligibilityCriterion">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns221:PlannedEligibilityCriterion" dimensionality="1" index="0" isArray="false" isRequired="false" name="plannedEligibilityCriterion" xmlns:ns221="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -1107,9 +1107,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="updatePlannedEligibilityCriterion">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns223:PlannedEligibilityCriterion" dimensionality="1" index="0" isArray="false" isRequired="false" name="plannedEligibilityCriterion" xmlns:ns223="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns224:PlannedEligibilityCriterion" dimensionality="1" isArray="false" xmlns:ns224="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="deletePlannedEligibilityCriterion">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns223:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns223="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns225:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns225="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1117,8 +1126,8 @@
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the PlannedEligibilityCriteria that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copyPlannedEligibilityStudyCriterions">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns224:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns224="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns225:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns225="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns226:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns226="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns227:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns227="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1126,17 +1135,17 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns226:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns226="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns228:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns228="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns227:PlannedActivity" dimensionality="1" isArray="true" xmlns:ns227="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns229:PlannedActivity" dimensionality="1" isArray="true" xmlns:ns229="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="Creates copies of the PlannedActivities that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns228:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns228="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns229:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns229="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns230:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns230="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns231:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns231="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1144,32 +1153,23 @@
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns230:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns230="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns232:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns232="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns231:PlannedActivity" dimensionality="1" isArray="true" xmlns:ns231="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns233:PlannedActivity" dimensionality="1" isArray="true" xmlns:ns233="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns232:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns232="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns233:PlannedActivity" dimensionality="1" isArray="false" xmlns:ns233="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns234:PlannedActivity" dimensionality="1" index="0" isArray="false" isRequired="false" name="plannedActivity" xmlns:ns234="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns234:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns234="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns235:PlannedActivity" dimensionality="1" isArray="false" xmlns:ns235="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns236:PlannedActivity" dimensionality="1" index="0" isArray="false" isRequired="false" name="plannedActivity" xmlns:ns236="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -1178,9 +1178,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns238:PlannedActivity" dimensionality="1" index="0" isArray="false" isRequired="false" name="plannedActivity" xmlns:ns238="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns239:PlannedActivity" dimensionality="1" isArray="false" xmlns:ns239="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns238:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns238="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns240:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns240="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1193,19 +1202,10 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns239:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns239="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns241:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns241="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getCurrentByStudyProtocol">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns240:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns240="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns241:DocumentWorkflowStatus" dimensionality="1" isArray="true" xmlns:ns241="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="getByStudyProtocol">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns242:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns242="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -1214,10 +1214,19 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="getByStudyProtocol">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns244:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns244="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns245:DocumentWorkflowStatus" dimensionality="1" isArray="true" xmlns:ns245="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="Creates copies of the DocumentWorkflowStatuses that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." name="copy">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns244:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns244="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns245:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns245="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns246:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="fromStudyProtocolId" xmlns:ns246="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns247:Id" dimensionality="1" index="1" isArray="false" isRequired="false" name="toStudyProtocolId" xmlns:ns247="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1225,23 +1234,14 @@
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns246:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns246="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns247:DocumentWorkflowStatus" dimensionality="1" isArray="false" xmlns:ns247="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns248:DocumentWorkflowStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="documentWorkflowStatus" xmlns:ns248="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns248:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns248="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns249:DocumentWorkflowStatus" dimensionality="1" isArray="false" xmlns:ns249="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns250:DocumentWorkflowStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="documentWorkflowStatus" xmlns:ns250="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -1250,9 +1250,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns252:DocumentWorkflowStatus" dimensionality="1" index="0" isArray="false" isRequired="false" name="documentWorkflowStatus" xmlns:ns252="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns253:DocumentWorkflowStatus" dimensionality="1" isArray="false" xmlns:ns253="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
       <ns2:Operation description="" name="delete">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns252:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns252="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns254:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns254="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1265,37 +1274,28 @@
      <ns2:operationCollection>
       <ns2:Operation description="" name="getServiceSecurityMetadata">
        <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns253:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns253="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:Output qName="ns255:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns255="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
       <ns2:Operation description="" name="getDocumentsByStudyProtocol">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns254:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns254="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns256:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns256="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
-       <ns2:Output qName="ns255:Document" dimensionality="1" isArray="true" xmlns:ns255="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:Output qName="ns257:Document" dimensionality="1" isArray="true" xmlns:ns257="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
       <ns2:Operation description="" name="get">
        <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns256:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns256="http://pa.services.coppa.nci.nih.gov"/>
-       </ns2:inputParameterCollection>
-       <ns2:Output qName="ns257:Document" dimensionality="1" isArray="false" xmlns:ns257="http://pa.services.coppa.nci.nih.gov"/>
-       <ns2:faultCollection>
-        <ns2:Fault description="" name="PAFault"/>
-       </ns2:faultCollection>
-      </ns2:Operation>
-      <ns2:Operation description="" name="create">
-       <ns2:inputParameterCollection>
-        <ns2:InputParameter qName="ns258:Document" dimensionality="1" index="0" isArray="false" isRequired="false" name="document" xmlns:ns258="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns258:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns258="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns259:Document" dimensionality="1" isArray="false" xmlns:ns259="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="update">
+      <ns2:Operation description="" name="create">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns260:Document" dimensionality="1" index="0" isArray="false" isRequired="false" name="document" xmlns:ns260="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
@@ -1304,9 +1304,18 @@
         <ns2:Fault description="" name="PAFault"/>
        </ns2:faultCollection>
       </ns2:Operation>
-      <ns2:Operation description="" name="delete">
+      <ns2:Operation description="" name="update">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns262:Document" dimensionality="1" index="0" isArray="false" isRequired="false" name="document" xmlns:ns262="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns263:Document" dimensionality="1" isArray="false" xmlns:ns263="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="delete">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns264:Document" dimensionality="1" index="0" isArray="false" isRequired="false" name="document" xmlns:ns264="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:faultCollection>
         <ns2:Fault description="" name="PAFault"/>
@@ -1315,17 +1324,71 @@
      </ns2:operationCollection>
      <ns2:contextPropertyCollection/>
     </ns2:ServiceContext>
+    <ns2:ServiceContext description="" name="StudyRelationshipService">
+     <ns2:operationCollection>
+      <ns2:Operation description="" name="get">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns265:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns265="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns266:StudyRelationship" dimensionality="1" isArray="false" xmlns:ns266="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="search">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns267:StudyRelationship" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRelationship" xmlns:ns267="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns268:StudyRelationship" dimensionality="1" isArray="true" xmlns:ns268="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="create">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns269:StudyRelationship" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRelationship" xmlns:ns269="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns270:StudyRelationship" dimensionality="1" isArray="false" xmlns:ns270="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="update">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns271:StudyRelationship" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyRelationship" xmlns:ns271="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:Output qName="ns272:StudyRelationship" dimensionality="1" isArray="false" xmlns:ns272="http://pa.services.coppa.nci.nih.gov"/>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="delete">
+       <ns2:inputParameterCollection>
+        <ns2:InputParameter qName="ns273:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="id" xmlns:ns273="http://pa.services.coppa.nci.nih.gov"/>
+       </ns2:inputParameterCollection>
+       <ns2:faultCollection>
+        <ns2:Fault description="" name="PAFault"/>
+       </ns2:faultCollection>
+      </ns2:Operation>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns274:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns274="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
+     </ns2:operationCollection>
+     <ns2:contextPropertyCollection/>
+    </ns2:ServiceContext>
    </ns2:serviceContextCollection>
-   <ns263:SemanticMetadata conceptCode="C63541" conceptDefinition="A service available on a system that coordinates resources that are not subject to central control, using open, general purpose protocols and interfaces to deliver nontrivial qualities of services." conceptName="Grid Service" order="0" xmlns:ns263="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
-   <ns264:SemanticMetadata conceptCode="C63543" conceptDefinition="A published API which receives data in the form of objects, performs computations based upon the input data, and returns information to a client via caGrid in the form of one or more objects." conceptName="Analytical Grid Service" order="1" xmlns:ns264="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+   <ns275:SemanticMetadata conceptCode="C63541" conceptDefinition="A service available on a system that coordinates resources that are not subject to central control, using open, general purpose protocols and interfaces to deliver nontrivial qualities of services." conceptName="Grid Service" order="0" xmlns:ns275="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+   <ns276:SemanticMetadata conceptCode="C63543" conceptDefinition="A published API which receives data in the form of objects, performs computations based upon the input data, and returns information to a client via caGrid in the form of one or more objects." conceptName="Analytical Grid Service" order="1" xmlns:ns276="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
   </ns2:Service>
  </ns1:serviceDescription>
  <ns1:hostingResearchCenter>
-  <ns265:ResearchCenter displayName="NCI" shortName="NCI" xmlns:ns265="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
-   <ns265:Address country="USA" locality="Rockville" postalCode="20852" stateProvince="MD" street1="2115 E. Jefferson St." street2=""/>
-   <ns265:pointOfContactCollection>
-    <ns265:PointOfContact affiliation="NCI" email="andonyac@mail.nih.gov" firstName="Christo" lastName="Andonyadis" phoneNumber="" role="Chief Architect for Clinical Science"/>
-   </ns265:pointOfContactCollection>
-  </ns265:ResearchCenter>
+  <ns277:ResearchCenter displayName="NCI" shortName="NCI" xmlns:ns277="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
+   <ns277:Address country="USA" locality="Rockville" postalCode="20852" stateProvince="MD" street1="2115 E. Jefferson St." street2=""/>
+   <ns277:pointOfContactCollection>
+    <ns277:PointOfContact affiliation="NCI" email="andonyac@mail.nih.gov" firstName="Christo" lastName="Andonyadis" phoneNumber="" role="Chief Architect for Clinical Science"/>
+   </ns277:pointOfContactCollection>
+  </ns277:ResearchCenter>
  </ns1:hostingResearchCenter>
 </ns1:ServiceMetadata>

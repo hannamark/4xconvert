@@ -130,6 +130,11 @@ public abstract class StudySiteAccrualStatusServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.documentservice.service.globus.resource.DocumentServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.studyrelationshipservice.service.globus.resource.StudyRelationshipServiceResourceHome getStudyRelationshipServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studyRelationshipServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studyrelationshipservice.service.globus.resource.StudyRelationshipServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();
