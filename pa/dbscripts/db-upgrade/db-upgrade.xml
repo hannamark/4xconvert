@@ -60,5 +60,8 @@
         <comment>execute studyRelationship.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyRelationship.sql"/>
     </changeSet>    
-
+    <changeSet id="13" author="Naveen">
+        <comment>execute documentType.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/documentType.sql"/>
+    </changeSet>    
 </databaseChangeLog>
