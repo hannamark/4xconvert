@@ -531,7 +531,7 @@
       <ns2:Operation description="Gets the StudyParticipationContacts for the given functional role codes and study protocol." name="getByStudyProtocolAndRoles">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns106:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns106="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns107:StudyParticipationContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyParticipationContact" xmlns:ns107="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns107:StudyParticipationContact" dimensionality="1" index="1" isArray="true" isRequired="false" name="studyParticipationContact" xmlns:ns107="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns108:StudyParticipationContact" dimensionality="1" isArray="true" xmlns:ns108="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -992,7 +992,7 @@
       <ns2:Operation description="Gets the StudyContacts for the given functional role codes and study protocol." name="getByStudyProtocolAndRoles">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns198:Id" dimensionality="1" index="0" isArray="false" isRequired="false" name="studyProtocolId" xmlns:ns198="http://pa.services.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns199:StudyContact" dimensionality="1" index="1" isArray="false" isRequired="false" name="studyContact" xmlns:ns199="http://pa.services.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns199:StudyContact" dimensionality="1" index="1" isArray="true" isRequired="false" name="studyContact" xmlns:ns199="http://pa.services.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns200:StudyContact" dimensionality="1" isArray="true" xmlns:ns200="http://pa.services.coppa.nci.nih.gov"/>
        <ns2:faultCollection>

@@ -32,7 +32,7 @@ public interface StudyContactServiceI {
    * @throws PAFault
    *	
    */
-  public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact[] studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 

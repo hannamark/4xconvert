@@ -847,7 +847,7 @@
     <ns176:Method description="Gets the StudyParticipationContacts for the given functional role codes and study protocol." isImported="false" isProvided="false" name="getByStudyProtocolAndRoles" xsi:type="ns176:MethodType">
      <ns176:Inputs>
       <ns176:Input qName="ns186:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns186="http://pa.services.coppa.nci.nih.gov"/>
-      <ns176:Input qName="ns187:StudyParticipationContact" description="StudyParticipationContacts with the functional code criteria" isArray="false" name="studyParticipationContact" xmlns:ns187="http://pa.services.coppa.nci.nih.gov"/>
+      <ns176:Input qName="ns187:StudyParticipationContact" description="StudyParticipationContacts with the functional code criteria" isArray="true" name="studyParticipationContact" xmlns:ns187="http://pa.services.coppa.nci.nih.gov"/>
      </ns176:Inputs>
      <ns176:Output qName="ns188:StudyParticipationContact" description="" isArray="true" xmlns:ns188="http://pa.services.coppa.nci.nih.gov"/>
      <ns176:Exceptions>
@@ -1380,7 +1380,7 @@
     <ns334:Method description="Gets the StudyContacts for the given functional role codes and study protocol." isImported="false" isProvided="false" name="getByStudyProtocolAndRoles" xsi:type="ns334:MethodType">
      <ns334:Inputs>
       <ns334:Input qName="ns341:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns341="http://pa.services.coppa.nci.nih.gov"/>
-      <ns334:Input qName="ns342:StudyContact" description="StudyContacts with the functional code criteria" isArray="false" name="studyContact" xmlns:ns342="http://pa.services.coppa.nci.nih.gov"/>
+      <ns334:Input qName="ns342:StudyContact" description="StudyContacts with the functional code criteria" isArray="true" name="studyContact" xmlns:ns342="http://pa.services.coppa.nci.nih.gov"/>
      </ns334:Inputs>
      <ns334:Output qName="ns343:StudyContact" description="" isArray="true" xmlns:ns343="http://pa.services.coppa.nci.nih.gov"/>
      <ns334:Exceptions>

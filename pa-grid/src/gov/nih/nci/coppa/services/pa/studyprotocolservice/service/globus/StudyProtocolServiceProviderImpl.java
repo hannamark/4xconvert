@@ -26,12 +26,6 @@ public class StudyProtocolServiceProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse search(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse();
-    boxedResult.setStudyProtocol(impl.search(params.getStudyProtocol().getStudyProtocol()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetStudyProtocolResponse getStudyProtocol(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetStudyProtocolResponse();
     boxedResult.setStudyProtocol(impl.getStudyProtocol(params.getId().getId()));
@@ -59,6 +53,12 @@ public class StudyProtocolServiceProviderImpl{
     public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateInterventionalStudyProtocolResponse createInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateInterventionalStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateInterventionalStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateInterventionalStudyProtocolResponse();
     boxedResult.setId(impl.createInterventionalStudyProtocol(params.getInterventionalStudyProtocol().getInterventionalStudyProtocol()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse search(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse();
+    boxedResult.setStudyProtocol(impl.search(params.getStudyProtocol().getStudyProtocol()));
     return boxedResult;
   }
 

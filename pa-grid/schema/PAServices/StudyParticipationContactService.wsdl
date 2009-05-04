@@ -101,7 +101,7 @@
             <element name="studyParticipationContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyParticipationContact" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:StudyParticipationContact" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>

@@ -120,7 +120,7 @@ public class StudyParticipationContactServiceClient extends StudyParticipationCo
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipationContact studyParticipationContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipationContact[] studyParticipationContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocolAndRoles");
     gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.stubs.GetByStudyProtocolAndRolesRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.stubs.GetByStudyProtocolAndRolesRequest();
