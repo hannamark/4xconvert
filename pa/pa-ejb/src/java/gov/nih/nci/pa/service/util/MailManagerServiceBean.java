@@ -169,7 +169,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
           body = body.replace(currentDate, getFormatedCurrentDate());
           body = body.replace(submitterName,
                   registryUser.getFirstName() + " " + registryUser.getLastName());
-          body = body.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
+          body = body.replace("${leadOrgTrialId}", spDTO.getLocalStudyProtocolIdentifier().toString());
           body = body.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
           body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
           body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
