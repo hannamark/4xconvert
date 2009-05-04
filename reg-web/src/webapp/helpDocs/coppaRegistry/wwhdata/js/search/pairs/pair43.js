@@ -1,0 +1,26 @@
+function FileData_Pairs(x)
+{
+x.t("trials","amending");
+x.t("instructions","values");
+x.t("submissions","completing");
+x.t("verified","trials");
+x.t("change","nci");
+x.t("original","amended");
+x.t("details","instructions");
+x.t("details","section");
+x.t("details","amending");
+x.t("trial","details");
+x.t("trial","identifier");
+x.t("completing","trial");
+x.t("registered","trials");
+x.t("cannot","change");
+x.t("section","original");
+x.t("section","cannot");
+x.t("amended","submissions");
+x.t("identifier","number");
+x.t("values","completing");
+x.t("nci","trial");
+x.t("amending","verified");
+x.t("amending","trial");
+x.t("amending","registered");
+}
