@@ -954,7 +954,7 @@ public class BatchCreateProtocols {
         if (!isIndIdeEmpty(dto)) {
         StudyIndldeDTO indldeDTO = null;
             indldeDTO = new StudyIndldeDTO();
-            indldeDTO.setStudyProtocolIi(studyProtocolIi);
+            indldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
             // indldeDTO.setStatusDateRange(statusDateRange)sDateRange(statusDateRange)
             indldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(dto.getIndType()));
             indldeDTO.setIndldeNumber(StConverter.convertToSt(dto.getIndNumber()));
