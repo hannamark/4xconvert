@@ -45,18 +45,6 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
-    <path id="jboss.classpath">
-        <fileset dir="${jboss.deploy.directory}/../lib">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
-    <path id="jboss.client.classpath">
-        <fileset dir="${jboss.deploy.directory}/../../../client">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
     <path id="ejb.package.classpath">
         <fileset dir="${pa.dir}/pa-ejb/target">
            <include name="*.jar"/>
@@ -151,8 +139,6 @@
             <classpath>
                 <path refid="compile.classpath"/> 
                 <path refid="ejb.package.classpath"/>
-                <path refid="jboss.classpath"/>
-                <path refid="jboss.client.classpath"/>
             </classpath>
         </javac>
         <copy todir="${viewer.build.outputDir}">
@@ -184,8 +170,6 @@
             <classpath>
                 <pathelement location="${viewer.build.outputDir}"/> 
                 <path refid="test.classpath"/>
-                <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>
             </classpath>
         </javac>
         <copy todir="${viewer.build.testOutputDir}">
@@ -204,10 +188,7 @@
              
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
             <classpath>
-                <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>  
                 <path refid="ejb.package.classpath"/> 
-
             </classpath>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain"/>
@@ -329,7 +310,6 @@
             <classpath location="${viewer.build.testOutputDir}"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
-            <classpath refid="jboss.client.classpath"/>
             <batchtest todir="${viewer.test.reports}">
                 <fileset dir="${viewer.build.testDir.0}">
                     <include name="**/*Test.java"/>

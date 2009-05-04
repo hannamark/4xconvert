@@ -74,28 +74,48 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.service.PAException;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/04/2009
+ *
+ * @param <CRITERIA> criteria dto
+ * @param <RESULT> result dto
  */
-public class TrialListAction extends AbstractReportAction
-        <TrialListCriteriaDto, TrialListResultDto> {
+public abstract class AbstractBaseReportBean<CRITERIA, RESULT> implements BaseReportInterface<CRITERIA, RESULT> {
 
-    private static final long serialVersionUID = 8183194180770453447L;
+    private static final String UNCHECKED = "unchecked";
+    private final Class<RESULT> resultType;
+
+    /** Logger. */
+    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
+    protected final Logger logger;
+
+    /** Default constructor. */
+    @SuppressWarnings(UNCHECKED)
+    public AbstractBaseReportBean() {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        resultType = (Class) parameterizedType.getActualTypeArguments()[1];
+        logger = Logger.getLogger(resultType);
+    }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected List<TrialListResultDto> getReport() {
-        // TODO Auto-generated method stub
+    public List<RESULT> get(CRITERIA criteria) throws PAException {
+        logger.debug("Calling get(" + resultType.getName() + ")...");
+        if (criteria == null) {
+            throw new PAException("Report criteria dto must not be null.");
+        }
         return null;
     }
+
 }

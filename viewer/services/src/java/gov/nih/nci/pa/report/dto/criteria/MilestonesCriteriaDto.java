@@ -74,28 +74,12 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
-
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-
-import java.util.List;
+package gov.nih.nci.pa.report.dto.criteria;
 
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class TrialListAction extends AbstractReportAction
-        <TrialListCriteriaDto, TrialListResultDto> {
+public class MilestonesCriteriaDto {
 
-    private static final long serialVersionUID = 8183194180770453447L;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected List<TrialListResultDto> getReport() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

@@ -74,12 +74,82 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.service.criteria;
+package gov.nih.nci.pa.report.dto.result;
+
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 03/19/2009
  */
-public class SummarySentCriteriaDto {
+public class TrialListResultDto {
 
+    private St organization;
+    private Ts dateLastCreated;
+    private St assignedIdentifier;
+    private St officialTitle;
+    private Cd statusCode;
+
+    /**
+     * @return the organization
+     */
+    public St getOrganization() {
+        return organization;
+    }
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(St organization) {
+        this.organization = organization;
+    }
+    /**
+     * @return the dateLastCreated
+     */
+    public Ts getDateLastCreated() {
+        return dateLastCreated;
+    }
+    /**
+     * @param dateLastCreated the dateLastCreated to set
+     */
+    public void setDateLastCreated(Ts dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
+    }
+    /**
+     * @return the assignedIdentifier
+     */
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+    /**
+     * @return the officialTitle
+     */
+    public St getOfficialTitle() {
+        return officialTitle;
+    }
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(St officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+    /**
+     * @return the statusCode
+     */
+    public Cd getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(Cd statusCode) {
+        this.statusCode = statusCode;
+    }
 }

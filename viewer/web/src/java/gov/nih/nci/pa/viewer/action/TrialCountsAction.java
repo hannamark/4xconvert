@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.service.criteria.TrialCountsCriteriaDto;
-import gov.nih.nci.pa.report.service.result.TrialCountstResultDto;
+import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialCountstResultDto;
 
 import java.util.List;
 

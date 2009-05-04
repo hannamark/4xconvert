@@ -74,12 +74,12 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.service.result;
+package gov.nih.nci.pa.report.dto.criteria;
 
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class MilestonesResultDto {
+public class SummarySentCriteriaDto {
 
 }

@@ -1,8 +1,8 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.pa.report.service.criteria.TrialListCriteriaDto;
-import gov.nih.nci.pa.report.service.result.TrialListResultDto;
+import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 
 import java.util.List;
 

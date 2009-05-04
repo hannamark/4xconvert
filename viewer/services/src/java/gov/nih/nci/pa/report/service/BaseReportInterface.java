@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.service.PAException;
+
 import java.util.List;
 
 /**
@@ -13,6 +15,7 @@ public interface BaseReportInterface<CRITERIA, RESULT> {
     /**
      * @param criteria criteria
      * @return report
+     * @throws PAException exception
      */
-    List<RESULT> get(CRITERIA criteria);
+    List<RESULT> get(CRITERIA criteria) throws PAException;
 }

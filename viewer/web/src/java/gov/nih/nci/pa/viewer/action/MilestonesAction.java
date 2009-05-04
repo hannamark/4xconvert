@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.service.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.report.service.result.MilestonesResultDto;
+import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
 
 import java.util.List;
 

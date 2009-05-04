@@ -5,13 +5,7 @@
 	<classpathentry kind="src" path="services/test/java"/>
 	<classpathentry kind="src" path="web/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="JBOSS_HOME"/>
 	<classpathentry kind="var" path="VIEWER_LIB"/>
-	<classpathentry kind="var" path="JBOSS_HOME/client/log4j.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/javax.servlet.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/javax.servlet.jsp.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/hibernate3.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-ejb3x.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/xwork-2.1.2.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ajaxtags-1.3-beta-rc7.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/aopalliance-1.0.jar"/>
@@ -32,7 +26,6 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/hibernate-validator-3.0.0.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/iso-datatypes-1.2rc1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/itext-2.0.6.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jboss-annotations-ejb3-3.0_RC9_Patch_1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jdom-0.9.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jstl-1.1.2.jar"/>
@@ -53,5 +46,10 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/test/mockrunner-0.4.1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/pa-ejb-client-1.1.jar"/>
 	<classpathentry kind="var" path="CODE_PA/pa-ejb/target/pa-ejb.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/commons-logging-4.0.5.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate3-4.0.5.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/log4j-4.0.5.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/compile/javax.servlet-4.0.5.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

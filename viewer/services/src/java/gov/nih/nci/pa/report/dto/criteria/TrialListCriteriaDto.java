@@ -74,28 +74,39 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.dto.criteria;
 
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-
-import java.util.List;
+import gov.nih.nci.coppa.iso.Bl;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 03/19/2009
  */
-public class TrialListAction extends AbstractReportAction
-        <TrialListCriteriaDto, TrialListResultDto> {
-
-    private static final long serialVersionUID = 8183194180770453447L;
-
+public class TrialListCriteriaDto {
+    private Bl ctrpOnly;
+    private Bl userOnly;
     /**
-     * {@inheritDoc}
+     * @return the ctrpOnly
      */
-    @Override
-    protected List<TrialListResultDto> getReport() {
-        // TODO Auto-generated method stub
-        return null;
+    public Bl getCtrpOnly() {
+        return ctrpOnly;
+    }
+    /**
+     * @param ctrpOnly the ctrpOnly to set
+     */
+    public void setCtrpOnly(Bl ctrpOnly) {
+        this.ctrpOnly = ctrpOnly;
+    }
+    /**
+     * @return the userOnly
+     */
+    public Bl getUserOnly() {
+        return userOnly;
+    }
+    /**
+     * @param userOnly the userOnly to set
+     */
+    public void setUserOnly(Bl userOnly) {
+        this.userOnly = userOnly;
     }
 }

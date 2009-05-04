@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.report.service.criteria.TrialListCriteriaDto;
-import gov.nih.nci.pa.report.service.result.TrialListResultDto;
+import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 
 import javax.ejb.Local;
 

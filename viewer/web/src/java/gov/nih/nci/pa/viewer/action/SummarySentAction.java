@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.service.criteria.SummarySentCriteriaDto;
-import gov.nih.nci.pa.report.service.result.SummarySentResultDto;
+import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
 
 import java.util.List;
 
