@@ -181,6 +181,7 @@
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="compile.classpath"/>  
+            	<path refid="ejb.package.classpath"/>  
             </classpath>
         </javac>
         <copy todir="${reg-web.build.testOutputDir}">
@@ -362,6 +363,8 @@
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
+        	<classpath refid="ejb.package.classpath"/>
+        	<classpath refid="jboss.classpath"></classpath>
             <batchtest todir="${reg-web.test.reports}">
                 <fileset dir="${reg-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
@@ -381,8 +384,8 @@
                           srcdir="${reg-web.build.srcDir.0}" />
         
         <cobertura-check datafile="${reg-web.build.dir}/cobertura.ser"
-                         totalbranchrate="10" 
-                         totallinerate="10"
+                         totalbranchrate="30" 
+                         totallinerate="40"
                          haltonfailure="false"/>
      </target>
      
