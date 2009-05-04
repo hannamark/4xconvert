@@ -113,7 +113,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
     public StudyIndldeDTO convertFromDomainToDto(StudyIndlde si) {
         StudyIndldeDTO siDTO = new StudyIndldeDTO();
         siDTO.setIdentifier(IiConverter.converToStudyIndIdeIi(si.getId()));
-        siDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(si.getStudyProtocol().getId()));
+        siDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(si.getStudyProtocol().getId()));
         siDTO.setExpandedAccessStatusCode(CdConverter.convertToCd(si.getExpandedAccessStatusCode()));
         siDTO.setExpandedAccessIndicator(BlConverter.convertToBl(si.getExpandedAccessIndicator()));
         siDTO.setGrantorCode(CdConverter.convertToCd(si.getGrantorCode()));
@@ -136,7 +136,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
         StudyIndlde si = new StudyIndlde();
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(siDTO.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(siDTO.getStudyProtocolIdentifier()));
         si.setDateLastUpdated(new Date());
         si.setStudyProtocol(spBo);
         if (siDTO.getIdentifier() != null) {

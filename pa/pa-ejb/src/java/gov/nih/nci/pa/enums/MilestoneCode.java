@@ -120,7 +120,8 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** 11. */
     INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false), 
     /** 12. */
-    INITIAL_CTGOV_SUBMISSION("Initial Submission to CT.GOV Date", true, false, null, false),  
+    INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE("Initial Submission To Clinicaltrials.gov Date", true, 
+            false, null, false),  
     /** 13. */
     ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false);
 
@@ -198,7 +199,7 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmp.put(INITIAL_CTGOV_SUBMISSION, Collections.unmodifiableSet(tmpSet));
+        tmp.put(INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);

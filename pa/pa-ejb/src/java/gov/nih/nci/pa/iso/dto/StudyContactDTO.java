@@ -58,7 +58,6 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 
 
@@ -73,7 +72,6 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     
 
     private static final long serialVersionUID = 3439458093846665017L;
-    private Ii studyProtocolIi;
     private Bl primaryIndicator;
     private Cd roleCode;
     private Ad postalAddress;
@@ -103,19 +101,6 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     public void setRoleCode(Cd roleCode) {
         this.roleCode = roleCode;
     }
-    /**
-     * @return the studyProtocolIi
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    /**
-     * @param studyProtocolIi the studyProtocolIi to set
-     */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
-    }
-    
     /**
      * @return the primaryIndicator
      */

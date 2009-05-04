@@ -126,14 +126,14 @@ public class StudyContactServiceBeanTest {
   public void create() throws Exception {
     StudyContactDTO dto = new StudyContactDTO();
     dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-    dto.setStudyProtocolIi(pid);
+    dto.setStudyProtocolIdentifier(pid);
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
     dto.setClinicalResearchStaffIi(clinicalResearchStaffId);
     StudyContactDTO dto2 = null;
     dto2 = new StudyContactDTO();
     dto2 = remoteEjb.create(dto);
-    assertEquals(dto.getStudyProtocolIi()
+    assertEquals(dto.getStudyProtocolIdentifier()
         , pid);
   }
   @Test 
@@ -141,6 +141,6 @@ public class StudyContactServiceBeanTest {
       List<StudyContactDTO> statusList = remoteEjb.getByStudyProtocol(pid);
       assertTrue(statusList.size() > 0);
       StudyContactDTO dto = statusList.get(0);
-      assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+      assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
   }
 }

@@ -157,16 +157,16 @@ public class AddressConverterUtil {
         for (Adxp adxp : adxpList) {
             
             if (adxp instanceof AdxpAl) {
-                sb.append(adxp.getValue()).append(',');
+                sb.append(adxp.getValue()).append(", ");
             }
             if (adxp instanceof AdxpCty) {
-                sb.append(adxp.getValue()).append(',');
+                sb.append(adxp.getValue()).append(", ");
             }
             if (adxp instanceof AdxpSta) {
-                sb.append(adxp.getValue()).append(',');
+                sb.append(adxp.getValue()).append(", ");
             }
             if (adxp instanceof AdxpZip) {
-                sb.append(adxp.getValue()).append(',');
+                sb.append(adxp.getValue()).append(", ");
             }
             if (adxp instanceof AdxpCnt) {
                 sb.append(adxp.getCode());

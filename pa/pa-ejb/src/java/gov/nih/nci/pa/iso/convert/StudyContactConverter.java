@@ -135,7 +135,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
-        dto.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         // handle phone and email
         DSet<Tel> telAddresses = new DSet<Tel>();
         ArrayList<String> emailList = new ArrayList<String>();
@@ -169,7 +169,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
      */
     public StudyContact convertFromDtoToDomain(StudyContactDTO dto , StudyContact bo) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         HealthCareProvider hfBo = null;
         ClinicalResearchStaff crs = null;
         if (dto.getIdentifier() != null) {

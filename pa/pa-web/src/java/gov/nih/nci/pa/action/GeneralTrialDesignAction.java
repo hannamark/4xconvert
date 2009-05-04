@@ -449,7 +449,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
     private void createOrUpdateCentralContact(Ii studyProtocolIi) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO();
-        scDto.setStudyProtocolIi(studyProtocolIi);
+        scDto.setStudyProtocolIdentifier(studyProtocolIi);
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
         List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         if (srDtos != null && !srDtos.isEmpty()) {

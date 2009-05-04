@@ -107,7 +107,7 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
         sgDTO.setIdentifier(IiConverter.converToStratumGroupIi(sg.getId()));
         sgDTO.setDescription(StConverter.convertToSt(sg.getDescription()));
         sgDTO.setGroupNumberText(StConverter.convertToSt(sg.getGroupNumberText()));
-        sgDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(sg.getStudyProtocol().getId()));
+        sgDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sg.getStudyProtocol().getId()));
         return sgDTO;
     }
 
@@ -121,7 +121,7 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
         StratumGroup sg = new StratumGroup();
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(sgDTO.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(sgDTO.getStudyProtocolIdentifier()));
         sg.setDateLastUpdated(new Date());
         sg.setStudyProtocol(spBo);
         sg.setId(IiConverter.convertToLong(sgDTO.getIdentifier()));

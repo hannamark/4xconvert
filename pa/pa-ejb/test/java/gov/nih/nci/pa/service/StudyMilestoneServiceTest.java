@@ -221,7 +221,7 @@ public class StudyMilestoneServiceTest {
         // try to create
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt("comment"));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_CTGOV_SUBMISSION));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setStudyProtocolIdentifier(spIi);
         try {
@@ -255,7 +255,7 @@ public class StudyMilestoneServiceTest {
         // try to create w/ null dwf
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt("comment"));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_CTGOV_SUBMISSION));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setStudyProtocolIdentifier(spIi);
         try {

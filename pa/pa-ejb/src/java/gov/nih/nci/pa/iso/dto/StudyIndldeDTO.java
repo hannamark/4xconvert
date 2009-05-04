@@ -80,7 +80,6 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 
 /**
@@ -94,7 +93,6 @@ import gov.nih.nci.coppa.iso.St;
 public class StudyIndldeDTO extends StudyDTO {
 
     private static final long serialVersionUID = 3369161746616052203L;
-    private Ii studyProtocolIi;
     private Cd expandedAccessStatusCode;
     private Bl expandedAccessIndicator;
     private Cd grantorCode;
@@ -104,19 +102,6 @@ public class StudyIndldeDTO extends StudyDTO {
     private St indldeNumber;
     private Cd indldeTypeCode;
     
-    /**
-     * @return studyProtocolIi
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    
-    /**
-     * @param studyProtocolIi studyProtocolIi
-     */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
-    }
     /**
      * @return expandedAccessIndicator
      */

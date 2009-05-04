@@ -617,7 +617,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
 
     private void createIndIdes(Ii studyProtocolIi , List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
         for (StudyIndldeDTO studyIndldeDTO : studyIndldeDTOs) {
-            studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
+            studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
             studyIndldeDTO.setIdentifier(null);
             studyIndldeService.create(studyIndldeDTO);
         }

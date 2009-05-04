@@ -115,7 +115,7 @@ public class StratumGroupConverterTest {
             assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
             assertEquals(bo.getDescription(), dto.getDescription().getValue());
             assertEquals(bo.getGroupNumberText(), dto.getGroupNumberText().getValue());
-            assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+            assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         }
 
         @Test
@@ -125,13 +125,13 @@ public class StratumGroupConverterTest {
             dto.setIdentifier(IiConverter.convertToIi((Long) null));
             dto.setDescription(StConverter.convertToSt("Description"));
             dto.setGroupNumberText(StConverter.convertToSt("Code"));
-            dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+            dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
             StratumGroupConverter sg = new StratumGroupConverter();
             StratumGroup bo = sg.convertFromDtoToDomain(dto);
             assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
             assertEquals(bo.getDescription(), dto.getDescription().getValue());
             assertEquals(bo.getGroupNumberText(), dto.getGroupNumberText().getValue());
-            assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+            assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         }
 }

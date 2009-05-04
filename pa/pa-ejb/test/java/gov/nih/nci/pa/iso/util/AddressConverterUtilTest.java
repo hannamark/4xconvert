@@ -19,7 +19,7 @@ public class AddressConverterUtilTest {
 	@Test
 	public void testConvertToAddress() {
    
-		String sb = "101 Renner rd,Richardson,TX,75081USA";
+		String sb = "101 Renner rd, Richardson, TX, 75081 USA";
 		Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
 		assertEquals("Create and convert to address test pass",sb,AddressConverterUtil.convertToAddress(address));
 	}

@@ -136,7 +136,7 @@ implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {
       String newType = dto.getIndldeTypeCode().getCode();
       String newNumber = dto.getIndldeNumber().getValue();
       String newGrantor = dto.getGrantorCode().getCode();
-      List<StudyIndldeDTO> spList = getByStudyProtocol(dto.getStudyProtocolIi());
+      List<StudyIndldeDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
       for (StudyIndldeDTO sp : spList) {
           boolean sameType = newType.equals(sp.getIndldeTypeCode().getCode());
           boolean sameNumber = newNumber.equals(sp.getIndldeNumber().getValue());

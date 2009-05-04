@@ -67,5 +67,9 @@
     <changeSet id="14" author="Naveen">
         <comment>execute documentTypeCode.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/documentTypeCode.sql"/>
-    </changeSet>    
+    </changeSet>   
+     <changeSet id="15" author="Anupama">
+            <comment>execute studyMilestoneUpdate.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/studyMilestoneUpdate.sql"/>
+    </changeSet>
 </databaseChangeLog>

@@ -347,7 +347,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                  IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
 
          html.append(appendData("Facility Name" , orgBo.getName() , true , true));
-         html.append(appendData("Location" , orgBo.getCity() + " , " + orgBo.getState()
+         html.append(appendData("Location" , orgBo.getCity() + ", " + orgBo.getState()
              + " " + orgBo.getPostalCode() +  " " + orgBo.getCountryName() , true , true));
          if (ssasList != null && (!ssasList.isEmpty())) {
            html.append(appendData("Site Recruitment Status" , getData(ssasList.get(0).getStatusCode() , true)
@@ -946,7 +946,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           Country country =  PoPaServiceBeanLookup.getRegulatoryInformationService().getRegulatoryAuthorityCountry(
                   Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
           if (country != null && ra != null) {
-              data = country.getName() + " : " + ra.getAuthorityName();
+              data = country.getName() + ": " + ra.getAuthorityName();
           } else if (country != null) {
               data = country.getName();
           } else if (ra != null) {

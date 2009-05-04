@@ -161,7 +161,7 @@ public class TrialIndideAction extends ActionSupport {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
-            studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
+            studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
             studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
                 studyIndldeWebDTO.getExpandedAccessIndicator())));
             studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
@@ -202,7 +202,7 @@ public class TrialIndideAction extends ActionSupport {
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
             studyIndldeDTO = PaRegistry.getStudyIndldeService().get(IiConverter.convertToIi(cbValue));
-            studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
+            studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
             if (studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
               studyIndldeWebDTO.setExpandedAccessIndicator("true");
             } else {

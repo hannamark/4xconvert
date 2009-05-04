@@ -159,7 +159,7 @@ public class SubGroupsAction extends ActionSupport {
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
              getAttribute(Constants.STUDY_PROTOCOL_II);
              StratumGroupDTO sgDTO = new StratumGroupDTO();
-             sgDTO.setStudyProtocolIi(studyProtocolIi);
+             sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
              PaRegistry.getSubGroupsService().create(sgDTO);
@@ -204,7 +204,7 @@ public class SubGroupsAction extends ActionSupport {
              getAttribute(Constants.STUDY_PROTOCOL_II);
              StratumGroupDTO  sgDTO = new StratumGroupDTO();
              sgDTO.setIdentifier(IiConverter.convertToIi(id));
-             sgDTO.setStudyProtocolIi(studyProtocolIi);
+             sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
              PaRegistry.getSubGroupsService().update(sgDTO);

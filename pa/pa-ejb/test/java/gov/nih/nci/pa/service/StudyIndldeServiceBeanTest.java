@@ -148,7 +148,7 @@ public class StudyIndldeServiceBeanTest {
         StudyIndldeDTO dto = new StudyIndldeDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
-        dto.setStudyProtocolIi(pid);
+        dto.setStudyProtocolIdentifier(pid);
         dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
         dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstHolderCode.NCRR));
@@ -169,6 +169,6 @@ public class StudyIndldeServiceBeanTest {
         StudyIndldeDTO dto = dtoList.get(0);
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_IND_IDE_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
-        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

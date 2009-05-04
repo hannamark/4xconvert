@@ -237,7 +237,7 @@ public class Person extends AbstractEntity {
             fullName = lastName;
         }
         if (firstName != null) {
-            fullName = lastName + "," + firstName;
+            fullName = lastName + ", " + firstName;
         }
         return fullName;
     }

@@ -124,7 +124,7 @@ public class StudyContactConverterTest {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
     assertEquals(bo.getPrimaryIndicator(), dto.getPrimaryIndicator().getValue());
     assertEquals(bo.getRoleCode().getCode(), dto.getRoleCode().getCode());
-    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
   }
 
   @Test
@@ -133,7 +133,7 @@ public class StudyContactConverterTest {
     StudyContactDTO dto = new StudyContactDTO();
     dto.setIdentifier(IiConverter.convertToIi((Long) null));
     dto.setPrimaryIndicator(BlConverter.convertToBl((Boolean) null));
-    dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+    dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
     StudyContactConverter sg = new StudyContactConverter();

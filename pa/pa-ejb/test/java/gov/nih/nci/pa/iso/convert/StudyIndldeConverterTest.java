@@ -132,7 +132,7 @@ public class StudyIndldeConverterTest {
         assertEquals(bo.getExpandedAccessIndicator() ,  dto.getExpandedAccessIndicator().getValue());
         assertEquals(bo.getHolderTypeCode().getCode() ,  dto.getHolderTypeCode().getCode());
         assertEquals(bo.getNihInstHolderCode().getCode() ,  dto.getNihInstHolderCode().getCode());
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         assertEquals(bo.getIndldeTypeCode().getCode() , dto.getIndldeTypeCode().getCode());
         assertEquals(bo.getGrantorCode().getCode() , dto.getGrantorCode().getCode());
         assertEquals(bo.getIndldeNumber() , dto.getIndldeNumber().getValue());
@@ -147,7 +147,7 @@ public class StudyIndldeConverterTest {
         dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
         dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCMHD));
         dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
         dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
         dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
         dto.setIndldeNumber(StConverter.convertToSt("1234"));

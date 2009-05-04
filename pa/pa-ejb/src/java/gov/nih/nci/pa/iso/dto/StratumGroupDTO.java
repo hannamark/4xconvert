@@ -54,7 +54,6 @@
  */
 package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 
 /**
@@ -70,7 +69,7 @@ public class StratumGroupDTO extends StudyDTO {
     private static final long serialVersionUID = 7599434306662924307L;
     private St description;
     private St groupNumberText;
-    private Ii studyProtocolIi;
+   
     
     
     /**
@@ -97,16 +96,5 @@ public class StratumGroupDTO extends StudyDTO {
     public void setGroupNumberText(St groupNumberText) {
         this.groupNumberText = groupNumberText;
     }
-    /**
-     * @return studyProtocolIi
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    /**
-     * @param studyProtocolIi studyProtocolIi
-     */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
-    }
+    
 }

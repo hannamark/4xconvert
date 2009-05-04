@@ -214,7 +214,7 @@ public class PARelationServiceBean {
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
         scDTO.setHealthCareProviderIi(IiConverter.convertToIi(hcpId));
         scDTO.setRoleCode(CdConverter.convertStringToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode()));
-        scDTO.setStudyProtocolIi(spDTO.getIdentifier());
+        scDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         scDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
         PoPaServiceBeanLookup.getStudyContactService().create(scDTO);
     }
@@ -250,7 +250,7 @@ public class PARelationServiceBean {
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
         scDTO.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         scDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
-        scDTO.setStudyProtocolIi(spDTO.getIdentifier());
+        scDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         // set DSET
         // set the DSET
         ArrayList<String> emailList = new ArrayList<String>();

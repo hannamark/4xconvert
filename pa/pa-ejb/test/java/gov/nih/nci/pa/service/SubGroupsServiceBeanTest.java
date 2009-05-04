@@ -127,14 +127,13 @@ public class SubGroupsServiceBeanTest {
     @Test
     public void create() throws Exception {
         StratumGroupDTO dto = new StratumGroupDTO();
-        dto.setStudyProtocolIi(pid);
+        dto.setStudyProtocolIdentifier(pid);
         dto.setDescription(StConverter.convertToSt("Description"));
         dto.setGroupNumberText(StConverter.convertToSt("Code"));
         StratumGroupDTO dto2 = null;
         dto2 = new StratumGroupDTO();
         dto2 = remoteEjb.create(dto);
-        assertEquals(dto.getStudyProtocolIi()
-                , pid);
+        assertEquals(dto.getStudyProtocolIdentifier(), pid);
     }
 
     @Test 
@@ -144,6 +143,6 @@ public class SubGroupsServiceBeanTest {
         StratumGroupDTO dto = dtoList.get(0);
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STRATUM_GROUP_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
-        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }
