@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client;
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.OversightCommittee;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.common.OversightCommitteeI;
 
 import java.rmi.RemoteException;
@@ -9,8 +10,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
@@ -81,25 +80,23 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
 		}
 	}
 
-  private static void getOversightCommittee(OversightCommitteeClient client) throws RemoteException {
-		Id id = new Id();
-		id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
-		id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-		id.setExtension("642");
-		OversightCommittee result = client.getById(id);
-		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
-	  }
-	  private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
-		    OversightCommittee criteria = new OversightCommittee();
-		    CD statusCode = new CD();
-	        statusCode.setCode("pending");
-	        criteria.setStatus(statusCode);
-	        OversightCommittee[] results = client.search(criteria);
-	        System.out.println("Search OversightCommittee Results Found: " + results.length);
-	        for (OversightCommittee oc : results) {
-	            System.out.println(ToStringBuilder.reflectionToString(oc, ToStringStyle.MULTI_LINE_STYLE));
-	        }
-		  }
+	private static void getOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+        Id id = new Id();
+        id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
+        id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+        id.setExtension("642");
+        OversightCommittee result = client.getById(id);
+        ClientUtils.handleResult(result);
+    }
+
+    private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+        OversightCommittee criteria = new OversightCommittee();
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        OversightCommittee[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
@@ -137,7 +134,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.OversightCommittee[] search(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException {
+  public gov.nih.nci.coppa.po.OversightCommittee[] search(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequest();
@@ -183,6 +180,21 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     params.setOversightCommittee(oversightCommitteeContainer);
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.OversightCommittee[] query(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequestOversightCommittee oversightCommitteeContainer = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequestOversightCommittee();
+    oversightCommitteeContainer.setOversightCommittee(oversightCommittee);
+    params.setOversightCommittee(oversightCommitteeContainer);
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getOversightCommittee();
     }
   }
 

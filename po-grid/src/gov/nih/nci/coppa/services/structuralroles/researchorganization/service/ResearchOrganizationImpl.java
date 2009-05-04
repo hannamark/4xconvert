@@ -37,7 +37,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(ResearchOrg
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.ResearchOrganization[] search(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
+  public gov.nih.nci.coppa.po.ResearchOrganization[] search(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
       return impl.search(researchOrganization);
   }
 
@@ -51,6 +51,10 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(ResearchOrg
 
   public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.updateStatus(targetId, statusCode);
+  }
+
+  public gov.nih.nci.coppa.po.ResearchOrganization[] query(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      return impl.query(researchOrganization, limitOffset);
   }
 
 }

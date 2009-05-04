@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client;
 
 import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.healthcarefacility.common.HealthCareFacilityI;
 
 import java.rmi.RemoteException;
@@ -9,8 +10,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
@@ -86,23 +85,16 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         id.setExtension("640");
         HealthCareFacility result = client.getById(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        ClientUtils.handleResult(result);
     }
 
     private static void searchHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
-      HealthCareFacility criteria = new HealthCareFacility();
+        HealthCareFacility criteria = new HealthCareFacility();
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
         HealthCareFacility[] results = client.search(criteria);
-        if (results == null) {
-            System.out.println("Search HealthCareFacility Results was null!");
-        } else {
-            System.out.println("Search HealthCareFacility Results Found: " + results.length);
-        }
-        for (HealthCareFacility hcf : results) {
-          System.out.println(ToStringBuilder.reflectionToString(hcf, ToStringStyle.MULTI_LINE_STYLE));
-        }
+        ClientUtils.handleSearchResults(results);
     }
 
   public gov.nih.nci.coppa.po.HealthCareFacility getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
@@ -153,7 +145,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.HealthCareFacility[] search(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareFacility[] search(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest();
@@ -187,6 +179,21 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     statusCodeContainer.setCd(statusCode);
     params.setStatusCode(statusCodeContainer);
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusResponse boxedResult = portType.updateStatus(params);
+    }
+  }
+
+  public gov.nih.nci.coppa.po.HealthCareFacility[] query(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryRequestHealthCareFacility healthCareFacilityContainer = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryRequestHealthCareFacility();
+    healthCareFacilityContainer.setHealthCareFacility(healthCareFacility);
+    params.setHealthCareFacility(healthCareFacilityContainer);
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getHealthCareFacility();
     }
   }
 

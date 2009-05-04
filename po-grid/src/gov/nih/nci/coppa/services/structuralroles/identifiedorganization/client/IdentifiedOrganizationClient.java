@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedOrganization;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.common.IdentifiedOrganizationI;
 
 import java.rmi.RemoteException;
@@ -9,8 +10,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
@@ -86,7 +85,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 	id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
 	id.setExtension("592");
 	IdentifiedOrganization result = client.getById(id);
-	System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+	ClientUtils.handleResult(result);
   }
   
   private static void searchIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
@@ -95,14 +94,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
         IdentifiedOrganization[] results = client.search(criteria);
-        if (results == null) {
-            System.out.println("Search IdentifiedOrganization Results was null!");
-        } else {
-            System.out.println("Search IdentifiedOrganization Results Found: " + results.length);
-        }
-        for (IdentifiedOrganization idOrg : results) {
-            System.out.println(ToStringBuilder.reflectionToString(idOrg, ToStringStyle.MULTI_LINE_STYLE));
-        }
+        ClientUtils.handleSearchResults(results);
 	  }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
@@ -141,7 +133,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
     }
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] search(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException {
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] search(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchRequest();
@@ -187,6 +179,21 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
     params.setIdentifiedOrganization(identifiedOrganizationContainer);
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] query(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryRequestIdentifiedOrganization identifiedOrganizationContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryRequestIdentifiedOrganization();
+    identifiedOrganizationContainer.setIdentifiedOrganization(identifiedOrganization);
+    params.setIdentifiedOrganization(identifiedOrganizationContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getIdentifiedOrganization();
     }
   }
 

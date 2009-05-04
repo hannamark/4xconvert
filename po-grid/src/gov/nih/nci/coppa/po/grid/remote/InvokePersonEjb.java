@@ -99,8 +99,12 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public List<PersonDTO> search(PersonDTO arg0, LimitOffset arg1) throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+    public List<PersonDTO> search(PersonDTO person, LimitOffset page) throws TooManyResultsException {
+        try {
+            List<PersonDTO> persons = locator.getPersonService().search(person, page);
+            return persons;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 }

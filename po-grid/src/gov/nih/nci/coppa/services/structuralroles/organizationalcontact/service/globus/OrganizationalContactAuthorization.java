@@ -2,7 +2,6 @@ package gov.nih.nci.coppa.services.structuralroles.organizationalcontact.service
 
 
 import java.rmi.RemoteException;
-
 import javax.security.auth.Subject;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.MessageContext;
@@ -98,6 +97,11 @@ public class OrganizationalContactAuthorization implements PDP {
 		
 		
 	}
+					
+	public static void authorizeQuery() throws RemoteException {
+		
+		
+	}
 	
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -165,6 +169,14 @@ public class OrganizationalContactAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("validate")){
 			try{
 				authorizeValidate();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("query")){
+			try{
+				authorizeQuery();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

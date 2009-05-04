@@ -3,13 +3,16 @@ package gov.nih.nci.coppa.po.grid.services;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.po.grid.dto.transform.TransformerRegistry;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdArrayTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.LimitOffsetTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokeCorrelationService;
+import gov.nih.nci.coppa.po.grid.remote.Utils;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
@@ -126,18 +129,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     @SuppressWarnings("unchecked")
     public XML[] search(XML criteria) throws RemoteException {
         try {
-            DTO dto = (DTO) getTransformer().toDto(criteria);
-            List<DTO> dtoResults = getService().search(dto);
-            if (dtoResults == null) {
-                return null;
-            }
-            XML[] xmlResults = (XML[]) Array.newInstance(criteria.getClass(), dtoResults.size());
-            int i = 0;
-            for (DTO dtoResult : dtoResults) {
-                XML xmlResult = (XML) getTransformer().toXml(dtoResult);
-                xmlResults[i++] = xmlResult;
-            }
-            return xmlResults;
+            return this.query(criteria, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
         } catch (Exception e) {
             throw FaultUtil.reThrowRemote(e);
         }
@@ -180,6 +172,30 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
             Map<String, String[]> map = getService().validate(dto);
             StringMap stringMap = StringMapTransformer.INSTANCE.toXml(map);
             return stringMap;
+        } catch (Exception e) {
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public XML[] query(XML criteria, LimitOffset pageParams) throws RemoteException {
+        try {
+            gov.nih.nci.services.LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(pageParams);
+            DTO dto = (DTO) getTransformer().toDto(criteria);
+            List<DTO> dtoResults = getService().search(dto, limitOffsetDTO);
+            if (dtoResults == null) {
+                return null;
+            }
+            XML[] xmlResults = (XML[]) Array.newInstance(criteria.getClass(), dtoResults.size());
+            int i = 0;
+            for (DTO dtoResult : dtoResults) {
+                XML xmlResult = (XML) getTransformer().toXml(dtoResult);
+                xmlResults[i++] = xmlResult;
+            }
+            return xmlResults;
         } catch (Exception e) {
             throw FaultUtil.reThrowRemote(e);
         }

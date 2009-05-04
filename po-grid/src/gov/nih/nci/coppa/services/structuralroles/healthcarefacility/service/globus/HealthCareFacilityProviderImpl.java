@@ -50,7 +50,7 @@ public class HealthCareFacilityProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse();
     boxedResult.setHealthCareFacility(impl.search(params.getHealthCareFacility().getHealthCareFacility()));
     return boxedResult;
@@ -65,6 +65,12 @@ public class HealthCareFacilityProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryResponse();
+    boxedResult.setHealthCareFacility(impl.query(params.getHealthCareFacility().getHealthCareFacility(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

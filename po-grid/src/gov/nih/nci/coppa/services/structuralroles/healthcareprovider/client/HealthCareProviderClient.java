@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client;
 
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.healthcareprovider.common.HealthCareProviderI;
 
 import java.rmi.RemoteException;
@@ -9,8 +10,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
@@ -87,7 +86,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         id.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         id.setExtension("640");
         HealthCareProvider result = client.getById(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        ClientUtils.handleResult(result);
     }
 
     private static void searchHealthCareProvider(HealthCareProviderClient client) throws RemoteException {
@@ -96,14 +95,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
         HealthCareProvider[] results = client.search(criteria);
-        if (results == null) {
-            System.out.println("Search HealthCareProvider Results was null!");
-        } else {
-            System.out.println("Search HealthCareProvider Results Found: " + results.length);
-        }
-        for (HealthCareProvider hcf : results) {
-          System.out.println(ToStringBuilder.reflectionToString(hcf, ToStringStyle.MULTI_LINE_STYLE));
-        }
+        ClientUtils.handleSearchResults(results);
     }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
@@ -142,7 +134,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchRequest();
@@ -188,6 +180,21 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
     params.setHealthCareProvider(healthCareProviderContainer);
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.HealthCareProvider[] query(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.QueryRequestHealthCareProvider healthCareProviderContainer = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.QueryRequestHealthCareProvider();
+    healthCareProviderContainer.setHealthCareProvider(healthCareProvider);
+    params.setHealthCareProvider(healthCareProviderContainer);
+    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getHealthCareProvider();
     }
   }
 

@@ -44,7 +44,7 @@ public class OrganizationalContactProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse();
     boxedResult.setOrganizationalContact(impl.search(params.getOrganizationalContact().getOrganizationalContact()));
     return boxedResult;
@@ -65,6 +65,12 @@ public class OrganizationalContactProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.ValidateResponse validate(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.ValidateRequest params) throws RemoteException {
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.ValidateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.ValidateResponse();
     boxedResult.setStringMap(impl.validate(params.getOrganizationalContact().getOrganizationalContact()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse();
+    boxedResult.setOrganizationalContact(impl.query(params.getOrganizationalContact().getOrganizationalContact(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

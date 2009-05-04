@@ -3,12 +3,15 @@ package gov.nih.nci.coppa.services.entities.person.service;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.LimitOffsetTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokePersonEjb;
+import gov.nih.nci.coppa.po.grid.remote.Utils;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.services.LimitOffset;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.rmi.RemoteException;
@@ -62,25 +65,12 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException {
-        try {
-            PersonDTO person_iso = PersonTransformer.INSTANCE.toDto(person);
-            List<PersonDTO> results = personService.search(person_iso);
-            if (results == null) {
-                return null;
-            }
-            logger.debug("Person(s) found from COPPA:" + results.size());
-            gov.nih.nci.coppa.po.Person[] returnResults = new gov.nih.nci.coppa.po.Person[results.size()];
-            int i = 0;
-            for (PersonDTO person_res : results) {
-                gov.nih.nci.coppa.po.Person person_res_tr = PersonTransformer.INSTANCE.toXml(person_res);
-                returnResults[i++] = person_res_tr;
-            }
-            return returnResults;
-        } catch (Exception e) {
-            logger.error("Error in searching Person(s).", e);
-            throw FaultUtil.reThrowRemote(e);
-        }
+  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      try {
+          return this.query(person, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
+      } catch (Exception e) {
+          throw FaultUtil.reThrowRemote(e);
+      }
     }
 
   public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
@@ -103,5 +93,27 @@ public class PersonImpl extends PersonImplBase {
             throw FaultUtil.reThrowRemote(e);
         }
     }
+
+  public gov.nih.nci.coppa.po.Person[] query(gov.nih.nci.coppa.po.Person person,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      try {
+          LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
+          PersonDTO person_iso = PersonTransformer.INSTANCE.toDto(person);
+          List<PersonDTO> results = personService.search(person_iso, limitOffsetDTO);
+          if (results == null) {
+              return null;
+          }
+          logger.debug("Person(s) found from COPPA:" + results.size());
+          gov.nih.nci.coppa.po.Person[] returnResults = new gov.nih.nci.coppa.po.Person[results.size()];
+          int i = 0;
+          for (PersonDTO person_res : results) {
+              gov.nih.nci.coppa.po.Person person_res_tr = PersonTransformer.INSTANCE.toXml(person_res);
+              returnResults[i++] = person_res_tr;
+          }
+          return returnResults;
+      } catch (Exception e) {
+          logger.error("Error in searching Person(s).", e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+  }
 
 }

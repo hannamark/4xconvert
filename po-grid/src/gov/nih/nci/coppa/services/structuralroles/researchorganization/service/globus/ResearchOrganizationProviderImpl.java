@@ -44,7 +44,7 @@ public class ResearchOrganizationProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.SearchResponse();
     boxedResult.setResearchOrganization(impl.search(params.getResearchOrganization().getResearchOrganization()));
     return boxedResult;
@@ -65,6 +65,12 @@ public class ResearchOrganizationProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.QueryResponse();
+    boxedResult.setResearchOrganization(impl.query(params.getResearchOrganization().getResearchOrganization(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

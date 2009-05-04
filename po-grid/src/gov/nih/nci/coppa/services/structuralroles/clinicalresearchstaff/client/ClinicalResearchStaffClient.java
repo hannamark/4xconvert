@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client;
 import gov.nih.nci.coppa.po.ClinicalResearchStaff;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.common.ClinicalResearchStaffI;
 
 import java.rmi.RemoteException;
@@ -10,8 +11,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
@@ -83,26 +82,31 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
 	}
 	
     private static void getClinicalResearchStaff(ClinicalResearchStaffClient client) {
-        Id id = new Id();
-        id.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
-        id.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
-        id.setExtension("4172");
+        Id id = createII();
         ClinicalResearchStaff result;
         try {
             result = client.getById(id);
-            System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+            ClientUtils.handleResult(result);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
-    
-    private static void getClinicalResearchStaffs(ClinicalResearchStaffClient client) {
+
+    /**
+     * @return
+     */
+    private static Id createII() {
         Id id = new Id();
         id.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
         id.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
         id.setExtension("4172");
+        return id;
+    }
+    
+    private static void getClinicalResearchStaffs(ClinicalResearchStaffClient client) {
+        Id id = createII();
         
         Id id2 = new Id();
         id2.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
@@ -112,7 +116,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         try {
             ClinicalResearchStaff[] results;
             results = client.getByIds(new Id[] {id, id2});
-            print(results);
+            ClientUtils.handleSearchResults(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -128,23 +132,11 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         try {
             ClinicalResearchStaff[] results;
             results = client.search(criteria);
-            print(results);
+            ClientUtils.handleSearchResults(results);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
-
-    private static void print(ClinicalResearchStaff[] results) {
-        if (results == null) {
-            System.out.println("ClinicalResearchStaff Results was null!");
-        } else {
-            System.out.println("ClinicalResearchStaff Results Found: " + results.length);
-        }
-        for (ClinicalResearchStaff crs : results) {
-            System.out.println(ToStringBuilder.reflectionToString(crs, ToStringStyle.MULTI_LINE_STYLE));
-        }
-    }
-    
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
@@ -182,7 +174,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] search(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] search(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest();
@@ -228,6 +220,21 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     params.setClinicalResearchStaff(clinicalResearchStaffContainer);
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] query(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequestClinicalResearchStaff clinicalResearchStaffContainer = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequestClinicalResearchStaff();
+    clinicalResearchStaffContainer.setClinicalResearchStaff(clinicalResearchStaff);
+    params.setClinicalResearchStaff(clinicalResearchStaffContainer);
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getClinicalResearchStaff();
     }
   }
 

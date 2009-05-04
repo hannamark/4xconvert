@@ -44,7 +44,7 @@ public class IdentifiedPersonProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchResponse();
     boxedResult.setIdentifiedPerson(impl.search(params.getIdentifiedPerson().getIdentifiedPerson()));
     return boxedResult;
@@ -65,6 +65,12 @@ public class IdentifiedPersonProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateResponse validate(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequest params) throws RemoteException {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateResponse();
     boxedResult.setStringMap(impl.validate(params.getIdentifiedPerson().getIdentifiedPerson()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryResponse();
+    boxedResult.setIdentifiedPerson(impl.query(params.getIdentifiedPerson().getIdentifiedPerson(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

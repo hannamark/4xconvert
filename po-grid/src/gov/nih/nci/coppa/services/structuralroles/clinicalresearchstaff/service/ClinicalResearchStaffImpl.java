@@ -36,7 +36,7 @@ public class ClinicalResearchStaffImpl extends ClinicalResearchStaffImplBase {
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] search(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] search(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
       return impl.search(clinicalResearchStaff);
   }
 
@@ -51,5 +51,10 @@ public class ClinicalResearchStaffImpl extends ClinicalResearchStaffImplBase {
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException {
       return impl.validate(clinicalResearchStaff);
   }
+
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] query(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      return impl.query(clinicalResearchStaff, limitOffset);
+  }
+
 }
 

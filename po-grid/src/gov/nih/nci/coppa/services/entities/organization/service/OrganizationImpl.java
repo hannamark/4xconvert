@@ -5,12 +5,15 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.LimitOffsetTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokeOrganizationEjb;
+import gov.nih.nci.coppa.po.grid.remote.Utils;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.services.LimitOffset;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.rmi.RemoteException;
@@ -56,24 +59,12 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException {
-        try {
-            OrganizationDTO org = OrganizationTransformer.INSTANCE.toDto(organization);
-            List<OrganizationDTO> results = service.search(org);
-            if (results == null) {
-                return null;
-            }
-            gov.nih.nci.coppa.po.Organization[] returnResults = new gov.nih.nci.coppa.po.Organization[results.size()];
-            int i = 0;
-            for (OrganizationDTO res : results) {
-                gov.nih.nci.coppa.po.Organization o = OrganizationTransformer.INSTANCE.toXml(res);
-                returnResults[i++] = o;
-            }
-            return returnResults;
-        } catch (Exception e) {
-            logger.error("SEARCH:ORGANIZATION", e);
-            throw FaultUtil.reThrowRemote(e);
-        }
+  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      try {
+          return this.query(organization, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
+      } catch (Exception e) {
+          throw FaultUtil.reThrowRemote(e);
+      }
     }
 
   public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
@@ -108,5 +99,26 @@ public class OrganizationImpl extends OrganizationImplBase {
             throw FaultUtil.reThrowRemote(e);
         }
     }
+
+  public gov.nih.nci.coppa.po.Organization[] query(gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      try {
+          LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
+          OrganizationDTO org = OrganizationTransformer.INSTANCE.toDto(organization);
+          List<OrganizationDTO> results = service.search(org, limitOffsetDTO);
+          if (results == null) {
+              return null;
+          }
+          gov.nih.nci.coppa.po.Organization[] returnResults = new gov.nih.nci.coppa.po.Organization[results.size()];
+          int i = 0;
+          for (OrganizationDTO res : results) {
+              gov.nih.nci.coppa.po.Organization o = OrganizationTransformer.INSTANCE.toXml(res);
+              returnResults[i++] = o;
+          }
+          return returnResults;
+      } catch (Exception e) {
+          logger.error("SEARCH:ORGANIZATION", e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+  }
 
 }

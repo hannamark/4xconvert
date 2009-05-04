@@ -18,13 +18,15 @@ public interface HealthCareProviderI {
 
   public gov.nih.nci.coppa.po.HealthCareProvider[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
 
-  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException ;
+  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault ;
 
   public void update(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
 
   public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
 
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException ;
+
+  public gov.nih.nci.coppa.po.HealthCareProvider[] query(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault ;
 
 }
 

@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
@@ -33,6 +34,9 @@ public final class FaultUtil {
             } else if (cause instanceof EntityValidationException) {
                 EntityValidationException e = (EntityValidationException) cause;
                 return EntityValidationFaultTransformer.INSTANCE.toXml(e);
+            } else if (cause instanceof TooManyResultsException) {
+                TooManyResultsException e = (TooManyResultsException) cause;
+                return TooManyResultsFaultTransformer.INSTANCE.toXml(e);
             } else if (cause instanceof RemoteException) { /* default */
                 return (RemoteException) cause;
             } else {

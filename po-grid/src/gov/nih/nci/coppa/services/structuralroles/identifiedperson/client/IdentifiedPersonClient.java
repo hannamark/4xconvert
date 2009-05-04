@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedperson.client;
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.identifiedperson.common.IdentifiedPersonI;
 
 import java.rmi.RemoteException;
@@ -9,8 +10,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
@@ -87,19 +86,17 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         id.setIdentifierName(IDENTIFIED_PERSON_IDENTIFIER_NAME);
         id.setExtension("100");
         IdentifiedPerson result = client.getById(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
-      }
-      private static void searchIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
-            IdentifiedPerson criteria = new IdentifiedPerson();
-            CD statusCode = new CD();
-            statusCode.setCode("pending");
-            criteria.setStatus(statusCode);
-            IdentifiedPerson[] results = client.search(criteria);
-            System.out.println("Search IdentifiedPerson Results Found: " + results.length);
-            for (IdentifiedPerson idPerson : results) {
-                System.out.println(ToStringBuilder.reflectionToString(idPerson, ToStringStyle.MULTI_LINE_STYLE));
-            }
-          }
+        ClientUtils.handleResult(result);
+    }
+
+    private static void searchIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
+        IdentifiedPerson criteria = new IdentifiedPerson();
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        IdentifiedPerson[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
@@ -137,7 +134,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest();
@@ -183,6 +180,21 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     params.setIdentifiedPerson(identifiedPersonContainer);
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] query(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestIdentifiedPerson();
+    identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
+    params.setIdentifiedPerson(identifiedPersonContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getIdentifiedPerson();
     }
   }
 

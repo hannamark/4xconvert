@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.po.grid.services;
 
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.services.PoDto;
 
@@ -51,6 +52,14 @@ public interface CorrelationGridService<DTO extends PoDto, XML extends Object> {
      * @throws RemoteException for unexpected errors
      */
     XML[] search(XML criteria) throws RemoteException;
+    
+    /**
+     * @param criteria the search criteria
+     * @param pageParams the results paging parameters 
+     * @return objects matching the criteria
+     * @throws RemoteException for unexpected errors
+     */
+    XML[] query(XML criteria, LimitOffset pageParams) throws RemoteException;
 
     // CHECKSTYLE:OFF
     /**

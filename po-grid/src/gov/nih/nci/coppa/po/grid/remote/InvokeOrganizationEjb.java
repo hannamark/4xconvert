@@ -96,8 +96,11 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1) throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+    public List<OrganizationDTO> search(OrganizationDTO org, LimitOffset page) throws TooManyResultsException {
+        try {
+            return locator.getOrganizationService().search(org, page);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 }

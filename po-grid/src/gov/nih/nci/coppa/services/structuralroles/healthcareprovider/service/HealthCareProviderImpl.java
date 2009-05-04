@@ -38,7 +38,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(HealthCareF
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException {
+  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
       return impl.search(healthCareProvider);
   }
 
@@ -52,6 +52,10 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(HealthCareF
 
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException {
       return impl.validate(healthCareProvider);
+  }
+
+  public gov.nih.nci.coppa.po.HealthCareProvider[] query(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      return impl.query(healthCareProvider, limitOffset);
   }
 
 }

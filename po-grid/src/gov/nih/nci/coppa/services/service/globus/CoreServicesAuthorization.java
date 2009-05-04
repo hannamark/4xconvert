@@ -2,7 +2,6 @@ package gov.nih.nci.coppa.services.service.globus;
 
 
 import java.rmi.RemoteException;
-
 import javax.security.auth.Subject;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.MessageContext;

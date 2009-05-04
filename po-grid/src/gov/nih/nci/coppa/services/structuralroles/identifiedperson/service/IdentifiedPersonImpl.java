@@ -37,7 +37,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedP
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
       return impl.search(identifiedPerson);
   }
 
@@ -51,6 +51,10 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedP
 
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
       return impl.validate(identifiedPerson);
+  }
+
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] query(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      return impl.query(identifiedPerson, limitOffset);
   }
 
 }

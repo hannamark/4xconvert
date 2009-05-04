@@ -61,4 +61,13 @@
 			<extension base="COPPA-PO-FAULTS:NullifiedDataFault" />
 		</complexContent>
 	</complexType>
+	<complexType name="TooManyResultsFault">
+	  <complexContent>
+			<extension base="wsrbf:BaseFaultType">
+				<sequence>
+					<element name="maxResults" type="xs:int" />
+				</sequence>
+			</extension>
+	  </complexContent>
+	</complexType>	
 </schema>

@@ -173,6 +173,33 @@
           </sequence>
         </complexType>
       </element>
+      <element name="QueryRequest">
+        <complexType>
+          <sequence>
+            <element name="identifiedPerson">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:IdentifiedPerson" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="limitOffset">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:LimitOffset" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="QueryResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:IdentifiedPerson" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="IdentifiedPersonResourceProperties">
         <complexType>
           <sequence />
@@ -223,11 +250,20 @@
   <message name="ValidateResponse">
     <part name="parameters" element="tns:ValidateResponse" />
   </message>
+  <message name="QueryRequest">
+    <part name="parameters" element="tns:QueryRequest" />
+  </message>
+  <message name="QueryResponse">
+    <part name="parameters" element="tns:QueryResponse" />
+  </message>
   <message name="EntityValidationFaultFaultMessage">
     <part name="fault" element="ns10:EntityValidationFault" />
   </message>
   <message name="NullifiedRoleFaultFaultMessage">
     <part name="fault" element="ns10:NullifiedRoleFault" />
+  </message>
+  <message name="TooManyResultsFaultFaultMessage">
+    <part name="fault" element="ns10:TooManyResultsFault" />
   </message>
   <!--============================================================
 
@@ -253,6 +289,7 @@
     <operation name="search">
       <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/SearchRequest" />
       <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/SearchResponse" />
+      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="update">
       <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/UpdateRequest" />
@@ -267,6 +304,11 @@
     <operation name="validate">
       <input message="tns:ValidateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/ValidateRequest" />
       <output message="tns:ValidateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/ValidateResponse" />
+    </operation>
+    <operation name="query">
+      <input message="tns:QueryRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/QueryRequest" />
+      <output message="tns:QueryResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/QueryResponse" />
+      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

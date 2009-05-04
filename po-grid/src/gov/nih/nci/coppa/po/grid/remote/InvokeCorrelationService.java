@@ -137,9 +137,13 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
     /**
      * {@inheritDoc}
      */
-    public List<DTO> search(DTO arg0, LimitOffset arg1) throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+    public List<DTO> search(DTO dto, LimitOffset page) throws TooManyResultsException {
+        try {
+            List<DTO> results = getLocator().getService(type).search(dto, page);
+            return results;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
 }

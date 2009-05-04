@@ -44,7 +44,7 @@ public class ClinicalResearchStaffProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse();
     boxedResult.setClinicalResearchStaff(impl.search(params.getClinicalResearchStaff().getClinicalResearchStaff()));
     return boxedResult;
@@ -65,6 +65,12 @@ public class ClinicalResearchStaffProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.ValidateResponse validate(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.ValidateRequest params) throws RemoteException {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.ValidateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.ValidateResponse();
     boxedResult.setStringMap(impl.validate(params.getClinicalResearchStaff().getClinicalResearchStaff()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse();
+    boxedResult.setClinicalResearchStaff(impl.query(params.getClinicalResearchStaff().getClinicalResearchStaff(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

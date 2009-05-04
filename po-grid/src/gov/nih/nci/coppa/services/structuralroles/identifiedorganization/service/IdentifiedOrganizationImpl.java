@@ -37,7 +37,7 @@ public class IdentifiedOrganizationImpl extends IdentifiedOrganizationImplBase {
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] search(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException {
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] search(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
       return impl.search(identifiedOrganization);
   }
 
@@ -51,6 +51,10 @@ public class IdentifiedOrganizationImpl extends IdentifiedOrganizationImplBase {
 
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException {
     return impl.validate(identifiedOrganization);
+  }
+
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] query(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      return impl.query(identifiedOrganization, limitOffset);
   }
 
 }

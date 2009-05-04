@@ -16,13 +16,15 @@ public interface OrganizationI {
 
   public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
 
-  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
+  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault ;
 
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Organization organization) throws RemoteException ;
 
   public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault ;
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
+
+  public gov.nih.nci.coppa.po.Organization[] query(gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault ;
 
 }
 

@@ -44,7 +44,7 @@ public class OversightCommitteeProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse();
     boxedResult.setOversightCommittee(impl.search(params.getOversightCommittee().getOversightCommittee()));
     return boxedResult;
@@ -65,6 +65,12 @@ public class OversightCommitteeProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.ValidateResponse validate(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.ValidateRequest params) throws RemoteException {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.ValidateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.ValidateResponse();
     boxedResult.setStringMap(impl.validate(params.getOversightCommittee().getOversightCommittee()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse();
+    boxedResult.setOversightCommittee(impl.query(params.getOversightCommittee().getOversightCommittee(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

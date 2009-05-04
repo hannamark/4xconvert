@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client;
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.OrganizationalContact;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.organizationalcontact.common.OrganizationalContactI;
 
 import java.rmi.RemoteException;
@@ -9,8 +10,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 
@@ -81,25 +80,23 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 		}
 	}
 
-  private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
-		Id id = new Id();
-		id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
-		id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
-		id.setExtension("648");
-		OrganizationalContact result = client.getById(id);
-		System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
-	  }
-	  private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
-		    OrganizationalContact criteria = new OrganizationalContact();
-		    CD statusCode = new CD();
-	        statusCode.setCode("pending");
-	        criteria.setStatus(statusCode);
-	        OrganizationalContact[] results = client.search(criteria);
-	        System.out.println("Search OrganizationalContact Results Found: " + results.length);
-	        for (OrganizationalContact orgContact : results) {
-	            System.out.println(ToStringBuilder.reflectionToString(orgContact, ToStringStyle.MULTI_LINE_STYLE));
-	        }
-		  }
+	private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
+        Id id = new Id();
+        id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
+        id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+        id.setExtension("648");
+        OrganizationalContact result = client.getById(id);
+        ClientUtils.handleResult(result);
+    }
+
+    private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
+        OrganizationalContact criteria = new OrganizationalContact();
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        OrganizationalContact[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
@@ -137,7 +134,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact[] search(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException {
+  public gov.nih.nci.coppa.po.OrganizationalContact[] search(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest();
@@ -183,6 +180,21 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     params.setOrganizationalContact(organizationalContactContainer);
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.OrganizationalContact[] query(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequestOrganizationalContact organizationalContactContainer = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequestOrganizationalContact();
+    organizationalContactContainer.setOrganizationalContact(organizationalContact);
+    params.setOrganizationalContact(organizationalContactContainer);
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getOrganizationalContact();
     }
   }
 

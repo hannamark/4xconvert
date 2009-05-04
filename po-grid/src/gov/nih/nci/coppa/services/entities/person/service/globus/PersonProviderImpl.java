@@ -44,7 +44,7 @@ public class PersonProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse search(gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest params) throws RemoteException {
+    public gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse search(gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse();
     boxedResult.setPerson(impl.search(params.getPerson().getPerson()));
     return boxedResult;
@@ -59,6 +59,12 @@ public class PersonProviderImpl{
     public gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusResponse updateStatus(gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusResponse boxedResult = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusResponse();
     impl.updateStatus(params.getTargetId().getId(),params.getStatusCode().getCd());
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.entities.person.stubs.QueryResponse query(gov.nih.nci.coppa.services.entities.person.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.entities.person.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.entities.person.stubs.QueryResponse();
+    boxedResult.setPerson(impl.query(params.getPerson().getPerson(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

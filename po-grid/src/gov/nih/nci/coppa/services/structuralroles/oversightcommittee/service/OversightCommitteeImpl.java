@@ -38,7 +38,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedO
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.OversightCommittee[] search(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException {
+  public gov.nih.nci.coppa.po.OversightCommittee[] search(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
 	  return impl.search(oversightCommittee);
   }
 
@@ -53,5 +53,10 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedO
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException {
       return impl.validate(oversightCommittee); 
   }
+
+  public gov.nih.nci.coppa.po.OversightCommittee[] query(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+      return impl.query(oversightCommittee, limitOffset);
+  }
+
 }
 
