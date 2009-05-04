@@ -82,7 +82,6 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -97,19 +96,15 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
-import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
-import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,14 +257,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         Map<String, String> err = new HashMap<String, String>();
         err = validator.validateTrialDTO(trialDTO);
         addErrors(err);
-        if (PAUtil.isNotEmpty(trialDTO.getStatusCode())
-                && RegistryUtil.isValidDate(trialDTO.getStatusDate())
-                && PAUtil.isNotEmpty(trialDTO.getCompletionDateType())
-                && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
-                && PAUtil.isNotEmpty(trialDTO.getStartDateType())
-                && RegistryUtil.isValidDate(trialDTO.getStartDate())) {
-            validateTrialDates(trialDTO);
-        }
+        
         err = new HashMap<String, String>();
         err = validator.validateDcoument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName",
                 "error.submit.protocolDocument");
@@ -290,131 +278,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         err = new HashMap<String, String>();
         err = validator.validateDcoument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName", "");
         addErrors(err);
-    }
-    /**
-     * validate the submit trial dates.
-     */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
-    private void validateTrialDates(TrialDTO trialDto) {
-        String startDateFieldName = "trialDTO.startDate";
-        // Constraint/Rule: 18 Current Trial Status Date must be current or past.
-        if (PAUtil.isNotEmpty(trialDto.getStatusDate())) {
-            Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
-            Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-            if (currentTimeStamp.before(statusDate)) {
-                addFieldError("trialDTO.statusDate", getText("error.submit.invalidStatusDate"));                
-            }
-        }        
-        // Constraint/Rule: 19 Trial Start Date must be current/past if ‘actual’ trial start date type 
-        // is selected and must be future if ‘anticipated’ trial start date type is selected.
-        if (PAUtil.isNotEmpty(trialDto.getStartDate()) && PAUtil.isNotEmpty(trialDto.getStartDateType())) {
-            if (trialDto.getStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                Timestamp trialStartDate = PAUtil.dateStringToTimestamp(trialDto.getStartDate());
-                Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-                if (currentTimeStamp.before(trialStartDate)) {
-                    addFieldError(startDateFieldName, getText("error.submit.invalidActualStartDate"));                
-                }
-            } else if (trialDto.getStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                Timestamp trialStartDate = PAUtil.dateStringToTimestamp(trialDto.getStartDate());
-                Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-                if (currentTimeStamp.after(trialStartDate)) {
-                 addFieldError(startDateFieldName, getText("error.submit.invalidAnticipatedStartDate"));                
-                }
-            }          
-        }        
-        // Constraint/Rule: 20 Primary Completion Date must be current/past if ‘actual’ 
-        // primary completion date type is selected and must be future if ‘anticipated’ 
-        // trial primary completion date type is selected.
-        if (PAUtil.isNotEmpty(trialDto.getCompletionDate()) && PAUtil.isNotEmpty(trialDto.getCompletionDateType())) {
-            if (trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                 Timestamp completionDate = PAUtil.dateStringToTimestamp(trialDto.getCompletionDate());
-                 Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-                 if (currentTimeStamp.before(completionDate)) {
-                       addFieldError("trialDTO.completionDate", 
-                               getText("error.submit.invalidActualCompletionDate"));                
-                   }
-            } else if (trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                    Timestamp completionDate = PAUtil.dateStringToTimestamp(trialDto.getCompletionDate());
-                    Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-                    if (currentTimeStamp.after(completionDate)) {
-                            addFieldError("trialDTO.completionDate", 
-                                    getText("error.submit.invalidAnticipatedCompletionDate"));                
-                        }
-            }          
-        }        
-        // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
-        // Current Trial Status Date and have ‘actual’ type.
-        //pa2.0 release adding Trial Start date is smaller or same Current Trial Status Date
-        if (PAUtil.isNotEmpty(trialDto.getStatusCode())
-            && PAUtil.isNotEmpty(trialDto.getStatusDate())
-            && PAUtil.isNotEmpty(trialDto.getStartDate())
-            && PAUtil.isNotEmpty(trialDto.getStartDateType())
-            && TrialStatusCode.ACTIVE.getCode().equals(trialDto.getStatusCode())) {
-              Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
-              Timestamp trialStartDate = PAUtil.dateStringToTimestamp(trialDto.getStartDate());
-              if (trialStartDate.after(statusDate) 
-                              || !trialDto.getStartDateType().equals(
-                                  ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  addFieldError(startDateFieldName, getText("error.submit.invalidStartDate"));
-              }                
-          }            
-        // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
-        //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
-        if (PAUtil.isNotEmpty(trialDto.getStatusCode())
-                         && PAUtil.isNotEmpty(trialDto.getStartDateType())) {
-          if (TrialStatusCode.APPROVED.getCode().equals(
-                          trialDto.getStatusCode())) {
-              if (!trialDto.getStartDateType().equals(
-                              ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                  addFieldError("trialDTO.startDateType", 
-                          getText("error.submit.invalidStartDateTypeApproved"));
-              }                
-          } else {
-              if (!trialDto.getStartDateType().equals(
-                       ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                          addFieldError("trialDTO.startDateType", 
-                                  getText("error.submit.invalidStartDateTypeOther"));
-              }              
-          }
-        }        
-        // Constraint/Rule: 23 If Current Trial Status is ‘Completed’, Primary Completion Date must be the 
-        // same as Current Trial Status Date and have ‘actual’ type.
-        if (PAUtil.isNotEmpty(trialDto.getStatusCode()) && PAUtil.isNotEmpty(trialDto.getStatusDate())
-            && PAUtil.isNotEmpty(trialDto.getCompletionDate()) && PAUtil.isNotEmpty(trialDto.getCompletionDateType())
-            && TrialStatusCode.COMPLETE.getCode().equals(trialDto.getStatusCode())) {
-                  Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
-                  Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(trialDto.getCompletionDate());
-                  if (!statusDate.equals(trialCompletionDate) || !trialDto.getCompletionDateType().equals(
-                          ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                              addFieldError("trialDTO.completionDate", 
-                                  getText("error.submit.invalidCompletionDate"));
-              }                
-          }            
-        // Constraint/Rule: 24 If Current Trial Status is ‘Completed’ or ‘Administratively Completed’, 
-        // Primary Completion Date must have ‘actual’ type. Primary Completion Date must have ‘anticipated’ type 
-        // for any other Current Trial Status value besides ‘Completed’ or ‘Administratively Completed’. 
-        if (PAUtil.isNotEmpty(trialDto.getStatusCode()) && PAUtil.isNotEmpty(trialDto.getCompletionDateType())) {
-          if (TrialStatusCode.COMPLETE.getCode().equals(trialDto.getStatusCode()) 
-              || TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(trialDto.getStatusCode())) {
-              if (!trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                 addFieldError("trialDTO.completionDateType", getText("error.submit.invalidCompletionDateType"));
-              }
-          } else {
-              if (PAUtil.isNotEmpty(trialDto.getCompletionDateType()) && !trialDto.getCompletionDateType().equals(
-                  ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                  addFieldError("trialDTO.completionDateType", 
-                          getText("error.submit.invalidCompletionDateTypeOther"));                  
-              }
-          }          
-        }        
-        // Constraint/Rule:25 Trial Start Date must be same/smaller than Primary Completion Date. 
-        if (PAUtil.isNotEmpty(trialDto.getStartDate()) && PAUtil.isNotEmpty(trialDto.getCompletionDate())) {
-            Timestamp trialStartDate = PAUtil.dateStringToTimestamp(trialDto.getStartDate());
-            Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(trialDto.getCompletionDate());
-            if (trialCompletionDate.before(trialStartDate)) {
-                addFieldError(startDateFieldName, getText("error.submit.invalidTrialDates"));                
-            }
-        }        
     }
  
     /**

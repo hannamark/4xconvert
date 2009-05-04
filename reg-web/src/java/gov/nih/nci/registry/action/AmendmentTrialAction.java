@@ -186,7 +186,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         TrialUtil util = new TrialUtil();
         List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
         if (PAUtil.isNotEmpty(protocolDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.AMENDMENT_PROTOCOL_DOCUMENT.getCode(), 
+            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
                     protocolDocFileName, protocolDoc));
         }
         if (PAUtil.isNotEmpty(irbApprovalFileName)) {
@@ -300,7 +300,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 && RegistryUtil.isValidDate(trialDTO.getStatusDate())
                 && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
                 && RegistryUtil.isValidDate(trialDTO.getStartDate())
-                && validator.isStatusOrDateChanged(trialDTO)) {
+                && validator.isTrialStatusOrDateChanged(trialDTO)) {
             Collection<String> errDate = validator.enforceBusinessRulesForDates(trialDTO);
             if (!errDate.isEmpty()) {
                 for (String msg : errDate) {

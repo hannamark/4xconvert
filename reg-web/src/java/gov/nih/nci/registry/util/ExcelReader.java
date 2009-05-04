@@ -123,7 +123,7 @@ public class ExcelReader {
             break;
         case HSSFCell.CELL_TYPE_NUMERIC:
             if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                log.info("cell.getDateCellValue()" + cell.getDateCellValue());
+                //log.info("cell.getDateCellValue()" + cell.getDateCellValue());
                 result = convertDateToString(cell.getDateCellValue(), "MM/dd/yyyy");
             } else {
                 result = String.valueOf(cell.getNumericCellValue());
