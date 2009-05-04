@@ -80,150 +80,62 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.grid.remote;
+package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.pa.service.ArmServiceRemote;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-
-import java.util.Properties;
-
-import javax.naming.CommunicationException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
+import gov.nih.nci.coppa.services.pa.StudyOverallStatus;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 
 /**
- * Service locator that uses JNDI to look up services.
+ * Transforms StudyOverallStatus instances.
  */
-public final class JNDIServiceLocator implements ServiceLocator {
-    private static final Logger LOG = LogManager.getLogger(JNDIServiceLocator.class);
-    private static final int MAX_RETRIES = 2;
-    private static JNDIServiceLocator instance = new JNDIServiceLocator();
-    private InitialContext context;
+public final class StudyOverallStatusTransformer
+        implements Transformer<StudyOverallStatus, StudyOverallStatusDTO> {
 
-    private JNDIServiceLocator() {
-        try {
-            Properties props = new Properties();
-            props.load(JNDIServiceLocator.class.getClassLoader().getResourceAsStream("jndi.properties"));
-            context = new InitialContext(props);
-        } catch (Exception e) {
-            LOG.error("Unable to load jndi properties.", e);
-            throw new RuntimeException("Unable to load jndi properties.", e);
+    /**
+     * Public singleton.
+     */
+    public static final StudyOverallStatusTransformer INSTANCE = new StudyOverallStatusTransformer();
+
+    private StudyOverallStatusTransformer() { }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyOverallStatusDTO toDto(StudyOverallStatus input)
+            throws DtoTransformException {
+        if (input == null) {
+            return null;
         }
+        StudyOverallStatusDTO result = new StudyOverallStatusDTO();
+        result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        result.setReasonText(STTransformer.INSTANCE.toDto(input.getReasonText()));
+        result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
+        result.setStatusDate(TSTransformer.INSTANCE.toDto(input.getStatusDate()));
+        result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toDto(input.getStudyProtocol()));
+        return result;
     }
 
     /**
-     * Get the singleton instance of the service locator.
-     * @return the singleton locator
+     * {@inheritDoc}
      */
-    public static JNDIServiceLocator getInstance() {
-        return instance;
-    }
-
-    private Object lookup(String name) throws NamingException {
-        Object object = null;
-        int i = 0;
-        while (object == null && i < MAX_RETRIES) {
-            try {
-                object = context.lookup(name);
-            } catch (CommunicationException com) {
-                instance = new JNDIServiceLocator();
-            }
-            i++;
+    public StudyOverallStatus toXml(StudyOverallStatusDTO input)
+            throws DtoTransformException {
+        if (input == null) {
+            return null;
         }
-
-        return object;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ArmServiceRemote getArmService() throws NamingException {
-        ArmServiceRemote result = (ArmServiceRemote) lookup("pa/ArmServiceBean/remote");
+        StudyOverallStatus result = new StudyOverallStatus();
+        result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        result.setReasonText(STTransformer.INSTANCE.toXml(input.getReasonText()));
+        result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
+        result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
+        result.setStudyProtocol(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public StudyProtocolServiceRemote getStudyProtocolService() throws NamingException {
-        StudyProtocolServiceRemote result = (StudyProtocolServiceRemote) lookup("pa/StudyProtocolServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyResourcingServiceRemote getStudyResourcingService() throws NamingException {
-        StudyResourcingServiceRemote result =
-            (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
-        StudyRegulatoryAuthorityServiceRemote result =
-            (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws NamingException {
-        StudyRecruitmentStatusServiceRemote result =
-            (StudyRecruitmentStatusServiceRemote) lookup("pa/StudyRecruitmentStatusServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService()
-    throws NamingException {
-        StudySiteAccrualStatusServiceRemote result =
-            (StudySiteAccrualStatusServiceRemote) lookup("pa/StudySiteAccrualStatusServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyParticipationContactServiceRemote getStudyParticipationContactService()
-            throws NamingException {
-        StudyParticipationContactServiceRemote result =
-            (StudyParticipationContactServiceRemote) lookup("pa/StudyParticipationContactServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService()
-            throws NamingException {
-        StudyOutcomeMeasureServiceRemote result =
-            (StudyOutcomeMeasureServiceRemote) lookup("pa/StudyOutcomeMeasureServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService()
-            throws NamingException {
-        StudyOverallStatusServiceRemote result =
-                (StudyOverallStatusServiceRemote) lookup("pa/StudyOverallStatusServiceBean/remote");
-        return result;
-    }
 }

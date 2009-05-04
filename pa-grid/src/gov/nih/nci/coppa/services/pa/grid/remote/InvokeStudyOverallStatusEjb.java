@@ -82,148 +82,87 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
-import gov.nih.nci.pa.service.ArmServiceRemote;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 
-import java.util.Properties;
-
-import javax.naming.CommunicationException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import java.util.List;
 
 /**
- * Service locator that uses JNDI to look up services.
+ * Wrapper class for invoking the StudyOverallStatus remote EJB.
  */
-public final class JNDIServiceLocator implements ServiceLocator {
-    private static final Logger LOG = LogManager.getLogger(JNDIServiceLocator.class);
-    private static final int MAX_RETRIES = 2;
-    private static JNDIServiceLocator instance = new JNDIServiceLocator();
-    private InitialContext context;
+public class InvokeStudyOverallStatusEjb implements StudyOverallStatusServiceRemote {
 
-    private JNDIServiceLocator() {
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyOverallStatusDTO get(Ii ii) throws PAException {
         try {
-            Properties props = new Properties();
-            props.load(JNDIServiceLocator.class.getClassLoader().getResourceAsStream("jndi.properties"));
-            context = new InitialContext(props);
+            StudyOverallStatusDTO result = locator.getStudyOverallStatusService().get(ii);
+            return result;
         } catch (Exception e) {
-            LOG.error("Unable to load jndi properties.", e);
-            throw new RuntimeException("Unable to load jndi properties.", e);
+            throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
 
     /**
-     * Get the singleton instance of the service locator.
-     * @return the singleton locator
+     * {@inheritDoc}
      */
-    public static JNDIServiceLocator getInstance() {
-        return instance;
-    }
-
-    private Object lookup(String name) throws NamingException {
-        Object object = null;
-        int i = 0;
-        while (object == null && i < MAX_RETRIES) {
-            try {
-                object = context.lookup(name);
-            } catch (CommunicationException com) {
-                instance = new JNDIServiceLocator();
-            }
-            i++;
+    public List<StudyOverallStatusDTO> getByStudyProtocol(Ii ii)
+            throws PAException {
+        try {
+            List<StudyOverallStatusDTO> result = locator.getStudyOverallStatusService().getByStudyProtocol(ii);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
         }
-
-        return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public ArmServiceRemote getArmService() throws NamingException {
-        ArmServiceRemote result = (ArmServiceRemote) lookup("pa/ArmServiceBean/remote");
-        return result;
+    public List<StudyOverallStatusDTO> getCurrentByStudyProtocol(Ii ii)
+            throws PAException {
+        try {
+            List<StudyOverallStatusDTO> result = locator.getStudyOverallStatusService().getCurrentByStudyProtocol(ii);
+            return result;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyProtocolServiceRemote getStudyProtocolService() throws NamingException {
-        StudyProtocolServiceRemote result = (StudyProtocolServiceRemote) lookup("pa/StudyProtocolServiceBean/remote");
-        return result;
+    public void copy(Ii arg0, Ii arg1) throws PAException {
+        throw new PAException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyResourcingServiceRemote getStudyResourcingService() throws NamingException {
-        StudyResourcingServiceRemote result =
-            (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
-        return result;
+    public StudyOverallStatusDTO create(StudyOverallStatusDTO arg0)
+            throws PAException {
+        throw new PAException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
-        StudyRegulatoryAuthorityServiceRemote result =
-            (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
-        return result;
+    public void delete(Ii arg0) throws PAException {
+        throw new PAException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws NamingException {
-        StudyRecruitmentStatusServiceRemote result =
-            (StudyRecruitmentStatusServiceRemote) lookup("pa/StudyRecruitmentStatusServiceBean/remote");
-        return result;
+    public StudyOverallStatusDTO update(StudyOverallStatusDTO arg0)
+            throws PAException {
+        throw new PAException("Not yet implemented");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService()
-    throws NamingException {
-        StudySiteAccrualStatusServiceRemote result =
-            (StudySiteAccrualStatusServiceRemote) lookup("pa/StudySiteAccrualStatusServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyParticipationContactServiceRemote getStudyParticipationContactService()
-            throws NamingException {
-        StudyParticipationContactServiceRemote result =
-            (StudyParticipationContactServiceRemote) lookup("pa/StudyParticipationContactServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService()
-            throws NamingException {
-        StudyOutcomeMeasureServiceRemote result =
-            (StudyOutcomeMeasureServiceRemote) lookup("pa/StudyOutcomeMeasureServiceBean/remote");
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService()
-            throws NamingException {
-        StudyOverallStatusServiceRemote result =
-                (StudyOverallStatusServiceRemote) lookup("pa/StudyOverallStatusServiceBean/remote");
-        return result;
-    }
 }

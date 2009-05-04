@@ -408,6 +408,10 @@
         <run-client serviceendpointname="ArmService" class="gov.nih.nci.coppa.services.pa.armservice.client.ArmServiceClient" debug-suspend="n" />
     </target>
 
+    <target name="runStudyOverallStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyOverallStatusService Client">
+        <run-client serviceendpointname="StudyOverallStatusService" class="gov.nih.nci.coppa.services.pa.studyoverallstatusservice.client.StudyOverallStatusServiceClient" debug-suspend="n" />
+    </target>
+
     <target name="runStudyResourcingClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyResourcingService Client">
         <run-client serviceendpointname="StudyResourcingService" class="gov.nih.nci.coppa.services.pa.studyresourcingservice.client.StudyResourcingServiceClient" debug-suspend="n" />
     </target>
