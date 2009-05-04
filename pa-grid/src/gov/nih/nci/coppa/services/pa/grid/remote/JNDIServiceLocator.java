@@ -86,6 +86,7 @@ import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -214,6 +215,16 @@ public final class JNDIServiceLocator implements ServiceLocator {
             throws NamingException {
         StudyOutcomeMeasureServiceRemote result =
             (StudyOutcomeMeasureServiceRemote) lookup("pa/StudyOutcomeMeasureServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyParticipationServiceRemote getStudyParticipationService()
+            throws NamingException {
+        StudyParticipationServiceRemote result =
+            (StudyParticipationServiceRemote) lookup("pa/StudyParticipationServiceBean/remote");
         return result;
     }
 

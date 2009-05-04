@@ -86,6 +86,7 @@ import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -157,9 +158,17 @@ public interface ServiceLocator {
     StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService() throws NamingException;
 
     /**
+     * Gets the StudyParticipation Service.
+     * @return the remote StudyParticipationService.
+     * @throws NamingException if unable to lookup.
+     */
+    StudyParticipationServiceRemote getStudyParticipationService() throws NamingException;
+
+    /**
      * Gets the StudyOverallStatus service.
      * @return the remote StudyOverallStatus service
      * @throws NamingException if unable to lookup.
      */
     StudyOverallStatusServiceRemote getStudyOverallStatusService() throws NamingException;
+
 }

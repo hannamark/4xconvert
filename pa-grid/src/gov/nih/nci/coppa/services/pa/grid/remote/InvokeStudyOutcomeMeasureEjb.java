@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * Wrapper class for invoking the StudyParticipantContact remote EJB.
+ * Wrapper class for invoking the StudyOutcomeMeasure remote EJB.
  */
 public class InvokeStudyOutcomeMeasureEjb implements StudyOutcomeMeasureServiceRemote {
 
