@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.structuralroles.researchorganization.client;
 
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.ResearchOrganization;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.researchorganization.common.ResearchOrganizationI;
@@ -66,6 +67,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
               // test....
               getResearchOrg(client);
               searchResearchOrg(client);
+              queryResearchOrg(client);
             } else {
                 usage();
                 System.exit(1);
@@ -90,11 +92,28 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
 
     private static void searchResearchOrg(ResearchOrganizationClient client) throws RemoteException {
+        ResearchOrganization criteria = createCriteria();
+        ResearchOrganization[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
+
+    /**
+     * @return
+     */
+    private static ResearchOrganization createCriteria() {
         ResearchOrganization criteria = new ResearchOrganization();
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        ResearchOrganization[] results = client.search(criteria);
+        return criteria;
+    }
+    
+    private static void queryResearchOrg(ResearchOrganizationClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);        
+        ResearchOrganization criteria = createCriteria();
+        ResearchOrganization[] results = client.query(criteria, limitOffset);
         ClientUtils.handleSearchResults(results);
     }
 

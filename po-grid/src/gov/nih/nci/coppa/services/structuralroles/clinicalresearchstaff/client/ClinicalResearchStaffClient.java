@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client;
 
 import gov.nih.nci.coppa.po.ClinicalResearchStaff;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.common.ClinicalResearchStaffI;
@@ -67,6 +68,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
               getClinicalResearchStaff(client);
               getClinicalResearchStaffs(client);
               searchClinicalResearchStaff(client);
+              queryClinicalResearchStaff(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -114,8 +116,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         id2.setExtension("4230");
         
         try {
-            ClinicalResearchStaff[] results;
-            results = client.getByIds(new Id[] {id, id2});
+            ClinicalResearchStaff[] results = client.getByIds(new Id[] {id, id2});
             ClientUtils.handleSearchResults(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
@@ -130,8 +131,22 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
         try {
-            ClinicalResearchStaff[] results;
-            results = client.search(criteria);
+            ClinicalResearchStaff[] results = client.search(criteria);
+            ClientUtils.handleSearchResults(results);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    private static void queryClinicalResearchStaff(ClinicalResearchStaffClient client) {
+        ClinicalResearchStaff criteria = new ClinicalResearchStaff();
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
+        try {
+            LimitOffset limitOffset = new LimitOffset();
+            limitOffset.setLimit(1);
+            limitOffset.setOffset(0);
+            ClinicalResearchStaff[] results = client.query(criteria, limitOffset);
             ClientUtils.handleSearchResults(results);
         } catch (RemoteException e) {
             e.printStackTrace();

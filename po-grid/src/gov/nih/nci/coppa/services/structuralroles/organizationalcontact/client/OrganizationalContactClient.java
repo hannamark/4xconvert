@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client;
 
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.organizationalcontact.common.OrganizationalContactI;
@@ -66,6 +67,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 			  // test....
 			  getOrgContact(client);
 			  searchOrgContact(client);
+			  queryOrgContact(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -90,12 +92,29 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
 
     private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
+        OrganizationalContact criteria = createCriteria();
+        OrganizationalContact[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
+    
+    private static void queryOrgContact(OrganizationalContactClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);        
+        OrganizationalContact criteria = createCriteria();
+        OrganizationalContact[] results = client.query(criteria, limitOffset);
+        ClientUtils.handleSearchResults(results);
+    }
+
+    /**
+     * @return
+     */
+    private static OrganizationalContact createCriteria() {
         OrganizationalContact criteria = new OrganizationalContact();
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        OrganizationalContact[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        return criteria;
     }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {

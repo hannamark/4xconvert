@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedOrganization;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.common.IdentifiedOrganizationI;
 
@@ -66,6 +67,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 			  // test....
 			  getIdentifiedOrg(client);
 			  searchIdentifiedOrg(client);
+			  queryIdentifiedOrg(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -89,13 +91,30 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
   }
   
   private static void searchIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
-	    IdentifiedOrganization criteria = new IdentifiedOrganization();
-	    CD statusCode = new CD();
-        statusCode.setCode("pending");
-        criteria.setStatus(statusCode);
+	    IdentifiedOrganization criteria = createCriteria();
         IdentifiedOrganization[] results = client.search(criteria);
         ClientUtils.handleSearchResults(results);
 	  }
+  
+  private static void queryIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
+      LimitOffset limitOffset = new LimitOffset();
+      limitOffset.setLimit(1);
+      limitOffset.setOffset(0);
+      IdentifiedOrganization criteria = createCriteria();
+      IdentifiedOrganization[] results = client.query(criteria, limitOffset);
+      ClientUtils.handleSearchResults(results);
+  }
+
+/**
+ * @return
+ */
+private static IdentifiedOrganization createCriteria() {
+    IdentifiedOrganization criteria = new IdentifiedOrganization();
+      CD statusCode = new CD();
+      statusCode.setCode("pending");
+      criteria.setStatus(statusCode);
+    return criteria;
+}
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){

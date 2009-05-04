@@ -98,16 +98,6 @@ public final class ClientUtils {
     private ClientUtils() {
         //no-op
     }
-    
-    /**
-     * The identifier name for org ii's.
-     */
-    public static final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
-
-    /**
-     * The ii root value for orgs.
-     */
-    public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
 
     /**
      * @param identifier the ISO II information

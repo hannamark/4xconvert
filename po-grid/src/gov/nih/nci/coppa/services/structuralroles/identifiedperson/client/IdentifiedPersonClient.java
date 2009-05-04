@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedperson.client;
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.identifiedperson.common.IdentifiedPersonI;
 
@@ -66,6 +67,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
               // test....
               getIdentifiedPerson(client);
               searchIdentifiedPerson(client);
+              queryIdentifiedPerson(client);
             } else {
                 usage();
                 System.exit(1);
@@ -90,12 +92,29 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     }
 
     private static void searchIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
+        IdentifiedPerson criteria = createCriteria();
+        IdentifiedPerson[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
+    
+    private static void queryIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);        
+        IdentifiedPerson criteria = createCriteria();
+        IdentifiedPerson[] results = client.query(criteria, limitOffset);
+        ClientUtils.handleSearchResults(results);
+    }
+
+    /**
+     * @return
+     */
+    private static IdentifiedPerson createCriteria() {
         IdentifiedPerson criteria = new IdentifiedPerson();
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        IdentifiedPerson[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        return criteria;
     }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {

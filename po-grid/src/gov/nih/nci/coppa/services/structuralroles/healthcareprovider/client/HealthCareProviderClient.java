@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client;
 
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.healthcareprovider.common.HealthCareProviderI;
 
@@ -66,6 +67,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
               // test....
               getHealthCareProvider(client);
               searchHealthCareProvider(client);
+              queryHealthCareProvider(client);
             } else {
                 usage();
                 System.exit(1);
@@ -90,12 +92,29 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
     }
 
     private static void searchHealthCareProvider(HealthCareProviderClient client) throws RemoteException {
-      HealthCareProvider criteria = new HealthCareProvider();
+      HealthCareProvider criteria = createCriteria();
+        HealthCareProvider[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
+    
+    private static void queryHealthCareProvider(HealthCareProviderClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);
+        HealthCareProvider criteria = createCriteria();
+        HealthCareProvider[] results = client.query(criteria, limitOffset);
+        ClientUtils.handleSearchResults(results);
+    }
+
+    /**
+     * @return
+     */
+    private static HealthCareProvider createCriteria() {
+        HealthCareProvider criteria = new HealthCareProvider();
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        HealthCareProvider[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        return criteria;
     }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {

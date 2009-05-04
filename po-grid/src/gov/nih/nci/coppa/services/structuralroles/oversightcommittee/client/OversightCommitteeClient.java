@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client;
 
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.OversightCommittee;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.common.OversightCommitteeI;
@@ -66,6 +67,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
 			  // test....
 			  getOversightCommittee(client);
 			  searchOversightCommittee(client);
+			  queryOversightCommittee(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -90,11 +92,28 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     }
 
     private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+        OversightCommittee criteria = createCriteria();
+        OversightCommittee[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
+
+    /**
+     * @return
+     */
+    private static OversightCommittee createCriteria() {
         OversightCommittee criteria = new OversightCommittee();
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        OversightCommittee[] results = client.search(criteria);
+        return criteria;
+    }
+    
+    private static void queryOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);        
+        OversightCommittee criteria = createCriteria();
+        OversightCommittee[] results = client.query(criteria, limitOffset);
         ClientUtils.handleSearchResults(results);
     }
 

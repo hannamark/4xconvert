@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client;
 
 import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.structuralroles.healthcarefacility.common.HealthCareFacilityI;
 
@@ -65,6 +66,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 			  // test....
               getHealthCareFacility(client);
               searchHealthCareFacility(client);
+              queryHealthCareFacility(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -89,12 +91,28 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
 
     private static void searchHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
+        HealthCareFacility criteria = createCriteria();
+        HealthCareFacility[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
+    private static void queryHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);
+        HealthCareFacility criteria = createCriteria();
+        HealthCareFacility[] results = client.query(criteria, limitOffset);
+        ClientUtils.handleSearchResults(results);
+    }
+
+    /**
+     * @return
+     */
+    private static HealthCareFacility createCriteria() {
         HealthCareFacility criteria = new HealthCareFacility();
         CD statusCode = new CD();
         statusCode.setCode("pending");
         criteria.setStatus(statusCode);
-        HealthCareFacility[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        return criteria;
     }
 
   public gov.nih.nci.coppa.po.HealthCareFacility getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
