@@ -242,6 +242,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             } else {
                 addActionError("Error occured, please try again");
             }
+            TrialValidator.addSessionAttributes(trialDTO);
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while submitting trial: " + e);
             return ERROR;
@@ -569,7 +570,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
            if (indList != null) {
                trialDTO.setIndIdeDtos(indList);
            }
-           
+               
            List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.GRANT_LIST);
            if (grantList != null) {

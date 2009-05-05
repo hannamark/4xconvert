@@ -194,8 +194,8 @@ public class TrialValidator {
             }
             if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.WITHDRAWN.equals(newCode)
                     && trialDto.getStartDateType().equals(actualString)) {
-                addActionError.add("Trial Start date type should be ‘Anticipated’ and Trial Start date "
-                            + "should be future date if Trial Status is changed from ‘Approved’ to ‘Withdrawn’.  ");
+                addActionError.add("Trial Start date type should be 'Anticipated' and Trial Start date "
+                            + "should be future date if Trial Status is changed from 'Approved' to 'Withdrawn'.  ");
             }
             if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
                 if (trialDto.getCompletionDateType().equals(anticipatedString)) {
