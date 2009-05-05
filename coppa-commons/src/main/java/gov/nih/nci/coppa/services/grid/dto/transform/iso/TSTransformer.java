@@ -13,6 +13,7 @@ import org.iso._21090.TS;
 
 /**
  * Transforms strings.
+ *
  * @author mshestopalov
  */
 public final class TSTransformer extends QTYTransformer<TS, Ts> implements Transformer<TS, Ts> {
@@ -55,7 +56,7 @@ public final class TSTransformer extends QTYTransformer<TS, Ts> implements Trans
         }
         SimpleDateFormat sDf = new SimpleDateFormat(FORMAT_STRING, Locale.getDefault());
         sDf.setLenient(false);
-        TS x = (TS) transformBaseXml(input);
+        TS x = transformBaseXml(input);
 
         Date v = input.getValue();
         if (v != null) {
@@ -74,7 +75,7 @@ public final class TSTransformer extends QTYTransformer<TS, Ts> implements Trans
         if (input == null) {
             return null;
         }
-        Ts d = (Ts) transformBaseDto(input);
+        Ts d = transformBaseDto(input);
         SimpleDateFormat sDf = new SimpleDateFormat(FORMAT_STRING, Locale.getDefault());
         sDf.setLenient(false);
         String v = input.getValue();
