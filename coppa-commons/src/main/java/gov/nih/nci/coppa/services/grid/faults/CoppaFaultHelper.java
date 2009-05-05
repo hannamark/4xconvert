@@ -28,8 +28,6 @@ import org.w3c.dom.Element;
 @SuppressWarnings("PMD")
 public final class CoppaFaultHelper {
 
-    private static final String LS = System.getProperty("line.separator");
-
     /**
      * Stack trace error code URI.
      */
@@ -51,7 +49,7 @@ public final class CoppaFaultHelper {
         }
     }
 
-    private BaseFaultType fault;
+    private final BaseFaultType fault;
 
     /**
      * Creates <code>FaultHelper</code> with a fault. If the fault contains a stack trace it will be automatically

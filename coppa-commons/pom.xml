@@ -304,7 +304,7 @@
                         </excludes>
                     </instrumentation>
                     <check>
-                        <totalBranchRate>97</totalBranchRate>
+                        <totalBranchRate>96</totalBranchRate>
                         <totalLineRate>92</totalLineRate>
                     </check>
                     <formats>

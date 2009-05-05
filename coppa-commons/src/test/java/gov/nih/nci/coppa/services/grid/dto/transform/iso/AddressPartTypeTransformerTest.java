@@ -20,14 +20,14 @@ public class AddressPartTypeTransformerTest extends AbstractTransformerTestBase<
 
 	@Override
 	public void verifyDtoSimple(AddressPartType x) {
-		assertEquals(x.ZIP, AddressPartType.ZIP);
-		
+		assertEquals(AddressPartType.ZIP, AddressPartType.ZIP);
+
 	}
 
 	@Override
 	public void verifyXmlSimple(org.iso._21090.AddressPartType x) {
-		assertEquals(x.ZIP, org.iso._21090.AddressPartType.ZIP);
-		
+		assertEquals(org.iso._21090.AddressPartType.ZIP, org.iso._21090.AddressPartType.ZIP);
+
 	}
 
 }

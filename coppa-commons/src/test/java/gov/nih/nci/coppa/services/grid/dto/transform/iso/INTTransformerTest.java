@@ -11,7 +11,6 @@ import gov.nih.nci.coppa.iso.UncertaintyType;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import org.iso._21090.ED;
 import org.iso._21090.EDText;
@@ -22,14 +21,16 @@ import org.junit.Test;
 /**
  *
  * @author max
- */public class INTTransformerTest extends AbstractTransformerTestBase<INTTransformer, INT, Int>{
+ */
+public class INTTransformerTest extends AbstractTransformerTestBase<INTTransformer, INT, Int>{
 
-        public Date VALUE_DATE = new Date();
+        private static final Integer VALUE = 4;
+        private static final Integer UNCERT = 5;
 
         @Override
         public INT makeXmlSimple() {
             INT x = new INT();
-            x.setValue(VALUE_DATE.getDate());
+            x.setValue(VALUE);
             EDText edText = new EDText();
             ED ed = new EDTransformerTest().makeXmlSimple();
             edText.setCharset(ed.getCharset());
@@ -41,7 +42,7 @@ import org.junit.Test;
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
             INT uncert = new INT();
-            uncert.setValue(VALUE_DATE.getDate());
+            uncert.setValue(UNCERT);
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
             x.setUncertainty(uncert);
@@ -52,7 +53,7 @@ import org.junit.Test;
         @Override
         public Int makeDtoSimple() {
             Int x = new Int();
-            x.setValue(VALUE_DATE.getDate());
+            x.setValue(VALUE);
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
             edText.setCharset(ed.getCharset());
@@ -64,7 +65,7 @@ import org.junit.Test;
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
             Int uncert = new Int();
-            uncert.setValue(VALUE_DATE.getDate());
+            uncert.setValue(UNCERT);
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
             x.setUncertainty(uncert);
@@ -74,7 +75,7 @@ import org.junit.Test;
 
         @Override
         public void verifyXmlSimple(INT x) {
-            assertEquals(VALUE_DATE.getDate(), x.getValue().intValue());
+            assertEquals(VALUE, x.getValue());
             ED ed = new EDTransformerTest().makeXmlSimple();
             assertEquals(ed.getValue(), x.getOriginalText().getValue());
             assertEquals(ed.getNullFlavor(), x.getOriginalText().getNullFlavor());
@@ -84,14 +85,14 @@ import org.junit.Test;
             assertEquals(ed.getReference().getValue(), x.getOriginalText().getReference().getValue());
             assertEquals(ed.getXml(), x.getOriginalText().getXml());
 
-            assertEquals(VALUE_DATE.getDate(), ((INT) x.getUncertainty()).getValue().intValue());
+            assertEquals(UNCERT, ((INT) x.getUncertainty()).getValue());
             assertNotNull(x.getUncertainty());
             assertEquals(org.iso._21090.UncertaintyType.B, x.getUncertaintyType());
         }
 
         @Override
         public void verifyDtoSimple(Int x) {
-            assertEquals(VALUE_DATE.getDate(), x.getValue().intValue());
+            assertEquals(VALUE, x.getValue());
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
             edText.setCharset(ed.getCharset());
@@ -103,7 +104,7 @@ import org.junit.Test;
             edText.setNullFlavor(ed.getNullFlavor());
             assertEquals(edText, x.getOriginalText());
             Int uncert = new Int();
-            uncert.setValue(VALUE_DATE.getDate());
+            uncert.setValue(UNCERT);
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
             assertEquals(uncert, x.getUncertainty());
