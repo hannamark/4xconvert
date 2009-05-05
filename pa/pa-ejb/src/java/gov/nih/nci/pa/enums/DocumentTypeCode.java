@@ -101,8 +101,6 @@ public enum DocumentTypeCode implements CodedEnum<String> {
     INFORMED_CONSENT_DOCUMENT("Informed Consent Document"),
     /**Other.*/
     OTHER("Other"),
-    /** Amendment Protocol Document.*/
-    AMENDMENT_PROTOCOL_DOCUMENT("Amendment Protocol Document"),
     /** Change Memo Document.*/
     CHANGE_MEMO_DOCUMENT("Change Memo Document"),
     /**Protocol Highlighted Document.     */
