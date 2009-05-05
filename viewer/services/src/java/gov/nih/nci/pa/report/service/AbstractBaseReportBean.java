@@ -82,6 +82,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -92,12 +93,17 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractBaseReportBean<CRITERIA, RESULT> implements BaseReportInterface<CRITERIA, RESULT> {
 
-    private static final String UNCHECKED = "unchecked";
     private final Class<RESULT> resultType;
+
+    /** Static spring to suppress conversion warnings. */
+    protected static final String UNCHECKED = "unchecked";
 
     /** Logger. */
     @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
     protected final Logger logger;
+
+    /** Hibernate session. */
+    protected Session session;
 
     /** Default constructor. */
     @SuppressWarnings(UNCHECKED)
@@ -111,11 +117,10 @@ public abstract class AbstractBaseReportBean<CRITERIA, RESULT> implements BaseRe
      * {@inheritDoc}
      */
     public List<RESULT> get(CRITERIA criteria) throws PAException {
-        logger.debug("Calling get(" + resultType.getName() + ")...");
+        logger.info("Calling get(" + resultType.getName() + ")...");
         if (criteria == null) {
             throw new PAException("Report criteria dto must not be null.");
         }
         return null;
     }
-
 }

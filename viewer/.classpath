@@ -51,5 +51,12 @@
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/log4j-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/javax.servlet-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/test/dom4j-1.6.1.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/test/hsqldb-1.8.0.7.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/spring-2.0.5.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate-annotations-3.2.0.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate-commons-annotations-3.3.0.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate-validator-3.0.0.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/test/cglib-4.0.5.GA.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

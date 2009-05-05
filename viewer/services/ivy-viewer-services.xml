@@ -1,12 +1,3 @@
-<!--
-$Id: ivy-bda.xml 253 2008-07-17 01:29:14Z saksass $
-$HeadURL: https://gforge.nci.nih.gov/svnroot/automation/trunk/bda/ivy/ivy-bda.xml $
-
-This is the definition of a virtual module called bda-download that has a dependency
-of bda-utils.  This virtual project causes the download of bda-utils from the NCICB Ivy
-Repository.  This file currently points to the 1.0 version of bda-utils if you want to
-use another version change the rev="1.0" to the desired version.
--->
 <ivy-module version="1.0">
   <info organisation="cbiit" module="pa-ejb"
         />
@@ -48,9 +39,12 @@ use another version change the rev="1.0" to the desired version.
     <dependency org="org.hibernate"  name="hibernate-commons-annotations"   rev="3.3.0.GA"        conf="compile->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
-
+    <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="compile->master"/>
+    
     <!-- test -->
+    <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
     <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>    
+    <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->runtime"/>
 
     <!-- other test targets -->

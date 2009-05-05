@@ -76,15 +76,22 @@
 */
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
 
 /**
 * @author Hugh Reinhart
@@ -94,50 +101,50 @@ import javax.ejb.Stateless;
 public class TrialListBean extends AbstractBaseReportBean<TrialListCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
 
+    private static final int ORGANIZATION_IDX = 0;
+    private static final int DATE_LAST_CREATED_IDX = 1;
+    private static final int ASSIGNED_IDENTIFIER_IDX = 2;
+    private static final int OFFICIAL_TITLE_IDX = 3;
+    private static final int STATUS_CODE_IDX = 4;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<TrialListResultDto> get(TrialListCriteriaDto criteria) throws PAException {
         super.get(criteria);
-
         ArrayList<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
-        TrialListResultDto dto = new TrialListResultDto();
-        dto.setOfficialTitle(StConverter.convertToSt("Hello world"));
-        rList.add(dto);
+        try {
+            session = HibernateUtil.getCurrentSession();
+            SQLQuery query = null;
+            String sql = "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
+                       + "       , sp.official_title, dws.status_code "
+                       + "FROM csm_user AS cm, document_workflow_status AS dws, study_protocol AS sp "
+                       + "WHERE sp.identifier = dws.study_protocol_identifier "
+                       + "  AND sp.user_last_created = cm.login_name "
+                       + "  AND cm.login_name Not In ('brownph2@mail.nih.gov','pb8593@yahoo.com') "
+                       + "  AND dws.identifier in "
+                       + "      ( select max(identifier) "
+                       + "        from document_workflow_status "
+                       + "        group by study_protocol_identifier ) "
+                       + "ORDER BY cm.organization, sp.date_last_created";
+            logger.info("query = " + sql);
+            query = session.createSQLQuery(sql);
+            @SuppressWarnings(UNCHECKED)
+            List<Object[]> queryList = query.list();
+            for (Object[] sr : queryList) {
+                TrialListResultDto rdto = new TrialListResultDto();
+                rdto.setOrganization(StConverter.convertToSt((String) sr[ORGANIZATION_IDX]));
+                rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) sr[DATE_LAST_CREATED_IDX]));
+                rdto.setAssignedIdentifier(StConverter.convertToSt((String) sr[ASSIGNED_IDENTIFIER_IDX]));
+                rdto.setOfficialTitle(StConverter.convertToSt((String) sr[OFFICIAL_TITLE_IDX]));
+                rdto.setStatusCode(CdConverter.convertStringToCd((String) sr[STATUS_CODE_IDX]));
+                rList.add(rdto);
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in get.  ", hbe);
+        }
+        logger.info("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
         return rList;
-
-//        getLogger().info("Entering getByStudyProtocol.  ");
-//
-//        Session session = null;
-//        List<BO> queryList = new ArrayList<BO>();
-//        try {
-//            session = HibernateUtil.getCurrentSession();
-//            Query query = null;
-//
-//            // step 1: form the hql
-//            String hql = "select alias "
-//                       + "from " + getTypeArgument().getName() + " alias "
-//                       + "join alias.studyProtocol sp "
-//                       + "where sp.id = :studyProtocolId "
-//                       + "order by alias.id ";
-//            getLogger().info("query " +  getTypeArgument().getName() + " = " + hql + ".  ");
-//
-//            // step 2: construct query object
-//            query = session.createQuery(hql);
-//            query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
-//
-//            // step 3: query the result
-//            queryList = query.list();
-//        } catch (HibernateException hbe) {
-//            throw new PAException("Hibernate exception in getByStudyProtocol.  ", hbe);
-//        }
-//        ArrayList<DTO> resultList = new ArrayList<DTO>();
-//        for (BO bo : queryList) {
-//            resultList.add(convertFromDomainToDto(bo));
-//        }
-//        getLogger().info("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).  ");
-//        return resultList;
-//
     }
 }
