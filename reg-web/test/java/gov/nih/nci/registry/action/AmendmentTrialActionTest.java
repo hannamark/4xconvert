@@ -527,6 +527,6 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         dto.setStatusDate("02/22/2010");
         trialAction.setTrialDTO(dto);
         assertEquals("error", trialAction.review());
-        assertTrue(trialAction.getActionErrors().contains("Current Trial Status Date cannot be in the future"));
+        assertTrue(trialAction.getFieldErrors().containsKey("trialDTO.statusDate"));
     }
 }
