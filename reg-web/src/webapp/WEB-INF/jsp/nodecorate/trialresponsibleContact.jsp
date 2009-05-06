@@ -1,7 +1,18 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<s:textfield label="Responsible Party Name" name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
-
-<input type="button" id="lookupbtn4RP" value="Look Up" onclick="lookup4loadresponsibleparty();" title="Opens a popup form to select Responsible Party Contact"/>
+<table>
+<tr>
+<td><s:textfield label="Responsible Party Name" name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
+</td>
+<td class="value">
+    <ul style="margin-top:-5px;">              
+        <li style="padding-left:0">
+         <a href="#" class="btn" id="lookupbtn4RP" onclick="lookup4loadresponsibleparty();" title="Opens a popup form to select Responsible Party Contact"/><span class="btn_img">
+         <span class="person">Look Up Person</span></span></a>
+        </li>
+    </ul>
+</td>
+</tr>
+</table>
 <span class="info">Required only if Responsible Party is Sponsor</span>
 <span class="formErrorMsg"> 
      <s:fielderror>

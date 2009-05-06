@@ -12,7 +12,7 @@
 	<display:column title="Zip" property="zip"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 		<display:column title="Action" class="action" sortable="false">
 		<a href="#" class="btn" onclick="submitform('${row.id}','${row.name}')">
-		<span class="btn_img"><span class="add">Select</span></span></a>  
+		<span class="btn_img"><span class="confirm">Select</span></span></a>  
 	</display:column>
 </display:table>
 </c:if>
