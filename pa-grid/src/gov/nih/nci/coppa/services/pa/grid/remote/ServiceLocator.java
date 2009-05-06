@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -170,5 +171,12 @@ public interface ServiceLocator {
      * @throws NamingException if unable to lookup.
      */
     StudyOverallStatusServiceRemote getStudyOverallStatusService() throws NamingException;
+
+    /**
+     * Gets the StudyDisease service.
+     * @return the remote StudyDisease service
+     * @throws NamingException if unable to lookup.
+     */
+    StudyDiseaseServiceRemote getStudyDiseaseService() throws NamingException;
 
 }

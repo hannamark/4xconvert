@@ -318,7 +318,7 @@
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="89" totallinerate="95" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="91" totallinerate="96" />
     </target>
 
     <!--
@@ -444,6 +444,10 @@
 
   <target name="runStudyParticipationClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyParticipationService Client">
           <run-client serviceendpointname="StudyParticipationService" class="gov.nih.nci.coppa.services.pa.studyparticipationservice.client.StudyParticipationServiceClient" debug-suspend="n" />
+  </target>
+
+  <target name="runStudyDiseaseClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyDiseaseService Client">
+              <run-client serviceendpointname="StudyDiseaseService" class="gov.nih.nci.coppa.services.pa.studydiseaseservice.client.StudyDiseaseServiceClient" debug-suspend="n" />
   </target>
 
 </project>

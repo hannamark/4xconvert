@@ -85,7 +85,7 @@ public class StudyParticipationServiceClient extends StudyParticipationServiceCl
         id.setExtension("27441");
         StudyParticipation stCont = client.get(id);
         if (stCont == null) {
-            System.out.println("could not find StudyParticipant");
+            System.out.println("could not find StudyDisease");
         } else {
             System.out.println("StudyParticipant 27441 found.");
         }
