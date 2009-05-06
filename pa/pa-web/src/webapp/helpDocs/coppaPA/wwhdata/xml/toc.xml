@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpTOC version="5.0" xmlns="urn:WebWorks-Help-TOC-Schema">
+  <i t="Protocol Abstraction Online Help" l="0">
+    <i t="Using the Online Help" l="1">
+      <i t="Using Navigation Tools" l="2" />
+    </i>
+  </i>
+  <i t="Getting Started" l="3">
+    <i t="Overview of Protocol Abstraction" l="4" />
+    <i t="Logging In to Protocol Abstraction" l="5" />
+    <i t="Logging Out of Protocol Abstraction" l="6" />
+  </i>
+  <i t="Validating Trials" l="7">
+    <i t="About Trial Validation" l="8">
+      <i t="Selecting Trials that Require Validation" l="9" />
+      <i t="Navigating the Validation Workspace" l="10" />
+      <i t="Saving Trial Information" l="11" />
+    </i>
+    <i t="Reviewing Recorded Trial Details" l="12" />
+    <i t="Reviewing Trial Documents" l="13" />
+    <i t="Reviewing Status Details" l="14" />
+    <i t="Reviewing Funding Details" l="15" />
+    <i t="Reviewing IND/IDE Details" l="16" />
+    <i t="Validating Amended Trial Submissions" l="17" />
+    <i t="Accepting and Rejecting Trials" l="18" />
+  </i>
+  <i t="Abstracting Trial Overview Data" l="19">
+    <i t="About Trial Overview Data" l="20" />
+    <i t="Abstracting Trial History Information" l="21" />
+    <i t="Abstracting Trial Milestones" l="22">
+      <i t="Trial Processing Life Cycle and Milestone Events" l="23" />
+      <i t="Trial Summary Report Life Cycle" l="24" />
+      <i t="Milestone and Processing Status Rules" l="25" />
+      <i t="Viewing and Adding Milestones" l="26" />
+    </i>
+    <i t="Abstracting On-hold Information" l="27">
+      <i t="Adding On-hold Records" l="28" />
+      <i t="Editing On-hold Records" l="29" />
+    </i>
+  </i>
+  <i t="Abstracting Administrative Data" l="30">
+    <i t="About Administrative Data" l="31" />
+    <i t="Abstracting General Trial Details" l="32">
+      <i t="Abstracting Trial Titles" l="33" />
+      <i t="Abstracting Trial Descriptions" l="34" />
+      <i t="Abstracting Lead Organizations and Principle Investigators" l="35" />
+      <i t="Abstracting Sponsors and Responsible Parties" l="36" />
+      <i t="Abstracting Central Contacts" l="37" />
+    </i>
+    <i t="Abstracting NCI-Specific Information" l="38" />
+    <i t="Abstracting Regulatory Information" l="39">
+      <i t="Abstracting Human Subject Safety Information" l="40" />
+      <i t="Abstracting Trial IND/IDE Information" l="41" />
+    </i>
+    <i t="Abstracting Trial Status Information" l="42" />
+    <i t="Abstracting Trial Funding Information" l="43" />
+    <i t="Abstracting Participating Site Information" l="44">
+      <i t="Linking Organizations to a Trial" l="45" />
+      <i t="Linking Investigators to a Trial" l="46" />
+      <i t="Abstracting Contacts" l="47" />
+      <i t="Unlinking Participating Sites From a Trial" l="48" />
+      <i t="Editing Participating Site Information" l="49" />
+    </i>
+    <i t="Abstracting Collaborator Information" l="50">
+      <i t="Unlinking Collaborators From a Trial" l="51" />
+    </i>
+    <i t="Abstracting Trial-Related Documents" l="52">
+      <i t="Adding Trial-Related Documents" l="53" />
+      <i t="Deleting Trial-Related Documents" l="54" />
+      <i t="Editing and Replacing Documents" l="55" />
+    </i>
+  </i>
+  <i t="Abstracting Scientific Data" l="56">
+    <i t="Abstracting Trial Descriptions" l="57" />
+    <i t="Abstracting Interventional Trial Design" l="58">
+      <i t="Abstracting Interventional Trial Design Details" l="59" />
+      <i t="Abstracting Interventional Trial Outcome Measures" l="60">
+        <i t="Adding Outcome Measures" l="61" />
+        <i t="Editing Outcome Measures" l="62" />
+        <i t="Deleting Outcome Measures" l="63" />
+      </i>
+      <i t="Abstracting Interventional Trial Eligibility Criteria" l="64" />
+      <i t="Adding Other Eligibility Criteria" l="65" />
+      <i t="Editing Other Eligibility Criteria" l="66" />
+      <i t="Deleting Eligibility Criteria" l="67" />
+    </i>
+    <i t="Abstracting Diseases/Conditions" l="68">
+      <i t="Viewing Disease/Condition Details" l="69" />
+      <i t="Adding Diseases/Conditions to a Trial" l="70" />
+      <i t="Unlinking Diseases/Conditions from a Trial" l="71" />
+    </i>
+    <i t="Abstracting Interventions" l="72">
+      <i t="Adding Interventions to a Trial" l="73" />
+      <i t="Editing Intervention Records" l="74" />
+      <i t="Unlinking Interventions from a Trial" l="75" />
+    </i>
+    <i t="Abstracting Arm Information" l="76">
+      <i t="Adding Arms to a Trial" l="77" />
+      <i t="Editing Arm Records" l="78" />
+      <i t="Deleting Arms" l="79" />
+    </i>
+    <i t="Abstracting Sub-Groups" l="80">
+      <i t="Adding Sub-groups to a Trial" l="81" />
+      <i t="Editing Sub-group Records" l="82" />
+      <i t="Deleting Sub-groups" l="83" />
+    </i>
+  </i>
+  <i t="Completing Abstractions" l="84">
+    <i t="About Abstraction Validation" l="85">
+      <i t="Trial Completion Criteria" l="86" />
+      <i t="Trial Reporting" l="87" />
+    </i>
+    <i t="Completing and Validating Abstractions" l="88" />
+  </i>
+  <i t="Working With Person Records" l="89">
+    <i t="Looking Up Registered Persons" l="90" />
+  </i>
+  <i t="Working With Organization Records" l="91">
+    <i t="Looking Up Registered Organizations" l="92" />
+  </i>
+  <i t="Metadata Definitions" l="93" />
+  <i t="Glossary" l="94" />
+  <i t="Application Support" l="95">
+    <i t="Application Support" l="95#1083658" />
+  </i>
+</WebWorksHelpTOC>
