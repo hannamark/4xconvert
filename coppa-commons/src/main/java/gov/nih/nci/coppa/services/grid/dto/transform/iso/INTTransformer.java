@@ -44,7 +44,7 @@ public final class INTTransformer extends QTYTransformer<INT, Int> implements Tr
         if (input == null) {
             return null;
         }
-        INT x = (INT) transformBaseXml(input);
+        INT x = transformBaseXml(input);
         Integer v = input.getValue();
         if (v != null) {
             x.setValue(v);
@@ -62,7 +62,7 @@ public final class INTTransformer extends QTYTransformer<INT, Int> implements Tr
         if (input == null) {
             return null;
         }
-        Int d = (Int) transformBaseDto(input);
+        Int d = transformBaseDto(input);
         Integer v = input.getValue();
         if (v != null) {
             d.setValue(v);

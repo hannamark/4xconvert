@@ -46,7 +46,7 @@ public final class PQVTransformer extends QTYTransformer<PQ, Pqv> implements Tra
         if (input == null) {
             return null;
         }
-        PQ x = (PQ) transformBaseXml(input);
+        PQ x = transformBaseXml(input);
         BigDecimal v = input.getValue();
         if (v != null) {
             x.setValue(v.doubleValue());
@@ -66,7 +66,7 @@ public final class PQVTransformer extends QTYTransformer<PQ, Pqv> implements Tra
         if (input == null) {
             return null;
         }
-        Pqv d = (Pqv) transformBaseDto(input);
+        Pqv d = transformBaseDto(input);
         Double v = input.getValue();
         if (v != null) {
             d.setValue(BigDecimal.valueOf(v));
