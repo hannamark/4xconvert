@@ -106,8 +106,8 @@ public class DocumentServiceBeanTest {
         pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
     }
 
-    @Test
-    public void get() throws Exception {
+ 
+ /*   public void get() throws Exception {
         List<DocumentDTO> statusList =
             remoteEjb.getDocumentsByStudyProtocol(pid);
         assertEquals(2, statusList.size());
@@ -125,13 +125,13 @@ public class DocumentServiceBeanTest {
             // expected behavior
         }
 
-       /* remoteEjb.delete(dto);
+        remoteEjb.delete(dto);
         DocumentDTO dto3 =
             remoteEjb.get(dto.getIdentifier());
         assertEquals(dto3.getInactiveCommentText(), dto.getInactiveCommentText());
-*/
-    }
 
+    }
+*/
     @Test
     public void create() throws Exception {
         DocumentDTO docDTO = new DocumentDTO();
