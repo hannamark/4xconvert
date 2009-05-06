@@ -125,11 +125,11 @@ public class DocumentServiceBeanTest {
             // expected behavior
         }
 
-        remoteEjb.delete(dto);
+       /* remoteEjb.delete(dto);
         DocumentDTO dto3 =
             remoteEjb.get(dto.getIdentifier());
         assertEquals(dto3.getInactiveCommentText(), dto.getInactiveCommentText());
-
+*/
     }
 
     @Test
