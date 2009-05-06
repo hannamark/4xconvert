@@ -9,20 +9,21 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
     <head>
-        <title><decorator:title default="Protocol Abstraction (PA)"/></title>  	  
+        <title><decorator:title default="Protocol Abstraction (PA)"/></title>     
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>        
         <link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
         <link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />        
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/Help.js"/>"></script>		
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/pa.js"/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/Help.js"/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/wwhapi.js"/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/wwhbaseurl.js"/>"></script> 
         <decorator:head/>
     </head>
     <body onload="setFocusToFirstControl();">
     <div id="wrapper" class="curate">
         <jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
         <jsp:include page="/WEB-INF/jsp/common/paheader.jsp"/>
-        <div id="main">	
+        <div id="main"> 
             <div id="contentwrapper">
                 <div id="content">
                     <a href="#" class="helpbutton" onclick="Help.popHelp('');">Help</a>
