@@ -89,11 +89,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -281,44 +279,38 @@ ServletResponseAware {
      */
     public String open() throws PAException {
     try {
-    DocumentDTO  docDTO =
-            PaRegistry.getDocumentService().get(IiConverter.convertToIi(getDocii()));
+          DocumentDTO  docDTO =
+                PaRegistry.getDocumentService().get(IiConverter.convertToIi(getDocii()));
         
-    StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(IiConverter.convertToIi(getStudyProtocolii()));
-        StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
-        sb.append(File.separator).append(spDTO.getAssignedIdentifier().getExtension()).append(File.separator).
-            append(docDTO.getIdentifier().getExtension()).append('-').append(getDocFileName());
+          StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(IiConverter.convertToIi(getStudyProtocolii()));
+   
+          StringBuffer fileName = new StringBuffer();
+          fileName.append(spDTO.getAssignedIdentifier().getExtension()).
+          append('-').append(docDTO.getFileName().getValue());
 
-        File downloadFile = new File(sb.toString());
-        StringBuffer fileName = new StringBuffer();
-        fileName.append(spDTO.getAssignedIdentifier().getExtension()).
-        append('-').append(docDTO.getFileName().getValue());
+          ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData());
 
-        FileInputStream fileToDownload = new FileInputStream(downloadFile);
+          servletResponse.setContentType("application/octet-stream");
+          servletResponse.setContentLength(docDTO.getText().getData().length);
+          servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName.toString() + "\"");
+          servletResponse.setHeader("Pragma", "public");
+          servletResponse.setHeader("Cache-Control", "max-age=0");
 
-        servletResponse.setContentType("application/octet-stream");
-        servletResponse.setContentLength(fileToDownload.available());
-        servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName.toString() + "\"");
-        servletResponse.setHeader("Pragma", "public");
-        servletResponse.setHeader("Cache-Control", "max-age=0");
-
-
-        int data;
-        ServletOutputStream out = servletResponse.getOutputStream();
-        while ((data = fileToDownload.read()) != -1) {
+          int data;
+          ServletOutputStream out = servletResponse.getOutputStream();
+          while ((data = bStream.read()) != -1) {
             out.write(data);
-        }
-        out.flush();
-        out.close();
-          
-        
-    } catch (FileNotFoundException err) {
+          }
+          out.flush();
+          out.close();
+      } catch (FileNotFoundException err) {
         LOG.error("TrialHistoryAction failed with FileNotFoundException: "
                 + err);
         addActionError(err.getMessage());
         return super.execute();
         
     } catch (Exception e) {
+        addActionError(e.getMessage());
         ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         return super.execute();
     }

@@ -88,10 +88,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -215,30 +215,24 @@ ServletResponseAware {
          try {
              DocumentDTO  docDTO =
                  PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
-
+             
              StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
              .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-
-
-             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
-             sb.append(File.separator).append(spDTO.getNciIdentifier()).append(File.separator).
-                 append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
-
-             File downloadFile = new File(sb.toString());
+           
              StringBuffer fileName = new StringBuffer();
              fileName.append(spDTO.getNciIdentifier()).append('-').append(docDTO.getFileName().getValue());
 
-             FileInputStream fileToDownload = new FileInputStream(downloadFile);
              servletResponse.setContentType("application/octet-stream");
-             servletResponse.setContentLength(fileToDownload.available());
+             servletResponse.setContentLength(docDTO.getText().getData().length);
              servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName.toString() + "\"");
              servletResponse.setHeader("Pragma", "public");
              servletResponse.setHeader("Cache-Control", "max-age=0");
 
 
              int data;
+             ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData()); 
              ServletOutputStream out = servletResponse.getOutputStream();
-             while ((data = fileToDownload.read()) != -1) {
+             while ((data =  bStream.read()) != -1) {
                  out.write(data);
              }
              out.flush();

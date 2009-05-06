@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -91,10 +92,15 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -122,6 +128,8 @@ public class DocumentServiceBean
                 implements DocumentServiceRemote, DocumentServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(DocumentServiceBean.class);
+    private static final int MAXF = 1024;
+    private static final String MSG = "docDTO should not be null";
 
     private SessionContext ejbContext;
 
@@ -188,7 +196,7 @@ public class DocumentServiceBean
     public DocumentDTO create(DocumentDTO docDTO)
     throws PAException {
         if (docDTO == null) {
-            throw new PAException(" docDTO should not be null ");
+            throw new PAException(MSG);
         }
         LOG.debug("Entering createTrialDocument ");
         checkTypeCodes(docDTO);
@@ -227,7 +235,7 @@ public class DocumentServiceBean
      * @return DocumentDTO
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"PMD" })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public DocumentDTO get(Ii id) throws PAException {
 
@@ -262,7 +270,21 @@ public class DocumentServiceBean
         if (!queryList.isEmpty()) {
             doc = queryList.get(0);
             docDTO = DocumentConverter.convertFromDomainToDTO(doc);
-
+            try {
+                StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
+                StudyProtocolServiceBean spBean = new StudyProtocolServiceBean();
+                StudyProtocolDTO spDTO = spBean.getStudyProtocol(docDTO.getStudyProtocolIi());
+                sb.append(File.separator).append(spDTO.getAssignedIdentifier().getExtension()).append(File.separator).
+                    append(docDTO.getIdentifier().getExtension()).append('-').append(doc.getFileName());
+                File downloadFile = new File(sb.toString());
+                docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(downloadFile))));
+            
+            } catch (FileNotFoundException fe) {
+               throw new PAException(" File Not found " + fe.getLocalizedMessage(), fe);
+            } catch (IOException io) {
+                throw new PAException(" IO Exception" + io.getLocalizedMessage(), io);
+            }
+                     
         }
         session.flush();
         LOG.info("Leaving getTrialDocumentById");
@@ -279,8 +301,8 @@ public class DocumentServiceBean
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
 
         if (docDTO == null) {
-            LOG.error(" docDTO should not be null ");
-            throw new PAException(" docDTO should not be null ");
+            LOG.error(MSG);
+            throw new PAException(MSG);
         }
         LOG.debug("Entering updateTrialDocument ");
         DocumentDTO docRetDTO = null;
@@ -308,6 +330,11 @@ public class DocumentServiceBean
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Boolean delete(DocumentDTO docDTO) throws PAException {
 
+       if (docDTO == null) {
+            throw new PAException(MSG);
+        }
+        
+        checkTypeCodesForDelete(docDTO);
         LOG.debug("Entering deleteTrialDocumentByID ");
         Boolean result = false;
         Session session = null;
@@ -357,11 +384,45 @@ public class DocumentServiceBean
         resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIi());
         if (!(resultList.isEmpty())) {
         for (DocumentDTO check : resultList) {
-            if (check.getTypeCode().getCode().equals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())
-                    || check.getTypeCode().getCode().equals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode())) {
+            if (!check.getTypeCode().getCode().equals(DocumentTypeCode.OTHER.getCode())) {
                 if (check.getTypeCode().getCode().equals(docDTO.getTypeCode().getCode())) {
                     result = false;
                     throw new PAException("Document with selected type already exists on the trial. ");
+                    //break;
+                } else {
+                result = true;
+                }
+            }
+         }
+        } else {
+            result = true;
+        }
+        return result;
+    }
+
+   
+    /**
+     * Check type codes for delete.
+     * 
+     * @param docDTO the doc dto
+     * 
+     * @return the boolean
+     * 
+     * @throws PAException the PA exception
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Boolean checkTypeCodesForDelete(DocumentDTO docDTO) throws PAException {
+        Boolean result = false;
+        List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
+        resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIi());
+        if (!(resultList.isEmpty())) {
+        for (DocumentDTO check : resultList) {
+            if (check.getTypeCode().getCode().equals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode()) 
+                    || check.getTypeCode().getCode().equals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode()) 
+                    || check.getTypeCode().getCode().equals(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode())) {
+               if (check.getTypeCode().getCode().equals(docDTO.getTypeCode().getCode())) {
+                    result = false;
+                    throw new PAException("Document with selected type cannot be deleted. ");
                     //break;
                 } else {
                 result = true;
@@ -410,5 +471,42 @@ public class DocumentServiceBean
         } catch (IOException e) {
             throw new PAException("Error while creating directory  " + sb.toString() , e);
         }
+    }
+    
+    /** Read an input stream in its entirety into a byte array. */
+    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+
+        int bufSize = MAXF * MAXF;
+        byte[] content;
+
+        List<byte[]> parts = new LinkedList<byte[]>();
+        InputStream in = new BufferedInputStream(inputStream);
+
+        byte[] readBuffer = new byte[bufSize];
+        byte[] part = null;
+        int bytesRead = 0;
+
+        // read everyting into a list of byte arrays
+        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
+            part = new byte[bytesRead];
+            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
+            parts.add(part);
+        }
+
+        // calculate the total size
+        int totalSize = 0;
+        for (byte[] partBuffer : parts) {
+            totalSize += partBuffer.length;
+        }
+
+        // allocate the array
+        content = new byte[totalSize];
+        int offset = 0;
+        for (byte[] partBuffer : parts) {
+            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
+            offset += partBuffer.length;
+        }
+
+        return content;
     }
 }

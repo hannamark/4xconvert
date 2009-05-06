@@ -139,9 +139,9 @@
 			<result name="displayOrgFld">/WEB-INF/jsp/nodecorate/orgField.jsp</result>	
 		</action>
 		<action name="trialDocument*" class="gov.nih.nci.pa.action.TrialDocumentAction" method="{1}">
- 			<result>/WEB-INF/jsp/trialDouments.jsp</result>
+ 			<result>/WEB-INF/jsp/trialDocuments.jsp</result>
  			<result name="input">/WEB-INF/jsp/trialDocumentAdd.jsp</result>
- 			<result name="error">/WEB-INF/jsp/trialDouments.jsp</result>
+ 			<result name="error">/WEB-INF/jsp/trialDocuments.jsp</result>
  			<result name="delete">/WEB-INF/jsp/trialDocumentDelete.jsp</result>
  		</action>		
 

@@ -347,8 +347,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                  IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
 
          html.append(appendData("Facility Name" , orgBo.getName() , true , true));
-         html.append(appendData("Location" , orgBo.getCity() + ", " + orgBo.getState()
-             + " " + orgBo.getPostalCode() +  " " + orgBo.getCountryName() , true , true));
+         html.append(appendData("Location" , orgBo.getCity() != null ? orgBo.getCity() : " " 
+             + ", " + orgBo.getState() != null ? orgBo.getState() : " "
+             + " " + orgBo.getPostalCode() != null ? orgBo.getPostalCode() : " "
+             +  " " + orgBo.getCountryName() != null ? orgBo.getCountryName() : " " , true , true));
          if (ssasList != null && (!ssasList.isEmpty())) {
            html.append(appendData("Site Recruitment Status" , getData(ssasList.get(0).getStatusCode() , true)
                + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
@@ -396,7 +398,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       html.append(TR_B);
       appendTDAndData(html, p.getFirstName());
       appendTDAndData(html, p.getLastName());
-      appendTDAndData(html, getData(spcDTO.getRoleCode(), true));
+      appendTDAndData(html, getTableData(spcDTO.getRoleCode(), true));
       html.append(TR_E);
     }
     html.append(first ? "" : TBL_E);
@@ -497,7 +499,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
           InterventionDTO inter = PoPaServiceBeanLookup.getInterventionService().get(pa.getInterventionIdentifier());
           html.append(TR_B);
-          appendTDAndData(html, getData(pa.getSubcategoryCode(), true));
+          appendTDAndData(html, getTableData(pa.getSubcategoryCode(), true));
           appendTDAndData(html, BlConverter.covertToBool(pa.getLeadProductIndicator()) ? "Yes" : "No");
           appendTDAndData(html, getData(inter.getName(), true));
           appendTDAndData(html, getData(pa.getTextDescription(), true));
@@ -727,7 +729,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       html.append(TR_B);
       appendTDAndData(html, orgBo.getName());
-      appendTDAndData(html, getData(sp.getFunctionalCode(), true));
+      appendTDAndData(html, getTableData(sp.getFunctionalCode(), true));
       html.append(TR_E);
     }
     html.append(TBL_E);
@@ -793,10 +795,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               html.append(TR_E);
           }
           html.append(TR_B);
-          appendTDAndData(html, getData(fund.getFundingMechanismCode(), true));
-          appendTDAndData(html, getData(fund.getNihInstitutionCode(), true));
+          appendTDAndData(html, getTableData(fund.getFundingMechanismCode(), true));
+          appendTDAndData(html, getTableData(fund.getNihInstitutionCode(), true));
           appendTDAndData(html, getData(fund.getSerialNumber(), true));
-          appendTDAndData(html, getData(fund.getNciDivisionProgramCode(), true));
+          appendTDAndData(html, getTableData(fund.getNciDivisionProgramCode(), true));
           /*appendTDAndData(html, getData(fund.getFundingTypeCode(), true));
           appendTDAndData(html, getData(fund.getSuffixGrantYear(), true));
           appendTDAndData(html, getData(fund.getSuffixOther(), true));*/
@@ -834,21 +836,21 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               html.append(TR_E);
           }
           html.append(TR_B);
-          appendTDAndData(html, getData(indDto.getIndldeTypeCode(), true));
-          appendTDAndData(html, getData(indDto.getGrantorCode(), true));
+          appendTDAndData(html, getTableData(indDto.getIndldeTypeCode(), true));
+          appendTDAndData(html, getTableData(indDto.getGrantorCode(), true));
           appendTDAndData(html, getData(indDto.getIndldeNumber() , true));
-          appendTDAndData(html, getData(indDto.getHolderTypeCode() , true));
+          appendTDAndData(html, getTableData(indDto.getHolderTypeCode() , true));
           if (HolderTypeCode.ORGANIZATION.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html, "  ");
+              appendTDAndData(html, NBSP);
           } else if (HolderTypeCode.INVESTIGATOR.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html, "  ");
+              appendTDAndData(html, NBSP);
           } else if (HolderTypeCode.NIH.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html , getData(indDto.getNihInstHolderCode(), true));
+              appendTDAndData(html , getTableData(indDto.getNihInstHolderCode(), true));
           } else if (HolderTypeCode.NCI.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html , getData(indDto.getNciDivProgHolderCode(), true));
+              appendTDAndData(html , getTableData(indDto.getNciDivProgHolderCode(), true));
           }
           appendTDAndData(html, convertBLToString(indDto.getExpandedAccessIndicator() , false));
-          appendTDAndData(html , getData(indDto.getExpandedAccessStatusCode(), true));
+          appendTDAndData(html , getTableData(indDto.getExpandedAccessStatusCode(), true));
           html.append(TR_E);
       }
       html.append(first ? "" : TBL_E);
@@ -1024,13 +1026,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     appendTitle(html, appendBoldData("General Trial Details"));
     html.append(BR)
         .append(appendData("Official Title", getInfo(studyProtocolDto.getOfficialTitle(), true), true, true));
-    html.append(appendData("Brief Title", getInfo(studyProtocolDto.getPublicTitle(), true), true, true));
-    html.append(appendData("Acronym", getInfo(studyProtocolDto.getAcronym(), true), true, true));
-    html.append(appendData("Brief Summary", getInfo(studyProtocolDto.getPublicDescription(), true), true, true));
-    html.append(appendData("Detailed Description", 
+    html.append(BR).append(appendData("Brief Title", getInfo(studyProtocolDto.getPublicTitle(), true), true, true));
+    html.append(BR).append(appendData("Acronym", getInfo(studyProtocolDto.getAcronym(), true), true, true));
+    html.append(BR)
+        .append(appendData("Brief Summary", getInfo(studyProtocolDto.getPublicDescription(), true), true, true));
+    html.append(BR).append(appendData("Detailed Description", 
                 getInfo(studyProtocolDto.getScientificDescription(), true), true, true));
-    html.append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
-    html.append(appendData("Reporting Dataset Method", 
+    html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
+    html.append(BR).append(appendData("Reporting Dataset Method", 
                 getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
     html.append(BR);
 
@@ -1190,7 +1193,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       html.append(TR_E);
       for (StudyOverallStatusDTO sostatus : sostatuses) {
           html.append(TR_B);
-          appendTDAndData(html, getData(sostatus.getStatusCode(), true));
+          appendTDAndData(html, getTableData(sostatus.getStatusCode(), true));
           appendTDAndData(html, PAUtil.normalizeDateString(
                   TsConverter.convertToTimestamp(sostatus.getStatusDate()).toString()));
           appendTDAndData(html, sostatus.getReasonText().getValue() == null ? ""
@@ -1308,6 +1311,25 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * 
    * @return the data
    */
+  private String getTableData(Cd cd , boolean appendNoData) {
+      String data = CdConverter.convertCdToString(cd);
+      if (data != null) {
+          return data;
+      } else if (appendNoData) {
+          return NO_DATA;
+      } else {
+          return null;
+      }
+  }
+  
+  /**
+   * Gets the data.
+   * 
+   * @param cd the cd
+   * @param appendNoData the append no data
+   * 
+   * @return the data
+   */
   private String getData(Cd cd , boolean appendNoData) {
       String data = CdConverter.convertCdToString(cd);
       if (data != null) {
@@ -1318,7 +1340,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           return null;
       }
   }
-
   /**
    * Append bold data.
    * 

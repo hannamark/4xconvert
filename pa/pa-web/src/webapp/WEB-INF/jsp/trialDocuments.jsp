@@ -29,10 +29,12 @@
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>    	
     	<display:column title="Delete" class="action">
-		<s:if test="%{#attr.row.typeCode.equals('PROTOCOL DOCUMENT')}">		    
+		<s:if test="%{#attr.row.typeCode.equals('Protocol Document')}">		    
 		</s:if>
-		<s:elseif test="%{#attr.row.typeCode.equals('IRB APPROVAL DOCUMENT')}">		    
+		<s:elseif test="%{#attr.row.typeCode.equals('IRB Approval Document')}">		    
 		</s:elseif>
+		<s:elseif test="%{#attr.row.typeCode.equals('Change Memo Document')}">           
+        </s:elseif>
 		<s:else>
 			<s:url id="url" action="trialDocumentdelete"><s:param name="id" value="%{#attr.row.id}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
