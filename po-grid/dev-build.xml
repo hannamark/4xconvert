@@ -316,6 +316,7 @@
         <fail if="junit.failure" message="There were JUnit failures." />
 
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
+        <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
         <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="87" totallinerate="95" />
     </target>
@@ -332,7 +333,7 @@
             <classpath>
                 <path location="${build.dest}" />
                 <path location="${stubs.dest}" />
-            	<path location="${basedir}/build/classes" />
+                <path location="${basedir}/build/classes" />
                 <path refid="checkstyle.classpath" />
                 <path>
                     <fileset dir="${lib.dir}" includes="po-services-*.jar coppa-commons-*.jar iso-datatypes-*.jar " />
