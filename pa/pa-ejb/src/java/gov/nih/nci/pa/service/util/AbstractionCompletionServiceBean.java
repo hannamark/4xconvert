@@ -179,7 +179,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (aList.size() != ispDTO.getNumberOfInterventionGroups().getValue()) {
          abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design under Scientific"
               + " Data menu.", "Number of interventional trial arm records must be the same"
-              + " as Number of Arms assigned in ‘Interventional Trial Design’."));
+              + " as Number of Arms assigned in Interventional Trial Design."));
         }
       }
     } else if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("ObservationalStudyProtocol")) {
@@ -191,7 +191,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {
           abstractionList.add(createError("Error", "Select Groups from Observational Trial Design under Scientific "
               + "Data menu.", "Number of Observational study group records must be the same"
-              + " as Number of Groups assigned in ‘Observational Study Design’."));
+              + " as Number of Groups assigned in Observational Study Design."));
         }
       }
     }
