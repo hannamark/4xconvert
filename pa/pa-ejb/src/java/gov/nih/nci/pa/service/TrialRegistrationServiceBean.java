@@ -115,7 +115,6 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -502,6 +501,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         StudyProtocolDTO oldSpDto = null;
         StudyProtocolDTO newSpDto = null;
         if (isAmend) {
+            studyProtocolDTO.setAmendmentReasonCode(null);
             oldIdentifier = studyProtocolDTO.getIdentifier();
             oldSpDto = studyProtocolService.getStudyProtocol(oldIdentifier);
             oldSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
@@ -586,28 +586,34 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         studyRelationshipService.create(srDto);
     }
 
-    private void createOverallStatuses(Ii studyProtocolIi , Ii oldStudyProtocolIi ,
-            StudyOverallStatusDTO currentStatus)
-    throws PAException {
-        List<StudyOverallStatusDTO> sosList = studyOverallStatusService.getCurrentByStudyProtocol(oldStudyProtocolIi);
+    private void createOverallStatuses(Ii studyProtocolIi, Ii oldStudyProtocolIi, StudyOverallStatusDTO newStatusDto)
+            throws PAException {
+        List<StudyOverallStatusDTO> sosList = studyOverallStatusService
+                .getByStudyProtocol(oldStudyProtocolIi);
         boolean first = true;
         boolean statusFound = false;
         for (StudyOverallStatusDTO sos : sosList) {
-            if (first && sos.getStatusCode().getCode().equals(currentStatus.getStatusCode().getCode())) {
-                sos.setReasonText(currentStatus.getReasonText());
-                sos.setStatusCode(currentStatus.getStatusCode());
-                sos.setStatusDate(currentStatus.getStatusDate());
-                statusFound = true;
+            if (first) {
+                // do it only once
+                StudyOverallStatusDTO currentDto = sosList.get(sosList.size() - 1);
+                if (currentDto.getStatusCode().getCode().equals(newStatusDto.getStatusCode().getCode())) {
+                    statusFound = true;
+                }
+            }
+            if (sos.getStatusCode().getCode().equals(newStatusDto.getStatusCode().getCode())) {
+                sos.setReasonText(newStatusDto.getReasonText());
+                sos.setStatusCode(newStatusDto.getStatusCode());
+                sos.setStatusDate(newStatusDto.getStatusDate());
             }
             first = false;
             sos.setIdentifier(null);
             sos.setStudyProtocolIdentifier(studyProtocolIi);
         } // for
 
-        Collections.reverse(sosList);
         if (!statusFound) {
-            sosList.add(currentStatus);
-
+            newStatusDto.setIdentifier(null);
+            newStatusDto.setStudyProtocolIdentifier(studyProtocolIi);
+            sosList.add(newStatusDto);
         }
 
         for (StudyOverallStatusDTO sos : sosList) {
