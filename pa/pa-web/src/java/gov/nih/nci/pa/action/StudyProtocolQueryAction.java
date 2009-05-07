@@ -256,7 +256,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             int randomInt = randomGenerator.nextInt(i);
 
             String fileName = "TSR" + randomInt  + ".html";
-            servletResponse.setContentType("application/octet-stream");
+            servletResponse.setContentType("text/html");
             servletResponse.setContentLength(htmlData.length());
             servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
             servletResponse.setHeader("Pragma", "public");

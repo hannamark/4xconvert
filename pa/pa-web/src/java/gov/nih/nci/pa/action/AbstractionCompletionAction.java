@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -268,45 +269,28 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
 
         PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
             IiConverter.convertToLong(studyProtocolIi));
-        //String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(studyProtocolIi);  
-        // TSRReportGenerator tsrReport = new TSRReportGenerator();
-        String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(studyProtocolIi);
-//        String folderPath = PaEarPropertyReader.getDocUploadPath();
-//        StringBuffer sb  = new StringBuffer(folderPath);
+          String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(studyProtocolIi);
+
         final int i = 1000;
         Random randomGenerator = new Random();
         int randomInt = randomGenerator.nextInt(i);
 
-//        String inputFile = new String(sb.append(File.separator).append("xmlfile_").append(randomInt 
-//            + studyProtocolIi.getExtension() + ".html"));
-//        OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
-//        oos.write(xmlData);
-//        oos.close();
-
- //       StringBuffer sb2  = new StringBuffer(folderPath);
-//        String outputFile = new String(sb2.append(File.separator).append(TSR).append(randomInt 
-//            + studyProtocolIi.getExtension() + HTML));
-//        File downloadFile = createAttachment(new File(inputFile), new File(outputFile));
         String fileName = TSR + randomInt + studyProtocolIi.getExtension() + HTML;
-//        FileInputStream fileToDownload = new FileInputStream(downloadFile);
-        servletResponse.setContentType("application/octet-stream");
+
+        servletResponse.setContentType("text/html");
         servletResponse.setContentLength(htmlData.length());
         servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
         servletResponse.setHeader("Pragma", "public");
         servletResponse.setHeader("Cache-Control", "max-age=0");
 
-//        int data;
+        int data;
+        ByteArrayInputStream bStream = new ByteArrayInputStream(htmlData.getBytes());
         ServletOutputStream servletout = servletResponse.getOutputStream();
-//        while ((data = fileToDownload.read()) != -1) {
-          servletout.write(htmlData.getBytes());
-//        }
+        while ((data = bStream.read()) != -1) {
+            servletout.write(data);
+          }
         servletout.flush();
         servletout.close();
-//        fileToDownload.close();
-        
-//        new File(inputFile).delete();
-//        new File(outputFile).delete();
-        
       } catch (Exception e) {
         return SUCCESS;
       }

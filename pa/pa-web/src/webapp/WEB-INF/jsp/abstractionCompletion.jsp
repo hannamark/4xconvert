@@ -20,7 +20,9 @@
 function generateReport(pid) {
     showPopWin('/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId='+pid, 900, 400, '', 'CLinical Trial XML Generation');
 }
-
+function generateTSR() {
+    showPopWin('/pa/protected/ajaxAbstractionCompletionviewTSR.action', 900, 400, '', 'View TSR');
+   }
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
@@ -29,7 +31,7 @@ function generateReport(pid) {
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form><s:actionerror/>    
+    <s:form name="aForm"><s:actionerror/>    
     <h2>
     <s:if test="${abstractionError==true}">                
         Abstraction validation failed. Please check error(s).
@@ -51,7 +53,7 @@ function generateReport(pid) {
             <ul class="btnrow">
                 <s:if test="${abstractionError==false}">                                        
                     <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>
-                    <li><s:a href="abstractionCompletionviewTSR.action" cssClass="btn"><span class="btn_img"><span class="save">View TSR</span></span></s:a></li>                                
+                    <li><s:a href="#"  cssClass="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></s:a></li>                                
                     <!--
                     <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Accepted'}">
                     <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">Complete Abstraction</span></span></s:a></li>
@@ -73,3 +75,4 @@ function generateReport(pid) {
    </div>
  </body>
  </html>
+ 

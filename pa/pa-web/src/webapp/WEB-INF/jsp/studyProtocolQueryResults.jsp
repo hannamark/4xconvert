@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-
+<s:form name="sForm"><s:actionerror/>    
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
     name="${param.listName}" requestURI="studyProtocolquery.action" export="false">
     <display:column class="title" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier"
@@ -21,7 +21,12 @@
             sortable="true" headerClass="sortable"/>
     </c:if>    
     <display:column titleKey="studyProtocol.viewTSR"  
-        href="studyProtocolviewTSR.action" property="viewTSR"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"/>
+        href="studyProtocolviewTSR.action" property="viewTSR"       />
 </display:table>
-
+</s:form>
+<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+function generateTSR(Id) {
+     showPopWin('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+Id, 900, 400, '', 'View TSR');
+    
+}
+</script>

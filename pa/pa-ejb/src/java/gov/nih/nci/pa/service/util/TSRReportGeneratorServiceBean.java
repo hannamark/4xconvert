@@ -347,10 +347,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                  IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
 
          html.append(appendData("Facility Name" , orgBo.getName() , true , true));
-         html.append(appendData("Location" , orgBo.getCity() != null ? orgBo.getCity() : " " 
-             + ", " + orgBo.getState() != null ? orgBo.getState() : " "
-             + " " + orgBo.getPostalCode() != null ? orgBo.getPostalCode() : " "
-             +  " " + orgBo.getCountryName() != null ? orgBo.getCountryName() : " " , true , true));
+         html.append(appendData("Location" , getLocation(orgBo), true , true));
          if (ssasList != null && (!ssasList.isEmpty())) {
            html.append(appendData("Site Recruitment Status" , getData(ssasList.get(0).getStatusCode() , true)
                + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
@@ -369,6 +366,26 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
      }
   }
 
+  /**
+   * Gets the location.
+   * 
+   * @param orgBo the org bo
+   * 
+   * @return the location
+   */
+  private String getLocation(Organization orgBo) {
+      String location = "";
+      
+       String city = orgBo.getCity() != null ? orgBo.getCity() : " ";
+       String state =  orgBo.getState() != null ? orgBo.getState() : " ";
+       String pc = orgBo.getPostalCode() != null ? orgBo.getPostalCode() : " ";
+       String country = orgBo.getCountryName() != null ? orgBo.getCountryName() : " ";
+      
+       location = city + ", " + state + " " + pc + " " + country;
+       
+      return location;
+      
+  }
   /**
    * Creates the investigators. 
    * @param html the html

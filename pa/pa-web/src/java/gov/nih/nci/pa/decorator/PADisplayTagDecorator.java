@@ -117,7 +117,8 @@ public class PADisplayTagDecorator extends TableDecorator {
         } else if (dwfs.equals(DocumentWorkflowStatusCode.REJECTED)) {
             return "";
         } else  {
-            return "View TSR";
+            Long id = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
+            return "<a href='#' onclick='generateTSR(" + id + ");'> View TSR </a>";
         }
     }
 }

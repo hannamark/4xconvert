@@ -59,7 +59,10 @@
             </result>
             <result name="criteriaProtected">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
             <result name="design">/WEB-INF/jsp/designDetails.jsp</result>
-        </action>       
+        </action> 
+          <action name="ajaxStudyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
+            <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
+          </action>             
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
             <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
@@ -205,6 +208,9 @@
 			<result name="delete">/WEB-INF/jsp/trialIndide.jsp</result>
 		</action>
 		<action name="abstractionCompletion*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
+            <result>/WEB-INF/jsp/abstractionCompletion.jsp</result> 
+        </action>
+            <action name="ajaxAbstractionCompletion*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
             <result>/WEB-INF/jsp/abstractionCompletion.jsp</result> 
         </action>
         <action name="disease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
