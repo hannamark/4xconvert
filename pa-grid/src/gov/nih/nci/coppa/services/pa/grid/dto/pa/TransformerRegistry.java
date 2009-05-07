@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -121,6 +122,7 @@ public final class TransformerRegistry {
         values.put(StudyOutcomeMeasureDTO.class, StudyOutcomeMeasureTransformer.INSTANCE);
         values.put(StudyParticipationDTO.class, StudyParticipationTransformer.INSTANCE);
         values.put(StudyOverallStatusDTO.class, StudyOverallStatusTransformer.INSTANCE);
+        values.put(StudyOnholdDTO.class, StudyOnholdTransformer.INSTANCE);
     }
 
     /**

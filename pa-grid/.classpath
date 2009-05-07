@@ -87,7 +87,7 @@
 	<classpathentry kind="lib" path="lib/pa-ejb-client-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl.jar"/>
-	<classpathentry kind="lib" path="lib/coppa-commons-1.0.jar"/>
-	<classpathentry kind="lib" path="test/lib/coppa-commons-1.0-tests.jar"/>
+	<classpathentry kind="lib" path="lib/coppa-commons-1.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="test/lib/coppa-commons-1.1-SNAPSHOT-tests.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
