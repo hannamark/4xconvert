@@ -164,8 +164,15 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
                                           IiConverter.convertToLong(studyProtocolIi));
 
           RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
+          
 
-          String body = lookUpTableService.getPropertyValue("tsr.body");
+          
+          String body = "";
+          if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
+              body = lookUpTableService.getPropertyValue("tsr.amend.body");
+          } else {
+              body = lookUpTableService.getPropertyValue("tsr.body");
+          }
           body = body.replace(currentDate, getFormatedCurrentDate());
           body = body.replace(submitterName,
                   registryUser.getFirstName() + " " + registryUser.getLastName());
@@ -430,7 +437,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         String body = lookUpTableService.getPropertyValue("rejection.body");
         body = body.replace(submitterName, 
                 registryUser.getFirstName() + " " + registryUser.getLastName());
-        body = body.replace("${leadorgid}", spDTO.getLeadOrganizationId().toString());
+        body = body.replace("${leadOrgTrialId}", spDTO.getLocalStudyProtocolIdentifier());
         body = body.replace("${reasoncode}", commentText);
         // Send Message
         sendMail(spDTO.getUserLastCreated(), 
