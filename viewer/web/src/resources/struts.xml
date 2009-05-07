@@ -28,7 +28,9 @@
                 <param name="actionName">welcome</param>
             </result>
         </action>
-        <action name="trialList" class="gov.nih.nci.pa.viewer.action.TrialListAction">
+        <action name="trialList*" class="gov.nih.nci.pa.viewer.action.TrialListAction" method="{1}">
+            <result name="input">/WEB-INF/jsp/trialList.jsp</result> 
+            <result name="result">/WEB-INF/jsp/trialList.jsp</result> 
             <result>/WEB-INF/jsp/trialList.jsp</result> 
         </action>
         <action name="trialCounts" class="gov.nih.nci.pa.viewer.action.TrialCountsAction">

@@ -74,27 +74,63 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.util;
 
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
-import gov.nih.nci.pa.service.PAException;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+
+import org.hibernate.cfg.Environment;
+import org.hibernate.context.ManagedSessionContext;
 
 /**
+ * Interceptor used for session management.
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/07/2009
  */
-public class MilestonesAction extends AbstractReportAction
-        <MilestonesCriteriaDto, MilestonesResultDto> {
-
-    private static final long serialVersionUID = -6179636182690581226L;
-
+public class ViewerHibernateSessionInterceptor {
     /**
-     * {@inheritDoc}
+     * Opens and closes a Hibernate session around any remote EJB method invoked.
+     *
+     * @param invContext the method context
+     * @return the method result
+     * @throws Exception if invoking the method throws an exception.
      */
-    @Override
-    public String getReport() throws PAException {
-        return SUCCESS;
+    @AroundInvoke
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public Object manageHibernateSession(final InvocationContext invContext) throws Exception {
+        boolean flushAndUnbind = false;
+
+        try {
+            if (isManagedSession() && !ManagedSessionContext.hasBind(getHelper().getSessionFactory())) {
+                getHelper().openAndBindSession();
+                flushAndUnbind = true;
+            }
+            final Object returnValue = invContext.proceed();
+            if (flushAndUnbind) {
+                getHelper().getCurrentSession().flush();
+            }
+            return returnValue;
+        } finally {
+            if (flushAndUnbind) {
+                getHelper().unbindAndCleanupSession();
+            }
+        }
     }
 
+    /**
+     * Determines if we are currently using managed sessions.
+     * @return true if we are, false otherwise.
+     */
+    private boolean isManagedSession() {
+        return "managed".equals(getHelper().getConfiguration()
+                .getProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS));
+    }
+
+    /**
+     * get the hibernate helper to use.
+     * @return the hibernate helper.
+     */
+    private ViewerHibernateHelper getHelper() {
+        return ViewerHibernateUtil.getHibernateHelper();
+    }
 }

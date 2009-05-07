@@ -1,6 +1,6 @@
 <ivy-module version="1.0">
-  <info organisation="cbiit" module="pa-ejb"
-        />
+  <info organisation="cbiit" module="ctrp-viewer-services"/>
+        
   <configurations>
     <conf name="compile"/>
     <conf name="test" extends="compile"/>
@@ -28,9 +28,8 @@
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.1.0.rc1"       conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="1.1"             conf="compile"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="1.1.0.rc1"       conf="compile->master"/>
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
     <dependency org="org.directwebremoting"  name="dwr"                     rev="2.0.1"           conf="compile->master"/>
@@ -45,6 +44,7 @@
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
     <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>    
     <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
+    <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->runtime"/>
 
     <!-- other test targets -->

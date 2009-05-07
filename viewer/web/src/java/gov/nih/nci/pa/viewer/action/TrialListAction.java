@@ -76,8 +76,12 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.service.TrialListLocal;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.viewer.dto.criteria.TrialListCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.List;
 
@@ -86,16 +90,73 @@ import java.util.List;
  * @since 04/29/2009
  */
 public class TrialListAction extends AbstractReportAction
-        <TrialListCriteriaDto, TrialListResultDto> {
+        <TrialListCriteriaWebDto, TrialListResultWebDto> {
 
     private static final long serialVersionUID = 8183194180770453447L;
+
+    /** Criteria used to generate report. */
+    private TrialListCriteriaWebDto criteria = new TrialListCriteriaWebDto();
+    /** Report result set. */
+    private List<TrialListResultWebDto> resultList = null;
+    private String results = "Search not yet performed.";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected List<TrialListResultDto> getReport() {
-        // TODO Auto-generated method stub
-        return null;
+    public String getReport() throws PAException {
+        TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
+        List<TrialListResultDto> isoList = local.get(criteria.getServiceDto());
+        setResultList(TrialListResultWebDto.getWebList(isoList));
+        setResults(getResultList().size() + " records returned.");
+        return SUCCESS;
+    }
+
+
+    /**
+     * @return the criteria
+     */
+    public TrialListCriteriaWebDto getCriteria() {
+        return criteria;
+    }
+
+
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(TrialListCriteriaWebDto criteria) {
+        this.criteria = criteria;
+    }
+
+
+    /**
+     * @return the resultList
+     */
+    public List<TrialListResultWebDto> getResultList() {
+        return resultList;
+    }
+
+
+    /**
+     * @param resultList the resultList to set
+     */
+    public void setResultList(List<TrialListResultWebDto> resultList) {
+        this.resultList = resultList;
+    }
+
+
+    /**
+     * @return the results
+     */
+    public String getResults() {
+        return results;
+    }
+
+
+    /**
+     * @param results the results to set
+     */
+    public void setResults(String results) {
+        this.results = results;
     }
 }

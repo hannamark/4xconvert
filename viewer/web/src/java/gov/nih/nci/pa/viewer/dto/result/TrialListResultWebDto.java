@@ -74,27 +74,138 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.viewer.dto.result;
 
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/06/2009
  */
-public class MilestonesAction extends AbstractReportAction
-        <MilestonesCriteriaDto, MilestonesResultDto> {
+public class TrialListResultWebDto extends AbstractWebDto<TrialListResultDto> {
 
-    private static final long serialVersionUID = -6179636182690581226L;
+    private String organization;
+    private String dateLastCreated;
+    private String assignedIdentifier;
+    private String officialTitle;
+    private String statusCode;
+
+    /**
+     * Static method for generating a list of web dto's from a list of service dto's.
+     * @param serviceDtoList service dto list
+     * @return web dto list
+     */
+    public static List<TrialListResultWebDto> getWebList(List<TrialListResultDto> serviceDtoList) {
+        List<TrialListResultWebDto> resultList = new ArrayList<TrialListResultWebDto>();
+        for (TrialListResultDto dto : serviceDtoList) {
+            resultList.add(new TrialListResultWebDto(dto));
+        }
+        return resultList;
+    }
+
+    /**
+     * Default constructor.
+     */
+    public TrialListResultWebDto() {
+        super();
+    }
+
+    /**
+     * Constructor using service dto.
+     * @param dto the service iso dto
+     */
+    public TrialListResultWebDto(TrialListResultDto dto) {
+        super();
+        this.organization = StConverter.convertToString(dto.getOrganization());
+        this.dateLastCreated = TsConverter.convertToString(dto.getDateLastCreated());
+        this.assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
+        this.officialTitle = StConverter.convertToString(dto.getOfficialTitle());
+        this.statusCode = CdConverter.convertCdToString(dto.getStatusCode());
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getReport() throws PAException {
-        return SUCCESS;
+    public TrialListResultDto getServiceDto() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
+    /**
+     * @return the organization
+     */
+    public String getOrganization() {
+        return organization;
+    }
+
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @return the dateLastCreated
+     */
+    public String getDateLastCreated() {
+        return dateLastCreated;
+    }
+
+    /**
+     * @param dateLastCreated the dateLastCreated to set
+     */
+    public void setDateLastCreated(String dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
+    }
+
+    /**
+     * @return the assignedIdentifier
+     */
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+
+    /**
+     * @return the officialTitle
+     */
+    public String getOfficialTitle() {
+        return officialTitle;
+    }
+
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(String officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+
+    /**
+     * @return the statusCode
+     */
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
 }

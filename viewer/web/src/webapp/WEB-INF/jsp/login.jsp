@@ -18,7 +18,7 @@
         <tr><td class="space" colspan="2">&nbsp;</td></tr>
         <tr>
             <td class="label" scope="row">
-                <label for="j_username">Email Address:</label>
+                <label for="j_username">Login Id:</label>
             </td>
             <td class="value">
                 <input name="j_username" maxlength="100" size="25" type="text">

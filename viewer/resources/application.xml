@@ -17,7 +17,7 @@
         </web>
     </module>
     <module>
-        <java>pa-ejb-client-1.1.jar</java>
+        <java>pa-ejb.jar</java>
     </module>
     <module>
         <java>po-services-client-1.1.0.rc1.jar</java>

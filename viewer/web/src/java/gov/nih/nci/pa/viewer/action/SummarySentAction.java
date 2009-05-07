@@ -78,8 +78,7 @@ package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
-
-import java.util.List;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author hreinhart
@@ -94,8 +93,8 @@ public class SummarySentAction extends AbstractReportAction
      * {@inheritDoc}
      */
     @Override
-    protected List<SummarySentResultDto> getReport() {
-        // TODO Auto-generated method stub
-        return null;
+    public String getReport() throws PAException {
+        return SUCCESS;
     }
+
 }

@@ -74,27 +74,17 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
-
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
-import gov.nih.nci.pa.service.PAException;
+package gov.nih.nci.pa.viewer.dto;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/06/2009
+ *
+ * @param <CRITERIADTO> corresponding service iso dto
  */
-public class MilestonesAction extends AbstractReportAction
-        <MilestonesCriteriaDto, MilestonesResultDto> {
-
-    private static final long serialVersionUID = -6179636182690581226L;
-
+public abstract class AbstractWebDto<CRITERIADTO> {
     /**
-     * {@inheritDoc}
+     * @return an iso dto instance
      */
-    @Override
-    public String getReport() throws PAException {
-        return SUCCESS;
-    }
-
+    public abstract CRITERIADTO getServiceDto();
 }

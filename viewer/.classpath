@@ -24,7 +24,6 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/hibernate-annotations-3.2.0.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/hibernate-commons-annotations-3.3.0.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/hibernate-validator-3.0.0.GA.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/iso-datatypes-1.2rc1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/itext-2.0.6.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jdom-0.9.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jericho-html-2.4.jar"/>
@@ -34,7 +33,6 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/poi-3.2-FINAL-20081019.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/po-services-client-1.1.0.rc1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/postgresql-jdbc3-8.3-603.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/security-4.0.1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/sitemesh-2.3.jar"/>
@@ -44,8 +42,6 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/struts2-spring-plugin-2.1.6.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/test/junit-4.4.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/test/mockrunner-0.4.1.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/pa-ejb-client-1.1.jar"/>
-	<classpathentry kind="var" path="CODE_PA/pa-ejb/target/pa-ejb.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/commons-logging-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/log4j-4.0.5.GA.jar"/>
@@ -58,5 +54,7 @@
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate-commons-annotations-3.3.0.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate-validator-3.0.0.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/test/cglib-4.0.5.GA.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/compile/iso-datatypes-1.1.0.rc1.jar"/>
+	<classpathentry kind="var" path="CODE_PA/pa-ejb/target/pa-ejb.jar" sourcepath="/CODE_PA/pa-ejb/src/java"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

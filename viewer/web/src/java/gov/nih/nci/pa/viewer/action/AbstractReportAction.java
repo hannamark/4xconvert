@@ -76,7 +76,7 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import java.util.List;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * Base class for report actions.
@@ -91,13 +91,10 @@ public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractVie
 
     private static final long serialVersionUID = 5350758217530734916L;
 
-    /** Criteria used to generate report. */
-    protected CRITERIA criteria;
-
     /**
      * Method used get the report.
-     *
-     * @return report result set
+     * @return action result
+     * @throws PAException exception
      */
-    protected abstract List<RESULT> getReport();
+    public abstract String getReport() throws PAException;
 }

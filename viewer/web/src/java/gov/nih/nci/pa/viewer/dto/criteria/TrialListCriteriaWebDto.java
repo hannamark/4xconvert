@@ -74,27 +74,73 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
+import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/06/2009
  */
-public class MilestonesAction extends AbstractReportAction
-        <MilestonesCriteriaDto, MilestonesResultDto> {
+public class TrialListCriteriaWebDto extends AbstractWebDto<TrialListCriteriaDto> {
 
-    private static final long serialVersionUID = -6179636182690581226L;
+    private Boolean ctrpOnly;
+    private Boolean userOnly;
+
+    /**
+     * Default constructor.
+     */
+    public TrialListCriteriaWebDto() {
+        // default constructor
+    }
+
+    /**
+     * Constructor using service dto.
+     * @param dto the service iso dto
+     */
+    public TrialListCriteriaWebDto(TrialListCriteriaDto dto) {
+        this.ctrpOnly = BlConverter.covertToBoolean(dto.getCtrpOnly());
+        this.userOnly = BlConverter.covertToBoolean(dto.getUserOnly());
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getReport() throws PAException {
-        return SUCCESS;
+    public TrialListCriteriaDto getServiceDto() {
+        TrialListCriteriaDto result = new TrialListCriteriaDto();
+        result.setCtrpOnly(BlConverter.convertToBl(getCtrpOnly()));
+        result.setUserOnly(BlConverter.convertToBl(getUserOnly()));
+        return result;
     }
 
+    /**
+     * @return the ctrpOnly
+     */
+    public Boolean getCtrpOnly() {
+        return ctrpOnly;
+    }
+
+    /**
+     * @param ctrpOnly the ctrpOnly to set
+     */
+    public void setCtrpOnly(Boolean ctrpOnly) {
+        this.ctrpOnly = ctrpOnly;
+    }
+
+    /**
+     * @return the userOnly
+     */
+    public Boolean getUserOnly() {
+        return userOnly;
+    }
+
+    /**
+     * @param userOnly the userOnly to set
+     */
+    public void setUserOnly(Boolean userOnly) {
+        this.userOnly = userOnly;
+    }
 }

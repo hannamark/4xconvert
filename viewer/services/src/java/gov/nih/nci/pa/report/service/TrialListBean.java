@@ -81,23 +81,26 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
+import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 
 /**
 * @author Hugh Reinhart
-* @since 4/10/2008
+* @since 4/10/2009
 */
 @Stateless
+@Interceptors(ViewerHibernateSessionInterceptor.class)
 public class TrialListBean extends AbstractBaseReportBean<TrialListCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
 
@@ -115,7 +118,7 @@ public class TrialListBean extends AbstractBaseReportBean<TrialListCriteriaDto, 
         super.get(criteria);
         ArrayList<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = ViewerHibernateUtil.getCurrentSession();
             SQLQuery query = null;
             String sql = "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
                        + "       , sp.official_title, dws.status_code "
@@ -142,7 +145,7 @@ public class TrialListBean extends AbstractBaseReportBean<TrialListCriteriaDto, 
                 rList.add(rdto);
             }
         } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in get.  ", hbe);
+            throw new PAException("Hibernate exception in TrialListBean.get().", hbe);
         }
         logger.info("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
         return rList;

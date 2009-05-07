@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Bl;
  * @since 03/19/2009
  */
 public class TrialListCriteriaDto {
+
     private Bl ctrpOnly;
     private Bl userOnly;
     /**

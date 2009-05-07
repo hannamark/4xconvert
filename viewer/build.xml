@@ -60,12 +60,10 @@
         <copy file="${servicesJar}" todir="${viewerEarDir}"/>
         <copy file="${webWar}" todir="${viewerEarDir}"/>
         
-        <delete file="${viewerEarDir}/pa-ejb.jar"/>
         <delete file="${viewerEarDir}/pa-web.war"/>
         <delete file="${viewerEarDir}/reg-web.war"/>
         <delete file="${viewerEarDir}/META-INF/application.xml"/>
         <copy file="${resourceDir}/application.xml" todir="${viewerEarDir}/META-INF"/>
-        <copy file="${softwareDir}/target/pa/lib/viewer/services/compile/pa-ejb-client-1.1.jar" todir="${viewerEarDir}"/>
         <ear destfile="${viewerEarFile}" 
              basedir="${viewerEarDir}" 
              compress="false" 
