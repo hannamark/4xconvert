@@ -1,0 +1,22 @@
+function FileData_Pairs(x)
+{
+x.t("managing","account");
+x.t("managing","password");
+x.t("instructions","changing");
+x.t("change","ctrp");
+x.t("time","logged");
+x.t("reset","instructions");
+x.t("resetting","password");
+x.t("logged","forget");
+x.t("account","managing");
+x.t("forget","password");
+x.t("registration","site");
+x.t("changing","password");
+x.t("site","password");
+x.t("ctrp","registration");
+x.t("password","managing");
+x.t("password","change");
+x.t("password","time");
+x.t("password","reset");
+x.t("password","resetting");
+}
