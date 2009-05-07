@@ -74,6 +74,11 @@
                         <td class="value">
                         <s:select onchange="statusChange()" headerKey=""
                             headerValue="--Select--" name="armType" list="#armTypeValues" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>armType</s:param>
+                               </s:fielderror>                            
+                         </span>
                         </td>
                     </tr>
                 </s:if>

@@ -238,7 +238,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      */
     public String add() throws PAException {
         businessRules();
-        if (hasActionErrors()) {
+        if (hasActionErrors() || hasFieldErrors()) {
             reloadInterventions();
             return ACT_EDIT;
         }
@@ -269,7 +269,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      */
     public String update() throws PAException {
         businessRules();
-        if (hasActionErrors()) {
+        if (hasActionErrors() || hasFieldErrors()) {
             reloadInterventions();
             return ACT_EDIT;
         }
@@ -296,6 +296,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     }
 
     private void businessRules() {
+        if (PAUtil.isEmpty(getArmType())) {
+            addFieldError("armType", "Select an Arm Type");   
+        }
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
                 && (!PAUtil.isEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode())
                 && (getAssociatedIds().size() > 0))) {

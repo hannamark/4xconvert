@@ -609,7 +609,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
     List<ArmDTO> arms = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
     for (ArmDTO armDTO : arms) {
-        if (ArmTypeCode.NO_INTERVENTION.getCode().equals(armDTO.getTypeCode())) {
+        if (ArmTypeCode.NO_INTERVENTION.getCode().equals(armDTO.getTypeCode().getCode())) {
             continue;
         }
         if (!intervention.containsKey(armDTO.getName().getValue())) {
