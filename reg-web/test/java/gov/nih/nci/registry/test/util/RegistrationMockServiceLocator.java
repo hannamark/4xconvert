@@ -28,6 +28,7 @@ import gov.nih.nci.registry.service.MockIdentifiedOrganizationCorrelationService
 import gov.nih.nci.registry.service.MockIdentifiedPersonCorrelationService;
 import gov.nih.nci.registry.service.MockLookUpTableService;
 import gov.nih.nci.registry.service.MockMailManagerService;
+import gov.nih.nci.registry.service.MockOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockOrganizationEntityService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPersonEntityService;
@@ -62,6 +63,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationService = new MockIdentifiedOrganizationCorrelationService();
     private final PersonEntityServiceRemote personEntityService = new MockPersonEntityService();
     private final IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService = new MockIdentifiedPersonCorrelationService();
+    private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     public DocumentServiceRemote getDocumentService() {
         return documentService;
     }
@@ -86,8 +88,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService()
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return organizationCorrelationService;
     }
 
     public PAOrganizationServiceRemote getPAOrganizationService() {

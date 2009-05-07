@@ -216,6 +216,23 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         assertEquals("redirect_to_search", submitAction.create());     
     }
     @Test
+    public void testCreateWithException(){
+        submitAction = new SubmitTrialAction();
+        HttpSession sess = new MockHttpSession();
+        TrialDTO dto = getMockTrialDTO();
+        dto.setPhaseCode("Other");
+        dto.setPhaseOtherText("phaseOtherText");
+        dto.setPrimaryPurposeCode("Other");
+        dto.setPrimaryPurposeOtherText("primaryPurposeOtherText");
+        dto.setOfficialTitle("testthrowException");
+        sess.setAttribute("trialDTO", dto);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
+        assertEquals("error", submitAction.create());
+    }
+
+    @Test
     public void testTrialDTOProperty(){
         submitAction = new SubmitTrialAction();
         assertNull(submitAction.getTrialDTO());
@@ -345,7 +362,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     }
 
     @Test
-    public void testValidateTrialDatesRule18Fail() throws URISyntaxException{
+    public void testValidateTrialDatesRule18Fail() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusDate("02/22/2010");
@@ -354,7 +371,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.statusDate"));
     }
     @Test
-    public void testValidateTrialDatesRule18Pass() throws URISyntaxException{
+    public void testValidateTrialDatesRule18Pass() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusDate("02/22/2009");
@@ -362,7 +379,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         assertEquals("error", submitAction.review());
     }
     @Test
-    public void testValidateTrialDatesRule19ActualFail(){
+    public void testValidateTrialDatesRule19ActualFail() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStartDate("02/22/2010");
@@ -478,7 +495,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         assertEquals("review", submitAction.review());
     }
     @Test
-    public void testValidateRule21StartTypeAnticipated() throws URISyntaxException {
+    public void testValidateRule21StartTypeAnticipated() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusCode("Active");

@@ -87,14 +87,14 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setChangeMemoDoc(f);
         trialAction.setInformedConsentDocument(f);
         trialAction.setParticipatingSites(f);
-        trialAction.setOtherDocument(f);
+        trialAction.setProtocolHighlightDocument(f);
         
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         trialAction.setInformedConsentDocumentFileName(FILE_NAME);
         trialAction.setParticipatingSitesFileName(FILE_NAME);
-        trialAction.setOtherDocumentFileName(FILE_NAME);
+        trialAction.setProtocolHighlightDocumentFileName(FILE_NAME);
         assertEquals("review", trialAction.review());
     }
     @Test
@@ -447,11 +447,11 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         assertNotNull(trialAction.getChangeMemoDoc());
     }
     @Test
-    public void testOtherDocProperty(){
+    public void testProtocolHighlightDocProperty(){
         trialAction = new AmendmentTrialAction();
-        assertNull(trialAction.getOtherDocument());
-        trialAction.setOtherDocument(new File(FILE_NAME));
-        assertNotNull(trialAction.getOtherDocument());
+        assertNull(trialAction.getProtocolHighlightDocument());
+        trialAction.setProtocolHighlightDocument(new File(FILE_NAME));
+        assertNotNull(trialAction.getProtocolHighlightDocument());
     }
     @Test
     public void testProtocolFileNameProperty(){
@@ -489,11 +489,11 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         assertNotNull(trialAction.getChangeMemoDocFileName());
     }
     @Test
-    public void testOtherFileNameProperty(){
+    public void testProtocolHighlightFileNameProperty(){
         trialAction = new AmendmentTrialAction();
-        assertNull(trialAction.getOtherDocumentFileName());
-        trialAction.setOtherDocumentFileName("OtherDocFIleName");
-        assertNotNull(trialAction.getOtherDocumentFileName());
+        assertNull(trialAction.getProtocolHighlightDocumentFileName());
+        trialAction.setProtocolHighlightDocumentFileName("protocolHighlight");
+        assertNotNull(trialAction.getProtocolHighlightDocumentFileName());
     }
     @Test
     public void testValidateTrialDates(){
@@ -513,7 +513,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         assertEquals("error", trialAction.review());
     }
     @Test
-    public void testValidateTrialDatesRule18Pass() throws URISyntaxException{
+    public void testValidateTrialDatesRule18Pass() {
         trialAction = new AmendmentTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusDate("02/22/2009");
@@ -521,12 +521,45 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         assertEquals("error", trialAction.review());
     }
     @Test
-    public void testValidateTrialDatesRule18Fail() throws URISyntaxException{
+    public void testValidateTrialDatesRule18Fail(){
         trialAction = new AmendmentTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusDate("02/22/2010");
         trialAction.setTrialDTO(dto);
         assertEquals("error", trialAction.review());
         assertTrue(trialAction.getFieldErrors().containsKey("trialDTO.statusDate"));
+    }
+    @Test
+    public void testInValidStatusTransition () {
+        trialAction = new AmendmentTrialAction();
+        TrialDTO dto = getMockTrialDTO();
+        dto.setStatusCode("Approved");
+        dto.setCompletionDateType("Actual");
+        trialAction.setTrialDTO(dto);
+        assertEquals("error", trialAction.review());
+        assertNotNull(trialAction.getActionErrors());
+    }
+    @Test
+    public void testStatusToAdComplete() throws URISyntaxException {
+        trialAction = new AmendmentTrialAction();
+        TrialDTO dto = getMockTrialDTO();
+        dto.setStatusCode("Administratively Complete");
+        dto.setReason("reason");
+        dto.setCompletionDateType("Actual");
+        dto.setCompletionDate("01/22/2009");
+        trialAction.setTrialDTO(dto);
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
+        
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+
+        assertEquals("error", trialAction.review());
+        assertNotNull(trialAction.getActionErrors());
     }
 }

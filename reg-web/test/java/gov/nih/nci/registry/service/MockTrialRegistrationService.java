@@ -63,6 +63,9 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             PersonDTO responsiblePartyContactDTO) throws PAException {
+        if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+            throw new PAException("test");
+        }
         return IiConverter.convertToIi("3");
     }
 

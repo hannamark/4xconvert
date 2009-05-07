@@ -92,7 +92,7 @@ public class MockStudyParticipationService implements
     public StudyParticipationDTO create(StudyParticipationDTO dto)
             throws PAException {
         // TODO Auto-generated method stub
-        return null;
+        return new StudyParticipationDTO();
     }
 
     /* (non-Javadoc)

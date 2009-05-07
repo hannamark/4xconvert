@@ -61,8 +61,8 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     private String participatingSitesFileName = null;
     private File informedConsentDocument = null;
     private String informedConsentDocumentFileName = null;
-    private File otherDocument = null;
-    private String otherDocumentFileName = null;
+    private File protocolHighlightDocument = null;
+    private String protocolHighlightDocumentFileName = null;
     private File changeMemoDoc;
     private String changeMemoDocFileName = null;
     private String trialAction = null;
@@ -205,9 +205,9 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
                         participatingSitesFileName, participatingSites));
          }
-         if (PAUtil.isNotEmpty(otherDocumentFileName)) {
+         if (PAUtil.isNotEmpty(protocolHighlightDocumentFileName)) {
              docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), 
-                        otherDocumentFileName, otherDocument));  
+                     protocolHighlightDocumentFileName, protocolHighlightDocument));  
          }
         return docDTOList;
     }
@@ -418,30 +418,36 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             String informedConsentDocumentFileName) {
         this.informedConsentDocumentFileName = informedConsentDocumentFileName;
     }
+
     /**
-     * @return the otherDocument
+     * @return the protocolHighlightDocument
      */
-    public File getOtherDocument() {
-        return otherDocument;
+    public File getProtocolHighlightDocument() {
+        return protocolHighlightDocument;
     }
+
     /**
-     * @param otherDocument the otherDocument to set
+     * @param protocolHighlightDocument the protocolHighlightDocument to set
      */
-    public void setOtherDocument(File otherDocument) {
-        this.otherDocument = otherDocument;
+    public void setProtocolHighlightDocument(File protocolHighlightDocument) {
+        this.protocolHighlightDocument = protocolHighlightDocument;
     }
+
     /**
-     * @return the otherDocumentFileName
+     * @return the protocolHighlightDocumentFileName
      */
-    public String getOtherDocumentFileName() {
-        return otherDocumentFileName;
+    public String getProtocolHighlightDocumentFileName() {
+        return protocolHighlightDocumentFileName;
     }
+
     /**
-     * @param otherDocumentFileName the otherDocumentFileName to set
+     * @param protocolHighlightDocumentFileName the protocolHighlightDocumentFileName to set
      */
-    public void setOtherDocumentFileName(String otherDocumentFileName) {
-        this.otherDocumentFileName = otherDocumentFileName;
+    public void setProtocolHighlightDocumentFileName(
+            String protocolHighlightDocumentFileName) {
+        this.protocolHighlightDocumentFileName = protocolHighlightDocumentFileName;
     }
+
     /**
      * @return the changeMemoDoc
      */
@@ -487,7 +493,8 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         //protocol Highlighted doc
         addErrors(err);
         err = new HashMap<String, String>();
-        err = validator.validateDcoument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName", "");
+        err = validator.validateDcoument(protocolHighlightDocumentFileName, protocolHighlightDocument,
+                "trialDTO.protocolHighlightDocumentFileName", "");
         addErrors(err);
         err = new HashMap<String, String>();
         err = validator.validateDcoument(changeMemoDocFileName, changeMemoDoc, "trialDTO.changeMemoDocFileName",

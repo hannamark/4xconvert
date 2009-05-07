@@ -65,7 +65,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
     public Ii createInterventionalStudyProtocol(
             InterventionalStudyProtocolDTO ispDTO) throws PAException {
         // TODO Auto-generated method stub
-        return null;
+        return IiConverter.convertToIi("2");
     }
 
     public Ii createObservationalStudyProtocol(

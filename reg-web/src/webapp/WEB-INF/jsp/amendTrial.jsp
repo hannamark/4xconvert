@@ -834,10 +834,10 @@ function toggledisplay2 (it) {
               <label for="submitTrial_otherDocument"><fmt:message key="amend.trial.protocolHighlight"/></label>
              </td>
              <td class="value">
-                 <s:file name="protocolHighlight" id="protocolHighlight" cssStyle="width:270px"/>
+                 <s:file name="protocolHighlightDocument" id="protocolHighlightDocument" cssStyle="width:270px"/>
                  <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>trialDTO.otherDocumentFileName</s:param>
+                    <s:param>trialDTO.protocolHighlightDocumentFileName</s:param>
                    </s:fielderror>                            
                  </span>                 
                </td>         
