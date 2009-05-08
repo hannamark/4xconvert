@@ -96,7 +96,7 @@ Amendment Date: ${amendmentDate}
 The amendment will be processed by CTRO staff. You will be notified about the status of this submission once it has been reviewed by our staff.
 
 If you have questions regarding this submission, please contact us at ncictro@mail.nih.gov
- 
+
 Thank you for submitting your trial amendment to CTRP.');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(16,'trial.amend.accept.subject',
