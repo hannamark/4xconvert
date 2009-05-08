@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<head>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
 <SCRIPT language="JavaScript">
@@ -42,7 +43,7 @@
 <body>
 <div class="box">
 <s:form id="poOrganizations" name="poOrganizations" >
-<h2>Search Contact Persons dfdfdfdfd</h2>
+<h2>Search Contact Persons </h2>
 
 
 <table  class="form">  
