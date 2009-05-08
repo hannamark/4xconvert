@@ -255,7 +255,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             Random randomGenerator = new Random();
             int randomInt = randomGenerator.nextInt(i);
 
-            String fileName = "TSR" + randomInt  + ".html";
+            //String fileName = "TSR" + randomInt  + ".html";
             servletResponse.setContentType("text/html");
             servletResponse.setContentLength(htmlData.length());
             ServletOutputStream servletout = servletResponse.getOutputStream();
