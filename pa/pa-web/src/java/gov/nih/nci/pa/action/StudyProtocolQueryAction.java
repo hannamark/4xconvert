@@ -91,7 +91,6 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -251,11 +250,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(
                     IiConverter.convertToIi(pId));
 
-            final int i = 1000;
-            Random randomGenerator = new Random();
-            int randomInt = randomGenerator.nextInt(i);
-
-            //String fileName = "TSR" + randomInt  + ".html";
             servletResponse.setContentType("text/html");
             servletResponse.setContentLength(htmlData.length());
             ServletOutputStream servletout = servletResponse.getOutputStream();
