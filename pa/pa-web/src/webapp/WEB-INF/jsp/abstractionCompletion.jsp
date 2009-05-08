@@ -21,7 +21,10 @@ function generateReport(pid) {
     showPopWin('/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId='+pid, 900, 400, '', 'CLinical Trial XML Generation');
 }
 function generateTSR() {
-    showPopWin('/pa/protected/ajaxAbstractionCompletionviewTSR.action', 900, 400, '', 'View TSR');
+   document.aForm.target = "TSR";
+   document.aForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSR.action";
+   document.aForm.submit();
+   
    }
 </SCRIPT>
 

@@ -91,7 +91,6 @@ import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -283,12 +282,9 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         servletResponse.setHeader("Pragma", "public");
         servletResponse.setHeader("Cache-Control", "max-age=0");
 
-        int data;
-        ByteArrayInputStream bStream = new ByteArrayInputStream(htmlData.getBytes());
         ServletOutputStream servletout = servletResponse.getOutputStream();
-        while ((data = bStream.read()) != -1) {
-            servletout.write(data);
-          }
+        servletout.write(htmlData.getBytes());
+
         servletout.flush();
         servletout.close();
       } catch (Exception e) {

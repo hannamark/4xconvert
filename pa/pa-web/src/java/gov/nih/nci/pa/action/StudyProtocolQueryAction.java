@@ -258,12 +258,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             String fileName = "TSR" + randomInt  + ".html";
             servletResponse.setContentType("text/html");
             servletResponse.setContentLength(htmlData.length());
-            servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
-            servletResponse.setHeader("Pragma", "public");
-            servletResponse.setHeader("Cache-Control", "max-age=0");
-
             ServletOutputStream servletout = servletResponse.getOutputStream();
-              servletout.write(htmlData.getBytes());
+            servletout.write(htmlData.getBytes());
             servletout.flush();
             servletout.close();
             
