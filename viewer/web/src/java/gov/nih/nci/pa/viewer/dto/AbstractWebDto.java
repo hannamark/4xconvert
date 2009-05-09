@@ -79,12 +79,12 @@ package gov.nih.nci.pa.viewer.dto;
 /**
  * @author Hugh Reinhart
  * @since 05/06/2009
- *
- * @param <CRITERIADTO> corresponding service iso dto
+ * @param <ISODTO> corresponding service iso dto
  */
-public abstract class AbstractWebDto<CRITERIADTO> {
+public abstract class AbstractWebDto<ISODTO> {
+
     /**
      * @return an iso dto instance
      */
-    public abstract CRITERIADTO getServiceDto();
+    public abstract ISODTO getIsoDto();
 }

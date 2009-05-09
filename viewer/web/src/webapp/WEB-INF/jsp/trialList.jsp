@@ -3,14 +3,16 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:set var="topic" scope="request" value="trial_list"/> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><fmt:message key="trialList.header" /></title>
+<s:head />
 <SCRIPT LANGUAGE="JavaScript">
 function handleAction(){
      document.forms[0].action="trialListgetReport.action";
      document.forms[0].submit();
 }
 </SCRIPT>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
 </head>
 <body>
 <!-- main content begins-->
@@ -19,18 +21,10 @@ function handleAction(){
         <table class="form">    
             <tr> 
                 <td scope="row" class="label">
-                    <label for="ctrpOnly"> <fmt:message key="trialList.criteria.ctrpOnly"/></label>
+                    <label for="ctrpOnly"><fmt:message key="trialList.criteria.ctrpOnly"/></label>
                 </td>
                 <td>
                     <s:checkbox name="criteria.ctrpOnly" />
-                </td>
-            </tr>
-            <tr> 
-                <td scope="row" class="label">
-                    <label for="userOnly"> <fmt:message key="trialList.criteria.userOnly"/></label>
-                </td>
-                <td>
-                    <s:checkbox name="criteria.userOnly" />
                 </td>
             </tr>
         </table>
@@ -43,9 +37,9 @@ function handleAction(){
                 </ul>   
             </del>
         </div>
+        <s:if test="%{resultList != null}">
+            <jsp:include page="/WEB-INF/jsp/trialListResults.jsp"/>
+        </s:if>
     </s:form>
-
-    <div class="line"></div>
-    <s:textfield name="results" maxlength="200" size="100" cssStyle="width:200px"/>  
 </body>
 </html>

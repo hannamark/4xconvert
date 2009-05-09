@@ -75,15 +75,19 @@
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package gov.nih.nci.pa.viewer.action;
+
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Action;
 /**
- * @author Bala Nair
+ * @author Hugh Reinhart
+ * @since 04/28/2009
  */
-public class Logout {
+public class LogoutAction {
+
     /**
-     * {@inheritDoc}
+     * Method to invalidate session.
+     * @return action result
      */
     public String logout() {
         if (ServletActionContext.getRequest().getSession() != null) {

@@ -89,16 +89,13 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class TrialListAction extends AbstractReportAction
-        <TrialListCriteriaWebDto, TrialListResultWebDto> {
+public class TrialListAction extends AbstractReportAction<TrialListCriteriaWebDto, TrialListResultWebDto> {
 
     private static final long serialVersionUID = 8183194180770453447L;
 
+
     /** Criteria used to generate report. */
-    private TrialListCriteriaWebDto criteria = new TrialListCriteriaWebDto();
-    /** Report result set. */
-    private List<TrialListResultWebDto> resultList = null;
-    private String results = "Search not yet performed.";
+    protected TrialListCriteriaWebDto criteria = new TrialListCriteriaWebDto();
 
     /**
      * {@inheritDoc}
@@ -106,12 +103,10 @@ public class TrialListAction extends AbstractReportAction
     @Override
     public String getReport() throws PAException {
         TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
-        List<TrialListResultDto> isoList = local.get(criteria.getServiceDto());
+        List<TrialListResultDto> isoList = local.get(criteria.getIsoDto());
         setResultList(TrialListResultWebDto.getWebList(isoList));
-        setResults(getResultList().size() + " records returned.");
-        return SUCCESS;
+        return super.getReport();
     }
-
 
     /**
      * @return the criteria
@@ -120,43 +115,10 @@ public class TrialListAction extends AbstractReportAction
         return criteria;
     }
 
-
     /**
      * @param criteria the criteria to set
      */
     public void setCriteria(TrialListCriteriaWebDto criteria) {
         this.criteria = criteria;
-    }
-
-
-    /**
-     * @return the resultList
-     */
-    public List<TrialListResultWebDto> getResultList() {
-        return resultList;
-    }
-
-
-    /**
-     * @param resultList the resultList to set
-     */
-    public void setResultList(List<TrialListResultWebDto> resultList) {
-        this.resultList = resultList;
-    }
-
-
-    /**
-     * @return the results
-     */
-    public String getResults() {
-        return results;
-    }
-
-
-    /**
-     * @param results the results to set
-     */
-    public void setResults(String results) {
-        this.results = results;
     }
 }

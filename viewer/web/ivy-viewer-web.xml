@@ -19,9 +19,10 @@
     <dependency org="apache"                 name="struts2-core"            rev="2.1.6"           conf="runtime->default"/>
     <dependency org="apache"                 name="struts2-spring-plugin"   rev="2.1.6"           conf="runtime->default"/>
     <dependency org="apache"                 name="taglibs-standard"        rev="1.1.2"           conf="runtime->master"/>
-    <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="runtime->master"/>
+    <dependency org="displaytag"             name="displaytag"              rev="1.2"             conf="runtime->master"/>
     <dependency org="freemarker"             name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
     <dependency org="itext"                  name="itext"                   rev="2.0.6"           conf="runtime->master"/>
+    <dependency org="jakarta"                name="commons-beanutils"       rev="1.7.0"           conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-collections"     rev="3.2.1"           conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-fileupload"      rev="1.2.1"           conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-io"              rev="1.4"             conf="runtime->master"/>

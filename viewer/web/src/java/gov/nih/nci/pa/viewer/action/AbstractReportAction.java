@@ -77,6 +77,11 @@
 package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.viewer.util.Constants;
+
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 /**
  * Base class for report actions.
@@ -84,17 +89,37 @@ import gov.nih.nci.pa.service.PAException;
  * @author hreinhart
  * @since 04/29/2009
  *
- * @param <CRITERIA> criteria dto used to generate report
- * @param <RESULT> dto used to return results
+ * @param <CRITERIA> criteria web dto used to generate report
+ * @param <RESULT> web dto used to return results
  */
 public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractViewerAction {
 
     private static final long serialVersionUID = 5350758217530734916L;
+
+    /** Report result set. */
+    protected List<RESULT> resultList;
 
     /**
      * Method used get the report.
      * @return action result
      * @throws PAException exception
      */
-    public abstract String getReport() throws PAException;
+    public String getReport() throws PAException {
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.RESULT_LIST, resultList);
+        return SUCCESS;
+    }
+
+    /**
+     * @return the resultList
+     */
+    public List<RESULT> getResultList() {
+        return resultList;
+    }
+
+    /**
+     * @param resultList the resultList to set
+     */
+    public void setResultList(List<RESULT> resultList) {
+        this.resultList = resultList;
+    }
 }

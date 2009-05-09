@@ -39,8 +39,8 @@
     </target>
 
     <target name="package-notest-noivy" depends="pre-clean">
-        <ant target="jar-notest" dir="${servicesDir}"/>
-        <ant target="war-notest" dir="${webDir}"/>
+        <ant target="jar-notest-noivy" dir="${servicesDir}"/>
+        <ant target="war-notest-noivy" dir="${webDir}"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -54,7 +54,7 @@
         <fail unless="viewerWarPresent" message="File viewer.war (web application) not available."/>
         <available file="${servicesJar}" type="file" property="viewerJarPresent"/>
         <fail unless="viewerJarPresent" message="File viewer.jar (services jar) not available."/>
-        
+
         <delete dir="${viewerEarDir}"/>
         <unjar src="${paEarFile}" dest="${viewerEarDir}"/>
         <copy file="${servicesJar}" todir="${viewerEarDir}"/>
@@ -63,11 +63,10 @@
         <delete file="${viewerEarDir}/pa-web.war"/>
         <delete file="${viewerEarDir}/reg-web.war"/>
         <delete file="${viewerEarDir}/META-INF/application.xml"/>
-        <copy file="${resourceDir}/application.xml" todir="${viewerEarDir}/META-INF"/>
         <ear destfile="${viewerEarFile}" 
              basedir="${viewerEarDir}" 
              compress="false" 
-             appxml="${viewerEarDir}/META-INF/application.xml"/>
+             appxml="${resourceDir}/application.xml"/>
     </target>
     
     <target name="deploy-ear">

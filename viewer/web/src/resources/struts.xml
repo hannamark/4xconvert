@@ -13,7 +13,7 @@
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
         </action>
-        <action name="logout" class="gov.nih.nci.pa.viewer.action.Logout" method="logout">
+        <action name="logout" class="gov.nih.nci.pa.viewer.action.LogoutAction" method="logout">
             <result>/index.jsp</result>
         </action>
         <action name="home">

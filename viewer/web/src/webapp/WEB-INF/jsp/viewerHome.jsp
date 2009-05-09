@@ -20,7 +20,7 @@
 
         <h1>CTRP Viewer Home</h1>
         <p class="intro">
-            This Portal enables you to generate reports about trial registered with NCI&#39;s Clinical Trials Reporting Program.
+            This Portal enables you to generate reports about trials registered with NCI&#39;s Clinical Trials Reporting Program.
         </p>
     </div>
 </body>

@@ -85,7 +85,7 @@ import gov.nih.nci.coppa.iso.Bl;
 public class TrialListCriteriaDto {
 
     private Bl ctrpOnly;
-    private Bl userOnly;
+
     /**
      * @return the ctrpOnly
      */
@@ -97,17 +97,5 @@ public class TrialListCriteriaDto {
      */
     public void setCtrpOnly(Bl ctrpOnly) {
         this.ctrpOnly = ctrpOnly;
-    }
-    /**
-     * @return the userOnly
-     */
-    public Bl getUserOnly() {
-        return userOnly;
-    }
-    /**
-     * @param userOnly the userOnly to set
-     */
-    public void setUserOnly(Bl userOnly) {
-        this.userOnly = userOnly;
     }
 }

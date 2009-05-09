@@ -86,6 +86,8 @@ public class Constants {
 
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_ROLE = "viewerRole";
+    /** Attribute used to store the results in session. */
+    public static final String RESULT_LIST = "displayTagList";
     /** role-name for the public role. */
     public static final String ROLE_PUBLIC = "Submitter";
     /** role-name for the ctro staff role. */

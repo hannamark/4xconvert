@@ -268,6 +268,8 @@
             description="Makes services jar, doesn't run tests">
     </target>
 
+    <target name="jar-notest-noivy" depends="compile, create-jar"/>
+
 
     <!-- ====================================================================== -->
     <!-- Run Cobertura and JUnit                                                -->

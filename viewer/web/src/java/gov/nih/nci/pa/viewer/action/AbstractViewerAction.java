@@ -91,21 +91,19 @@ public abstract class AbstractViewerAction extends ActionSupport {
     private static final long serialVersionUID = -5423491292515161915L;
 
     /**
-     * @return the role from the session
-     */
-    protected String getUserRole() {
-        return (String) ServletActionContext.getRequest().getSession().getAttribute(Constants.SESSION_ATTR_ROLE);
-    }
-
-    /**
      * Default implementation throws derived exception.
-     *
      * @throws PAException exception
      * @return action result
      */
     @Override
     public String execute() throws PAException {
-        return "success";
+        return SUCCESS;
     }
 
+    /**
+     * @return the role from the session
+     */
+    protected String getUserRole() {
+        return (String) ServletActionContext.getRequest().getSession().getAttribute(Constants.SESSION_ATTR_ROLE);
+    }
 }

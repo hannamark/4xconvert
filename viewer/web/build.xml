@@ -262,9 +262,6 @@
         <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib">
             <fileset dir="${lib.dir}/runtime"/>
         </copy>
-        <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib">
-            <fileset dir="${pa.dir}/pa-ejb/target"/>
-        </copy>
         <war destfile="${viewer.build.dir}/${viewer.war}" 
              compress="false" 
              webxml="${basedir}/src/webapp/WEB-INF/web.xml">            
@@ -279,6 +276,8 @@
 
     <target name="war-notest" depends="ivy-compile, ivy-runtime, compile, create-war"
             description="Package the application.  Do not run tests."/>
+
+    <target name="war-notest-noivy" depends="compile, create-war"/>
 
 
     <!-- ====================================================================== -->

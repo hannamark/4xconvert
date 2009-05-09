@@ -10,7 +10,8 @@
            </c:otherwise>
         </c:choose>
         <c:choose>
-            <c:when test="${pageContext.request.remoteUser != null}">                    
+            <c:when test="${pageContext.request.remoteUser != null}">
+                <c:if test="${(sessionScope.viewerRole == 'Abstractor')}">
                 <c:choose>
                     <c:when test="${requestScope.topic == 'trial_list'}">
                        <li><a href="trialList.action" class="selected">Trial List Report</a></li> 
@@ -43,7 +44,8 @@
                        <li><a href="summarySent.action" >Summary Sent Report</a></li>
                     </c:otherwise>
                 </c:choose>
-                <li><a href="/viewer/logout.action" >Log Out</a></li>
+              </c:if>  
+              <li><a href="/viewer/logout.action" >Log Out</a></li>
             </c:when>
             <c:otherwise>
                <c:choose>

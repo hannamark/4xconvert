@@ -87,13 +87,12 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 public class TrialListCriteriaWebDto extends AbstractWebDto<TrialListCriteriaDto> {
 
     private Boolean ctrpOnly;
-    private Boolean userOnly;
 
     /**
      * Default constructor.
      */
     public TrialListCriteriaWebDto() {
-        // default constructor
+        super();
     }
 
     /**
@@ -101,18 +100,17 @@ public class TrialListCriteriaWebDto extends AbstractWebDto<TrialListCriteriaDto
      * @param dto the service iso dto
      */
     public TrialListCriteriaWebDto(TrialListCriteriaDto dto) {
+        super();
         this.ctrpOnly = BlConverter.covertToBoolean(dto.getCtrpOnly());
-        this.userOnly = BlConverter.covertToBoolean(dto.getUserOnly());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TrialListCriteriaDto getServiceDto() {
+    public TrialListCriteriaDto getIsoDto() {
         TrialListCriteriaDto result = new TrialListCriteriaDto();
         result.setCtrpOnly(BlConverter.convertToBl(getCtrpOnly()));
-        result.setUserOnly(BlConverter.convertToBl(getUserOnly()));
         return result;
     }
 
@@ -128,19 +126,5 @@ public class TrialListCriteriaWebDto extends AbstractWebDto<TrialListCriteriaDto
      */
     public void setCtrpOnly(Boolean ctrpOnly) {
         this.ctrpOnly = ctrpOnly;
-    }
-
-    /**
-     * @return the userOnly
-     */
-    public Boolean getUserOnly() {
-        return userOnly;
-    }
-
-    /**
-     * @param userOnly the userOnly to set
-     */
-    public void setUserOnly(Boolean userOnly) {
-        this.userOnly = userOnly;
     }
 }

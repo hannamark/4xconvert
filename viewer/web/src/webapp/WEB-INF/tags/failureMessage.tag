@@ -1,4 +1,4 @@
-<%@ tag display-name="failureMessage"  description="Displays the succes messages"  body-content="empty" %>
+<%@ tag display-name="failureMessage"  description="Displays the failure messages"  body-content="empty" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- Success Messages --%>
