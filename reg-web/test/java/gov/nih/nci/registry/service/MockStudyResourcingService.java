@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
@@ -26,7 +27,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceRemote 
         studyRDto.setFundingMechanismCode(CdConverter.convertStringToCd("B09"));
         studyRDto.setNihInstitutionCode(CdConverter.convertStringToCd("AG"));
         studyRDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("CCR"));
-        studyRDto.setSerialNumber(IntConverter.convertToInt("123456"));
+        studyRDto.setSerialNumber(StConverter.convertToSt("123456"));
         studyRDto.setIdentifier(IiConverter.convertToIi("1"));
         studyRDto.setStudyProtocolIi(IiConverter.convertToIi("1"));
         list.add(studyRDto);

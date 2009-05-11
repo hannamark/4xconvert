@@ -112,7 +112,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -517,7 +516,7 @@ public class BatchCreateProtocols {
                             .getNihGrantNCIDivisionCode())));
             studyResoureDTO.setNihInstitutionCode(CdConverter
                     .convertStringToCd(batchDto.getNihGrantInstituteCode()));
-            studyResoureDTO.setSerialNumber(IntConverter.convertToInt(batchDto
+            studyResoureDTO.setSerialNumber(StConverter.convertToSt(batchDto
                     .getNihGrantSrNumber()));
             RegistryServiceLocator.getStudyResourcingService()
                     .createStudyResourcing(studyResoureDTO);

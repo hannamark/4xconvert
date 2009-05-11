@@ -29,7 +29,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -590,7 +589,7 @@ public class TrialUtil {
            isoDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
                                NciDivisionProgramCode.getByCode(dto.getNciDivisionProgramCode())));
            isoDTO.setNihInstitutionCode(CdConverter.convertStringToCd(dto.getNihInstitutionCode()));
-           isoDTO.setSerialNumber(IntConverter.convertToInt(dto.getSerialNumber()));
+           isoDTO.setSerialNumber(StConverter.convertToSt(dto.getSerialNumber()));
            grantsDTOList.add(isoDTO);
        }
        return grantsDTOList;
