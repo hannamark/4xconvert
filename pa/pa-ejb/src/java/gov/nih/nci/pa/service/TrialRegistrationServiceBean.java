@@ -507,6 +507,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             oldSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
             studyProtocolService.updateStudyProtocol(oldSpDto);
         }
+        if (BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator()) 
+                && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
+            studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+            studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));            
+            
+            // size of ind/ide > 0 
+        }
         studyProtocolDTO.setIdentifier(null);
         if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
             studyProtocolIi =  studyProtocolService.createInterventionalStudyProtocol(
@@ -588,6 +595,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
 
     private void createOverallStatuses(Ii studyProtocolIi, Ii oldStudyProtocolIi, StudyOverallStatusDTO newStatusDto)
             throws PAException {
+
         List<StudyOverallStatusDTO> sosList = studyOverallStatusService
                 .getByStudyProtocol(oldStudyProtocolIi);
         boolean first = true;
@@ -600,11 +608,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     statusFound = true;
                 }
             }
-            if (sos.getStatusCode().getCode().equals(newStatusDto.getStatusCode().getCode())) {
-                sos.setReasonText(newStatusDto.getReasonText());
-                sos.setStatusCode(newStatusDto.getStatusCode());
-                sos.setStatusDate(newStatusDto.getStatusDate());
-            }
             first = false;
             sos.setIdentifier(null);
             sos.setStudyProtocolIdentifier(studyProtocolIi);
@@ -614,6 +617,15 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             newStatusDto.setIdentifier(null);
             newStatusDto.setStudyProtocolIdentifier(studyProtocolIi);
             sosList.add(newStatusDto);
+        } else {
+            StudyOverallStatusDTO lastStatusDto = sosList.get(sosList.size() - 1);
+            if (lastStatusDto != null 
+                    && lastStatusDto.getStatusCode().getCode().equals(newStatusDto.getStatusCode().getCode())) {
+                lastStatusDto.setReasonText(newStatusDto.getReasonText());
+                lastStatusDto.setStatusCode(newStatusDto.getStatusCode());
+                lastStatusDto.setStatusDate(newStatusDto.getStatusDate());
+            }
+            
         }
 
         for (StudyOverallStatusDTO sos : sosList) {
