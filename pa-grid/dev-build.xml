@@ -318,7 +318,7 @@
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="91" totallinerate="96" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="92" totallinerate="96" />
     </target>
 
     <!--
@@ -442,12 +442,16 @@
             <run-client serviceendpointname="StudyOutcomeMeasureService" class="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.client.StudyOutcomeMeasureServiceClient" debug-suspend="n" />
     </target>
 
-  <target name="runStudyParticipationClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyParticipationService Client">
+    <target name="runStudyParticipationClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyParticipationService Client">
           <run-client serviceendpointname="StudyParticipationService" class="gov.nih.nci.coppa.services.pa.studyparticipationservice.client.StudyParticipationServiceClient" debug-suspend="n" />
-  </target>
+    </target>
 
-  <target name="runStudyDiseaseClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyDiseaseService Client">
-              <run-client serviceendpointname="StudyDiseaseService" class="gov.nih.nci.coppa.services.pa.studydiseaseservice.client.StudyDiseaseServiceClient" debug-suspend="n" />
-  </target>
+    <target name="runStudyDiseaseClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyDiseaseService Client">
+          <run-client serviceendpointname="StudyDiseaseService" class="gov.nih.nci.coppa.services.pa.studydiseaseservice.client.StudyDiseaseServiceClient" debug-suspend="n" />
+    </target>
+
+    <target name="runStudyContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyContactService Client">
+       <run-client serviceendpointname="StudyContactService" class="gov.nih.nci.coppa.services.pa.studycontactservice.client.StudyContactServiceClient" debug-suspend="n" />
+    </target>
 
 </project>

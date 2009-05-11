@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -246,6 +247,16 @@ public final class JNDIServiceLocator implements ServiceLocator {
             throws NamingException {
         StudyDiseaseServiceRemote result =
             (StudyDiseaseServiceRemote) lookup("pa/StudyDiseaseServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyContactServiceRemote getStudyContactService()
+            throws NamingException {
+        StudyContactServiceRemote result =
+            (StudyContactServiceRemote) lookup("pa/StudyContactServiceBean/remote");
         return result;
     }
 }

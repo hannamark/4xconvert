@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.ArmTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyContactTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyDiseaseTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOnholdTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOutcomeMeasureTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOverallStatusTransformer;
@@ -19,6 +21,7 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransform
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.TransformerRegistry;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -40,7 +43,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(12, tMap.size());
+        assertEquals(14, tMap.size());
         tMap.clear();
     }
 
@@ -81,8 +84,15 @@ public class TransformerRegistryTest {
         trans = TransformerRegistry.INSTANCE.getTransformer(StudyOverallStatusDTO.class);
         assertTrue(trans instanceof StudyOverallStatusTransformer);
         //#12
+        trans = TransformerRegistry.INSTANCE.getTransformer(StudyDiseaseDTO.class);
+        assertTrue(trans instanceof StudyDiseaseTransformer);
+        //#13
+        trans = TransformerRegistry.INSTANCE.getTransformer(StudyDiseaseDTO.class);
+        assertTrue(trans instanceof StudyContactTransformer);
+        //#14
         trans = TransformerRegistry.INSTANCE.getTransformer(StudyOnholdDTO.class);
         assertTrue(trans instanceof StudyOnholdTransformer);
+
     }
 
     @Test (expected=RuntimeException.class)
