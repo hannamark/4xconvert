@@ -102,6 +102,11 @@
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
+                            <groupId>gov.nih.nci.coppa</groupId>
+                            <artifactId>coppa-commons</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
                             <groupId>com.fiveamsolutions</groupId>
                             <artifactId>nci-commons-core</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>
