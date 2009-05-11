@@ -84,6 +84,8 @@ package gov.nih.nci.services.person;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
@@ -97,8 +99,6 @@ import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.LimitOffset;
-import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.Utils;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;

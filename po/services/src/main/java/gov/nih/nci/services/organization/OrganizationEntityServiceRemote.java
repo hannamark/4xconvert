@@ -84,9 +84,9 @@ package gov.nih.nci.services.organization;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.LimitOffset;
-import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.util.List;

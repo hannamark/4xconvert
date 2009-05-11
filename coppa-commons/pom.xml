@@ -152,9 +152,12 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageName>org.iso._21090</packageName>
-                    <schemaDirectory>schema</schemaDirectory>
+                	<bindingDirectory>${basedir}/src/main/xjb</bindingDirectory>
+                    <schemaDirectory>${basedir}/src/main/xsd/</schemaDirectory>
+                    <schemaFiles>CoppaCommons.xsd,ISO_datatypes_Narrative.xsd</schemaFiles>
                     <outputDirectory>${generatedStubsSrcDir}</outputDirectory>
+                    <staleFile>${project.build.directory}/generated-sources/jaxb/.staleFlag</staleFile>
+                    <verbose>true</verbose>
                 </configuration>
             </plugin>
             <plugin>
@@ -301,6 +304,7 @@
                         <excludes>
                             <exclude>gov/nih/nci/coppa/services/grid/ser/*</exclude>
                             <exclude>org/iso/_21090/*</exclude>
+                            <exclude>gov/nih/nci/coppa/common/*</exclude>
                         </excludes>
                     </instrumentation>
                     <check>

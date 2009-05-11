@@ -86,6 +86,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -101,8 +103,6 @@ import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
-import gov.nih.nci.services.LimitOffset;
-import gov.nih.nci.services.TooManyResultsException;
 import gov.nih.nci.services.correlation.AbstractCorrelationServiceBean;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 

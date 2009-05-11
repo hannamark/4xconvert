@@ -80,7 +80,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
+package gov.nih.nci.coppa.services;
 
 /**
  * Used to indicate that too many results were found for what is acceptable by the system. 
