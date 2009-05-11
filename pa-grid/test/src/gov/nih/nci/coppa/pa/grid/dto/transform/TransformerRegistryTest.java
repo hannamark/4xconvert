@@ -21,6 +21,7 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransform
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.TransformerRegistry;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
@@ -87,7 +88,7 @@ public class TransformerRegistryTest {
         trans = TransformerRegistry.INSTANCE.getTransformer(StudyDiseaseDTO.class);
         assertTrue(trans instanceof StudyDiseaseTransformer);
         //#13
-        trans = TransformerRegistry.INSTANCE.getTransformer(StudyDiseaseDTO.class);
+        trans = TransformerRegistry.INSTANCE.getTransformer(StudyContactDTO.class);
         assertTrue(trans instanceof StudyContactTransformer);
         //#14
         trans = TransformerRegistry.INSTANCE.getTransformer(StudyOnholdDTO.class);
