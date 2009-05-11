@@ -87,7 +87,6 @@ import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -248,7 +247,7 @@ public class StudyResourcingServiceBean
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
             studyResourcing.setSuffixGrantYear(StConverter.convertToString(studyResourcingDTO.getSuffixGrantYear()));
             studyResourcing.setSuffixOther(StConverter.convertToString(studyResourcingDTO.getSuffixOther()));
-            studyResourcing.setSerialNumber(IntConverter.convertToInteger(studyResourcingDTO.getSerialNumber()));
+            studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
             session.update(studyResourcing);
             session.flush();
             studyResourcingRetDTO = StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
@@ -474,7 +473,7 @@ public class StudyResourcingServiceBean
 
     @SuppressWarnings({"PMD" })
         private void enforceNoDuplicate(StudyResourcingDTO dto) throws PAException {
-          Integer newSerialNumber = dto.getSerialNumber().getValue();
+          String newSerialNumber = dto.getSerialNumber().getValue();
           String newFundingMech = dto.getFundingMechanismCode().getCode();
           String newNciDivCode = dto.getNciDivisionProgramCode().getCode();
           String newNihInstCode = dto.getNihInstitutionCode().getCode();

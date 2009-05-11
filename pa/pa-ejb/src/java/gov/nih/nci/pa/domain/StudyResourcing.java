@@ -116,7 +116,7 @@ public class StudyResourcing extends AbstractEntity {
     private NciDivisionProgramCode nciDivisionProgramCode;
     private String suffixGrantYear;
     private String suffixOther;
-    private Integer serialNumber;
+    private String serialNumber;
     private StudyProtocol studyProtocol;
     private Boolean activeIndicator;
     private String inactiveCommentText;
@@ -228,13 +228,13 @@ public class StudyResourcing extends AbstractEntity {
      * @return serialNumber
      */
     @Column(name = "SERIAL_NUMBER")
-    public Integer getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
     /**
      * @param serialNumber serialNumber
      */
-    public void setSerialNumber(Integer serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
 

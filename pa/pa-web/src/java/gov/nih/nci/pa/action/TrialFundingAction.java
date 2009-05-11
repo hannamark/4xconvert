@@ -85,7 +85,6 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -178,7 +177,7 @@ private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
           trialFundingWebDTO.getNihInstitutionCode()));
       studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
       studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
-      studyResoureDTO.setSerialNumber(IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
+      studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
       PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
 
       query();
@@ -218,7 +217,7 @@ private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
           trialFundingWebDTO.getNihInstitutionCode()));
       studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
       studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
-      studyResoureDTO.setSerialNumber(IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
+      studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
       PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
 
       query();

@@ -86,7 +86,6 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
@@ -120,7 +119,7 @@ public class StudyResourcingConverter {
         srDTO.setNihInstitutionCode(CdConverter.convertStringToCd(studyResourcing.getNihInstituteCode()));
         srDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcing.getSuffixGrantYear()));
         srDTO.setSuffixOther(StConverter.convertToSt(studyResourcing.getSuffixOther()));
-        srDTO.setSerialNumber(IntConverter.convertToInt(studyResourcing.getSerialNumber()));
+        srDTO.setSerialNumber(StConverter.convertToSt(studyResourcing.getSerialNumber()));
         srDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(studyResourcing.getStudyProtocol().getId()));
         //@tdo: date range
         return srDTO;
