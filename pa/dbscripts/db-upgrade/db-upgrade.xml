@@ -72,4 +72,8 @@
             <comment>execute studyMilestoneUpdate.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyMilestoneUpdate.sql"/>
     </changeSet>
+     <changeSet id="16" author="Anupama">
+            <comment>execute studyResourcingUpdate.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/studyResourcingUpdate.sql"/>
+    </changeSet>
 </databaseChangeLog>
