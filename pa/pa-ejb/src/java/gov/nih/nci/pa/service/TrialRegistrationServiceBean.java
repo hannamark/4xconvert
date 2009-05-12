@@ -507,7 +507,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             oldSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
             studyProtocolService.updateStudyProtocol(oldSpDto);
         }
-        if (BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator()) 
+        if (!BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator()) 
                 && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
             studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
             studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));            
