@@ -617,17 +617,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             newStatusDto.setIdentifier(null);
             newStatusDto.setStudyProtocolIdentifier(studyProtocolIi);
             sosList.add(newStatusDto);
-        } else {
-            StudyOverallStatusDTO lastStatusDto = sosList.get(sosList.size() - 1);
-            if (lastStatusDto != null 
-                    && lastStatusDto.getStatusCode().getCode().equals(newStatusDto.getStatusCode().getCode())) {
-                lastStatusDto.setReasonText(newStatusDto.getReasonText());
-                lastStatusDto.setStatusCode(newStatusDto.getStatusCode());
-                lastStatusDto.setStatusDate(newStatusDto.getStatusDate());
-            }
-            
         }
-
         for (StudyOverallStatusDTO sos : sosList) {
             studyOverallStatusService.create(sos);
         }
