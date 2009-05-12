@@ -34,7 +34,7 @@ x.t("metadata","definitions");
 x.t("comments","specifications");
 x.t("templates","further");
 x.t("registration","templates");
-x.t("appear",".xsl");
+x.t("appear",".xls");
 x.t("include","following");
 x.t("proprietary","trials");
 x.t("valid","data");
@@ -50,7 +50,7 @@ x.t("protocol","details");
 x.t("downloading","trial");
 x.t("order","data");
 x.t("following","order");
-x.t(".xsl","file");
 x.t("elements","provide");
 x.t("designation","data");
+x.t(".xls","file");
 }
