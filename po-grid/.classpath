@@ -87,8 +87,6 @@
 	<classpathentry kind="lib" path="lib/jaxb-impl.jar"/>
 	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
 	<classpathentry kind="lib" path="lib/iso-datatypes-1.2rc1.jar"/>
-	<classpathentry kind="lib" path="lib/coppa-commons-1.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="test/lib/coppa-commons-1.0-SNAPSHOT-tests.jar"/>
 	<classpathentry kind="var" path="PO_GLOBUS"/>
 	<classpathentry kind="lib" path="lib/po-services-1.3-SNAPSHOT-client.jar"/>
 	<classpathentry kind="lib" path="lib/coppa-commons-1.1-SNAPSHOT.jar"/>

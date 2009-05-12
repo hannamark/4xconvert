@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.coppa.po.grid.remote;
 
-import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.coppa.services.LimitOffset;
 
 /**
  * Utility class or all server-side services.

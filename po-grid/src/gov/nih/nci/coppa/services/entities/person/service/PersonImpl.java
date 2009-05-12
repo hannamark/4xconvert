@@ -3,15 +3,15 @@ package gov.nih.nci.coppa.services.entities.person.service;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.LimitOffsetTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokePersonEjb;
 import gov.nih.nci.coppa.po.grid.remote.Utils;
+import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.rmi.RemoteException;
@@ -65,7 +65,7 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
       try {
           return this.query(person, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
       } catch (Exception e) {
@@ -94,7 +94,7 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Person[] query(gov.nih.nci.coppa.po.Person person,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.Person[] query(gov.nih.nci.coppa.po.Person person,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
       try {
           LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
           PersonDTO person_iso = PersonTransformer.INSTANCE.toDto(person);

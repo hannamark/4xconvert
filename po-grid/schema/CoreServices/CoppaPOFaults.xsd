@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:COPPA-PO="http://po.coppa.nci.nih.gov" xmlns:COPPA-PO-FAULTS="http://faults.po.coppa.nci.nih.gov"
+	xmlns:COPPA-COMMON-FAULTS="http://faults.common.coppa.nci.nih.gov"
 	xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
 	targetNamespace="http://faults.po.coppa.nci.nih.gov" elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
 	<import
 		namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
 		schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+    <import namespace="http://faults.common.coppa.nci.nih.gov" schemaLocation="./CoppaCommonsFaults.xsd"/>
 	<xs:complexType name="StringMapType">
 		<xs:sequence>
 			<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
@@ -61,13 +63,4 @@
 			<extension base="COPPA-PO-FAULTS:NullifiedDataFault" />
 		</complexContent>
 	</complexType>
-	<complexType name="TooManyResultsFault">
-	  <complexContent>
-			<extension base="wsrbf:BaseFaultType">
-				<sequence>
-					<element name="maxResults" type="xs:int" />
-				</sequence>
-			</extension>
-	  </complexContent>
-	</complexType>	
 </schema>

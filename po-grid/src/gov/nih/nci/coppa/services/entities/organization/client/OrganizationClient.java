@@ -1,7 +1,7 @@
 package gov.nih.nci.coppa.services.entities.organization.client;
 
 import gov.nih.nci.coppa.po.Id;
-import gov.nih.nci.coppa.po.LimitOffset;
+import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
@@ -139,7 +139,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
   }
 
-  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequest();
@@ -187,7 +187,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
   }
 
-  public gov.nih.nci.coppa.po.Organization[] query(gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.Organization[] query(gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"query");
     gov.nih.nci.coppa.services.entities.organization.stubs.QueryRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.QueryRequest();

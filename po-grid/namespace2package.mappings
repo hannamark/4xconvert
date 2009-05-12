@@ -50,6 +50,7 @@ http\://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types=
 http\://enterpriseservices.nci.nih.gov/entities/Person/types=gov.nih.nci.coppa.services.entities.person.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090
+http\://faults.common.coppa.nci.nih.gov=gov.nih.nci.coppa.common.faults
 http\://po.coppa.nci.nih.gov=gov.nih.nci.coppa.po
 http\://faults.po.coppa.nci.nih.gov=gov.nih.nci.coppa.po.faults
 http\://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types=gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.types
@@ -57,12 +58,14 @@ http\://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/typ
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 http\://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types=gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.types
 http\://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types=gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.types
+http\://common.coppa.nci.nih.gov=gov.nih.nci.coppa.common
 http\://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types=gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.types
 http\://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types=gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types
 http\://enterpriseservices.nci.nih.gov/entities/Organization/types=gov.nih.nci.coppa.services.entities.organization.stubs.types
 http\://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types=gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.types
 http\://enterpriseservices.nci.nih.gov/CoreServices/types=gov.nih.nci.coppa.services.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
+
 
 
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common

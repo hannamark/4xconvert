@@ -120,9 +120,9 @@ public final class ClientUtils {
      */
     public static void handleSearchResults(BaseType[] results) {
         if (results == null) {
-            System.out.println("Search Organization Results was null!");
+            System.out.println("Search Results were null!");
         } else {
-            System.out.println("Search Organization Results Found: " + results.length);
+            System.out.println("Search Results Found: " + results.length);
             for (BaseType org : results) {
                 print(org);
             }

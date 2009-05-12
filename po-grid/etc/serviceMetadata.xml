@@ -90,7 +90,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns17:Person" dimensionality="1" index="0" isArray="false" isRequired="false" name="person" xmlns:ns17="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns18:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns18="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns18:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns18="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns19:Person" dimensionality="1" isArray="true" xmlns:ns19="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -161,7 +161,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns32:Organization" dimensionality="1" index="0" isArray="false" isRequired="false" name="organization" xmlns:ns32="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns33:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns33="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns33:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns33="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns34:Organization" dimensionality="1" isArray="true" xmlns:ns34="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -241,7 +241,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns49:HealthCareFacility" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareFacility" xmlns:ns49="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns50:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns50="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns50:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns50="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns51:HealthCareFacility" dimensionality="1" isArray="true" xmlns:ns51="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -321,7 +321,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns66:ClinicalResearchStaff" dimensionality="1" index="0" isArray="false" isRequired="false" name="clinicalResearchStaff" xmlns:ns66="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns67:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns67="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns67:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns67="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns68:ClinicalResearchStaff" dimensionality="1" isArray="true" xmlns:ns68="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -401,7 +401,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns83:HealthCareProvider" dimensionality="1" index="0" isArray="false" isRequired="false" name="healthCareProvider" xmlns:ns83="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns84:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns84="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns84:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns84="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns85:HealthCareProvider" dimensionality="1" isArray="true" xmlns:ns85="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -481,7 +481,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns100:IdentifiedOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedOrganization" xmlns:ns100="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns101:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns101="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns101:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns101="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns102:IdentifiedOrganization" dimensionality="1" isArray="true" xmlns:ns102="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -561,7 +561,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns117:IdentifiedPerson" dimensionality="1" index="0" isArray="false" isRequired="false" name="identifiedPerson" xmlns:ns117="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns118:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns118="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns118:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns118="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns119:IdentifiedPerson" dimensionality="1" isArray="true" xmlns:ns119="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -641,7 +641,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns134:OrganizationalContact" dimensionality="1" index="0" isArray="false" isRequired="false" name="organizationalContact" xmlns:ns134="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns135:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns135="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns135:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns135="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns136:OrganizationalContact" dimensionality="1" isArray="true" xmlns:ns136="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -721,7 +721,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns151:OversightCommittee" dimensionality="1" index="0" isArray="false" isRequired="false" name="oversightCommittee" xmlns:ns151="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns152:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns152="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns152:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns152="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns153:OversightCommittee" dimensionality="1" isArray="true" xmlns:ns153="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>
@@ -801,7 +801,7 @@
       <ns2:Operation description="" name="query">
        <ns2:inputParameterCollection>
         <ns2:InputParameter qName="ns168:ResearchOrganization" dimensionality="1" index="0" isArray="false" isRequired="false" name="researchOrganization" xmlns:ns168="http://po.coppa.nci.nih.gov"/>
-        <ns2:InputParameter qName="ns169:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns169="http://po.coppa.nci.nih.gov"/>
+        <ns2:InputParameter qName="ns169:LimitOffset" dimensionality="1" index="1" isArray="false" isRequired="false" name="limitOffset" xmlns:ns169="http://common.coppa.nci.nih.gov"/>
        </ns2:inputParameterCollection>
        <ns2:Output qName="ns170:ResearchOrganization" dimensionality="1" isArray="true" xmlns:ns170="http://po.coppa.nci.nih.gov"/>
        <ns2:faultCollection>

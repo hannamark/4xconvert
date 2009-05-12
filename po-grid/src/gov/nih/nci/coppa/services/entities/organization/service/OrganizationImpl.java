@@ -5,15 +5,15 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.LimitOffsetTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokeOrganizationEjb;
 import gov.nih.nci.coppa.po.grid.remote.Utils;
+import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.services.LimitOffset;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.rmi.RemoteException;
@@ -59,7 +59,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
       try {
           return this.query(organization, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
       } catch (Exception e) {
@@ -100,7 +100,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Organization[] query(gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.po.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.Organization[] query(gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
       try {
           LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
           OrganizationDTO org = OrganizationTransformer.INSTANCE.toDto(organization);

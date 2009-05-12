@@ -1,7 +1,7 @@
 package gov.nih.nci.coppa.po.grid.services;
 
+import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
-import gov.nih.nci.coppa.po.LimitOffset;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.services.PoDto;
 

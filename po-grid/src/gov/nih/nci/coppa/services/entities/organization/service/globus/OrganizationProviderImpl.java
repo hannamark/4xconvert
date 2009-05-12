@@ -38,7 +38,7 @@ public class OrganizationProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse search(gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    public gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse search(gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse();
     boxedResult.setOrganization(impl.search(params.getOrganization().getOrganization()));
     return boxedResult;
@@ -62,7 +62,7 @@ public class OrganizationProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.organization.stubs.QueryResponse query(gov.nih.nci.coppa.services.entities.organization.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    public gov.nih.nci.coppa.services.entities.organization.stubs.QueryResponse query(gov.nih.nci.coppa.services.entities.organization.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.entities.organization.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.QueryResponse();
     boxedResult.setOrganization(impl.query(params.getOrganization().getOrganization(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;

@@ -1,20 +1,80 @@
 <ns1:ServiceDescription introduceVersion="1.2" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement className="Cd" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Cd" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="ClinicalResearchStaff" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ClinicalResearchStaff" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="HealthCareFacility" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareFacility" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="HealthCareProvider" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareProvider" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="IdentifiedOrganization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="IdentifiedOrganization" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="IdentifiedPerson" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="IdentifiedPerson" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="LimitOffset" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="LimitOffset" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="Organization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Organization" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="OrganizationalContact" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="OrganizationalContact" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="OversightCommittee" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="OversightCommittee" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="Person" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Person" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="ResearchOrganization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ResearchOrganization" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement className="StringMap" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StringMap" xsi:type="ns2:SchemaElementType"/>
+  <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./ResearchOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ResearchOrganizationReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./CoppaPOFaults.xsd" namespace="http://faults.po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po.faults" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" packageName="org.oasis.wsrf.faults" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./PersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Person/types" packageName="gov.nih.nci.coppa.services.entities.person.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedEntityFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="PersonReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./OversightCommitteeTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" packageName="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="OversightCommitteeReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./OrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Organization/types" packageName="gov.nih.nci.coppa.services.entities.organization.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedEntityFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="OrganizationReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./OrganizationalContactTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" packageName="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="OrganizationalContactReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./IdentifiedOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="IdentifiedOrganizationReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./IdentifiedPersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="IdentifiedPersonReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./HealthCareProviderTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="HealthCareProviderReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./HealthCareFacilityTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="HealthCareFacilityReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./ClinicalResearchStaffTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" packageName="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="ClinicalResearchStaffReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="br" xsi:type="ns2:SchemaElementType"/>
@@ -40,80 +100,23 @@
    <ns2:SchemaElement type="thead" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="tr" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace location="../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" packageName="org.oasis.wsrf.faults" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
+  <ns2:Namespace location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="Cd" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Cd" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="ClinicalResearchStaff" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ClinicalResearchStaff" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="HealthCareFacility" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareFacility" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="HealthCareProvider" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareProvider" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="IdentifiedOrganization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="IdentifiedOrganization" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="IdentifiedPerson" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="IdentifiedPerson" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Organization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Organization" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="OrganizationalContact" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="OrganizationalContact" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="OversightCommittee" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="OversightCommittee" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Person" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Person" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="ResearchOrganization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ResearchOrganization" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StringMap" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StringMap" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace location="../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./CoppaPOFaults.xsd" namespace="http://faults.po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po.faults" xsi:type="ns2:NamespaceType"/>
-  <ns2:Namespace location="./OrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Organization/types" packageName="gov.nih.nci.coppa.services.entities.organization.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedEntityFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="OrganizationReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./PersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/entities/Person/types" packageName="gov.nih.nci.coppa.services.entities.person.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedEntityFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="PersonReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./ResearchOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ResearchOrganizationReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./OversightCommitteeTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" packageName="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="OversightCommitteeReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./OrganizationalContactTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" packageName="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="OrganizationalContactReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./IdentifiedPersonTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="IdentifiedPersonReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./IdentifiedOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="IdentifiedOrganizationReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./HealthCareProviderTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="HealthCareProviderReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./HealthCareFacilityTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" packageName="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="HealthCareFacilityReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./ClinicalResearchStaffTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" packageName="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="ClinicalResearchStaffReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  <ns2:Namespace location="./CoppaCommons.xsd" namespace="http://common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="LimitOffset" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="LimitOffset" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="" namespace="http://www.w3.org/2001/XMLSchema" packageName="" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="anySimpleType" xsi:type="ns2:SchemaElementType"/>
@@ -289,7 +292,7 @@
     <ns12:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns12:MethodType">
      <ns12:Inputs>
       <ns12:Input qName="ns31:Person" description="" isArray="false" name="person" xmlns:ns31="http://po.coppa.nci.nih.gov"/>
-      <ns12:Input qName="ns32:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns32="http://po.coppa.nci.nih.gov"/>
+      <ns12:Input qName="ns32:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns32="http://common.coppa.nci.nih.gov"/>
      </ns12:Inputs>
      <ns12:Output qName="ns33:Person" description="" isArray="true" xmlns:ns33="http://po.coppa.nci.nih.gov"/>
      <ns12:Exceptions>
@@ -372,7 +375,7 @@
     <ns36:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns36:MethodType">
      <ns36:Inputs>
       <ns36:Input qName="ns55:Organization" description="" isArray="false" name="organization" xmlns:ns55="http://po.coppa.nci.nih.gov"/>
-      <ns36:Input qName="ns56:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns56="http://po.coppa.nci.nih.gov"/>
+      <ns36:Input qName="ns56:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns56="http://common.coppa.nci.nih.gov"/>
      </ns36:Inputs>
      <ns36:Output qName="ns57:Organization" description="" isArray="true" xmlns:ns57="http://po.coppa.nci.nih.gov"/>
      <ns36:Exceptions>
@@ -464,7 +467,7 @@
     <ns60:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns60:MethodType">
      <ns60:Inputs>
       <ns60:Input qName="ns82:HealthCareFacility" description="" isArray="false" name="healthCareFacility" xmlns:ns82="http://po.coppa.nci.nih.gov"/>
-      <ns60:Input qName="ns83:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns83="http://po.coppa.nci.nih.gov"/>
+      <ns60:Input qName="ns83:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns83="http://common.coppa.nci.nih.gov"/>
      </ns60:Inputs>
      <ns60:Output qName="ns84:HealthCareFacility" description="" isArray="true" xmlns:ns84="http://po.coppa.nci.nih.gov"/>
      <ns60:Exceptions>
@@ -556,7 +559,7 @@
     <ns87:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns87:MethodType">
      <ns87:Inputs>
       <ns87:Input qName="ns109:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns109="http://po.coppa.nci.nih.gov"/>
-      <ns87:Input qName="ns110:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns110="http://po.coppa.nci.nih.gov"/>
+      <ns87:Input qName="ns110:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns110="http://common.coppa.nci.nih.gov"/>
      </ns87:Inputs>
      <ns87:Output qName="ns111:ClinicalResearchStaff" description="" isArray="true" xmlns:ns111="http://po.coppa.nci.nih.gov"/>
      <ns87:Exceptions>
@@ -648,7 +651,7 @@
     <ns114:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns114:MethodType">
      <ns114:Inputs>
       <ns114:Input qName="ns136:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns136="http://po.coppa.nci.nih.gov"/>
-      <ns114:Input qName="ns137:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns137="http://po.coppa.nci.nih.gov"/>
+      <ns114:Input qName="ns137:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns137="http://common.coppa.nci.nih.gov"/>
      </ns114:Inputs>
      <ns114:Output qName="ns138:HealthCareProvider" description="" isArray="true" xmlns:ns138="http://po.coppa.nci.nih.gov"/>
      <ns114:Exceptions>
@@ -740,7 +743,7 @@
     <ns141:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns141:MethodType">
      <ns141:Inputs>
       <ns141:Input qName="ns163:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns163="http://po.coppa.nci.nih.gov"/>
-      <ns141:Input qName="ns164:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns164="http://po.coppa.nci.nih.gov"/>
+      <ns141:Input qName="ns164:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns164="http://common.coppa.nci.nih.gov"/>
      </ns141:Inputs>
      <ns141:Output qName="ns165:IdentifiedOrganization" description="" isArray="true" xmlns:ns165="http://po.coppa.nci.nih.gov"/>
      <ns141:Exceptions>
@@ -832,7 +835,7 @@
     <ns168:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns168:MethodType">
      <ns168:Inputs>
       <ns168:Input qName="ns190:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns190="http://po.coppa.nci.nih.gov"/>
-      <ns168:Input qName="ns191:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns191="http://po.coppa.nci.nih.gov"/>
+      <ns168:Input qName="ns191:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns191="http://common.coppa.nci.nih.gov"/>
      </ns168:Inputs>
      <ns168:Output qName="ns192:IdentifiedPerson" description="" isArray="true" xmlns:ns192="http://po.coppa.nci.nih.gov"/>
      <ns168:Exceptions>
@@ -924,7 +927,7 @@
     <ns195:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns195:MethodType">
      <ns195:Inputs>
       <ns195:Input qName="ns217:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns217="http://po.coppa.nci.nih.gov"/>
-      <ns195:Input qName="ns218:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns218="http://po.coppa.nci.nih.gov"/>
+      <ns195:Input qName="ns218:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns218="http://common.coppa.nci.nih.gov"/>
      </ns195:Inputs>
      <ns195:Output qName="ns219:OrganizationalContact" description="" isArray="true" xmlns:ns219="http://po.coppa.nci.nih.gov"/>
      <ns195:Exceptions>
@@ -1016,7 +1019,7 @@
     <ns222:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns222:MethodType">
      <ns222:Inputs>
       <ns222:Input qName="ns244:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns244="http://po.coppa.nci.nih.gov"/>
-      <ns222:Input qName="ns245:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns245="http://po.coppa.nci.nih.gov"/>
+      <ns222:Input qName="ns245:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns245="http://common.coppa.nci.nih.gov"/>
      </ns222:Inputs>
      <ns222:Output qName="ns246:OversightCommittee" description="" isArray="true" xmlns:ns246="http://po.coppa.nci.nih.gov"/>
      <ns222:Exceptions>
@@ -1108,7 +1111,7 @@
     <ns249:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns249:MethodType">
      <ns249:Inputs>
       <ns249:Input qName="ns271:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns271="http://po.coppa.nci.nih.gov"/>
-      <ns249:Input qName="ns272:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns272="http://po.coppa.nci.nih.gov"/>
+      <ns249:Input qName="ns272:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns272="http://common.coppa.nci.nih.gov"/>
      </ns249:Inputs>
      <ns249:Output qName="ns273:ResearchOrganization" description="" isArray="true" xmlns:ns273="http://po.coppa.nci.nih.gov"/>
      <ns249:Exceptions>

@@ -44,7 +44,7 @@ public class ClinicalResearchStaffProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse();
     boxedResult.setClinicalResearchStaff(impl.search(params.getClinicalResearchStaff().getClinicalResearchStaff()));
     return boxedResult;
@@ -68,7 +68,7 @@ public class ClinicalResearchStaffProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.TooManyResultsFault {
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse();
     boxedResult.setClinicalResearchStaff(impl.query(params.getClinicalResearchStaff().getClinicalResearchStaff(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
