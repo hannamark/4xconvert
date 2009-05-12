@@ -297,6 +297,7 @@
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
                 <pathelement location="${pa-ejb.build.outputDir}"/>
+            	<path refid="compile.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>

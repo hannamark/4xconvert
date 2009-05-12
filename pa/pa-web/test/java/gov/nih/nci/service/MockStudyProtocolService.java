@@ -79,6 +79,8 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -213,5 +215,11 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
      */
     public void deleteStudyProtocol(Ii ii) throws PAException {    
      // TODO Auto-generated method stub
+    }
+
+    public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
+            TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

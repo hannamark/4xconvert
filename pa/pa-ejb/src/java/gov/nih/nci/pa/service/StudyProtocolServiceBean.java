@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -101,6 +103,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -118,6 +121,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -192,51 +196,42 @@ import org.hibernate.criterion.Example;
 
     }
 
-
-
     /**
-    *
-    * @param dto of StudyProtocolDTO
-    * @return List StudyProtocolDTO
-    * @throws PAException PAException
-    */
-   @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-   public List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException {
-       if (dto == null) {
-           LOG.error(" StudyProtocolDTO should not be null ");
-           throw new PAException(" StudyProtocolDTO should not be null ");
-       }
-       LOG.info("Entering getStudyProtocol");
-       Session session = null;
-       List <StudyProtocol> studyProtocolList = null;
-       try {
-           session = HibernateUtil.getCurrentSession();
-           StudyProtocol exampleDO = new StudyProtocol();
-           exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
-           Example example = Example.create(exampleDO);
-           studyProtocolList = session.createCriteria(StudyProtocol.class).add(example).list();
-           session.flush();
+     * 
+     * @param dto of StudyProtocolDTO
+     * @return List StudyProtocolDTO
+     * @throws PAException PAException
+     * @deprecated
+     */
+    @Deprecated
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException {
+        if (dto == null) {
+            LOG.error(" StudyProtocolDTO should not be null ");
+            throw new PAException(" StudyProtocolDTO should not be null ");
+        }
+        LOG.info("Entering search");
+        Session session = null;
+        List<StudyProtocol> studyProtocolList = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StudyProtocol exampleDO = new StudyProtocol();
+            exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+            Example example = Example.create(exampleDO);
+            studyProtocolList = session.createCriteria(StudyProtocol.class).add(example).list();
+            session.flush();
 
-       }  catch (HibernateException hbe) {
-           LOG.error(" Hibernate exception while retrieving StudyProtocol for dto = " + hbe);
-           throw new PAException(" Hibernate exception while retrieving "
-                   + "StudyProtocol for dto = " +  hbe);
-       }
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while retrieving StudyProtocol for dto = " + hbe);
+            throw new PAException(" Hibernate exception while retrieving " + "StudyProtocol for dto = " + hbe);
+        }
 
-       LOG.info("Leaving getStudyProtocol");
+        List<StudyProtocolDTO> studyProtocolDTOList = convertFromDomainToDTO(studyProtocolList);
+        LOG.info("Leaving search");
+        return studyProtocolDTOList;
 
-       List<StudyProtocolDTO> studyProtocolDTOList = null;
-       if (studyProtocolList != null) {
-    studyProtocolDTOList = new ArrayList<StudyProtocolDTO>();
-    for (StudyProtocol sp : studyProtocolList) {
-    StudyProtocolDTO studyProtocolDTO =
-              StudyProtocolConverter.convertFromDomainToDTO(sp);
-    studyProtocolDTOList.add(studyProtocolDTO);
     }
-    }
-       return studyProtocolDTOList;
-
-   }
+    
     /**
      *
      * @param studyProtocolDTO studyProtocolDTO
@@ -757,6 +752,57 @@ import org.hibernate.criterion.Example;
         LOG.debug("Creating wfs for id = " + sp.getIdentifier());
         documentWorkflowStatusService.create(dwDto);
         LOG.debug("Leaving createDocumentWorkFlowStatus().");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
+            TooManyResultsException {
+        if (dto == null) {
+            LOG.error(" StudyProtocolDTO should not be null ");
+            throw new PAException(" StudyProtocolDTO should not be null ");
+        }
+        LOG.info("Entering search");
+        Session session = null;
+        List <StudyProtocol> studyProtocolList = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StudyProtocol exampleDO = new StudyProtocol();
+            exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+            Example example = Example.create(exampleDO);
+            Criteria criteria = session.createCriteria(StudyProtocol.class).add(example);
+            int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+            criteria.setMaxResults(maxLimit);
+            criteria.setFirstResult(pagingParams.getOffset());
+            studyProtocolList = criteria.list();
+            session.flush();
+
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while retrieving StudyProtocol for dto = " + hbe);
+            throw new PAException(" Hibernate exception while retrieving "
+                    + "StudyProtocol for dto = " +  hbe);
+        }
+
+        if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
+        }
+        List<StudyProtocolDTO> studyProtocolDTOList = convertFromDomainToDTO(studyProtocolList);
+        LOG.info("Leaving search");
+        return studyProtocolDTOList;
+    }
+
+    private List<StudyProtocolDTO> convertFromDomainToDTO(List<StudyProtocol> studyProtocolList) {
+        List<StudyProtocolDTO> studyProtocolDTOList = null;
+        if (studyProtocolList != null) {
+            studyProtocolDTOList = new ArrayList<StudyProtocolDTO>();
+            for (StudyProtocol sp : studyProtocolList) {
+                StudyProtocolDTO studyProtocolDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
+                studyProtocolDTOList.add(studyProtocolDTO);
+            }
+        }
+        return studyProtocolDTOList;
     }
     
 }

@@ -60,6 +60,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <!-- runtime -->
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.1.0.rc1"       conf="runtime->master"/>
     <dependency org="ncicb"                  name="po-services-client"      rev="1.1.0.rc1"       conf="runtime->master"/>
+    <dependency org="ncicb"                  name="coppa-commons"       	rev="1.1-SNAPSHOT"       conf="runtime->master"/>
 
     <!-- container -->
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="container->master"/>

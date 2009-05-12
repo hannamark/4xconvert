@@ -105,4 +105,8 @@ public class PAConstants {
     /** PHONE. **/
     public static final String PHONE = "PHONE";
 
+    /**
+     * The maxmium number of search results to be returned for a remote service method.
+     */
+    public static final int MAX_SEARCH_RESULTS = 500;
 }

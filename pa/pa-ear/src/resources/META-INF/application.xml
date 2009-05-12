@@ -32,6 +32,9 @@
     <module>
         <java>iso-datatypes-1.1.0.rc1.jar</java>
     </module>
+    <module>
+        <java>coppa-commons-1.1-SNAPSHOT.jar</java>
+    </module>
     <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>Submitter</role-name></security-role>
     <security-role><role-name>ReportViewer</role-name></security-role>

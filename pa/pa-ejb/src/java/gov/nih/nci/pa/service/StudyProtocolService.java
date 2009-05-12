@@ -109,7 +109,9 @@ public interface StudyProtocolService {
      * @param dto the dto 
      * @return the study protocol 
      * @throws PAException the PA exception
+     * @deprecated
      */
+    @Deprecated
     List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException;
     
     /**
