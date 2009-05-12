@@ -74,51 +74,17 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.util.ViewerConstants;
+import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
 
-import java.util.List;
-
-import org.apache.struts2.ServletActionContext;
+import javax.ejb.Local;
 
 /**
- * Base class for report actions.
- *
- * @author hreinhart
- * @since 04/29/2009
- *
- * @param <CRITERIA> criteria web dto used to generate report
- * @param <RESULT> web dto used to return results
+ * @author Hugh Reinhart
+ * @since 05/12/2009
  */
-public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractViewerAction {
-
-    private static final long serialVersionUID = 5350758217530734916L;
-
-    private List<RESULT> resultList;
-
-    /**
-     * Method used get the report.
-     * @return action result
-     * @throws PAException exception
-     */
-    public String getReport() throws PAException {
-        ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_LIST, resultList);
-        return SUCCESS;
-    }
-
-    /**
-     * @return the resultList
-     */
-    public List<RESULT> getResultList() {
-        return resultList;
-    }
-
-    /**
-     * @param resultList the resultList to set
-     */
-    public void setResultList(List<RESULT> resultList) {
-        this.resultList = resultList;
-    }
+@Local
+public interface SummarySentLocal extends BaseReportInterface<SummarySentCriteriaDto, SummarySentResultDto> {
 }

@@ -1,33 +1,28 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-import gov.nih.nci.pa.report.test.util.TestSchema;
+import gov.nih.nci.pa.report.util.TestSchema;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class TrialListTest {
 	TrialListLocal localSvc;
 
-//    @Before
+    @Before
     public void setUp() throws Exception {
         TestSchema.reset();
-    	localSvc = new TrialListBean();
+    	localSvc = new TrialListReportBean();
      }
 
     @Test
-    public void dummyTest() {
-        assertTrue(true);
-    }
-
-//    @Test
     public void getTest() throws Exception {
     	TrialListCriteriaDto crit = new TrialListCriteriaDto();
         List<TrialListResultDto> resultList = localSvc.get(crit);

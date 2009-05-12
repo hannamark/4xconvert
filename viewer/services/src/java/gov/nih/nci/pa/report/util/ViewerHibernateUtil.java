@@ -76,20 +76,27 @@
 */
 package gov.nih.nci.pa.report.util;
 
+
 import org.hibernate.Session;
 
 /**
  * HibernateUtil for viewer.
  */
 public class ViewerHibernateUtil {
-    private static final ViewerHibernateHelper HIBERNATE_HELPER = new ViewerHibernateHelper();
+
+    private static final CtrpHibernateHelper HIBERNATE_HELPER = new ViewerHibernateHelper();
+    static CtrpHibernateHelper testHelper = null;
 
     /**
      * Get the hibernate helper.
      * @return the helper.
      */
-    public static ViewerHibernateHelper getHibernateHelper() {
-        return HIBERNATE_HELPER;
+    public static CtrpHibernateHelper getHibernateHelper() {
+        if (testHelper != null) {
+            return testHelper;
+        } else {
+            return HIBERNATE_HELPER;
+        }
     }
 
     /**
@@ -97,6 +104,7 @@ public class ViewerHibernateUtil {
      * @return the session.
      */
     public static Session getCurrentSession() {
-        return getHibernateHelper().getCurrentSession();
+         return getHibernateHelper().getCurrentSession();
     }
+
 }

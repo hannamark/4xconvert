@@ -74,51 +74,38 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
+import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.struts2.ServletActionContext;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 /**
- * Base class for report actions.
- *
- * @author hreinhart
- * @since 04/29/2009
- *
- * @param <CRITERIA> criteria web dto used to generate report
- * @param <RESULT> web dto used to return results
- */
-public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractViewerAction {
-
-    private static final long serialVersionUID = 5350758217530734916L;
-
-    private List<RESULT> resultList;
+* @author Hugh Reinhart
+* @since 5/12/2009
+*/
+@Stateless
+@Interceptors(ViewerHibernateSessionInterceptor.class)
+public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCriteriaDto, TrialCountsResultDto>
+        implements TrialCountsLocal {
 
     /**
-     * Method used get the report.
-     * @return action result
-     * @throws PAException exception
+     * {@inheritDoc}
      */
-    public String getReport() throws PAException {
-        ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_LIST, resultList);
-        return SUCCESS;
+    @Override
+    @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+    public List<TrialCountsResultDto> get(TrialCountsCriteriaDto criteria)
+            throws PAException {
+        super.get(criteria);
+        ArrayList<TrialCountsResultDto> rList = new ArrayList<TrialCountsResultDto>();
+        return rList;
     }
 
-    /**
-     * @return the resultList
-     */
-    public List<RESULT> getResultList() {
-        return resultList;
-    }
-
-    /**
-     * @param resultList the resultList to set
-     */
-    public void setResultList(List<RESULT> resultList) {
-        this.resultList = resultList;
-    }
 }

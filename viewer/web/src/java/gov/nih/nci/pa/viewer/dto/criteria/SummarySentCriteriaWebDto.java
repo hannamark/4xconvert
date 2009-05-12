@@ -74,12 +74,24 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.dto.result;
+package gov.nih.nci.pa.viewer.dto.criteria;
+
+import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
+import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/12/2009
  */
-public class TrialCountstResultDto {
+public class SummarySentCriteriaWebDto extends AbstractWebDto<SummarySentCriteriaDto> {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SummarySentCriteriaDto getIsoDto() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

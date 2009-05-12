@@ -76,10 +76,26 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
+import gov.nih.nci.coppa.iso.Bl;
+
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class MilestonesCriteriaDto {
+public class MilestonesCriteriaDto extends TrialListCriteriaDto {
+    private Bl currentMilestoneOnly;
 
+    /**
+     * @return the currentMilestoneOnly
+     */
+    public Bl getCurrentMilestoneOnly() {
+        return currentMilestoneOnly;
+    }
+
+    /**
+     * @param currentMilestoneOnly the currentMilestoneOnly to set
+     */
+    public void setCurrentMilestoneOnly(Bl currentMilestoneOnly) {
+        this.currentMilestoneOnly = currentMilestoneOnly;
+    }
 }

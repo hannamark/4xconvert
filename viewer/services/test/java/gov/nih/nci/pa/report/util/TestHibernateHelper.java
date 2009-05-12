@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.report.test.util;
+package gov.nih.nci.pa.report.util;
 
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -53,7 +53,7 @@ import org.hibernate.cfg.Configuration;
 /**
  * HibernateHelper class used during unit testing.
  */
-public class TestHibernateHelper {
+public class TestHibernateHelper implements CtrpHibernateHelper {
 
     private static final Class<?>[] CSM_CLASSES = {gov.nih.nci.security.authorization.domainobjects.Application.class,
         gov.nih.nci.security.authorization.domainobjects.Group.class,
@@ -141,10 +141,35 @@ public class TestHibernateHelper {
     }
 
     /**
-     * Get the session that is bound to the current context.
-     * @return the current session
+     * {@inheritDoc}
      */
     public Session getCurrentSession() {
         return testSession;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+   public Configuration getConfiguration() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SessionFactory getSessionFactory() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void openAndBindSession() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void unbindAndCleanupSession() {
     }
 }

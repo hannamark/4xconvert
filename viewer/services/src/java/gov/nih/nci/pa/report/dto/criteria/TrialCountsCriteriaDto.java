@@ -76,10 +76,40 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
+
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class TrialCountsCriteriaDto {
+public class TrialCountsCriteriaDto extends TrialListCriteriaDto {
+    private Cd groupByTimeUnits;
+    private Ivl<Ts> timeInterval;
 
+    /**
+     * @return the groupByTimeUnits
+     */
+    public Cd getGroupByTimeUnits() {
+        return groupByTimeUnits;
+    }
+    /**
+     * @param groupByTimeUnits the groupByTimeUnits to set
+     */
+    public void setGroupByTimeUnits(Cd groupByTimeUnits) {
+        this.groupByTimeUnits = groupByTimeUnits;
+    }
+    /**
+     * @return the timeInterval
+     */
+    public Ivl<Ts> getTimeInterval() {
+        return timeInterval;
+    }
+    /**
+     * @param timeInterval the timeInterval to set
+     */
+    public void setTimeInterval(Ivl<Ts> timeInterval) {
+        this.timeInterval = timeInterval;
+    }
 }

@@ -76,25 +76,48 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.TrialCountstResultDto;
+import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
+import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.viewer.dto.criteria.TrialCountsCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
+
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
 public class TrialCountsAction extends AbstractReportAction
-        <TrialCountsCriteriaDto, TrialCountstResultDto> {
+        <TrialCountsCriteriaWebDto, TrialCountsResultWebDto> {
 
     private static final long serialVersionUID = 8863596924457440094L;
+
+    TrialCountsCriteriaWebDto criteria = new TrialCountsCriteriaWebDto();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String getReport() throws PAException {
-        return SUCCESS;
+        TrialCountsLocal local = ViewerServiceLocator.getInstance().getTrialCountsReportService();
+        List<TrialCountsResultDto> isoList = local.get(criteria.getIsoDto());
+        setResultList(TrialCountsResultWebDto.getWebList(isoList));
+        return super.getReport();
     }
 
+    /**
+     * @return the criteria
+     */
+    public TrialCountsCriteriaWebDto getCriteria() {
+        return criteria;
+    }
+
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(TrialCountsCriteriaWebDto criteria) {
+        this.criteria = criteria;
+    }
 }

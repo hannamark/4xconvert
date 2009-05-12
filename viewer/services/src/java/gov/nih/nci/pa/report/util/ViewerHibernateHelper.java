@@ -100,7 +100,7 @@ import org.hibernate.mapping.Collection;
 /**
  * HibernateHelper for viewer.
  */
-public class ViewerHibernateHelper {
+public class ViewerHibernateHelper implements CtrpHibernateHelper {
 
     private static final Logger LOG = Logger.getLogger(ViewerHibernateHelper.class);
 
@@ -117,7 +117,6 @@ public class ViewerHibernateHelper {
 
     private Configuration configuration;
     private SessionFactory sessionFactory;
-    private Session testSession;
 
     /**
      * Default constructor.
@@ -208,9 +207,6 @@ public class ViewerHibernateHelper {
      * @return the current session
      */
     public Session getCurrentSession() {
-        if (testSession != null) {
-            return testSession;
-        }
         return getSessionFactory().getCurrentSession();
     }
 
@@ -261,12 +257,5 @@ public class ViewerHibernateHelper {
     public void unbindAndCleanupSession() {
         org.hibernate.classic.Session currentSession = ManagedSessionContext.unbind(getSessionFactory());
         currentSession.close();
-    }
-
-    /**
-     * Open an HQLDB session for use during unit testing.
-     */
-    public void openTestSession() {
-        this.testSession = this.sessionFactory.openSession();
     }
 }

@@ -112,13 +112,6 @@ public class TrialListResultWebDto extends AbstractWebDto<TrialListResultDto> {
     }
 
     /**
-     * Default constructor.
-     */
-    public TrialListResultWebDto() {
-        super();
-    }
-
-    /**
      * Constructor using service dto.
      * @param dto the service iso dto
      */

@@ -74,51 +74,33 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
-
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.util.ViewerConstants;
-
-import java.util.List;
-
-import org.apache.struts2.ServletActionContext;
+package gov.nih.nci.pa.report.enums;
 
 /**
- * Base class for report actions.
- *
- * @author hreinhart
- * @since 04/29/2009
- *
- * @param <CRITERIA> criteria web dto used to generate report
- * @param <RESULT> web dto used to return results
+ * @author Hugh Reinhart
+ * @since 05/12/2009
  */
-public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractViewerAction {
+public enum TimeUnitsCode {
+    /** Day. */
+    DAY("Day"),
+    /** Month. */
+    MONTH("Month"),
+    /** Year. */
+    YEAR("Year");
 
-    private static final long serialVersionUID = 5350758217530734916L;
-
-    private List<RESULT> resultList;
+    private String displayString;
 
     /**
-     * Method used get the report.
-     * @return action result
-     * @throws PAException exception
+     * @param displayString
      */
-    public String getReport() throws PAException {
-        ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_LIST, resultList);
-        return SUCCESS;
+    private TimeUnitsCode(String displayString) {
+        this.displayString = displayString;
     }
 
     /**
-     * @return the resultList
+     * @return the displayString
      */
-    public List<RESULT> getResultList() {
-        return resultList;
-    }
-
-    /**
-     * @param resultList the resultList to set
-     */
-    public void setResultList(List<RESULT> resultList) {
-        this.resultList = resultList;
+    public String getDisplayString() {
+        return displayString;
     }
 }

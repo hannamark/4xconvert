@@ -76,16 +76,16 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.viewer.dto.criteria.MilestonesCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.MilestonesResultWebDto;
 
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
 public class MilestonesAction extends AbstractReportAction
-        <MilestonesCriteriaDto, MilestonesResultDto> {
+        <MilestonesCriteriaWebDto, MilestonesResultWebDto> {
 
     private static final long serialVersionUID = -6179636182690581226L;
 

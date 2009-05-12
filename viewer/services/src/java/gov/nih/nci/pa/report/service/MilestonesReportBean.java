@@ -76,86 +76,36 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-import gov.nih.nci.pa.report.util.ReportConstants;
+import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
-import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
-
 /**
 * @author Hugh Reinhart
-* @since 4/10/2009
+* @since 5/12/2009
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialListBean extends AbstractBaseReportBean<TrialListCriteriaDto, TrialListResultDto>
-        implements TrialListLocal {
-
-    private static final int ORGANIZATION_IDX = 0;
-    private static final int DATE_LAST_CREATED_IDX = 1;
-    private static final int ASSIGNED_IDENTIFIER_IDX = 2;
-    private static final int OFFICIAL_TITLE_IDX = 3;
-    private static final int STATUS_CODE_IDX = 4;
+public class MilestonesReportBean extends AbstractBaseReportBean<MilestonesCriteriaDto, MilestonesResultDto>
+        implements MilestonesLocal {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<TrialListResultDto> get(TrialListCriteriaDto criteria) throws PAException {
+    @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+    public List<MilestonesResultDto> get(MilestonesCriteriaDto criteria)
+            throws PAException {
         super.get(criteria);
-        ArrayList<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
-        try {
-            session = ViewerHibernateUtil.getCurrentSession();
-            SQLQuery query = null;
-            String sql
-                = "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
-                + "       , sp.official_title, dws.status_code "
-                + "FROM study_protocol AS sp "
-                + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
-                + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
-                + "WHERE dws.identifier in "
-                + "      ( select max(identifier) "
-                + "        from document_workflow_status "
-                + "        group by study_protocol_identifier ) "
-                + "  AND sp.USER_LAST_CREATED Not In (:EXCLUDE_LIST) "
-                + "ORDER BY cm.organization, sp.date_last_created";
-            logger.info("query = " + sql);
-            query = session.createSQLQuery(sql);
-            if (BlConverter.covertToBool(criteria.getCtrpOnly())) {
-                query.setParameterList("EXCLUDE_LIST", ReportConstants.NON_CTRP_SUBMITTERS);
-            } else {
-                query.setParameter("EXCLUDE_LIST", "");
-            }
-            @SuppressWarnings(UNCHECKED)
-            List<Object[]> queryList = query.list();
-            for (Object[] sr : queryList) {
-                TrialListResultDto rdto = new TrialListResultDto();
-                rdto.setOrganization(StConverter.convertToSt((String) sr[ORGANIZATION_IDX]));
-                rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) sr[DATE_LAST_CREATED_IDX]));
-                rdto.setAssignedIdentifier(StConverter.convertToSt((String) sr[ASSIGNED_IDENTIFIER_IDX]));
-                rdto.setOfficialTitle(StConverter.convertToSt((String) sr[OFFICIAL_TITLE_IDX]));
-                rdto.setStatusCode(CdConverter.convertStringToCd((String) sr[STATUS_CODE_IDX]));
-                rList.add(rdto);
-            }
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in TrialListBean.get().", hbe);
-        }
-        logger.info("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
+        ArrayList<MilestonesResultDto> rList = new ArrayList<MilestonesResultDto>();
         return rList;
     }
+
 }

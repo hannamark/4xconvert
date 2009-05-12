@@ -76,10 +76,26 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
+import gov.nih.nci.coppa.iso.Bl;
+
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
 public class SummarySentCriteriaDto {
+    private Bl overdue;
 
+    /**
+     * @return the overdue
+     */
+    public Bl getOverdue() {
+        return overdue;
+    }
+
+    /**
+     * @param overdue the overdue to set
+     */
+    public void setOverdue(Bl overdue) {
+        this.overdue = overdue;
+    }
 }

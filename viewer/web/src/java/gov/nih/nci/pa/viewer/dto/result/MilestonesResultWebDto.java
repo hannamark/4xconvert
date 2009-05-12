@@ -74,51 +74,48 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.viewer.dto.result;
 
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.util.ViewerConstants;
+import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
+import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.struts2.ServletActionContext;
-
 /**
- * Base class for report actions.
- *
- * @author hreinhart
- * @since 04/29/2009
- *
- * @param <CRITERIA> criteria web dto used to generate report
- * @param <RESULT> web dto used to return results
+ * @author Hugh Reinhart
+ * @since 05/12/2009
  */
-public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractViewerAction {
-
-    private static final long serialVersionUID = 5350758217530734916L;
-
-    private List<RESULT> resultList;
+public class MilestonesResultWebDto extends AbstractWebDto<MilestonesResultDto> {
 
     /**
-     * Method used get the report.
-     * @return action result
-     * @throws PAException exception
+     * Static method for generating a list of web dto's from a list of service dto's.
+     * @param serviceDtoList service dto list
+     * @return web dto list
      */
-    public String getReport() throws PAException {
-        ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_LIST, resultList);
-        return SUCCESS;
-    }
-
-    /**
-     * @return the resultList
-     */
-    public List<RESULT> getResultList() {
+    public static List<MilestonesResultWebDto> getWebList(List<MilestonesResultDto> serviceDtoList) {
+        List<MilestonesResultWebDto> resultList = new ArrayList<MilestonesResultWebDto>();
+        for (MilestonesResultDto dto : serviceDtoList) {
+            resultList.add(new MilestonesResultWebDto(dto));
+        }
         return resultList;
     }
 
     /**
-     * @param resultList the resultList to set
+     * Constructor using service dto.
+     * @param dto the service iso dto
      */
-    public void setResultList(List<RESULT> resultList) {
-        this.resultList = resultList;
+    @SuppressWarnings("PMD.UnusedFormalParameter")
+    public MilestonesResultWebDto(MilestonesResultDto dto) {
+        super();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MilestonesResultDto getIsoDto() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

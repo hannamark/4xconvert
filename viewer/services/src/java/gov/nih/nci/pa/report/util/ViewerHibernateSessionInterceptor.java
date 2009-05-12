@@ -130,7 +130,7 @@ public class ViewerHibernateSessionInterceptor {
      * get the hibernate helper to use.
      * @return the hibernate helper.
      */
-    private ViewerHibernateHelper getHelper() {
+    private CtrpHibernateHelper getHelper() {
         return ViewerHibernateUtil.getHibernateHelper();
     }
 }

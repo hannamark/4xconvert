@@ -76,16 +76,16 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.viewer.dto.criteria.SummarySentCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.SummarySentResultWebDto;
 
 /**
  * @author hreinhart
  * @since 04/29/2009
  */
 public class SummarySentAction extends AbstractReportAction
-        <SummarySentCriteriaDto, SummarySentResultDto> {
+        <SummarySentCriteriaWebDto, SummarySentResultWebDto> {
 
     private static final long serialVersionUID = 1753836643932684365L;
 

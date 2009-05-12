@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.report.service.MilestonesLocal;
+import gov.nih.nci.pa.report.service.SummarySentLocal;
+import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
 
@@ -87,9 +90,30 @@ import gov.nih.nci.pa.util.JNDIUtil;
  */
 public class JndiServiceLocator implements ServiceLocator {
     /**
-     * @return TrialListLocal trial list service
+     * {@inheritDoc}
+     */
+    public MilestonesLocal getMilestonesReportService() {
+        return (MilestonesLocal) JNDIUtil.lookup("pa/MilestonesReportBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SummarySentLocal getSummarySentReportService() {
+        return (SummarySentLocal) JNDIUtil.lookup("pa/SummarySentReportBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TrialCountsLocal getTrialCountsReportService() {
+        return (TrialCountsLocal) JNDIUtil.lookup("pa/TrialCountsReportBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public TrialListLocal getTrialListReportService() {
-        return (TrialListLocal) JNDIUtil.lookup("pa/TrialListBean/local");
+        return (TrialListLocal) JNDIUtil.lookup("pa/TrialListReportBean/local");
     }
 }
