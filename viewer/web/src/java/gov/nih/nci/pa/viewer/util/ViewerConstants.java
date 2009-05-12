@@ -78,11 +78,12 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+
 /**
  * @author Hugh Reinhart
  * @since 4/16/2009
  */
-public class Constants {
+public final class ViewerConstants {
 
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_ROLE = "viewerRole";

@@ -77,7 +77,7 @@
 package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.util.Constants;
+import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -95,14 +95,14 @@ public class WelcomeAction extends AbstractViewerAction {
     @Override
     public String execute() throws PAException {
         String actionResult = null;
-        if (ServletActionContext.getRequest().isUserInRole(Constants.ROLE_CTRO)) {
+        if (ServletActionContext.getRequest().isUserInRole(ViewerConstants.ROLE_CTRO)) {
             ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.SESSION_ATTR_ROLE, Constants.ROLE_CTRO);
+                    ViewerConstants.SESSION_ATTR_ROLE, ViewerConstants.ROLE_CTRO);
             actionResult =  "ctroWelcome";
         }
-        if (ServletActionContext.getRequest().isUserInRole(Constants.ROLE_PUBLIC)) {
+        if (ServletActionContext.getRequest().isUserInRole(ViewerConstants.ROLE_PUBLIC)) {
             ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.SESSION_ATTR_ROLE, Constants.ROLE_PUBLIC);
+                    ViewerConstants.SESSION_ATTR_ROLE, ViewerConstants.ROLE_PUBLIC);
             actionResult = "publicWelcome";
         }
         if (actionResult == null) {

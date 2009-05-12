@@ -76,11 +76,13 @@
 */
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.util.ReportConstants;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
@@ -120,19 +122,25 @@ public class TrialListBean extends AbstractBaseReportBean<TrialListCriteriaDto, 
         try {
             session = ViewerHibernateUtil.getCurrentSession();
             SQLQuery query = null;
-            String sql = "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
-                       + "       , sp.official_title, dws.status_code "
-                       + "FROM csm_user AS cm, document_workflow_status AS dws, study_protocol AS sp "
-                       + "WHERE sp.identifier = dws.study_protocol_identifier "
-                       + "  AND sp.user_last_created = cm.login_name "
-                       + "  AND cm.login_name Not In ('brownph2@mail.nih.gov','pb8593@yahoo.com') "
-                       + "  AND dws.identifier in "
-                       + "      ( select max(identifier) "
-                       + "        from document_workflow_status "
-                       + "        group by study_protocol_identifier ) "
-                       + "ORDER BY cm.organization, sp.date_last_created";
+            String sql
+                = "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
+                + "       , sp.official_title, dws.status_code "
+                + "FROM study_protocol AS sp "
+                + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
+                + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
+                + "WHERE dws.identifier in "
+                + "      ( select max(identifier) "
+                + "        from document_workflow_status "
+                + "        group by study_protocol_identifier ) "
+                + "  AND sp.USER_LAST_CREATED Not In (:EXCLUDE_LIST) "
+                + "ORDER BY cm.organization, sp.date_last_created";
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql);
+            if (BlConverter.covertToBool(criteria.getCtrpOnly())) {
+                query.setParameterList("EXCLUDE_LIST", ReportConstants.NON_CTRP_SUBMITTERS);
+            } else {
+                query.setParameter("EXCLUDE_LIST", "");
+            }
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
             for (Object[] sr : queryList) {

@@ -1,7 +1,7 @@
-/*
+/***
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -74,36 +74,14 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
-
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.util.ViewerConstants;
-
-import org.apache.struts2.ServletActionContext;
-
-import com.opensymphony.xwork2.ActionSupport;
+package gov.nih.nci.pa.report.util;
 
 /**
  * @author Hugh Reinhart
- * @since 4/16/2009
+ * @since 5/12/2009
  */
-public abstract class AbstractViewerAction extends ActionSupport {
-    private static final long serialVersionUID = -5423491292515161915L;
+public final class ReportConstants {
 
-    /**
-     * Default implementation throws derived exception.
-     * @throws PAException exception
-     * @return action result
-     */
-    @Override
-    public String execute() throws PAException {
-        return SUCCESS;
-    }
-
-    /**
-     * @return the role from the session
-     */
-    protected String getUserRole() {
-        return (String) ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.SESSION_ATTR_ROLE);
-    }
+    /** Array of all STUDY_PROTOCOL.USER_LAST_CREATED's used to identify non-CTRP studies. */
+    public static final String[] NON_CTRP_SUBMITTERS = {"brownph2@mail.nih.gov", "pb8593@yahoo.com"};
 }
