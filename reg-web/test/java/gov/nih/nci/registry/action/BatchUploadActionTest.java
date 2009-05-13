@@ -6,8 +6,12 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.junit.Test;
 
@@ -17,7 +21,7 @@ import org.junit.Test;
  */
 public class BatchUploadActionTest extends AbstractRegWebTest {
     private BatchUploadAction  action;
-    private static final String FILE_NAME = "ProtocolDoc.doc";
+    private static final String FILE_NAME = "batchUploadTest.xls";
     @Test
     public void testTrialDataProperty(){
        action = new BatchUploadAction();
@@ -84,4 +88,36 @@ public class BatchUploadActionTest extends AbstractRegWebTest {
         action = new BatchUploadAction();
         assertEquals("error",action.process());
     }
+    @Test 
+    public void testProcessWithInValidDocType() throws URISyntaxException{
+        action = new BatchUploadAction();
+        action.setOrgName("orgName");
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource("test.txt");
+        File f = new File(fileUrl.toURI());
+        
+        action.setTrialData(f);
+        action.setTrialDataFileName("test.txt");
+        fileUrl = ClassLoader.getSystemClassLoader().getResource("test.txt");
+        f = new File(fileUrl.toURI());
+        action.setDocZip(f);
+        action.setDocZipFileName("test.txt");
+        assertEquals("error",action.process());
+        assertTrue(action.getFieldErrors().containsKey("docZipFileName"));
+        assertTrue(action.getFieldErrors().containsKey("trialDataFileName"));
+    }
+    @Test 
+    public void testProcessWithNoValidationErr() throws URISyntaxException, PAException {
+        action = new BatchUploadAction();
+        action.setOrgName("orgName");
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        action.setTrialData(f);
+        action.setTrialDataFileName(FILE_NAME);
+        fileUrl = ClassLoader.getSystemClassLoader().getResource("7000DDoc.zip");
+        f = new File(fileUrl.toURI());
+        action.setDocZip(f);
+        action.setDocZipFileName("7000DDoc.zip");
+        assertEquals("batch_confirm",action.process());
+    }
+    
 }
