@@ -21,7 +21,7 @@ function handleAction(){
         <table class="form">    
             <tr> 
                 <td scope="row" class="label">
-                    <label for="ctrpOnly"><fmt:message key="trialList.criteria.ctrpOnly"/></label>
+                    <label><fmt:message key="trialList.criteria.ctrpOnly"/></label>
                 </td>
                 <td>
                     <s:checkbox name="criteria.ctrpOnly" />
@@ -38,7 +38,7 @@ function handleAction(){
             </del>
         </div>
         <s:if test="%{resultList != null}">
-            <jsp:include page="/WEB-INF/jsp/trialListResults.jsp"/>
+            <jsp:include page="/WEB-INF/jsp/incl/trialListResults.jsp"/>
         </s:if>
     </s:form>
 </body>

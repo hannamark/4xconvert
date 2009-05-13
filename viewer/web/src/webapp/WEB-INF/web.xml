@@ -96,6 +96,7 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Submitter</role-name>
+            <role-name>ReportViewer</role-name>
             <role-name>Abstractor</role-name>
         </auth-constraint>
     </security-constraint>
@@ -105,6 +106,7 @@
             <url-pattern>/ctro/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
+            <role-name>ReportViewer</role-name>
             <role-name>Abstractor</role-name>
         </auth-constraint>
     </security-constraint>
@@ -117,11 +119,15 @@
     </login-config>
 
     <security-role>
-        <description>Clinical Trials Reporting Office personnel.</description>
+        <description>Role for Clinical Trials Reporting Office personnel.</description>
         <role-name>Abstractor</role-name>
     </security-role>
     <security-role>
-        <description>The public (anyone with a valid account for any PA application).</description>
+        <description>Read-only role to view Clinical Trials Reporting Office reports.</description>
+        <role-name>ReportViewer</role-name>
+    </security-role>
+    <security-role>
+        <description>Role for users who have created an id through Protocol Registry</description>
         <role-name>Submitter</role-name>
     </security-role>
 </web-app>

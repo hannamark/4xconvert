@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
 import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
@@ -85,13 +86,45 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
  */
 public class MilestonesCriteriaWebDto extends AbstractWebDto<MilestonesCriteriaDto> {
 
+    Boolean ctrpOnly;
+    Boolean currentMilestoneOnly;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public MilestonesCriteriaDto getIsoDto() {
-        // TODO Auto-generated method stub
-        return null;
+        MilestonesCriteriaDto result = new MilestonesCriteriaDto();
+        result.setCtrpOnly(BlConverter.convertToBl(getCtrpOnly()));
+        result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
+        return result;
     }
 
+    /**
+     * @return the currentMilestoneOnly
+     */
+    public Boolean getCurrentMilestoneOnly() {
+        return currentMilestoneOnly;
+    }
+
+    /**
+     * @param currentMilestoneOnly the currentMilestoneOnly to set
+     */
+    public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
+        this.currentMilestoneOnly = currentMilestoneOnly;
+    }
+
+    /**
+     * @return the ctrpOnly
+     */
+    public Boolean getCtrpOnly() {
+        return ctrpOnly;
+    }
+
+    /**
+     * @param ctrpOnly the ctrpOnly to set
+     */
+    public void setCtrpOnly(Boolean ctrpOnly) {
+        this.ctrpOnly = ctrpOnly;
+    }
 }

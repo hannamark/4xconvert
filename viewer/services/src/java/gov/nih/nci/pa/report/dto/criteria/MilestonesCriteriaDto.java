@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Bl;
  * @since 04/29/2009
  */
 public class MilestonesCriteriaDto extends TrialListCriteriaDto {
+
     private Bl currentMilestoneOnly;
 
     /**

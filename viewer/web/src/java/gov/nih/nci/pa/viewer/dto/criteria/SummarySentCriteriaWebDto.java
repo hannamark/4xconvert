@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
 import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
@@ -85,13 +86,29 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
  */
 public class SummarySentCriteriaWebDto extends AbstractWebDto<SummarySentCriteriaDto> {
 
+    Boolean overdueOnly;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public SummarySentCriteriaDto getIsoDto() {
-        // TODO Auto-generated method stub
-        return null;
+        SummarySentCriteriaDto result = new SummarySentCriteriaDto();
+        result.setOverdueOnly(BlConverter.convertToBl(getOverdueOnly()));
+        return result;
     }
 
+    /**
+     * @return the overdueOnly
+     */
+    public Boolean getOverdueOnly() {
+        return overdueOnly;
+    }
+
+    /**
+     * @param overdueOnly the overdueOnly to set
+     */
+    public void setOverdueOnly(Boolean overdueOnly) {
+        this.overdueOnly = overdueOnly;
+    }
 }

@@ -28,24 +28,22 @@
                 <param name="actionName">welcome</param>
             </result>
         </action>
-        <action name="trialList*" class="gov.nih.nci.pa.viewer.action.TrialListAction" method="{1}">
-            <result name="input">/WEB-INF/jsp/trialList.jsp</result> 
-            <result name="result">/WEB-INF/jsp/trialList.jsp</result> 
-            <result>/WEB-INF/jsp/trialList.jsp</result> 
-        </action>
-        <action name="trialCounts" class="gov.nih.nci.pa.viewer.action.TrialCountsAction">
-            <result>/WEB-INF/jsp/trialCounts.jsp</result> 
-        </action>
-        <action name="milestones" class="gov.nih.nci.pa.viewer.action.MilestonesAction">
-             <result>/WEB-INF/jsp/milestones.jsp</result> 
-        </action>
-        <action name="summarySent" class="gov.nih.nci.pa.viewer.action.SummarySentAction">
-            <result>/WEB-INF/jsp/summarySent.jsp</result> 
-        </action>
     </package>
     <package name="ctro" namespace="/ctro" extends="public">
         <action name="welcome" class="gov.nih.nci.pa.viewer.action.WelcomeAction">
             <result name="ctroWelcome">/WEB-INF/jsp/ctroWelcome.jsp</result> 
+        </action>
+        <action name="trialList*" class="gov.nih.nci.pa.viewer.action.TrialListAction" method="{1}">
+            <result>/WEB-INF/jsp/trialList.jsp</result> 
+        </action>
+        <action name="trialCounts*" class="gov.nih.nci.pa.viewer.action.TrialCountsAction" method="{1}">
+            <result>/WEB-INF/jsp/trialCounts.jsp</result> 
+        </action>
+        <action name="milestones*" class="gov.nih.nci.pa.viewer.action.MilestonesAction" method="{1}">
+             <result>/WEB-INF/jsp/milestones.jsp</result> 
+        </action>
+        <action name="summarySent*" class="gov.nih.nci.pa.viewer.action.SummarySentAction" method="{1}">
+            <result>/WEB-INF/jsp/summarySent.jsp</result> 
         </action>
     </package>
 </struts>

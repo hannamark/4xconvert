@@ -76,6 +76,9 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
 import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
@@ -85,12 +88,77 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
  */
 public class TrialCountsCriteriaWebDto extends AbstractWebDto<TrialCountsCriteriaDto> {
 
+    Boolean ctrpOnly;
+    String groupByTimeUnit;
+    String intervalStartDate;
+    String intervalEndDate;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public TrialCountsCriteriaDto getIsoDto() {
-        // TODO Auto-generated method stub
-        return null;
+        TrialCountsCriteriaDto result = new TrialCountsCriteriaDto();
+        result.setCtrpOnly(BlConverter.convertToBl(getCtrpOnly()));
+        result.setGroupByTimeUnit(CdConverter.convertStringToCd(getGroupByTimeUnit()));
+        result.setTimeInterval(IvlConverter.convertTs()
+                .convertToIvl(getIntervalStartDate(), getIntervalEndDate()));
+        return result;
+    }
+
+    /**
+     * @return the ctrpOnly
+     */
+    public Boolean getCtrpOnly() {
+        return ctrpOnly;
+    }
+
+    /**
+     * @param ctrpOnly the ctrpOnly to set
+     */
+    public void setCtrpOnly(Boolean ctrpOnly) {
+        this.ctrpOnly = ctrpOnly;
+    }
+
+    /**
+     * @return the groupByTimeUnit
+     */
+    public String getGroupByTimeUnit() {
+        return groupByTimeUnit;
+    }
+
+    /**
+     * @param groupByTimeUnit the groupByTimeUnit to set
+     */
+    public void setGroupByTimeUnit(String groupByTimeUnit) {
+        this.groupByTimeUnit = groupByTimeUnit;
+    }
+
+    /**
+     * @return the intervalStartDate
+     */
+    public String getIntervalStartDate() {
+        return intervalStartDate;
+    }
+
+    /**
+     * @param intervalStartDate the intervalStartDate to set
+     */
+    public void setIntervalStartDate(String intervalStartDate) {
+        this.intervalStartDate = intervalStartDate;
+    }
+
+    /**
+     * @return the intervalEndDate
+     */
+    public String getIntervalEndDate() {
+        return intervalEndDate;
+    }
+
+    /**
+     * @param intervalEndDate the intervalEndDate to set
+     */
+    public void setIntervalEndDate(String intervalEndDate) {
+        this.intervalEndDate = intervalEndDate;
     }
 }

@@ -85,20 +85,20 @@ import gov.nih.nci.coppa.iso.Ts;
  * @since 04/29/2009
  */
 public class TrialCountsCriteriaDto extends TrialListCriteriaDto {
-    private Cd groupByTimeUnits;
+    private Cd groupByTimeUnit;
     private Ivl<Ts> timeInterval;
 
     /**
      * @return the groupByTimeUnits
      */
-    public Cd getGroupByTimeUnits() {
-        return groupByTimeUnits;
+    public Cd getGroupByTimeUnit() {
+        return groupByTimeUnit;
     }
     /**
-     * @param groupByTimeUnits the groupByTimeUnits to set
+     * @param groupByTimeUnit the groupByTimeUnits to set
      */
-    public void setGroupByTimeUnits(Cd groupByTimeUnits) {
-        this.groupByTimeUnits = groupByTimeUnits;
+    public void setGroupByTimeUnit(Cd groupByTimeUnit) {
+        this.groupByTimeUnit = groupByTimeUnit;
     }
     /**
      * @return the timeInterval

@@ -93,6 +93,7 @@ public class TrialListCriteriaWebDto extends AbstractWebDto<TrialListCriteriaDto
      */
     public TrialListCriteriaWebDto() {
         super();
+        this.ctrpOnly = true;
     }
 
     /**

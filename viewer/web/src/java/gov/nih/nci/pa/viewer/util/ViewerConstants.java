@@ -93,4 +93,6 @@ public final class ViewerConstants {
     public static final String ROLE_PUBLIC = "Submitter";
     /** role-name for the ctro staff role. */
     public static final String ROLE_CTRO = "Abstractor";
+    /** role-name to view ctro staff reports without write access to PA. */
+    public static final String ROLE_REPORTING = "ReportViewer";
 }

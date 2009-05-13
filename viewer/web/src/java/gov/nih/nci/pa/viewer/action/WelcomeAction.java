@@ -100,6 +100,11 @@ public class WelcomeAction extends AbstractViewerAction {
                     ViewerConstants.SESSION_ATTR_ROLE, ViewerConstants.ROLE_CTRO);
             actionResult =  "ctroWelcome";
         }
+        if (ServletActionContext.getRequest().isUserInRole(ViewerConstants.ROLE_REPORTING)) {
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    ViewerConstants.SESSION_ATTR_ROLE, ViewerConstants.ROLE_CTRO);
+            actionResult =  "ctroWelcome";
+        }
         if (ServletActionContext.getRequest().isUserInRole(ViewerConstants.ROLE_PUBLIC)) {
             ServletActionContext.getRequest().getSession().setAttribute(
                     ViewerConstants.SESSION_ATTR_ROLE, ViewerConstants.ROLE_PUBLIC);
