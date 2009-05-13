@@ -69,6 +69,7 @@
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/mail-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/log4j-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-logging-4.0.5.GA.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.1-SNAPSHOT.jar"/>
     <classpathentry combineaccessrules="false" kind="src" path="/pa"/>
     <classpathentry kind="output" path="target/classes"/>
 </classpath>

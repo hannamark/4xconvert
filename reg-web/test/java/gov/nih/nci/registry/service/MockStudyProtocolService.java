@@ -1,6 +1,8 @@
 package gov.nih.nci.registry.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -112,6 +114,13 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
 
     public StudyProtocolDTO updateStudyProtocol(
             StudyProtocolDTO studyProtocolDTO) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<StudyProtocolDTO> search(StudyProtocolDTO dto,
+            LimitOffset pagingParams) throws PAException,
+            TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }
