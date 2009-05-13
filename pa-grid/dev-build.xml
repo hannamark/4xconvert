@@ -458,4 +458,8 @@
        <run-client serviceendpointname="StudyContactService" class="gov.nih.nci.coppa.services.pa.studycontactservice.client.StudyContactServiceClient" debug-suspend="n" />
     </target>
 
+  <target name="runStudyIndIdeClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyIndIdeService Client">
+         <run-client serviceendpointname="StudyIndIdeService" class="gov.nih.nci.coppa.services.pa.studyindideservice.client.StudyIndIdeServiceClient" debug-suspend="n" />
+  </target>
+
 </project>

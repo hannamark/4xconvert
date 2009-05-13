@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -127,6 +128,7 @@ public final class TransformerRegistry {
         values.put(StudyDiseaseDTO.class, StudyDiseaseTransformer.INSTANCE);
         values.put(StudyContactDTO.class, StudyContactTransformer.INSTANCE);
         values.put(StudyOnholdDTO.class, StudyOnholdTransformer.INSTANCE);
+        values.put(StudyIndldeDTO.class, StudyIndldeTransformer.INSTANCE);
     }
 
     /**
