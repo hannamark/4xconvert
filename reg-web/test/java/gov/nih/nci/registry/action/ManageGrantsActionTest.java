@@ -4,11 +4,7 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 

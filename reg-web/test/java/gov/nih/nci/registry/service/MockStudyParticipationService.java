@@ -3,18 +3,17 @@
  */
 package gov.nih.nci.registry.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vrushali

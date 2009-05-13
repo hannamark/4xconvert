@@ -3,14 +3,13 @@
  */
 package gov.nih.nci.registry.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vrushali

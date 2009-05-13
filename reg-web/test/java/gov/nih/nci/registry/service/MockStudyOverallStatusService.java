@@ -3,20 +3,17 @@
  */
 package gov.nih.nci.registry.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vrushali

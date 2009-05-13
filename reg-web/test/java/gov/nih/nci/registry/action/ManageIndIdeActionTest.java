@@ -4,11 +4,7 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -19,7 +15,7 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
 
 /**
- * @author Administrator
+ * @author Vrushali
  *
  */
 public class ManageIndIdeActionTest extends AbstractRegWebTest {

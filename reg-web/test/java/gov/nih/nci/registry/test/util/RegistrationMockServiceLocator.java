@@ -30,11 +30,14 @@ import gov.nih.nci.registry.service.MockLookUpTableService;
 import gov.nih.nci.registry.service.MockMailManagerService;
 import gov.nih.nci.registry.service.MockOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockOrganizationEntityService;
+import gov.nih.nci.registry.service.MockOrganizationalContactCorrelationService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPersonEntityService;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
+import gov.nih.nci.registry.service.MockStudyContactService;
 import gov.nih.nci.registry.service.MockStudyIndldeService;
 import gov.nih.nci.registry.service.MockStudyOverallStatusService;
+import gov.nih.nci.registry.service.MockStudyParticipationContactService;
 import gov.nih.nci.registry.service.MockStudyParticipationService;
 import gov.nih.nci.registry.service.MockStudyProtocolService;
 import gov.nih.nci.registry.service.MockStudyResourcingService;
@@ -64,6 +67,9 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final PersonEntityServiceRemote personEntityService = new MockPersonEntityService();
     private final IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService = new MockIdentifiedPersonCorrelationService();
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
+    private final OrganizationalContactCorrelationServiceRemote orgContactCorrelationService = new MockOrganizationalContactCorrelationService();
+    private final StudyContactServiceRemote studyContactService = new MockStudyContactService();
+    private final StudyParticipationContactServiceRemote studyParticipationContactService = new MockStudyParticipationContactService();
     public DocumentServiceRemote getDocumentService() {
         return documentService;
     }
@@ -107,8 +113,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     public OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return orgContactCorrelationService;
     }
 
     public PersonEntityServiceRemote getPoPersonEntityService()
@@ -131,8 +136,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     }
 
     public StudyContactServiceRemote getStudyContactService() {
-        // TODO Auto-generated method stub
-        return null;
+        return studyContactService;
     }
 
     public StudyIndldeServiceRemote getStudyIndldeService() {
@@ -145,8 +149,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     public StudyParticipationContactServiceRemote getStudyParticipationContactService()
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return studyParticipationContactService;
     }
 
     public StudyParticipationServiceRemote getStudyParticipationService() {

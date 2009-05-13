@@ -7,13 +7,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.registry.util.Constants;
 
 import javax.servlet.http.HttpSession;
 
@@ -485,13 +483,13 @@ public class PopupActionTest extends AbstractRegWebTest {
     public void testDisplayOrgListDisplayTagWithCtepId() throws PAException{
         popUpAction = new PopupAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setupAddParameter("OrgName", "OrgName");
+        request.setupAddParameter("orgName", "OrgName");
         request.setupAddParameter("email", "em@mail.com");
-        request.setupAddParameter("country", "USA");
-        request.setupAddParameter("city", "");
-        request.setupAddParameter("state", "");
-        request.setupAddParameter("zip", "");
-        request.setupAddParameter("ctepId","1");
+        request.setupAddParameter("countryName", "USA");
+        request.setupAddParameter("cityName", "");
+        request.setupAddParameter("stateName", "");
+        request.setupAddParameter("zipCode", "");
+        request.setupAddParameter("ctepid","1");
         ServletActionContext.setRequest(request);
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
      }
@@ -514,12 +512,12 @@ public class PopupActionTest extends AbstractRegWebTest {
     public void testDisplayOrgListDisplayTagWithCtepIdNoResult() throws PAException{
         popUpAction = new PopupAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setupAddParameter("OrgName", "OrgName");
+        request.setupAddParameter("orgName", "OrgName");
         request.setupAddParameter("email", "em@mail.com");
-        request.setupAddParameter("country", "USA");
-        request.setupAddParameter("city", "");
-        request.setupAddParameter("state", "");
-        request.setupAddParameter("zip", "");
+        request.setupAddParameter("countryName", "USA");
+        request.setupAddParameter("cityName", "");
+        request.setupAddParameter("stateName", "");
+        request.setupAddParameter("zipCode", "");
         request.setupAddParameter("ctepId","2");
         ServletActionContext.setRequest(request);
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
@@ -529,6 +527,20 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction = new PopupAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession sess =  new MockHttpSession();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
+        popUpAction.prepare();
+        assertNotNull(ServletActionContext.getRequest().getSession().getAttribute("countrylist"));
+     
+    }
+    @Test
+    public void testPrepareSessionWithValue() throws Exception{
+        popUpAction = new PopupAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession sess =  new MockHttpSession();
+        List<String> countryList = new ArrayList<String>();
+        countryList.add("USA");
+        sess.setAttribute("countrylist",countryList);
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         popUpAction.prepare();

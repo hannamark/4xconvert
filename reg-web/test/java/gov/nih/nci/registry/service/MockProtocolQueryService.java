@@ -44,6 +44,9 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
      */
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
             StudyProtocolQueryCriteria sc) throws PAException {
+        if(sc.getOfficialTitle() != null && sc.getOfficialTitle().equalsIgnoreCase("ThrowException")) {
+            throw new PAException("Test");
+        }
         List<StudyProtocolQueryDTO> returnList = new ArrayList<StudyProtocolQueryDTO>();
         for (StudyProtocolQueryDTO sp: list) {
             if(sp.getLocalStudyProtocolIdentifier().equals(sc.getLeadOrganizationTrialIdentifier())) {

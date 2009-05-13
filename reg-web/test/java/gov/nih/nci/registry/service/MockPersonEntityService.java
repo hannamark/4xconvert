@@ -3,13 +3,6 @@
  */
 package gov.nih.nci.registry.service;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Enxp;
@@ -17,13 +10,19 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali
@@ -48,6 +47,12 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
         } catch (URISyntaxException e) {
         }
         personList.add(dto);
+        dto = new PersonDTO();
+        dto.setIdentifier(IiConverter.convertToIi("3"));
+        dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
+        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
+                "stateOrProvince", "postalCode", "USA"));
+        personList.add(dto);
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.services.person.PersonEntityServiceRemote#createPerson(gov.nih.nci.services.person.PersonDTO)
@@ -60,6 +65,9 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
      * @see gov.nih.nci.services.person.PersonEntityServiceRemote#getPerson(gov.nih.nci.coppa.iso.Ii)
      */
     public PersonDTO getPerson(Ii arg0) throws NullifiedEntityException {
+        if(arg0.getExtension().equals("3")){
+            throw new NullifiedEntityException(arg0);
+        }
         for(PersonDTO dto:personList){
             if(dto.getIdentifier().getExtension().equals(arg0.getExtension())){
                 return dto;
