@@ -111,7 +111,7 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       super();
   }
 
-  public StudyOverallStatus[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii ii = IITransformer.INSTANCE.toDto(id);
           List<StudyOverallStatusDTO> dtoList = ejb.getByStudyProtocol(ii);
@@ -122,9 +122,9 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       }
   }
 
-  public StudyOverallStatus[] getCurrentByStudyProtocol(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
-          Ii ii = IITransformer.INSTANCE.toDto(id);
+          Ii ii = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyOverallStatusDTO> dtoList = ejb.getCurrentByStudyProtocol(ii);
           return convert(dtoList);
       } catch (Exception e) {
@@ -133,7 +133,7 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       }
   }
 
-  public StudyOverallStatus get(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii ii = IITransformer.INSTANCE.toDto(id);
           StudyOverallStatusDTO dto = ejb.get(ii);
@@ -144,19 +144,19 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       }
   }
 
-  public void copy(Id fromStudyProtocolId,Id toStudyProtocolId) throws RemoteException, PAFault {
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       throw new RemoteException("Not yet implemented");
     }
 
-  public StudyOverallStatus create(StudyOverallStatus studyOverallStatus) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus create(gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     throw new RemoteException("Not yet implemented");
   }
 
-  public StudyOverallStatus update(StudyOverallStatus studyOverallStatus) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus update(gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     throw new RemoteException("Not yet implemented");
   }
 
-  public void delete(Id id) throws RemoteException, PAFault {
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     throw new RemoteException("Not yet implemented");
   }
 

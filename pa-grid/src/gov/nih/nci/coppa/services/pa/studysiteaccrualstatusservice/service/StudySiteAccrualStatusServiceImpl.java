@@ -32,7 +32,7 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     /**
      * {@inheritDoc}
      */
-  public StudySiteAccrualStatus getStudySiteAccrualStatus(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             StudySiteAccrualStatusDTO dto = ejb.getStudySiteAccrualStatus(iiDto);
@@ -46,7 +46,7 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     /**
      * {@inheritDoc}
      */
-  public StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudyParticipation(Id studyParticipationId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyParticipationId);
             List<StudySiteAccrualStatusDTO> dtoList = ejb.getStudySiteAccrualStatusByStudyParticipation(iiDto);
@@ -60,7 +60,7 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     /**
      * {@inheritDoc}
      */
-  public StudySiteAccrualStatus[] getCurrentStudySiteAccrualStatusByStudyParticipation(Id studyParticipationId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getCurrentStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyParticipationId);
             List<StudySiteAccrualStatusDTO> dtoList = ejb.getCurrentStudySiteAccrualStatusByStudyParticipation(iiDto);
@@ -74,14 +74,14 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     /**
      * {@inheritDoc}
      */
-  public StudySiteAccrualStatus createStudySiteAccrualStatus(StudySiteAccrualStatus studySiteAccrualStatus) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus createStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-  public StudySiteAccrualStatus updateStudySiteAccrualStatus(StudySiteAccrualStatus studySiteAccrualStatus) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus updateStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 

@@ -32,7 +32,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         super();
     }
 
-    public StudyOnhold get(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             StudyOnholdDTO studyOnholdDto = studyOnholdService.get(iiDto);
@@ -43,7 +43,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         }
     }
 
-    public StudyOnhold[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             List<StudyOnholdDTO> studyOnholdDtoList = studyOnholdService.getByStudyProtocol(iiDto);
@@ -54,7 +54,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         }
     }
 
-    public StudyOnhold[] getCurrentByStudyProtocol(Id studyProtocolId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<StudyOnholdDTO> studyOnholdDtoList = studyOnholdService.getCurrentByStudyProtocol(iiDto);
@@ -65,7 +65,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         }
     }
 
-    public BL isOnhold(Id studyProtocolId) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.BL isOnhold(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             Bl isOnhold = studyOnholdService.isOnhold(iiDto);
@@ -78,19 +78,19 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         }
       }
 
-    public void copy(Id fromStudyProtocolId,Id toStudyProtocolId) throws RemoteException, PAFault {
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
-    public StudyOnhold create(StudyOnhold studyOnhold) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold create(gov.nih.nci.coppa.services.pa.StudyOnhold studyOnhold) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
-    public StudyOnhold update(StudyOnhold studyOnhold) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold update(gov.nih.nci.coppa.services.pa.StudyOnhold studyOnhold) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 
-    public void delete(Id id) throws RemoteException, PAFault {
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
 

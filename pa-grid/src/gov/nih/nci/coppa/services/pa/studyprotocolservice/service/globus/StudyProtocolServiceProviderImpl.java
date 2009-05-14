@@ -56,9 +56,9 @@ public class StudyProtocolServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse search(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    public gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse search(gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse();
-    boxedResult.setStudyProtocol(impl.search(params.getStudyProtocol().getStudyProtocol()));
+    boxedResult.setStudyProtocol(impl.search(params.getStudyProtocol().getStudyProtocol(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

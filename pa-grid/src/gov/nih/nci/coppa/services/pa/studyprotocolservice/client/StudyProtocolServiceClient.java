@@ -152,13 +152,16 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyProtocol[] search(gov.nih.nci.coppa.services.pa.StudyProtocol studyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyProtocol[] search(gov.nih.nci.coppa.services.pa.StudyProtocol studyProtocol,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequest();
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequestStudyProtocol studyProtocolContainer = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequestStudyProtocol();
     studyProtocolContainer.setStudyProtocol(studyProtocol);
     params.setStudyProtocol(studyProtocolContainer);
+    gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getStudyProtocol();
     }

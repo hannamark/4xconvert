@@ -86,6 +86,7 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityServic
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types=gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/types=gov.nih.nci.coppa.services.pa.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types=gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.types
+http\://common.coppa.nci.nih.gov=gov.nih.nci.coppa.common
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/types=gov.nih.nci.coppa.services.pa.armservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types=gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.stubs.types
 http\://pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa
@@ -93,6 +94,7 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/type
 http\://www.w3.org/XML/1998/namespace=namespace
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types=gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
+http\://faults.common.coppa.nci.nih.gov=gov.nih.nci.coppa.common.faults
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types=gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
@@ -101,10 +103,11 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types
 http\://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types=gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types=gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types=gov.nih.nci.coppa.services.pa.studycontactservice.stubs.types
-http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.types
-http\://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types=gov.nih.nci.coppa.services.pa.studyindideservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types=gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.types
+http\://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types=gov.nih.nci.coppa.services.pa.studyindideservice.stubs.types
+http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types=gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.types
+
 
 
 

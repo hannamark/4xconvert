@@ -72,6 +72,58 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
         }
     }
 
+  
+  private static void testGet(StudyOnholdServiceClient client) throws RemoteException {
+      Id id = new Id();
+      id.setExtension("1");
+
+      System.out.println("Testing StudyOnhold.get()...");
+      StudyOnhold result = client.get(id);
+      if (result == null) {
+          System.out.println("could not find StudyOnhold.");
+      } else {
+          System.out.println("StudyOnhold 1 found.");
+      }
+  }
+
+  private static void testGetByStudyProtocol(StudyOnholdServiceClient client) throws RemoteException {
+      Id id = new Id();
+      id.setExtension("1");
+
+      System.out.println("Testing StudyOnhold.getByStudyProtocol()...");
+      StudyOnhold[] result = client.getByStudyProtocol(id);
+      if (result == null) {
+          System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
+      } else {
+          System.out.println("StudyOnhold record(s) found for StudyProtocol = 1.");
+      }
+  }
+
+  private static void testGetCurrentByStudyProtocol(StudyOnholdServiceClient client) throws RemoteException {
+      Id id = new Id();
+      id.setExtension("1");
+
+      System.out.println("Testing StudyOnhold.getCurrentByStudyProtocol()...");
+      StudyOnhold[] result = client.getCurrentByStudyProtocol(id);
+      if (result == null) {
+          System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
+      } else {
+          System.out.println("StudyOnhold record(s) found for StudyProtocol = 1.");
+      }
+  }
+
+  private static void testIsOnhold(StudyOnholdServiceClient client) throws RemoteException {
+      Id id = new Id();
+      id.setExtension("1");
+
+      System.out.println("Testing StudyOnhold.isOnhold()...");
+      BL result = client.isOnhold(id);
+      if (result == null) {
+          System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
+      } else {
+          System.out.println("StudyOnhold status for StudyProtocol = 1 is " + result.toString());
+      }
+  }
   public gov.nih.nci.coppa.services.pa.StudyOnhold[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
@@ -168,56 +220,5 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     return boxedResult.getBL();
     }
   }
-  
-  private static void testGet(StudyOnholdServiceClient client) throws RemoteException {
-      Id id = new Id();
-      id.setExtension("1");
 
-      System.out.println("Testing StudyOnhold.get()...");
-      StudyOnhold result = client.get(id);
-      if (result == null) {
-          System.out.println("could not find StudyOnhold.");
-      } else {
-          System.out.println("StudyOnhold 1 found.");
-      }
-  }
-
-  private static void testGetByStudyProtocol(StudyOnholdServiceClient client) throws RemoteException {
-      Id id = new Id();
-      id.setExtension("1");
-
-      System.out.println("Testing StudyOnhold.getByStudyProtocol()...");
-      StudyOnhold[] result = client.getByStudyProtocol(id);
-      if (result == null) {
-          System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
-      } else {
-          System.out.println("StudyOnhold record(s) found for StudyProtocol = 1.");
-      }
-  }
-
-  private static void testGetCurrentByStudyProtocol(StudyOnholdServiceClient client) throws RemoteException {
-      Id id = new Id();
-      id.setExtension("1");
-
-      System.out.println("Testing StudyOnhold.getCurrentByStudyProtocol()...");
-      StudyOnhold[] result = client.getCurrentByStudyProtocol(id);
-      if (result == null) {
-          System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
-      } else {
-          System.out.println("StudyOnhold record(s) found for StudyProtocol = 1.");
-      }
-  }
-
-  private static void testIsOnhold(StudyOnholdServiceClient client) throws RemoteException {
-      Id id = new Id();
-      id.setExtension("1");
-
-      System.out.println("Testing StudyOnhold.isOnhold()...");
-      BL result = client.isOnhold(id);
-      if (result == null) {
-          System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
-      } else {
-          System.out.println("StudyOnhold status for StudyProtocol = 1 is " + result.toString());
-      }
-  }
 }

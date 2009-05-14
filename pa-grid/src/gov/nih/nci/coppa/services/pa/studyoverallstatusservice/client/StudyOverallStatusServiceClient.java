@@ -217,7 +217,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.CopyRequestToStudyProtocolId();
     toStudyProtocolIdContainer.setId(toStudyProtocolId);
     params.setToStudyProtocolId(toStudyProtocolIdContainer);
-    portType.copy(params);
+    gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.CopyResponse boxedResult = portType.copy(params);
     }
   }
 
@@ -276,7 +276,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.DeleteRequestId();
     idContainer.setId(id);
     params.setId(idContainer);
-    portType.delete(params);
+    gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
   }
 

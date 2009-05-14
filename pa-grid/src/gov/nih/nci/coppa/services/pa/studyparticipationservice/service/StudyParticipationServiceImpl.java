@@ -53,9 +53,7 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
         return result;
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,
-          gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation)
-      throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyParticipation[] result = null;
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
@@ -71,9 +69,7 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
       }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,
-          gov.nih.nci.coppa.services.pa.StudyParticipation[] studyParticipation)
-  throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipation[] studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyParticipation[] result = null;
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
