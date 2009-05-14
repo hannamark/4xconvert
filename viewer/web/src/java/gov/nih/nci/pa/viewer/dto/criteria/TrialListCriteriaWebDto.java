@@ -86,24 +86,7 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
  */
 public class TrialListCriteriaWebDto extends AbstractWebDto<TrialListCriteriaDto> {
 
-    private Boolean ctrpOnly;
-
-    /**
-     * Default constructor.
-     */
-    public TrialListCriteriaWebDto() {
-        super();
-        this.ctrpOnly = true;
-    }
-
-    /**
-     * Constructor using service dto.
-     * @param dto the service iso dto
-     */
-    public TrialListCriteriaWebDto(TrialListCriteriaDto dto) {
-        super();
-        this.ctrpOnly = BlConverter.covertToBoolean(dto.getCtrpOnly());
-    }
+    private Boolean ctrpOnly = true;
 
     /**
      * {@inheritDoc}

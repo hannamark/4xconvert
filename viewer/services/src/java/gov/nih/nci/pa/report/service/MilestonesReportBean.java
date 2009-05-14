@@ -76,16 +76,26 @@
 */
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
+import gov.nih.nci.pa.report.util.ReportConstants;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
+import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
 
 /**
 * @author Hugh Reinhart
@@ -96,6 +106,12 @@ import javax.interceptor.Interceptors;
 public class MilestonesReportBean extends AbstractBaseReportBean<MilestonesCriteriaDto, MilestonesResultDto>
         implements MilestonesLocal {
 
+    private static final int ASSIGNED_IDENTIFIER_IDX = 0;
+    private static final int OFFICIAL_TITLE_IDX = 1;
+    private static final int ORGANIZATION_IDX = 2;
+    private static final int MILESTONE_CODE_IDX = 3;
+    private static final int MILESTONE_DATE_IDX = 4;
+
     /**
      * {@inheritDoc}
      */
@@ -105,6 +121,46 @@ public class MilestonesReportBean extends AbstractBaseReportBean<MilestonesCrite
             throws PAException {
         super.get(criteria);
         ArrayList<MilestonesResultDto> rList = new ArrayList<MilestonesResultDto>();
+        try {
+            session = ViewerHibernateUtil.getCurrentSession();
+            SQLQuery query = null;
+            StringBuffer sql = new StringBuffer(
+                  "SELECT sp.assigned_identifier, sp.official_title, us.organization, sm.milestone_code "
+                + "     , sm.milestone_date "
+                + "FROM study_milestone AS sm "
+                + "  INNER JOIN study_protocol AS sp ON (sm.study_protocol_identifier = sp.identifier) "
+                + "  LEFT OUTER JOIN csm_user AS us ON (sp.user_last_created = us.login_name) "
+                + "WHERE (sp.user_last_created NOT IN (:EXCLUDE_LIST) OR sp.user_last_created IS NULL) ");
+            if (BlConverter.covertToBool(criteria.getCurrentMilestoneOnly())) {
+                sql.append(
+                        " AND (sm.identifier, sm.study_protocol_identifier) in "
+                      + "     (select max(identifier), study_protocol_identifier "
+                      + "        from study_milestone "
+                      + "        group by study_protocol_identifier) ");
+            }
+            sql.append("ORDER BY sp.assigned_identifier, sm.identifier ");
+            logger.info("query = " + sql);
+            query = session.createSQLQuery(sql.toString());
+            if (BlConverter.covertToBool(criteria.getCtrpOnly())) {
+                query.setParameterList("EXCLUDE_LIST", ReportConstants.NON_CTRP_SUBMITTERS);
+            } else {
+                query.setParameter("EXCLUDE_LIST", "");
+            }
+            @SuppressWarnings(UNCHECKED)
+            List<Object[]> queryList = query.list();
+            for (Object[] sr : queryList) {
+                MilestonesResultDto rdto = new MilestonesResultDto();
+                rdto.setAssignedIdentifier(StConverter.convertToSt((String) sr[ASSIGNED_IDENTIFIER_IDX]));
+                rdto.setMilestoneCode(CdConverter.convertStringToCd((String) sr[MILESTONE_CODE_IDX]));
+                rdto.setMilestoneDate(TsConverter.convertToTs((Timestamp) sr[MILESTONE_DATE_IDX]));
+                rdto.setOfficialTitle(StConverter.convertToSt((String) sr[OFFICIAL_TITLE_IDX]));
+                rdto.setOrganization(StConverter.convertToSt((String) sr[ORGANIZATION_IDX]));
+                rList.add(rdto);
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in " + this.getClass(), hbe);
+        }
+        logger.info("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
         return rList;
     }
 

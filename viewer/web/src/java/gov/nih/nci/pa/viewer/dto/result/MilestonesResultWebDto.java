@@ -76,6 +76,9 @@
 */
 package gov.nih.nci.pa.viewer.dto.result;
 
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
 import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
@@ -87,6 +90,12 @@ import java.util.List;
  * @since 05/12/2009
  */
 public class MilestonesResultWebDto extends AbstractWebDto<MilestonesResultDto> {
+
+    private String assignedIdentifier;
+    private String officialTitle;
+    private String organization;
+    private String milestoneCode;
+    private String milestoneDate;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -105,9 +114,13 @@ public class MilestonesResultWebDto extends AbstractWebDto<MilestonesResultDto> 
      * Constructor using service dto.
      * @param dto the service iso dto
      */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     public MilestonesResultWebDto(MilestonesResultDto dto) {
         super();
+        this.assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
+        this.milestoneCode = CdConverter.convertCdToString(dto.getMilestoneCode());
+        this.milestoneDate = TsConverter.convertToString(dto.getMilestoneDate());
+        this.officialTitle = StConverter.convertToString(dto.getOfficialTitle());
+        this.organization = StConverter.convertToString(dto.getOrganization());
     }
 
     /**
@@ -117,5 +130,75 @@ public class MilestonesResultWebDto extends AbstractWebDto<MilestonesResultDto> 
     public MilestonesResultDto getIsoDto() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * @return the assignedIdentifier
+     */
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+
+    /**
+     * @return the officialTitle
+     */
+    public String getOfficialTitle() {
+        return officialTitle;
+    }
+
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(String officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+
+    /**
+     * @return the organization
+     */
+    public String getOrganization() {
+        return organization;
+    }
+
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @return the milestoneCode
+     */
+    public String getMilestoneCode() {
+        return milestoneCode;
+    }
+
+    /**
+     * @param milestoneCode the milestoneCode to set
+     */
+    public void setMilestoneCode(String milestoneCode) {
+        this.milestoneCode = milestoneCode;
+    }
+
+    /**
+     * @return the milestoneDate
+     */
+    public String getMilestoneDate() {
+        return milestoneDate;
+    }
+
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(String milestoneDate) {
+        this.milestoneDate = milestoneDate;
     }
 }

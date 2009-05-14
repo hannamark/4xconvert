@@ -2,16 +2,17 @@
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<html>
 <c:set var="topic" scope="request" value="summary_sent"/> 
 <head>
 <title><fmt:message key="summarySent.header" /></title>
 <s:head />
-<SCRIPT LANGUAGE="JavaScript">
+<script type="text/javascript">
 function handleAction(){
      document.forms[0].action="summarySentgetReport.action";
      document.forms[0].submit();
 }
-</SCRIPT>
+</script>
 </head>
 <body>
 <!-- main content begins-->
@@ -19,10 +20,10 @@ function handleAction(){
     <s:form>
         <table class="form">    
             <tr> 
-                <td scope="row" class="label">
+                <td class="label">
                     <label><fmt:message key="summarySent.criteria.overdueOnly"/></label>
                 </td>
-                <td>
+                <td class="value">
                     <s:checkbox name="criteria.overdueOnly" />
                 </td>
             </tr>
@@ -41,3 +42,4 @@ function handleAction(){
         </s:if>
     </s:form>
 </body>
+</html>

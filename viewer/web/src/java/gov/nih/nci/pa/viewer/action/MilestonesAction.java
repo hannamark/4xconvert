@@ -76,9 +76,14 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
+import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
+import gov.nih.nci.pa.report.service.MilestonesLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.MilestonesCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.MilestonesResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
+
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
@@ -89,12 +94,27 @@ public class MilestonesAction extends AbstractReportAction
 
     private static final long serialVersionUID = -6179636182690581226L;
 
+    private MilestonesCriteriaWebDto criteria = new MilestonesCriteriaWebDto();
     /**
      * {@inheritDoc}
      */
     @Override
     public String getReport() throws PAException {
-        return SUCCESS;
+        MilestonesLocal local = ViewerServiceLocator.getInstance().getMilestonesReportService();
+        List<MilestonesResultDto> isoList = local.get(criteria.getIsoDto());
+        setResultList(MilestonesResultWebDto.getWebList(isoList));
+        return super.getReport();
     }
-
+    /**
+     * @return the criteria
+     */
+    public MilestonesCriteriaWebDto getCriteria() {
+        return criteria;
+    }
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(MilestonesCriteriaWebDto criteria) {
+        this.criteria = criteria;
+    }
 }

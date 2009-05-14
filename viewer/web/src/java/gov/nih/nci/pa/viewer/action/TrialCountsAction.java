@@ -94,7 +94,7 @@ public class TrialCountsAction extends AbstractReportAction
 
     private static final long serialVersionUID = 8863596924457440094L;
 
-    TrialCountsCriteriaWebDto criteria = new TrialCountsCriteriaWebDto();
+    private TrialCountsCriteriaWebDto criteria = new TrialCountsCriteriaWebDto();
 
     /**
      * {@inheritDoc}

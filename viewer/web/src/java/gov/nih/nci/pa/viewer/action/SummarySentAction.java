@@ -76,9 +76,14 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
+import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
+import gov.nih.nci.pa.report.service.SummarySentLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.SummarySentCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.SummarySentResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
+
+import java.util.List;
 
 /**
  * @author hreinhart
@@ -89,12 +94,31 @@ public class SummarySentAction extends AbstractReportAction
 
     private static final long serialVersionUID = 1753836643932684365L;
 
+    private SummarySentCriteriaWebDto criteria = new SummarySentCriteriaWebDto();
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getReport() throws PAException {
-        return SUCCESS;
+        SummarySentLocal local = ViewerServiceLocator.getInstance().getSummarySentReportService();
+        List<SummarySentResultDto> isoList = local.get(criteria.getIsoDto());
+        setResultList(SummarySentResultWebDto.getWebList(isoList));
+        return super.getReport();
+    }
+
+    /**
+     * @return the criteria
+     */
+    public SummarySentCriteriaWebDto getCriteria() {
+        return criteria;
+    }
+
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(SummarySentCriteriaWebDto criteria) {
+        this.criteria = criteria;
     }
 
 }

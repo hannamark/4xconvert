@@ -86,8 +86,8 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
  */
 public class MilestonesCriteriaWebDto extends AbstractWebDto<MilestonesCriteriaDto> {
 
-    Boolean ctrpOnly;
-    Boolean currentMilestoneOnly;
+    Boolean ctrpOnly = true;
+    Boolean currentMilestoneOnly = true;
 
     /**
      * {@inheritDoc}

@@ -80,6 +80,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
+import gov.nih.nci.pa.report.enums.TimeUnitsCode;
 import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 /**
@@ -88,10 +89,10 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
  */
 public class TrialCountsCriteriaWebDto extends AbstractWebDto<TrialCountsCriteriaDto> {
 
-    Boolean ctrpOnly;
-    String groupByTimeUnit;
-    String intervalStartDate;
-    String intervalEndDate;
+    private Boolean ctrpOnly = true;;
+    private String groupByTimeUnit = TimeUnitsCode.DAY.getDisplayName();
+    private String intervalStartDate = null;
+    private String intervalEndDate = null;
 
     /**
      * {@inheritDoc}

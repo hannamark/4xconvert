@@ -132,7 +132,7 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
                 + "      ( select max(identifier) "
                 + "        from document_workflow_status "
                 + "        group by study_protocol_identifier ) "
-                + "  AND sp.USER_LAST_CREATED Not In (:EXCLUDE_LIST) "
+                + "  AND (sp.user_last_created NOT IN (:EXCLUDE_LIST) OR sp.user_last_created IS NULL)"
                 + "ORDER BY cm.organization, sp.date_last_created";
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql);
@@ -153,7 +153,7 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
                 rList.add(rdto);
             }
         } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in TrialListBean.get().", hbe);
+            throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
         logger.info("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
         return rList;

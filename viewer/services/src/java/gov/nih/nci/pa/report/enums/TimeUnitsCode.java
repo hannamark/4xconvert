@@ -88,19 +88,32 @@ public enum TimeUnitsCode {
     /** Year. */
     YEAR("Year");
 
-    private String displayString;
+    private String displayName;
 
     /**
-     * @param displayString
+     * @param displayName
      */
-    private TimeUnitsCode(String displayString) {
-        this.displayString = displayString;
+    private TimeUnitsCode(String displayName) {
+        this.displayName = displayName;
     }
 
     /**
      * @return the displayString
      */
-    public String getDisplayString() {
-        return displayString;
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * construct a array of display names.
+     * @return String[] display names
+     */
+    public static String[]  getDisplayNames() {
+        TimeUnitsCode[] codes = TimeUnitsCode.values();
+        String[] codedNames = new String[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            codedNames[i] = codes[i].getDisplayName();
+        }
+        return codedNames;
     }
 }

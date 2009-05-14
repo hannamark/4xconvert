@@ -86,7 +86,7 @@ import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
  */
 public class SummarySentCriteriaWebDto extends AbstractWebDto<SummarySentCriteriaDto> {
 
-    Boolean overdueOnly;
+    Boolean overdueOnly = true;
 
     /**
      * {@inheritDoc}

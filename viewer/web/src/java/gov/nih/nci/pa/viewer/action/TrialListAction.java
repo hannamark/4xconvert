@@ -93,7 +93,6 @@ public class TrialListAction extends AbstractReportAction<TrialListCriteriaWebDt
 
     private static final long serialVersionUID = 8183194180770453447L;
 
-
     /** Criteria used to generate report. */
     protected TrialListCriteriaWebDto criteria = new TrialListCriteriaWebDto();
 

@@ -76,10 +76,80 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
 public class MilestonesResultDto {
 
+    private St assignedIdentifier;
+    private St officialTitle;
+    private St organization;
+    private Cd milestoneCode;
+    private Ts milestoneDate;
+
+    /**
+     * @return the assignedIdentifier
+     */
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+    /**
+     * @return the officialTitle
+     */
+    public St getOfficialTitle() {
+        return officialTitle;
+    }
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(St officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+    /**
+     * @return the organization
+     */
+    public St getOrganization() {
+        return organization;
+    }
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(St organization) {
+        this.organization = organization;
+    }
+    /**
+     * @return the milestoneCode
+     */
+    public Cd getMilestoneCode() {
+        return milestoneCode;
+    }
+    /**
+     * @param milestoneCode the milestoneCode to set
+     */
+    public void setMilestoneCode(Cd milestoneCode) {
+        this.milestoneCode = milestoneCode;
+    }
+    /**
+     * @return the milestoneDate
+     */
+    public Ts getMilestoneDate() {
+        return milestoneDate;
+    }
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(Ts milestoneDate) {
+        this.milestoneDate = milestoneDate;
+    }
 }
