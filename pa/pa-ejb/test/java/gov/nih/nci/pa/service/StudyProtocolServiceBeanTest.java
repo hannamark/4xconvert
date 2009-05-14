@@ -103,8 +103,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
-import java.util.List;
-
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -117,15 +115,10 @@ public class StudyProtocolServiceBeanTest {
 
     private StudyProtocolServiceBean bean = new StudyProtocolServiceBean();
     private StudyProtocolServiceRemote remoteEjb = bean;
-    private DocumentWorkflowStatusServiceBean dwf = new DocumentWorkflowStatusServiceBean();
-    private StudyMilestoneServiceBean milestone = new StudyMilestoneServiceBean();
     private StudyRelationshipServiceBean srb = new StudyRelationshipServiceBean();
     @Before
     public void setUp() throws Exception {
-        bean.setDocumentWorkflowStatusService(dwf);
-        dwf.setStudyMilestoneService(milestone);
         bean.studyRelationshipService = srb;
-        milestone.documentWorkflowStatusService = dwf;
         TestSchema.reset();
     }
 

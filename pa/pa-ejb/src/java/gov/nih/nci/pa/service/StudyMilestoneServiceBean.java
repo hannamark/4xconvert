@@ -285,9 +285,28 @@ public class StudyMilestoneServiceBean
         }
         return dto;
     }
-
+    @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
+        
+        if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.SUBMITTED.equals(dwStatus)) {
+                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
+            }
+        }
+        if (newCode.equals(MilestoneCode.SUBMISSION_ACCEPTED)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
+                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
+            }
+        }
+        if (newCode.equals(MilestoneCode.SUBMISSION_REJECTED)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.REJECTED.equals(dwStatus)) {
+                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
+            }
+        }
         if (newCode.equals(MilestoneCode.QC_COMPLETE)) {
             DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
             if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
@@ -319,6 +338,9 @@ public class StudyMilestoneServiceBean
         dwfDto.setStatusCode(CdConverter.convertToCd(dwf));
         dwfDto.setStatusDateRange(dto.getMilestoneDate());
         dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+        if (dto.getCommentText() != null) {
+            dwfDto.setCommentText(dto.getCommentText()); 
+        }
         getDocumentWorkflowStatusService().create(dwfDto);
     }
 

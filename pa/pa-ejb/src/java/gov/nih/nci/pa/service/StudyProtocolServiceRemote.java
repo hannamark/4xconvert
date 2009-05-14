@@ -85,7 +85,6 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import java.util.List;
 
 import javax.ejb.Remote;
-
 /**
  * @author Hugh Reinhart
  * @since 08/13/2008

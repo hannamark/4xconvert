@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -94,6 +95,7 @@ import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -105,6 +107,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
@@ -114,7 +117,9 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -153,6 +158,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyIndldeServiceLocal studyIndldeService  = null;
     @EJB
     StudyResourcingServiceLocal studyResourcingService = null;
+    @EJB
+    StudyMilestoneServicelocal studyMilestoneService = null;
     @EJB
     DocumentServiceLocal documentService = null;
     @EJB
@@ -525,7 +532,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             studyTypeCode = StudyTypeCode.OBSERVATIONAL;
         }
         ////// todo : when batch upload is changed to use the business service 
-        /// createDocumentWorkFlowStatus(studyProtocolIi);
+        createMilestone(studyProtocolIi);
         newSpDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
         if (isAmend) {
             createStudyRelationship(studyProtocolIi , oldIdentifier , newSpDto);
@@ -716,6 +723,16 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 IiConverter.convertToLong(studyProtocolIi),
                 DSetConverter.convertDSetToList(dset, PAConstants.EMAIL).get(0),
                 DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));
+    }
+    
+    private void createMilestone(Ii studyProtocolIi) throws PAException {
+        
+        StudyMilestoneDTO smDto = new StudyMilestoneDTO();
+        smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
+        smDto.setStudyProtocolIdentifier(studyProtocolIi);
+        smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_RECEIVED));
+        studyMilestoneService.create(smDto);
+        
     }
 
     private void enforceBusinessRules(

@@ -97,13 +97,11 @@ public class DocumentWorkflowStatusServiceBeanTest {
 
   private DocumentWorkflowStatusServiceBean bean = new DocumentWorkflowStatusServiceBean();
   private DocumentWorkflowStatusServiceRemote remoteEjb = bean;
-  private StudyMilestoneServiceBean milestoneServiceBean = new StudyMilestoneServiceBean();
+  
   Ii pid;
   
   @Before
   public void setUp() throws Exception {
-      bean.setStudyMilestoneService(milestoneServiceBean);
-      milestoneServiceBean.documentWorkflowStatusService = bean;
       TestSchema.reset1();
       TestSchema.primeData();
       pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));

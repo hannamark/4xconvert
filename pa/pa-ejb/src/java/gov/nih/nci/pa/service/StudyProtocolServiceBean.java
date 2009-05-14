@@ -87,17 +87,14 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -142,6 +139,7 @@ import org.hibernate.criterion.Example;
     private static final int FIVE_5 = 5;
     @EJB
     StudyRelationshipServiceLocal studyRelationshipService = null;
+    
     private SessionContext ejbContext;
 
     @Resource
@@ -149,18 +147,7 @@ import org.hibernate.criterion.Example;
         this.ejbContext = ctx;
     }
     
-    DocumentWorkflowStatusServiceRemote documentWorkflowStatusService;
-
-    /**
-     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
-     */
-    @EJB
-    void setDocumentWorkflowStatusService(
-            DocumentWorkflowStatusServiceRemote documentWorkflowStatusService) {
-        this.documentWorkflowStatusService = documentWorkflowStatusService;
-    }    
-
-    /**
+     /**
      *
      * @param ii primary id of StudyProtocol
      * @return StudyProtocolDTO
@@ -429,7 +416,7 @@ import org.hibernate.criterion.Example;
         } finally {
             session.flush();
         }
-        createDocumentWorkFlowStatus(isp);
+        //createDocumentWorkFlowStatus(isp);
         LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.converToStudyProtocolIi(isp.getId());
 
@@ -560,7 +547,7 @@ import org.hibernate.criterion.Example;
         } finally {
             session.flush();
         }
-        createDocumentWorkFlowStatus(osp);
+        //createDocumentWorkFlowStatus(osp);
         LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.converToStudyProtocolIi(osp.getId());
 
@@ -743,17 +730,6 @@ import org.hibernate.criterion.Example;
 
     }
     
-    private void createDocumentWorkFlowStatus(StudyProtocol sp) throws PAException {
-        LOG.debug("Entering createDocumentWorkFlowStatus().");
-        DocumentWorkflowStatusDTO dwDto = new DocumentWorkflowStatusDTO();
-        dwDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
-        dwDto.setStatusDateRange(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
-        dwDto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
-        LOG.debug("Creating wfs for id = " + sp.getIdentifier());
-        documentWorkflowStatusService.create(dwDto);
-        LOG.debug("Leaving createDocumentWorkFlowStatus().");
-    }
-
     /**
      * {@inheritDoc}
      */

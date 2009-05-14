@@ -80,13 +80,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -95,9 +89,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -156,81 +148,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     return SUCCESS;
     }
 
-    /**
-     * 
-     * @return String
-     */
-    public String complete() {
-        LOG.info("Entering Complete");
-        try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-            getAttribute(Constants.STUDY_PROTOCOL_II);
-            
-            DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
-            dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
-            dwsDto.setStatusDateRange(TsConverter.convertToTs(
-                              new Timestamp(new Date().getTime())));
-            dwsDto.setStudyProtocolIdentifier(studyProtocolIi);
-            PaRegistry.getDocumentWorkflowStatusService().create(dwsDto);
-
-            StudyProtocolDTO spDTO = new StudyProtocolDTO();
-            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            spDTO.setRecordVerificationDate(TsConverter.convertToTs(
-               new Timestamp(new Date().getTime())));
-            PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
-            
-            StudyProtocolQueryDTO  studyProtocolQueryDTO = 
-            PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                        IiConverter.convertToLong(studyProtocolIi));
-            // put an entry in the session and store StudyProtocolQueryDTO 
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-        }
-        LOG.info("Leaving Complete");
-    return SUCCESS;
-    }
-    
-    /**
-     * 
-     * @return String
-     */
-    public String verified() {
-      LOG.info("Entering verified");
-      try {
-          Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-          getAttribute(Constants.STUDY_PROTOCOL_II);
-          
-          DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
-          dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED));
-          dwsDto.setStatusDateRange(TsConverter.convertToTs(
-                            new Timestamp(new Date().getTime())));
-          dwsDto.setStudyProtocolIdentifier(studyProtocolIi);
-          PaRegistry.getDocumentWorkflowStatusService().create(dwsDto);
-          
-          StudyProtocolDTO spDTO = new StudyProtocolDTO();
-          spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-          spDTO.setRecordVerificationDate(TsConverter.convertToTs(
-             new Timestamp(new Date().getTime())));
-          PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
-          
-          StudyProtocolQueryDTO  studyProtocolQueryDTO = 
-          PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                      IiConverter.convertToLong(studyProtocolIi));
-          // put an entry in the session and store StudyProtocolQueryDTO 
-          ServletActionContext.getRequest().getSession().setAttribute(
-                  Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-          
-      } catch (Exception e) {
-          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-      }
-      LOG.info("Leaving verified");
-  return SUCCESS;
-    }
-
-    /**
+     /**
      * @return res
      */
     public String generateXML() {

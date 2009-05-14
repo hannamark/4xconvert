@@ -81,11 +81,8 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.convert.DocumentWorkflowStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -97,7 +94,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
@@ -115,17 +111,6 @@ import org.hibernate.Session;
 public class DocumentWorkflowStatusServiceBean extends
     AbstractStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus, DocumentWorkflowStatusConverter>
     implements DocumentWorkflowStatusServiceRemote, DocumentWorkflowStatusServiceLocal {
-
-    private StudyMilestoneServiceRemote studyMilestoneService;
-
-    /**
-     * @param studyMilestoneService the studyMilestoneService to set
-     */
-    @EJB
-    void setStudyMilestoneService(
-            StudyMilestoneServiceRemote studyMilestoneService) {
-        this.studyMilestoneService = studyMilestoneService;
-    }
 
     /**
      * @param dto arm to create
@@ -155,7 +140,6 @@ public class DocumentWorkflowStatusServiceBean extends
             dto.setStatusDateRange(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
             if (queryList == null || queryList.isEmpty()) {
                 super.create(dto);
-                createMilestones(dto);
             } else if (queryList.size() == 1) {
                 dto.setIdentifier(IiConverter.convertToIi(queryList.get(0).getId()));
                 super.update(dto);
@@ -189,46 +173,4 @@ public class DocumentWorkflowStatusServiceBean extends
         return resultList;
     }
 
-    private void createMilestones(DocumentWorkflowStatusDTO dto) {
-        DocumentWorkflowStatusCode newCode = DocumentWorkflowStatusCode.getByCode(dto.getStatusCode().getCode());
-        if (DocumentWorkflowStatusCode.SUBMITTED.equals(newCode)) {
-            StudyMilestoneDTO smDto = new StudyMilestoneDTO();
-            smDto.setMilestoneDate(dto.getStatusDateRange());
-            smDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-            smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_RECEIVED));
-            try {
-                studyMilestoneService.create(smDto);
-            } catch (PAException e) {
-                getLogger().error("Error automatically recording submission received milesone.", e);
-            }
-        }
-        if (DocumentWorkflowStatusCode.ACCEPTED.equals(newCode)) {
-            StudyMilestoneDTO smDto = new StudyMilestoneDTO();
-            smDto.setMilestoneDate(dto.getStatusDateRange());
-            smDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-            smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_ACCEPTED));
-            try {
-                studyMilestoneService.create(smDto);
-            } catch (PAException e) {
-                getLogger().error("Error automatically recording submission accepted milesone.", e);
-            }
-            smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_PDQ_ABSTRACTION));
-            try {
-                studyMilestoneService.create(smDto);
-            } catch (PAException e) {
-                getLogger().error("Error automatically recording ready for PDQ abstraction milesone.", e);
-            }
-        }
-        if (DocumentWorkflowStatusCode.REJECTED.equals(newCode)) {
-            StudyMilestoneDTO smDto = new StudyMilestoneDTO();
-            smDto.setMilestoneDate(dto.getStatusDateRange());
-            smDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-            smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_REJECTED));
-            try {
-                studyMilestoneService.create(smDto);
-            } catch (PAException e) {
-                getLogger().error("Error automatically recording submission rejection milesone.", e);
-            }
-        }
-    }
-}
+  }

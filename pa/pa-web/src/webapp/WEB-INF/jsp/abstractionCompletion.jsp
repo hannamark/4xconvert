@@ -57,17 +57,7 @@ function generateTSR() {
                 <s:if test="${abstractionError==false}">                                        
                     <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>
                     <li><s:a href="#"  cssClass="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></s:a></li>                                
-                    <!--
-                    <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Accepted'}">
-                    <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">Complete Abstraction</span></span></s:a></li>
-                    </s:if>
-                    -->
                 </s:if>
-                <!--
-                <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Abstracted'}">
-                <li><s:a href="abstractionCompletionverified.action" cssClass="btn"><span class="btn_img"><span class="save">Verify Abstraction</span></span></s:a></li>
-                </s:if>
-                --> 
             </ul>   
         </del>
     </div> 
