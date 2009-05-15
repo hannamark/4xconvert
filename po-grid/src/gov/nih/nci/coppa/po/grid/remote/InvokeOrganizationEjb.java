@@ -99,6 +99,8 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
     public List<OrganizationDTO> search(OrganizationDTO org, LimitOffset page) throws TooManyResultsException {
         try {
             return locator.getOrganizationService().search(org, page);
+        } catch (TooManyResultsException e) {
+            throw e;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

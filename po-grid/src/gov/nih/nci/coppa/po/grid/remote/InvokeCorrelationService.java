@@ -141,6 +141,8 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         try {
             List<DTO> results = getLocator().getService(type).search(dto, page);
             return results;
+        } catch (TooManyResultsException e) {
+            throw e;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

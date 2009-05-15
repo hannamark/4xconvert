@@ -103,6 +103,8 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
         try {
             List<PersonDTO> persons = locator.getPersonService().search(person, page);
             return persons;
+        } catch (TooManyResultsException e) {
+            throw e;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
