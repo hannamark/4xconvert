@@ -211,7 +211,6 @@ import org.w3c.dom.Text;
 public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
     
-    /** The study protocol service. */
     @EJB
     StudyProtocolServiceLocal studyProtocolService = null;
     @EJB

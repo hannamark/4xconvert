@@ -80,9 +80,49 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.ArmServiceBean;
+import gov.nih.nci.pa.service.ArmServiceLocal;
+import gov.nih.nci.pa.service.DiseaseServiceBean;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceBean;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceBean;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceBean;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceBean;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PoPaMockServiceLocator;
+import gov.nih.nci.pa.service.StudyContactServiceBean;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
+import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyIndldeServiceBean;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceBean;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceBean;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceBean;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
+import gov.nih.nci.pa.service.StudyParticipationServiceBean;
+import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceBean;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceBean;
+import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.SubGroupsServiceBean;
+import gov.nih.nci.pa.service.SubGroupsServiceLocal;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.correlation.PoPaRegistry;
 import gov.nih.nci.pa.util.TestSchema;
-
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,21 +132,90 @@ import org.junit.Test;
  *
  */
 public class TSRReportGeneratorServiceTest {
+    
     private TSRReportGeneratorServiceBean bean = new TSRReportGeneratorServiceBean();
-    private TSRReportGeneratorServiceRemote remoteEjb = bean;
+    
+    private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolServiceBean();
+    
+    StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusServiceBean();
+    
+    StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeServiceBean();
+    
+    StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseServiceBean();
+    
+    ArmServiceLocal armService = new ArmServiceBean() ;
+    
+    PlannedActivityServiceLocal plannedActivityService = new PlannedActivityServiceBean();
+    
+    SubGroupsServiceLocal subGroupsService = new SubGroupsServiceBean();
+    
+    StudyParticipationServiceLocal studyParticipationService = new StudyParticipationServiceBean();
+    
+    StudyParticipationContactServiceLocal studyParticipationContactService = new StudyParticipationContactServiceBean();
+    
+    StudyContactServiceLocal studyContactService = new StudyContactServiceBean();
+    
+    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusServiceBean();
+    
+    StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureServiceBean();
+    
+    StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityServiceBean();
+    
+    OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
+    
+    DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusServiceBean();
+    
+    RegulatoryInformationServiceRemote regulatoryInformationService = new RegulatoryInformationBean();
+    
+    DiseaseServiceRemote diseaseService = new DiseaseServiceBean();
+    
+    InterventionServiceRemote interventionService = new InterventionServiceBean();
+    
+    InterventionAlternateNameServiceRemote interventionAlternateNameService = new InterventionAlternateNameServiceBean();
+    
+    StudyResourcingServiceRemote  studyResourcingService = new StudyResourcingServiceBean();
+    
+    PAOrganizationServiceRemote  paOrganizationService = new PAOrganizationServiceBean();
+    
+    //private TSRReportGeneratorServiceRemote remoteEjb = bean;
 
     @Before
     public void setUp() throws Exception {
+        
+        bean.studyProtocolService = studyProtocolService;
+        bean.armService = armService;
+        bean.documentWorkflowStatusService =documentWorkflowStatusService;
+        bean.ocsr = ocsr;
+        bean.plannedActivityService = plannedActivityService;
+        bean.studyContactService = studyContactService;
+        bean.studyDiseaseService = studyDiseaseService;
+        bean.studyIndldeService=studyIndldeService;
+        bean.studyParticipationService=studyParticipationService;
+        bean.studyOutcomeMeasureService=studyOutcomeMeasureService;
+        bean.studyOverallStatusService=studyOverallStatusService;
+        bean.studyParticipationContactService=studyParticipationContactService;
+        bean.studyRegulatoryAuthorityService=studyRegulatoryAuthorityService;
+        bean.studySiteAccrualStatusService=studySiteAccrualStatusService;
+        bean.subGroupsService=  subGroupsService;  
+        bean.regulatoryInformationService = regulatoryInformationService;
+        bean.diseaseService = diseaseService;
+        bean.interventionAlternateNameService = interventionAlternateNameService;
+        bean.interventionService = interventionService; 
+        bean.studyResourcingService = studyResourcingService;
+        bean.paOrganizationService = paOrganizationService;
+        
         TestSchema.reset();
-    }
+        TestSchema.primeData();
+      }
     
     @Test(expected=PAException.class)
     public void nullParameter() throws Exception {
-        remoteEjb.generateTSRHtml(null);
+        bean.generateTSRHtml(null);
     }
-    //@Test
+    @Test
     public void generateTSRHtmlTest() throws Exception {
         Ii ii = IiConverter.converToStudyProtocolIi(Long.valueOf(1));
-        String x = remoteEjb.generateTSRHtml(ii);
+        String x = bean.generateTSRHtml(ii);
+        assertNotNull(x);
     }
 }

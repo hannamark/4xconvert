@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmServiceBean;
@@ -91,6 +92,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceBean;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceBean;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceBean;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PoPaMockServiceLocator;
@@ -192,6 +194,19 @@ public class CTGovXmlGeneratorServiceTest {
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
      }
+    
+    @Test(expected=PAException.class)
+    public void nullParameter() throws Exception {
+        bean.generateCTGovXml(null);
+    }
+    @Test
+    public void createErrorXMLTest() throws Exception {
+        bean.documentWorkflowStatusService=null;
+        String error = bean.generateCTGovXml(spIi);
+        assertTrue(error.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?><error><error_description>Unable to generate the XML</error_description>"));
+        
+        
+    }
     
     @Test
     public void generateCTGovXmlTest() throws Exception {

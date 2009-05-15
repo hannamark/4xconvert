@@ -132,6 +132,7 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -376,6 +377,7 @@ public class TestSchema {
             sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
             sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
             sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+            sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
             sp.setIdentifier("NCI-2009-00001");
             sp.setSubmissionNumber(Integer.valueOf(1));
             
