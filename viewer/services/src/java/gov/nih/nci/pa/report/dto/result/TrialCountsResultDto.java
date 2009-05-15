@@ -76,9 +76,13 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * @author Hugh Reinhart
@@ -86,9 +90,10 @@ import gov.nih.nci.coppa.iso.Ts;
  */
 public class TrialCountsResultDto {
 
-    private St organization;
-    private Ivl<Ts> timeInverval;
-    private gov.nih.nci.coppa.iso.Int count;
+    private St organization = StConverter.convertToSt(null);
+    private Ivl<Ts> timeInverval = IvlConverter.convertTs().convertToIvl(null, null);
+    private Int count = IntConverter.convertToInt((Integer) null);
+
     /**
      * @return the organization
      */

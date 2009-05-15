@@ -108,11 +108,12 @@ public enum TimeUnitsCode {
      * construct a array of display names.
      * @return String[] display names
      */
-    public static String[]  getDisplayNames() {
+    public static String[][]  getDisplayNames() {
         TimeUnitsCode[] codes = TimeUnitsCode.values();
-        String[] codedNames = new String[codes.length];
+        String[][] codedNames = new String[2][codes.length];
         for (int i = 0; i < codes.length; i++) {
-            codedNames[i] = codes[i].getDisplayName();
+            codedNames[0][i] = Integer.toString(i);
+            codedNames[1][i] = codes[i].getDisplayName();
         }
         return codedNames;
     }

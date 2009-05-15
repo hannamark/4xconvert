@@ -79,6 +79,9 @@ package gov.nih.nci.pa.report.dto.result;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * @author Hugh Reinhart
@@ -86,11 +89,11 @@ import gov.nih.nci.coppa.iso.Ts;
  */
 public class TrialListResultDto {
 
-    private St organization;
-    private Ts dateLastCreated;
-    private St assignedIdentifier;
-    private St officialTitle;
-    private Cd statusCode;
+    private St organization = StConverter.convertToSt(null);
+    private Ts dateLastCreated = TsConverter.convertToTs(null);
+    private St assignedIdentifier = StConverter.convertToSt(null);
+    private St officialTitle = StConverter.convertToSt(null);
+    private Cd statusCode = CdConverter.convertToCd(null);
 
     /**
      * @return the organization

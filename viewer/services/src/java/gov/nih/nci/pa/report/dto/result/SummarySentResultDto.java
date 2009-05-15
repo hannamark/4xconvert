@@ -76,10 +76,27 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.TsConverter;
+
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class SummarySentResultDto {
+public class SummarySentResultDto extends AbstractMilestoneResultDto {
 
+    private Ts feedbackDate = TsConverter.convertToTs(null);
+
+    /**
+     * @return the feedbackDate
+     */
+    public Ts getFeedbackDate() {
+        return feedbackDate;
+    }
+    /**
+     * @param feedbackDate the feedbackDate to set
+     */
+    public void setFeedbackDate(Ts feedbackDate) {
+        this.feedbackDate = feedbackDate;
+    }
 }

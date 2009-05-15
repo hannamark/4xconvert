@@ -76,12 +76,21 @@
 */
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -93,19 +102,52 @@ import javax.interceptor.Interceptors;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class SummarySentReportBean extends AbstractBaseReportBean<SummarySentCriteriaDto, SummarySentResultDto>
+public class SummarySentReportBean extends AbstractMilestoneReportBean<SummarySentCriteriaDto, SummarySentResultDto>
         implements SummarySentLocal {
+
+    private static final int DAYS_TILL_OVERDUE = 5;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
     public List<SummarySentResultDto> get(SummarySentCriteriaDto criteria)
         throws PAException {
         super.get(criteria);
-        ArrayList<SummarySentResultDto> rList = new ArrayList<SummarySentResultDto>();
+        List<Object[]> queryList = this.getMilestones(true, false, true);
+        HashMap<BigInteger, SummarySentResultDto> ssMap = new HashMap<BigInteger, SummarySentResultDto>();
+        for (Object[] sr : queryList) {
+            BigInteger spId = (BigInteger) sr[SP_IDENTIFIER_IDX];
+            if (!ssMap.containsKey(spId)) {
+                ssMap.put(spId, new SummarySentResultDto());
+            }
+            ssMap.get(spId).setAssignedIdentifier(StConverter.convertToSt((String) sr[ASSIGNED_IDENTIFIER_IDX]));
+            ssMap.get(spId).setOfficialTitle(StConverter.convertToSt((String) sr[OFFICIAL_TITLE_IDX]));
+            ssMap.get(spId).setOrganization(StConverter.convertToSt((String) sr[ORGANIZATION_IDX]));
+            if (MilestoneCode.TRIAL_SUMMARY_FEEDBACK.getName().equals(sr[MILESTONE_CODE_IDX])) {
+                ssMap.get(spId).setFeedbackDate(TsConverter.convertToTs((Timestamp) sr[MILESTONE_DATE_IDX]));
+            } else {
+                ssMap.get(spId).setMilestoneDate(TsConverter.convertToTs((Timestamp) sr[MILESTONE_DATE_IDX]));
+            }
+        }
+        List<SummarySentResultDto> rList = new ArrayList<SummarySentResultDto>();
+        rList.addAll(ssMap.values());
+        if (BlConverter.covertToBool(criteria.getOverdueOnly())) {
+            rList = removeIfNotOverdue(rList);
+        }
         return rList;
     }
 
+    private static List<SummarySentResultDto> removeIfNotOverdue(List<SummarySentResultDto> rList) {
+        Calendar testDate = Calendar.getInstance();
+        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
+        testDate.add(Calendar.DAY_OF_MONTH, -DAYS_TILL_OVERDUE);
+        for (SummarySentResultDto r : rList) {
+            if (PAUtil.isTsNull(r.getFeedbackDate())
+                    && TsConverter.convertToTimestamp(r.getMilestoneDate()).before(testDate.getTime())) {
+                resultList.add(r);
+            }
+        }
+        return resultList;
+    }
 }

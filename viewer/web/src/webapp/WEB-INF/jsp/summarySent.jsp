@@ -16,7 +16,7 @@ function handleAction(){
 </head>
 <body>
 <!-- main content begins-->
-    <h1><fmt:message key="milestones.header"/></h1>
+    <h1><fmt:message key="summarySent.header"/></h1>
     <s:form>
         <table class="form">    
             <tr> 
@@ -38,7 +38,7 @@ function handleAction(){
             </del>
         </div>
         <s:if test="%{resultList != null}">
-            <jsp:include page="/WEB-INF/jsp/incl/milestonesResults.jsp"/>
+            <jsp:include page="/WEB-INF/jsp/incl/summarySentResults.jsp"/>
         </s:if>
     </s:form>
 </body>

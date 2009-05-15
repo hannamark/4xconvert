@@ -74,29 +74,87 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.dto.result;
+package gov.nih.nci.pa.viewer.dto.result;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.result.AbstractMilestoneResultDto;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/15/2009
  */
-public class MilestonesResultDto extends AbstractMilestoneResultDto {
+public abstract class AbstractMilestoneResultWebDto {
 
-    private Cd milestoneCode = CdConverter.convertToCd(null);
+    private String assignedIdentifier;
+    private String officialTitle;
+    private String organization;
+    private String milestoneDate;
 
     /**
-     * @return the milestoneCode
+     * Constructor using service dto.
+     * @param dto the service iso dto
      */
-    public Cd getMilestoneCode() {
-        return milestoneCode;
+    public AbstractMilestoneResultWebDto(AbstractMilestoneResultDto dto) {
+        this.assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
+        this.milestoneDate = TsConverter.convertToString(dto.getMilestoneDate());
+        this.officialTitle = StConverter.convertToString(dto.getOfficialTitle());
+        this.organization = StConverter.convertToString(dto.getOrganization());
     }
+
     /**
-     * @param milestoneCode the milestoneCode to set
+     * @return the assignedIdentifier
      */
-    public void setMilestoneCode(Cd milestoneCode) {
-        this.milestoneCode = milestoneCode;
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+
+    /**
+     * @return the officialTitle
+     */
+    public String getOfficialTitle() {
+        return officialTitle;
+    }
+
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(String officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+
+    /**
+     * @return the organization
+     */
+    public String getOrganization() {
+        return organization;
+    }
+
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @return the milestoneDate
+     */
+    public String getMilestoneDate() {
+        return milestoneDate;
+    }
+
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(String milestoneDate) {
+        this.milestoneDate = milestoneDate;
     }
 }

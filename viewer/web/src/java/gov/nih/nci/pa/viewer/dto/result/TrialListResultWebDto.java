@@ -80,8 +80,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +88,7 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since 05/06/2009
  */
-public class TrialListResultWebDto extends AbstractWebDto<TrialListResultDto> {
+public class TrialListResultWebDto {
 
     private String organization;
     private String dateLastCreated;
@@ -122,20 +120,6 @@ public class TrialListResultWebDto extends AbstractWebDto<TrialListResultDto> {
         this.assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
         this.officialTitle = StConverter.convertToString(dto.getOfficialTitle());
         this.statusCode = CdConverter.convertCdToString(dto.getStatusCode());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TrialListResultDto getIsoDto() {
-        TrialListResultDto serviceDto = new TrialListResultDto();
-        serviceDto.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
-        serviceDto.setDateLastCreated(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getDateLastCreated())));
-        serviceDto.setOfficialTitle(StConverter.convertToSt(getOfficialTitle()));
-        serviceDto.setOrganization(StConverter.convertToSt(getOrganization()));
-        serviceDto.setStatusCode(CdConverter.convertStringToCd(getStatusCode()));
-        return serviceDto;
     }
 
     /**

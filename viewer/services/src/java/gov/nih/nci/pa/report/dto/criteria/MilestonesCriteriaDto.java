@@ -77,6 +77,7 @@
 package gov.nih.nci.pa.report.dto.criteria;
 
 import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.pa.iso.util.BlConverter;
 
 /**
  * @author Hugh Reinhart
@@ -84,7 +85,7 @@ import gov.nih.nci.coppa.iso.Bl;
  */
 public class MilestonesCriteriaDto extends TrialListCriteriaDto {
 
-    private Bl currentMilestoneOnly;
+    private Bl currentMilestoneOnly = BlConverter.convertToBl(null);
 
     /**
      * @return the currentMilestoneOnly

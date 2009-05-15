@@ -81,13 +81,12 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
 import gov.nih.nci.pa.report.enums.TimeUnitsCode;
-import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 /**
  * @author Hugh Reinhart
  * @since 05/12/2009
  */
-public class TrialCountsCriteriaWebDto extends AbstractWebDto<TrialCountsCriteriaDto> {
+public class TrialCountsCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialCountsCriteriaDto> {
 
     private Boolean ctrpOnly = true;;
     private String groupByTimeUnit = TimeUnitsCode.DAY.getDisplayName();

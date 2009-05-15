@@ -78,13 +78,12 @@ package gov.nih.nci.pa.viewer.dto.criteria;
 
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
-import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 /**
  * @author Hugh Reinhart
  * @since 05/06/2009
  */
-public class TrialListCriteriaWebDto extends AbstractWebDto<TrialListCriteriaDto> {
+public class TrialListCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialListCriteriaDto> {
 
     private Boolean ctrpOnly = true;
 

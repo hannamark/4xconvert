@@ -74,14 +74,14 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto;
+package gov.nih.nci.pa.viewer.dto.criteria;
 
 /**
  * @author Hugh Reinhart
  * @since 05/06/2009
  * @param <ISODTO> corresponding service iso dto
  */
-public abstract class AbstractWebDto<ISODTO> {
+public abstract class AbstractBaseCriteriaWebDto<ISODTO> {
 
     /**
      * @return an iso dto instance

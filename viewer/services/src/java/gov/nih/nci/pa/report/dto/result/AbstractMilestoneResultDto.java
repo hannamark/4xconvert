@@ -76,27 +76,68 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/15/2009
  */
-public class MilestonesResultDto extends AbstractMilestoneResultDto {
+public abstract class AbstractMilestoneResultDto {
 
-    private Cd milestoneCode = CdConverter.convertToCd(null);
+    private St assignedIdentifier = StConverter.convertToSt(null);
+    private St officialTitle = StConverter.convertToSt(null);
+    private St organization = StConverter.convertToSt(null);
+    private Ts milestoneDate = TsConverter.convertToTs(null);
 
     /**
-     * @return the milestoneCode
+     * @return the assignedIdentifier
      */
-    public Cd getMilestoneCode() {
-        return milestoneCode;
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
     }
     /**
-     * @param milestoneCode the milestoneCode to set
+     * @param assignedIdentifier the assignedIdentifier to set
      */
-    public void setMilestoneCode(Cd milestoneCode) {
-        this.milestoneCode = milestoneCode;
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+    /**
+     * @return the officialTitle
+     */
+    public St getOfficialTitle() {
+        return officialTitle;
+    }
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(St officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+    /**
+     * @return the organization
+     */
+    public St getOrganization() {
+        return organization;
+    }
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(St organization) {
+        this.organization = organization;
+    }
+    /**
+     * @return the milestoneDate
+     */
+    public Ts getMilestoneDate() {
+        return milestoneDate;
+    }
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(Ts milestoneDate) {
+        this.milestoneDate = milestoneDate;
     }
 }

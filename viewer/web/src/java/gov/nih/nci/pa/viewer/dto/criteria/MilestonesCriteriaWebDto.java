@@ -78,13 +78,12 @@ package gov.nih.nci.pa.viewer.dto.criteria;
 
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 /**
  * @author Hugh Reinhart
  * @since 05/12/2009
  */
-public class MilestonesCriteriaWebDto extends AbstractWebDto<MilestonesCriteriaDto> {
+public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
 
     Boolean ctrpOnly = true;
     Boolean currentMilestoneOnly = true;

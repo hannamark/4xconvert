@@ -76,8 +76,10 @@
 */
 package gov.nih.nci.pa.viewer.dto.result;
 
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
-import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +88,12 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since 05/12/2009
  */
-public class TrialCountsResultWebDto extends AbstractWebDto<TrialCountsResultDto> {
+public class TrialCountsResultWebDto {
+
+    String organization;
+    String start;
+    String end;
+    String count;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -105,16 +112,67 @@ public class TrialCountsResultWebDto extends AbstractWebDto<TrialCountsResultDto
      * Constructor using service dto.
      * @param dto the service iso dto
      */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     public TrialCountsResultWebDto(TrialCountsResultDto dto) {
         super();
+        this.organization = StConverter.convertToString(dto.getOrganization());
+        this.count = IntConverter.convertToInteger(dto.getCount()).toString();
+        this.start = IvlConverter.convertTs().convertLowToString(dto.getTimeInverval());
+        this.end = IvlConverter.convertTs().convertHighToString(dto.getTimeInverval());
     }
 
     /**
-     * {@inheritDoc}
+     * @return the organization
      */
-    @Override
-    public TrialCountsResultDto getIsoDto() {
-        return null;
+    public String getOrganization() {
+        return organization;
+    }
+
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @return the start
+     */
+    public String getStart() {
+        return start;
+    }
+
+    /**
+     * @param start the start to set
+     */
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    /**
+     * @return the end
+     */
+    public String getEnd() {
+        return end;
+    }
+
+    /**
+     * @param end the end to set
+     */
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    /**
+     * @return the count
+     */
+    public String getCount() {
+        return count;
+    }
+
+    /**
+     * @param count the count to set
+     */
+    public void setCount(String count) {
+        this.count = count;
     }
 }

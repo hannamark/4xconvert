@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.dto.result;
 
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
-import gov.nih.nci.pa.viewer.dto.AbstractWebDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +86,9 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since 05/12/2009
  */
-public class SummarySentResultWebDto extends AbstractWebDto<SummarySentResultDto> {
+public class SummarySentResultWebDto extends AbstractMilestoneResultWebDto {
+
+    String feedbackDate;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -105,17 +107,22 @@ public class SummarySentResultWebDto extends AbstractWebDto<SummarySentResultDto
      * Constructor using service dto.
      * @param dto the service iso dto
      */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     public SummarySentResultWebDto(SummarySentResultDto dto) {
-        super();
+        super(dto);
+        this.feedbackDate = TsConverter.convertToString(dto.getFeedbackDate());
     }
 
     /**
-     * {@inheritDoc}
+     * @return the feedbackDate
      */
-    @Override
-    public SummarySentResultDto getIsoDto() {
-        // TODO Auto-generated method stub
-        return null;
+    public String getFeedbackDate() {
+        return feedbackDate;
+    }
+
+    /**
+     * @param feedbackDate the feedbackDate to set
+     */
+    public void setFeedbackDate(String feedbackDate) {
+        this.feedbackDate = feedbackDate;
     }
 }
