@@ -106,7 +106,7 @@ public class StudyResourcingTransformerTest extends
         result.setNihInstitutionCode(new CDTransformerTest().makeDtoSimple());
         result.setOrganizationIdentifier(new IITransformerTest().makeDtoSimple());
         result.setResourceProviderIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setSerialNumber(new INTTransformerTest().makeDtoSimple());
+        result.setSerialNumber(new STTransformerTest().makeDtoSimple());
         result.setStudyProtocolIi(new IITransformerTest().makeDtoSimple());
         result.setSuffixGrantYear(new STTransformerTest().makeDtoSimple());
         result.setSuffixOther(new STTransformerTest().makeDtoSimple());
@@ -126,7 +126,7 @@ public class StudyResourcingTransformerTest extends
         result.setNihInstitutionCode(new CDTransformerTest().makeXmlSimple());
         result.setOrganizationIdentifier(new IITransformerTest().makeXmlSimple());
         result.setResourceProviderIdentifier(new IITransformerTest().makeXmlSimple());
-        result.setSerialNumber(new INTTransformerTest().makeXmlSimple());
+        result.setSerialNumber(new STTransformerTest().makeXmlSimple());
         result.setStudyProtocol(new IITransformerTest().makeXmlSimple());
         result.setSuffixGrantYear(new STTransformerTest().makeXmlSimple());
         result.setSuffixOther(new STTransformerTest().makeXmlSimple());
@@ -145,7 +145,7 @@ public class StudyResourcingTransformerTest extends
         new CDTransformerTest().verifyDtoSimple(x.getNihInstitutionCode());
         new IITransformerTest().verifyDtoSimple(x.getOrganizationIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getResourceProviderIdentifier());
-        new INTTransformerTest().verifyDtoSimple(x.getSerialNumber());
+        new STTransformerTest().verifyDtoSimple(x.getSerialNumber());
         new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIi());
         new STTransformerTest().verifyDtoSimple(x.getSuffixGrantYear());
         new STTransformerTest().verifyDtoSimple(x.getSuffixOther());
@@ -163,7 +163,7 @@ public class StudyResourcingTransformerTest extends
         new CDTransformerTest().verifyXmlSimple(x.getNihInstitutionCode());
         new IITransformerTest().verifyXmlSimple(x.getOrganizationIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getResourceProviderIdentifier());
-        new INTTransformerTest().verifyXmlSimple(x.getSerialNumber());
+        new STTransformerTest().verifyXmlSimple(x.getSerialNumber());
         new IITransformerTest().verifyXmlSimple(x.getStudyProtocol());
         new STTransformerTest().verifyXmlSimple(x.getSuffixGrantYear());
         new STTransformerTest().verifyXmlSimple(x.getSuffixOther());

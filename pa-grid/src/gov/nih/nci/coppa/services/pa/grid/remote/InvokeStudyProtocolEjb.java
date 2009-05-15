@@ -1,6 +1,10 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
+import java.util.List;
+
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
@@ -94,5 +98,41 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0)
             throws PAException {
         throw new PAException("ObservationStudyProtocal methods are not implemented!");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> search(StudyProtocolDTO arg0, LimitOffset arg1) throws PAException,
+            TooManyResultsException {
+        try {
+            return locator.getStudyProtocolService().search(arg0, arg1);
+        } catch (PAException e) {
+            throw e;
+        } catch (TooManyResultsException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteStudyProtocol(Ii arg0) throws PAException {
+        return;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @deprecated -- DO NOT USE
+     */
+    @Deprecated
+    public List<StudyProtocolDTO> search(StudyProtocolDTO arg0) throws PAException {
+        try {
+            return locator.getStudyProtocolService().search(arg0);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 }

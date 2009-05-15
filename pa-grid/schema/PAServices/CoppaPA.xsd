@@ -464,7 +464,7 @@
                         <xs:element name="nihInstitutionCode" type="ISO:CD" />
                         <xs:element name="suffixGrantYear" type="ISO:ST" />
                         <xs:element name="suffixOther" type="ISO:ST" />
-                        <xs:element name="serialNumber" type="ISO:INT" />
+                        <xs:element name="serialNumber" type="ISO:ST" />
                         <xs:element name="inactiveCommentText" type="ISO:ST" />
                     </xs:sequence>
                 </xs:extension>

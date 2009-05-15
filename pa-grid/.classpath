@@ -84,10 +84,10 @@
 	<classpathentry kind="var" path="PA_GLOBUS"/>
 	<classpathentry kind="lib" path="lib/iso-datatypes-1.2rc1.jar"/>
 	<classpathentry kind="lib" path="test/lib/junit-4.4.jar"/>
-	<classpathentry kind="lib" path="lib/pa-ejb-client-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl.jar"/>
 	<classpathentry kind="lib" path="lib/coppa-commons-1.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="test/lib/coppa-commons-1.1-SNAPSHOT-tests.jar"/>
+	<classpathentry kind="lib" path="lib/pa-ejb-client-2.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

@@ -87,7 +87,6 @@ import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.pa.StudyResourcing;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -124,7 +123,7 @@ public final class StudyResourcingTransformer implements Transformer<StudyResour
         result.setNihInstitutionCode(CDTransformer.INSTANCE.toDto(input.getNihInstitutionCode()));
         result.setOrganizationIdentifier(IITransformer.INSTANCE.toDto(input.getOrganizationIdentifier()));
         result.setResourceProviderIdentifier(IITransformer.INSTANCE.toDto(input.getResourceProviderIdentifier()));
-        result.setSerialNumber(INTTransformer.INSTANCE.toDto(input.getSerialNumber()));
+        result.setSerialNumber(STTransformer.INSTANCE.toDto(input.getSerialNumber()));
         result.setStudyProtocolIi(IITransformer.INSTANCE.toDto(input.getStudyProtocol()));
         result.setSuffixGrantYear(STTransformer.INSTANCE.toDto(input.getSuffixGrantYear()));
         result.setSuffixOther(STTransformer.INSTANCE.toDto(input.getSuffixOther()));
@@ -151,7 +150,7 @@ public final class StudyResourcingTransformer implements Transformer<StudyResour
         result.setNihInstitutionCode(CDTransformer.INSTANCE.toXml(input.getNihInstitutionCode()));
         result.setOrganizationIdentifier(IITransformer.INSTANCE.toXml(input.getOrganizationIdentifier()));
         result.setResourceProviderIdentifier(IITransformer.INSTANCE.toXml(input.getResourceProviderIdentifier()));
-        result.setSerialNumber(INTTransformer.INSTANCE.toXml(input.getSerialNumber()));
+        result.setSerialNumber(STTransformer.INSTANCE.toXml(input.getSerialNumber()));
         result.setStudyProtocol(IITransformer.INSTANCE.toXml(input.getStudyProtocolIi()));
         result.setSuffixGrantYear(STTransformer.INSTANCE.toXml(input.getSuffixGrantYear()));
         result.setSuffixOther(STTransformer.INSTANCE.toXml(input.getSuffixOther()));
