@@ -16,13 +16,14 @@ import org.globus.wsrf.Constants;
  * This class holds all service properties which were defined for the service to have
  * access to.
  * 
- * @created by Introduce Toolkit version 1.2
+ * @created by Introduce Toolkit version 1.3
  * 
  */
 public class CoreServicesConfiguration implements ServiceConfiguration {
 
 	public static CoreServicesConfiguration  configuration = null;
-
+    public String etcDirectoryPath;
+    	
 	public static CoreServicesConfiguration getConfiguration() throws Exception {
 		if (CoreServicesConfiguration.configuration != null) {
 			return CoreServicesConfiguration.configuration;
@@ -42,17 +43,17 @@ public class CoreServicesConfiguration implements ServiceConfiguration {
 		return CoreServicesConfiguration.configuration;
 	}
 	
-	private String etcDirectoryPath;
+
 	
 	
-	
-	public String getEtcDirectoryPath() {
+    public String getEtcDirectoryPath() {
 		return ContainerConfig.getBaseDirectory() + File.separator + etcDirectoryPath;
 	}
 	
 	public void setEtcDirectoryPath(String etcDirectoryPath) {
 		this.etcDirectoryPath = etcDirectoryPath;
 	}
+
 
 	
 }

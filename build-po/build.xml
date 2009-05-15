@@ -366,6 +366,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
       <property name="java.naming.security.principal" value="%%pogrid.jndi.principal%%"/>
       <property name="java.naming.security.credentials" value="%%pogrid.jndi.credentials%%"/>
+      <property name="no.deployment.validation" value="true"/>
     </ant>
 
     <zip update="false" destfile="${po-grid.dist.dir}/${po-grid.artifact.file}">

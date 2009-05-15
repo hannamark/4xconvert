@@ -252,7 +252,7 @@
         </cobertura-instrument>   
         
         <mkdir dir="${pa-ejb.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile"
                     file="${pa-ejb.build.dir}/cobertura.ser" />

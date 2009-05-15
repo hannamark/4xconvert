@@ -10,6 +10,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/ResearchOrganization-security-metadata.xml" />
+    <parameter name="researchorganization-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="researchorganization-serviceName" value="ResearchOrganization" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/OversightCommittee" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.service.globus.OversightCommitteeProviderImpl" />
@@ -21,6 +23,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/OversightCommittee-security-metadata.xml" />
+    <parameter name="oversightcommittee-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="oversightcommittee-serviceName" value="OversightCommittee" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/OrganizationalContact" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.service.globus.OrganizationalContactProviderImpl" />
@@ -32,6 +36,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/OrganizationalContact-security-metadata.xml" />
+    <parameter name="organizationalcontact-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="organizationalcontact-serviceName" value="OrganizationalContact" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/IdentifiedPerson" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.identifiedperson.service.globus.IdentifiedPersonProviderImpl" />
@@ -43,6 +49,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/IdentifiedPerson-security-metadata.xml" />
+    <parameter name="identifiedperson-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="identifiedperson-serviceName" value="IdentifiedPerson" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/IdentifiedOrganization" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.service.globus.IdentifiedOrganizationProviderImpl" />
@@ -54,6 +62,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/IdentifiedOrganization-security-metadata.xml" />
+    <parameter name="identifiedorganization-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="identifiedorganization-serviceName" value="IdentifiedOrganization" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/HealthCareProvider" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.service.globus.HealthCareProviderProviderImpl" />
@@ -65,6 +75,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/HealthCareProvider-security-metadata.xml" />
+    <parameter name="healthcareprovider-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="healthcareprovider-serviceName" value="HealthCareProvider" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ClinicalResearchStaff" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.service.globus.ClinicalResearchStaffProviderImpl" />
@@ -76,6 +88,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/ClinicalResearchStaff-security-metadata.xml" />
+    <parameter name="clinicalresearchstaff-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="clinicalresearchstaff-serviceName" value="ClinicalResearchStaff" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/HealthCareFacility" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.service.globus.HealthCareFacilityProviderImpl" />
@@ -87,6 +101,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/HealthCareFacility-security-metadata.xml" />
+    <parameter name="healthcarefacility-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="healthcarefacility-serviceName" value="HealthCareFacility" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/Organization" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.entities.organization.service.globus.OrganizationProviderImpl" />
@@ -98,6 +114,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/Organization-security-metadata.xml" />
+    <parameter name="organization-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="organization-serviceName" value="Organization" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/Person" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.entities.person.service.globus.PersonProviderImpl" />
@@ -109,6 +127,8 @@
     <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/Person-security-metadata.xml" />
+    <parameter name="person-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="person-serviceName" value="Person" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/CoreServices" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.service.globus.CoreServicesProviderImpl" />
@@ -120,6 +140,8 @@
     <parameter name="providers" value=" GetMRPProvider GetRPProvider QueryRPProvider gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
     <parameter name="loadOnStartup" value="true" />
     <parameter name="securityMetadata" value="ETC-PATH/CoreServices-security-metadata.xml" />
+    <parameter name="coreservices-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="coreservices-serviceName" value="CoreServices" />
   </service>
   <typeMapping name="AggregatorContent" qname="aggr:AggregatorContent" type="java:org.globus.mds.aggregator.types.AggregatorContent" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" />
   <ns3:typeMapping xmlns:ns3="http://xml.apache.org/axis/wsdd/" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.StringMapType" qname="ns2:StringMapType" />
