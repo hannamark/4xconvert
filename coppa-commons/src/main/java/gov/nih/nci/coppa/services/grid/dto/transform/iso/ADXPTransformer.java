@@ -31,6 +31,7 @@ import gov.nih.nci.coppa.iso.AdxpSttyp;
 import gov.nih.nci.coppa.iso.AdxpUnid;
 import gov.nih.nci.coppa.iso.AdxpUnit;
 import gov.nih.nci.coppa.iso.AdxpZip;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.HashMap;
@@ -41,13 +42,17 @@ import org.iso._21090.ADXP;
 /**
  * Transforms the parts of an address. Should only be used by the ADTransformer class.
  */
-final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
+final class ADXPTransformer extends AbstractTransformer<org.iso._21090.ADXP, Adxp>
+    implements Transformer<org.iso._21090.ADXP, Adxp> {
 
     public static final ADXPTransformer INSTANCE = new ADXPTransformer();
 
     private ADXPTransformer() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ADXP toXml(Adxp input) {
         // Don't worry about null here - this is a package-protected class and
         // the AD converter
@@ -60,6 +65,9 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
         return x;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Adxp toDto(ADXP input) {
         // Don't worry about null here - this is a package-protected class and
         // the AD converter
@@ -70,10 +78,10 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
         d.setValue(input.getValue());
         return d;
     }
-    
+
     /**
      * factory method to create an address part.
-     * 
+     *
      * @param type the typeof the part to create.
      * @return an address part with the
      */
@@ -89,7 +97,7 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
     }
 
     private static Map<AddressPartType, Adxp> types = new HashMap<AddressPartType, Adxp>();
-    
+
     static {
         types.put(AddressPartType.ADL, new AdxpAdl());
         types.put(AddressPartType.AL, new AdxpAl());
@@ -120,5 +128,12 @@ final class ADXPTransformer implements Transformer<org.iso._21090.ADXP, Adxp> {
         types.put(AddressPartType.UNID, new AdxpUnid());
         types.put(AddressPartType.UNIT, new AdxpUnit());
         types.put(AddressPartType.ZIP, new AdxpZip());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ADXP[] createXmlArray(int size) throws DtoTransformException {
+        return new ADXP[size];
     }
 }

@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import org.iso._21090.CD;
@@ -8,7 +9,8 @@ import org.iso._21090.CD;
 /**
  * Transforms coded data elements.
  */
-public final class CDTransformer implements Transformer<CD, Cd> {
+public final class CDTransformer extends AbstractTransformer<CD, Cd>
+    implements Transformer<CD, Cd> {
 
     /**
      * Singleton for client consumption.
@@ -50,5 +52,12 @@ public final class CDTransformer implements Transformer<CD, Cd> {
             res.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(input.getNullFlavor()));
         }
         return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CD[] createXmlArray(int size) throws DtoTransformException {
+        return new CD[size];
     }
 }

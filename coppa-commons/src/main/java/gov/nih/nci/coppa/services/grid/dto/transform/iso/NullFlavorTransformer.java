@@ -1,12 +1,14 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 /**
  * Transforms null flavors.
  */
-public final class NullFlavorTransformer implements Transformer<org.iso._21090.NullFlavor, NullFlavor> {
+public final class NullFlavorTransformer extends AbstractTransformer<org.iso._21090.NullFlavor, NullFlavor>
+    implements Transformer<org.iso._21090.NullFlavor, NullFlavor> {
 
     /**
      * Public singleton.
@@ -34,5 +36,13 @@ public final class NullFlavorTransformer implements Transformer<org.iso._21090.N
             return null;
         }
         return NullFlavor.valueOf(input.value());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public org.iso._21090.NullFlavor[] createXmlArray(int size)
+            throws DtoTransformException {
+        return new org.iso._21090.NullFlavor[size];
     }
 }

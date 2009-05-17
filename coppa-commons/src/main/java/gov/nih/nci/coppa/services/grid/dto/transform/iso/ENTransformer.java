@@ -20,8 +20,9 @@ import org.iso._21090.ENXP;
  * @param <ENXX> exact EN subtype.
  * @param <EnXx> associated DTO type.
  */
-@SuppressWarnings("PMD.AbstractNaming")
-public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements Transformer<ENXX, EnXx> {
+@SuppressWarnings({"PMD.AbstractNaming", "PMD.TooManyMethods" })
+public abstract class ENTransformer<ENXX extends EN, EnXx extends En> extends AbstractTransformer<ENXX, EnXx>
+    implements Transformer<ENXX, EnXx> {
 
     /**
      * Public singleton.
@@ -115,6 +116,13 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
         protected EnOn newDto() {
             return new EnOn();
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        public ENON[] createXmlArray(int size) throws DtoTransformException {
+            return new ENON[size];
+        }
     }
 
     /**
@@ -144,6 +152,13 @@ public abstract class ENTransformer<ENXX extends EN, EnXx extends En> implements
         @Override
         protected EnPn newDto() {
             return new EnPn();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public ENPN[] createXmlArray(int size) throws DtoTransformException {
+            return new ENPN[size];
         }
     };
 }

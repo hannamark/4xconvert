@@ -16,7 +16,8 @@ import org.iso._21090.TS;
  *
  * @author mshestopalov
  */
-public final class TSTransformer extends QTYTransformer<TS, Ts> implements Transformer<TS, Ts> {
+public final class TSTransformer extends QTYTransformer<TS, Ts>
+    implements Transformer<TS, Ts> {
 
     /**
      * Public singleton.
@@ -90,5 +91,12 @@ public final class TSTransformer extends QTYTransformer<TS, Ts> implements Trans
         }
 
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TS[] createXmlArray(int size) throws DtoTransformException {
+        return new TS[size];
     }
 }

@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import org.iso._21090.ST;
@@ -8,7 +9,8 @@ import org.iso._21090.ST;
 /**
  * Transforms strings.
  */
-public final class STTransformer implements Transformer<ST, St> {
+public final class STTransformer extends AbstractTransformer<ST, St>
+    implements Transformer<ST, St> {
 
     /**
      * Public singleton.
@@ -50,5 +52,12 @@ public final class STTransformer implements Transformer<ST, St> {
             d.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(input.getNullFlavor()));
         }
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ST[] createXmlArray(int size) throws DtoTransformException {
+        return new ST[size];
     }
 }

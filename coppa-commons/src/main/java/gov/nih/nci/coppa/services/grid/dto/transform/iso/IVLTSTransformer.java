@@ -11,7 +11,8 @@ import org.iso._21090.TS;
 /**
  * Transforms timestamp intervals.
  */
-public final class IVLTSTransformer implements Transformer<IVLTS, Ivl<Ts>> {
+public final class IVLTSTransformer extends AbstractTransformer<IVLTS, Ivl<Ts>>
+    implements Transformer<IVLTS, Ivl<Ts>> {
 
     /**
      * Public singleton.
@@ -64,6 +65,13 @@ public final class IVLTSTransformer implements Transformer<IVLTS, Ivl<Ts>> {
         result.setWidth(TSTransformer.INSTANCE.toXml((Ts) input.getWidth()));
 
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IVLTS[] createXmlArray(int size) throws DtoTransformException {
+        return new IVLTS[size];
     }
 
 }

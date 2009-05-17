@@ -12,7 +12,8 @@ import org.iso._21090.EDText;
  * Transforms strings.
  * @author mshestopalov
  */
-public final class EDTextTransformer implements Transformer<EDText, EdText> {
+public final class EDTextTransformer extends AbstractTransformer<EDText, EdText>
+    implements Transformer<EDText, EdText> {
 
     /**
      * Public singleton.
@@ -58,5 +59,12 @@ public final class EDTextTransformer implements Transformer<EDText, EdText> {
         x.setValue(ed.getValue());
         x.setNullFlavor(ed.getNullFlavor());
         return x;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public EDText[] createXmlArray(int size) throws DtoTransformException {
+        return new EDText[size];
     }
 }

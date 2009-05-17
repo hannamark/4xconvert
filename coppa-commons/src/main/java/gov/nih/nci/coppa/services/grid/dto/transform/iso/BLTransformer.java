@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import org.iso._21090.BL;
@@ -10,7 +11,8 @@ import org.iso._21090.BL;
 /**
  * Transforms strings.
  */
-public final class BLTransformer implements Transformer<BL, Bl> {
+public final class BLTransformer extends AbstractTransformer<BL, Bl>
+    implements Transformer<BL, Bl> {
 
     /**
      * Public singleton.
@@ -53,5 +55,12 @@ public final class BLTransformer implements Transformer<BL, Bl> {
             d.setNullFlavor(nf);
         }
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public BL[] createXmlArray(int size) throws DtoTransformException {
+        return new BL[size];
     }
 }

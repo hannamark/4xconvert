@@ -16,7 +16,8 @@ import org.iso._21090.TELUrl;
  * Transforms strings.
  * @author mshestopalov
  */
-public final class EDTransformer implements Transformer<ED, Ed> {
+public final class EDTransformer extends AbstractTransformer<ED, Ed>
+    implements Transformer<ED, Ed> {
 
     /**
      * Public singleton.
@@ -112,5 +113,12 @@ public final class EDTransformer implements Transformer<ED, Ed> {
             t = (TelUrl) TELTransformer.INSTANCE.toDto(convertedRef);
         }
         return t;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ED[] createXmlArray(int size) throws DtoTransformException {
+        return new ED[size];
     }
 }

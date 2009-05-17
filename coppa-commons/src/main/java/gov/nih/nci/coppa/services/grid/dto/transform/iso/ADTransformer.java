@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.ArrayList;
@@ -13,7 +14,8 @@ import org.iso._21090.ADXP;
 /**
  * Transforms Addresses.
  */
-public final class ADTransformer implements Transformer<AD, Ad> {
+public final class ADTransformer extends AbstractTransformer<AD, Ad>
+    implements Transformer<AD, Ad> {
 
     /**
      * Public singleton.
@@ -70,5 +72,12 @@ public final class ADTransformer implements Transformer<AD, Ad> {
                 targetPart.add(ADXPTransformer.INSTANCE.toDto(p));
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AD[] createXmlArray(int size) throws DtoTransformException {
+        return new AD[size];
     }
 }

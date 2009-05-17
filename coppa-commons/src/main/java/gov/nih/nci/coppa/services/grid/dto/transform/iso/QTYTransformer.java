@@ -21,7 +21,8 @@ import org.iso._21090.TS;
  * @param <Qtyx> extends Qtyx.
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AbstractNaming" })
-public abstract class QTYTransformer<QTYX extends QTY, Qtyx extends Qty> implements Transformer<QTYX, Qtyx> {
+public abstract class QTYTransformer<QTYX extends QTY, Qtyx extends Qty> extends AbstractTransformer<QTYX, Qtyx>
+    implements Transformer<QTYX, Qtyx> {
 
     /**
      * @return newly constructed xml object.

@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.HashSet;
@@ -16,7 +17,8 @@ import org.iso._21090.NullFlavor;
  * Transforms sets of II.
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public final class DSETIITransformer implements Transformer<DSETII, DSet<Ii>> {
+public final class DSETIITransformer extends AbstractTransformer<DSETII, DSet<Ii>>
+    implements Transformer<DSETII, DSet<Ii>> {
 
     /**
      * Public transformer instance.
@@ -63,6 +65,13 @@ public final class DSETIITransformer implements Transformer<DSETII, DSet<Ii>> {
             tItem.add(IITransformer.INSTANCE.toDto(ad));
         }
         return x;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DSETII[] createXmlArray(int size) throws DtoTransformException {
+        return new DSETII[size];
     }
 
 }

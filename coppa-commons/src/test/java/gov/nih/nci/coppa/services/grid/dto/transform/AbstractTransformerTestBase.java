@@ -4,14 +4,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -32,6 +33,7 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO>, XML, DTO> {
 
+    private final int NUM_OBJ_TO_CONVERT = 10;
     protected final Class<T> tClass;
     protected final Class<XML> xmlClass;
     protected final Class<DTO> dtoClass;
@@ -94,6 +96,39 @@ public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO
     public abstract void verifyXmlSimple(XML x);
 
     public abstract void verifyDtoSimple(DTO x);
+
+    public void testXmlConvert() throws DtoTransformException {
+        // create list of XML objects
+        XML[] arr = transformer.createXmlArray(NUM_OBJ_TO_CONVERT);
+        for (int i = 0 ; i < NUM_OBJ_TO_CONVERT ; i++) {
+            arr[i] = makeXmlSimple();
+        }
+        //test null
+        XML[] nullArr = null;
+        assertNull(transformer.convert(nullArr));
+
+        List<DTO> dtos = transformer.convert(arr);
+        for (DTO dto : dtos) {
+            verifyDtoSimple(dto);
+        }
+    }
+
+    public void testDtoConvert() throws DtoTransformException {
+        // create list of DTO objects
+        List<DTO> dtos = new ArrayList<DTO>();
+        for (int i = 0 ; i < NUM_OBJ_TO_CONVERT ; i++) {
+            dtos.add(makeDtoSimple());
+        }
+
+        //test null
+        List<DTO> nullList = null;
+        assertNull(transformer.convert(nullList));
+
+        XML[] isos = transformer.convert(dtos);
+        for (int i = 0 ; i < NUM_OBJ_TO_CONVERT ; i++) {
+            verifyXmlSimple(isos[i]);
+        }
+    }
 
     public XML makeXmlNull() {
         return null;

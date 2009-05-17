@@ -12,7 +12,8 @@ import org.iso._21090.PQ;
  * Transforms strings.
  * @author mshestopalov
  */
-public final class PQVTransformer extends QTYTransformer<PQ, Pqv> implements Transformer<PQ, Pqv> {
+public final class PQVTransformer extends QTYTransformer<PQ, Pqv>
+    implements Transformer<PQ, Pqv> {
 
     /**
      * Public singleton.
@@ -77,5 +78,12 @@ public final class PQVTransformer extends QTYTransformer<PQ, Pqv> implements Tra
 
 
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PQ[] createXmlArray(int size) throws DtoTransformException {
+        return new PQ[size];
     }
 }

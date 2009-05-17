@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.HashSet;
@@ -16,7 +17,8 @@ import org.iso._21090.NullFlavor;
  * Transforms sets of CD.
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public final class DSETCDTransformer implements Transformer<DSETCD, DSet<Cd>> {
+public final class DSETCDTransformer extends AbstractTransformer<DSETCD, DSet<Cd>>
+    implements Transformer<DSETCD, DSet<Cd>> {
     /**
      * Public transformer instance.
      */
@@ -25,9 +27,6 @@ public final class DSETCDTransformer implements Transformer<DSETCD, DSet<Cd>> {
     private DSETCDTransformer() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     /**
      * {@inheritDoc}
      */
@@ -54,9 +53,6 @@ public final class DSETCDTransformer implements Transformer<DSETCD, DSet<Cd>> {
     /**
      * {@inheritDoc}
      */
-    /**
-     * {@inheritDoc}
-     */
     public DSet<Cd> toDto(DSETCD input) {
         if (input == null || input.getNullFlavor() != null) {
             return null;
@@ -69,6 +65,13 @@ public final class DSETCDTransformer implements Transformer<DSETCD, DSet<Cd>> {
             tItem.add(CDTransformer.INSTANCE.toDto(cd));
         }
         return x;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DSETCD[] createXmlArray(int size) throws DtoTransformException {
+        return new DSETCD[size];
     }
 
 }

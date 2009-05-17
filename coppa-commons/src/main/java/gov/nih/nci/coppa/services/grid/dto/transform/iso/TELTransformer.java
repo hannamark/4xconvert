@@ -20,7 +20,8 @@ import org.iso._21090.TELUrl;
 /**
  * Transforms telecoms.
  */
-public final class TELTransformer implements Transformer<TEL, Tel> {
+public final class TELTransformer extends AbstractTransformer<TEL, Tel>
+    implements Transformer<TEL, Tel> {
 
     /**
      * Public singleton.
@@ -96,6 +97,13 @@ public final class TELTransformer implements Transformer<TEL, Tel> {
         } else {
             target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
         }
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    public TEL[] createXmlArray(int size) throws DtoTransformException {
+        return new TEL[size];
     }
 
 }

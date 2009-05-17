@@ -23,7 +23,8 @@ import org.iso._21090.TEL;
  * </ol>
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public final class DSETTELTransformer implements Transformer<DSETTEL, DSet<Tel>> {
+public final class DSETTELTransformer extends AbstractTransformer<DSETTEL, DSet<Tel>>
+    implements Transformer<DSETTEL, DSet<Tel>> {
 
     /**
      * Public singleton.
@@ -71,5 +72,12 @@ public final class DSETTELTransformer implements Transformer<DSETTEL, DSet<Tel>>
             tItem.add(TELTransformer.INSTANCE.toDto(tel));
         }
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DSETTEL[] createXmlArray(int size) throws DtoTransformException {
+        return new DSETTEL[size];
     }
 }

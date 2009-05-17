@@ -10,7 +10,8 @@ import org.iso._21090.INT;
  * Transforms strings.
  * @author mshestopalov
  */
-public final class INTTransformer extends QTYTransformer<INT, Int> implements Transformer<INT, Int> {
+public final class INTTransformer extends QTYTransformer<INT, Int>
+    implements Transformer<INT, Int> {
 
     /**
      * Public singleton.
@@ -71,4 +72,13 @@ public final class INTTransformer extends QTYTransformer<INT, Int> implements Tr
         }
         return d;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public INT[] createXmlArray(int size) throws DtoTransformException {
+        return new INT[size];
+    }
+
+
 }

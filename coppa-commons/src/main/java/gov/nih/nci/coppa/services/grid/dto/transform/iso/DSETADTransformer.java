@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.HashSet;
@@ -16,7 +17,8 @@ import org.iso._21090.NullFlavor;
  * Transforms sets of addresses.
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public final class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
+public final class DSETADTransformer extends AbstractTransformer<DSETAD, DSet<Ad>>
+    implements Transformer<DSETAD, DSet<Ad>> {
 
     /**
      * Public transformer instance.
@@ -63,6 +65,13 @@ public final class DSETADTransformer implements Transformer<DSETAD, DSet<Ad>> {
             tItem.add(ADTransformer.INSTANCE.toDto(ad));
         }
         return x;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DSETAD[] createXmlArray(int size) throws DtoTransformException {
+        return new DSETAD[size];
     }
 
 }
