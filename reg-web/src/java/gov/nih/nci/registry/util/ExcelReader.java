@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -20,16 +21,15 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * @author Vrushali
  * 
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class ExcelReader {
-    private static Logger log = Logger.getLogger(ExcelReader.class);
+    private static final Logger LOG = Logger.getLogger(ExcelReader.class);
 
     /**
      * 
@@ -41,26 +41,23 @@ public class ExcelReader {
      */
     public List<StudyProtocolBatchDTO> convertToDTOFromExcelWrokbook(
             HSSFWorkbook wb) throws PAException {
-
         List<StudyProtocolBatchDTO> batchDtoList = new ArrayList<StudyProtocolBatchDTO>();
         StudyProtocolBatchDTO batchDto = null;
         if (wb == null) {
             throw new PAException(" HSSFWorkbook cannot be null ");
         }
-        // loop for every worksheet in the workbook
         int numOfSheets = wb.getNumberOfSheets();
         if (numOfSheets == 0) {
-            log.error("There are no workbook to process");
+            LOG.error("There are no workbook to process");
             throw new PAException(" There are no workbook to process");
         }
         for (int i = 0; i < numOfSheets; i++) {
             if (i > 0) {
-                // process only the firs sheet
-                break;
+                break; // loop for every work sheet in the workbook but process only the first sheet
             }
             HSSFSheet sheet = wb.getSheetAt(i);
             if (sheet == null) {
-                log.error("There are no work sheets to process");
+                LOG.error("There are no work sheets to process");
                 throw new PAException(" There are no work sheets to process");
             }
             // loop every row in the work sheet
@@ -68,66 +65,45 @@ public class ExcelReader {
             for (Iterator rows = sheet.rowIterator(); rows.hasNext();) {
                 HSSFRow row = (HSSFRow) rows.next();
                 if (flag) {
-                    // skip the first row, since its a header row
-                    flag = false;
+                    flag = false; // skip the first row, since its a header row
                     continue;
                 }
-
                 short c1 = row.getFirstCellNum();
                 short c2 = row.getLastCellNum();
-                // loop for every cell in each row
                 batchDto = new StudyProtocolBatchDTO();
-                for (int c = c1; c < c2; c++) {
+                for (int c = c1; c < c2; c++) { 
+                    // loop for every cell in each row
                     HSSFCell cell = row.getCell(c);
                     String cellValue = null;
                     if (cell != null) {
                         cellValue = getCellValue(cell);
-                        // set corresponding values
-                        setDto(batchDto, cellValue, c);
-
+                        setDto(batchDto, cellValue, c); // set corresponding values
                     } // if
                 } // column for loop
-                // add the dto to the list
-                batchDtoList.add(batchDto);
+                batchDtoList.add(batchDto); // add the dto to the list
             } // rows for loop
         } // work sheet for loop
-        log.info("Leaving convertToProtocolFromExcelWrokbook");
+        LOG.info("Leaving convertToProtocolFromExcelWrokbook");
         return batchDtoList;
     }
-
     /**
      * 
      * @param cell
      * @return
      */
     private String getCellValue(HSSFCell cell) {
-        if (cell == null) {
-            return null;
-        }
-
         String result = null;
-
         int cellType = cell.getCellType();
         switch (cellType) {
         case HSSFCell.CELL_TYPE_BLANK:
-            result = "";
-            break;
-        case HSSFCell.CELL_TYPE_BOOLEAN:
-            result = cell.getBooleanCellValue() ? "true" : "false";
-            break;
-        case HSSFCell.CELL_TYPE_ERROR:
-            result = "ERROR: " + cell.getErrorCellValue();
-            break;
-        case HSSFCell.CELL_TYPE_FORMULA:
-            result = cell.getRichStringCellValue().getString();
+            result = null;
             break;
         case HSSFCell.CELL_TYPE_NUMERIC:
             if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                //log.info("cell.getDateCellValue()" + cell.getDateCellValue());
                 result = convertDateToString(cell.getDateCellValue(), "MM/dd/yyyy");
             } else {
                 result = String.valueOf(cell.getNumericCellValue());
-                result = result.substring(0, result.indexOf("."));
+                result = result.substring(0, result.indexOf('.'));
                 }
             break;
         case HSSFCell.CELL_TYPE_STRING:
@@ -145,27 +121,19 @@ public class ExcelReader {
 
     /**
      * 
-     * @param is
-     *            is
+     * @param is is
      * @return wb
-     * @throws PAException
-     *             Exception
+     * @throws PAException exception
+     * @throws IOException i
      */
-    public HSSFWorkbook parseExcel(InputStream is) throws PAException {
-        log.info("Entereing parseExcel");
+    public HSSFWorkbook parseExcel(InputStream is) throws PAException, IOException {
+        LOG.info("Entereing parseExcel");
         HSSFWorkbook wb = null;
         if (is == null) {
             throw new PAException(" Input stream cannot be null ");
         }
-        try {
-            POIFSFileSystem fs = new POIFSFileSystem(is);
-            wb = new HSSFWorkbook(fs);
-
-        } catch (IOException e) {
-            throw new PAException(" Error while creating POI file steam ", e);
-        } catch (OfficeXmlFileException ex) {
-            throw new PAException(" Please enter only CSV or Excel files");
-        }
+        POIFSFileSystem fs = new POIFSFileSystem(is);
+        wb = new HSSFWorkbook(fs);
         if (wb == null) {
             throw new PAException(" Error reading the workbook ");
         }
@@ -181,7 +149,8 @@ public class ExcelReader {
      * @throws PAException
      * @return dto dto
      */
-    private StudyProtocolBatchDTO setDto(StudyProtocolBatchDTO batchDto,
+    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NcssMethodCount" })
+     private StudyProtocolBatchDTO setDto(StudyProtocolBatchDTO batchDto,
             String cellValue, int col) throws PAException {
         switch (col) {
         case BatchConstants.UNIQUE_TRIAL_IDENTIFIER: batchDto.setUniqueTrialId(cellValue); break;
@@ -277,7 +246,7 @@ public class ExcelReader {
         case BatchConstants.IND_HOLDER_TYPE: batchDto.setIndHolderType(cellValue); break;
         case BatchConstants.IND_NIH_INSTITUTION: batchDto.setIndNIHInstitution(cellValue); break;
         case BatchConstants.IND_NCI_DIV_CODE: batchDto.setIndNCIDivision(cellValue); break;
-        case BatchConstants.IND_HAS_EXPANDED_ACCESS: if (cellValue.equalsIgnoreCase("Yes")) {
+        case BatchConstants.IND_HAS_EXPANDED_ACCESS: if (cellValue != null && cellValue.equalsIgnoreCase("Yes")) {
                 batchDto.setIndHasExpandedAccess("True"); break;
              } else {
                  batchDto.setIndHasExpandedAccess(cellValue); break;
@@ -308,7 +277,7 @@ public class ExcelReader {
         String formattedDate = null;
 
         if (date != null && format != null) {
-            dateFormatter = new SimpleDateFormat(format);
+            dateFormatter = new SimpleDateFormat(format, Locale.US);
             formattedDate = dateFormatter.format(date);
         }
         return formattedDate;

@@ -88,8 +88,8 @@ public class BatchUploadActionTest extends AbstractRegWebTest {
         action = new BatchUploadAction();
         assertEquals("error",action.process());
     }
-    @Test 
-    public void testProcessWithInValidDocType() throws URISyntaxException{
+  @Test 
+    public void testProcessWithInValidDocType() throws URISyntaxException, PAException{
         action = new BatchUploadAction();
         action.setOrgName("orgName");
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource("test.txt");
@@ -118,6 +118,7 @@ public class BatchUploadActionTest extends AbstractRegWebTest {
         action.setDocZip(f);
         action.setDocZipFileName("7000DDoc.zip");
         assertEquals("batch_confirm",action.process());
+        deleteCreatedFolder();
     }
     
 }

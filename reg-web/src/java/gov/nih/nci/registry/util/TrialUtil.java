@@ -365,7 +365,8 @@ public class TrialUtil {
      * @return iso
      */
     public OrganizationDTO convertToSummary4OrgDTO(TrialDTO trialDTO) {
-        if (trialDTO.getSummaryFourOrgIdentifier().equals("")) {
+        if (trialDTO.getSummaryFourOrgIdentifier() == null 
+                || trialDTO.getSummaryFourOrgIdentifier().equals("")) {
             return null;
         }
         OrganizationDTO isoDto = new OrganizationDTO();

@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -32,10 +33,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * 
  * 
  */
-@SuppressWarnings("PMD")
-public class BatchHelper implements Runnable { //implements Runnable {
+public class BatchHelper implements Runnable { 
 
-    private static Logger log = Logger.getLogger(BatchHelper.class);
+    private static final Logger LOG = Logger.getLogger(BatchHelper.class);
     private String uploadLoc = null;
     private String trialDataFileName = null;
     private String unzipLoc = null;
@@ -63,9 +63,10 @@ public class BatchHelper implements Runnable { //implements Runnable {
      * @throws PAException
      *             PAException
      * @return list list
+     * @throws IOException i
      */
     public List<StudyProtocolBatchDTO> processExcel(String fileName)
-            throws PAException {
+            throws PAException, IOException {
         InputStream is;
         List<StudyProtocolBatchDTO> list = null;
         try {
@@ -74,7 +75,7 @@ public class BatchHelper implements Runnable { //implements Runnable {
             ExcelReader reader = new ExcelReader();
             list = reader.convertToDTOFromExcelWrokbook(wb);
         } catch (FileNotFoundException e) {
-            log.error("BatchHelper:processExcel-" + e);
+            LOG.error("BatchHelper:processExcel-" + e);
         }
         return list;
     }
@@ -82,7 +83,6 @@ public class BatchHelper implements Runnable { //implements Runnable {
      * starts the batch processing.
      */
     public void run() {
-        StringBuffer mailBody = new StringBuffer();
         //String subject = "Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status";
         try {
             // open a new Hibernate session and bind to the context
@@ -91,21 +91,21 @@ public class BatchHelper implements Runnable { //implements Runnable {
             // start reading the xls file and create the required DTO
             List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc
                     + File.separator + trialDataFileName);
-            HashMap map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
+            HashMap<String, String> map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
                     + File.separator, userName);
             //get the Failed and Sucess count and remove it from map so that reporting of each trial 
             String sucessCount = (String) map.get("Sucess Trial Count");
             map.remove("Sucess Trial Count");
             String failedCount = (String) map.get("Failed Trial Count");
             map.remove("Failed Trial Count");
-            String totalCount = new Integer(map.size()).toString();
+            String totalCount = Integer.valueOf(map.size()).toString();
             String attachFileName = generateExcelFileForAttachement(map);
             //get the values of email's subject and email body from the database
             String[] params = {userName , };
             MessageFormat formatterSubject = new MessageFormat(
                     RegistryServiceLocator.getLookUpTableService().getPropertyValue("trial.batchUpload.subject"));
             String emailSubject = formatterSubject.format(params);
-            log.info("emailSubject is: " + emailSubject);
+            LOG.info("emailSubject is: " + emailSubject);
             String submissionMailBody = RegistryServiceLocator.getLookUpTableService().
                                     getPropertyValue("trial.batchUpload.body");
             submissionMailBody = submissionMailBody.replace("${totalCount}", totalCount);
@@ -120,7 +120,7 @@ public class BatchHelper implements Runnable { //implements Runnable {
 
 
         } catch (Exception e) {
-            log.error("Exception while processing batch" + e.getMessage());
+            LOG.error("Exception while processing batch" + e.getMessage());
         } finally {
             // unbind the  Hibernate session
             HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
@@ -132,7 +132,8 @@ public class BatchHelper implements Runnable { //implements Runnable {
      * @param map ma
      * @return st
      */
-    private String generateExcelFileForAttachement(HashMap map) {
+    @SuppressWarnings({"PMD.LooseCoupling" })
+    private String generateExcelFileForAttachement(HashMap<String, String> map) {
         try {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = wb.createSheet("new sheet");
@@ -141,8 +142,8 @@ public class BatchHelper implements Runnable { //implements Runnable {
             HSSFCell cellReason = headerRow.createCell(1);
             cellId.setCellValue(new HSSFRichTextString("Unique Trial Identifier"));
             cellReason.setCellValue(new HSSFRichTextString("Status"));
-            Set s = map.keySet();
-            Iterator iter = s.iterator();
+            Set<String> s = map.keySet();
+            Iterator<String> iter = s.iterator();
             String mapLocalTrialId = null;
             int i = 0;
             HSSFRow detailRow;
@@ -159,12 +160,76 @@ public class BatchHelper implements Runnable { //implements Runnable {
             FileOutputStream fileOut = new FileOutputStream(uploadLoc + File.separator + "batchUploadReport.xls");
             wb.write(fileOut);
            fileOut.close();          
-           log.error("Your file has been created succesfully");    
+           LOG.error("Your file has been created succesfully");    
                } catch (Exception ex) {
-                   log.error("exception while generating excel report" + ex.getMessage());
+                   LOG.error("exception while generating excel report" + ex.getMessage());
             }    
 
         return uploadLoc + File.separator + "batchUploadReport.xls";
+    }
+
+
+    /**
+     * @return the uploadLoc
+     */
+    public String getUploadLoc() {
+        return uploadLoc;
+    }
+
+
+    /**
+     * @param uploadLoc the uploadLoc to set
+     */
+    public void setUploadLoc(String uploadLoc) {
+        this.uploadLoc = uploadLoc;
+    }
+
+
+    /**
+     * @return the trialDataFileName
+     */
+    public String getTrialDataFileName() {
+        return trialDataFileName;
+    }
+
+
+    /**
+     * @param trialDataFileName the trialDataFileName to set
+     */
+    public void setTrialDataFileName(String trialDataFileName) {
+        this.trialDataFileName = trialDataFileName;
+    }
+
+
+    /**
+     * @return the unzipLoc
+     */
+    public String getUnzipLoc() {
+        return unzipLoc;
+    }
+
+
+    /**
+     * @param unzipLoc the unzipLoc to set
+     */
+    public void setUnzipLoc(String unzipLoc) {
+        this.unzipLoc = unzipLoc;
+    }
+
+
+    /**
+     * @return the userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+
+    /**
+     * @param userName the userName to set
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 }

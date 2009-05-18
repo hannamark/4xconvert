@@ -3,9 +3,12 @@
  */
 package gov.nih.nci.registry.action;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -110,4 +113,42 @@ public abstract class AbstractRegWebTest {
         indDtos.add(indDto);
         return indDtos;
     }
+    protected void deleteCreatedFolder() throws PAException{
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StringBuffer sbFolderPath = new StringBuffer(folderPath);
+        File uploadedFolder = new File(sbFolderPath.toString());
+        if (!uploadedFolder.exists()) {
+            return;
+          }
+          String[] childrenFolder = uploadedFolder.list();
+          for (int i = 0; i < childrenFolder.length; i++) {
+            File currentFolder = new File(sbFolderPath + File.separator + childrenFolder[i]);
+            if (!currentFolder.isDirectory()) { // skip ., .., other directories, etc.
+              continue;
+            }
+            if (currentFolder.getName().startsWith("orgName")) { // name match
+                System.out.println("removing " + currentFolder.getPath());
+                if (!deleteDir(currentFolder))
+                    System.err.println("Couldn't remove " + currentFolder.getPath());
+                }
+            }
+    }
+    /** Deletes all files and sub directories under dir.
+     Returns true if all deletions were successful.
+     If a deletion fails, the method stops attempting to delete and returns false.
+     **/
+    private boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        // The directory is now empty so delete it
+        return dir.delete();
+    } 
+
 }

@@ -3,11 +3,19 @@
  */
 package gov.nih.nci.registry.dto;
 
+import org.hibernate.validator.Email;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotEmpty;
+import org.hibernate.validator.Pattern;
+
+import com.opensymphony.xwork2.validator.annotations.Validation;
+
 /**
  * @author Vrushali
  * 
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals" })
+@Validation
 public class StudyProtocolBatchDTO {
     private String uniqueTrialId;
     private String localProtocolIdentifier;
@@ -120,8 +128,10 @@ public class StudyProtocolBatchDTO {
     private String informedConsentDocumentFileName;
     private String otherTrialRelDocumentFileName;
     
-    private boolean validRecord;
-
+    private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
+    private static final int SERIAL_NUM_MIN = 5;
+    private static final int SERIAL_NUM_MAX  = 6;
+       
     /**
      * . Default Constructor
      */
@@ -132,6 +142,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the currentTrialStatus
      */
+    @NotEmpty(message = "Current Trial Status is required.\n")    
     public String getCurrentTrialStatus() {
         return currentTrialStatus;
     }
@@ -146,6 +157,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the currentTrialStatusDate
      */
+    @NotEmpty(message = "Current Trial Status Date is required.\n")
     public String getCurrentTrialStatusDate() {
         return currentTrialStatusDate;
     }
@@ -160,6 +172,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgCity
      */
+    @NotEmpty(message = "Lead Organization's City is required.\n")
     public String getLeadOrgCity() {
         return leadOrgCity;
     }
@@ -174,6 +187,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgCountry
      */
+    @NotEmpty(message = "Lead Organization's Country is required.\n")    
     public String getLeadOrgCountry() {
         return leadOrgCountry;
     }
@@ -202,6 +216,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgEmail
      */
+    @Email(message = "Lead Organization's Email Address is invalid.\n")
+    @NotEmpty(message = "Lead Organization's Email is required.\n")
     public String getLeadOrgEmail() {
         return leadOrgEmail;
     }
@@ -230,6 +246,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgName
      */
+    @NotEmpty(message = "Lead Organization's Name is required.\n")
     public String getLeadOrgName() {
         return leadOrgName;
     }
@@ -244,6 +261,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgPhone
      */
+    @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
+            message = "Lead Organization's Phone is invalid.\n")
     public String getLeadOrgPhone() {
         return leadOrgPhone;
     }
@@ -272,6 +291,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgStreetAddress
      */
+    @NotEmpty(message = "Lead Organization's Street Address is required.\n")
     public String getLeadOrgStreetAddress() {
         return leadOrgStreetAddress;
     }
@@ -328,6 +348,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgZip
      */
+    @NotEmpty(message = "Lead Organization's Street Zip is required.\n")
     public String getLeadOrgZip() {
         return leadOrgZip;
     }
@@ -342,6 +363,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the localProtocolIdentifier
      */
+    @NotEmpty(message = "Lead Organization Trial Identifier is required. ")    
     public String getLocalProtocolIdentifier() {
         return localProtocolIdentifier;
     }
@@ -412,6 +434,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the nihGrantSrNumber
      */
+    @Length(message = "Serial number can be numeric with 5 or 6 digits.\n", max = SERIAL_NUM_MAX, min = SERIAL_NUM_MIN)
+    @Pattern(message = "Serial Number must be numeric.\n", regex = "^[0-9]+$")
     public String getNihGrantSrNumber() {
         return nihGrantSrNumber;
     }
@@ -426,6 +450,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the phase
      */
+    @NotEmpty(message = "Trail Phase is required.\n")
     public String getPhase() {
         return phase;
     }
@@ -454,6 +479,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piCity
      */
+    @NotEmpty(message = "Principal Investigator's City is required.\n")
     public String getPiCity() {
         return piCity;
     }
@@ -468,6 +494,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piCountry
      */
+    @NotEmpty(message = "Principal Investigator's Country is required.\n")
     public String getPiCountry() {
         return piCountry;
     }
@@ -482,6 +509,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piEmail
      */
+    @Email(message = "Principal Investigator's Email Address is invalid.\n")
+    @NotEmpty(message = "Principal Investigator's Email Address is required.\n")
     public String getPiEmail() {
         return piEmail;
     }
@@ -510,6 +539,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piFirstName
      */
+    @NotEmpty(message = "Principal Investigator's First Name is required.\n")
     public String getPiFirstName() {
         return piFirstName;
     }
@@ -524,6 +554,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piLastName
      */
+    @NotEmpty(message = "Principal Investigator's Last Name is required.\n")
     public String getPiLastName() {
         return piLastName;
     }
@@ -566,6 +597,9 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piPhone
      */
+    @NotEmpty(message = "Principal Investigator's Phone is required.\n")
+    @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
+            message = "Principal Investigator's Phone is invalid.\n")
     public String getPiPhone() {
         return piPhone;
     }
@@ -594,6 +628,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piStreetAddress
      */
+    @NotEmpty(message = "Principal Investigator's Street Address is required.\n")
     public String getPiStreetAddress() {
         return piStreetAddress;
     }
@@ -636,6 +671,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piZip
      */
+    @NotEmpty(message = "Principal Investigator's Zip is required.\n")
     public String getPiZip() {
         return piZip;
     }
@@ -650,6 +686,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the primaryCompletionDate
      */
+    @NotEmpty(message = "Primary Completion Date is required.\n")
     public String getPrimaryCompletionDate() {
         return primaryCompletionDate;
     }
@@ -664,6 +701,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the primaryCompletionDateType
      */
+    @NotEmpty(message = "Primary Completion Date Type is required.\n")
     public String getPrimaryCompletionDateType() {
         return primaryCompletionDateType;
     }
@@ -678,6 +716,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the primaryPurpose
      */
+    @NotEmpty(message = "Trial Purpose is required.\n")
     public String getPrimaryPurpose() {
         return primaryPurpose;
     }
@@ -706,6 +745,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the responsibleParty
      */
+    @NotEmpty(message = "Responsible Party Not Provided.\n")
     public String getResponsibleParty() {
         return responsibleParty;
     }
@@ -720,6 +760,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorCity
      */
+    @NotEmpty(message = "Sponsor Organization's City is required.\n")
     public String getSponsorCity() {
         return sponsorCity;
     }
@@ -930,6 +971,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorCountry
      */
+    @NotEmpty(message = "Sponsor Organization's Country is required.\n")
     public String getSponsorCountry() {
         return sponsorCountry;
     }
@@ -958,6 +1000,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorEmail
      */
+    @Email(message = "Sponsor Organization's Email Address is invalid.\n")
+    @NotEmpty(message = "Sponsor Organization's Email Address is required.\n")
     public String getSponsorEmail() {
         return sponsorEmail;
     }
@@ -986,6 +1030,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorOrgName
      */
+    @NotEmpty(message = "Sponsor Organization's Name is required.\n")
     public String getSponsorOrgName() {
         return sponsorOrgName;
     }
@@ -1000,6 +1045,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorPhone
      */
+    @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
+            message = "Sponsor Organization's Phone is invalid.\n")
     public String getSponsorPhone() {
         return sponsorPhone;
     }
@@ -1028,6 +1075,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorStreetAddress
      */
+    @NotEmpty(message = "Sponsor Organization's Street Address is required.\n")
     public String getSponsorStreetAddress() {
         return sponsorStreetAddress;
     }
@@ -1070,6 +1118,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorZip
      */
+    @NotEmpty(message = "Sponsor Organization's Zip is required.\n")
     public String getSponsorZip() {
         return sponsorZip;
     }
@@ -1084,6 +1133,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the studyStartDate
      */
+    @NotEmpty(message = "Study Start Date is required. \n")
     public String getStudyStartDate() {
         return studyStartDate;
     }
@@ -1098,6 +1148,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the studyStartDateType
      */
+    @NotEmpty(message = "Study Start Date Type is required.\n")
     public String getStudyStartDateType() {
         return studyStartDateType;
     }
@@ -1294,6 +1345,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the title
      */
+    @NotEmpty(message = "Trial Title is required")  
+    @Length(message = "Trial Title must be 4000 characters max", max = TRIAL_TITLE_MAX_LENGTH)
     public String getTitle() {
         return title;
     }
@@ -1308,6 +1361,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the trialType
      */
+    @NotEmpty(message = "Trial Type is required.\n")
     public String getTrialType() {
         return trialType;
     }
@@ -1464,6 +1518,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the irbApprovalDocumentFileName
      */
+    @NotEmpty(message = "IRB Approval Document is required.\n")
     public String getIrbApprovalDocumentFileName() {
         return irbApprovalDocumentFileName;
     }
@@ -1508,6 +1563,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the protcolDocumentFileName
      */
+    @NotEmpty(message = "Protocol Document is required. \n")
     public String getProtcolDocumentFileName() {
         return protcolDocumentFileName;
     }
@@ -1519,21 +1575,7 @@ public class StudyProtocolBatchDTO {
         this.protcolDocumentFileName = protcolDocumentFileName;
     }
 
-    /**
-     * @return the validRecord
-     */
-    public boolean isValidRecord() {
-        return validRecord;
-    }
-
-    /**
-     * @param validRecord the validRecord to set
-     */
-    public void setValidRecord(boolean validRecord) {
-        this.validRecord = validRecord;
-    }
-
-    /**
+   /**
      * @return the reasonForStudyStopped
      */
     public String getReasonForStudyStopped() {
