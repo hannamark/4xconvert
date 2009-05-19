@@ -2,7 +2,7 @@
  <ns1:serviceDescription>
   <ns2:Service description="" name="CoreServices" version="1.2" xmlns:ns2="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service">
    <ns2:pointOfContactCollection>
-    <ns3:PointOfContact affiliation="" email="" firstName="" lastName="" phoneNumber="" role="" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
+    <ns3:PointOfContact affiliation="NCI" email="andonyac@mail.nih.gov" firstName="Christo" lastName="Andonyadis" phoneNumber="" role="Chief Architect for Clinical Science" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"/>
    </ns2:pointOfContactCollection>
    <ns2:serviceContextCollection>
     <ns2:ServiceContext description="" name="CoreServices">
@@ -817,10 +817,10 @@
   </ns2:Service>
  </ns1:serviceDescription>
  <ns1:hostingResearchCenter>
-  <ns173:ResearchCenter displayName="" shortName="" xmlns:ns173="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
-   <ns173:Address country="" locality="" postalCode="" stateProvince="" street1="" street2=""/>
+  <ns173:ResearchCenter displayName="NCI" shortName="NCI" xmlns:ns173="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
+   <ns173:Address country="USA" locality="Rockville" postalCode="20852" stateProvince="MD" street1="2115 E. Jefferson St." street2=""/>
    <ns173:pointOfContactCollection>
-    <ns173:PointOfContact affiliation="" email="" firstName="" lastName="" phoneNumber="" role=""/>
+    <ns173:PointOfContact affiliation="NCI" email="andonyac@mail.nih.gov" firstName="Christo" lastName="Andonyadis" phoneNumber="" role="Chief Architect for Clinical Science"/>
    </ns173:pointOfContactCollection>
   </ns173:ResearchCenter>
  </ns1:hostingResearchCenter>
