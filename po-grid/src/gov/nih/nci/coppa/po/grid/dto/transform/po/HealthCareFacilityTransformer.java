@@ -6,6 +6,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -13,7 +14,9 @@ import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 /**
  * Transforms HealthCareFacility instances.
  */
-public final class HealthCareFacilityTransformer implements Transformer<HealthCareFacility, HealthCareFacilityDTO> {
+public final class HealthCareFacilityTransformer
+    extends AbstractTransformer<HealthCareFacility, HealthCareFacilityDTO>
+    implements Transformer<HealthCareFacility, HealthCareFacilityDTO> {
     /**
      * Public singleton.
      */
@@ -48,5 +51,13 @@ public final class HealthCareFacilityTransformer implements Transformer<HealthCa
         d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareFacility[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new HealthCareFacility[arg0];
     }
 }

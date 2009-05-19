@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.po.faults.StringMapType;
 import gov.nih.nci.coppa.po.faults.StringMapTypeEntry;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,9 @@ import org.apache.commons.lang.StringUtils;
  * @author smatyas
  *
  */
-public final class StringMapTypeTransformer implements Transformer<StringMapType, Map<String, String[]>> {
+public final class StringMapTypeTransformer
+    extends AbstractTransformer<StringMapType, Map<String, String[]>>
+    implements Transformer<StringMapType, Map<String, String[]>> {
     /**
      * Public singleton.
      */
@@ -52,6 +55,14 @@ public final class StringMapTypeTransformer implements Transformer<StringMapType
         }
         output.setEntry(entries.toArray(new StringMapTypeEntry[entries.size()]));
         return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StringMapType[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StringMapType[arg0];
     }
 
 }

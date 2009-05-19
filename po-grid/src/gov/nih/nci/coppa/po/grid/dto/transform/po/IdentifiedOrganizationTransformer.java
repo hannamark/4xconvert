@@ -6,6 +6,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.IdentifiedOrganization;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -13,8 +14,9 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 /**
  * Transforms IdentifiedOrganization instances.
  */
-public final class IdentifiedOrganizationTransformer implements
-      Transformer<IdentifiedOrganization, IdentifiedOrganizationDTO> {
+public final class IdentifiedOrganizationTransformer
+    extends AbstractTransformer<IdentifiedOrganization, IdentifiedOrganizationDTO>
+    implements Transformer<IdentifiedOrganization, IdentifiedOrganizationDTO> {
 
     /**
     * Public singleton.
@@ -56,5 +58,13 @@ public final class IdentifiedOrganizationTransformer implements
         d.setAssignedId(IITransformer.INSTANCE.toXml(input.getAssignedId()));
         d.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedOrganization[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new IdentifiedOrganization[arg0];
     }
 }

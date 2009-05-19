@@ -4,7 +4,9 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.NullFlavorTransformer;
 
 /**
@@ -12,7 +14,9 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.NullFlavorTransformer;
  * @author smatyas
  *
  */
-public final class IdTransformer implements Transformer<Id, Ii> {
+public final class IdTransformer
+    extends AbstractTransformer<Id, Ii>
+    implements Transformer<Id, Ii> {
 
     /**
      * Public singleton.
@@ -72,6 +76,13 @@ public final class IdTransformer implements Transformer<Id, Ii> {
             target.setScope(IdentifierScope.valueOf(source.getScope().name()));
         }
         target.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(source.getNullFlavor()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Id[] createXmlArray(int arg0) throws DtoTransformException {
+        return new Id[arg0];
     }
 
 }

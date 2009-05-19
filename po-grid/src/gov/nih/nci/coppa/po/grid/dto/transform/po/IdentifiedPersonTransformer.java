@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
@@ -12,8 +13,9 @@ import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
  * Transforms IdentifiedPerson instances.
  * @author mshestopalov
  */
-public final class IdentifiedPersonTransformer implements
-      Transformer<IdentifiedPerson, IdentifiedPersonDTO> {
+public final class IdentifiedPersonTransformer
+    extends AbstractTransformer<IdentifiedPerson, IdentifiedPersonDTO>
+    implements Transformer<IdentifiedPerson, IdentifiedPersonDTO> {
 
     /**
     * Public singleton.
@@ -55,5 +57,13 @@ public final class IdentifiedPersonTransformer implements
         d.setAssignedId(IITransformer.INSTANCE.toXml(input.getAssignedId()));
         d.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedPerson[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new IdentifiedPerson[arg0];
     }
 }

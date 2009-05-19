@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.po.faults.SimpleIIMapType;
 import gov.nih.nci.coppa.po.faults.SimpleIIMapTypeEntry;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,9 @@ import java.util.Map;
  * @author smatyas
  *
  */
-public final class SimpleIIMapTypeTransformer implements Transformer<SimpleIIMapType, Map<Ii, Ii>> {
+public final class SimpleIIMapTypeTransformer
+    extends AbstractTransformer<SimpleIIMapType, Map<Ii, Ii>>
+    implements Transformer<SimpleIIMapType, Map<Ii, Ii>> {
     /**
      * Public singleton.
      */
@@ -52,6 +55,14 @@ public final class SimpleIIMapTypeTransformer implements Transformer<SimpleIIMap
         }
         output.setEntry(entries.toArray(new SimpleIIMapTypeEntry[entries.size()]));
         return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SimpleIIMapType[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new SimpleIIMapType[arg0];
     }
 
 }

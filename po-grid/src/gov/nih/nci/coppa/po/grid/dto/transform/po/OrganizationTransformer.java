@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENTransformer;
@@ -14,7 +15,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 /**
  * Transforms Organization instances.
  */
-public final class OrganizationTransformer implements Transformer<Organization, OrganizationDTO> {
+public final class OrganizationTransformer
+    extends AbstractTransformer<Organization, OrganizationDTO>
+    implements Transformer<Organization, OrganizationDTO> {
 
     /**
      * Public singleton.
@@ -53,5 +56,12 @@ public final class OrganizationTransformer implements Transformer<Organization, 
         d.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
         d.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Organization[] createXmlArray(int arg0) throws DtoTransformException {
+        return new Organization[arg0];
     }
 }

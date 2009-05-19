@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.OversightCommittee;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
@@ -10,7 +11,9 @@ import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 /**
  * Transforms OversightCommittee instances.
  */
-public class OversightCommitteeTransformer implements Transformer<OversightCommittee, OversightCommitteeDTO> {
+public class OversightCommitteeTransformer
+    extends AbstractTransformer<OversightCommittee, OversightCommitteeDTO>
+    implements Transformer<OversightCommittee, OversightCommitteeDTO> {
     /**
     * Public singleton.
     */
@@ -47,5 +50,13 @@ public class OversightCommitteeTransformer implements Transformer<OversightCommi
           xml.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
           return xml;
      }
+
+     /**
+      * {@inheritDoc}
+      */
+    public OversightCommittee[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new OversightCommittee[arg0];
+    }
 
 }

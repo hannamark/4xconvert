@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
@@ -15,7 +16,9 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
  * @author mshestopalov
  *
  */
-public final class HealthCareProviderTransformer implements Transformer<HealthCareProvider, HealthCareProviderDTO> {
+public final class HealthCareProviderTransformer
+    extends AbstractTransformer<HealthCareProvider, HealthCareProviderDTO>
+    implements Transformer<HealthCareProvider, HealthCareProviderDTO> {
     /**
      * Public singleton.
      */
@@ -58,5 +61,13 @@ public final class HealthCareProviderTransformer implements Transformer<HealthCa
               d.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
               d.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
               return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareProvider[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new HealthCareProvider[arg0];
     }
 }

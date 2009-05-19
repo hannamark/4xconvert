@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
@@ -12,8 +13,9 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
  * @author smatyas
  *
  */
-public final class NullifiedEntityFaultTransformer implements
-        Transformer<NullifiedEntityFault, NullifiedEntityException> {
+public final class NullifiedEntityFaultTransformer
+    extends AbstractTransformer<NullifiedEntityFault, NullifiedEntityException>
+    implements Transformer<NullifiedEntityFault, NullifiedEntityException> {
     /**
      * Public singleton.
      */
@@ -41,6 +43,14 @@ public final class NullifiedEntityFaultTransformer implements
             fault.setNullifiedEntries(SimpleIIMapTypeTransformer.INSTANCE.toXml(input.getNullifiedEntities()));
         }
         return fault;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public NullifiedEntityFault[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new NullifiedEntityFault[arg0];
     }
 
 }

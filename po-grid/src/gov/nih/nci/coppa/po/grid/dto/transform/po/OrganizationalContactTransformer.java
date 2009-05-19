@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformer;
@@ -14,7 +15,8 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
  * Transforms OrganizationalContact instances.
  */
 public final class OrganizationalContactTransformer
-      implements Transformer<OrganizationalContact, OrganizationalContactDTO> {
+    extends AbstractTransformer<OrganizationalContact, OrganizationalContactDTO>
+    implements Transformer<OrganizationalContact, OrganizationalContactDTO> {
       /**
      * Public singleton.
      */
@@ -57,6 +59,14 @@ public final class OrganizationalContactTransformer
         xml.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
         xml.setTypeCode(DSETCDTransformer.INSTANCE.toXml(input.getTypeCode()));
         return xml;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationalContact[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new OrganizationalContact[arg0];
     }
 
 }

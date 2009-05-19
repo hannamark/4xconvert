@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 
@@ -11,8 +12,9 @@ import gov.nih.nci.po.service.EntityValidationException;
  * @author smatyas
  *
  */
-public final class EntityValidationFaultTransformer implements
-        Transformer<EntityValidationFault, EntityValidationException> {
+public final class EntityValidationFaultTransformer
+    extends AbstractTransformer<EntityValidationFault, EntityValidationException>
+    implements Transformer<EntityValidationFault, EntityValidationException> {
     /**
      * Public singleton.
      */
@@ -40,6 +42,14 @@ public final class EntityValidationFaultTransformer implements
             fault.setErrors(StringMapTypeTransformer.INSTANCE.toXml(input.getErrors()));
         }
         return fault;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public EntityValidationFault[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new EntityValidationFault[arg0];
     }
 
 }

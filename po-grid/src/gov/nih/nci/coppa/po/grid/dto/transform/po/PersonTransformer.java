@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENTransformer;
@@ -13,7 +14,9 @@ import gov.nih.nci.services.person.PersonDTO;
 /**
  * Transforms Persons.
  */
-public final class PersonTransformer implements Transformer<Person, PersonDTO> {
+public final class PersonTransformer
+    extends AbstractTransformer<Person, PersonDTO>
+    implements Transformer<Person, PersonDTO> {
 
     /**
      * Public singleton.
@@ -52,5 +55,12 @@ public final class PersonTransformer implements Transformer<Person, PersonDTO> {
         d.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
         d.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Person[] createXmlArray(int arg0) throws DtoTransformException {
+        return new Person[arg0];
     }
 }

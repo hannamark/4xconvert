@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -13,7 +14,9 @@ import java.util.Map;
  * @author smatyas
  *
  */
-public final class StringMapTransformer implements Transformer<StringMap, Map<String, String[]>> {
+public final class StringMapTransformer
+    extends AbstractTransformer<StringMap, Map<String, String[]>>
+    implements Transformer<StringMap, Map<String, String[]>> {
     /**
      * Public singleton.
      */
@@ -44,6 +47,13 @@ public final class StringMapTransformer implements Transformer<StringMap, Map<St
             output.getEntry().add(entry);
         }
         return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StringMap[] createXmlArray(int arg0) throws DtoTransformException {
+        return new StringMap[arg0];
     }
 
 }

@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import gov.nih.nci.coppa.po.ClinicalResearchStaff;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
@@ -13,6 +14,7 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
  * Transforms ClinicalRearchStaff instances.
  */
 public final class ClinicalResearchStaffTransformer
+    extends AbstractTransformer<ClinicalResearchStaff, ClinicalResearchStaffDTO>
     implements Transformer<ClinicalResearchStaff, ClinicalResearchStaffDTO> {
 
     /**
@@ -54,5 +56,13 @@ public final class ClinicalResearchStaffTransformer
         d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         d.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
         return d;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ClinicalResearchStaff[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new ClinicalResearchStaff[arg0];
     }
 }

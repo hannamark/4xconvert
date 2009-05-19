@@ -4,11 +4,14 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 /**
  * Transforms Id[] (XML type) and Ii[] (DTO type) instances.
  * @author smatyas
  */
-public final class IdArrayTransformer implements Transformer<Id[], Ii[]> {
+public final class IdArrayTransformer
+    extends AbstractTransformer<Id[], Ii[]>
+    implements Transformer<Id[], Ii[]> {
     /**
      * Public singleton.
      */
@@ -47,6 +50,13 @@ public final class IdArrayTransformer implements Transformer<Id[], Ii[]> {
             i++;
         }
         return results;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Id[][] createXmlArray(int arg0) throws DtoTransformException {
+        return new Id[arg0][];
     }
 
 }
