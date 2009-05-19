@@ -30,29 +30,6 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
         super();
     }
 
-    private StudyParticipation[] convert(List<StudyParticipationDTO> dtosList) throws DtoTransformException {
-        if (dtosList == null) {
-            return null;
-        }
-        StudyParticipation[] result = null;
-        result = new StudyParticipation[dtosList.size()];
-        int i = 0;
-        for (StudyParticipationDTO tEmp : dtosList) {
-            result[i] = StudyParticipationTransformer.INSTANCE.toXml(tEmp);
-            i++;
-        }
-        return result;
-    }
-
-    private List<StudyParticipationDTO> convert(StudyParticipation[] arrayList) throws DtoTransformException {
-        List<StudyParticipationDTO> result = null;
-        result = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation tEmp : arrayList) {
-            result.add(StudyParticipationTransformer.INSTANCE.toDto(tEmp));
-        }
-        return result;
-    }
-
   public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyParticipation[] result = null;
       try {
@@ -61,7 +38,7 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
                   .toDto(studyParticipation);
           List<StudyParticipationDTO> dtosList = studyParService.getByStudyProtocol(iiDto, spcDto);
 
-          result = convert(dtosList);
+          result = StudyParticipationTransformer.INSTANCE.convert(dtosList);
           return result;
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
@@ -73,10 +50,10 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
       StudyParticipation[] result = null;
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-          List<StudyParticipationDTO> spcDtos = convert(studyParticipation);
+          List<StudyParticipationDTO> spcDtos = StudyParticipationTransformer.INSTANCE.convert(studyParticipation);
           List<StudyParticipationDTO> dtosList = studyParService.getByStudyProtocol(iiDto, spcDtos);
 
-          result = convert(dtosList);
+          result = StudyParticipationTransformer.INSTANCE.convert(dtosList);
 
           return result;
       } catch (Exception e) {
@@ -89,7 +66,7 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(id);
           List<StudyParticipationDTO> dtosList = studyParService.getByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyParticipationTransformer.INSTANCE.convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);
@@ -105,7 +82,7 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyParticipationDTO> dtosList = studyParService.getCurrentByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyParticipationTransformer.INSTANCE.convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

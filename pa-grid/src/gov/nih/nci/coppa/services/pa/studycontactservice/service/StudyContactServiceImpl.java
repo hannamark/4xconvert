@@ -29,29 +29,6 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
         super();
     }
 
-  private StudyContact[] convert(List<StudyContactDTO> dtosList) throws DtoTransformException {
-        if (dtosList == null) {
-            return null;
-        }
-        StudyContact[] result = null;
-        result = new StudyContact[dtosList.size()];
-        int i = 0;
-        for (StudyContactDTO tEmp : dtosList) {
-            result[i] = StudyContactTransformer.INSTANCE.toXml(tEmp);
-            i++;
-        }
-        return result;
-  }
-
-  private List<StudyContactDTO> convert(StudyContact[] arrayList) throws DtoTransformException {
-        List<StudyContactDTO> result = null;
-        result = new ArrayList<StudyContactDTO>();
-        for (StudyContact tEmp : arrayList) {
-            result.add(StudyContactTransformer.INSTANCE.toDto(tEmp));
-        }
-        return result;
-  }
-
   public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyContact[] result = null;
       try {
@@ -60,7 +37,8 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
                   .toDto(studyContact);
           List<StudyContactDTO> dtosList = studyContactService.getByStudyProtocol(iiDto, spcDto);
 
-          result = convert(dtosList);
+          result = StudyContactTransformer.INSTANCE
+          .convert(dtosList);
           return result;
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
@@ -72,10 +50,12 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
       try {
           StudyContact[] result = null;
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-          List<StudyContactDTO> spcDtos = convert(studyContact);
+          List<StudyContactDTO> spcDtos = StudyContactTransformer.INSTANCE
+          .convert(studyContact);
           List<StudyContactDTO> dtosList = studyContactService.getByStudyProtocol(iiDto, spcDtos);
 
-          result = convert(dtosList);
+          result = StudyContactTransformer.INSTANCE
+          .convert(dtosList);
 
           return result;
       } catch (Exception e) {
@@ -88,7 +68,8 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(id);
           List<StudyContactDTO> dtosList = studyContactService.getByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyContactTransformer.INSTANCE
+          .convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);
@@ -104,7 +85,8 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyContactDTO> dtosList = studyContactService.getCurrentByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyContactTransformer.INSTANCE
+          .convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

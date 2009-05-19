@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
@@ -96,7 +97,9 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
  *
  * @author Steve Lustbader
  */
-public final class StudyResourcingTransformer implements Transformer<StudyResourcing, StudyResourcingDTO> {
+public final class StudyResourcingTransformer
+    extends AbstractTransformer<StudyResourcing, StudyResourcingDTO>
+    implements Transformer<StudyResourcing, StudyResourcingDTO> {
 
     /**
      * Public singleton.
@@ -158,6 +161,14 @@ public final class StudyResourcingTransformer implements Transformer<StudyResour
                 .getSummary4ReportedResourceIndicator()));
         result.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyResourcing[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StudyResourcing[arg0];
     }
 
 }

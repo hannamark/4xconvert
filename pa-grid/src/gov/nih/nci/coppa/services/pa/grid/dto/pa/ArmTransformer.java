@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
@@ -94,7 +95,8 @@ import gov.nih.nci.pa.iso.dto.ArmDTO;
 /**
  * Transforms Arm instances.
  */
-public final class ArmTransformer implements Transformer<Arm, ArmDTO> {
+public final class ArmTransformer extends AbstractTransformer<Arm, ArmDTO>
+    implements Transformer<Arm, ArmDTO> {
 
     /**
      * Public singleton.
@@ -136,5 +138,12 @@ public final class ArmTransformer implements Transformer<Arm, ArmDTO> {
         result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
         result.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Arm[] createXmlArray(int arg0) throws DtoTransformException {
+        return new Arm[arg0];
     }
 }

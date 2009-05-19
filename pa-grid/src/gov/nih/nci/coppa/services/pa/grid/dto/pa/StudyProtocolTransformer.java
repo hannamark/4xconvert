@@ -91,7 +91,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
  * Transforms StudyProtocol instances.
  */
 public final class StudyProtocolTransformer extends AbstractStudyProtocolTransformer<StudyProtocol, StudyProtocolDTO>
-        implements Transformer<StudyProtocol, StudyProtocolDTO> {
+    implements Transformer<StudyProtocol, StudyProtocolDTO> {
 
     /**
      * Public singleton.
@@ -136,5 +136,13 @@ public final class StudyProtocolTransformer extends AbstractStudyProtocolTransfo
         }
         StudyProtocol result = transformBaseXml(input);
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocol[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StudyProtocol[arg0];
     }
 }

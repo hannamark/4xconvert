@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
@@ -97,6 +98,7 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
  * Transforms StudyContact instances.
  */
 public final class StudyContactTransformer
+    extends AbstractTransformer<StudyContact, StudyContactDTO>
     implements Transformer<StudyContact, StudyContactDTO> {
 
     /**
@@ -172,5 +174,12 @@ public final class StudyContactTransformer
         result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddresses()));
 
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyContact[] createXmlArray(int arg0) throws DtoTransformException {
+        return new StudyContact[arg0];
     }
 }

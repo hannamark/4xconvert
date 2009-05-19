@@ -1,9 +1,7 @@
 package gov.nih.nci.coppa.services.pa.armservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.pa.Arm;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.ArmTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeArmEjb;
@@ -53,7 +51,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             List<ArmDTO> armDto = armService.getByPlannedActivity(iiDto);
-            return convert(armDto);
+            return ArmTransformer.INSTANCE.convert(armDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -67,7 +65,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             List<ArmDTO> armDto = armService.getByStudyProtocol(iiDto);
-            return convert(armDto);
+            return ArmTransformer.INSTANCE.convert(armDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -81,7 +79,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<ArmDTO> armDto = armService.getCurrentByStudyProtocol(iiDto);
-            return convert(armDto);
+            return ArmTransformer.INSTANCE.convert(armDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -114,13 +112,5 @@ public class ArmServiceImpl extends ArmServiceImplBase {
      */
   public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
-    }
-
-    private static Arm[] convert(List<ArmDTO> armDto) throws DtoTransformException {
-        Arm[] result = new Arm[armDto.size()];
-        for (int i = 0; i < armDto.size(); ++i) {
-            result[i] = ArmTransformer.INSTANCE.toXml(armDto.get(i));
-        }
-        return result;
     }
 }

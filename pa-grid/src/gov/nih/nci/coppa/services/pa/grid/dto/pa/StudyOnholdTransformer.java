@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformer;
@@ -12,7 +13,9 @@ import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 /**
  * Transforms StudyOnhold between XML and DTO representations.
  */
-public final class StudyOnholdTransformer implements Transformer<StudyOnhold, StudyOnholdDTO> {
+public final class StudyOnholdTransformer
+    extends AbstractTransformer<StudyOnhold, StudyOnholdDTO>
+    implements Transformer<StudyOnhold, StudyOnholdDTO> {
 
     /**
      * Public singleton.
@@ -55,6 +58,13 @@ public final class StudyOnholdTransformer implements Transformer<StudyOnhold, St
         result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toXml(dto.getStudyProtocolIdentifier()));
 
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyOnhold[] createXmlArray(int arg0) throws DtoTransformException {
+        return new StudyOnhold[arg0];
     }
 
 }

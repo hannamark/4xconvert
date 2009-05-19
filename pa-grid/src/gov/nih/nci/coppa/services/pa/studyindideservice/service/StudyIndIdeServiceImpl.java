@@ -28,27 +28,13 @@ public class StudyIndIdeServiceImpl extends StudyIndIdeServiceImplBase {
         super();
     }
 
-    private StudyIndlde[] convert(List<StudyIndldeDTO> dtosList) throws DtoTransformException {
-        if (dtosList == null) {
-            return null;
-        }
-        StudyIndlde[] result = null;
-        result = new StudyIndlde[dtosList.size()];
-        int i = 0;
-        for (StudyIndldeDTO tEmp : dtosList) {
-            result[i] = StudyIndldeTransformer.INSTANCE.toXml(tEmp);
-            i++;
-        }
-        return result;
-  }
-
   public gov.nih.nci.coppa.services.pa.StudyIndlde[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyIndlde[] result = null;
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyIndldeDTO> dtosList = studyIndIdeService.getByStudyProtocol(iiDto);
 
-          result = convert(dtosList);
+          result = StudyIndldeTransformer.INSTANCE.convert(dtosList);
           return result;
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
@@ -67,7 +53,7 @@ public class StudyIndIdeServiceImpl extends StudyIndIdeServiceImplBase {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyIndldeDTO> dtosList = studyIndIdeService.getCurrentByStudyProtocol(iiDto);
 
-          result = convert(dtosList);
+          result = StudyIndldeTransformer.INSTANCE.convert(dtosList);
           return result;
       } catch (Exception e) {
           logger.error(e.getMessage(), e);

@@ -27,7 +27,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
 
     private static final Logger logger = LogManager.getLogger(StudyOnholdServiceImpl.class);
     private final InvokeStudyOnholdEjb studyOnholdService = new InvokeStudyOnholdEjb();
-    
+
     public StudyOnholdServiceImpl() throws RemoteException {
         super();
     }
@@ -47,7 +47,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             List<StudyOnholdDTO> studyOnholdDtoList = studyOnholdService.getByStudyProtocol(iiDto);
-            return convert(studyOnholdDtoList);
+            return StudyOnholdTransformer.INSTANCE.convert(studyOnholdDtoList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -58,7 +58,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<StudyOnholdDTO> studyOnholdDtoList = studyOnholdService.getCurrentByStudyProtocol(iiDto);
-            return convert(studyOnholdDtoList);
+            return StudyOnholdTransformer.INSTANCE.convert(studyOnholdDtoList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -94,12 +94,5 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         throw new RemoteException("Not yet implemented");
     }
 
-    private static StudyOnhold[] convert(List<StudyOnholdDTO> studyOnholdDto) throws DtoTransformException {
-        StudyOnhold[] result = new StudyOnhold[studyOnholdDto.size()];
-        for (int i = 0; i < studyOnholdDto.size(); ++i) {
-            result[i] = StudyOnholdTransformer.INSTANCE.toXml(studyOnholdDto.get(i));
-        }
-        return result;
-    }
 }
 

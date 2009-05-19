@@ -154,4 +154,12 @@ public final class InterventionalStudyProtocolTransformer extends
 
         return result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public InterventionalStudyProtocol[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new InterventionalStudyProtocol[arg0];
+    }
 }

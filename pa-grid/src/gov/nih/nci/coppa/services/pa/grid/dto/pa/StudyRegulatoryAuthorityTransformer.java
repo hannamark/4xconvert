@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -93,8 +94,9 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
  *
  * @author Steve Lustbader
  */
-public final class StudyRegulatoryAuthorityTransformer implements
-        Transformer<StudyRegulatoryAuthority, StudyRegulatoryAuthorityDTO> {
+public final class StudyRegulatoryAuthorityTransformer
+    extends AbstractTransformer<StudyRegulatoryAuthority, StudyRegulatoryAuthorityDTO>
+    implements Transformer<StudyRegulatoryAuthority, StudyRegulatoryAuthorityDTO> {
 
     /**
      * Public singleton.
@@ -132,6 +134,14 @@ public final class StudyRegulatoryAuthorityTransformer implements
         result.setRegulatoryAuthorityIdentifier(IITransformer.INSTANCE.toXml(input.getRegulatoryAuthorityIdentifier()));
         result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyRegulatoryAuthority[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StudyRegulatoryAuthority[arg0];
     }
 
 }

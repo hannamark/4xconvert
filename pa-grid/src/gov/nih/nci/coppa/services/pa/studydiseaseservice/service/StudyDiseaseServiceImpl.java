@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyDisease;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyContactTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyDiseaseTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyDiseaseEjb;
@@ -28,25 +29,12 @@ public class StudyDiseaseServiceImpl extends StudyDiseaseServiceImplBase {
         super();
     }
 
-    private StudyDisease[] convert(List<StudyDiseaseDTO> dtosList) throws DtoTransformException {
-        if (dtosList == null) {
-            return null;
-        }
-        StudyDisease[] result = null;
-        result = new StudyDisease[dtosList.size()];
-        int i = 0;
-        for (StudyDiseaseDTO tEmp : dtosList) {
-            result[i] = StudyDiseaseTransformer.INSTANCE.toXml(tEmp);
-            i++;
-        }
-        return result;
-    }
-
   public gov.nih.nci.coppa.services.pa.StudyDisease[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(id);
           List<StudyDiseaseDTO> dtosList = studyDiseaseService.getByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyDiseaseTransformer.INSTANCE
+          .convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);
@@ -62,7 +50,8 @@ public class StudyDiseaseServiceImpl extends StudyDiseaseServiceImplBase {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyDiseaseDTO> dtosList = studyDiseaseService.getCurrentByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyDiseaseTransformer.INSTANCE
+          .convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

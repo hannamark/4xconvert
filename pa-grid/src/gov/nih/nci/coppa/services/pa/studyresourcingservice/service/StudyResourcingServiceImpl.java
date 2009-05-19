@@ -1,9 +1,7 @@
 package gov.nih.nci.coppa.services.pa.studyresourcingservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.pa.StudyResourcing;
 import gov.nih.nci.coppa.services.pa.armservice.service.ArmServiceImpl;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyResourcingTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
@@ -51,7 +49,7 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<StudyResourcingDTO> studyResourcingDto = srService.getstudyResourceByStudyProtocol(iiDto);
-            return convert(studyResourcingDto);
+            return StudyResourcingTransformer.INSTANCE.convert(studyResourcingDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -71,14 +69,6 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
 
   public void deleteStudyResourceByID(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
-    }
-
-    private static StudyResourcing[] convert(List<StudyResourcingDTO> studyResourcingDto) throws DtoTransformException {
-        StudyResourcing[] result = new StudyResourcing[studyResourcingDto.size()];
-        for (int i = 0; i < studyResourcingDto.size(); ++i) {
-            result[i] = StudyResourcingTransformer.INSTANCE.toXml(studyResourcingDto.get(i));
-        }
-        return result;
     }
 
 }

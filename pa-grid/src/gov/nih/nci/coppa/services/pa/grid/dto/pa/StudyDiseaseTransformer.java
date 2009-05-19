@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyDisease;
@@ -93,6 +94,7 @@ import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
  * Transforms StudyDisease instances.
  */
 public final class StudyDiseaseTransformer
+    extends AbstractTransformer<StudyDisease, StudyDiseaseDTO>
     implements Transformer<StudyDisease, StudyDiseaseDTO> {
 
     /**
@@ -139,5 +141,12 @@ public final class StudyDiseaseTransformer
         result.setLeadDiseaseIndicator(BLTransformer.INSTANCE.toXml(input.getLeadDiseaseIndicator()));
 
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyDisease[] createXmlArray(int arg0) throws DtoTransformException {
+        return new StudyDisease[arg0];
     }
 }

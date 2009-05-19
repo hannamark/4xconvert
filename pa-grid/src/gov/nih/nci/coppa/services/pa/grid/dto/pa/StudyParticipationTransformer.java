@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
@@ -96,6 +97,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
  * Transforms StudyParticipation instances.
  */
 public final class StudyParticipationTransformer
+    extends AbstractTransformer<StudyParticipation, StudyParticipationDTO>
     implements Transformer<StudyParticipation, StudyParticipationDTO> {
 
     /**
@@ -171,5 +173,13 @@ public final class StudyParticipationTransformer
         result.setTargetAccrualNumber(INTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
 
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyParticipation[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StudyParticipation[arg0];
     }
 }

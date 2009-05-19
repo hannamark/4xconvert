@@ -1,9 +1,7 @@
 package gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOutcomeMeasureTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyOutcomeMeasureEjb;
@@ -27,22 +25,11 @@ public class StudyOutcomeMeasureServiceImpl extends StudyOutcomeMeasureServiceIm
         super();
     }
 
-  private StudyOutcomeMeasure[] convert(List<StudyOutcomeMeasureDTO> dtosList) throws DtoTransformException {
-      StudyOutcomeMeasure[] result = null;
-      result = new StudyOutcomeMeasure[dtosList.size()];
-      int i = 0;
-      for (StudyOutcomeMeasureDTO tEmp : dtosList) {
-          result[i] = StudyOutcomeMeasureTransformer.INSTANCE.toXml(tEmp);
-          i++;
-      }
-      return result;
-  }
-
   public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(id);
           List<StudyOutcomeMeasureDTO> dtosList = studyOutMeasureService.getByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyOutcomeMeasureTransformer.INSTANCE.convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);
@@ -58,7 +45,7 @@ public class StudyOutcomeMeasureServiceImpl extends StudyOutcomeMeasureServiceIm
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyOutcomeMeasureDTO> dtosList = studyOutMeasureService.getCurrentByStudyProtocol(iiDto);
-          return convert(dtosList);
+          return StudyOutcomeMeasureTransformer.INSTANCE.convert(dtosList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

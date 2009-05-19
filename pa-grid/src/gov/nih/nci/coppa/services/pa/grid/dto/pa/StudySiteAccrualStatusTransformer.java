@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
@@ -93,8 +94,9 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 /**
  * Transforms StudySiteAccrualStatus instances.
  */
-public final class StudySiteAccrualStatusTransformer implements
-        Transformer<StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
+public final class StudySiteAccrualStatusTransformer
+    extends AbstractTransformer<StudySiteAccrualStatus, StudySiteAccrualStatusDTO>
+    implements Transformer<StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
 
     /**
      * Public singleton.
@@ -134,6 +136,14 @@ public final class StudySiteAccrualStatusTransformer implements
         result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
         result.setStudyParticipation(IITransformer.INSTANCE.toXml(input.getStudyParticipationIi()));
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteAccrualStatus[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StudySiteAccrualStatus[arg0];
     }
 
 }

@@ -115,7 +115,7 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       try {
           Ii ii = IITransformer.INSTANCE.toDto(id);
           List<StudyOverallStatusDTO> dtoList = ejb.getByStudyProtocol(ii);
-          return convert(dtoList);
+          return StudyOverallStatusTransformer.INSTANCE.convert(dtoList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);
@@ -126,7 +126,7 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       try {
           Ii ii = IITransformer.INSTANCE.toDto(studyProtocolId);
           List<StudyOverallStatusDTO> dtoList = ejb.getCurrentByStudyProtocol(ii);
-          return convert(dtoList);
+          return StudyOverallStatusTransformer.INSTANCE.convert(dtoList);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);
@@ -158,13 +158,5 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
 
   public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     throw new RemoteException("Not yet implemented");
-  }
-
-  private static StudyOverallStatus[] convert(List<StudyOverallStatusDTO> dtoList) throws DtoTransformException {
-      StudyOverallStatus[] result = new StudyOverallStatus[dtoList.size()];
-      for (int i = 0; i < dtoList.size(); ++i) {
-          result[i] = StudyOverallStatusTransformer.INSTANCE.toXml(dtoList.get(i));
-      }
-      return result;
   }
 }

@@ -86,7 +86,9 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<StudyParticipationContactDTO> dtosList =
-                    studyParContService.getByStudyProtocol(iiDto, convert(studyParticipationContact));
+                    studyParContService.getByStudyProtocol(iiDto
+                            , StudyParticipationContactTransformer
+                            .INSTANCE.convert(studyParticipationContact));
             result = new StudyParticipationContact[dtosList.size()];
             int i = 0;
             for (StudyParticipationContactDTO tEmp : dtosList) {
@@ -98,15 +100,6 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
         }
-    }
-
-    private static final List<StudyParticipationContactDTO> convert(StudyParticipationContact[] studyParticipationContact)
-            throws DtoTransformException {
-        List<StudyParticipationContactDTO> spcDtos = new ArrayList<StudyParticipationContactDTO>();
-        for (int i = 0; i < studyParticipationContact.length; i++) {
-            spcDtos.add(StudyParticipationContactTransformer.INSTANCE.toDto(studyParticipationContact[i]));
-        }
-        return spcDtos;
     }
 
     /**

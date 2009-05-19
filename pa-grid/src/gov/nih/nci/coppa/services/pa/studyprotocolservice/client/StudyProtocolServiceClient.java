@@ -78,7 +78,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27426");
+        id.setExtension("27432");
         StudyProtocol result = client.getStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
@@ -87,7 +87,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27426");
+        id.setExtension("27432");
         InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }

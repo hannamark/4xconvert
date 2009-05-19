@@ -80,73 +80,20 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.grid.dto.pa;
+package gov.nih.nci.coppa.pa.grid.dto.transform.pa.faults;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
-import gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
+import gov.nih.nci.coppa.services.pa.faults.PAFault;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.PAFaultTransformer;
 
-/**
- * Transforms StudyRecruitmentStatus instances.
- */
-public final class StudyRecruitmentStatusTransformer
-    extends AbstractTransformer<StudyRecruitmentStatus, StudyRecruitmentStatusDTO>
-    implements Transformer<StudyRecruitmentStatus, StudyRecruitmentStatusDTO> {
+import org.junit.Test;
 
-    /**
-     * Public singleton.
-     */
-    public static final StudyRecruitmentStatusTransformer INSTANCE = new StudyRecruitmentStatusTransformer();
+public class PaFaultTransformerTest {
 
-    private StudyRecruitmentStatusTransformer() { }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyRecruitmentStatusDTO toDto(StudyRecruitmentStatus input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-
-        StudyRecruitmentStatusDTO result = new StudyRecruitmentStatusDTO();
-        //II
-        result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
-        result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toDto(input.getStudyProtocol()));
-        //CD
-        result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
-        result.setStatusDate(TSTransformer.INSTANCE.toDto(input.getStatusDate()));
-
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyRecruitmentStatus toXml(StudyRecruitmentStatusDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        StudyRecruitmentStatus result = new StudyRecruitmentStatus();
-        //II
-        result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
-        result.setStudyProtocol(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
-        //CD
-        result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
-        result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
-
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyRecruitmentStatus[] createXmlArray(int arg0)
-            throws DtoTransformException {
-        return new StudyRecruitmentStatus[arg0];
+    @Test(expected = UnsupportedOperationException.class)
+    public void testToDto() throws DtoTransformException {
+        PAFaultTransformer.INSTANCE
+            .toDto(CoppaFaultHelper.toFault(new PAFault(), new UnsupportedOperationException()));
     }
 }

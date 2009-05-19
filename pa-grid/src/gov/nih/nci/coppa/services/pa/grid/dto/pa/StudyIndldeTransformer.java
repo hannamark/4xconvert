@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
@@ -95,6 +96,7 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
  * Transforms StudyIndlde instances.
  */
 public final class StudyIndldeTransformer
+    extends AbstractTransformer<StudyIndlde, StudyIndldeDTO>
     implements Transformer<StudyIndlde, StudyIndldeDTO> {
 
     /**
@@ -162,5 +164,12 @@ public final class StudyIndldeTransformer
         result.setIndldeNumber(STTransformer.INSTANCE.toXml(input.getIndldeNumber()));
 
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyIndlde[] createXmlArray(int arg0) throws DtoTransformException {
+        return new StudyIndlde[arg0];
     }
 }

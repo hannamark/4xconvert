@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
@@ -95,7 +96,8 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
  * Transforms StudyOverallStatus instances.
  */
 public final class StudyOverallStatusTransformer
-        implements Transformer<StudyOverallStatus, StudyOverallStatusDTO> {
+    extends AbstractTransformer<StudyOverallStatus, StudyOverallStatusDTO>
+    implements Transformer<StudyOverallStatus, StudyOverallStatusDTO> {
 
     /**
      * Public singleton.
@@ -136,6 +138,14 @@ public final class StudyOverallStatusTransformer
         result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
         result.setStudyProtocol(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyOverallStatus[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StudyOverallStatus[arg0];
     }
 
 }
