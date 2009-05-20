@@ -78,6 +78,6 @@
     <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/jbossall-client-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/jboss-ejb3x-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/hibernate3-4.0.5.GA.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.1-SNAPSHOT.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.1.jar"/>
     <classpathentry kind="output" path="eclipse-out"/>
 </classpath>
