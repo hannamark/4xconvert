@@ -27,7 +27,7 @@ public class MockDocumentService implements DocumentServiceRemote {
         dto.setFileName(StConverter.convertToSt("fileName"));
         dto.setTypeCode(CdConverter.convertStringToCd("typeCode"));
         dto.setIdentifier(IiConverter.convertToIi("1"));
-        dto.setStudyProtocolIi(IiConverter.convertToIi("1"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         docList.add(dto);
     }
     
@@ -42,9 +42,7 @@ public class MockDocumentService implements DocumentServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.DocumentService#delete(gov.nih.nci.pa.iso.dto.DocumentDTO)
      */
-    public Boolean delete(DocumentDTO docDTO) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+    public void delete(DocumentDTO docDTO) throws PAException {
     }
 
     /* (non-Javadoc)
@@ -62,7 +60,7 @@ public class MockDocumentService implements DocumentServiceRemote {
             throws PAException {
         List<DocumentDTO> matchingDtos = new ArrayList<DocumentDTO>();
         for (DocumentDTO dto: docList){
-            if(dto.getStudyProtocolIi().getExtension().equals(studyProtocolIi.getExtension())) {
+            if(dto.getStudyProtocolIdentifier().getExtension().equals(studyProtocolIi.getExtension())) {
                 matchingDtos.add(dto);
             }
         }

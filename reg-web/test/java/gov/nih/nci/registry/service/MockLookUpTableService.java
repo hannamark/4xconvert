@@ -25,6 +25,8 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         map.put("smtp", "mailfwd.nih.gov");
         map.put("fromaddress", "ncictrp@mail.nih.gov");
         map.put("allowed.uploadfile.types", "doc");
+        map.put("user.account.subject", "Junit user account subject");
+        map.put("user.account.body", "Junit user account body url");
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#getCountries()

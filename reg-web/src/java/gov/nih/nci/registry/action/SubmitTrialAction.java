@@ -79,9 +79,6 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -173,28 +170,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
             if (trialDTO == null) {
                return ERROR; 
-            }
-            //duplicate check--
-          //check for duplicate using the Lead Org Trial Identifier and Lead Org Identifier
-            Organization paOrg = new Organization();
-            paOrg.setIdentifier(trialDTO.getLeadOrganizationIdentifier());
-            paOrg = RegistryServiceLocator.getPAOrganizationService().getOrganizationByIndetifers(paOrg);
-            if (paOrg != null && paOrg.getId() != null) {
-                StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-                criteria.setLeadOrganizationTrialIdentifier(trialDTO.getLocalProtocolIdentifier());
-                criteria.setLeadOrganizationId(paOrg.getId().toString());
-                criteria.setExcludeRejectProtocol(Boolean.TRUE);
-                List<StudyProtocolQueryDTO> records = RegistryServiceLocator.
-                                    getProtocolQueryService().getStudyProtocolByCriteria(criteria);
-                if (records != null && !records.isEmpty()) {
-                    addActionError("Duplicate Trial Submission: A trial exists in the system with the same "
-                            + "Lead Organization Trial Identifier for the selected Lead Organization");
-                    ServletActionContext.getRequest().setAttribute(
-                              "failureMessage" , "Duplicate Trial Submission: A trial exists in the system " 
-                              + "with the same  Lead Organization Trial Identifier for the " 
-                              + "selected Lead Organization");
-                    return ERROR;
-                }
             }
             TrialUtil util = new TrialUtil();
             StudyProtocolDTO studyProtocolDTO = null;

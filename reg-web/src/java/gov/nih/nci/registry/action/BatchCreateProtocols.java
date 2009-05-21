@@ -86,9 +86,6 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -208,27 +205,6 @@ public class BatchCreateProtocols {
             // using the Lead Org Trial Identifier and Lead Org Identifier
             OrganizationBatchDTO leadOrgDto = dataValidator.buildLeadOrgDto(dto);
             Ii orgIdIi = lookUpOrgs(leadOrgDto);            
-            
-            Organization paOrg = new Organization();
-            paOrg.setIdentifier(IiConverter.convertToString(orgIdIi));
-            paOrg = RegistryServiceLocator.getPAOrganizationService()
-                        .getOrganizationByIndetifers(paOrg);
-        
-            if (paOrg != null && paOrg.getId() != null) {
-                    StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-                    criteria.setLeadOrganizationTrialIdentifier(dto.getLocalProtocolIdentifier());
-                    criteria.setLeadOrganizationId(paOrg.getId().toString());    
-                    criteria.setExcludeRejectProtocol(Boolean.TRUE);
-
-                    List<StudyProtocolQueryDTO> records = RegistryServiceLocator
-                            .getProtocolQueryService().getStudyProtocolByCriteria(
-                                    criteria);
-                    if (records != null && !records.isEmpty()) {
-                       throw new PAException(
-                                "Duplicate Trial - A trial exists in the system "
-                                        + " for the Lead Organization and Trial Identifier");
-                    }
-            }
             //look up sponser
             OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(dto);
             Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);

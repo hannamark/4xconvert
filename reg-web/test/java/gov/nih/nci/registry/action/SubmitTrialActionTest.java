@@ -166,7 +166,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction = new SubmitTrialAction();
         assertEquals("error", submitAction.create());      
     }
-    @Test
+    //@Test
     public void testCreateWithDupTrial(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();

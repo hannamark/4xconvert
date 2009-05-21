@@ -34,6 +34,7 @@ import gov.nih.nci.registry.service.MockOrganizationalContactCorrelationService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPersonEntityService;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
+import gov.nih.nci.registry.service.MockRegistryUserService;
 import gov.nih.nci.registry.service.MockStudyContactService;
 import gov.nih.nci.registry.service.MockStudyIndldeService;
 import gov.nih.nci.registry.service.MockStudyOverallStatusService;
@@ -70,6 +71,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final OrganizationalContactCorrelationServiceRemote orgContactCorrelationService = new MockOrganizationalContactCorrelationService();
     private final StudyContactServiceRemote studyContactService = new MockStudyContactService();
     private final StudyParticipationContactServiceRemote studyParticipationContactService = new MockStudyParticipationContactService();
+    private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
     public DocumentServiceRemote getDocumentService() {
         return documentService;
     }
@@ -126,8 +128,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     }
 
     public RegistryUserServiceRemote getRegistryUserService() {
-        // TODO Auto-generated method stub
-        return null;
+
+        return registryUserService;
     }
 
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
