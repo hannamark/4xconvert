@@ -651,7 +651,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private void createdocuments(Ii studyProtocolIi , List<DocumentDTO> documentDTOs)
     throws PAException {
         for (DocumentDTO documentDTO : documentDTOs) {
-            documentDTO.setStudyProtocolIi(studyProtocolIi);
+            documentDTO.setStudyProtocolIdentifier(studyProtocolIi);
             documentDTO.setIdentifier(null);
             documentService.create(documentDTO);
         }

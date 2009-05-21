@@ -57,7 +57,6 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ed;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 /**
  *
@@ -67,10 +66,9 @@ import gov.nih.nci.coppa.iso.St;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class DocumentDTO extends BaseDTO {
+public class DocumentDTO extends StudyDTO {
     private static final long serialVersionUID = 6363271404447384900L;
     private Cd typeCode;
-    private Ii studyProtocolIi;
     private Bl activeIndicator;
     private St fileName;
     private St inactiveCommentText;
@@ -88,21 +86,7 @@ public class DocumentDTO extends BaseDTO {
     public void setTypeCode(Cd typeCode) {
         this.typeCode = typeCode;
     }
-    
-    /**
-     * @return studyProtocolIi
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    
-    /**
-     * @param studyProtocolIi studyProtocolIi
-     */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
-    }
-    
+   
     /**
      * @return activeIndicator
      */

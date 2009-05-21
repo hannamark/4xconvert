@@ -108,7 +108,7 @@ public class DocumentConverter {
         docDTO.setIdentifier(IiConverter.converToDocumentIi(doc.getId()));
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
-        docDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(doc.getStudyProtocol().getId()));
+        docDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(doc.getStudyProtocol().getId()));
         return docDTO;
     }
 
@@ -121,7 +121,7 @@ public class DocumentConverter {
         Document doc = new Document();
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIdentifier()));
         doc.setDateLastUpdated(new Date());
         doc.setStudyProtocol(spBo);
         if (docDTO.getTypeCode() != null) {

@@ -84,11 +84,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.validator.NotNull;
 /**
  *
  * @author Kalpana Guthikonda
@@ -96,11 +92,10 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name =  "DOCUMENT")
-public class Document extends AbstractEntity {
+public class Document extends AbstractStudyEntity {
 
     private static final long serialVersionUID = 8042681583974060450L;
     private DocumentTypeCode typeCode;
-    private StudyProtocol studyProtocol;
     private Boolean activeIndicator;
     private String fileName;
     private String inactiveCommentText;
@@ -122,25 +117,6 @@ public class Document extends AbstractEntity {
     public void setTypeCode(DocumentTypeCode typeCode) {
         this.typeCode = typeCode;
     }
-
-    /**
-     *
-     * @return protocol
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
-    @NotNull
-    public StudyProtocol getStudyProtocol() {
-        return studyProtocol;
-    }
-
-    /**
-     * @param studyProtocol studyProtocol
-     */
-    public void setStudyProtocol(StudyProtocol studyProtocol) {
-        this.studyProtocol = studyProtocol;
-    }
-
     /**
      *
      * @return activeIndicator

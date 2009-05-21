@@ -135,7 +135,7 @@ public class DocumentServiceBeanTest {
     @Test
     public void create() throws Exception {
         DocumentDTO docDTO = new DocumentDTO();
-        docDTO.setStudyProtocolIi(pid);
+        docDTO.setStudyProtocolIdentifier(pid);
         docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
         docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
         docDTO.setText(EdConverter.convertToEd("test".getBytes()));
@@ -155,6 +155,6 @@ public class DocumentServiceBeanTest {
         DocumentDTO dto = statusList.get(0);
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.DOCUMENT_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
-        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

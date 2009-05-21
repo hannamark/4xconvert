@@ -123,9 +123,8 @@ public interface DocumentService {
 
     /**
      * @param docDTO DocumentDTO 
-     * @return Boolean
      * @throws PAException PAException
      */
-    Boolean delete(DocumentDTO docDTO) throws PAException; 
+    void delete(DocumentDTO docDTO) throws PAException; 
 
 }

@@ -247,10 +247,12 @@ public class StudyMilestoneServiceBean
                 }
             }
         }
-
         // document work flow status rules
         DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-        if (!newCode.isValidDwfStatus(dwStatus)) {
+        if ((!newCode.equals(MilestoneCode.SUBMISSION_RECEIVED)
+                && !newCode.equals(MilestoneCode.SUBMISSION_ACCEPTED)
+                && !newCode.equals(MilestoneCode.SUBMISSION_REJECTED))
+                && !newCode.isValidDwfStatus(dwStatus)) {
             StringBuffer errMsg = new StringBuffer("The processing status must be ");
             int iSize = newCode.getValidDwfStatuses().size();
             for (int x = 0; x < iSize; x++) {
@@ -269,7 +271,6 @@ public class StudyMilestoneServiceBean
                     + "status is " + ((dwStatus == null) ? "null." : "'" + dwStatus.getCode() + "'."));
             throw new PAException(errMsg.toString());
         }
-
         // validate abstraction
         if (validateAbstractions && newCode.isValidationTrigger()) {
             if (abstractionCompletionService == null) {
@@ -290,22 +291,13 @@ public class StudyMilestoneServiceBean
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
         
         if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED)) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.SUBMITTED.equals(dwStatus)) {
-                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
-            }
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
         }
         if (newCode.equals(MilestoneCode.SUBMISSION_ACCEPTED)) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
-                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
-            }
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
         }
         if (newCode.equals(MilestoneCode.SUBMISSION_REJECTED)) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.REJECTED.equals(dwStatus)) {
-                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
-            }
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
         }
         if (newCode.equals(MilestoneCode.QC_COMPLETE)) {
             DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());

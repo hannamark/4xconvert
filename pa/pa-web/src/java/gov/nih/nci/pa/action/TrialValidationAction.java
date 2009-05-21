@@ -98,7 +98,6 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -113,6 +112,7 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -129,7 +129,9 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -188,16 +190,18 @@ public class TrialValidationAction extends ActionSupport {
         if (hasFieldErrors()) {
             return EDIT;
         }
+        try {
         save();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
         return EDIT;
     }
-
     /**
      *
      * @return String
-     * @throws PAException ex
      */
-    public String accept() throws PAException {
+    public String accept() {
         enforceBusinessRules();
         //check if submission number is greater than 1 then it is amend
         if (isTrialForAmendment(gtdDTO.getSubmissionNumber())
@@ -207,16 +211,20 @@ public class TrialValidationAction extends ActionSupport {
         if (hasFieldErrors()) {
             return EDIT;
         }
-        save();
-        createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
-                setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
-        //send mail only if the trial is Amended
-        if (isTrialForAmendment(gtdDTO.getSubmissionNumber())) {
-            //send mail
-            PoPaServiceBeanLookup.getMailManagerService()
-            .sendAmendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
+        try { 
+            save();
+            createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
+                    setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
+            //send mail only if the trial is Amended
+            if (isTrialForAmendment(gtdDTO.getSubmissionNumber())) {
+                //send mail
+                PoPaServiceBeanLookup.getMailManagerService()
+                .sendAmendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
+            }
+        } catch (PAException e) {
+                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
         return EDIT;
     }
@@ -230,7 +238,11 @@ public class TrialValidationAction extends ActionSupport {
         if (hasFieldErrors()) {
             return EDIT;
         }
+        try {
         save();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
         ServletActionContext.getRequest().getSession().setAttribute("submissionNumber", gtdDTO.getSubmissionNumber());
         return "rejectReason";
     }
@@ -283,58 +295,33 @@ public class TrialValidationAction extends ActionSupport {
      * Creates the milestones.
      * 
      * @param msc the msc
+     * @throws PAException e
      */
-    private void createMilestones(MilestoneCode msc) {
+    private void createMilestones(MilestoneCode msc) throws PAException {
         
-        DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
-        try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            
-        if (MilestoneCode.SUBMISSION_ACCEPTED.equals(msc)) {
+
             StudyMilestoneDTO smDto = new StudyMilestoneDTO();
-            smDto.setMilestoneDate(dto.getStatusDateRange());
-            smDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-            smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_ACCEPTED));
-            try {
-                PaRegistry.getStudyMilestoneService().create(smDto);
-            } catch (PAException e) {
-                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-            }
-            smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_PDQ_ABSTRACTION));
-            try {
-                PaRegistry.getStudyMilestoneService().create(smDto);
-            } catch (PAException e) {
-                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-            }
-        }
-        if (MilestoneCode.SUBMISSION_REJECTED.equals(msc)) {
-            StudyMilestoneDTO smDto = new StudyMilestoneDTO();
-            smDto.setMilestoneDate(dto.getStatusDateRange());
-            smDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-            smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_REJECTED));
-            if (gtdDTO.getCommentText() != null) {
+            smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+            smDto.setStudyProtocolIdentifier(studyProtocolIi);
+            smDto.setMilestoneCode(CdConverter.convertToCd(msc));
                 smDto.setCommentText(StConverter.convertToSt(gtdDTO.getCommentText()));
-            }
-            try {
+
+            PaRegistry.getStudyMilestoneService().create(smDto);
+            
+            if (MilestoneCode.SUBMISSION_ACCEPTED.equals(msc)) {
+                smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_PDQ_ABSTRACTION));
                 PaRegistry.getStudyMilestoneService().create(smDto);
-            } catch (PAException e) {
-                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-            }
-        }
+            }   
+            StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
+            .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
         
-        StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
-        .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
-        
-        // put an entry in the session and store StudyProtocolQueryDTO
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-        } 
+            // put an entry in the session and store StudyProtocolQueryDTO
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
     }
 
-    private void save() {
-        try {
+    private void save() throws PAException {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
@@ -365,9 +352,6 @@ public class TrialValidationAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-        }
     }
 
     private void enforceBusinessRules() {
@@ -795,14 +779,14 @@ public class TrialValidationAction extends ActionSupport {
                     persons.add(EnPnConverter.convertToPaPersonDTO(resultDTO));
                 } catch (NullifiedEntityException e) {
                     addActionError(e.getMessage());
-                    ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+                    ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
                     LOG.error("Exception occured while getting organization contact : " + e);
                     return "display_org_contacts";
                 }
             }
         } catch (Exception e) {
             addActionError(e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             LOG.error("Exception occured while getting organization contact : " + e);
             return "display_org_contacts";
         }

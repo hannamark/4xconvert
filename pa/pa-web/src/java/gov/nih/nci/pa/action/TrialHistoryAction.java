@@ -255,7 +255,7 @@ ServletResponseAware {
     for (DocumentDTO docDto : documentDTO) {
         String fileName = StConverter.convertToString(docDto.getFileName());
         documents.append("<a href='#' onclick=\"handlePopup('");
-        documents.append(docDto.getStudyProtocolIi().getExtension());
+        documents.append(docDto.getStudyProtocolIdentifier().getExtension());
         documents.append("','");
         documents.append(docDto.getIdentifier().getExtension());
         documents.append("','");

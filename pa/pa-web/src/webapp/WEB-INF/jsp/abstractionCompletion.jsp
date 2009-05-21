@@ -36,15 +36,15 @@ function generateTSR() {
    <pa:failureMessage/>
     <s:form name="aForm"><s:actionerror/>    
     <h2>
-    <s:if test="${abstractionError==true}">                
+    <s:if test="%{abstractionError==true}">                
         Abstraction validation failed. Please check error(s).
     </s:if> 
-    <s:elseif test="${abstractionError==false}">
+    <s:if test="%{abstractionError==false}">
         Abstraction is valid.             
-    </s:elseif>
+    </s:if>
     
     </h2>
-    <s:if test="abstractionList != null">    
+    <s:if test="%{abstractionList != null}">    
     <display:table name="${abstractionList}" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
 	    <display:column title="Type" property="errorType"  sortable="true" headerClass="sortable" />
     	<display:column title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
@@ -54,10 +54,10 @@ function generateTSR() {
 	<div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
-                <s:if test="${abstractionError==false}">                                        
-                    <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>
-                    <li><s:a href="#"  cssClass="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></s:a></li>                                
-                </s:if>
+                <c:if test="${abstractionError==false}">                                        
+                    <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
+                    <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>                                
+                </c:if>
             </ul>   
         </del>
     </div> 

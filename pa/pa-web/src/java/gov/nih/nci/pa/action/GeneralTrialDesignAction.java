@@ -177,12 +177,15 @@ public class GeneralTrialDesignAction extends ActionSupport {
         if (hasFieldErrors()) {
           return RESULT;
         }
+        try {
         save();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
         return RESULT;
     }
 
-    private void save() {
-        try {
+    private void save() throws PAException {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
@@ -210,13 +213,6 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
-
-
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(
-                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-        }
-
     }
 
 

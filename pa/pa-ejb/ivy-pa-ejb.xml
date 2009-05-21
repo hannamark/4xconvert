@@ -22,10 +22,9 @@ This is the definition of a virtual module called bda-download that has a depend
     <!-- compile -->
     <dependency org="ajax"                   name="ajaxtags"                rev="1.3-beta-rc7"    conf="compile->master"/>
     <dependency org="aopalliance"            name="aopalliance"             rev="1.0"             conf="compile->master"/>
-    <dependency org="apache"                 name="struts2-api"             rev="2.0.5"           conf="compile->master"/>
-    <dependency org="apache"                 name="struts2-core"            rev="2.0.5"           conf="compile->master"/>
-    <dependency org="apache"                 name="struts2-sitemesh-plugin" rev="2.0.5"           conf="compile->master"/>
-    <dependency org="apache"                 name="struts2-spring-plugin"   rev="2.0.5"           conf="compile->master"/>
+    <dependency org="apache"                 name="struts2-core"            rev="2.0.14"           conf="compile->default"/>
+    <dependency org="apache"                 name="struts2-sitemesh-plugin" rev="2.0.14"           conf="compile->default"/>
+    <dependency org="apache"                 name="struts2-spring-plugin"   rev="2.0.14"           conf="compile->default"/>
     <dependency org="apache"                 name="taglibs-standard"        rev="1.1.2"           conf="compile->master"/>
     <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="compile->master"/>
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="compile->master"/>
@@ -56,9 +55,9 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ncicb"                  name="po-services-client"      rev="1.1.0.rc1"       conf="compile->master"/>
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
-    <dependency org="ognl"                   name="ognl"                    rev="2.6.9"           conf="compile->master"/>
+    <dependency org="ognl"                   name="ognl"                    rev="2.6.11"           conf="compile->default"/>
     <dependency org="opensymphony"           name="sitemesh"                rev="2.2.1"           conf="compile->master"/>
-    <dependency org="opensymphony"           name="xwork"                   rev="2.0.0"           conf="compile->master"/>
+    <dependency org="opensymphony"           name="xwork"                   rev="2.0.7"           conf="compile->default"/>
     <dependency org="org.directwebremoting"  name="dwr"                     rev="2.0.1"           conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0"           conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.GA"        conf="compile->master"/>

@@ -115,7 +115,7 @@ private Session sess;
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getTypeCode().getCode(), dto.getTypeCode().getCode());
         assertEquals(bo.getFileName(), dto.getFileName().getValue());
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
 
     @Test
@@ -125,12 +125,12 @@ private Session sess;
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
         dto.setFileName(StConverter.convertToSt("IRB_Approval_Document.doc"));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
         Document bo = DocumentConverter.convertFromDTOToDomain(dto);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getTypeCode().getCode(), dto.getTypeCode().getCode());
         assertEquals(bo.getFileName(), dto.getFileName().getValue());
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
 }

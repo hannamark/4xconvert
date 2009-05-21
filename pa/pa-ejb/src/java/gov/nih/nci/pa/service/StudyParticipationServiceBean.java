@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -88,14 +89,20 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -104,6 +111,7 @@ import javax.interceptor.Interceptors;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyParticipationServiceBean
         extends AbstractRoleIsoService<StudyParticipationDTO, StudyParticipation, StudyParticipationConverter>
         implements StudyParticipationServiceRemote, StudyParticipationServiceLocal {
@@ -114,7 +122,6 @@ public class StudyParticipationServiceBean
      * @throws PAException PAException
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
         StudyParticipationDTO createDto = businessRules(dto);
         createDto.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
@@ -129,7 +136,6 @@ public class StudyParticipationServiceBean
      * @throws PAException PAException
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyParticipationDTO update(StudyParticipationDTO dto)
             throws PAException {
         StudyParticipationDTO updateDto = businessRules(dto);
@@ -170,6 +176,7 @@ public class StudyParticipationServiceBean
             dto.setReviewBoardApprovalNumber(null);
         }
         enforceNoDuplicate(dto);
+        enforceNoDuplicateTrial(dto);
         return dto;
     }
 
@@ -197,6 +204,8 @@ public class StudyParticipationServiceBean
                         + newFunction + "' for this study.");
             }
         }
+        
+        
     }
 
     private void enforceOnlyOneOversightCommittee(StudyParticipationDTO dto) throws PAException {
@@ -212,4 +221,52 @@ public class StudyParticipationServiceBean
             }
         }
     }
+    /**
+     * 
+     * @param dto dto
+     * @throws PAException e
+     */
+    private void enforceNoDuplicateTrial(StudyParticipationDTO dto) throws PAException {
+        Session session = null;
+        List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+            // step 1: form the hql
+            String hql = " select spart "
+                       + " from StudyParticipation spart "
+                       + " join spart.researchOrganization as ro "
+                       + " where spart.localStudyProtocolIdentifier = :localStudyProtocolIdentifier "
+                       + " and spart.functionalCode = '"
+                       +   StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'"
+                       + " and ro.id = :orgIdentifier";
+
+            getLogger().info("query study_participation = " + hql + ".  ");
+
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            query.setParameter("localStudyProtocolIdentifier",
+                    StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
+            query.setParameter("orgIdentifier",
+                    IiConverter.convertToLong(dto.getResearchOrganizationIi()));
+
+            // step 3: query the result
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in getByLocalStudyProtocolIdentifier.  ", hbe);
+        }
+        if (queryList.size() > 1) {
+            throw new PADuplicateException("Duplicate Trial Submission: A trial exists in the system with the same "
+                    + "Lead Organization Trial Identifier for the selected Lead Organization");
+        }
+        for (StudyParticipation sp : queryList) {
+            if (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension())) {
+                throw new PADuplicateException("Duplicate Trial Submission: A trial exists in the system with the same "
+                        + "Lead Organization Trial Identifier for the selected Lead Organization");
+            }
+        }
+        getLogger().info("Leaving enforceNoDuplicateTrial..");
+    
+        }
+
 }

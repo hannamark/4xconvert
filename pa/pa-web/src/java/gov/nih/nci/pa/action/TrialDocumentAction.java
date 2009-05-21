@@ -192,7 +192,7 @@ ServletResponseAware {
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
              getAttribute(Constants.STUDY_PROTOCOL_II);
              DocumentDTO docDTO = new DocumentDTO();
-             docDTO.setStudyProtocolIi(studyProtocolIi);
+             docDTO.setStudyProtocolIdentifier(studyProtocolIi);
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
@@ -287,7 +287,7 @@ ServletResponseAware {
              getAttribute(Constants.STUDY_PROTOCOL_II);
              DocumentDTO  docDTO = new DocumentDTO();
              docDTO.setIdentifier(IiConverter.convertToIi(id));
-             docDTO.setStudyProtocolIi(studyProtocolIi);
+             docDTO.setStudyProtocolIdentifier(studyProtocolIi);
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
