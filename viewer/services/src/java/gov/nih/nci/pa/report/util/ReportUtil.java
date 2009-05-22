@@ -1,7 +1,7 @@
-/*
+/***
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -74,91 +74,94 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.service;
+package gov.nih.nci.pa.report.util;
 
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
-import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
 
-import java.lang.reflect.ParameterizedType;
+import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
+import java.util.Calendar;
 
 /**
  * @author Hugh Reinhart
- * @since 05/04/2009
- *
- * @param <CRITERIA> criteria dto
- * @param <RESULT> result dto
+ * @since 5/20/2009
  */
-public abstract class AbstractBaseReportBean<CRITERIA extends AbstractBaseCriteriaDto, RESULT>
-        implements BaseReportInterface<CRITERIA, RESULT> {
-
-    private final Class<RESULT> resultType;
-
-    /** Static spring to suppress conversion warnings. */
-    protected static final String UNCHECKED = "unchecked";
-
-    /** Logger. */
-    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
-    protected final Logger logger;
-
-    /** Hibernate session. */
-    protected Session session;
-
-    /** Default constructor. */
-    @SuppressWarnings(UNCHECKED)
-    public AbstractBaseReportBean() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-        resultType = (Class) parameterizedType.getActualTypeArguments()[1];
-        logger = Logger.getLogger(resultType);
+public final class ReportUtil {
+    /**
+     * Convert BigInteger to iso Int.
+     * @param bigInt the BigInteger returned use hibernate sql
+     * @return iso Int
+     * @throws PAException conversion exception
+     */
+    public static Int convertToInt(BigInteger bigInt) throws PAException {
+        int intValue = bigInt.intValue();
+        if (!bigInt.equals(BigInteger.valueOf(intValue))) {
+            throw new PAException("Error converting BigInteger to Int.  Value is out of range.");
+        }
+        return IntConverter.convertToInt(intValue);
     }
 
     /**
-     * {@inheritDoc}
+     * Convert Double to iso Int.
+     * @param doub the Double returned use hibernate sql
+     * @return iso Int
+     * @throws PAException conversion exception
      */
-    public List<RESULT> get(CRITERIA criteria) throws PAException {
-        logger.info("Calling get(" + resultType.getName() + ")...");
-        if (criteria == null) {
-            throw new PAException("Report criteria dto must not be null.");
+    public static Int convertToInt(Double doub) throws PAException {
+        int intValue = doub.intValue();
+        if (!doub.equals(Double.valueOf(intValue))) {
+            throw new PAException("Error converting Double to Int.  Value is out of range.");
         }
-        return null;
+        return IntConverter.convertToInt(intValue);
     }
 
     /**
-     * @param criteria criteria
-     * @param field field to run date checks
-     * @return date range clauses
+     * @param year year
+     * @param month month
+     * @param day day
+     * @return Timestamp
      */
-    protected String getDateRangeClauses(CRITERIA criteria, String field) {
-        StringBuffer sql = new StringBuffer();
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
-            sql.append("AND " + field + " >= :LOW ");
-        }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
-            sql.append("AND " + field + " < :HIGH ");
-        }
-        return sql.toString();
+    public static Timestamp makeTimestamp(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.DATE, day);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return new Timestamp(cal.getTimeInMillis());
     }
 
     /**
-     * @param criteria criteria
-     * @param query query
+     * @param timestamp timestame
+     * @return year
      */
-    protected void setDateRangeParameters(CRITERIA criteria, SQLQuery query) {
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
-            query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
-        }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
-            Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
-            query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
-                    ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
-        }
+    public static int getYear(Timestamp timestamp) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timestamp);
+        return cal.get(Calendar.YEAR);
+    }
+
+    /**
+     * @param timestamp timestamp
+     * @return month
+     */
+    public static int getMonth(Timestamp timestamp) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timestamp);
+        return cal.get(Calendar.MONTH) + 1;
+    }
+
+    /**
+     * @param timestamp timestamp
+     * @return day
+     */
+    public static int getDay(Timestamp timestamp) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timestamp);
+        return cal.get(Calendar.DAY_OF_MONTH);
     }
 }

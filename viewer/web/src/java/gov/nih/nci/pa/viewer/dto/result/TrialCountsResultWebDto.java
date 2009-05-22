@@ -77,7 +77,6 @@
 package gov.nih.nci.pa.viewer.dto.result;
 
 import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
 
@@ -90,10 +89,11 @@ import java.util.List;
  */
 public class TrialCountsResultWebDto {
 
-    String organization;
-    String start;
-    String end;
-    String count;
+    private String organization;
+    private Integer year;
+    private Integer month;
+    private Integer day;
+    private Integer count;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -115,9 +115,10 @@ public class TrialCountsResultWebDto {
     public TrialCountsResultWebDto(TrialCountsResultDto dto) {
         super();
         this.organization = StConverter.convertToString(dto.getOrganization());
-        this.count = IntConverter.convertToInteger(dto.getCount()).toString();
-        this.start = IvlConverter.convertTs().convertLowToString(dto.getTimeInverval());
-        this.end = IvlConverter.convertTs().convertHighToString(dto.getTimeInverval());
+        this.year = IntConverter.convertToInteger(dto.getYear());
+        this.month = IntConverter.convertToInteger(dto.getMonth());
+        this.day = IntConverter.convertToInteger(dto.getDay());
+        this.count = IntConverter.convertToInteger(dto.getCount());
     }
 
     /**
@@ -135,44 +136,58 @@ public class TrialCountsResultWebDto {
     }
 
     /**
-     * @return the start
+     * @return the year
      */
-    public String getStart() {
-        return start;
+    public Integer getYear() {
+        return year;
     }
 
     /**
-     * @param start the start to set
+     * @param year the year to set
      */
-    public void setStart(String start) {
-        this.start = start;
+    public void setYear(Integer year) {
+        this.year = year;
     }
 
     /**
-     * @return the end
+     * @return the month
      */
-    public String getEnd() {
-        return end;
+    public Integer getMonth() {
+        return month;
     }
 
     /**
-     * @param end the end to set
+     * @param month the month to set
      */
-    public void setEnd(String end) {
-        this.end = end;
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
+    /**
+     * @return the day
+     */
+    public Integer getDay() {
+        return day;
+    }
+
+    /**
+     * @param day the day to set
+     */
+    public void setDay(Integer day) {
+        this.day = day;
     }
 
     /**
      * @return the count
      */
-    public String getCount() {
+    public Integer getCount() {
         return count;
     }
 
     /**
      * @param count the count to set
      */
-    public void setCount(String count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 }

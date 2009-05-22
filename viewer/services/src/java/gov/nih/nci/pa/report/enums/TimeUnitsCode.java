@@ -81,6 +81,8 @@ package gov.nih.nci.pa.report.enums;
  * @since 05/12/2009
  */
 public enum TimeUnitsCode {
+    /** None. */
+    NONE(""),
     /** Day. */
     DAY("Day"),
     /** Month. */

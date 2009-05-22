@@ -81,9 +81,12 @@ import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.TrialCountsCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerConstants;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 /**
  * @author Hugh Reinhart
@@ -104,6 +107,8 @@ public class TrialCountsAction extends AbstractReportAction
         TrialCountsLocal local = ViewerServiceLocator.getInstance().getTrialCountsReportService();
         List<TrialCountsResultDto> isoList = local.get(criteria.getIsoDto());
         setResultList(TrialCountsResultWebDto.getWebList(isoList));
+        ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_TIME_UNITS,
+                criteria.getGroupByTimeUnit());
         return super.getReport();
     }
 

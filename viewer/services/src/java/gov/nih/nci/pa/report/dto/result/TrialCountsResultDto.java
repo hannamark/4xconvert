@@ -77,11 +77,8 @@
 package gov.nih.nci.pa.report.dto.result;
 
 import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
@@ -91,7 +88,9 @@ import gov.nih.nci.pa.iso.util.StConverter;
 public class TrialCountsResultDto {
 
     private St organization = StConverter.convertToSt(null);
-    private Ivl<Ts> timeInverval = IvlConverter.convertTs().convertToIvl(null, null);
+    private Int year = IntConverter.convertToInt((Integer) null);
+    private Int month = IntConverter.convertToInt((Integer) null);
+    private Int day = IntConverter.convertToInt((Integer) null);
     private Int count = IntConverter.convertToInt((Integer) null);
 
     /**
@@ -107,16 +106,40 @@ public class TrialCountsResultDto {
         this.organization = organization;
     }
     /**
-     * @return the timeInverval
+     * @return the year
      */
-    public Ivl<Ts> getTimeInverval() {
-        return timeInverval;
+    public Int getYear() {
+        return year;
     }
     /**
-     * @param timeInverval the timeInverval to set
+     * @param year the year to set
      */
-    public void setTimeInverval(Ivl<Ts> timeInverval) {
-        this.timeInverval = timeInverval;
+    public void setYear(Int year) {
+        this.year = year;
+    }
+    /**
+     * @return the month
+     */
+    public Int getMonth() {
+        return month;
+    }
+    /**
+     * @param month the month to set
+     */
+    public void setMonth(Int month) {
+        this.month = month;
+    }
+    /**
+     * @return the day
+     */
+    public Int getDay() {
+        return day;
+    }
+    /**
+     * @param day the day to set
+     */
+    public void setDay(Int day) {
+        this.day = day;
     }
     /**
      * @return the count

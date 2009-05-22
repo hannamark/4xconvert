@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.report.util.ReportConstants;
+import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
@@ -17,7 +17,8 @@ import org.hibernate.SQLQuery;
  * @param <CRITERIA> criteria dto
  * @param <RESULT> result dto
  */
-public class AbstractMilestoneReportBean<CRITERIA, RESULT> extends AbstractBaseReportBean<CRITERIA, RESULT> {
+public class AbstractMilestoneReportBean<CRITERIA extends AbstractBaseCriteriaDto, RESULT>
+        extends AbstractBaseReportBean<CRITERIA, RESULT> {
 
     /** study protocol identifier. */
     protected static final int SP_IDENTIFIER_IDX = 0;
@@ -33,13 +34,13 @@ public class AbstractMilestoneReportBean<CRITERIA, RESULT> extends AbstractBaseR
     protected static final int MILESTONE_DATE_IDX = 5;
 
     /**
-     * @param ctrpOnly only return milestones related to ctrp trials
+     * @param criteria criteria
      * @param currentOnly only return the most recent milestone
      * @param summaryRelatedOnly only return milestones related to trial summary document
      * @return query result
      * @throws PAException exception
      */
-    protected List<Object[]> getMilestones(boolean ctrpOnly, boolean currentOnly, boolean summaryRelatedOnly)
+    protected List<Object[]> getMilestones(CRITERIA criteria, boolean currentOnly, boolean summaryRelatedOnly)
             throws PAException {
 
         List<Object[]> resultList;
@@ -52,26 +53,26 @@ public class AbstractMilestoneReportBean<CRITERIA, RESULT> extends AbstractBaseR
                 + "FROM study_milestone AS sm "
                 + "  INNER JOIN study_protocol AS sp ON (sm.study_protocol_identifier = sp.identifier) "
                 + "  LEFT OUTER JOIN csm_user AS us ON (sp.user_last_created = us.login_name) "
-                + "WHERE (sp.user_last_created NOT IN (:EXCLUDE_LIST) OR sp.user_last_created IS NULL) ");
+                + "WHERE 1=1 ");
             if (currentOnly) {
                 sql.append(
-                        " AND (sm.identifier, sm.study_protocol_identifier) in "
-                      + "     (select max(identifier), study_protocol_identifier "
-                      + "        from study_milestone "
-                      + "        group by study_protocol_identifier) ");
+                        "AND (sm.identifier, sm.study_protocol_identifier) in "
+                      + "    (select max(identifier), study_protocol_identifier "
+                      + "     from study_milestone "
+                      + "     group by study_protocol_identifier) ");
             }
             if (summaryRelatedOnly) {
-                sql.append(" AND sm.milestone_code IN ('" + MilestoneCode.TRIAL_SUMMARY_SENT.getName()
-                        + "','" + MilestoneCode.TRIAL_SUMMARY_FEEDBACK.getName() + "') ");
+                sql.append(" AND ((sm.milestone_code = '" + MilestoneCode.TRIAL_SUMMARY_SENT.getName() + "' "
+                                  + getDateRangeClauses(criteria, "sm.milestone_date") + ") "
+                                  + "OR (sm.milestone_code = '" + MilestoneCode.TRIAL_SUMMARY_FEEDBACK.getName()
+                                  + "')) ");
+            } else {
+                sql.append(getDateRangeClauses(criteria, "sm.milestone_date"));
             }
             sql.append("ORDER BY sp.assigned_identifier, sm.identifier ");
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
-            if (ctrpOnly) {
-                query.setParameterList("EXCLUDE_LIST", ReportConstants.NON_CTRP_SUBMITTERS);
-            } else {
-                query.setParameter("EXCLUDE_LIST", "");
-            }
+            setDateRangeParameters(criteria, query);
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
             resultList = queryList;

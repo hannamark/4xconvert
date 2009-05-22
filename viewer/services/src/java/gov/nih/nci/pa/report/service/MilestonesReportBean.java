@@ -110,8 +110,7 @@ public class MilestonesReportBean extends AbstractMilestoneReportBean<Milestones
         super.get(criteria);
         ArrayList<MilestonesResultDto> rList = new ArrayList<MilestonesResultDto>();
 
-        List<Object[]> queryList = getMilestones(
-                BlConverter.covertToBool(criteria.getCtrpOnly()),
+        List<Object[]> queryList = getMilestones(criteria,
                 BlConverter.covertToBool(criteria.getCurrentMilestoneOnly()),
                 false);
 

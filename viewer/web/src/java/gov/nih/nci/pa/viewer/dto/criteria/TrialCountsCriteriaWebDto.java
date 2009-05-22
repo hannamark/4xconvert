@@ -76,9 +76,7 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
 import gov.nih.nci.pa.report.enums.TimeUnitsCode;
 
@@ -90,8 +88,6 @@ public class TrialCountsCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialC
 
     private Boolean ctrpOnly = true;;
     private String groupByTimeUnit = TimeUnitsCode.DAY.getDisplayName();
-    private String intervalStartDate = null;
-    private String intervalEndDate = null;
 
     /**
      * {@inheritDoc}
@@ -99,10 +95,8 @@ public class TrialCountsCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialC
     @Override
     public TrialCountsCriteriaDto getIsoDto() {
         TrialCountsCriteriaDto result = new TrialCountsCriteriaDto();
-        result.setCtrpOnly(BlConverter.convertToBl(getCtrpOnly()));
+        super.setInterval(result);
         result.setGroupByTimeUnit(CdConverter.convertStringToCd(getGroupByTimeUnit()));
-        result.setTimeInterval(IvlConverter.convertTs()
-                .convertToIvl(getIntervalStartDate(), getIntervalEndDate()));
         return result;
     }
 
@@ -132,33 +126,5 @@ public class TrialCountsCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialC
      */
     public void setGroupByTimeUnit(String groupByTimeUnit) {
         this.groupByTimeUnit = groupByTimeUnit;
-    }
-
-    /**
-     * @return the intervalStartDate
-     */
-    public String getIntervalStartDate() {
-        return intervalStartDate;
-    }
-
-    /**
-     * @param intervalStartDate the intervalStartDate to set
-     */
-    public void setIntervalStartDate(String intervalStartDate) {
-        this.intervalStartDate = intervalStartDate;
-    }
-
-    /**
-     * @return the intervalEndDate
-     */
-    public String getIntervalEndDate() {
-        return intervalEndDate;
-    }
-
-    /**
-     * @param intervalEndDate the intervalEndDate to set
-     */
-    public void setIntervalEndDate(String intervalEndDate) {
-        this.intervalEndDate = intervalEndDate;
     }
 }

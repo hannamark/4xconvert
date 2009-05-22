@@ -94,7 +94,7 @@ public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<Milesto
     @Override
     public MilestonesCriteriaDto getIsoDto() {
         MilestonesCriteriaDto result = new MilestonesCriteriaDto();
-        result.setCtrpOnly(BlConverter.convertToBl(getCtrpOnly()));
+        super.setInterval(result);
         result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
         return result;
     }

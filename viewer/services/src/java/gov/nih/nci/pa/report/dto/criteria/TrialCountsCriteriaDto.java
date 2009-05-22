@@ -77,19 +77,15 @@
 package gov.nih.nci.pa.report.dto.criteria;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class TrialCountsCriteriaDto extends TrialListCriteriaDto {
+public class TrialCountsCriteriaDto extends AbstractBaseCriteriaDto {
 
     private Cd groupByTimeUnit = CdConverter.convertToCd(null);
-    private Ivl<Ts> timeInterval = IvlConverter.convertTs().convertToIvl(null, null);
 
     /**
      * @return the groupByTimeUnits
@@ -102,17 +98,5 @@ public class TrialCountsCriteriaDto extends TrialListCriteriaDto {
      */
     public void setGroupByTimeUnit(Cd groupByTimeUnit) {
         this.groupByTimeUnit = groupByTimeUnit;
-    }
-    /**
-     * @return the timeInterval
-     */
-    public Ivl<Ts> getTimeInterval() {
-        return timeInterval;
-    }
-    /**
-     * @param timeInterval the timeInterval to set
-     */
-    public void setTimeInterval(Ivl<Ts> timeInterval) {
-        this.timeInterval = timeInterval;
     }
 }

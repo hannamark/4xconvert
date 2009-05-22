@@ -83,7 +83,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class MilestonesCriteriaDto extends TrialListCriteriaDto {
+public class MilestonesCriteriaDto extends AbstractBaseCriteriaDto {
 
     private Bl currentMilestoneOnly = BlConverter.convertToBl(null);
 

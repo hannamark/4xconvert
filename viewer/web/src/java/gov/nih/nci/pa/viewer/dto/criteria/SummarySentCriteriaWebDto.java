@@ -93,6 +93,7 @@ public class SummarySentCriteriaWebDto extends AbstractBaseCriteriaWebDto<Summar
     @Override
     public SummarySentCriteriaDto getIsoDto() {
         SummarySentCriteriaDto result = new SummarySentCriteriaDto();
+        super.setInterval(result);
         result.setOverdueOnly(BlConverter.convertToBl(getOverdueOnly()));
         return result;
     }

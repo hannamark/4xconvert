@@ -76,16 +76,30 @@
 */
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
+import gov.nih.nci.pa.report.enums.TimeUnitsCode;
+import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
+import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
 
 /**
 * @author Hugh Reinhart
@@ -96,16 +110,162 @@ import javax.interceptor.Interceptors;
 public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCriteriaDto, TrialCountsResultDto>
         implements TrialCountsLocal {
 
+    private static final int HASH_CONSTANT = 33;
+
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
     public List<TrialCountsResultDto> get(TrialCountsCriteriaDto criteria)
             throws PAException {
         super.get(criteria);
-        ArrayList<TrialCountsResultDto> rList = new ArrayList<TrialCountsResultDto>();
-        return rList;
+        TimeUnitsCode timeUnits =  TimeUnitsCode.valueOf(CdConverter.convertCdToString(criteria.getGroupByTimeUnit()));
+        Map<Group, Integer> counts;
+        try {
+            session = ViewerHibernateUtil.getCurrentSession();
+            String sss = CdConverter.convertCdToString(criteria.getGroupByTimeUnit());
+            TimeUnitsCode.valueOf(sss);
+            IvlConverter.convertTs().convertLow(criteria.getTimeInterval());
+            IvlConverter.convertTs().convertHigh(criteria.getTimeInterval());
+            SQLQuery query = null;
+            StringBuffer sql = new StringBuffer("SELECT organization, date_last_created ");
+            sql.append("FROM study_protocol AS sp "
+                     + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
+                     + "WHERE 1=1 ");
+            sql.append(getDateRangeClauses(criteria, "sp.date_last_created"));
+            logger.info("query = " + sql);
+            query = session.createSQLQuery(sql.toString());
+            setDateRangeParameters(criteria, query);
+            @SuppressWarnings(UNCHECKED)
+            List<Object[]> queryList = query.list();
+            counts = generateCounts(queryList,
+                    TimeUnitsCode.valueOf(CdConverter.convertCdToString(criteria.getGroupByTimeUnit())));
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in " + this.getClass(), hbe);
+        }
+        logger.info("Leaving get(TrialCountsCriteriaDto), returning " + counts.size() + " object(s).");
+        return generateIsoResultList(counts, timeUnits);
     }
 
+    /**
+     * Used to group output for summation.
+     */
+    class Group implements Comparable<TrialCountsReportBean.Group> {
+
+        private final String org;
+        private final Timestamp ts;
+
+        /**
+         * @param org organization
+         * @param ts creation date
+         * @param tu time units
+         */
+        Group(String org, Timestamp ts, TimeUnitsCode tu) {
+            int year = 1;
+            int month = 1;
+            int day = 1;
+            if (TimeUnitsCode.DAY.equals(tu)) {
+                year = ReportUtil.getYear(ts);
+                month = ReportUtil.getMonth(ts);
+                day = ReportUtil.getDay(ts);
+            }
+            if (TimeUnitsCode.MONTH.equals(tu)) {
+                year = ReportUtil.getYear(ts);
+                month = ReportUtil.getMonth(ts);
+            }
+            if (TimeUnitsCode.YEAR.equals(tu)) {
+                year = ReportUtil.getYear(ts);
+            }
+            this.org = (org == null) ? "" : org.trim();
+            this.ts = ReportUtil.makeTimestamp(year, month, day);
+        }
+        /**
+         * @return the org
+         */
+        String getOrg() {
+            return org;
+        }
+        /**
+         * @return the ts
+         */
+        Timestamp getTs() {
+            return ts;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if ((obj == null) || (obj.getClass() != this.getClass())) {
+                return false;
+            }
+            Group test = (Group) obj;
+            return ((ts == test.ts) || (ts != null && ts.equals(test.ts))
+                    && (org == test.org || (org != null && org.equals(test.org))));
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            int hash = HASH_CONSTANT;
+            hash += HASH_CONSTANT * ts.hashCode();
+            hash += org.hashCode();
+            return hash;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public int compareTo(Group o) {
+            if (this.org.compareTo(o.org) != 0) {
+                return this.org.compareTo(o.org);
+            }
+            return this.ts.compareTo(o.ts);
+        }
+    }
+
+    private Map<Group, Integer> generateCounts(List<Object[]> sqlList, TimeUnitsCode timeUnits) {
+        HashMap<Group, Integer> hm = new HashMap<Group, Integer>();
+        for (Object[] sr : sqlList) {
+            Group gp = new TrialCountsReportBean.Group((String) sr[0], (Timestamp) sr[1], timeUnits);
+            if (hm.containsKey(gp)) {
+                hm.put(gp, hm.get(gp) + 1);
+            } else {
+                hm.put(gp, 1);
+            }
+        }
+        return hm;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<TrialCountsResultDto> generateIsoResultList(Map<Group, Integer> counts, TimeUnitsCode timeUnits)
+            throws PAException {
+        ArrayList<Group> group = new ArrayList<Group>();
+        group.addAll(counts.keySet());
+        Collections.sort(group);
+
+        ArrayList<TrialCountsResultDto> isoList = new ArrayList<TrialCountsResultDto>();
+        for (Group g : counts.keySet()) {
+            TrialCountsResultDto iso = new TrialCountsResultDto();
+            iso.setCount(IntConverter.convertToInt(counts.get(g)));
+            if (timeUnits == TimeUnitsCode.DAY) {
+                iso.setDay(IntConverter.convertToInt(ReportUtil.getDay(g.getTs())));
+                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.getTs())));
+                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.getTs())));
+            }
+            if (timeUnits == TimeUnitsCode.MONTH) {
+                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.getTs())));
+                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.getTs())));
+            }
+            if (timeUnits == TimeUnitsCode.YEAR) {
+                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.getTs())));
+            }
+            iso.setOrganization(StConverter.convertToSt(g.getOrg()));
+            isoList.add(iso);
+        }
+        return isoList;
+    }
 }

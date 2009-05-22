@@ -114,7 +114,7 @@ public class SummarySentReportBean extends AbstractMilestoneReportBean<SummarySe
     public List<SummarySentResultDto> get(SummarySentCriteriaDto criteria)
         throws PAException {
         super.get(criteria);
-        List<Object[]> queryList = this.getMilestones(true, false, true);
+        List<Object[]> queryList = this.getMilestones(criteria, false, true);
         HashMap<BigInteger, SummarySentResultDto> ssMap = new HashMap<BigInteger, SummarySentResultDto>();
         for (Object[] sr : queryList) {
             BigInteger spId = (BigInteger) sr[SP_IDENTIFIER_IDX];
@@ -132,10 +132,21 @@ public class SummarySentReportBean extends AbstractMilestoneReportBean<SummarySe
         }
         List<SummarySentResultDto> rList = new ArrayList<SummarySentResultDto>();
         rList.addAll(ssMap.values());
+        rList = removeIfOnlyFeedback(rList);
         if (BlConverter.covertToBool(criteria.getOverdueOnly())) {
             rList = removeIfNotOverdue(rList);
         }
         return rList;
+    }
+
+    private static List<SummarySentResultDto> removeIfOnlyFeedback(List<SummarySentResultDto> rList) {
+        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
+        for (SummarySentResultDto r : rList) {
+            if (!PAUtil.isTsNull(r.getMilestoneDate())) {
+                resultList.add(r);
+            }
+        }
+        return resultList;
     }
 
     private static List<SummarySentResultDto> removeIfNotOverdue(List<SummarySentResultDto> rList) {

@@ -159,7 +159,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
-public class SummarySentCriteriaDto {
+public class SummarySentCriteriaDto extends AbstractBaseCriteriaDto {
 
     private Bl overdueOnly = BlConverter.convertToBl(null);
 

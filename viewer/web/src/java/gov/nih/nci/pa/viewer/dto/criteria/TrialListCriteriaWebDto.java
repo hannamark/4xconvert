@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
 
 /**
@@ -93,7 +92,7 @@ public class TrialListCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialLis
     @Override
     public TrialListCriteriaDto getIsoDto() {
         TrialListCriteriaDto result = new TrialListCriteriaDto();
-        result.setCtrpOnly(BlConverter.convertToBl(getCtrpOnly()));
+        super.setInterval(result);
         return result;
     }
 

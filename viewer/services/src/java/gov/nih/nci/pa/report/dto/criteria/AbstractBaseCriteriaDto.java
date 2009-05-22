@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -74,14 +74,31 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.util;
+package gov.nih.nci.pa.report.dto.criteria;
+
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 
 /**
+ * All reports will have a date range as the part of the criteria.
  * @author Hugh Reinhart
- * @since 5/12/2009
+ * @since 05/22/2009
  */
-public final class ReportConstants {
+public abstract class AbstractBaseCriteriaDto {
 
-    /** Array of all STUDY_PROTOCOL.USER_LAST_CREATED's used to identify non-CTRP studies. */
-    public static final String[] NON_CTRP_SUBMITTERS = {"brownph2@mail.nih.gov", "pb8593@yahoo.com"};
+    private Ivl<Ts> timeInterval = IvlConverter.convertTs().convertToIvl(null, null);
+
+    /**
+     * @return the timeInterval
+     */
+    public Ivl<Ts> getTimeInterval() {
+        return timeInterval;
+    }
+    /**
+     * @param timeInterval the timeInterval to set
+     */
+    public void setTimeInterval(Ivl<Ts> timeInterval) {
+        this.timeInterval = timeInterval;
+    }
 }

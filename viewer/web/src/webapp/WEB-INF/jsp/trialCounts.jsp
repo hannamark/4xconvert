@@ -10,15 +10,15 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
-    addCalendar("Cal1", "Select Date", "criteria.intervalStartDate", "criteria");
-    addCalendar("Cal2", "Select Date", "criteria.intervalEndDate", "criteria");
-    setWidth(90, 1, 15, 1);
-    setFormat("mm/dd/yyyy");
+addCalendar("Cal1", "Select Date", "criteria.intervalStartDate", "criteria");
+addCalendar("Cal2", "Select Date", "criteria.intervalEndDate", "criteria");
+setWidth(90, 1, 15, 1);
+setFormat("mm/dd/yyyy");
 
-    function handleAction(){
-        document.forms[0].action="trialCountsgetReport.action";
-        document.forms[0].submit();
-    }
+function handleAction(){
+    document.forms[0].action="trialCountsgetReport.action";
+    document.forms[0].submit();
+}
 </script>
 </head>
 <body>
@@ -26,21 +26,13 @@
     <h1><fmt:message key="trialCounts.header"/></h1>
     <s:form name="criteria">
         <table class="form">    
-            <tr> 
-                <td class="label">
-                    <label><fmt:message key="trialCounts.criteria.ctrpOnly"/></label>
-                </td>
-                <td class="value">
-                    <s:checkbox name="criteria.ctrpOnly" />
-                </td>
-            </tr>
-            <tr> 
+           <tr> 
                 <td class="label">
                     <label><fmt:message key="trialCounts.criteria.groupByTimeUnit"/></label>
                 </td>
                 <td class="value"><s:select
                     name="criteria.groupByTimeUnit"
-                    headerKey="-1" headerValue=""
+                    headerKey="NONE" headerValue=""
                     list="#{'DAY':'Day', 'MONTH':'Month', 'YEAR':'Year'}"/>
                 </td>
             </tr>

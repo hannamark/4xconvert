@@ -87,12 +87,15 @@ public final class ViewerConstants {
 
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_ROLE = "viewerRole";
+    /** Role-name for the public role. */
+    public static final String ROLE_PUBLIC = "Submitter";
+    /** Role-name for the ctro staff role. */
+    public static final String ROLE_CTRO = "Abstractor";
+    /** Role-name to view ctro staff reports without write access to PA. */
+    public static final String ROLE_REPORTING = "ReportViewer";
+
     /** Attribute used to store the results in session. */
     public static final String RESULT_LIST = "displayTagList";
-    /** role-name for the public role. */
-    public static final String ROLE_PUBLIC = "Submitter";
-    /** role-name for the ctro staff role. */
-    public static final String ROLE_CTRO = "Abstractor";
-    /** role-name to view ctro staff reports without write access to PA. */
-    public static final String ROLE_REPORTING = "ReportViewer";
+    /** Attribute used to store the time units for report in session. */
+    public static final String RESULT_TIME_UNITS = "timeUnitsCode";
 }

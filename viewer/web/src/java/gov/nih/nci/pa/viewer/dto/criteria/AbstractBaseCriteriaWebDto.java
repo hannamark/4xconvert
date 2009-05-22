@@ -76,15 +76,61 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
+import gov.nih.nci.pa.util.PAUtil;
+
 /**
  * @author Hugh Reinhart
  * @since 05/06/2009
  * @param <ISODTO> corresponding service iso dto
  */
-public abstract class AbstractBaseCriteriaWebDto<ISODTO> {
+public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractBaseCriteriaDto> {
+
+    private String intervalStartDate;
+    private String intervalEndDate;
 
     /**
      * @return an iso dto instance
      */
     public abstract ISODTO getIsoDto();
+
+    /**
+     * @param isodto the iso dto
+     */
+    public void setInterval(ISODTO isodto) {
+        String low = getIntervalStartDate();
+        if ((low != null) && low.trim().equals("")) {
+            low = null;
+        }
+        String high = getIntervalEndDate();
+        if ((high != null) && high.trim().equals("")) {
+            high = null;
+        }
+        isodto.setTimeInterval(IvlConverter.convertTs().convertToIvl(low, high));
+    }
+    /**
+     * @return the intervalStartDate
+     */
+    public String getIntervalStartDate() {
+        return intervalStartDate;
+    }
+    /**
+     * @param intervalStartDate the intervalStartDate to set
+     */
+    public void setIntervalStartDate(String intervalStartDate) {
+        this.intervalStartDate = PAUtil.normalizeDateString(intervalStartDate);
+    }
+    /**
+     * @return the intervalEndDate
+     */
+    public String getIntervalEndDate() {
+        return intervalEndDate;
+    }
+    /**
+     * @param intervalEndDate the intervalEndDate to set
+     */
+    public void setIntervalEndDate(String intervalEndDate) {
+        this.intervalEndDate = PAUtil.normalizeDateString(intervalEndDate);
+    }
 }

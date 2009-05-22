@@ -76,13 +76,11 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-import gov.nih.nci.pa.report.util.ReportConstants;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
@@ -122,8 +120,8 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
         try {
             session = ViewerHibernateUtil.getCurrentSession();
             SQLQuery query = null;
-            String sql
-                = "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
+            StringBuffer sql = new StringBuffer(
+                  "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
                 + "       , sp.official_title, dws.status_code "
                 + "FROM study_protocol AS sp "
                 + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
@@ -131,16 +129,12 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
                 + "WHERE dws.identifier in "
                 + "      ( select max(identifier) "
                 + "        from document_workflow_status "
-                + "        group by study_protocol_identifier ) "
-                + "  AND (sp.user_last_created NOT IN (:EXCLUDE_LIST) OR sp.user_last_created IS NULL)"
-                + "ORDER BY cm.organization, sp.date_last_created";
+                + "        group by study_protocol_identifier ) ");
+            sql.append(getDateRangeClauses(criteria, "sp.date_last_created"));
+            sql.append("ORDER BY cm.organization, sp.date_last_created");
             logger.info("query = " + sql);
-            query = session.createSQLQuery(sql);
-            if (BlConverter.covertToBool(criteria.getCtrpOnly())) {
-                query.setParameterList("EXCLUDE_LIST", ReportConstants.NON_CTRP_SUBMITTERS);
-            } else {
-                query.setParameter("EXCLUDE_LIST", "");
-            }
+            query = session.createSQLQuery(sql.toString());
+            setDateRangeParameters(criteria, query);
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
             for (Object[] sr : queryList) {
