@@ -9,7 +9,8 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -54,7 +55,7 @@ public class MockOrganizationCorrelationService implements
         o.setIdentifier(poId);
         o.setName(getOrgNameFromPoIdentifier(poId));
         o.setPostalCode("12345");
-        o.setStatusCode(StatusCode.ACTIVE);
+        o.setStatusCode(EntityStatusCode.ACTIVE);
         paOrgList.add(o);
         poPaOrgMap.put(poId, o);
     }
@@ -78,7 +79,7 @@ public class MockOrganizationCorrelationService implements
         hcf.setId(seq++);
         hcf.setIdentifier("po" + seq);
         hcf.setOrganization(poPaOrgMap.get(orgPoIdentifier));
-        hcf.setStatusCode(StatusCode.ACTIVE);
+        hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         hcfList.add(hcf);
         return hcf.getId();
@@ -103,7 +104,7 @@ public class MockOrganizationCorrelationService implements
         oc.setId(seq++);
         oc.setIdentifier("po" + seq);
         oc.setOrganization(poPaOrgMap.get(orgPoIdentifier));
-        oc.setStatusCode(StatusCode.ACTIVE);
+        oc.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         oc.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         ocList.add(oc);
         return oc.getId();
@@ -123,7 +124,7 @@ public class MockOrganizationCorrelationService implements
         o.setIdentifier(IiConverter.convertToString(poOrg.getIdentifier()));
         o.setName(EnOnConverter.convertEnOnToString(poOrg.getName()));
         o.setPostalCode("12345");
-        o.setStatusCode(StatusCode.ACTIVE);
+        o.setStatusCode(EntityStatusCode.ACTIVE);
         paOrgList.add(o);
         poPaOrgMap.put(o.getIdentifier(), o);
         return o;
@@ -147,7 +148,7 @@ public class MockOrganizationCorrelationService implements
         ro.setId(seq++);
         ro.setIdentifier("po" + seq);
         ro.setOrganization(poPaOrgMap.get(orgPoIdentifier));
-        ro.setStatusCode(StatusCode.ACTIVE);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         ro.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         roList.add(ro);
         return ro.getId();
