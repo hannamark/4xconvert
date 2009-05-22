@@ -142,6 +142,7 @@ import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
@@ -149,6 +150,7 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -405,13 +407,13 @@ public class TestSchema {
             
             ResearchOrganization rOrg = new ResearchOrganization();
             rOrg.setOrganization(org);
-            rOrg.setStatusCode(StatusCode.ACTIVE);
+            rOrg.setStatusCode(StructuralRoleStatusCode.ACTIVE);
             addUpdObject(rOrg);
             researchOrganizationIds.add(rOrg.getId());
             
             OversightCommittee oCommittee = new OversightCommittee();
             oCommittee.setOrganization(org);
-            oCommittee.setStatusCode(StatusCode.ACTIVE);
+            oCommittee.setStatusCode(StructuralRoleStatusCode.ACTIVE);
             addUpdObject(oCommittee);
             oversightCommitteeIds.add(oCommittee.getId());
                      
@@ -432,7 +434,7 @@ public class TestSchema {
             sPart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
             sPart.setHealthCareFacility(hfc);
             sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
-            sPart.setStatusCode(StatusCode.ACTIVE);
+            sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
             sPart.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("6/1/2008"));
             sPart.setStudyProtocol(sp);
             addUpdObject(sPart);
@@ -456,7 +458,7 @@ public class TestSchema {
             spc.setPrimaryIndicator(true);
             spc.setRoleCode(StudyParticipationContactRoleCode.SUBMITTER);
             spc.setState("ZZ");
-            spc.setStatusCode(StatusCode.ACTIVE);
+            spc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
             spc.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/15/2008"));
             spc.setStudyParticipation(sPart);
             spc.setStudyProtocol(sp);
@@ -584,7 +586,7 @@ public class TestSchema {
             sc.setPrimaryIndicator(Boolean.TRUE);    
             sc.setStudyProtocol(sp);
             sc.setRoleCode(StudyContactRoleCode.SCIENTIFIC_LEADERSHIP);
-            sc.setStatusCode(StatusCode.ACTIVE);
+            sc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
             addUpdObject(sc);
             
             StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();

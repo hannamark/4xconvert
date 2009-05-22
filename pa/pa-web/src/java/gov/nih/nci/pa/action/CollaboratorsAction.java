@@ -84,7 +84,7 @@ import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -202,7 +202,7 @@ public class CollaboratorsAction extends ActionSupport
         Long paOrgId = ocService.createResearchOrganizationCorrelations(poOrgId);
 
         StudyParticipationDTO sp = new StudyParticipationDTO();
-        sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+        sp.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.getByCode(functionalCode)));
         sp.setHealthcareFacilityIi(null);
         sp.setResearchOrganizationIi(IiConverter.convertToIi(paOrgId));

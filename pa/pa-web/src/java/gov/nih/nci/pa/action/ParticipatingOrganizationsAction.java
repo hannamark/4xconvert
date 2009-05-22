@@ -86,8 +86,8 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -277,7 +277,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
             sp.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
             sp.setIdentifier(null);
-            sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+            sp.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
             sp.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
             sp.setStudyProtocolIdentifier(spIi);
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
@@ -719,7 +719,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         participationContactDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(studyProtocolQueryDto
                 .getStudyProtocolId()));
-        participationContactDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
+        participationContactDTO.setStatusCode(CdConverter.convertStringToCd(
+                FunctionalRoleStatusCode.PENDING.getCode()));
         participationContactDTO.setStudyParticipationIi(IiConverter
                 .convertToIi(orgsTabWebDTO.getStudyParticipationId()));
         if (isPrimaryContact) {

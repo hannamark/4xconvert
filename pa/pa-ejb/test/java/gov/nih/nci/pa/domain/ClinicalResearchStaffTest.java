@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -131,7 +131,7 @@ public class ClinicalResearchStaffTest   {
         crs.setOrganization(o);
         crs.setPerson(p);
         crs.setIdentifier("abc");
-        crs.setStatusCode(StatusCode.PENDING);
+        crs.setStatusCode(StructuralRoleStatusCode.PENDING);
         return  crs;
     }
 

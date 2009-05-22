@@ -22,6 +22,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.util.TestSchema;
@@ -57,7 +58,7 @@ public class PaPersonDTOTest {
         spcc.setRoleCode(StudyParticipationContactRoleCode.SUBMITTER);
         spcc.setStudyParticipation(spc);
         spcc.setStudyProtocol(sp);
-        spcc.setStatusCode(StatusCode.ACTIVE);
+        spcc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(spcc);
     }
 	

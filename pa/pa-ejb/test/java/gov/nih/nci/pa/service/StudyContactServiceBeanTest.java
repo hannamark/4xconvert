@@ -81,7 +81,7 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -128,7 +128,7 @@ public class StudyContactServiceBeanTest {
     dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
     dto.setStudyProtocolIdentifier(pid);
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
-    dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+    dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
     dto.setClinicalResearchStaffIi(clinicalResearchStaffId);
     StudyContactDTO dto2 = null;
     dto2 = new StudyContactDTO();

@@ -80,9 +80,6 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
@@ -104,9 +101,11 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -148,7 +147,7 @@ public class ProtocolQueryServiceTest {
         
         ResearchOrganization ro = new ResearchOrganization();
         ro.setOrganization(o);
-        ro.setStatusCode(StatusCode.ACTIVE);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(ro);
         StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
         spc.setResearchOrganization(ro);

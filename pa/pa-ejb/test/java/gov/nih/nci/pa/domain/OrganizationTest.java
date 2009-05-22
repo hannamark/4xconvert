@@ -80,10 +80,11 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Before;
@@ -143,7 +144,7 @@ public class OrganizationTest   {
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
         create.setIdentifier("abc");
-        create.setStatusCode(StatusCode.PENDING);
+        create.setStatusCode(EntityStatusCode.PENDING);
         return create;
         
     }

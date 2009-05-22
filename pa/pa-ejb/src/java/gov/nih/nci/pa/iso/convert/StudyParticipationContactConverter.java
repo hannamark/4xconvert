@@ -86,7 +86,7 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -187,7 +187,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
        // bo.setRoleCode(StudyParticipationContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setRoleCode(gov.nih.nci.pa.enums.StudyParticipationContactRoleCode.getByCode(
                 dto.getRoleCode().getCode()));        
-        bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
+        bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         
         if (dto.getTelecomAddresses() != null) {

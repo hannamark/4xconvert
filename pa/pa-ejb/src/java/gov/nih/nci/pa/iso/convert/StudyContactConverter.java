@@ -84,7 +84,7 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -186,9 +186,9 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             bo.setClinicalResearchStaff(crs);
         }
         if (dto.getStatusCode() == null) {
-            bo.setStatusCode(StatusCode.PENDING);
+            bo.setStatusCode(FunctionalRoleStatusCode.PENDING);
         } else {
-            bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
+            bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
         }
         bo.setRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setStudyProtocol(spBo);

@@ -81,7 +81,7 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -133,7 +133,7 @@ public class StudyParticipationConverterTest {
     dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Ecog1"));
     dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
-    dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+    dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
     StudyParticipationConverter sg = new StudyParticipationConverter();
     StudyParticipation bo = sg.convertFromDtoToDomain(dto);
     assertStudyParticipationConverter(bo, dto);

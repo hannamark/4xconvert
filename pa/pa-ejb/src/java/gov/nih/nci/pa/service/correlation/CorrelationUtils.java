@@ -93,7 +93,8 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -828,18 +829,18 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @return
      * @throws PAException
      */
-    StatusCode convertPOEntifyStatusToPAEntityStatus(Cd cd) throws PAException {
+    EntityStatusCode convertPOEntifyStatusToPAEntityStatus(Cd cd) throws PAException {
         if (cd == null) {
             throw new PAException(" Cd cannot be null");
         }
         if ("ACTIVE".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.ACTIVE;
+            return EntityStatusCode.ACTIVE;
         } else if ("INACTIVE".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.INACTIVE;
+            return EntityStatusCode.INACTIVE;
         } else if ("NULLIFIED".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.NULLIFIED;
+            return EntityStatusCode.NULLIFIED;
         } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.PENDING;
+            return EntityStatusCode.PENDING;
         } else {
             throw new PAException(" Unsuported PA known status " + cd.getCode());
         }
@@ -851,20 +852,22 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @return
      * @throws PAException
      */
-    StatusCode convertPORoleStatusToPARoleStatus(Cd cd) throws PAException {
+    StructuralRoleStatusCode convertPORoleStatusToPARoleStatus(Cd cd) throws PAException {
         if (cd == null) {
             throw new PAException(" Cd cannot be null");
         }
         if ("ACTIVE".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.ACTIVE;
-        } else if ("INACTIVE".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.INACTIVE;
+            return StructuralRoleStatusCode.ACTIVE;
+        } else if ("CANCELLED".equalsIgnoreCase(cd.getCode())) {
+            return StructuralRoleStatusCode.CANCELLED;
         } else if ("NULLIFIED".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.NULLIFIED;
+            return StructuralRoleStatusCode.NULLIFIED;
         } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.PENDING;
+            return StructuralRoleStatusCode.PENDING;
         } else if ("SUSPENDED".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.SUSPENDED;
+            return StructuralRoleStatusCode.SUSPENDED;
+        } else if ("TERMINATED".equalsIgnoreCase(cd.getCode())) {
+            return StructuralRoleStatusCode.TERMINATED;
         } else {
             throw new PAException(" Unsuported PA known status " + cd.getCode());
         }

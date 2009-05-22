@@ -85,8 +85,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
-import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -145,7 +145,7 @@ public class StudyParticipationServiceTest {
         assertEquals(studyId, spBo.getStudyProtocol().getId());
         assertEquals(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getName()
                     , spBo.getFunctionalCode().getName());
-        assertEquals(StatusCode.ACTIVE.getName(), spBo.getStatusCode().getName());
+        assertEquals(FunctionalRoleStatusCode.ACTIVE.getName(), spBo.getStatusCode().getName());
         assertEquals("Local SP ID 01", spBo.getLocalStudyProtocolIdentifier());
     }
     @Test
@@ -156,7 +156,7 @@ public class StudyParticipationServiceTest {
         spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         spDto.setHealthcareFacilityIi(facilityIi);
         spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP ID 02"));
-        spDto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+        spDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         spDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/15/2008")));
         spDto.setStudyProtocolIdentifier(studyIi);
         spDto.setTargetAccrualNumber(IntConverter.convertToInt(accrualNum));

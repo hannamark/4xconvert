@@ -80,7 +80,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -128,7 +128,7 @@ public class StudyParticipationContactServiceBeanTest {
     dto.setStudyProtocolIdentifier(pid);
     dto.setStudyParticipationIi(studyParticipationId);
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
-    dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+    dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
       StudyParticipationContactDTO dto2 = null;
       dto2 = new StudyParticipationContactDTO();
       dto2 = remoteEjb.create(dto);

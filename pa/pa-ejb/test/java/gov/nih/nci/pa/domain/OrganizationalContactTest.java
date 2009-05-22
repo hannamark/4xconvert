@@ -80,7 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -138,7 +138,7 @@ public class OrganizationalContactTest {
         oc.setOrganization(o);
         oc.setIdentifier("abc");
         oc.setPerson(p);
-        oc.setStatusCode(StatusCode.PENDING);
+        oc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return oc;
     }
     

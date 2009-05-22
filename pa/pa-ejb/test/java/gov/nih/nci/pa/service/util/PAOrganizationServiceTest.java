@@ -17,9 +17,9 @@ import gov.nih.nci.pa.domain.StudyParticipationTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.TestSchema;
@@ -48,7 +48,7 @@ public class PAOrganizationServiceTest {
         TestSchema.addUpdObject(hcf);
         ResearchOrganization ro = new ResearchOrganization();
         ro.setOrganization(o);
-        ro.setStatusCode(StatusCode.ACTIVE);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(ro);
         StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
         spc.setResearchOrganization(ro);
@@ -61,7 +61,7 @@ public class PAOrganizationServiceTest {
         spcc.setRoleCode(StudyParticipationContactRoleCode.SUBMITTER);
         spcc.setStudyParticipation(spc);
         spcc.setStudyProtocol(sp);
-        spcc.setStatusCode(StatusCode.ACTIVE);
+        spcc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(spcc);
     }
     

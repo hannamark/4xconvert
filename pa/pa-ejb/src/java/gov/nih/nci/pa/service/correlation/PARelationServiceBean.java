@@ -81,7 +81,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -142,7 +142,7 @@ public class PARelationServiceBean {
         studyPartDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localSpIdentifier));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-        studyPartDTO.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
+        studyPartDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
     }
 
@@ -172,7 +172,7 @@ public class PARelationServiceBean {
                 .convertStringToCd(StudyParticipationFunctionalCode.SPONSOR.getCode()));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-        studyPartDTO.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
+        studyPartDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
     }
     
@@ -215,7 +215,7 @@ public class PARelationServiceBean {
         scDTO.setHealthCareProviderIi(IiConverter.convertToIi(hcpId));
         scDTO.setRoleCode(CdConverter.convertStringToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode()));
         scDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-        scDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
+        scDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
         PoPaServiceBeanLookup.getStudyContactService().create(scDTO);
     }
 
@@ -249,7 +249,7 @@ public class PARelationServiceBean {
         StudyContactDTO scDTO = new StudyContactDTO();
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
         scDTO.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        scDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
+        scDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
         scDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         // set DSET
         // set the DSET
@@ -300,7 +300,7 @@ public class PARelationServiceBean {
                 StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR.getCode()));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-        studyPartDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
+        studyPartDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
         // now create study participation contact as responsible party
         OrganizationalContactCorrelationServiceBean oc = new OrganizationalContactCorrelationServiceBean();
@@ -321,7 +321,7 @@ public class PARelationServiceBean {
                 StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
         spcDTO.setStudyParticipationIi(studyPartDTO.getIdentifier());
         spcDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-        spcDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
+        spcDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
         PoPaServiceBeanLookup.getStudyParticipationContactService().create(spcDTO);
     }
 

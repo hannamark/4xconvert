@@ -80,7 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -268,7 +268,7 @@ public class StudyContactTest   {
         sc.setCountry(c);
         sc.setPostalCode("20111");
         sc.setUserLastUpdated("abstractor");
-        sc.setStatusCode(StatusCode.ACTIVE);
+        sc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sc.setDateLastUpdated(now);
         sc.setStudyProtocol(sp);

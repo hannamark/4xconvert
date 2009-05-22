@@ -80,11 +80,10 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
-
-import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -143,7 +142,7 @@ public class PersonTest {
         p.setLastName("Amiruddin");
         p.setMiddleName("S");
         p.setIdentifier("abc");
-        p.setStatusCode(StatusCode.PENDING);
+        p.setStatusCode(EntityStatusCode.PENDING);
         return p;
     }
 

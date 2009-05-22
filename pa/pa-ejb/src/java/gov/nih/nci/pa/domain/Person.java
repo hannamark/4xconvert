@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +110,7 @@ public class Person extends AbstractEntity {
     private String middleName;
     private String fullName;
     private String identifier;
-    private StatusCode statusCode;
+    private EntityStatusCode statusCode;
 
     private List<HealthCareProvider> healthCareProviders = new ArrayList<HealthCareProvider>();
     private List<ClinicalResearchStaff> clinicalResearchStaffs = new ArrayList<ClinicalResearchStaff>();
@@ -184,14 +184,14 @@ public class Person extends AbstractEntity {
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
-    public StatusCode getStatusCode() {
+    public EntityStatusCode getStatusCode() {
         return statusCode;
     }
     /**
      *
      * @param statusCode statusCode
      */
-    public void setStatusCode(StatusCode statusCode) {
+    public void setStatusCode(EntityStatusCode statusCode) {
         this.statusCode = statusCode;
     }
 

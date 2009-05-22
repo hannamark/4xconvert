@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 
 import java.sql.Timestamp;
 
@@ -100,7 +100,7 @@ import org.hibernate.validator.NotNull;
 public class FunctionalRole extends AbstractEntity {
     static final long serialVersionUID = 8492645655L;
 
-    private StatusCode statusCode;
+    private FunctionalRoleStatusCode  statusCode;
     private Timestamp statusDateRangeLow;
     /** . **/
     protected StudyProtocol studyProtocol;
@@ -112,15 +112,15 @@ public class FunctionalRole extends AbstractEntity {
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
-    public StatusCode getStatusCode() {
+    public FunctionalRoleStatusCode  getStatusCode() {
         return statusCode;
     }
     /**
      *
-     * @param statusCode statusCode
+     * @param fStatusCode statusCode
      */
-    public void setStatusCode(StatusCode statusCode) {
-        this.statusCode = statusCode;
+    public void setStatusCode(FunctionalRoleStatusCode  fStatusCode) {
+        this.statusCode = fStatusCode;
     }
     /**
      *

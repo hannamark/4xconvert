@@ -80,11 +80,10 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
-
-import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -152,7 +151,7 @@ public class HealthCareProviderTest {
         hc.setOrganization(o);
         hc.setPerson(p);
         hc.setIdentifier("abc");
-        hc.setStatusCode(StatusCode.PENDING);
+        hc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return hc;
     }
 

@@ -38,7 +38,9 @@ public class EnumTest {
 		testMethods(RecruitmentStatusCode.class);
 		testMethods(ResponsibilityCode.class);
 		testMethods(ReviewBoardApprovalStatusCode.class);
-		testMethods(StatusCode.class);
+		testMethods(EntityStatusCode.class);
+		testMethods(StructuralRoleStatusCode.class);
+		testMethods(FunctionalRoleStatusCode.class);
 		testMethods(SamplingMethodCode.class);
 		testMethods(StudyClassificationCode.class);
 		testMethods(StudyContactRoleCode.class);
@@ -239,12 +241,24 @@ public class EnumTest {
 		        assertEquals("SUBMITTED_EXEMPT", ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getName());
 		        assertEquals("Submitted, exempt", ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StatusCode")){			
-			 String[] x = StatusCode.getDisplayNames();
-		        assertEquals(StatusCode.values().length, x.length);
-		        assertEquals("ACTIVE", StatusCode.ACTIVE.getName());
-		        assertEquals("Active", StatusCode.ACTIVE.getCode());
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.EntityStatusCode")){			
+			 String[] x = EntityStatusCode.getDisplayNames();
+		        assertEquals(EntityStatusCode.values().length, x.length);
+		        assertEquals("ACTIVE", EntityStatusCode.ACTIVE.getName());
+		        assertEquals("Active", EntityStatusCode.ACTIVE.getCode());
 		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StructuralRoleStatusCode")){           
+             String[] x = StructuralRoleStatusCode.getDisplayNames();
+                assertEquals(StructuralRoleStatusCode.values().length, x.length);
+                assertEquals("ACTIVE", StructuralRoleStatusCode.ACTIVE.getName());
+                assertEquals("Active", StructuralRoleStatusCode.ACTIVE.getCode());
+        }
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.FunctionalRoleStatusCode")){           
+             String[] x = FunctionalRoleStatusCode.getDisplayNames();
+                assertEquals(FunctionalRoleStatusCode.values().length, x.length);
+                assertEquals("ACTIVE", FunctionalRoleStatusCode.ACTIVE.getName());
+                assertEquals("Active", FunctionalRoleStatusCode.ACTIVE.getCode());
+        }
 		 if (clazz.getName().equals("gov.nih.nci.pa.enums.SamplingMethodCode")){			
 			 String[] x = SamplingMethodCode.getDisplayNames();
 		        assertEquals(SamplingMethodCode.values().length, x.length);

@@ -83,7 +83,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyParticipationContactConverter;
@@ -145,7 +145,7 @@ public class StudyParticipationContactServiceTest {
         spc.setPostalAddress(AddressConverterUtil.create("1", "2", "3", "4", "5", "ZZZ"));
         spc.setPrimaryIndicator(BlConverter.convertToBl(true));
         spc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.COORDINATING_INVESTIGATOR));
-        spc.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+        spc.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         spc.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2005")));
         spc.setStudyParticipationIi(participationIi);
         spc.setStudyProtocolIdentifier(protocolIi);

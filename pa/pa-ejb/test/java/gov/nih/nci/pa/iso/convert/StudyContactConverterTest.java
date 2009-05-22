@@ -81,8 +81,8 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -135,7 +135,7 @@ public class StudyContactConverterTest {
     dto.setPrimaryIndicator(BlConverter.convertToBl((Boolean) null));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
-    dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+    dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
     StudyContactConverter sg = new StudyContactConverter();
     StudyContact bo = sg.convertFromDtoToDomain(dto);
     assertStudyContactConverter(bo, dto);

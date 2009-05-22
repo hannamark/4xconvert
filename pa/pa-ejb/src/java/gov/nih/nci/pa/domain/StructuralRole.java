@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 
 import java.sql.Timestamp;
 
@@ -98,7 +98,7 @@ import org.hibernate.validator.NotNull;
 public class StructuralRole extends AbstractEntity {
 
     private static final long serialVersionUID = 7498499786106581528L;
-    private StatusCode statusCode;
+    private StructuralRoleStatusCode  statusCode;
     private Timestamp statusDateRangeLow;
 
     /**
@@ -108,14 +108,14 @@ public class StructuralRole extends AbstractEntity {
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
-    public StatusCode getStatusCode() {
+    public StructuralRoleStatusCode getStatusCode() {
         return statusCode;
     }
     /**
      *
      * @param statusCode statusCode
      */
-    public void setStatusCode(StatusCode statusCode) {
+    public void setStatusCode(StructuralRoleStatusCode statusCode) {
         this.statusCode = statusCode;
     }
     /**
