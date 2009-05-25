@@ -11,7 +11,7 @@
 	<display:column title="Address" property="address"  headerClass="sortable"/>
 	<display:column title="Emails" property="email"/>
 	<display:column title="Role Code">
-			 <s:select id="${row.id}"  list="#rolecode"/>
+			 <s:select id="%{#attr.row.id}"  list="#rolecode"/>
   	</display:column>
 	<display:column title="Action" class="action" sortable="false">
 	<a href="#" class="btn" onclick="callCreatePerson('${row.id}',document.getElementById('${row.id}').value)">
