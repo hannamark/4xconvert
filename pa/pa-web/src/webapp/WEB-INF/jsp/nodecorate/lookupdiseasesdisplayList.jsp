@@ -9,13 +9,16 @@
     <display:column title="Menu Display Name" property="menuDisplayName"  headerClass="sortable"/> 
     <display:column title="Parent Name" property="parentPreferredName"  headerClass="sortable"/> 
     <display:column title="Select" headerClass="centered" class="action" sortable="false">
-        <s:if test="${(row.menuDisplayName!=null)&&(row.menuDisplayName!='')}">
-            <s:a href="#" cssClass="btn" onclick="submitform('${row.diseaseIdentifier}')">
+        <c:choose>
+        <c:when test="${(row.menuDisplayName!=null)&&(row.menuDisplayName!='')}">
+            <a href="#" class="btn" onclick="submitform('${row.diseaseIdentifier}')">
                 <span class="btn_img"><span class="add">Select</span></span>
-            </s:a>
-        </s:if><s:else>
-            not suitable for reporting
-        </s:else>  
+            </a>
+        </c:when>
+        <c:otherwise>
+                    not suitable for reporting
+        </c:otherwise>
+        </c:choose>  
     </display:column>
 </display:table>
 </c:if>

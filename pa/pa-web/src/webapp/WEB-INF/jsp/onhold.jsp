@@ -44,12 +44,12 @@ function handleEdit(rowId){
                 <display:column property="dateLow" sortable="false" titleKey="onhold.date.low"/>
                 <display:column property="dateHigh" sortable="false" titleKey="onhold.date.high"/>
                 <display:column titleKey="onhold.edit" headerClass="centered" class="action">
-                    <s:if test="${(row.dateHigh==null)}">
+                    <c:if test="${(row.dateHigh==null)}">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
-                    </s:if>
+                    </c:if>
                 </display:column>
              </display:table>
         </td></tr>
@@ -57,12 +57,12 @@ function handleEdit(rowId){
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
-        <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+        <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
             <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-        </s:if>    
-        <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Accepted'}">
+        </c:if>    
+        <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Accepted'}">
             <li><a href="milestone.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-        </s:if>    
+        </c:if>    
         <li><a href="generalTrialDesignquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li> 
     </ul>
     </del></div>

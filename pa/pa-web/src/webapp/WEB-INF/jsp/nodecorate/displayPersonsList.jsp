@@ -14,8 +14,8 @@
 			 <s:select id="${row.id}"  list="#rolecode"/>
   	</display:column>
 	<display:column title="Action" class="action" sortable="false">
-	<s:a href="#" cssClass="btn" onclick="callCreatePerson('${row.id}',document.getElementById('${row.id}').value)">
-							<span class="btn_img"><span class="add">Select</span></span></s:a>
+	<a href="#" class="btn" onclick="callCreatePerson('${row.id}',document.getElementById('${row.id}').value)">
+							<span class="btn_img"><span class="add">Select</span></span></a>
 	</display:column>
 </display:table>
 </c:if>

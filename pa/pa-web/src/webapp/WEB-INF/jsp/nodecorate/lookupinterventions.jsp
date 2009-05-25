@@ -28,6 +28,9 @@
         });
         return false;
     }
+    function cancel() {
+    
+    } 
 </SCRIPT>
 
 </head> 
@@ -52,8 +55,13 @@
          <del class="btnwrapper">
             <ul class="btnrow">
                <li>
-                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img">
+                    <span class="search">Search</span></span></s:a>
+                   <s:a href="#" cssClass="btn" onclick="cancel();">
+                    <span class="btn_img"><span class="cancel">Cancel</span></span>
+                </s:a>  
                </li>
+                
             </ul>
           </del>
     </div>

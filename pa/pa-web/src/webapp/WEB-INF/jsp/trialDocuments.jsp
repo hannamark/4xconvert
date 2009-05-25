@@ -46,19 +46,23 @@
 			<del class="btnwrapper">
 				<ul class="btnrow">
 					<li><s:a href="trialDocumentinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-					<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+				<c:choose>
+                  <c:when test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 						<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 						<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Next</span></span></a></li>
-				</s:if>
-				<s:else>
+				  </c:when>
+				<c:otherwise>
 					<li><a href="collaborators.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-					<s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+					<c:choose>
+                     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
            				<li><a href="interventionalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        			</s:if>
-        			<s:else>
+        			</c:when>
+        			<c:otherwise>
           				<li><a href="observationalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        			</s:else>
-				</s:else>
+        			</c:otherwise>
+        			</c:choose>
+			 </c:otherwise>
+			</c:choose>
 				</ul>	
 			</del>
 		</div>

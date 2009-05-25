@@ -35,12 +35,14 @@
 			<del class="btnwrapper">
 				<ul class="btnrow">
 					<li><s:a href="subGroupsinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-					<s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+					<c:choose>
+                         <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                        <li><a href="trialArms.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-                    </s:if>
-                    <s:else>
+                   </c:when>
+                    <c:otherwise>
                       <li><a href="trialArmsobservational.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-                    </s:else>
+                    </c:otherwise>
+                    </c:choose>
 					<li><a href="abstractionCompletionquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 				</ul>	
 			</del>

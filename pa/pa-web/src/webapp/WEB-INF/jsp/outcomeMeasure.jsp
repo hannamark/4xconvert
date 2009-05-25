@@ -6,20 +6,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>
-	<s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+	<c:choose>
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>
-     </s:if>
-     <s:else><fmt:message key="isdesign.outcome.title"/></s:else>
+     </c:when>
+     <c:otherwise><fmt:message key="isdesign.outcome.title"/></c:otherwise></c:choose>
 </title> 
 	<s:head />
 </head>
 
 <body onload="setFocusToFirstControl();">
 
- <h1><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+ <h1><c:choose>
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>
-     </s:if>
-     <s:else><fmt:message key="isdesign.outcome.title"/></s:else></h1>
+     </c:when>
+     <c:otherwise><fmt:message key="isdesign.outcome.title"/></c:otherwise></c:choose></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
   <pa:sucessMessage/>
@@ -47,12 +49,14 @@
 			<del class="btnwrapper">
 				<ul class="btnrow">
 					<li><s:a href="interventionalStudyDesignoutcomeinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-					<s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+					<c:choose>
+                    <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
            				<li><a href="interventionalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-        			</s:if>
-        			<s:else>
+        			</c:when>
+        			<c:otherwise>
           				<li><a href="observationalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-        			</s:else> 					
+        			</c:otherwise>
+        			</c:choose>				
 					<li><a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 				</ul>	
 			</del>

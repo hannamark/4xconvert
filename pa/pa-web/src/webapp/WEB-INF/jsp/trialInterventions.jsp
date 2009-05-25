@@ -84,12 +84,14 @@ function handleCreate(){
         <li><a href="disease.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>
-		<s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+		<c:choose>
+        <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
            <li><a href="trialArms.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        </s:if>
-        <s:else>
+        </c:when>
+       <c:otherwise>
           <li><a href="trialArmsobservational.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        </s:else>            
+        </c:otherwise>
+        </c:choose>         
     </ul>
     </del></div>
 </s:form></div>

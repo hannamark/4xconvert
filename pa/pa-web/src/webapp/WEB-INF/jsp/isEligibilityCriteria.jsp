@@ -6,10 +6,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>
-     <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+    <c:choose>
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
-     </s:if>
-     <s:else><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></s:else> 
+     </c:when>
+     <c:otherwise><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></c:otherwise> 
+     </c:choose>
      </title>   
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
@@ -27,10 +29,12 @@ BubbleTips.activateTipOn("dfn");
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
- <h1><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+ <h1>
+ <c:choose>
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
-     </s:if>
-     <s:else><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></s:else> </h1>
+     </c:when>
+     <c:otherwise><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></c:otherwise></c:choose> </h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>
@@ -38,7 +42,7 @@ BubbleTips.activateTipOn("dfn");
     <s:form><s:actionerror/>    
     <h2><fmt:message key="isdesign.eligibilitycriteria.title"/></h2>
     <table class="form">
-    <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+    <c:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
         <tr>
             <td scope="row"  class="label">
             <label>
@@ -70,7 +74,7 @@ BubbleTips.activateTipOn("dfn");
                  </span>
             </td>
         </tr>
-    </s:if>
+    </c:if>
 	<tr>
 		<td scope="row"  class="label"><label>
 			<fmt:message key="isdesign.eligibilitycriteria.ahv"/><span class="required">*</span></label>

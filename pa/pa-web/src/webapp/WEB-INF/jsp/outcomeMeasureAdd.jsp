@@ -5,10 +5,11 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+    <title><c:choose>
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>
-     </s:if>
-     <s:else><fmt:message key="isdesign.outcome.title"/></s:else>
+     </c:when>
+     <c:otherwise><fmt:message key="isdesign.outcome.title"/></c:otherwise></c:choose>
      </title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
@@ -36,10 +37,11 @@ BubbleTips.activateTipOn("dfn");
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
- <h1><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+ <h1><c:choose>
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>
-     </s:if>
-     <s:else><fmt:message key="isdesign.outcome.title"/></s:else></h1>
+     </c:when>
+     <c:otherwise><fmt:message key="isdesign.outcome.title"/></c:otherwise></c:choose></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>

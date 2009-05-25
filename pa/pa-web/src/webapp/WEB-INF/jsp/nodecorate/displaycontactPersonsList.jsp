@@ -9,8 +9,8 @@
 	<display:column title="Last Name" property="lastName"  headerClass="sortable"/>
 	<display:column title="E-mails" property="email" />
 	<display:column title="Action" class="action" sortable="false">
-	<s:a href="#" cssClass="btn" onclick="callCreateContactPerson('${row.id}')">
-		<span class="btn_img"><span class="add">Select</span></span></s:a>	
+	<a href="#" class="btn" onclick="callCreateContactPerson('${row.id}')">
+		<span class="btn_img"><span class="add">Select</span></span></a>	
 	</display:column>
 </display:table>
 </c:if> 
