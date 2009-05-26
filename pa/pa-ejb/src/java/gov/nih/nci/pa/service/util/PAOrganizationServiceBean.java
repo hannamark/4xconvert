@@ -219,7 +219,7 @@ public class PAOrganizationServiceBean implements
                       + " join ros.studyParticipations as sps "
                       + " join sps.studyProtocol as sp "
                       + "  where sps.functionalCode = '"
-                      +   StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'"
+                      +   StudyParticipationFunctionalCode.LEAD_ORGANIZATION  + "'"
                       +  " order by o.name");
             } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
                 hql.append(

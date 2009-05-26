@@ -196,7 +196,7 @@ public class StudyParticipationTest  {
                 " join o.healthCareFacilities as hcfs " +
                 " join hcfs.studyParticipations as sps " +
                 " join sps.studyProtocol as sp " +
-                "  where sps.functionalCode = '" +StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'");
+                "  where sps.functionalCode = '" +StudyParticipationFunctionalCode.LEAD_ORGANIZATION  + "'");
 
 
         List<Organization> organizations = null;
@@ -207,7 +207,7 @@ public class StudyParticipationTest  {
     }
     public static StudyParticipation createStudyParticipationObj(StudyProtocol sp , HealthCareFacility hcp ) {
         StudyParticipation create = new StudyParticipation();
-        create.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
+        create.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
         create.setLocalStudyProtocolIdentifier("Ecog1");
         create.setUserLastUpdated("abstractor");
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());

@@ -403,7 +403,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         if (BlConverter.covertToBool(spDTO.getReviewBoardApprovalRequiredIndicator())) {
             // update the lead organization record
             searchCode = new StudyParticipationDTO();
-            searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+            searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
             List<StudyParticipationDTO> fromDtos =
                     studyParticipationService.getByStudyProtocol(fromStudyProtocolIi, searchCode);
             List<StudyParticipationDTO> toDtos =
@@ -642,7 +642,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private void createStudyResources(Ii studyProtocolIi , List<StudyResourcingDTO> studyResourcingDTOs)
     throws PAException {
         for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
-            studyResourcingDTO.setStudyProtocolIi(studyProtocolIi);
+            studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolIi);
             studyResourcingDTO.setIdentifier(null);
             studyResourcingService.createStudyResourcing(studyResourcingDTO);
         }

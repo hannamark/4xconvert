@@ -143,7 +143,7 @@ public class StudyParticipationServiceTest {
         StudyParticipationDTO spDto = remoteEjb.get(participationIi);
         StudyParticipation spBo = studyParticipationConverter.convertFromDtoToDomain(spDto);
         assertEquals(studyId, spBo.getStudyProtocol().getId());
-        assertEquals(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getName()
+        assertEquals(StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getName()
                     , spBo.getFunctionalCode().getName());
         assertEquals(FunctionalRoleStatusCode.ACTIVE.getName(), spBo.getStatusCode().getName());
         assertEquals("Local SP ID 01", spBo.getLocalStudyProtocolIdentifier());

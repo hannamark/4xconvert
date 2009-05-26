@@ -108,7 +108,7 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
     /**
      * Lead organization.
      */
-    LEAD_ORAGANIZATION("Lead Organization", false),
+    LEAD_ORGANIZATION("Lead Organization", false),
     /**
      * Protocol Management Center.
      */

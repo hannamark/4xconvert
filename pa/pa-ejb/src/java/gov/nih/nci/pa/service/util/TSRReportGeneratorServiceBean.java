@@ -523,7 +523,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     appendTitle(html, appendBoldData("Secondary Outcome Measures"));
         html.append(appendData("Description", getInfo(smDTO.getName(), true), true , true));
         html.append(appendData("TimeFrame", getInfo(smDTO.getTimeFrame(), true), true , true));
-        html.append(appendData("Safety Issue", convertBLToString((smDTO.getSafetyIndicator()), false), true , true));
+        html.append(appendData("Safety Issue?", convertBLToString((smDTO.getSafetyIndicator()), false), true , true));
         html.append(BR);
       }
     }
@@ -1054,7 +1054,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    */
   private void appendSecondaryIdentifiers(StringBuffer html , StudyProtocolDTO studyProtocolDto) throws  PAException {
       StudyParticipationDTO spartDTO = new StudyParticipationDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
       List<StudyParticipationDTO> sParts = studyParticipationService
           .getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
      
@@ -1121,7 +1121,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       Organization sponsor = ocsr.getOrganizationByFunctionRole(
               studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
       Organization lead = ocsr.getOrganizationByFunctionRole(
-              studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+              studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
       Person leadPi = null;
       Person centralContact = null;
       StudyContactDTO scDto = new StudyContactDTO();
@@ -1181,7 +1181,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           
           StudyParticipationDTO spartDTO = new StudyParticipationDTO();
           spartDTO.setFunctionalCode(
-                  CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+                  CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
           List<StudyParticipationDTO> sParts = studyParticipationService.getByStudyProtocol(studyProtocolIi, spartDTO);
           for (StudyParticipationDTO spart : sParts) {
               sponsorResponsible = correlationUtils.getPAOrganizationByPAResearchOrganizationId(

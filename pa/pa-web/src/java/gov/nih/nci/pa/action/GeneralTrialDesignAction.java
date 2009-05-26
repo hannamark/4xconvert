@@ -190,7 +190,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
-                        StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) ,
+                        StudyParticipationFunctionalCode.LEAD_ORGANIZATION) ,
                         gtdDTO.getLeadOrganizationIdentifier() ,
                         PAUtil.stringSetter(gtdDTO.getLocalProtocolIdentifier()));
             updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(

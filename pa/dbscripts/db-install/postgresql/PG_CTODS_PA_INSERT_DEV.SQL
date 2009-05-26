@@ -83,12 +83,12 @@ values (6, 'PO006', 1, current_timestamp, 'po' ,'ACTIVE')
 
 insert into study_participation 
        (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier ,status_code, status_date_range_low, date_last_updated, user_last_updated ) 
-values (1,'LEAD_ORAGANIZATION','CALGB-88612-A443',1, 1, 'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
+values (1,'LEAD_ORGANIZATION','CALGB-88612-A443',1, 1, 'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
 ;
  
 insert into study_participation 
        (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier , status_code, status_date_range_low, date_last_updated, user_last_updated ) 
-values (2,'LEAD_ORAGANIZATION','CCG-09032-A443',2 ,2,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
+values (2,'LEAD_ORGANIZATION','CCG-09032-A443',2 ,2,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
 ;
 
 

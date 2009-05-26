@@ -109,7 +109,7 @@ public class StudyParticipationConverterTest {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudyParticipation bo = new StudyParticipation();
     bo.setId(123L);
-    bo.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
+    bo.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
     bo.setLocalStudyProtocolIdentifier("Ecog1");
     bo.setStudyProtocol(sp);
     StudyParticipationConverter sg = new StudyParticipationConverter();
@@ -131,7 +131,7 @@ public class StudyParticipationConverterTest {
     StudyParticipationDTO dto = new StudyParticipationDTO();
     dto.setIdentifier(IiConverter.convertToIi((Long) null));
     dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Ecog1"));
-    dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+    dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
     StudyParticipationConverter sg = new StudyParticipationConverter();

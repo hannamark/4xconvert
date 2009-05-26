@@ -623,7 +623,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                + " or sms.id is null ) ");
            }
            where.append(" and sps.functionalCode ='"
-                   + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
+                   + StudyParticipationFunctionalCode.LEAD_ORGANIZATION + "'");
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");

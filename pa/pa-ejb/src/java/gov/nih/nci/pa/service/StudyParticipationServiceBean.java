@@ -238,7 +238,7 @@ public class StudyParticipationServiceBean
                        + " join spart.researchOrganization as ro "
                        + " where spart.localStudyProtocolIdentifier = :localStudyProtocolIdentifier "
                        + " and spart.functionalCode = '"
-                       +   StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'"
+                       +   StudyParticipationFunctionalCode.LEAD_ORGANIZATION  + "'"
                        + " and ro.id = :orgIdentifier";
 
             getLogger().info("query study_participation = " + hql + ".  ");

@@ -326,7 +326,7 @@ public class TrialValidationAction extends ActionSupport {
                     Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
             updateStudyParticipation(studyProtocolIi, CdConverter
-                    .convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION), gtdDTO
+                    .convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION), gtdDTO
                     .getLeadOrganizationIdentifier(), gtdDTO.getLocalProtocolIdentifier());
             updateStudyParticipation(studyProtocolIi,
                     CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR), gtdDTO.getSponsorIdentifier(),
@@ -422,7 +422,7 @@ public class TrialValidationAction extends ActionSupport {
                 orgId = org.getId();
             }
         }
-        summary4ResoureDTO.setStudyProtocolIi(studyProtocolIi);
+        summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
         summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
         if (PAUtil.isNotEmpty(gtdDTO.getSummaryFourFundingCategoryCode())) {
             summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.getByCode(gtdDTO

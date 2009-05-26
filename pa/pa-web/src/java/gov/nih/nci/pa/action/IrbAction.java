@@ -436,7 +436,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         } else {
             List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
             for (StudyParticipationDTO sp : spList) {
-                if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode().equals(
+                if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().equals(
                         sp.getFunctionalCode().getCode())) {
                     sPartToUpdate = sp.getIdentifier();
                 }
@@ -522,7 +522,7 @@ public class IrbAction extends ActionSupport implements Preparable {
                     
                   setApprovalStatus(part.getReviewBoardApprovalStatusCode().getCode());
                   setApprovalNumber(StConverter.convertToString(part.getReviewBoardApprovalNumber()));
-                  setSiteRelated(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode().
+                  setSiteRelated(StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().
                           equals(CdConverter.convertCdToString(part.getFunctionalCode())) ? NO : YES);
                   if (PAUtil.isIiNull(part.getOversightCommitteeIi())) {
                       loadOrg(null);

@@ -191,7 +191,7 @@ public class NCISpecificInformationAction extends ActionSupport {
             // Step2 : update values to StudyResourcing
             srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
-            srDTO.setStudyProtocolIi(studyProtocolIi);
+            srDTO.setStudyProtocolIdentifier(studyProtocolIi);
             // Step3: update studyprotocol
             spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
             // Step 4: check if we have an organization for PO id
@@ -223,7 +223,7 @@ public class NCISpecificInformationAction extends ActionSupport {
             if (summary4ResoureDTO == null) {
                 // summary 4 record does not exist,so create a new one
                 summary4ResoureDTO = new StudyResourcingDTO();
-                summary4ResoureDTO.setStudyProtocolIi(studyProtocolIi);
+                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
                 summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
                 summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                         .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
@@ -231,7 +231,7 @@ public class NCISpecificInformationAction extends ActionSupport {
                 PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
             } else {
                 // summary 4 record does exist,so so do an update
-                summary4ResoureDTO.setStudyProtocolIi(studyProtocolIi);
+                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
                 summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                         .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
                 summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));

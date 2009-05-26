@@ -138,7 +138,7 @@ public class PARelationServiceBean {
         Long roId = oc.createResearchOrganizationCorrelations(orgPoIdentifier);
         StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
         studyPartDTO.setFunctionalCode(CdConverter
-                .convertStringToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode()));
+                .convertStringToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode()));
         studyPartDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localSpIdentifier));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
@@ -364,7 +364,7 @@ public class PARelationServiceBean {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
         StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO();
-        summary4ResoureDTO.setStudyProtocolIi(spDTO.getIdentifier());
+        summary4ResoureDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
         if (summartFourSorceCode != null) {
             summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summartFourSorceCode));

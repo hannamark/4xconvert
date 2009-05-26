@@ -431,7 +431,7 @@ public class TestSchema {
             clinicalResearchStaffIds.add(crs.getId());            
             
             StudyParticipation sPart = new StudyParticipation();
-            sPart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
+            sPart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
             sPart.setHealthCareFacility(hfc);
             sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
             sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);

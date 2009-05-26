@@ -478,7 +478,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
                 StudyParticipationDTO spartDTO = new StudyParticipationDTO();
                 spartDTO.setFunctionalCode(
-                        CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+                        CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
                 List<StudyParticipationDTO> sParts = 
                                 studyParticipationService.getByStudyProtocol(studyProtocolIi, spartDTO);
                    //PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, spartDTO);
@@ -544,7 +544,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         dtos.add(dto);
         dto = new StudyParticipationDTO();
-        dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+        dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
         dtos.add(dto);
 
         List<StudyParticipationDTO> spDTOs = studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), dtos);
@@ -616,7 +616,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         appendElement(idInfo , createElement("org_study_id" , spDTO.getAssignedIdentifier().getExtension(), doc));
 
         StudyParticipationDTO spartDTO = new StudyParticipationDTO();
-        spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+        spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
         List<StudyParticipationDTO> sParts = //PoPaServiceBeanLookup.getStudyParticipationService()
                                          studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), spartDTO);
         for (StudyParticipationDTO spart : sParts) {
@@ -978,7 +978,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
             StudyParticipationDTO spartDTO = new StudyParticipationDTO();
             spartDTO.setFunctionalCode(
-                    CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+                    CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
             List<StudyParticipationDTO> sParts = //PoPaServiceBeanLookup. getStudyParticipationService()
                 studyParticipationService.getByStudyProtocol(studyProtocolIi, spartDTO);
             for (StudyParticipationDTO spart : sParts) {

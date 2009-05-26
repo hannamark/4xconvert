@@ -105,7 +105,7 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
         StudyParticipation sp = new StudyParticipation();
         sp.setId(seq++);
         sp.setStudyProtocol(MockStudyProtocolService.list.get(0));
-        sp.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
+        sp.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
         sp.setLocalStudyProtocolIdentifier("LSPID 001");
     }
 

@@ -76,4 +76,12 @@
             <comment>execute studyResourcingUpdate.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyResourcingUpdate.sql"/>
     </changeSet>
+     <changeSet id="17" author="Anupama">
+            <comment>execute studyResourcingColumnUpdate.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/studyResourcingColumnUpdate.sql"/>
+    </changeSet>
+    <changeSet id="18" author="Anupama">
+            <comment>execute studyParticipationFunctionalCodeUpdate.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/studyParticipationFunctionalCodeUpdate.sql"/>
+    </changeSet>
 </databaseChangeLog>

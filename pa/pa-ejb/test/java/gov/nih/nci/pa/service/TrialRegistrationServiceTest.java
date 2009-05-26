@@ -151,7 +151,7 @@ public class TrialRegistrationServiceTest {
         OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
         sponsorOrganizationDTO.setIdentifier(IiConverter.converToPoOrganizationIi("111"));
         StudyParticipationDTO spDto = new StudyParticipationDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
         StudyParticipationDTO leadOrganizationParticipationIdentifierDTO  = 
             studyParticipationService.getByStudyProtocol(spIi, spDto).get(0) ;
 //        StudyContactDTO studyContactDTO = 
