@@ -188,7 +188,7 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
             // query the lead organization study participation site
             StudyParticipationDTO leadParticipationDTO = getStudyParticipation(studyProtocolIi,
-                    StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
+                    StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
             if (leadParticipationDTO != null) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
@@ -418,7 +418,7 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
             // query the lead organization study participation site
             StudyParticipationDTO leadParticipationDTO = getStudyParticipation(studyProtocolIi,
-                    StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
+                    StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
             if (leadParticipationDTO != null) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,

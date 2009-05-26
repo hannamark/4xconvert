@@ -29,7 +29,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceRemote 
         studyRDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("CCR"));
         studyRDto.setSerialNumber(StConverter.convertToSt("123456"));
         studyRDto.setIdentifier(IiConverter.convertToIi("1"));
-        studyRDto.setStudyProtocolIi(IiConverter.convertToIi("1"));
+        studyRDto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         list.add(studyRDto);
     }
     /* (non-Javadoc)
@@ -66,7 +66,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceRemote 
             Ii studyProtocolIi) throws PAException {
         List<StudyResourcingDTO> matchingDtosList = new ArrayList<StudyResourcingDTO>();
         for (StudyResourcingDTO dto :list){
-            if(dto.getStudyProtocolIi().getExtension().equals(studyProtocolIi.getExtension())){
+            if(dto.getStudyProtocolIdentifier().getExtension().equals(studyProtocolIi.getExtension())){
                 matchingDtosList.add(dto);
             }
         }
