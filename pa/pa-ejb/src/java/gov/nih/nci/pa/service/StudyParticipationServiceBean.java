@@ -78,9 +78,13 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -144,6 +148,51 @@ public class StudyParticipationServiceBean
         return resultDto;
     }
 
+    /**
+     * 
+     * @param ii ii of the structural roles
+     * @param roleStatusCode role status code
+     * @throws PAException on error
+     */
+    public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
+        List<StudyParticipation> sps = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StringBuffer hql = new StringBuffer(" Select sps from StudyParticipation sps  ");
+            if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" join sps.healthCareFacility as hcp where hcp.identifier = '" + ii.getExtension() + "'");
+            }
+            if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" join sps.researchOrganization as ro where ro.identifier = '" + ii.getExtension() + "'");
+            }
+            if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" join sps.oversightCommittee as oc where oc.identifier = '" + ii.getExtension() + "'");
+            }
+    
+            sps = session.createQuery(hql.toString()).list();
+            for (StudyParticipation sp : sps) {
+                sp.setStatusCode(newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE));
+                session.update(sp);
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException(hbe);
+        }
+    }
+
+    private FunctionalRoleStatusCode newFRStatusCode(Cd roleStatusCode , ActStatusCode actStatusCode) {
+        FunctionalRoleStatusCode returnStatusCode = null;
+        StructuralRoleStatusCode roleCode = StructuralRoleStatusCode.getByCode(roleStatusCode.getCode());
+        if (StructuralRoleStatusCode.NULLIFIED.equals(roleCode)) {
+            returnStatusCode = FunctionalRoleStatusCode.NULLIFIED;
+        } else if (ActStatusCode.NULLIFIED.equals(actStatusCode)) {
+            returnStatusCode = FunctionalRoleStatusCode.NULLIFIED;
+        } else {
+            returnStatusCode = FunctionalRoleStatusCode.PENDING;
+        }
+        return returnStatusCode;
+    }
+    
     @SuppressWarnings("PMD.NPathComplexity")
     private StudyParticipationDTO businessRules(StudyParticipationDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {

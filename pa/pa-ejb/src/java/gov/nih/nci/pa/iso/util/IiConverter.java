@@ -90,7 +90,7 @@ import gov.nih.nci.coppa.iso.NullFlavor;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({ "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.ExcessiveClassLength"  })
 public class IiConverter {
     
     /** Study Protocol Root. **/
@@ -561,6 +561,18 @@ public class IiConverter {
         return ii;
     }
 
+    /**
+     * converts to Po Research Organization Ii Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToPoResearchOrganizationIi(String id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
+        ii.setRoot(RESEARCH_ORG_ROOT);
+        return ii;
+    }
+    
     /**
      * converts to Po crs contact  Ii Ii.
      * @param id id

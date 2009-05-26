@@ -83,9 +83,14 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
@@ -98,6 +103,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -117,13 +123,17 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.UnusedFormalParameter" })
+@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.CyclomaticComplexity",  "PMD.NPathComplexity" })
+ 
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(OrganizationSynchronizationServiceBean.class);
-
+    private static CorrelationUtils cUtils = new CorrelationUtils();
     private SessionContext ejbContext;
+    @EJB
+    StudyParticipationServiceLocal spsLocal = null;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
@@ -135,17 +145,16 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
      * @param orgIdentifer ii of organization
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public void synchronizeOrganization(Ii orgIdentifer) throws PAException {
 
         OrganizationDTO orgDto = null;
         LOG.debug("Entering synchronizeOrganization");
         try {
-            orgDto = PoPaServiceBeanLookup.getOrganizationEntityService().getOrganization(orgIdentifer);
-            updateOrganization(orgDto);
+            orgDto = PoRegistry.getOrganizationEntityService().getOrganization(orgIdentifer);
+            updateOrganization(orgIdentifer , orgDto , orgDto);
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is nullified " + orgIdentifer.getExtension());
-           nulifyOrganization(orgIdentifer);
+           updateOrganization(orgIdentifer , orgDto , orgDto);
         }
         LOG.debug("Leaving synchronizeOrganization");
     }
@@ -156,21 +165,19 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
      * @return List list of sp ids
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Long> synchronizeOversightCommittee(Ii oscIdentifer) throws PAException {
 
         OversightCommitteeDTO oscDto = null;
         LOG.debug("Entering synchronizeOversightCommittee");
-        List<Long> spIds = getAffectedStudyProtocolIds("oversightCommittee" , oscIdentifer.getExtension());
         try {
-            oscDto = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifer);
-            updateOversightCommittee(oscDto);
+            oscDto = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifer);
+            updateOversightCommittee(oscIdentifer , oscDto);
         } catch (NullifiedRoleException e) {
-           LOG.error("This OversightCommittee is nullified " + oscIdentifer.getExtension());
-           nulifyOversightCommittee(oscIdentifer);
+           LOG.info("This OversightCommittee is nullified " + oscIdentifer.getExtension());
+           updateOversightCommittee(oscIdentifer , null);
         }
         LOG.debug("Leaving synchronizeOversightCommittee");
-        return spIds;
+        return null;
     }
 
 
@@ -180,18 +187,17 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
      * @return List list of sp ids
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Long> synchronizeHealthCareFacility(Ii hcfIdentifer) throws PAException {
 
         HealthCareFacilityDTO hcfDto = null;
         LOG.debug("Entering synchronizeHealthCareFacility");
-        List<Long> spIds = getAffectedStudyProtocolIds("healthCareFacility" , hcfIdentifer.getExtension());
+        List<Long> spIds = null;
         try {
-            hcfDto = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifer);
-            updateHealthCareFacility(hcfDto);
+            hcfDto = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifer);
+            updateHealthCareFacility(hcfIdentifer , hcfDto);
         } catch (NullifiedRoleException e) {
            LOG.error("This HealthCareFacility is nullified " + hcfIdentifer.getExtension());
-           nulifyHealthCareFacility(hcfIdentifer);
+           updateHealthCareFacility(hcfIdentifer , null);
         }
         LOG.debug("Leaving synchronizeOrganization");
         return spIds;
@@ -199,244 +205,160 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     /***
      *
-     * @param roIdentifer po ResearchOrganization identifier
+     * @param roIdentifier po ResearchOrganization identifier
      * @return List list of sp ids
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Long> synchronizeResearchOrganization(Ii roIdentifer) throws PAException {
+    public List<Long> synchronizeResearchOrganization(Ii roIdentifier) throws PAException {
 
         ResearchOrganizationDTO roDto = null;
         LOG.debug("Entering synchronizeResearchOrganization");
-        List<Long> spIds = getAffectedStudyProtocolIds("researchOrganization" , roIdentifer.getExtension());
         try {
-            roDto = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().getCorrelation(roIdentifer);
-            updateResearchOrganization(roDto);
+            roDto = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(roIdentifier);
+            updateResearchOrganization(roIdentifier , roDto);
         } catch (NullifiedRoleException e) {
-           LOG.error("This ResearchOrganization is nullified " + roIdentifer.getExtension());
-           nulifyResearchOrganization(roIdentifer);
+           LOG.info("This ResearchOrganization is nullified " + roIdentifier.getExtension());
+           updateResearchOrganization(roIdentifier , null);
         }
         LOG.debug("Leaving synchronizeResearchOrganization");
-        return spIds;
+        return null;
     }
 
-    private void nulifyOrganization(Ii organizationIdentifer) throws PAException {
-        LOG.debug("Entering nulifyOrganization");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        Organization org = cUtils.getPAOrganizationByIndetifers(null, organizationIdentifer.getExtension());
-        if (org != null) {
-            // delete the organization and all of on delete cascade will delete the entire child
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                Organization organization = (Organization) session.get(Organization.class, org.getId());
-                session.delete(organization);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting Organization for id = " + org.getId() , hbe);
+    private void updateResearchOrganization(Ii ii , ResearchOrganizationDTO roDto) throws PAException {
+        LOG.debug("Entering updateResearchOrganization");
+        Session session = null;
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setIdentifier(ii.getExtension());
+        ro = cUtils.getPAResearchOrganization(ro);
+        boolean cascadeRole = false;
+        if (ro != null) {
+            if (roDto == null 
+                    || !ro.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()))) {
+                cascadeRole = true;
+            }
+            session = HibernateUtil.getCurrentSession();
+            if (roDto == null) {
+                ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+            } else {
+                ro.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()));
+            }
+            ro.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+            session.update(ro);
+            if (cascadeRole) {
+                spsLocal.cascadeRoleStatus(ii , CdConverter.convertToCd(ro.getStatusCode()));
+                
             }
         }
-        LOG.debug("Leaving nulifyOrganization");
+        LOG.debug("Leaving updateResearchOrganization");
 
     }
+    
+    private void updateOversightCommittee(Ii ii , OversightCommitteeDTO ocDto) throws PAException {
+        Session session = null;
+        OversightCommittee oc = new OversightCommittee();
+        oc.setIdentifier(ii.getExtension());
+        oc = cUtils.getPAOversightCommittee(oc);
+        if (oc != null) {
+          session = HibernateUtil.getCurrentSession();
+          if (ocDto == null) {
+              oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+          } else {
+              oc.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()));
+          }
+          oc.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+          session.update(oc);
+          if (ocDto == null 
+               || !oc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()))) {
+              spsLocal.cascadeRoleStatus(ii , CdConverter.convertToCd(oc.getStatusCode()));
+          }
+        }
+    }
 
-    private void updateOrganization(OrganizationDTO orgDto) throws PAException {
+    private void updateHealthCareFacility(Ii ii , HealthCareFacilityDTO hcfDto) throws PAException {
+        Session session = null;
+      HealthCareFacility hcf = new HealthCareFacility();
+      hcf.setIdentifier(ii.getExtension());
+      hcf = cUtils.getPAHealthCareFacility(hcf);
+      boolean cascadeRole = false;
+      if (hcf != null) {
+        try {
+            session = HibernateUtil.getCurrentSession();
+            if (hcfDto == null 
+                    || !hcf.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()))) {
+                cascadeRole = true;
+            }
+
+            if (hcfDto == null) {
+                hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+            } else {
+                hcf.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()));
+            }
+            hcf.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+            session.update(hcf);
+            if (cascadeRole) {
+                spsLocal.cascadeRoleStatus(ii , CdConverter.convertToCd(hcf.getStatusCode()));
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception while updating HealthCareFacility for id = "
+                    + hcf.getId() , hbe);
+        }
+        LOG.debug("Leaving updateHealthCareFacility");
+      }
+    }
+    
+    private void updateOrganization(Ii ii , OrganizationDTO orgDto  , OrganizationDTO duplicateOrg) throws PAException {
         LOG.debug("Entering updateOrganization");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        Organization org = cUtils.getPAOrganizationByIndetifers(null, orgDto.getIdentifier().getExtension());
-        if (org != null) {
+        Organization paOrg = cUtils.getPAOrganizationByIndetifers(null, ii.getExtension());
+        if (paOrg != null && duplicateOrg == null) {
             // update the organization
             Session session = null;
             try {
                 session = HibernateUtil.getCurrentSession();
-                Organization organization = (Organization) session.get(Organization.class, org.getId());
-                org = cUtils.convertPOToPAOrganization(orgDto);
-                organization.setCity(org.getCity());
-                organization.setCountryName(org.getCountryName());
-                organization.setName(org.getName());
-                organization.setPostalCode(org.getPostalCode());
-                organization.setState(org.getState());
-                organization.setStatusCode(org.getStatusCode());
+                Organization organization = (Organization) session.get(Organization.class, paOrg.getId());
+                if (orgDto != null) {
+                   // that means its not nullified
+                    paOrg = cUtils.convertPOToPAOrganization(orgDto);
+                    organization.setCity(paOrg.getCity());
+                    organization.setCountryName(paOrg.getCountryName());
+                    organization.setName(paOrg.getName());
+                    organization.setPostalCode(paOrg.getPostalCode());
+                    organization.setState(paOrg.getState());
+                    organization.setStatusCode(paOrg.getStatusCode());
+                } else {
+                    // its means its nullified
+                    organization.setStatusCode(EntityStatusCode.NULLIFIED);
+                    
+                }
                 organization.setDateLastUpdated(new Timestamp((new Date()).getTime()));
                 if (ejbContext != null) {
                     organization.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
                 }
                 session.update(organization);
-                session.flush();
+//                if (duplicateOrg != null) {
+//                    
+//                }
             } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting Organization for id = " + org.getId() , hbe);
+                throw new PAException("Hibernate exception while deleting Organization for id = " + paOrg.getId(), hbe);
             }
         }
         LOG.debug("Leaving updateOrganization");
     }
-
-    private void nulifyHealthCareFacility(Ii hcIdentifer) throws PAException {
-        LOG.debug("Entering nulifyHealthCareFacility");
-        HealthCareFacility hcf = new HealthCareFacility();
-        CorrelationUtils cUtils = new CorrelationUtils();
-        hcf.setIdentifier(hcIdentifer.getExtension());
-        hcf = cUtils.getPAHealthCareFacility(hcf);
-        if (hcf != null) {
-            // delete the hcf and all of on delete cascade will delete the entire child
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                HealthCareFacility healthCareFacility =
-                        (HealthCareFacility) session.get(HealthCareFacility.class, hcf.getId());
-                session.delete(healthCareFacility);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting healthCareFacility for id = "
-                        + hcf.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving nulifyHealthCareFacility");
-    }
-
-    private void updateHealthCareFacility(HealthCareFacilityDTO hcfDto) throws PAException {
-        LOG.debug("Entering updateHealthCareFacility");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setIdentifier(hcfDto.getIdentifier().getExtension());
-        hcf = cUtils.getPAHealthCareFacility(hcf);
-        if (hcf != null) {
-            // update the organization
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                HealthCareFacility hcFacility = (HealthCareFacility) session.get(HealthCareFacility.class, hcf.getId());
-                hcFacility.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()));
-                hcFacility.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-                if (ejbContext != null) {
-                    hcFacility.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-                }
-                session.update(hcFacility);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while updating HealthCareFacility for id = "
-                        + hcf.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving updateHealthCareFacility");
-    }
-
-
-    private void nulifyOversightCommittee(Ii oscIdentifer) throws PAException {
-        LOG.debug("Entering nulifyOversightCommittee");
-        OversightCommittee osc = new OversightCommittee();
-        CorrelationUtils cUtils = new CorrelationUtils();
-        osc.setIdentifier(oscIdentifer.getExtension());
-        osc = cUtils.getPAOversightCommittee(osc);
-        if (osc != null) {
-            // delete the hcf and all of on delete cascade will delete the entire child
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                OversightCommittee oversightCommittee =
-                        (OversightCommittee) session.get(OversightCommittee.class, osc.getId());
-                session.delete(oversightCommittee);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting OversightCommittee for id = "
-                        + osc.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving nulifyHealthCareFacility");
-    }
-
-    private void updateOversightCommittee(OversightCommitteeDTO oscDto) throws PAException {
-        LOG.debug("Entering updateOversightCommittee");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        OversightCommittee osc = new OversightCommittee();
-        osc.setIdentifier(oscDto.getIdentifier().getExtension());
-        osc = cUtils.getPAOversightCommittee(osc);
-        if (osc != null) {
-            // update the organization
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                OversightCommittee osComittee = (OversightCommittee) session.get(OversightCommittee.class, osc.getId());
-                osComittee.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(oscDto.getStatus()));
-                osComittee.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-                if (ejbContext != null) {
-                    osComittee.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-                }
-                session.update(osComittee);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while updating OversightCommittee for id = "
-                        + osc.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving updateOversightCommittee");
-    }
-
-    private void nulifyResearchOrganization(Ii roIdentifer) throws PAException {
-        LOG.debug("Entering nulifyResearchOrganization");
-        ResearchOrganization ro = new ResearchOrganization();
-        CorrelationUtils cUtils = new CorrelationUtils();
-        ro.setIdentifier(roIdentifer.getExtension());
-        ro = cUtils.getPAResearchOrganization(ro);
-        if (ro != null) {
-            // delete the hcf and all of on delete cascade will delete the entire child
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                ResearchOrganization researchOrganization =
-                        (ResearchOrganization) session.get(ResearchOrganization.class, ro.getId());
-                session.delete(researchOrganization);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting ResearchOrganization for id = "
-                        + ro.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving nulifyResearchOrganization");
-    }
-
-    private void updateResearchOrganization(ResearchOrganizationDTO roDto) throws PAException {
-        LOG.debug("Entering updateResearchOrganization");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        ResearchOrganization ro = new ResearchOrganization();
-        ro.setIdentifier(roDto.getIdentifier().getExtension());
-        ro = cUtils.getPAResearchOrganization(ro);
-        if (ro != null) {
-            // update the organization
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                ResearchOrganization rOg = (ResearchOrganization) session.get(ResearchOrganization.class, ro.getId());
-                rOg.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()));
-                rOg.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-                if (ejbContext != null) {
-                    rOg.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-                }
-                session.update(rOg);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while updating ResearchOrganization for id = "
-                        + ro.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving updateResearchOrganization");
-    }
-
-
-
-    @SuppressWarnings("unchecked")
-    private List<Long> getAffectedStudyProtocolIds(String className , String identifier) throws PAException  {
-        Session session = null;
-        List<Long> spIds = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            String hql = " Select distinct sp.id from StudyProtocol sp  "
-                      + " join sp.studyParticipations as sps"
-                      + " join sps." + className + " as cl where cl.identifier = '" + identifier + "'";
-            spIds =  session.createQuery(hql).list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception while retrieving affected Ids for identifier = "
-                    + identifier + " for class name " + className , hbe);
-        }
-        return spIds;
-    }
+    
+//    private void cascaseDuplicateEntity(Organization nullfiedOrg  , OrganizationDTO duplicateOrg) throws PAException {
+//        // first create an entity 
+//        Organization dupPaOrg = 
+//    cUtils.getPAOrganizationByIndetifers(null, duplicateOrg.getIdentifier().getExtension());
+//        if (dupPaOrg == null) {
+//            dupPaOrg = cUtils.createPAOrganization(duplicateOrg);
+//        }
+//        // find if the old org has any hcf 
+//        HealthCareFacility nhcf = new HealthCareFacility();
+//        hcf.setOrganization(nullfiedOrg);
+//        hcf = cUtils.getPAHealthCareFacility(hcf);
+//        if (hcf != null) {
+//            
+//        }
+//        
+//    }
+    
 }

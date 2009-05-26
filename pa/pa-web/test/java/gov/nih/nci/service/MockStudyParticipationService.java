@@ -78,11 +78,11 @@
 */
 package gov.nih.nci.service;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
-import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -212,6 +212,11 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
 
     public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
             throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
         // TODO Auto-generated method stub
         
     }

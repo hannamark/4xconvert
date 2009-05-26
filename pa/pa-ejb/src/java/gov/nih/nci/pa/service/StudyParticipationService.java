@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 
 /**
@@ -88,5 +90,15 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
  * copyright holder, NCI.
  */
 public interface StudyParticipationService extends RolePaService<StudyParticipationDTO> {
+    
+    /**
+     * 
+     * @param ii ii of the structural roles
+     * @param roleStatusCode role status code
+     * @throws PAException on error
+     */
+    
+    void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException;
+
    
 }
