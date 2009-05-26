@@ -141,7 +141,7 @@ public class StudyResourcingServiceBeanTest {
         
         StudyResourcingDTO srDTO1 = new StudyResourcingDTO();
         srDTO1.setSerialNumber(StConverter.convertToSt("12345"));
-        srDTO1.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+        srDTO1.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
         
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);
         assertNotNull(srDTO2);
@@ -164,13 +164,13 @@ public class StudyResourcingServiceBeanTest {
         
         StudyResourcingDTO srDTO1 = new StudyResourcingDTO();
         srDTO1.setSerialNumber(StConverter.convertToSt("12345"));
-        srDTO1.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+        srDTO1.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
         
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);
         assertNotNull(srDTO2);
         assertEquals (srDTO1.getSerialNumber().getValue(), srDTO2.getSerialNumber().getValue());
 
-        srDTO2.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+        srDTO2.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
         srDTO2.setSerialNumber(StConverter.convertToSt("123123"));
         StudyResourcingDTO srDTO3 = remoteEjb.updateStudyResourcing(srDTO2);
         assertNotNull(srDTO3);
@@ -192,6 +192,6 @@ public class StudyResourcingServiceBeanTest {
         StudyResourcingDTO dto = remoteEjb.getStudyResourceByID(IiConverter.converToStudyResourcingIi(sr.getId()));
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_RESOURCING_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
-        assertEquals(dto.getStudyProtocolIi().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 }

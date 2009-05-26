@@ -165,18 +165,15 @@ private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
       getAttribute(Constants.STUDY_PROTOCOL_II);
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
 
-      studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
+      studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getFundingMechanismCode()));
-      studyResoureDTO.setFundingTypeCode(
-          CdConverter.convertStringToCd(trialFundingWebDTO.getFundingTypeCode()));
+     
       studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
               NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
       studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getNihInstitutionCode()));
-      studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
-      studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
       studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
       PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
 
@@ -206,17 +203,14 @@ private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
 
       studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourceByID(
           IiConverter.convertToIi(cbValue));
-      studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
+      studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getFundingMechanismCode()));
-      studyResoureDTO.setFundingTypeCode(
-          CdConverter.convertStringToCd(trialFundingWebDTO.getFundingTypeCode()));
+      
       studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
               NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
       studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getNihInstitutionCode()));
-      studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
-      studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
       studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
       PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
 

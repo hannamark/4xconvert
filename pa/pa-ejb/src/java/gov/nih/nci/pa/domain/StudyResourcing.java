@@ -85,11 +85,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.validator.NotNull;
 
 
 /**
@@ -103,21 +99,16 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name =  "STUDY_RESOURCING")
-public class StudyResourcing extends AbstractEntity {
+public class StudyResourcing extends AbstractStudyEntity {
 
     private static final long serialVersionUID = 4862154740562809004L;
     private SummaryFourFundingCategoryCode typeCode;
     private Boolean summary4ReportedResourceIndicator;
     private String organizationIdentifier;
-    private String resourceProviderIdentifier;
     private String fundingMechanismCode;
     private String nihInstituteCode;
-    private String fundingTypeCode;
     private NciDivisionProgramCode nciDivisionProgramCode;
-    private String suffixGrantYear;
-    private String suffixOther;
     private String serialNumber;
-    private StudyProtocol studyProtocol;
     private Boolean activeIndicator;
     private String inactiveCommentText;
 
@@ -168,22 +159,7 @@ public class StudyResourcing extends AbstractEntity {
     public void setOrganizationIdentifier(String organizationIdentifier) {
         this.organizationIdentifier = organizationIdentifier;
     }
-    /**
-     *
-     * @return resourceProviderIdentifier
-     */
-    @Column(name = "RESOURCE_PROVIDER_IDENTIFIER")
-    public String getResourceProviderIdentifier() {
-        return resourceProviderIdentifier;
-    }
-    /**
-     *
-     * @param resourceProviderIdentifier resourceProviderIdentifier
-     */
-    public void setResourceProviderIdentifier(String resourceProviderIdentifier) {
-        this.resourceProviderIdentifier = resourceProviderIdentifier;
-    }
-
+   
     /**
      * @return fundingMechanismCode
      */
@@ -197,33 +173,7 @@ public class StudyResourcing extends AbstractEntity {
     public void setFundingMechanismCode(String fundingMechanismCode) {
         this.fundingMechanismCode = fundingMechanismCode;
     }
-    /**
-     * @return fundingTypeCode
-     */
-    @Column(name = "FUNDING_TYPE_CODE")
-    public String getFundingTypeCode() {
-        return fundingTypeCode;
-    }
-    /**
-     * @param fundingTypeCode fundingTypeCode
-     */
-    public void setFundingTypeCode(String fundingTypeCode) {
-        this.fundingTypeCode = fundingTypeCode;
-    }
-
-    /**
-     * @return suffixOther
-     */
-    @Column(name = "SUFFIX_OTHER")
-    public String getSuffixOther() {
-        return suffixOther;
-    }
-    /**
-     * @param suffixOther suffixOther
-     */
-    public void setSuffixOther(String suffixOther) {
-        this.suffixOther = suffixOther;
-    }
+  
     /**
      * @return serialNumber
      */
@@ -269,40 +219,7 @@ public class StudyResourcing extends AbstractEntity {
     public void setNciDivisionProgramCode(NciDivisionProgramCode nciDivisionProgramCode) {
         this.nciDivisionProgramCode = nciDivisionProgramCode;
     }
-    /**
-     *
-     * @return suffixGrantYear
-     */
-    @Column(name = "SUFFIX_GRANT_YEAR")
-    public String getSuffixGrantYear() {
-        return suffixGrantYear;
-    }
-
-    /**
-     *
-     * @param suffixGrantYear suffixGrantYear
-     */
-    public void setSuffixGrantYear(String suffixGrantYear) {
-        this.suffixGrantYear = suffixGrantYear;
-    }
-
-    /**
-     *
-     * @return protocol
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
-    @NotNull
-    public StudyProtocol getStudyProtocol() {
-       return studyProtocol;
-    }
-    /**
-     *
-     * @param studyProtocol studyProtocol
-     */
-    public void setStudyProtocol(StudyProtocol studyProtocol) {
-        this.studyProtocol = studyProtocol;
-    }
+     
     /**
      *
      * @return activeIndicator

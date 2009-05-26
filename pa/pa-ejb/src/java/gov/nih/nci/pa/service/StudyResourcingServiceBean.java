@@ -241,12 +241,9 @@ public class StudyResourcingServiceBean
             }
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                     studyResourcingDTO.getFundingMechanismCode()));
-            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode().getCode());
             studyResourcing.setNciDivisionProgramCode(NciDivisionProgramCode.getByCode(
                         studyResourcingDTO.getNciDivisionProgramCode().getCode()));
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
-            studyResourcing.setSuffixGrantYear(StConverter.convertToString(studyResourcingDTO.getSuffixGrantYear()));
-            studyResourcing.setSuffixOther(StConverter.convertToString(studyResourcingDTO.getSuffixOther()));
             studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
             session.update(studyResourcing);
             session.flush();
@@ -299,7 +296,7 @@ public class StudyResourcingServiceBean
         }
         // create Protocol Obj
         StudyProtocol studyProtocol = new StudyProtocol();
-        studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIi()));
+        studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
 
 
         studyResourcing.setStudyProtocol(studyProtocol);
@@ -477,7 +474,7 @@ public class StudyResourcingServiceBean
           String newFundingMech = dto.getFundingMechanismCode().getCode();
           String newNciDivCode = dto.getNciDivisionProgramCode().getCode();
           String newNihInstCode = dto.getNihInstitutionCode().getCode();
-          List<StudyResourcingDTO> spList = getstudyResourceByStudyProtocol(dto.getStudyProtocolIi());
+          List<StudyResourcingDTO> spList = getstudyResourceByStudyProtocol(dto.getStudyProtocolIdentifier());
           for (StudyResourcingDTO sp : spList) {
               boolean sameSerialNumber = newSerialNumber.equals(sp.getSerialNumber().getValue());
               boolean sameFundingMech = newFundingMech.equals(sp.getFundingMechanismCode().getCode());

@@ -382,7 +382,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             sb.append(" join org.healthCareFacilities as orgRole  ");
         } else if (StudyParticipationFunctionalCode.COLLABORATORS.equals(functionalCode)) {
             sb.append(" join org.researchOrganizations as orgRole  ");
-        } else if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.equals(functionalCode)) {
+        } else if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
             sb.append(" join org.healthCareFacilities as orgRole  ");
         }
 
@@ -397,9 +397,9 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                     + "'" + StudyParticipationFunctionalCode.FUNDING_SOURCE + "',"
                     + "'" + StudyParticipationFunctionalCode.LABORATORY + "',"
                     + "'" + StudyParticipationFunctionalCode.AGENT_SOURCE + "')");
-        } else if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.equals(functionalCode)) {
+        } else if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
             sb.append(" and sps.functionalCode in ('"
-                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "')");
+                    + StudyParticipationFunctionalCode.LEAD_ORGANIZATION + "')");
         }
         List<Organization> queryList = new ArrayList<Organization>();
         try {

@@ -653,7 +653,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   throws PAException {
       List<StudyParticipationDTO> sParts = new ArrayList<StudyParticipationDTO>();
       StudyParticipationDTO spartDTO = new StudyParticipationDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
       sParts.add(spartDTO);
       spartDTO = new StudyParticipationDTO();
       spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
@@ -663,7 +663,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           for (StudyParticipationDTO dto : dtos) {
               if (PAUtil.isGreatenThan(dto.getLocalStudyProtocolIdentifier(),
                       PAAttributeMaxLen.LEN_30)) {
-                  if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode().equals(
+                  if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().equals(
                           dto.getFunctionalCode().getCode())) {
                       abstractionList.add(createError("Error" ,
                               "Select General Trial Details from Administrative Data menu." ,

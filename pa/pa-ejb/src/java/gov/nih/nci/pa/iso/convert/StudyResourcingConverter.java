@@ -109,18 +109,14 @@ public class StudyResourcingConverter {
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
         srDTO.setIdentifier(IiConverter.converToStudyResourcingIi(studyResourcing.getId()));
         srDTO.setOrganizationIdentifier(IiConverter.convertToIi(studyResourcing.getOrganizationIdentifier()));
-        srDTO.setResourceProviderIdentifier(IiConverter.convertToIi(studyResourcing.getResourceProviderIdentifier()));
         srDTO.setSummary4ReportedResourceIndicator(
                 BlConverter.convertToBl(studyResourcing.getSummary4ReportedResourceIndicator()));
         srDTO.setTypeCode(CdConverter.convertToCd(studyResourcing.getTypeCode()));
         srDTO.setFundingMechanismCode(CdConverter.convertStringToCd(studyResourcing.getFundingMechanismCode()));
-        srDTO.setFundingTypeCode(CdConverter.convertStringToCd(studyResourcing.getFundingTypeCode()));
         srDTO.setNciDivisionProgramCode(CdConverter.convertToCd(studyResourcing.getNciDivisionProgramCode()));
         srDTO.setNihInstitutionCode(CdConverter.convertStringToCd(studyResourcing.getNihInstituteCode()));
-        srDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcing.getSuffixGrantYear()));
-        srDTO.setSuffixOther(StConverter.convertToSt(studyResourcing.getSuffixOther()));
         srDTO.setSerialNumber(StConverter.convertToSt(studyResourcing.getSerialNumber()));
-        srDTO.setStudyProtocolIi(IiConverter.converToStudyProtocolIi(studyResourcing.getStudyProtocol().getId()));
+      srDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(studyResourcing.getStudyProtocol().getId()));
         //@tdo: date range
         return srDTO;
     }
@@ -133,17 +129,13 @@ public class StudyResourcingConverter {
     public static StudyResourcing convertFromDTOToDomain(StudyResourcingDTO studyResourcingDTO) {
         StudyResourcing studyResourcing = new StudyResourcing();
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
         if (studyResourcingDTO.getIdentifier() != null) {
             studyResourcing.setId(IiConverter.convertToLong(studyResourcingDTO.getIdentifier()));
         }
         studyResourcing.setStudyProtocol(spBo);
         if (studyResourcingDTO.getOrganizationIdentifier() != null) {
             studyResourcing.setOrganizationIdentifier(studyResourcingDTO.getOrganizationIdentifier().getExtension());
-        }
-        if (studyResourcingDTO.getResourceProviderIdentifier() != null) {
-            studyResourcing.setResourceProviderIdentifier(
-                    studyResourcingDTO.getResourceProviderIdentifier().getExtension());
         }
         if (studyResourcingDTO.getSummary4ReportedResourceIndicator() != null) {
             studyResourcing.setSummary4ReportedResourceIndicator(
@@ -163,15 +155,6 @@ public class StudyResourcingConverter {
         }
         if (studyResourcingDTO.getNihInstitutionCode() != null) {
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
-        }
-        if (studyResourcingDTO.getFundingTypeCode() != null) {
-            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode().getCode());
-        }
-        if (studyResourcingDTO.getSuffixOther() != null) {
-            studyResourcing.setSuffixOther(studyResourcingDTO.getSuffixOther().getValue());
-        }
-        if (studyResourcingDTO.getSuffixGrantYear() != null) {
-            studyResourcing.setSuffixGrantYear(StConverter.convertToString(studyResourcingDTO.getSuffixGrantYear()));
         }
         if (studyResourcingDTO.getSerialNumber() != null) {
             studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());

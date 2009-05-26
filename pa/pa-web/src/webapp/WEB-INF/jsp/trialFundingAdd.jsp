@@ -116,41 +116,7 @@ function tooltip() {
                                </s:fielderror>                            
                              </span>
                       </td>         
-                </tr> 
-                <tr>
-                     <td scope="row" class="label">
-                     <label for="fundingTypeCode">
-                            <fmt:message key="trialFunding.funding.typecode"/>:
-                     </label>
-                    </td>
-                    <td class="value">
-                        
-                        <s:select  
-                           name="trialFundingWebDTO.fundingTypeCode" 
-                           list="#{'':'','1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" 
-                           cssStyle="width:40px" />                           
-                      </td>         
-                </tr>                   
-                <tr>
-                     <td scope="row" class="label">
-                     <label for="grantYear">
-                            <fmt:message key="trialFunding.grant.year" />:
-                     </label>
-                    </td>
-                    <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:100px"/>
-                      </td>         
-                </tr> 
-                <tr>
-                     <td scope="row" class="label">
-                     <label for="suffix">
-                            <fmt:message key="trialFunding.suffix" />:
-                     </label>
-                    </td>
-                    <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:100px"/>
-                      </td>         
-                </tr>                 
+                </tr>         
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">

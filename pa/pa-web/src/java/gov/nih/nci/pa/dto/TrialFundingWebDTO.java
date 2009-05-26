@@ -89,12 +89,9 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
  */
 public class TrialFundingWebDTO {
     
-    private String fundingTypeCode;
     private String fundingMechanismCode;
     private String nihInstitutionCode;
     private String nciDivisionProgramCode;
-    private String suffixgrantYear;
-    private String suffixOther;
     private String id;
     private String serialNumber;
     private String inactiveCommentText;
@@ -107,13 +104,9 @@ public class TrialFundingWebDTO {
         this.fundingMechanismCode = iso.getFundingMechanismCode().getCode();
         this.nihInstitutionCode = iso.getNihInstitutionCode().getCode();
         this.nciDivisionProgramCode = iso.getNciDivisionProgramCode().getCode();
-        this.fundingTypeCode = iso.getFundingTypeCode().getCode();
-        this.suffixgrantYear = iso.getSuffixGrantYear().getValue();
-        this.suffixOther = iso.getSuffixOther().getValue();
         this.id = iso.getIdentifier().getExtension();
         this.serialNumber = iso.getSerialNumber().getValue().toString();
-        //this.inactiveCommentText = iso.getInactiveCommentText().getValue();
-    }
+     }
     
     /** .
      *  Default Constructor
@@ -122,21 +115,7 @@ public class TrialFundingWebDTO {
         super();
     }
 
-    /**
-     * @return fundingTypeCode
-     */
-    public String getFundingTypeCode() {
-        return fundingTypeCode;
-    }
-
-    /**
-     * @param fundingTypeCode fundingTypeCode
-     */
-    public void setFundingTypeCode(String fundingTypeCode) {
-        this.fundingTypeCode = fundingTypeCode;
-    }
-
-    /**
+   /**
      * @return fundingMechanismCode
      */
     public String getFundingMechanismCode() {
@@ -178,35 +157,7 @@ public class TrialFundingWebDTO {
         this.nciDivisionProgramCode = nciDivisionProgramCode;
     }
 
-    /**
-     * @return suffixgrantYear
-     */
-    public String getSuffixgrantYear() {
-        return suffixgrantYear;
-    }
-
-    /**
-     * @param suffixgrantYear suffixgrantYear
-     */
-    public void setSuffixgrantYear(String suffixgrantYear) {
-        this.suffixgrantYear = suffixgrantYear;
-    }
-
-    /**
-     * @return suffixOther
-     */
-    public String getSuffixOther() {
-        return suffixOther;
-    }
-
-    /**
-     * @param suffixOther suffixOther
-     */
-    public void setSuffixOther(String suffixOther) {
-        this.suffixOther = suffixOther;
-    }
-
-    /**
+   /**
      * @return id
      */
     public String getId() {

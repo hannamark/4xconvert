@@ -68,19 +68,14 @@ import gov.nih.nci.coppa.iso.St;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class StudyResourcingDTO extends BaseDTO {
+public class StudyResourcingDTO extends StudyDTO {
     private static final long serialVersionUID = 5304999422726239395L;
     private Cd typeCode;
     private Bl summary4ReportedResourceIndicator;
     private Ii organizationIdentifier;
-    private Ii resourceProviderIdentifier;
-    private Ii studyProtocolIi;
     private Cd fundingMechanismCode;
-    private Cd fundingTypeCode;
     private Cd nciDivisionProgramCode;
     private Cd nihInstitutionCode;
-    private St suffixGrantYear;
-    private St suffixOther;
     private St serialNumber;
     private St inactiveCommentText;
     /**
@@ -127,33 +122,6 @@ public class StudyResourcingDTO extends BaseDTO {
         this.organizationIdentifier = organizationIdentifier;
     }
     /**
-     * 
-     * @return resourceProviderIdentifier
-     */
-    public Ii getResourceProviderIdentifier() {
-        return resourceProviderIdentifier;
-    }
-    /**
-     * 
-     * @param resourceProviderIdentifier Ii
-     */
-    public void setResourceProviderIdentifier(Ii resourceProviderIdentifier) {
-        this.resourceProviderIdentifier = resourceProviderIdentifier;
-    }
-
-    /**
-     * @return the studyProtocolidentifier
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    /**
-     * @param studyProtocolIi ii
-     */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
-    }
-    /**
      * @return the fundingMechanismCode
      */
     public Cd getFundingMechanismCode() {
@@ -166,31 +134,6 @@ public class StudyResourcingDTO extends BaseDTO {
         this.fundingMechanismCode = fundingMechanismCode;
     }
     
-    /**
-     * @return suffixOther
-     */
-    public St getSuffixOther() {
-        return suffixOther;
-    }
-    
-    /**
-     * @param suffixOther suffixOther St
-     */
-    public void setSuffixOther(St suffixOther) {
-        this.suffixOther = suffixOther;
-    }
-    /**
-     * @return fundingTypeCode
-     */
-    public Cd getFundingTypeCode() {
-        return fundingTypeCode;
-    }
-    /**
-     * @param fundingTypeCode fundingTypeCode
-     */
-    public void setFundingTypeCode(Cd fundingTypeCode) {
-        this.fundingTypeCode = fundingTypeCode;
-    }
     /**
      * @return serialNumber
      */
@@ -232,20 +175,6 @@ public class StudyResourcingDTO extends BaseDTO {
         this.nihInstitutionCode = nihInstitutionCode;
     }
     
-    /**
-     * 
-     * @return suffixGrantYear
-     */
-    public St getSuffixGrantYear() {
-        return suffixGrantYear;
-    }
-    /**
-     * 
-     * @param suffixGrantYear suffixGrantYear
-     */
-    public void setSuffixGrantYear(St suffixGrantYear) {
-        this.suffixGrantYear = suffixGrantYear;
-    }    
     /**
      * 
      * @return inactiveCommentText

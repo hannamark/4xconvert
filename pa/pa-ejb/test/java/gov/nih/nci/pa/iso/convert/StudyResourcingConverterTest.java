@@ -109,7 +109,6 @@ public class StudyResourcingConverterTest {
     StudyResourcing bo = new StudyResourcing();
     bo.setId(123L);
     bo.setOrganizationIdentifier("100");
-    bo.setResourceProviderIdentifier("100");
     bo.setStudyProtocol(sp);
     bo.setSummary4ReportedResourceIndicator(Boolean.TRUE);
     bo.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
@@ -122,8 +121,6 @@ public class StudyResourcingConverterTest {
       StudyResourcingDTO dto) {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
     assertEquals(bo.getOrganizationIdentifier(),  IiConverter.convertToString(dto.getOrganizationIdentifier()));
-    assertEquals(bo.getResourceProviderIdentifier(),  IiConverter.convertToString(dto.getResourceProviderIdentifier()));
-    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
     assertEquals(bo.getSummary4ReportedResourceIndicator(),  dto.getSummary4ReportedResourceIndicator().getValue());
     assertEquals(bo.getTypeCode().getCode(),  dto.getTypeCode().getCode());
   }
@@ -134,8 +131,6 @@ public class StudyResourcingConverterTest {
     StudyResourcingDTO dto = new StudyResourcingDTO();
     dto.setIdentifier(IiConverter.convertToIi((Long) null));
     dto.setOrganizationIdentifier(IiConverter.convertToIi("100"));
-    dto.setResourceProviderIdentifier(IiConverter.convertToIi("100"));
-    dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
     dto.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
     dto.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
     StudyResourcingConverter sg = new StudyResourcingConverter();

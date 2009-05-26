@@ -121,7 +121,6 @@ public class StudyResourcingTest {
         assertEquals("DateLastUpdated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
         assertEquals("Id does not match " , create.getId(),  saved.getId());
         assertEquals("Organization Id does not match " , create.getOrganizationIdentifier(),  saved.getOrganizationIdentifier());
-        assertEquals("Resource Id does not match " , create.getResourceProviderIdentifier(),  saved.getResourceProviderIdentifier());
         assertEquals("Study Protocol  Id does not match " , create.getStudyProtocol().getId(),  saved.getStudyProtocol().getId());
         assertEquals("Summary4ReportedResourceIndicator does not match " , create.getSummary4ReportedResourceIndicator(),  saved.getSummary4ReportedResourceIndicator());
         assertEquals("TypeCode does not match " , create.getTypeCode().getCode(),  saved.getTypeCode().getCode());
@@ -170,7 +169,6 @@ public class StudyResourcingTest {
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sr.setDateLastUpdated(now);
         sr.setOrganizationIdentifier("po-001");
-        sr.setResourceProviderIdentifier("rp-001");
         sr.setStudyProtocol(sp);
         sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
