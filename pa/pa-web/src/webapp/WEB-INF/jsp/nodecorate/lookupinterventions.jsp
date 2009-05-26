@@ -29,7 +29,7 @@
         return false;
     }
     function cancel() {
-        window.top.close();
+        window.top.hidePopWin(true);
     } 
 </SCRIPT>
 
