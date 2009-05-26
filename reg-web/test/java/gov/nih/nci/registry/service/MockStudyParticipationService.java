@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.registry.service;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -117,6 +118,11 @@ public class MockStudyParticipationService implements
             throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
+        // TODO Auto-generated method stub
+        
     }
 
 }
