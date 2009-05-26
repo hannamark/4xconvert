@@ -1,18 +1,15 @@
 package gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyParticipationContact;
-import gov.nih.nci.coppa.services.pa.faults.PAFault;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationContactTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyParticipationContactEjb;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
@@ -31,6 +28,10 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     public StudyParticipationContactServiceImpl() throws RemoteException {
         super();
     }
+
+    private GenericStudyPaGridServiceImpl<StudyParticipationContactDTO, StudyParticipationContact> impl
+    = new GenericStudyPaGridServiceImpl<StudyParticipationContactDTO,
+    StudyParticipationContact>(StudyParticipationContact.class, StudyParticipationContactDTO.class);
 
     /**
      * {@inheritDoc}
@@ -106,21 +107,7 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
      * {@inheritDoc}
      */
   public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        StudyParticipationContact[] result = null;
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(id);
-            List<StudyParticipationContactDTO> dtosList = studyParContService.getByStudyProtocol(iiDto);
-            result = new StudyParticipationContact[dtosList.size()];
-            int i = 0;
-            for (StudyParticipationContactDTO tEmp : dtosList) {
-                result[i] = StudyParticipationContactTransformer.INSTANCE.toXml(tEmp);
-                i++;
-            }
-            return result;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
+        return impl.getByStudyProtocol(id);
     }
 
     /**
@@ -134,36 +121,14 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
      * {@inheritDoc}
      */
   public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        StudyParticipationContact[] result = null;
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-            List<StudyParticipationContactDTO> dtosList = studyParContService.getCurrentByStudyProtocol(iiDto);
-            result = new StudyParticipationContact[dtosList.size()];
-            int i = 0;
-            for (StudyParticipationContactDTO tEmp : dtosList) {
-                result[i] = StudyParticipationContactTransformer.INSTANCE.toXml(tEmp);
-                i++;
-            }
-            return result;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
+        return impl.getCurrentByStudyProtocol(studyProtocolId);
     }
 
     /**
      * {@inheritDoc}
      */
   public gov.nih.nci.coppa.services.pa.StudyParticipationContact get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(id);
-            StudyParticipationContactDTO result = studyParContService.get(iiDto);
-            return StudyParticipationContactTransformer.INSTANCE.toXml(result);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
-
+        return impl.get(id);
     }
 
     /**

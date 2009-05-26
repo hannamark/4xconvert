@@ -93,12 +93,24 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
  *
  * @author Steve Lustbader
  */
-public class InvokeStudyRegulatoryAuthorityEjb implements StudyRegulatoryAuthorityServiceRemote {
+public class InvokeStudyRegulatoryAuthorityEjb
+    extends InvokePaServiceEjb<StudyRegulatoryAuthorityDTO>
+    implements StudyRegulatoryAuthorityServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
-     * {@inheritDoc}
+     * Const.
+     */
+    public InvokeStudyRegulatoryAuthorityEjb() {
+        super(StudyRegulatoryAuthorityDTO.class);
+    }
+
+    /**
+     * Copy method.
+     * @param fromStudyProtocolIi from
+     * @param toStudyProtocolIi to
+     * @throws PAException when fail.
      */
     public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         try {
@@ -109,19 +121,10 @@ public class InvokeStudyRegulatoryAuthorityEjb implements StudyRegulatoryAuthori
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public StudyRegulatoryAuthorityDTO create(StudyRegulatoryAuthorityDTO sraDTO) throws PAException {
-        try {
-            StudyRegulatoryAuthorityDTO result = locator.getStudyRegulatoryAuthorityService().create(sraDTO);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
+     * GetByStudyProtocol method.
+     * @param studyProtocolIi ii.
+     * @return tudyRegulatoryAuthorityDTO dto.
+     * @throws PAException when fail.
      */
     public StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
@@ -133,17 +136,4 @@ public class InvokeStudyRegulatoryAuthorityEjb implements StudyRegulatoryAuthori
         }
 
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyRegulatoryAuthorityDTO update(StudyRegulatoryAuthorityDTO sraDTO) throws PAException {
-        try {
-            StudyRegulatoryAuthorityDTO result = locator.getStudyRegulatoryAuthorityService().update(sraDTO);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
 }

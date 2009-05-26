@@ -58,8 +58,8 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
               System.out.println("Getting study protocol");
               getStudyProtocol(client);
 
-              System.out.println("Getting interventional study protocol");
-              getInterventionalStudyProtocol(client);
+    //          System.out.println("Getting interventional study protocol");
+  //            getInterventionalStudyProtocol(client);
             } else {
                 usage();
                 System.exit(1);
@@ -82,7 +82,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         StudyProtocol result = client.getStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
-
+/*
     private static void getInterventionalStudyProtocol(StudyProtocolServiceClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -91,7 +91,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
-
+*/
   public gov.nih.nci.coppa.services.pa.StudyProtocol getStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getStudyProtocol");

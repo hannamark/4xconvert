@@ -82,13 +82,32 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyDTO;
+import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
+import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyPaService;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -97,6 +116,9 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.CommunicationException;
@@ -114,6 +136,46 @@ public final class JNDIServiceLocator implements ServiceLocator {
     private static final int MAX_RETRIES = 2;
     private static JNDIServiceLocator instance = new JNDIServiceLocator();
     private InitialContext context;
+    private static Map<Class<?>, Method> values = new HashMap<Class<?>, Method>();
+
+    static {
+        try {
+            /*
+             * Cache the Method instead of the actual Remote instance as it would be very difficult to handle
+             * NamingException, etc..
+             */
+            values.put(ArmDTO.class, getInstance().getClass().getMethod(
+                    "getArmService"));
+            values.put(StudyProtocolDTO.class,
+                    getInstance().getClass().getMethod("getStudyProtocolService"));
+            values.put(StudyResourcingDTO.class,
+                    getInstance().getClass().getMethod("getStudyResourcingService"));
+            values.put(StudyRegulatoryAuthorityDTO.class,
+                    getInstance().getClass().getMethod("getStudyRegulatoryAuthorityService"));
+            values.put(StudyRecruitmentStatusDTO.class,
+                    getInstance().getClass().getMethod("getStudyRecruitmentStatusService"));
+            values.put(StudySiteAccrualStatusDTO.class,
+                    getInstance().getClass().getMethod("getStudySiteAccrualStatusService"));
+            values.put(StudyParticipationContactDTO.class,
+                    getInstance().getClass().getMethod("getStudyParticipationContactService"));
+            values.put(StudyOutcomeMeasureDTO.class,
+                    getInstance().getClass().getMethod("getStudyOutcomeMeasureService"));
+            values.put(StudyParticipationDTO.class,
+                    getInstance().getClass().getMethod("getStudyParticipationService"));
+            values.put(StudyOverallStatusDTO.class,
+                    getInstance().getClass().getMethod("getStudyOverallStatusService"));
+            values.put(StudyDiseaseDTO.class,
+                    getInstance().getClass().getMethod("getStudyDiseaseService"));
+            values.put(StudyOnholdDTO.class,
+                    getInstance().getClass().getMethod("getStudyOnholdService"));
+            values.put(StudyContactDTO.class,
+                    getInstance().getClass().getMethod("getStudyContactService"));
+            values.put(StudyIndldeDTO.class,
+                    getInstance().getClass().getMethod("getStudyIndldeService"));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
     private JNDIServiceLocator() {
         try {
@@ -281,4 +343,49 @@ public final class JNDIServiceLocator implements ServiceLocator {
             (StudyIndldeServiceRemote) lookup("pa/StudyIndldeServiceBean/remote");
         return result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <Z extends BaseDTO> BasePaService<Z> getBasePaService(Class<Z> type)
+            throws NamingException {
+        Method serviceMethod = values.get(type);
+        BasePaService<Z> service = null;
+        try {
+            service = (BasePaService<Z>) serviceMethod.invoke(this);
+        } catch (Exception e) {
+
+            throw new InvokeCoppaServiceException("Unable to invoke method, "
+                    + serviceMethod.getName() + " with exception " + e.getMessage());
+        }
+        if (service == null) {
+            throw new IllegalArgumentException("Unable to locate service for type, " + type);
+        }
+        return service;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <S extends StudyDTO> StudyPaService<S> getStudyPaService(Class<S> type)
+            throws NamingException {
+        Method serviceMethod = values.get(type);
+        StudyPaService<S> service = null;
+        try {
+            service = (StudyPaService<S>) serviceMethod.invoke(this);
+        } catch (Exception e) {
+            System.err.println("----------------can't find method-start st--------------");
+            System.err.println("error cause: " + e.getCause());
+            e.printStackTrace();
+            System.err.println("----------------end st---------------");
+            throw new InvokeCoppaServiceException("Unable to invoke method, "
+                    + serviceMethod.getName() + " with exception ");
+        }
+        if (service == null) {
+            throw new IllegalArgumentException("Unable to locate service for type, " + type);
+        }
+        return service;
+    }
+
+
 }

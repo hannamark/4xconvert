@@ -1,16 +1,15 @@
 package gov.nih.nci.coppa.services.pa.studycontactservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyContact;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyContactTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyContactEjb;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
@@ -28,6 +27,10 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
     public StudyContactServiceImpl() throws RemoteException {
         super();
     }
+
+    private GenericStudyPaGridServiceImpl<StudyContactDTO, StudyContact> impl
+    = new GenericStudyPaGridServiceImpl<StudyContactDTO, StudyContact>(StudyContact.class, StudyContactDTO.class);
+
 
   public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyContact[] result = null;
@@ -65,15 +68,7 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
   }
 
   public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          List<StudyContactDTO> dtosList = studyContactService.getByStudyProtocol(iiDto);
-          return StudyContactTransformer.INSTANCE
-          .convert(dtosList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getByStudyProtocol(id);
   }
 
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
@@ -82,26 +77,11 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
   }
 
   public gov.nih.nci.coppa.services.pa.StudyContact[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-          List<StudyContactDTO> dtosList = studyContactService.getCurrentByStudyProtocol(iiDto);
-          return StudyContactTransformer.INSTANCE
-          .convert(dtosList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getCurrentByStudyProtocol(studyProtocolId);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyContact get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          StudyContactDTO dto = studyContactService.get(iiDto);
-          return StudyContactTransformer.INSTANCE.toXml(dto);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.get(id);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyContact create(gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

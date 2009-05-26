@@ -2,20 +2,16 @@ package gov.nih.nci.coppa.services.pa.studyonholdservice.service;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.BL;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyOnhold;
-import gov.nih.nci.coppa.services.pa.faults.PAFault;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOnholdTransformer;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyOnholdEjb;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -32,37 +28,19 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         super();
     }
 
+    private GenericStudyPaGridServiceImpl<StudyOnholdDTO, StudyOnhold> impl
+    = new GenericStudyPaGridServiceImpl<StudyOnholdDTO, StudyOnhold>(StudyOnhold.class, StudyOnholdDTO.class);
+
   public gov.nih.nci.coppa.services.pa.StudyOnhold get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(id);
-            StudyOnholdDTO studyOnholdDto = studyOnholdService.get(iiDto);
-            return StudyOnholdTransformer.INSTANCE.toXml(studyOnholdDto);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
+        return impl.get(id);
     }
 
   public gov.nih.nci.coppa.services.pa.StudyOnhold[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(id);
-            List<StudyOnholdDTO> studyOnholdDtoList = studyOnholdService.getByStudyProtocol(iiDto);
-            return StudyOnholdTransformer.INSTANCE.convert(studyOnholdDtoList);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
+        return impl.getByStudyProtocol(id);
     }
 
   public gov.nih.nci.coppa.services.pa.StudyOnhold[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-            List<StudyOnholdDTO> studyOnholdDtoList = studyOnholdService.getCurrentByStudyProtocol(iiDto);
-            return StudyOnholdTransformer.INSTANCE.convert(studyOnholdDtoList);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
+        return impl.getCurrentByStudyProtocol(studyProtocolId);
     }
 
   public gov.nih.nci.coppa.services.pa.BL isOnhold(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

@@ -82,66 +82,35 @@
  */
 package gov.nih.nci.coppa.services.pa.studyoverallstatusservice.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyOverallStatus;
-import gov.nih.nci.coppa.services.pa.faults.PAFault;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOverallStatusTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
-import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyOverallStatusEjb;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 
 import java.rmi.RemoteException;
-import java.util.List;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 /**
  * Implementation of the StudyOverallStatusService. Dispatches to the remote EJBs and the Transformers.
  */
 public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImplBase {
 
-  private static final Logger logger = LogManager.getLogger(StudyOverallStatusServiceImpl.class);
-  private final InvokeStudyOverallStatusEjb ejb = new InvokeStudyOverallStatusEjb();
-
   public StudyOverallStatusServiceImpl() throws RemoteException {
       super();
   }
 
+  private GenericStudyPaGridServiceImpl<StudyOverallStatusDTO, StudyOverallStatus> impl
+      = new GenericStudyPaGridServiceImpl<StudyOverallStatusDTO,
+      StudyOverallStatus>(StudyOverallStatus.class, StudyOverallStatusDTO.class);
+
   public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii ii = IITransformer.INSTANCE.toDto(id);
-          List<StudyOverallStatusDTO> dtoList = ejb.getByStudyProtocol(ii);
-          return StudyOverallStatusTransformer.INSTANCE.convert(dtoList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getByStudyProtocol(id);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii ii = IITransformer.INSTANCE.toDto(studyProtocolId);
-          List<StudyOverallStatusDTO> dtoList = ejb.getCurrentByStudyProtocol(ii);
-          return StudyOverallStatusTransformer.INSTANCE.convert(dtoList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getByStudyProtocol(studyProtocolId);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyOverallStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii ii = IITransformer.INSTANCE.toDto(id);
-          StudyOverallStatusDTO dto = ejb.get(ii);
-          return StudyOverallStatusTransformer.INSTANCE.toXml(dto);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.get(id);
   }
 
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

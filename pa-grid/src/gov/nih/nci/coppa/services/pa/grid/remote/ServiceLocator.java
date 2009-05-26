@@ -82,13 +82,17 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
+import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyPaService;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -201,5 +205,25 @@ public interface ServiceLocator {
      * @throws NamingException if unable to lookup.
      */
     StudyIndldeServiceRemote getStudyIndldeService() throws NamingException;
+
+    /**
+    * Gets a base generic service.
+    * @param <Z> BasePa DTO type
+    * @param type Correlation DTO class
+    * @return BasePaService
+    * @throws NamingException on error looking up the service
+    */
+   @SuppressWarnings("unchecked")
+   <Z extends BaseDTO> BasePaService getBasePaService(Class<Z> type) throws NamingException;
+
+   /**
+    * Gets a study generic service.
+    * @param <S> StudyPa DTO type
+    * @param type Correlation DTO class
+    * @return StudyPaService
+    * @throws NamingException on error looking up the service
+    */
+   @SuppressWarnings("unchecked")
+   <S extends StudyDTO> StudyPaService getStudyPaService(Class<S> type) throws NamingException;
 
 }

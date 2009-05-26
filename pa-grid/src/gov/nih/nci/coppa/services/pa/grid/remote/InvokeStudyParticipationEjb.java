@@ -12,104 +12,18 @@ import java.util.List;
 /**
  * Wrapper class for invoking the StudyParticipant remote EJB.
  */
-public class InvokeStudyParticipationEjb implements StudyParticipationServiceRemote {
+public class InvokeStudyParticipationEjb
+    extends InvokeStudyPaServiceEjb<StudyParticipationDTO>
+    implements StudyParticipationServiceRemote {
+
+    /**
+     * Const.
+     */
+    public InvokeStudyParticipationEjb() {
+        super(StudyParticipationDTO.class);
+    }
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public void copy(Ii arg0, Ii arg1) throws PAException {
-        try {
-            locator.getStudyParticipationService().copy(arg0, arg1);
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii arg0)
-            throws PAException {
-        try {
-            List<StudyParticipationDTO> result =
-                locator.getStudyParticipationService().getByStudyProtocol(arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<StudyParticipationDTO> getCurrentByStudyProtocol(Ii arg0)
-            throws PAException {
-        try {
-            List<StudyParticipationDTO> result =
-                locator.getStudyParticipationService().getCurrentByStudyProtocol(arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyParticipationDTO create(StudyParticipationDTO arg0)
-            throws PAException {
-        try {
-            StudyParticipationDTO result =
-                locator.getStudyParticipationService().create(arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void delete(Ii arg0) throws PAException {
-        try {
-            locator.getStudyParticipationService().delete(arg0);
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyParticipationDTO get(Ii arg0) throws PAException {
-
-        try {
-            StudyParticipationDTO result =
-                locator.getStudyParticipationService().get(arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyParticipationDTO update(StudyParticipationDTO arg0)
-            throws PAException {
-        try {
-            StudyParticipationDTO result =
-                locator.getStudyParticipationService().update(arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
 
     /**
      * {@inheritDoc}

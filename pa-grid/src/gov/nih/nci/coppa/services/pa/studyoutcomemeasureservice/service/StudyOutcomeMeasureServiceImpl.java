@@ -1,17 +1,10 @@
 package gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOutcomeMeasureTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
-import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyOutcomeMeasureEjb;
+import gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 
 import java.rmi.RemoteException;
-import java.util.List;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 /**
  * Implementation of the StudyOutcomeMeasureService. Dispatches to the remote EJBs and the Transformers.
@@ -19,21 +12,16 @@ import org.apache.log4j.Logger;
  */
 public class StudyOutcomeMeasureServiceImpl extends StudyOutcomeMeasureServiceImplBase {
 
-    private static final Logger logger = LogManager.getLogger(StudyOutcomeMeasureServiceImpl.class);
-    private final InvokeStudyOutcomeMeasureEjb studyOutMeasureService = new InvokeStudyOutcomeMeasureEjb();
     public StudyOutcomeMeasureServiceImpl() throws RemoteException {
         super();
     }
 
+    private GenericStudyPaGridServiceImpl<StudyOutcomeMeasureDTO, StudyOutcomeMeasure> impl
+    = new GenericStudyPaGridServiceImpl<StudyOutcomeMeasureDTO,
+        StudyOutcomeMeasure>(StudyOutcomeMeasure.class, StudyOutcomeMeasureDTO.class);
+
   public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          List<StudyOutcomeMeasureDTO> dtosList = studyOutMeasureService.getByStudyProtocol(iiDto);
-          return StudyOutcomeMeasureTransformer.INSTANCE.convert(dtosList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getByStudyProtocol(id);
   }
 
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
@@ -42,28 +30,11 @@ public class StudyOutcomeMeasureServiceImpl extends StudyOutcomeMeasureServiceIm
   }
 
   public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-          List<StudyOutcomeMeasureDTO> dtosList = studyOutMeasureService.getCurrentByStudyProtocol(iiDto);
-          return StudyOutcomeMeasureTransformer.INSTANCE.convert(dtosList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getCurrentByStudyProtocol(studyProtocolId);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-
-      StudyOutcomeMeasureDTO result = null;
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          result = studyOutMeasureService.get(iiDto);
-
-          return StudyOutcomeMeasureTransformer.INSTANCE.toXml(result);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.get(id);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure create(gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure studyOutcomeMeasure) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

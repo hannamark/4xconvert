@@ -1,16 +1,15 @@
 package gov.nih.nci.coppa.services.pa.studyparticipationservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyParticipation;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyParticipationEjb;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
@@ -29,6 +28,9 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
     public StudyParticipationServiceImpl() throws RemoteException {
         super();
     }
+
+    private GenericStudyPaGridServiceImpl<StudyParticipationDTO, StudyParticipation> impl
+    = new GenericStudyPaGridServiceImpl<StudyParticipationDTO, StudyParticipation>(StudyParticipation.class, StudyParticipationDTO.class);
 
   public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyParticipation[] result = null;
@@ -63,14 +65,7 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
   }
 
   public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          List<StudyParticipationDTO> dtosList = studyParService.getByStudyProtocol(iiDto);
-          return StudyParticipationTransformer.INSTANCE.convert(dtosList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getByStudyProtocol(id);
   }
 
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
@@ -79,25 +74,11 @@ public class StudyParticipationServiceImpl extends StudyParticipationServiceImpl
   }
 
   public gov.nih.nci.coppa.services.pa.StudyParticipation[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-          List<StudyParticipationDTO> dtosList = studyParService.getCurrentByStudyProtocol(iiDto);
-          return StudyParticipationTransformer.INSTANCE.convert(dtosList);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getCurrentByStudyProtocol(studyProtocolId);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyParticipation get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          StudyParticipationDTO dto = studyParService.get(iiDto);
-          return StudyParticipationTransformer.INSTANCE.toXml(dto);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.get(id);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyParticipation create(gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

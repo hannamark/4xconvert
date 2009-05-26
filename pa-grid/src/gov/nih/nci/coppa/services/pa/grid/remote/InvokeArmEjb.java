@@ -11,9 +11,18 @@ import java.util.List;
 /**
  * Wrapper class for invoking the Arm remote EJB.
  */
-public class InvokeArmEjb implements ArmServiceRemote {
+public class InvokeArmEjb
+    extends InvokeStudyPaServiceEjb<ArmDTO>
+    implements ArmServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+
+    /**
+     * Const.
+     */
+    public InvokeArmEjb() {
+        super(ArmDTO.class);
+    }
 
     /**
      * {@inheritDoc}
@@ -25,69 +34,5 @@ public class InvokeArmEjb implements ArmServiceRemote {
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<ArmDTO> getByStudyProtocol(Ii ii) throws PAException {
-        try {
-            List<ArmDTO> result = locator.getArmService().getByStudyProtocol(ii);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<ArmDTO> getCurrentByStudyProtocol(Ii ii) throws PAException {
-        try {
-            List<ArmDTO> result = locator.getArmService().getCurrentByStudyProtocol(ii);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ArmDTO get(Ii ii) throws PAException {
-        try {
-            ArmDTO result = locator.getArmService().get(ii);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void copy(Ii arg0, Ii arg1) throws PAException {
-        throw new PAException("Not yet implemented");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ArmDTO create(ArmDTO arg0) throws PAException {
-        throw new PAException("Not yet implemented");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void delete(Ii arg0) throws PAException {
-        throw new PAException("Not yet implemented");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ArmDTO update(ArmDTO arg0) throws PAException {
-        throw new PAException("Not yet implemented");
     }
 }

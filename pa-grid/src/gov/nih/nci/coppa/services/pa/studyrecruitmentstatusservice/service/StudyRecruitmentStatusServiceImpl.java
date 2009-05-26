@@ -1,18 +1,10 @@
 package gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRecruitmentStatusTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
-import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyRecruitmentStatusEjb;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 
 import java.rmi.RemoteException;
-import java.util.List;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 /**
  * Implementation of the StudyRecruitmentStatusService. Dispatches to the remote EJBs and the Transformers.
@@ -21,32 +13,19 @@ import org.apache.log4j.Logger;
  */
 public class StudyRecruitmentStatusServiceImpl extends StudyRecruitmentStatusServiceImplBase {
 
-  private static final Logger logger = LogManager.getLogger(StudyRecruitmentStatusServiceImpl.class);
-  private final InvokeStudyRecruitmentStatusEjb studyRecStatService = new InvokeStudyRecruitmentStatusEjb();
   public StudyRecruitmentStatusServiceImpl() throws RemoteException {
       super();
   }
+
+  private GenericStudyPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus> impl
+  = new GenericStudyPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus>(StudyRecruitmentStatus.class, StudyRecruitmentStatusDTO.class);
+
 
   /**
    * {@inheritDoc}
    */
   public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      StudyRecruitmentStatus[] result = null;
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          List<StudyRecruitmentStatusDTO> dtosList = studyRecStatService.getByStudyProtocol(iiDto);
-
-          result = new StudyRecruitmentStatus[dtosList.size()];
-          int i = 0;
-          for (StudyRecruitmentStatusDTO tEmp : dtosList) {
-              result[i] = StudyRecruitmentStatusTransformer.INSTANCE.toXml(tEmp);
-              i++;
-          }
-          return result;
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getByStudyProtocol(id);
   }
 
   /**
@@ -61,36 +40,14 @@ public class StudyRecruitmentStatusServiceImpl extends StudyRecruitmentStatusSer
    * {@inheritDoc}
    */
   public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      StudyRecruitmentStatus[] result = null;
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-          List<StudyRecruitmentStatusDTO> dtosList = studyRecStatService.getCurrentByStudyProtocol(iiDto);
-
-          result = new StudyRecruitmentStatus[dtosList.size()];
-          int i = 0;
-          for (StudyRecruitmentStatusDTO tEmp : dtosList) {
-              result[i] = StudyRecruitmentStatusTransformer.INSTANCE.toXml(tEmp);
-              i++;
-          }
-          return result;
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.getCurrentByStudyProtocol(studyProtocolId);
   }
 
   /**
    * {@inheritDoc}
    */
   public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          StudyRecruitmentStatusDTO dto = studyRecStatService.get(iiDto);
-          return StudyRecruitmentStatusTransformer.INSTANCE.toXml(dto);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
+      return impl.get(id);
   }
 
   /**
