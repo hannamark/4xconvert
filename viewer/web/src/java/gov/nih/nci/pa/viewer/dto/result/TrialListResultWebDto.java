@@ -77,9 +77,11 @@
 package gov.nih.nci.pa.viewer.dto.result;
 
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +96,7 @@ public class TrialListResultWebDto {
     private String dateLastCreated;
     private String assignedIdentifier;
     private String officialTitle;
+    private String submissionType;
     private String statusCode;
 
     /**
@@ -119,6 +122,15 @@ public class TrialListResultWebDto {
         this.dateLastCreated = TsConverter.convertToString(dto.getDateLastCreated());
         this.assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
         this.officialTitle = StConverter.convertToString(dto.getOfficialTitle());
+        Integer submissionNumber = IntConverter.convertToInteger(dto.getSubmissionNumber());
+        if (submissionNumber != null) {
+            if (submissionNumber == 1) {
+                this.submissionType = ViewerConstants.INITIAL_SUBMISSION;
+            }
+            if (submissionNumber > 1) {
+                this.submissionType = ViewerConstants.AMENDMENT;
+            }
+        }
         this.statusCode = CdConverter.convertCdToString(dto.getStatusCode());
     }
 
@@ -176,6 +188,20 @@ public class TrialListResultWebDto {
      */
     public void setOfficialTitle(String officialTitle) {
         this.officialTitle = officialTitle;
+    }
+
+    /**
+     * @return the submissionType
+     */
+    public String getSubmissionType() {
+        return submissionType;
+    }
+
+    /**
+     * @param submissionType the submissionType to set
+     */
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
     }
 
     /**

@@ -85,7 +85,6 @@ import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
  */
 public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
 
-    Boolean ctrpOnly = true;
     Boolean currentMilestoneOnly = true;
 
     /**
@@ -111,19 +110,5 @@ public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<Milesto
      */
     public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
         this.currentMilestoneOnly = currentMilestoneOnly;
-    }
-
-    /**
-     * @return the ctrpOnly
-     */
-    public Boolean getCtrpOnly() {
-        return ctrpOnly;
-    }
-
-    /**
-     * @param ctrpOnly the ctrpOnly to set
-     */
-    public void setCtrpOnly(Boolean ctrpOnly) {
-        this.ctrpOnly = ctrpOnly;
     }
 }

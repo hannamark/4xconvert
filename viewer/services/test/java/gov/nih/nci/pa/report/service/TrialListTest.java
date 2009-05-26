@@ -2,6 +2,7 @@ package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
@@ -32,6 +33,7 @@ public class TrialListTest {
             System.out.println(StConverter.convertToString(dto.getOfficialTitle()));
             System.out.println(StConverter.convertToString(dto.getOrganization()));
             System.out.println(TsConverter.convertToString(dto.getDateLastCreated()));
+            System.out.println(IntConverter.convertToInteger(dto.getSubmissionNumber()));
             System.out.println(CdConverter.convertCdToString(dto.getStatusCode()));
         }
     }

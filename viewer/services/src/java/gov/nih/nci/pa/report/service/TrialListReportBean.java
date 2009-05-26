@@ -77,6 +77,7 @@
 package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
@@ -108,7 +109,8 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
     private static final int DATE_LAST_CREATED_IDX = 1;
     private static final int ASSIGNED_IDENTIFIER_IDX = 2;
     private static final int OFFICIAL_TITLE_IDX = 3;
-    private static final int STATUS_CODE_IDX = 4;
+    private static final int SUBMISSION_NUMBER_IDX = 4;
+    private static final int STATUS_CODE_IDX = 5;
 
     /**
      * {@inheritDoc}
@@ -122,7 +124,7 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
                   "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
-                + "       , sp.official_title, dws.status_code "
+                + "       , sp.official_title, sp.submission_number, dws.status_code "
                 + "FROM study_protocol AS sp "
                 + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
                 + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
@@ -131,7 +133,7 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
                 + "        from document_workflow_status "
                 + "        group by study_protocol_identifier ) ");
             sql.append(getDateRangeClauses(criteria, "sp.date_last_created"));
-            sql.append("ORDER BY cm.organization, sp.date_last_created");
+            sql.append("ORDER BY cm.organization, sp.date_last_created, sp.identifier ");
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
@@ -143,6 +145,7 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
                 rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) sr[DATE_LAST_CREATED_IDX]));
                 rdto.setAssignedIdentifier(StConverter.convertToSt((String) sr[ASSIGNED_IDENTIFIER_IDX]));
                 rdto.setOfficialTitle(StConverter.convertToSt((String) sr[OFFICIAL_TITLE_IDX]));
+                rdto.setSubmissionNumber(IntConverter.convertToInt((Integer) sr[SUBMISSION_NUMBER_IDX]));
                 rdto.setStatusCode(CdConverter.convertStringToCd((String) sr[STATUS_CODE_IDX]));
                 rList.add(rdto);
             }

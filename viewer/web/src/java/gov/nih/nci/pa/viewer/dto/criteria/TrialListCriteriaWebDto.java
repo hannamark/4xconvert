@@ -84,8 +84,6 @@ import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
  */
 public class TrialListCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialListCriteriaDto> {
 
-    private Boolean ctrpOnly = true;
-
     /**
      * {@inheritDoc}
      */
@@ -94,19 +92,5 @@ public class TrialListCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialLis
         TrialListCriteriaDto result = new TrialListCriteriaDto();
         super.setInterval(result);
         return result;
-    }
-
-    /**
-     * @return the ctrpOnly
-     */
-    public Boolean getCtrpOnly() {
-        return ctrpOnly;
-    }
-
-    /**
-     * @param ctrpOnly the ctrpOnly to set
-     */
-    public void setCtrpOnly(Boolean ctrpOnly) {
-        this.ctrpOnly = ctrpOnly;
     }
 }

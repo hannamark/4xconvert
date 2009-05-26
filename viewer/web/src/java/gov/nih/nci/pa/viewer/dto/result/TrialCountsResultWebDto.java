@@ -76,9 +76,11 @@
 */
 package gov.nih.nci.pa.viewer.dto.result;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
+import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +95,7 @@ public class TrialCountsResultWebDto {
     private Integer year;
     private Integer month;
     private Integer day;
+    private String submissionType;
     private Integer count;
 
     /**
@@ -118,6 +121,14 @@ public class TrialCountsResultWebDto {
         this.year = IntConverter.convertToInteger(dto.getYear());
         this.month = IntConverter.convertToInteger(dto.getMonth());
         this.day = IntConverter.convertToInteger(dto.getDay());
+        Boolean initial = BlConverter.covertToBoolean(dto.getInitialSubmission());
+        if (initial != null) {
+            if (initial) {
+                this.submissionType = ViewerConstants.INITIAL_SUBMISSION;
+            } else {
+                this.submissionType = ViewerConstants.AMENDMENT;
+            }
+        }
         this.count = IntConverter.convertToInteger(dto.getCount());
     }
 
@@ -175,6 +186,20 @@ public class TrialCountsResultWebDto {
      */
     public void setDay(Integer day) {
         this.day = day;
+    }
+
+    /**
+     * @return the submissionType
+     */
+    public String getSubmissionType() {
+        return submissionType;
+    }
+
+    /**
+     * @param submissionType the submissionType to set
+     */
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
     }
 
     /**

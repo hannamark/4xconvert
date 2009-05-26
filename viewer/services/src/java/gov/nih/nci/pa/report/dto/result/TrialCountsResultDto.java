@@ -76,8 +76,10 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -91,6 +93,7 @@ public class TrialCountsResultDto {
     private Int year = IntConverter.convertToInt((Integer) null);
     private Int month = IntConverter.convertToInt((Integer) null);
     private Int day = IntConverter.convertToInt((Integer) null);
+    private Bl initialSubmission = BlConverter.convertToBl(null);
     private Int count = IntConverter.convertToInt((Integer) null);
 
     /**
@@ -140,6 +143,18 @@ public class TrialCountsResultDto {
      */
     public void setDay(Int day) {
         this.day = day;
+    }
+    /**
+     * @return the initialSubmission
+     */
+    public Bl getInitialSubmission() {
+        return initialSubmission;
+    }
+    /**
+     * @param initialSubmission the initialSubmission to set
+     */
+    public void setInitialSubmission(Bl initialSubmission) {
+        this.initialSubmission = initialSubmission;
     }
     /**
      * @return the count

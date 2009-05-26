@@ -10,4 +10,7 @@
     <display:column titleKey="report.result.organization" property="organization" sortable="true" headerClass="sortable"/>
     <display:column titleKey="summarySent.result.milestoneDate" property="milestoneDate" sortable="true" headerClass="sortable"/>
     <display:column titleKey="summarySent.result.feedbackDate" property="feedbackDate" sortable="true" headerClass="sortable"/>
+    <s:if test="%{criteria.overdueOnly == false}">
+        <display:column titleKey="summarySent.result.feedbackOnTime" property="feedbackOnTime" sortable="true" headerClass="sortable"/>
+    </s:if>
 </display:table>

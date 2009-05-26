@@ -8,6 +8,7 @@
     <display:column titleKey="report.result.assignedIdentifier" property="assignedIdentifier" sortable="true" headerClass="sortable"/>
     <display:column titleKey="report.result.officialTitle" property="officialTitle" sortable="true" headerClass="sortable"/>
     <display:column titleKey="report.result.organization" property="organization" sortable="true" headerClass="sortable"/>
+    <display:column titleKey="report.result.submissionType" property="submissionType" sortable="true" headerClass="sortable"/>
     <display:column titleKey="trialList.result.dateLastCreated" property="dateLastCreated" sortable="true" headerClass="sortable"/>
     <display:column titleKey="trialList.result.statusCode" property="statusCode" sortable="true" headerClass="sortable"/>
 </display:table>

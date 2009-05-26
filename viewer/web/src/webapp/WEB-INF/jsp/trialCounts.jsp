@@ -37,6 +37,14 @@ function handleAction(){
                 </td>
             </tr>
             <tr> 
+                <td class="label">
+                    <label><fmt:message key="trialCounts.criteria.groupBySubmissionType"/></label>
+                </td>
+                <td class="value">
+                    <s:checkbox name="criteria.groupBySubmissionType" />
+                </td>
+            </tr>
+            <tr> 
                 <td scope="row" class="label">
                     <label><fmt:message key="trialCounts.criteria.intervalStartDate"/></label>
                 </td>

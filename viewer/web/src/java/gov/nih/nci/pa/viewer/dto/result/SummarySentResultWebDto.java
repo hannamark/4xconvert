@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.pa.viewer.dto.result;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
 
@@ -88,7 +89,8 @@ import java.util.List;
  */
 public class SummarySentResultWebDto extends AbstractMilestoneResultWebDto {
 
-    String feedbackDate;
+    private String feedbackDate;
+    private String feedbackOnTime;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -110,6 +112,14 @@ public class SummarySentResultWebDto extends AbstractMilestoneResultWebDto {
     public SummarySentResultWebDto(SummarySentResultDto dto) {
         super(dto);
         this.feedbackDate = TsConverter.convertToString(dto.getFeedbackDate());
+        Boolean onTime = BlConverter.covertToBoolean(dto.getFeedbackOnTime());
+        if (onTime == null) {
+            this.feedbackOnTime = "";
+        } else if (onTime) {
+            this.feedbackOnTime = "Yes";
+        } else {
+            this.feedbackOnTime = "No";
+        }
     }
 
     /**
@@ -124,5 +134,19 @@ public class SummarySentResultWebDto extends AbstractMilestoneResultWebDto {
      */
     public void setFeedbackDate(String feedbackDate) {
         this.feedbackDate = feedbackDate;
+    }
+
+    /**
+     * @return the feedbackOnTime
+     */
+    public String getFeedbackOnTime() {
+        return feedbackOnTime;
+    }
+
+    /**
+     * @param feedbackOnTime the feedbackOnTime to set
+     */
+    public void setFeedbackOnTime(String feedbackOnTime) {
+        this.feedbackOnTime = feedbackOnTime;
     }
 }

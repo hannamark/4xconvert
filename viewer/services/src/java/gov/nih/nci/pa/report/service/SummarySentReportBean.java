@@ -82,6 +82,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
+import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
@@ -105,7 +106,7 @@ import javax.interceptor.Interceptors;
 public class SummarySentReportBean extends AbstractMilestoneReportBean<SummarySentCriteriaDto, SummarySentResultDto>
         implements SummarySentLocal {
 
-    private static final int DAYS_TILL_OVERDUE = 5;
+    private static final int DAYS_TILL_OVERDUE = 7;    // 5 business days
 
     /**
      * {@inheritDoc}
@@ -135,6 +136,8 @@ public class SummarySentReportBean extends AbstractMilestoneReportBean<SummarySe
         rList = removeIfOnlyFeedback(rList);
         if (BlConverter.covertToBool(criteria.getOverdueOnly())) {
             rList = removeIfNotOverdue(rList);
+        } else {
+            rList = setOnTimeFlag(rList);
         }
         return rList;
     }
@@ -151,13 +154,33 @@ public class SummarySentReportBean extends AbstractMilestoneReportBean<SummarySe
 
     private static List<SummarySentResultDto> removeIfNotOverdue(List<SummarySentResultDto> rList) {
         Calendar testDate = Calendar.getInstance();
-        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
         testDate.add(Calendar.DAY_OF_MONTH, -DAYS_TILL_OVERDUE);
+        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
         for (SummarySentResultDto r : rList) {
             if (PAUtil.isTsNull(r.getFeedbackDate())
                     && TsConverter.convertToTimestamp(r.getMilestoneDate()).before(testDate.getTime())) {
                 resultList.add(r);
             }
+        }
+        return resultList;
+    }
+
+    private static List<SummarySentResultDto> setOnTimeFlag(List<SummarySentResultDto> rList) {
+        Calendar testDate = Calendar.getInstance();
+        testDate.add(Calendar.DAY_OF_MONTH, -DAYS_TILL_OVERDUE);
+        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
+        for (SummarySentResultDto r : rList) {
+            if (PAUtil.isTsNull(r.getFeedbackDate())
+                    && TsConverter.convertToTimestamp(r.getMilestoneDate()).before(testDate.getTime())) {
+                r.setFeedbackOnTime(BlConverter.convertToBl(false));
+            } else {
+                Timestamp sent = TsConverter.convertToTimestamp(r.getMilestoneDate());
+                Timestamp fbRequired = ReportUtil.makeTimestamp(ReportUtil.getYear(sent),
+                        ReportUtil.getMonth(sent), ReportUtil.getDay(sent) + DAYS_TILL_OVERDUE);
+                Timestamp fb = TsConverter.convertToTimestamp(r.getFeedbackDate());
+                r.setFeedbackOnTime(BlConverter.convertToBl(!fb.after(fbRequired)));
+            }
+            resultList.add(r);
         }
         return resultList;
     }

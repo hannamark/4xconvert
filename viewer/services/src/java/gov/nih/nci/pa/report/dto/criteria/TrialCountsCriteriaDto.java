@@ -76,7 +76,9 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 /**
@@ -86,6 +88,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 public class TrialCountsCriteriaDto extends AbstractBaseCriteriaDto {
 
     private Cd groupByTimeUnit = CdConverter.convertToCd(null);
+    private Bl groupBySubmissionType = BlConverter.convertToBl(null);
 
     /**
      * @return the groupByTimeUnits
@@ -98,5 +101,17 @@ public class TrialCountsCriteriaDto extends AbstractBaseCriteriaDto {
      */
     public void setGroupByTimeUnit(Cd groupByTimeUnit) {
         this.groupByTimeUnit = groupByTimeUnit;
+    }
+    /**
+     * @return the groupBySubmissionType
+     */
+    public Bl getGroupBySubmissionType() {
+        return groupBySubmissionType;
+    }
+    /**
+     * @param groupBySubmissionType the groupBySubmissionType to set
+     */
+    public void setGroupBySubmissionType(Bl groupBySubmissionType) {
+        this.groupBySubmissionType = groupBySubmissionType;
     }
 }

@@ -76,7 +76,9 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
@@ -86,6 +88,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 public class SummarySentResultDto extends AbstractMilestoneResultDto {
 
     private Ts feedbackDate = TsConverter.convertToTs(null);
+    private Bl feedbackOnTime = BlConverter.convertToBl(null);
 
     /**
      * @return the feedbackDate
@@ -98,5 +101,17 @@ public class SummarySentResultDto extends AbstractMilestoneResultDto {
      */
     public void setFeedbackDate(Ts feedbackDate) {
         this.feedbackDate = feedbackDate;
+    }
+    /**
+     * @return the feedbackOnTime
+     */
+    public Bl getFeedbackOnTime() {
+        return feedbackOnTime;
+    }
+    /**
+     * @param feedbackOnTime the feedbackOnTime to set
+     */
+    public void setFeedbackOnTime(Bl feedbackOnTime) {
+        this.feedbackOnTime = feedbackOnTime;
     }
 }

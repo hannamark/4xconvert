@@ -77,9 +77,11 @@
 package gov.nih.nci.pa.report.dto.result;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -94,6 +96,7 @@ public class TrialListResultDto {
     private St assignedIdentifier = StConverter.convertToSt(null);
     private St officialTitle = StConverter.convertToSt(null);
     private Cd statusCode = CdConverter.convertToCd(null);
+    private Int submissionNumber = IntConverter.convertToInt((Integer) null);
 
     /**
      * @return the organization
@@ -154,5 +157,17 @@ public class TrialListResultDto {
      */
     public void setStatusCode(Cd statusCode) {
         this.statusCode = statusCode;
+    }
+    /**
+     * @return the submissionNumber
+     */
+    public Int getSubmissionNumber() {
+        return submissionNumber;
+    }
+    /**
+     * @param submissionNumber the submissionNumber to set
+     */
+    public void setSubmissionNumber(Int submissionNumber) {
+        this.submissionNumber = submissionNumber;
     }
 }

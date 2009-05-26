@@ -15,6 +15,9 @@
     <s:if test="%{criteria.groupByTimeUnit == 'DAY'}">
         <display:column titleKey="trialCounts.result.day" property="day"/>
     </s:if>
+    <s:if test="%{criteria.groupBySubmissionType == true}">
+        <display:column titleKey="report.result.submissionType" property="submissionType"/>
+    </s:if>
     <display:column titleKey="trialCounts.result.count" property="count" sortable="true" headerClass="sortable"/>
 </display:table>
 
