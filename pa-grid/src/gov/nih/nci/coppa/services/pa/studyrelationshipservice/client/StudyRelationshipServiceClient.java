@@ -88,13 +88,16 @@ public class StudyRelationshipServiceClient extends StudyRelationshipServiceClie
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyRelationship[] search(gov.nih.nci.coppa.services.pa.StudyRelationship studyRelationship) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRelationship[] search(gov.nih.nci.coppa.services.pa.StudyRelationship studyRelationship,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"search");
     gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchRequest params = new gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchRequest();
     gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchRequestStudyRelationship studyRelationshipContainer = new gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchRequestStudyRelationship();
     studyRelationshipContainer.setStudyRelationship(studyRelationship);
     params.setStudyRelationship(studyRelationshipContainer);
+    gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getStudyRelationship();
     }

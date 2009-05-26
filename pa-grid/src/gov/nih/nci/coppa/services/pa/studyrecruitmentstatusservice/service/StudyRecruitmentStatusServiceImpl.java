@@ -20,7 +20,6 @@ public class StudyRecruitmentStatusServiceImpl extends StudyRecruitmentStatusSer
   private GenericStudyPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus> impl
   = new GenericStudyPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus>(StudyRecruitmentStatus.class, StudyRecruitmentStatusDTO.class);
 
-
   /**
    * {@inheritDoc}
    */

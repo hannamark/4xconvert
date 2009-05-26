@@ -31,7 +31,6 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
     private GenericStudyPaGridServiceImpl<StudyContactDTO, StudyContact> impl
     = new GenericStudyPaGridServiceImpl<StudyContactDTO, StudyContact>(StudyContact.class, StudyContactDTO.class);
 
-
   public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       StudyContact[] result = null;
       try {

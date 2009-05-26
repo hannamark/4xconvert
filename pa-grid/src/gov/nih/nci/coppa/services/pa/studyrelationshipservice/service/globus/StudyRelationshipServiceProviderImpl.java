@@ -34,7 +34,7 @@ public class StudyRelationshipServiceProviderImpl{
 
     public gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchResponse search(gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.SearchResponse();
-    boxedResult.setStudyRelationship(impl.search(params.getStudyRelationship().getStudyRelationship()));
+    boxedResult.setStudyRelationship(impl.search(params.getStudyRelationship().getStudyRelationship(),params.getLimitOffset().getLimitOffset()));
     return boxedResult;
   }
 

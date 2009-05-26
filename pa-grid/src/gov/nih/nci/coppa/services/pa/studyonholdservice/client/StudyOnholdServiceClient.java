@@ -124,6 +124,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
           System.out.println("StudyOnhold status for StudyProtocol = 1 is " + result.toString());
       }
   }
+
   public gov.nih.nci.coppa.services.pa.StudyOnhold[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
