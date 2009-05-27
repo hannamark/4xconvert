@@ -114,6 +114,7 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -452,7 +453,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
-        selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+        selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
         // convert the PO DTO to the pa domain
         paOrgDTO = EnOnConverter.convertPoOrganizationDTO(selectedOrgDTO, null);
         //paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
@@ -517,7 +518,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
                 hasErrors = true;
             } else {
-                selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
+                selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                         EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             }
             if (PAUtil.isEmpty(email)) {
@@ -549,7 +550,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             }
         }
         if (selectedPersTO == null) {
-            selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
+            selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
         }
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
@@ -760,7 +761,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public String saveStudyParticipationPrimContact() throws PAException, NullifiedEntityException {
         clearErrorsAndMessages();
         String contactPersId = ServletActionContext.getRequest().getParameter("contactpersid");
-        selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
+        selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                 EnOnConverter.convertToOrgIi(Long.valueOf(contactPersId)));
         return DISPLAY_SP_CONTACTS;
     }
@@ -801,7 +802,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             personContactWebDTO.setMiddleName(webDTO.getMiddleName());
             personContactWebDTO.setSelectedPersId(webDTO.getSelectedPersId());
         } else {
-            selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
+            selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(contactPersId)));
             personContactWebDTO.setSelectedPersId(Long.valueOf(selectedPersTO.getIdentifier().getExtension()));
             gov.nih.nci.pa.dto.PaPersonDTO personDTO = EnPnConverter.convertToPaPersonDTO(selectedPersTO);

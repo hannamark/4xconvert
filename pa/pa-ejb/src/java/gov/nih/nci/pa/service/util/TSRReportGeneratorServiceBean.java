@@ -143,9 +143,9 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.SubGroupsServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -958,7 +958,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   if (paOrg != null) {
                       OrganizationDTO poOrg = null;
                       try {
-                          poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+                          poOrg = PoRegistry.getOrganizationEntityService().
                               getOrganization(IiConverter.converToPoOrganizationIi(paOrg.getIdentifier()));
                       } catch (NullifiedEntityException e) {
                           throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);

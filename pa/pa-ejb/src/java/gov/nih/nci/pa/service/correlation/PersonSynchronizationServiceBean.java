@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -144,7 +145,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         PersonDTO personDto = null;
         LOG.debug("Entering synchronizePerson");
         try {
-            personDto = PoPaServiceBeanLookup.getPersonEntityService().getPerson(perIdentifer);
+            personDto = PoRegistry.getPersonEntityService().getPerson(perIdentifer);
             updatePerson(personDto);
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is nullified " + perIdentifer.getExtension());
@@ -165,7 +166,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         LOG.debug("Entering synchronizeClinicalResearchStaff");
         List<Long> spIds = getAffectedStudyProtocolIds("clinicalResearchStaff" , crsIdentifer.getExtension());
         try {
-            crsDto = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().getCorrelation(crsIdentifer);
+            crsDto = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(crsIdentifer);
             updateClinicalResearchStaff(crsDto);
         } catch (NullifiedRoleException e) {
            LOG.error("This ClinicalResearchStaff is nullified " + crsIdentifer.getExtension());
@@ -187,7 +188,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         LOG.debug("Entering synchronizeHealthCareProvider");
         List<Long> spIds = getAffectedStudyProtocolIds("healthCareProvider" , hcpIdentifer.getExtension());
         try {
-            hcpDto = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().getCorrelation(hcpIdentifer);
+            hcpDto = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(hcpIdentifer);
             updateHealthCareProvider(hcpDto);
         } catch (NullifiedRoleException e) {
            LOG.error("This HealthCareProvider is nullified " + hcpIdentifer.getExtension());
@@ -211,7 +212,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         LOG.debug("Entering synchronizeOrganizationalContact");
         List<Long> spIds = getAffectedStudyProtocolIds("organizationalContact" , ocIdentifer.getExtension());
         try {
-            ocDto = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifer);
+            ocDto = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifer);
             updateOrganizationalContact(ocDto);
         } catch (NullifiedRoleException e) {
            LOG.error("This OrganizationalContact is nullified " + ocIdentifer.getExtension());

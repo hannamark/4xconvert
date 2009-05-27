@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -139,7 +140,7 @@ public class HealthCareProviderCorrelationBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -150,7 +151,7 @@ public class HealthCareProviderCorrelationBean {
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         try {
-            poPer = PoPaServiceBeanLookup.getPersonEntityService().
+            poPer = PoRegistry.getPersonEntityService().
                 getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -164,7 +165,7 @@ public class HealthCareProviderCorrelationBean {
         List<HealthCareProviderDTO> hcpDTOs = null;
         hcpDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         hcpDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-        hcpDTOs = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().search(hcpDTO);
+        hcpDTOs = PoRegistry.getHealthCareProviderCorrelationService().search(hcpDTO);
         if (hcpDTOs != null && hcpDTOs.size() > 1) {
             LOG.error("PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");
             throw new PAException(
@@ -172,8 +173,8 @@ public class HealthCareProviderCorrelationBean {
         }
         if (hcpDTOs == null || hcpDTOs.isEmpty()) {
             try {
-                Ii ii = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
-                hcpDTO = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().getCorrelation(ii);
+                Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
+                hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during for HealthCareProvider " , e);
                 throw new PAException("Validation exception during get HealthCareProvider " , e);

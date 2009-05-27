@@ -111,6 +111,7 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -545,7 +546,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private String getCtGocIdentifier() throws  PAException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
         poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
-        List<OrganizationDTO> poOrgs = PaRegistry.getPoOrganizationEntityService().search(poOrgDto);
+        List<OrganizationDTO> poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto);
         String identifier = null;
         if (poOrgs == null || poOrgs.isEmpty()) {
             poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov.address", null, "ct.mun", "VA", "20171",
@@ -566,7 +567,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
             poOrgDto.setTelecomAddress(telco);
             try {
-                Ii ii = PaRegistry.getPoOrganizationEntityService().createOrganization(poOrgDto);
+                Ii ii = PoRegistry.getOrganizationEntityService().createOrganization(poOrgDto);
                 identifier = ii.getExtension();
             } catch (EntityValidationException e) {
                 throw new PAException(e);

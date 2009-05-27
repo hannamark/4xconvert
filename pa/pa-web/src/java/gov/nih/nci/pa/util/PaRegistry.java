@@ -113,12 +113,6 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 
 /**
@@ -227,16 +221,6 @@ public final class PaRegistry {
     public static StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
         return getInstance().getServiceLocator().getStudyRegulatoryAuthorityService();
     }
-
-    /**
-     * 
-     * @return OrganizationEntityServiceRemote
-     * @throws PAException on error
-     */
-    public static OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
-        return getInstance().getServiceLocator().getPoOrganizationEntityService();
-    }
-
     /**
      * 
      * @return LookUpTableServiceRemote
@@ -278,16 +262,6 @@ public final class PaRegistry {
     public static DocumentServiceRemote getDocumentService() {
         return getInstance().getServiceLocator().getDocumentService();
     }
-
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error 
-     */
-    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() 
-        throws PAException {
-        return getInstance().getServiceLocator().getPoHealthCareProverService();
-    }
-
     /**
      * 
      * @return SubGroupsServiceRemote
@@ -303,16 +277,6 @@ public final class PaRegistry {
     public static StudyParticipationContactServiceRemote getStudyParticipationContactService() {
         return getInstance().getServiceLocator().getStudyParticipationContactService();
     }
-
-    /**
-     * 
-     * @return PersonEntityServiceRemote
-     * @throws PAException on error 
-     */
-    public static PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
-        return getInstance().getServiceLocator().getPoPersonEntityService();
-    }
-
     /**
      * 
      * @return PAHealthCareProviderRemote
@@ -320,16 +284,6 @@ public final class PaRegistry {
     public static PAHealthCareProviderRemote getPAHealthCareProviderService() {
         return getInstance().getServiceLocator().getPAHealthCareProviderService();
     }
-    
-    /**
-     * @return HealthCareProviderCorrelationServiceRemote
-     * @throws PAException on error 
-     */
-    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() 
-        throws PAException {
-        return getInstance().getServiceLocator().getPoPersonCorrelationService();
-    }
-
     /**
      * @return PlannedActivityServiceRemote
      */
@@ -362,16 +316,6 @@ public final class PaRegistry {
     public static ArmServiceRemote getArmService() {
         return getInstance().getServiceLocator().getArmService();
     }
-    /**
-     * 
-     * @return ClinicalResearchStaffCorrelationServiceRemote
-     * @throws PAException on error 
-     */
-    public static ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() 
-        throws PAException {
-        return getInstance().getServiceLocator().getPoClinicalResearchStaffCorrelationService();
-    }
-
     /**
      * 
      * @return CTGovXmlGeneratorServiceRemote
@@ -437,16 +381,6 @@ public final class PaRegistry {
     public static StudyContactServiceRemote getStudyContactService() {
         return getInstance().getServiceLocator().getStudyContactService();
     }
-    /**
-     * 
-     * @return OrganizationalContactCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public static OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()
-            throws PAException {
-        return getInstance().getServiceLocator().getPoOrganizationalContactCorrelationService();
-    }
-       
     /**
      * @return StudyMilestoneService
      */

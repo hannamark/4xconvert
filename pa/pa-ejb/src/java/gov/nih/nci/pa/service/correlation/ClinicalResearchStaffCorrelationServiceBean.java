@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -135,7 +136,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -146,7 +147,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         try {
-            poPer = PoPaServiceBeanLookup.getPersonEntityService().
+            poPer = PoRegistry.getPersonEntityService().
                 getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
   //          Map m = e.getNullifiedEntities();
@@ -160,14 +161,14 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         List<ClinicalResearchStaffDTO> crsDTOs = null;
         crsDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         crsDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-        crsDTOs = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().search(crsDTO);
+        crsDTOs = PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
         if (crsDTOs != null && crsDTOs.size() > 1) {
             throw new PAException("PO CRS Correlation should not have more than 1  ");
         }
         if (crsDTOs == null || crsDTOs.isEmpty()) {
             try {
-                Ii ii = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-                crsDTO = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
+                Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
+                crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during get ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during get ClinicalResearchStaff " , e);

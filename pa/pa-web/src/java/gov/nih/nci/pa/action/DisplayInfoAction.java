@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -139,7 +140,7 @@ public class DisplayInfoAction extends ActionSupport {
                     .getSession().getAttribute(Constants.TRIAL_SUMMARY);
             CorrelationUtils cUtils = new CorrelationUtils();
             Person userInfo = cUtils.getPAPersonByIndetifers(studyProtocolQueryDTO.getPiId(), null);
-            PersonDTO poPerson = PaRegistry.getPoPersonEntityService().getPerson(
+            PersonDTO poPerson = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.converToPoPersonIi(userInfo.getIdentifier()));
             persWebDTO = EnPnConverter.convertToPaPersonDTO(poPerson);
             persWebDTO.setTelephone(null);

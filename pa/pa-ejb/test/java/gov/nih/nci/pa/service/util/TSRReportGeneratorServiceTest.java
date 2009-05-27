@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmServiceBean;
@@ -93,7 +94,6 @@ import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceBean;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
-import gov.nih.nci.pa.service.PoPaMockServiceLocator;
 import gov.nih.nci.pa.service.StudyContactServiceBean;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
@@ -120,9 +120,8 @@ import gov.nih.nci.pa.service.SubGroupsServiceBean;
 import gov.nih.nci.pa.service.SubGroupsServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.correlation.PoPaRegistry;
 import gov.nih.nci.pa.util.TestSchema;
-import static org.junit.Assert.assertNotNull;
+
 import org.junit.Before;
 import org.junit.Test;
 

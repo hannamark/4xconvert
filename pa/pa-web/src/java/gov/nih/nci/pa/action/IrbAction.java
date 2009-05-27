@@ -107,6 +107,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.HashMap;
@@ -549,7 +550,7 @@ public class IrbAction extends ActionSupport implements Preparable {
             ct = new ContactWebDTO();
             return;
         }
-        OrganizationDTO poOrg = PaRegistry.getPoOrganizationEntityService().
+        OrganizationDTO poOrg = PoRegistry.getOrganizationEntityService().
             getOrganization(IiConverter.converToPoOrganizationIi(poOrgId));
         if (poOrg == null) {
             throw new PAException("Error getting organization data from PO for id = " + poOrgId

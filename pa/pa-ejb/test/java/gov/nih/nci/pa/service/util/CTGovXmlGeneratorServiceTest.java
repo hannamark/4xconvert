@@ -95,7 +95,6 @@ import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceBean;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
-import gov.nih.nci.pa.service.PoPaMockServiceLocator;
 import gov.nih.nci.pa.service.StudyContactServiceBean;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
@@ -120,7 +119,8 @@ import gov.nih.nci.pa.service.SubGroupsServiceBean;
 import gov.nih.nci.pa.service.SubGroupsServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.correlation.PoPaRegistry;
+import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
@@ -189,7 +189,7 @@ public class CTGovXmlGeneratorServiceTest {
         bean.diseaseService = diseaseService;
         bean.interventionAlternateNameService = interventionAlternateNameService;
         bean.interventionService = interventionService; 
-        PoPaRegistry.getInstance().setPopaserviceLocator(new PoPaMockServiceLocator());
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         TestSchema.reset1();
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));

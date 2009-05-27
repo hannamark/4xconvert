@@ -98,6 +98,7 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
@@ -325,7 +326,7 @@ public class CollaboratorsAction extends ActionSupport
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
-        selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+        selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
 
         // store selection
         Organization org = new Organization();

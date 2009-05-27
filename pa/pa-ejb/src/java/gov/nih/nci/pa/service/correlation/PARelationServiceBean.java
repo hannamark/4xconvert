@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -350,7 +351,7 @@ public class PARelationServiceBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().getOrganization(
+            poOrg = PoRegistry.getOrganizationEntityService().getOrganization(
                     IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
             // Map m = e.getNullifiedEntities();

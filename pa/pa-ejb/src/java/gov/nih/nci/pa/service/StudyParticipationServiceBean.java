@@ -304,13 +304,12 @@ public class StudyParticipationServiceBean
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in getByLocalStudyProtocolIdentifier.  ", hbe);
         }
-        if (queryList.size() > 1) {
-            throw new PADuplicateException("Duplicate Trial Submission: A trial exists in the system with the same "
-                    + "Lead Organization Trial Identifier for the selected Lead Organization");
-        }
         for (StudyParticipation sp : queryList) {
-            if (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension())) {
-                throw new PADuplicateException("Duplicate Trial Submission: A trial exists in the system with the same "
+            //When create DTO get Id will be null and if queryList is having value then its duplicate
+            //When update check if the record is same if not then throw ex
+            if ((dto.getIdentifier() == null) 
+                    || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
+                throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
                         + "Lead Organization Trial Identifier for the selected Lead Organization");
             }
         }

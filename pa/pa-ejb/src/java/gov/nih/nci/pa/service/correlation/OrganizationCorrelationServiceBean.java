@@ -96,6 +96,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -152,7 +153,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is no longer available instead use ");
@@ -168,14 +169,14 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         List<HealthCareFacilityDTO> hcfDTOs = null;
         hcfDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
 
-        hcfDTOs = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
+        hcfDTOs = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
         if (hcfDTOs != null && hcfDTOs.size() > 1) {
             throw new PAException("PO hcfDTOs Correlation should not have more than 1  ");
         }
         if (hcfDTOs == null || hcfDTOs.isEmpty()) {
             try {
-                Ii ii = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
-                hcfDTO = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().getCorrelation(ii);
+                Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
+                hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during get ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
@@ -227,7 +228,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is no longer available instead use ");
@@ -246,15 +247,15 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 //        cd.setCode(CANCER_CENTER_CODE);
 //        roDTO.setTypeCode(cd);
 //        roDTO.setFundingMechanism(CdConverter.convertStringToCd(FUNDING_MECHANISM_CODE));
-        roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
+        roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(roDTO);
         if (roDTOs != null && roDTOs.size() > 1) {
 //            throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
             LOG.warn("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first.");
         }
         if (roDTOs == null || roDTOs.isEmpty()) {
             try {
-                Ii ii = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
-                roDTO = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().getCorrelation(ii);
+                Ii ii = PoRegistry.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
+                roDTO = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during get ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
@@ -305,7 +306,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
             throw new PAException("This Organization is no longer available instead use ", e);
@@ -319,15 +320,15 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
         List<OversightCommitteeDTO> ocDTOs = null;
         ocDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        ocDTOs = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().search(ocDTO);
+        ocDTOs = PoRegistry.getOversightCommitteeCorrelationService().search(ocDTO);
         if (ocDTOs != null && ocDTOs.size() > 1) {
             throw new PAException("PO OversightCommitteeDTOs Correlation should not have more than 1.  ");
         }
         if (ocDTOs == null || ocDTOs.isEmpty()) {
             try {
                 ocDTO.setTypeCode(CdConverter.convertStringToCd(IRB_CODE));
-                Ii ii = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().createCorrelation(ocDTO);
-                ocDTO = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().getCorrelation(ii);
+                Ii ii = PoRegistry.getOversightCommitteeCorrelationService().createCorrelation(ocDTO);
+                ocDTO = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 throw new PAException("Validation exception during get PO OversightCommittee.  " , e);
             } catch (EntityValidationException e) {
@@ -458,7 +459,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     public String getCtGovPOIdentifier() throws  PAException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
         poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
-        List<OrganizationDTO> poOrgs = PoPaServiceBeanLookup.getOrganizationEntityService().search(poOrgDto);
+        List<OrganizationDTO> poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto);
         String identifier = null;
         if (poOrgs == null || poOrgs.isEmpty()) {
             poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov.address", null, "ct.mun", "VA", "20171",
@@ -479,7 +480,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
             poOrgDto.setTelecomAddress(telco);
             try {
-                Ii ii = PoPaServiceBeanLookup.getOrganizationEntityService().createOrganization(poOrgDto);
+                Ii ii = PoRegistry.getOrganizationEntityService().createOrganization(poOrgDto);
                 identifier = ii.getExtension();
             } catch (EntityValidationException e) {
                 throw new PAException(e);

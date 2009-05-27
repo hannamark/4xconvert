@@ -1,10 +1,14 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
  * A class for all Po look-ups.
@@ -55,6 +59,47 @@ public class PoJndiServiceLocator implements PoServiceLocator {
         String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
                                 + "/po/OversightCommitteeCorrelationServiceBean/remote";
         return (OversightCommitteeCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
+    }
+    /**
+     * @return PersonEntityServiceRemote
+     * @throws PAException on error
+     */
+    public PersonEntityServiceRemote getPersonEntityService() throws PAException {
+        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo() + "/po/PersonEntityServiceBean/remote";
+        return (PersonEntityServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
+    }    
+
+    /**
+     * @return ClinicalResearchStaffCorrelationServiceBean
+     * @throws PAException e
+     */
+    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()  
+    throws PAException { 
+        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
+            + "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
+        return (ClinicalResearchStaffCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
+    }
+    /**
+     * @return HealthCareProviderCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() throws PAException {
+        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/po/HealthCareProviderCorrelationServiceBean/remote";
+        return (HealthCareProviderCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
     } 
+    /**
+     * @return OrganizationalContactCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() 
+    throws PAException {
+        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/po/OrganizationalContactCorrelationServiceBean/remote";
+        return (OrganizationalContactCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
+    } 
+
+
+
 
 }

@@ -18,10 +18,10 @@ import org.apache.log4j.Logger;
  */
 public final class PoJNDIUtil {
 
-    private static final Logger LOG = Logger.getLogger(JNDIUtil.class);
+    private static final Logger LOG = Logger.getLogger(PoJNDIUtil.class);
     private static final String RESOURCE_NAME = "jndi.properties";
     private static PoJNDIUtil theInstance = new PoJNDIUtil();
-    private InitialContext poCtx;
+    private final InitialContext poCtx;
 
     private PoJNDIUtil() {
         try {
@@ -40,26 +40,21 @@ public final class PoJNDIUtil {
      * @return object in default context with given name
      */
     public static Object lookupPo(String name) {
-        return lookup(theInstance.poCtx, name);
-    }
-
-    /**
-     * @param ctx
-     *            context
-     * @param name
-     *            name to get
-     * @return object in contect with given name
-     */
-    public static Object lookup(InitialContext ctx, String name) {
         try {
-            return ctx.lookup(name);
+            Properties env = new Properties();
+            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
+            //load the Credential again
+            new InitialContext(env);            
+            return theInstance.poCtx.lookup(name);
         } catch (NamingException ex) {
             LOG.error("------------------Here is what's in the context--(looking for " + name + ")----------");
-            dump(ctx, 0);
+            dump(theInstance.poCtx, 0);
             LOG.error("-----------------------------------------------------------");
             throw new IllegalStateException(ex);
         }
     }
+
+
 
     private static void dump(javax.naming.Context ctx, int indent) {
         try {
@@ -88,9 +83,9 @@ public final class PoJNDIUtil {
      * @throws IOException
      *             on class load error
      */
-    public static Properties getProperties() throws IOException {
+    private static Properties getProperties() throws IOException {
         Properties props = new Properties();
-        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
+        props.load(PoJNDIUtil.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
         props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
         return props;
     }

@@ -113,12 +113,6 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 
 /**
@@ -179,13 +173,6 @@ public interface ServiceLocator {
      * @return StudyRegulatoryAuthorityServiceRemote
      */
     StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService();    
-
-    /** 
-     * @return OrganizationEntityServiceRemote
-     * @throws PAException on error
-     */
-    OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException;
-    
     /**
     *
     * @return LookUpTableServiceRemote
@@ -214,13 +201,6 @@ public interface ServiceLocator {
      */
     DocumentServiceRemote getDocumentService();
     /**
-    *
-    * @return HealthCareFacilityCorrelationServiceRemote
-    * @throws PAException on error  
-    */
-    HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() throws PAException;
-
-    /**
      * 
      * @return SubGroupsServiceRemote
      */
@@ -231,24 +211,10 @@ public interface ServiceLocator {
     * @return StudyParticipationContactServiceRemote
     */    
     StudyParticipationContactServiceRemote getStudyParticipationContactService();
-    
-    /**
-     * @return PersonEntityServiceRemote
-     * @throws PAException on error
-     */
-    PersonEntityServiceRemote getPoPersonEntityService() throws PAException;
-
     /**
      * @return PAHealthCareProviderRemote
      */    
     PAHealthCareProviderRemote getPAHealthCareProviderService();
-
-    /**
-     * @return HealthCareProviderCorrelationServiceRemote
-     * @throws PAException on error 
-     */ 
-    HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() throws PAException;
-    
     /**
      * @return PlannedActivityServiceRemote
      */
@@ -273,13 +239,6 @@ public interface ServiceLocator {
      * @return ArmServiceRemote
      */
     ArmServiceRemote getArmService();
-
-    /**
-     * @return getPoClinicalResearchStaffCorrelationService
-     * @throws PAException on error 
-     */
-    ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() throws PAException;
-
     /**
      * @return CTGovXmlGeneratorService
      * @throws PAException on error 
@@ -323,14 +282,6 @@ public interface ServiceLocator {
      * @return StudyContactService
      */
     StudyContactServiceRemote getStudyContactService();
-    
-    /**
-     * 
-     * @return OrganizationalContactCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService() throws PAException;
-    
     /**
      * @return StudyMilestoneService
      */

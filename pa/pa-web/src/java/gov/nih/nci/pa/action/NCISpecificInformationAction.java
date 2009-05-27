@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import org.apache.commons.lang.StringUtils;
@@ -203,7 +204,7 @@ public class NCISpecificInformationAction extends ActionSupport {
                 Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
                 if (org == null) {
                     OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
-                    OrganizationDTO oDto = PaRegistry.getPoOrganizationEntityService().getOrganization(
+                    OrganizationDTO oDto = PoRegistry.getOrganizationEntityService().getOrganization(
                             IiConverter.converToPoOrganizationIi(poIdentifer));
                     // create a new org if its null
 //                    org = new Organization();
@@ -301,7 +302,7 @@ public class NCISpecificInformationAction extends ActionSupport {
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         OrganizationDTO selectedOrgDTO;
         try {
-            selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+            selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());

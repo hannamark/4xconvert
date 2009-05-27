@@ -124,6 +124,7 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -411,7 +412,7 @@ public class TrialValidationAction extends ActionSupport {
                 OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
                 OrganizationDTO oDto;
                 try {
-                    oDto = PaRegistry.getPoOrganizationEntityService().getOrganization(
+                    oDto = PoRegistry.getOrganizationEntityService().getOrganization(
                             IiConverter.converToPoOrganizationIi(poIdentifer));
                 } catch (NullifiedEntityException e) {
                     throw new PAException(e);
@@ -663,7 +664,7 @@ public class TrialValidationAction extends ActionSupport {
         }
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         try {
-            selectedLeadOrg = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+            selectedLeadOrg = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
             gtdDTO.setLeadOrganizationName(selectedLeadOrg.getName().getPart().get(0).getValue());
             gtdDTO.setLeadOrganizationIdentifier(selectedLeadOrg.getIdentifier().getExtension());
         } catch (Exception e) {
@@ -683,7 +684,7 @@ public class TrialValidationAction extends ActionSupport {
             return "display_lead_prinicipal_inv";
         }
         try {
-            selectedLeadPrincipalInvestigator = PaRegistry.getPoPersonEntityService().getPerson(
+            selectedLeadPrincipalInvestigator = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             gtdDTO.setPiIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
             gov.nih.nci.pa.dto.PaPersonDTO personDTO = EnPnConverter
@@ -708,7 +709,7 @@ public class TrialValidationAction extends ActionSupport {
         }
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         try {
-            selectedSponsor = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+            selectedSponsor = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
             gtdDTO.setSponsorIdentifier(selectedSponsor.getIdentifier().getExtension());
             gtdDTO.setSponsorName(selectedSponsor.getName().getPart().get(0).getValue());
         } catch (Exception e) {
@@ -730,7 +731,7 @@ public class TrialValidationAction extends ActionSupport {
         }
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         try {
-            selectedSummary4Sponsor = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+            selectedSummary4Sponsor = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
             gtdDTO.setSummaryFourOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
             gtdDTO.setSummaryFourOrgIdentifier(selectedSummary4Sponsor.getIdentifier().getExtension());
         } catch (Exception e) {
@@ -747,7 +748,7 @@ public class TrialValidationAction extends ActionSupport {
         PersonDTO centralContact = null;
         String persId = ServletActionContext.getRequest().getParameter("persId");
         try {
-            centralContact = PaRegistry.getPoPersonEntityService().getPerson(
+            centralContact = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             gov.nih.nci.pa.dto.PaPersonDTO personDTO = EnPnConverter.convertToPaPersonDTO(centralContact);
             gtdDTO.setCentralContactIdentifier(centralContact.getIdentifier().getExtension());
@@ -769,11 +770,11 @@ public class TrialValidationAction extends ActionSupport {
         contactDTO.setScoperIdentifier(contactIi);
         try {
             getCountriesList();
-            List<OrganizationalContactDTO> list = PaRegistry.getPoOrganizationalContactCorrelationService().search(
+            List<OrganizationalContactDTO> list = PoRegistry.getOrganizationalContactCorrelationService().search(
                     contactDTO);
             for (OrganizationalContactDTO organizationalContactDTO : list) {
                 try {
-                    PersonDTO resultDTO = PaRegistry.getPoPersonEntityService().getPerson(
+                    PersonDTO resultDTO = PoRegistry.getPersonEntityService().getPerson(
                             organizationalContactDTO.getPlayerIdentifier());
                     // persons.add(convertToPaPerson(resultDTO));
                     persons.add(EnPnConverter.convertToPaPersonDTO(resultDTO));
@@ -802,7 +803,7 @@ public class TrialValidationAction extends ActionSupport {
         try {
             //String orgId = ServletActionContext.getRequest().getParameter("orgId");
             persId = ServletActionContext.getRequest().getParameter("persId");
-            PersonDTO selectedLeadPrincipalInvestigator = PaRegistry.getPoPersonEntityService().getPerson(
+            PersonDTO selectedLeadPrincipalInvestigator = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             gtdDTO.setResponsiblePersonIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
             gov.nih.nci.pa.dto.PaPersonDTO personDTO = EnPnConverter

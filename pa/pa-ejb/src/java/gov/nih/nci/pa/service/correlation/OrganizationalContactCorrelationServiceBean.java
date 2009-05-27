@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -135,7 +136,7 @@ public class OrganizationalContactCorrelationServiceBean {
 
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -146,7 +147,7 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         try {
-            poPer = PoPaServiceBeanLookup.getPersonEntityService().
+            poPer = PoRegistry.getPersonEntityService().
             getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
   //          Map m = e.getNullifiedEntities();
@@ -160,14 +161,14 @@ public class OrganizationalContactCorrelationServiceBean {
         List<OrganizationalContactDTO> ocDTOs = null;
         ocDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         ocDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-        ocDTOs = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
+        ocDTOs = PoRegistry.getOrganizationalContactCorrelationService().search(ocDTO);
         if (ocDTOs != null && ocDTOs.size() > 1) {
             throw new PAException("PO oc Correlation should not have more than 1  ");
         }
         if (ocDTOs == null || ocDTOs.isEmpty()) {
             try {
-                Ii ii = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
-                ocDTO = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ii);
+                Ii ii = PoRegistry.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
+                ocDTO = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during get OrganizationalContact " , e);
                 throw new PAException("Validation exception during get OrganizationalContact " , e);
