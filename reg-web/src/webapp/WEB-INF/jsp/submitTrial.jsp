@@ -147,6 +147,13 @@ function addGrant(){
         isValidGrant = false;
         alertMessage=alertMessage+ "\n Serial Number must be numeric";
     }
+    if (isSerialEmpty == false && serialNumber != null){
+        var numericExpression = /^[0-9]+$/;
+         if(!numericExpression.test(serialNumber)){
+         isValidGrant = false;
+         alertMessage=alertMessage+ "\n Serial Number must be numeric";
+        } 
+    }
     if (isSerialEmpty == false && (serialNumber.length < 5 || serialNumber.length > 6)){
         isValidGrant = false;
         alertMessage=alertMessage+ "\n Serial Number must be 5 or 6 digits";
