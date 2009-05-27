@@ -121,7 +121,7 @@ public class StudyRegulatoryAuthorityConverterTest {
     bo.setStudyProtocol(sp);
 
     StudyRegulatoryAuthorityConverter sg = new StudyRegulatoryAuthorityConverter();
-    StudyRegulatoryAuthorityDTO dto = sg.convertFromDomainToDTO(bo);
+    StudyRegulatoryAuthorityDTO dto = sg.convertFromDomainToDto(bo);
     assertStudyRegulatoryAuthorityConverter(bo, dto);
   }
 
@@ -141,7 +141,7 @@ public class StudyRegulatoryAuthorityConverterTest {
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
     StudyRegulatoryAuthorityConverter sg = new StudyRegulatoryAuthorityConverter();
-    StudyRegulatoryAuthority bo = sg.convertFromDTOToDomain(dto);
+    StudyRegulatoryAuthority bo = sg.convertFromDtoToDomain(dto);
     assertStudyRegulatoryAuthorityConverter(bo, dto);
   }
 

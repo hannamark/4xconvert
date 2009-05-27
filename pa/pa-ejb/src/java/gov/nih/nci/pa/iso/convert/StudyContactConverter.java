@@ -91,11 +91,13 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -134,7 +136,8 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
+        dto.setStatusDateRange(
+                IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         // handle phone and email
         DSet<Tel> telAddresses = new DSet<Tel>();
@@ -204,6 +207,9 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             }
         }
 
+        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        bo.setStatusDateRangeHigh(null);
+        
         return bo;
     }
 

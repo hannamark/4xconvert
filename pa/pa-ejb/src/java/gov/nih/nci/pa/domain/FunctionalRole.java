@@ -93,20 +93,31 @@ import org.hibernate.validator.NotNull;
 
 /**
  * Abstract class for managing functional roles.
+ * 
  * @author Naveen Amiruddin
  * @since 05/22/2008
  */
 @MappedSuperclass
 public class FunctionalRole extends AbstractEntity {
+    
+    /** The Constant serialVersionUID. */
     static final long serialVersionUID = 8492645655L;
 
+    /** The status code. */
     private FunctionalRoleStatusCode  statusCode;
+    
+    /** The status date range low. */
     private Timestamp statusDateRangeLow;
-    /** . **/
+    
+    /** The status date range high. */
+    private Timestamp statusDateRangeHigh;
+    
+    /** The study protocol. */
     protected StudyProtocol studyProtocol;
 
     /**
-     *
+     * Gets the status code.
+     * 
      * @return statusCode
      */
     @Column(name = "STATUS_CODE")
@@ -115,23 +126,29 @@ public class FunctionalRole extends AbstractEntity {
     public FunctionalRoleStatusCode  getStatusCode() {
         return statusCode;
     }
+    
     /**
-     *
+     * Sets the status code.
+     * 
      * @param fStatusCode statusCode
      */
     public void setStatusCode(FunctionalRoleStatusCode  fStatusCode) {
         this.statusCode = fStatusCode;
     }
+    
     /**
-     *
+     * Gets the status date range low.
+     * 
      * @return statusDateRangeLow
      */
     @Column(name = "STATUS_DATE_RANGE_LOW")
     public Timestamp getStatusDateRangeLow() {
         return statusDateRangeLow;
     }
+    
     /**
-     *
+     * Sets the status date range low.
+     * 
      * @param statusDateRangeLow  statusDateRangeLow
      */
     public void setStatusDateRangeLow(Timestamp statusDateRangeLow) {
@@ -139,7 +156,8 @@ public class FunctionalRole extends AbstractEntity {
     }
 
     /**
-     *
+     * Gets the study protocol.
+     * 
      * @return studyProtocol
      */
     @ManyToOne
@@ -150,11 +168,27 @@ public class FunctionalRole extends AbstractEntity {
     }
 
     /**
-     *
+     * Sets the study protocol.
+     * 
      * @param studyProtocol studyProtocol
      */
     public void setStudyProtocol(StudyProtocol studyProtocol) {
         this.studyProtocol = studyProtocol;
+    }
+
+    /**
+     * @return the statusDateRangeHigh
+     */
+    @Column(name = "STATUS_DATE_RANGE_HIGH")
+    public Timestamp getStatusDateRangeHigh() {
+        return statusDateRangeHigh;
+    }
+
+    /**
+     * @param statusDateRangeHigh the statusDateRangeHigh to set
+     */
+    public void setStatusDateRangeHigh(Timestamp statusDateRangeHigh) {
+        this.statusDateRangeHigh = statusDateRangeHigh;
     }
 
 

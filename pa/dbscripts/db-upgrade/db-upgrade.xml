@@ -84,4 +84,8 @@
             <comment>execute studyParticipationFunctionalCodeUpdate.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyParticipationFunctionalCodeUpdate.sql"/>
     </changeSet>
+    <changeSet id="19" author="Anupama">
+            <comment>execute updateToFunctionalRole.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/updateToFunctionalRole.sql"/>
+    </changeSet>
 </databaseChangeLog>

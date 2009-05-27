@@ -164,7 +164,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             
             String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(IiConverter
                     .convertToIi(studyProtocolId));
-            servletResponse.setContentType("application/xml");
+            servletResponse.setContentType("application/xml;charset=ISO-8859-1");
             servletResponse.setContentLength(xmlData.length());
             ServletOutputStream out = servletResponse.getOutputStream();
             out.write(xmlData.getBytes());
@@ -194,7 +194,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
 
         String fileName = TSR + randomInt + studyProtocolIi.getExtension() + HTML;
 
-        servletResponse.setContentType("text/html");
+        servletResponse.setContentType("text/html;charset=ISO-8859-1");
         servletResponse.setContentLength(htmlData.length());
         servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
         servletResponse.setHeader("Pragma", "public");

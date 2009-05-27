@@ -507,7 +507,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     private Element createRegulatoryAuthority(StudyProtocolDTO spDTO , Document doc) throws PAException {
-        StudyRegulatoryAuthorityDTO sraDTO = studyRegulatoryAuthorityService.getByStudyProtocol(spDTO.getIdentifier());
+        List<StudyRegulatoryAuthorityDTO> sraDTOList = 
+                studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDTO.getIdentifier());
+        StudyRegulatoryAuthorityDTO sraDTO = null;
+        if (!sraDTOList.isEmpty()) {
+            sraDTO = sraDTOList.get(0);
+        }
             //PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService().getByStudyProtocol(spDTO.getIdentifier());
         if (sraDTO == null) {
             return null;
@@ -1197,6 +1202,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         element.appendChild(text);
         return element;
     }
+    
     private static Element createElement(String elementName , String st , int maxLength , Document doc) {
         if (st == null || elementName == null || st == null) {
             return null;

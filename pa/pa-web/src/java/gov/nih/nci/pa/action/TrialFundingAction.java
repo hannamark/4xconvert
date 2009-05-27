@@ -92,6 +92,8 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -291,12 +293,34 @@ private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
     if (PAUtil.isNotEmpty(trialFundingWebDTO.getSerialNumber())) {
       try {
         Integer.valueOf(trialFundingWebDTO.getSerialNumber());
+        boolean flag = isNumeric(trialFundingWebDTO.getSerialNumber());
+        if (!flag) {
+            addFieldError("trialFundingWebDTO.serialNumber",
+            "Please Enter a numeric value");  
+        }
+            
       } catch (NumberFormatException e) {
         addFieldError("trialFundingWebDTO.serialNumber",
         "Please Enter a numeric value");
       }
+      
     }
   }
+  
+  
+  
+ private boolean isNumeric(String number) {
+  boolean isValid = false;   
+  //Initialize reg ex for numeric data.
+  String expression = "^[0-9]*[0-9]+$";
+  CharSequence inputStr = number;
+  Pattern pattern = Pattern.compile(expression);
+  Matcher matcher = pattern.matcher(inputStr);
+  if (matcher.matches()) {
+      isValid = true;
+  }
+  return isValid;
+}
   /**
    * @return cbValue
    */

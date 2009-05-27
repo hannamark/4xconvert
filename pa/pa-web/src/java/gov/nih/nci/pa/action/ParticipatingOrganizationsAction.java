@@ -99,6 +99,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -279,7 +280,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
             sp.setIdentifier(null);
             sp.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-            sp.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+            sp.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
             sp.setStudyProtocolIdentifier(spIi);
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
             try {

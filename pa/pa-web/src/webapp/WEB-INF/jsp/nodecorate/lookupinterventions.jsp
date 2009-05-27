@@ -47,9 +47,9 @@
         </td>
         <td>
             <s:textfield id="searchName" name="searchName"  maxlength="60" size="60"  cssStyle="width:200px" />
-        </td>
+        </td> </tr>
     <tr><td/><td class="info">Use * as wildcard when entering search string</td></tr>
-    </tr>
+   
 </table>
     <div class="actionsrow">
          <del class="btnwrapper">

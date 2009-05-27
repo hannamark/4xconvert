@@ -81,7 +81,6 @@ package gov.nih.nci.pa.domain;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
@@ -97,10 +96,9 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table (name = "STUDY_REGULATORY_AUTHORITY")
-public class StudyRegulatoryAuthority extends AbstractEntity {
+public class StudyRegulatoryAuthority extends AbstractStudyEntity {
 
     private static final long serialVersionUID = 1L;
-    private StudyProtocol studyProtocol;
     private RegulatoryAuthority regulatoryAuthority;
 
 
@@ -121,23 +119,4 @@ public class StudyRegulatoryAuthority extends AbstractEntity {
     public void setRegulatoryAuthority(RegulatoryAuthority regulatoryAuthority) {
         this.regulatoryAuthority = regulatoryAuthority;
     }
-    /**
-     *
-     * @return protocol
-     */
-    @OneToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
-    @NotNull
-    public StudyProtocol getStudyProtocol() {
-
-       return studyProtocol;
-    }
-    /**
-     *
-     * @param studyProtocol studyProtocol
-     */
-    public void setStudyProtocol(StudyProtocol studyProtocol) {
-        this.studyProtocol = studyProtocol;
-    }
-
-}
+ }

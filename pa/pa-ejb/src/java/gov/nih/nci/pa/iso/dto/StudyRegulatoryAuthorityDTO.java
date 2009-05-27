@@ -65,22 +65,10 @@ import gov.nih.nci.coppa.iso.Ii;
  * copyright holder, NCI.
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class StudyRegulatoryAuthorityDTO extends BaseDTO {
+public class StudyRegulatoryAuthorityDTO extends StudyDTO {
     private static final long serialVersionUID = 6820293873809276285L;
-    private Ii studyProtocolIdentifier;
     private Ii regulatoryAuthorityIdentifier;
-    /**
-     * @return the studyProtocolIdentifer
-     */
-    public Ii getStudyProtocolIdentifier() {
-        return studyProtocolIdentifier;
-    }
-    /**
-     * @param studyProtocolIdentifier the protocolId to set
-     */
-    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
-        this.studyProtocolIdentifier = studyProtocolIdentifier;
-    }
+        
     /**
      * @return the regulatoryAuthorityIdentifier
      */

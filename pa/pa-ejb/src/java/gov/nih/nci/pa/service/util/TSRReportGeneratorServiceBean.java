@@ -333,6 +333,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       if (studyProtocolIi == null) {
           throw new PAException("Study Protocol Identifier is null");
       }
+     
       StringBuffer htmldata = new StringBuffer();
       htmldata.append(FONT_TITLE).append(CENTER_B).append(appendBoldData("Trial Summary Report"))
               .append(CENTER_E).append(FONT_END);
@@ -863,9 +864,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               appendTDAndData(html, appendTRBold("NIH Institution Code"));
               appendTDAndData(html, appendTRBold("Serial Number"));
               appendTDAndData(html, appendTRBold("NCI Division/Program Code"));
-              /*appendTDAndData(html, appendTRBold("Funding Type"));
-              appendTDAndData(html, appendTRBold("Grant Year"));
-              appendTDAndData(html, appendTRBold("Suffix"));*/
               html.append(TR_E);
           }
           html.append(TR_B);
@@ -1010,13 +1008,18 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 //        getData(spDto.getAccrualReportingMethodCode(), true), true , false));
       appendTitle(html, appendBoldData("Regulatory Information"));
       html.append(BR);
-      StudyRegulatoryAuthorityDTO sraDTO = studyRegulatoryAuthorityService.getByStudyProtocol(spDto.getIdentifier());
+      List<StudyRegulatoryAuthorityDTO> sraDTOList = 
+              studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDto.getIdentifier());
+      StudyRegulatoryAuthorityDTO sraDTO = null;
+      if (!sraDTOList.isEmpty()) {
+          sraDTO = sraDTOList.get(0);
+      }  
       if (sraDTO != null) {
-          String data = null;
-          RegulatoryAuthority ra = regulatoryInformationService.
+           String data = null;
+           RegulatoryAuthority ra = regulatoryInformationService.
                       get(Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
 
-          Country country =  regulatoryInformationService.getRegulatoryAuthorityCountry(
+           Country country =  regulatoryInformationService.getRegulatoryAuthorityCountry(
                   Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
           if (country != null && ra != null) {
               data = country.getName() + ": " + ra.getAuthorityName();
@@ -1491,5 +1494,5 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           return NO;
       }
   }
-
+  
 }

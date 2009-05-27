@@ -79,7 +79,6 @@
 
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 
 /**
@@ -87,23 +86,8 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
  * @since 03/28/2009
  */
 
-public interface StudyRegulatoryAuthorityService {
+public interface StudyRegulatoryAuthorityService extends StudyPaService<StudyRegulatoryAuthorityDTO> {
 
-    /**
-     * 
-     * @param studyProtocolIi sp id
-     * @return StudyRegulatoryAuthorityDTO as the dto
-     * @throws PAException on error
-     */
-    StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi)  throws PAException;
-    
-    /**
-     * 
-     * @param sraDTO as parameter
-     * @return StudyRegulatoryAuthorityDTO as the return object
-     * @throws PAException on error
-     */ 
-    StudyRegulatoryAuthorityDTO create(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
     /**
      * 
      * @param sraDTO as parameter
@@ -112,12 +96,5 @@ public interface StudyRegulatoryAuthorityService {
      */
     StudyRegulatoryAuthorityDTO update(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
 
-    /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
-     * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @throws PAException on error
-     */
-    void copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
-
+    
 }

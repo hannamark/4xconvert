@@ -55,6 +55,7 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
@@ -69,7 +70,7 @@ public class FunctionalRoleDTO extends StudyDTO {
     private static final long serialVersionUID = 123489324790L;
 
     Cd statusCode;
-    Ts statusDateRangeLow;
+    private Ivl<Ts> statusDateRange;
     
     /**
      * @return the statusCode
@@ -84,15 +85,16 @@ public class FunctionalRoleDTO extends StudyDTO {
         this.statusCode = statusCode;
     }
     /**
-     * @return the statusDateRangeLow
+     * @return the statusDateRange
      */
-    public Ts getStatusDateRangeLow() {
-        return statusDateRangeLow;
+    public Ivl<Ts> getStatusDateRange() {
+        return statusDateRange;
     }
     /**
-     * @param statusDateRangeLow the statusDateRangeLow to set
+     * @param statusDateRange the statusDateRange to set
      */
-    public void setStatusDateRangeLow(Ts statusDateRangeLow) {
-        this.statusDateRangeLow = statusDateRangeLow;
+    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
+        this.statusDateRange = statusDateRange;
     }
+    
 }

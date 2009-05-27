@@ -92,11 +92,13 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Convert StudyParticipationContact domain to DTO.
@@ -131,7 +133,8 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
         dto.setPrimaryIndicator(BlConverter.convertToBl(bo.getPrimaryIndicator()));
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
+        dto.setStatusDateRange(
+                IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
         if (bo.getStudyParticipation() != null) {
             dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
         }
@@ -188,7 +191,8 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
         bo.setRoleCode(gov.nih.nci.pa.enums.StudyParticipationContactRoleCode.getByCode(
                 dto.getRoleCode().getCode()));        
         bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
-        bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
+        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        bo.setStatusDateRangeHigh(null);
         
         if (dto.getTelecomAddresses() != null) {
             bo.setEmail(DSetConverter.getFirstElement(dto.getTelecomAddresses(), "EMAIL"));

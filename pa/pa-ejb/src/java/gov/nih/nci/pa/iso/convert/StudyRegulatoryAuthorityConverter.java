@@ -93,14 +93,15 @@ import gov.nih.nci.pa.iso.util.IiConverter;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class StudyRegulatoryAuthorityConverter {
+public class StudyRegulatoryAuthorityConverter extends 
+gov.nih.nci.pa.iso.convert.AbstractConverter<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority> {
     
     /**
      * 
      * @param sra as a parameter
      * @return StudyProtocolDTO is returned as DTO
      */
-    public static StudyRegulatoryAuthorityDTO convertFromDomainToDTO(StudyRegulatoryAuthority sra) {
+    public StudyRegulatoryAuthorityDTO convertFromDomainToDto(StudyRegulatoryAuthority sra) {
         StudyRegulatoryAuthorityDTO sriDTO = new StudyRegulatoryAuthorityDTO();
         sriDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sra.getStudyProtocol().getId()));
         sriDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(sra.getRegulatoryAuthority().getId()));
@@ -113,8 +114,11 @@ public class StudyRegulatoryAuthorityConverter {
      * @param dto to be converted
      * @return StudyRegulatoryAuthority as domain object 
      */
-    public static StudyRegulatoryAuthority convertFromDTOToDomain(StudyRegulatoryAuthorityDTO dto) {
+    public StudyRegulatoryAuthority convertFromDtoToDomain(StudyRegulatoryAuthorityDTO dto) {
         StudyRegulatoryAuthority authority = new StudyRegulatoryAuthority();
+        if (dto.getIdentifier() != null) {
+            authority.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        }
         StudyProtocol  sp = new StudyProtocol();
         sp.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         RegulatoryAuthority ra = new RegulatoryAuthority();

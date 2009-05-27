@@ -114,6 +114,8 @@ public class Converters {
     private static StudyParticipationContactConverter studyParticipationContactConverter =
         new StudyParticipationContactConverter();
     private static StudyRelationshipConverter studyRelationshipConverter = new StudyRelationshipConverter();
+    private static StudyRegulatoryAuthorityConverter studyRegulatoryAuthorityConverter =
+                    new StudyRegulatoryAuthorityConverter();
 
     /**
      * @param clazz class
@@ -182,6 +184,9 @@ public class Converters {
         }
         if (clazz.equals(StudyRelationshipConverter.class)) {
             return (TYPE) studyRelationshipConverter;
+        }
+        if (clazz.equals(StudyRegulatoryAuthorityConverter.class)) {
+            return (TYPE) studyRegulatoryAuthorityConverter;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

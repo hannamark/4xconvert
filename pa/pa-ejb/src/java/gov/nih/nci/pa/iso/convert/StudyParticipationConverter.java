@@ -78,18 +78,22 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -131,7 +135,8 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         dto.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(bo.getReviewBoardApprovalStatusCode()));
         dto.setTargetAccrualNumber(IntConverter.convertToInt(bo.getTargetAccrualNumber()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
+        dto.setStatusDateRange(
+                IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
@@ -167,7 +172,7 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         }
 
         StudyParticipation bo = new StudyParticipation();
-        bo.setDateLastUpdated(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
+        bo.setDateLastUpdated(new Timestamp(new Date().getTime()));
         bo.setFunctionalCode(StudyParticipationFunctionalCode.getByCode(dto.getFunctionalCode().getCode()));
         bo.setHealthCareFacility(hfBo);
         bo.setResearchOrganization(roBo);
@@ -175,7 +180,8 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setLocalStudyProtocolIdentifier(StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
         bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
-        bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
+        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        bo.setStatusDateRangeHigh(null);
         bo.setStudyProtocol(spBo);
         bo.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
         bo.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));

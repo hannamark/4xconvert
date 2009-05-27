@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
@@ -157,7 +158,7 @@ public class StudyParticipationServiceTest {
         spDto.setHealthcareFacilityIi(facilityIi);
         spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP ID 02"));
         spDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-        spDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/15/2008")));
+        spDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(PAUtil.dateStringToTimestamp("1/1/2005"),null));
         spDto.setStudyProtocolIdentifier(studyIi);
         spDto.setTargetAccrualNumber(IntConverter.convertToInt(accrualNum));
         StudyParticipationDTO result = remoteEjb.create(spDto);

@@ -80,6 +80,9 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
@@ -114,7 +117,8 @@ public class StudyRegulatoryAuthorityServiceBeanTest {
 
   @Test
   public void get() throws Exception {
-    StudyRegulatoryAuthorityDTO dto =  remoteEjb.getByStudyProtocol(pid);
+      List<StudyRegulatoryAuthorityDTO> dtoList =  remoteEjb.getByStudyProtocol(pid);
+      StudyRegulatoryAuthorityDTO dto = dtoList.get(0);
     assertEquals(IiConverter.convertToLong(pid)
         , (IiConverter.convertToLong(dto.getStudyProtocolIdentifier())));
     StudyRegulatoryAuthorityDTO dto2 = null;
@@ -139,7 +143,8 @@ public class StudyRegulatoryAuthorityServiceBeanTest {
   
   @Test 
   public void iiRootTest() throws Exception {
-      StudyRegulatoryAuthorityDTO dto = remoteEjb.getByStudyProtocol(pid);
+      List<StudyRegulatoryAuthorityDTO> dtoList =  remoteEjb.getByStudyProtocol(pid);
+      StudyRegulatoryAuthorityDTO dto = dtoList.get(0);
       assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
   }
 }

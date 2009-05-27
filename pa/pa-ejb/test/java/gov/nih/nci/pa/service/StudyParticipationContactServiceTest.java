@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
@@ -146,7 +147,7 @@ public class StudyParticipationContactServiceTest {
         spc.setPrimaryIndicator(BlConverter.convertToBl(true));
         spc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.COORDINATING_INVESTIGATOR));
         spc.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-        spc.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2005")));
+        spc.setStatusDateRange(IvlConverter.convertTs().convertToIvl(PAUtil.dateStringToTimestamp("1/1/2005"),null));
         spc.setStudyParticipationIi(participationIi);
         spc.setStudyProtocolIdentifier(protocolIi);
         spc.setHealthCareProviderIi(healthCareProviderIi);

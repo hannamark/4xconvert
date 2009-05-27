@@ -95,6 +95,8 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -216,6 +218,9 @@ public class StudyResourcingServiceBean
           if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
             throw new PAException("Serial number can be numeric with 5 or 6 digits");
           }
+          if (!isNumeric(snValue)) {
+              throw new PAException("Serial number should have numbers from [0-9]");
+          }
         }
         try {
             session = HibernateUtil.getCurrentSession();
@@ -264,6 +269,7 @@ public class StudyResourcingServiceBean
      * @return StudyProtocolDTO
      * @throws PAException PAException
      */
+    @SuppressWarnings("PMD.NPathComplexity")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         final int serialNumMin = 5;
@@ -286,6 +292,9 @@ public class StudyResourcingServiceBean
           String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
           if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
             throw new PAException("Serial number can be numeric with 5 or 6 digits");
+          }
+          if (!isNumeric(snValue)) {
+              throw new PAException("Serial number should have numbers from [0-9]");
           }
         }
         StudyResourcing studyResourcing = StudyResourcingConverter.convertFromDTOToDomain(studyResourcingDTO);
@@ -312,8 +321,6 @@ public class StudyResourcingServiceBean
         }
         LOG.debug("Leaving createStudyResourcing ");
         return StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
-
-
     }
 
     /**
@@ -488,5 +495,19 @@ public class StudyResourcingServiceBean
                   }
               }
           }
+      }
+    
+    @SuppressWarnings({"PMD" })
+    private boolean isNumeric(String number) {
+        boolean isValid = false;   
+        //Initialize reg ex for numeric data.
+        String expression = "^[0-9]*[0-9]+$";
+        CharSequence inputStr = number;
+        Pattern pattern = Pattern.compile(expression);
+        Matcher matcher = pattern.matcher(inputStr);
+        if (matcher.matches()) {
+            isValid = true;
+        }
+        return isValid;
       }
 }

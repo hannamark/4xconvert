@@ -327,8 +327,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
   private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
-    StudyRegulatoryAuthorityDTO sraDTO = PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService()
+      
+    List<StudyRegulatoryAuthorityDTO> sraDTOList = PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService()
     .getByStudyProtocol(studyProtocolIi);
+    StudyRegulatoryAuthorityDTO sraDTO = null;
+    if (!sraDTOList.isEmpty()) {
+        sraDTO = sraDTOList.get(0);
+    }
     if (sraDTO == null) {
       abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
           + " from Administrative Data menu.", "Regulatory Information fields must be Entered."));
