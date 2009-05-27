@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.convert.StudyRecruitmentStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
+import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -98,6 +99,7 @@ import org.apache.log4j.Logger;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 public class StudyRecruitmentStatusServiceBean
 extends AbstractStudyIsoService<StudyRecruitmentStatusDTO, StudyRecruitmentStatus, StudyRecruitmentStatusConverter>
