@@ -119,17 +119,13 @@ public final class StudyResourcingTransformer
 
         StudyResourcingDTO result = new StudyResourcingDTO();
         result.setFundingMechanismCode(CDTransformer.INSTANCE.toDto(input.getFundingMechanismCode()));
-        result.setFundingTypeCode(CDTransformer.INSTANCE.toDto(input.getFundingTypeCode()));
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
         result.setInactiveCommentText(STTransformer.INSTANCE.toDto(input.getInactiveCommentText()));
         result.setNciDivisionProgramCode(CDTransformer.INSTANCE.toDto(input.getNciDivisionProgramCode()));
         result.setNihInstitutionCode(CDTransformer.INSTANCE.toDto(input.getNihInstitutionCode()));
         result.setOrganizationIdentifier(IITransformer.INSTANCE.toDto(input.getOrganizationIdentifier()));
-        result.setResourceProviderIdentifier(IITransformer.INSTANCE.toDto(input.getResourceProviderIdentifier()));
         result.setSerialNumber(STTransformer.INSTANCE.toDto(input.getSerialNumber()));
-        result.setStudyProtocolIi(IITransformer.INSTANCE.toDto(input.getStudyProtocol()));
-        result.setSuffixGrantYear(STTransformer.INSTANCE.toDto(input.getSuffixGrantYear()));
-        result.setSuffixOther(STTransformer.INSTANCE.toDto(input.getSuffixOther()));
+        result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toDto(input.getStudyProtocolIdentifier()));
         result.setSummary4ReportedResourceIndicator(BLTransformer.INSTANCE.toDto(input
                 .getSummary4ReportedResourceIndicator()));
         result.setTypeCode(CDTransformer.INSTANCE.toDto(input.getTypeCode()));
@@ -146,17 +142,13 @@ public final class StudyResourcingTransformer
         }
         StudyResourcing result = new StudyResourcing();
         result.setFundingMechanismCode(CDTransformer.INSTANCE.toXml(input.getFundingMechanismCode()));
-        result.setFundingTypeCode(CDTransformer.INSTANCE.toXml(input.getFundingTypeCode()));
         result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
         result.setInactiveCommentText(STTransformer.INSTANCE.toXml(input.getInactiveCommentText()));
         result.setNciDivisionProgramCode(CDTransformer.INSTANCE.toXml(input.getNciDivisionProgramCode()));
         result.setNihInstitutionCode(CDTransformer.INSTANCE.toXml(input.getNihInstitutionCode()));
         result.setOrganizationIdentifier(IITransformer.INSTANCE.toXml(input.getOrganizationIdentifier()));
-        result.setResourceProviderIdentifier(IITransformer.INSTANCE.toXml(input.getResourceProviderIdentifier()));
         result.setSerialNumber(STTransformer.INSTANCE.toXml(input.getSerialNumber()));
-        result.setStudyProtocol(IITransformer.INSTANCE.toXml(input.getStudyProtocolIi()));
-        result.setSuffixGrantYear(STTransformer.INSTANCE.toXml(input.getSuffixGrantYear()));
-        result.setSuffixOther(STTransformer.INSTANCE.toXml(input.getSuffixOther()));
+        result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
         result.setSummary4ReportedResourceIndicator(BLTransformer.INSTANCE.toXml(input
                 .getSummary4ReportedResourceIndicator()));
         result.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));

@@ -86,7 +86,6 @@ import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyResourcing;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyResourcingTransformer;
@@ -99,17 +98,13 @@ public class StudyResourcingTransformerTest extends
     public StudyResourcingDTO makeDtoSimple() {
         StudyResourcingDTO result = new StudyResourcingDTO();
         result.setFundingMechanismCode(new CDTransformerTest().makeDtoSimple());
-        result.setFundingTypeCode(new CDTransformerTest().makeDtoSimple());
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setInactiveCommentText(new STTransformerTest().makeDtoSimple());
         result.setNciDivisionProgramCode(new CDTransformerTest().makeDtoSimple());
         result.setNihInstitutionCode(new CDTransformerTest().makeDtoSimple());
         result.setOrganizationIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setResourceProviderIdentifier(new IITransformerTest().makeDtoSimple());
         result.setSerialNumber(new STTransformerTest().makeDtoSimple());
-        result.setStudyProtocolIi(new IITransformerTest().makeDtoSimple());
-        result.setSuffixGrantYear(new STTransformerTest().makeDtoSimple());
-        result.setSuffixOther(new STTransformerTest().makeDtoSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         result.setSummary4ReportedResourceIndicator(new BLTransformerTest().makeDtoSimple());
         result.setTypeCode(new CDTransformerTest().makeDtoSimple());
         return result;
@@ -119,17 +114,13 @@ public class StudyResourcingTransformerTest extends
     public StudyResourcing makeXmlSimple() {
         StudyResourcing result = new StudyResourcing();
         result.setFundingMechanismCode(new CDTransformerTest().makeXmlSimple());
-        result.setFundingTypeCode(new CDTransformerTest().makeXmlSimple());
         result.setIdentifier(new IITransformerTest().makeXmlSimple());
         result.setInactiveCommentText(new STTransformerTest().makeXmlSimple());
         result.setNciDivisionProgramCode(new CDTransformerTest().makeXmlSimple());
         result.setNihInstitutionCode(new CDTransformerTest().makeXmlSimple());
         result.setOrganizationIdentifier(new IITransformerTest().makeXmlSimple());
-        result.setResourceProviderIdentifier(new IITransformerTest().makeXmlSimple());
         result.setSerialNumber(new STTransformerTest().makeXmlSimple());
-        result.setStudyProtocol(new IITransformerTest().makeXmlSimple());
-        result.setSuffixGrantYear(new STTransformerTest().makeXmlSimple());
-        result.setSuffixOther(new STTransformerTest().makeXmlSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
         result.setSummary4ReportedResourceIndicator(new BLTransformerTest().makeXmlSimple());
         result.setTypeCode(new CDTransformerTest().makeXmlSimple());
         return result;
@@ -138,17 +129,13 @@ public class StudyResourcingTransformerTest extends
     @Override
     public void verifyDtoSimple(StudyResourcingDTO x) {
         new CDTransformerTest().verifyDtoSimple(x.getFundingMechanismCode());
-        new CDTransformerTest().verifyDtoSimple(x.getFundingTypeCode());
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         new STTransformerTest().verifyDtoSimple(x.getInactiveCommentText());
         new CDTransformerTest().verifyDtoSimple(x.getNciDivisionProgramCode());
         new CDTransformerTest().verifyDtoSimple(x.getNihInstitutionCode());
         new IITransformerTest().verifyDtoSimple(x.getOrganizationIdentifier());
-        new IITransformerTest().verifyDtoSimple(x.getResourceProviderIdentifier());
         new STTransformerTest().verifyDtoSimple(x.getSerialNumber());
-        new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIi());
-        new STTransformerTest().verifyDtoSimple(x.getSuffixGrantYear());
-        new STTransformerTest().verifyDtoSimple(x.getSuffixOther());
+        new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
         new BLTransformerTest().verifyDtoSimple(x.getSummary4ReportedResourceIndicator());
         new CDTransformerTest().verifyDtoSimple(x.getTypeCode());
     }
@@ -156,17 +143,13 @@ public class StudyResourcingTransformerTest extends
     @Override
     public void verifyXmlSimple(StudyResourcing x) {
         new CDTransformerTest().verifyXmlSimple(x.getFundingMechanismCode());
-        new CDTransformerTest().verifyXmlSimple(x.getFundingTypeCode());
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         new STTransformerTest().verifyXmlSimple(x.getInactiveCommentText());
         new CDTransformerTest().verifyXmlSimple(x.getNciDivisionProgramCode());
         new CDTransformerTest().verifyXmlSimple(x.getNihInstitutionCode());
         new IITransformerTest().verifyXmlSimple(x.getOrganizationIdentifier());
-        new IITransformerTest().verifyXmlSimple(x.getResourceProviderIdentifier());
         new STTransformerTest().verifyXmlSimple(x.getSerialNumber());
-        new IITransformerTest().verifyXmlSimple(x.getStudyProtocol());
-        new STTransformerTest().verifyXmlSimple(x.getSuffixGrantYear());
-        new STTransformerTest().verifyXmlSimple(x.getSuffixOther());
+        new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
         new BLTransformerTest().verifyXmlSimple(x.getSummary4ReportedResourceIndicator());
         new CDTransformerTest().verifyXmlSimple(x.getTypeCode());
     }

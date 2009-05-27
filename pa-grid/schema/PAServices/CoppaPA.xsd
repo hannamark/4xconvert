@@ -149,10 +149,9 @@
     <xs:element name="Document">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PA:BaseType">
+                <xs:extension base="COPPA-PA:StudyType">
                     <xs:sequence>
                         <xs:element name="typeCode" type="ISO:CD" />
-                        <xs:element name="studyProtocol" type="ISO:II" />
                         <xs:element name="activeIndicator" type="ISO:BL" />
                         <xs:element name="fileName" type="ISO:ST" />
                         <xs:element name="inactiveCommentText" type="ISO:ST" />
@@ -451,19 +450,14 @@
     <xs:element name="StudyResourcing">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PA:BaseType">
+                <xs:extension base="COPPA-PA:StudyType">
                     <xs:sequence>
                         <xs:element name="typeCode" type="ISO:CD" />
                         <xs:element name="summary4ReportedResourceIndicator" type="ISO:BL" />
                         <xs:element name="organizationIdentifier" type="ISO:II" />
-                        <xs:element name="resourceProviderIdentifier" type="ISO:II" />
-                        <xs:element name="studyProtocol" type="ISO:II" />
                         <xs:element name="fundingMechanismCode" type="ISO:CD" />
-                        <xs:element name="fundingTypeCode" type="ISO:CD" />
                         <xs:element name="nciDivisionProgramCode" type="ISO:CD" />
                         <xs:element name="nihInstitutionCode" type="ISO:CD" />
-                        <xs:element name="suffixGrantYear" type="ISO:ST" />
-                        <xs:element name="suffixOther" type="ISO:ST" />
                         <xs:element name="serialNumber" type="ISO:ST" />
                         <xs:element name="inactiveCommentText" type="ISO:ST" />
                     </xs:sequence>

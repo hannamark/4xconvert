@@ -70,24 +70,27 @@ public class StudyContactServiceClient extends StudyContactServiceClientBase imp
     }
 
     private static void getForStudyContact(StudyContactServiceClient client) throws RemoteException {
-
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27432");
+        id.setExtension("27453");
         StudyContact[] stCont = client.getByStudyProtocol(id);
-        System.out.println("get by study protocol brought back set sized " + stCont.length);
+        if (stCont != null) {
+            System.out.println("get by study protocol brought back set sized " + stCont.length);
+        } else {
+            System.out.println("get by study protocol brought back null set");
+        }
     }
 
     private static void getStudyContact(StudyContactServiceClient client) throws RemoteException {
 
         Id id = new Id();
-        id.setExtension("27445");
+        id.setExtension("27439");
         StudyContact stCont = client.get(id);
         if (stCont == null) {
             System.out.println("could not find StudyContact");
         } else {
-            System.out.println("StudyParticipant 27445 found.");
+            System.out.println("StudyParticipant 27439 found.");
         }
     }
 

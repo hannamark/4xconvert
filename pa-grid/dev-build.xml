@@ -318,7 +318,7 @@
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="92" totallinerate="94" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="93" totallinerate="94" />
     </target>
 
     <!--
