@@ -39,6 +39,7 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO>
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii arg0) throws PAException {
         try {
             return (List<DTO>) getLocator().getStudyPaService(getType()).getByStudyProtocol(arg0);
@@ -50,6 +51,7 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO>
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public List<DTO> getCurrentByStudyProtocol(Ii arg0) throws PAException {
         try {
             return (List<DTO>) getLocator().getStudyPaService(getType()).getCurrentByStudyProtocol(arg0);

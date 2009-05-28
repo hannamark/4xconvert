@@ -26,6 +26,7 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public DTO create(DTO dto) throws PAException {
         try {
             DTO result = (DTO) getLocator().getBasePaService(type).create(dto);
@@ -50,6 +51,7 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public DTO get(Ii id) throws PAException {
         try {
             DTO result = (DTO) getLocator().getBasePaService(type).get(id);
@@ -62,6 +64,7 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public DTO update(DTO dto) throws PAException {
         try {
             DTO result = (DTO) getLocator().getBasePaService(type).update(dto);

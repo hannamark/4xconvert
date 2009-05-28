@@ -90,7 +90,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformer;
 import gov.nih.nci.coppa.services.pa.StudyContact;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 
@@ -133,8 +133,8 @@ public final class StudyContactTransformer
         //AD
         result.setPostalAddress(ADTransformer.INSTANCE.toDto(input.getPostalAddress()));
 
-        //TS
-        result.setStatusDateRangeLow(TSTransformer.INSTANCE.toDto(input.getStatusDateRangeLow()));
+        //IVLTS
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toDto(input.getStatusDateRange()));
 
         //DSETTEL
         result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddresses()));
@@ -167,8 +167,8 @@ public final class StudyContactTransformer
         //AD
         result.setPostalAddress(ADTransformer.INSTANCE.toXml(input.getPostalAddress()));
 
-        //TS
-        result.setStatusDateRangeLow(TSTransformer.INSTANCE.toXml(input.getStatusDateRangeLow()));
+        //IVLTS
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(input.getStatusDateRange()));
 
         //DSETTEL
         result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddresses()));

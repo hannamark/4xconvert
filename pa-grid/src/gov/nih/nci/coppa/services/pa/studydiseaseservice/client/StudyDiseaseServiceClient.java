@@ -76,7 +76,11 @@ public class StudyDiseaseServiceClient extends StudyDiseaseServiceClientBase imp
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
         id.setExtension("27432");
         StudyDisease[] stCont = client.getByStudyProtocol(id);
-        System.out.println("get by study protocol brought back set sized " + stCont.length);
+        if (stCont != null) {
+            System.out.println("get by study protocol brought back set sized " + stCont.length);
+        } else {
+            System.out.println("get by study protocol brought back null set");
+        }
     }
 
     private static void getStudyDisease(StudyDiseaseServiceClient client) throws RemoteException {

@@ -55,8 +55,9 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
             if(args[0].equals("-url")){
               StudyRegulatoryAuthorityServiceClient client = new StudyRegulatoryAuthorityServiceClient(args[1]);
 
-              System.out.println("Getting StudyRegulatoryAuthority by study protocol");
               getByStudyProtocol(client);
+              getCurrentByStudyProtocol(client);
+              getById(client);
             } else {
                 usage();
                 System.exit(1);
@@ -72,15 +73,46 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
     }
 
     private static void getByStudyProtocol(StudyRegulatoryAuthorityServiceClient client) throws RemoteException, PAFault {
+        System.out.println("Getting StudyRegulatoryAuthority by study protocol");
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
         id.setExtension("27426");
-        StudyRegulatoryAuthority result = client.getByStudyProtocol(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        StudyRegulatoryAuthority[] results = client.getByStudyProtocol(id);
+        printResults(results);
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    private static void getCurrentByStudyProtocol(StudyRegulatoryAuthorityServiceClient client) throws RemoteException, PAFault {
+        System.out.println("Getting Current StudyRegulatoryAuthority by study protocol");
+        Id id = new Id();
+        id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        id.setExtension("27426");
+        StudyRegulatoryAuthority[] results = client.getCurrentByStudyProtocol(id);
+        printResults(results);
+    }
+
+    private static void getById(StudyRegulatoryAuthorityServiceClient client) throws RemoteException, PAFault {
+        System.out.println("Getting StudyRegulatoryAuthority by ID");
+        Id id = new Id();
+        id.setExtension("27473");
+        StudyRegulatoryAuthority results = client.get(id);
+        printResults(results);
+    }
+
+    private static void printResults(StudyRegulatoryAuthority... results) {
+        if (results != null) {
+            System.out.println(results.length + " results found");
+            for (int i = 0; i < results.length; i++) {
+                System.out.println(ToStringBuilder.reflectionToString(results[i], ToStringStyle.MULTI_LINE_STYLE));
+            }
+        } else {
+            System.out.println("No results found");
+        }
+    }
+
+
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetByStudyProtocolRequest();
@@ -127,6 +159,41 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
     toStudyProtocolIdContainer.setId(toStudyProtocolId);
     params.setToStudyProtocolId(toStudyProtocolIdContainer);
     gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.CopyResponse boxedResult = portType.copy(params);
+    }
+  }
+
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetCurrentByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId();
+    studyProtocolIdContainer.setId(studyProtocolId);
+    params.setStudyProtocolId(studyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
+    return boxedResult.getStudyRegulatoryAuthority();
+    }
+  }
+
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"get");
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetRequest();
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetRequestId idContainer = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetResponse boxedResult = portType.get(params);
+    return boxedResult.getStudyRegulatoryAuthority();
+    }
+  }
+
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"delete");
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.DeleteRequest();
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.DeleteRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
   }
 

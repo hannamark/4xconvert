@@ -88,7 +88,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyParticipationContact;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationContactTransformer;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -111,8 +111,8 @@ public class StudyParticipationContactTransformerTest
         result.setStatusCode(new CDTransformerTest().makeDtoSimple());
         result.setRoleCode(new CDTransformerTest().makeDtoSimple());
 
-        //TS
-        result.setStatusDateRangeLow(new TSTransformerTest().makeDtoSimple());
+        //IVLTS
+        result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
 
         //AD
         result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
@@ -140,8 +140,8 @@ public class StudyParticipationContactTransformerTest
         result.setStatusCode(new CDTransformerTest().makeXmlSimple());
         result.setRoleCode(new CDTransformerTest().makeXmlSimple());
 
-        //TS
-        result.setStatusDateRangeLow(new TSTransformerTest().makeXmlSimple());
+        //IVLTS
+        result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
 
         //AD
         result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
@@ -167,8 +167,8 @@ public class StudyParticipationContactTransformerTest
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
         new CDTransformerTest().verifyDtoSimple(x.getRoleCode());
 
-        //TS
-        new TSTransformerTest().verifyDtoSimple(x.getStatusDateRangeLow());
+        //IVLTS
+        new IVLTSTransformerTest().verifyDtoSimple(x.getStatusDateRange());
 
         //AD
         new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
@@ -193,8 +193,8 @@ public class StudyParticipationContactTransformerTest
         new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
         new CDTransformerTest().verifyXmlSimple(x.getRoleCode());
 
-        //TS
-        new TSTransformerTest().verifyXmlSimple(x.getStatusDateRangeLow());
+        //IVLTS
+        new IVLTSTransformerTest().verifyXmlSimple(x.getStatusDateRange());
 
         //AD
         new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());

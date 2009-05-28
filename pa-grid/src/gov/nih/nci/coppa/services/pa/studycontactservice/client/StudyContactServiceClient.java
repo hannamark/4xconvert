@@ -73,7 +73,7 @@ public class StudyContactServiceClient extends StudyContactServiceClientBase imp
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27453");
+        id.setExtension("27426");
         StudyContact[] stCont = client.getByStudyProtocol(id);
         if (stCont != null) {
             System.out.println("get by study protocol brought back set sized " + stCont.length);

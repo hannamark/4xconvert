@@ -59,7 +59,7 @@
       <element name="GetByStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns5:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+            <element ref="ns5:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -128,6 +128,64 @@
           <sequence />
         </complexType>
       </element>
+      <element name="GetCurrentByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCurrentByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="StudyRegulatoryAuthorityServiceResourceProperties">
         <complexType>
           <sequence />
@@ -160,6 +218,24 @@
   <message name="CopyResponse">
     <part name="parameters" element="tns:CopyResponse" />
   </message>
+  <message name="GetCurrentByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolRequest" />
+  </message>
+  <message name="GetCurrentByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetCurrentByStudyProtocolResponse" />
+  </message>
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
   <message name="PAFaultFaultMessage">
     <part name="fault" element="ns0:PAFault" />
   </message>
@@ -187,6 +263,21 @@
     <operation name="copy">
       <input message="tns:CopyRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/CopyRequest" />
       <output message="tns:CopyResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/CopyResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getCurrentByStudyProtocol">
+      <input message="tns:GetCurrentByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/GetCurrentByStudyProtocolRequest" />
+      <output message="tns:GetCurrentByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/GetCurrentByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/GetResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/DeleteResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/PAFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">

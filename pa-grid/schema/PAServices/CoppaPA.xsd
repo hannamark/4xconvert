@@ -26,23 +26,12 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="BaseWithStatusCodeType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:BaseType">
-                <xs:sequence>
-                    <xs:element name="statusCode" type="ISO:CD" />
-                    <xs:element name="statusDateRangeLow" type="ISO:TS" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="FunctionalRoleType" abstract="true">
         <xs:complexContent>
             <xs:extension base="COPPA-PA:StudyType">
                 <xs:sequence>
                     <xs:element name="statusCode" type="ISO:CD" />
-                    <xs:element name="statusDateRangeLow" type="ISO:TS" />
+                    <xs:element name="statusDateRange" type="ISO:IVL_TS" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -437,9 +426,8 @@
     <xs:element name="StudyRegulatoryAuthority">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PA:BaseType">
+                <xs:extension base="COPPA-PA:StudyType">
                     <xs:sequence>
-                        <xs:element name="studyProtocolIdentifier" type="ISO:II" />
                         <xs:element name="regulatoryAuthorityIdentifier" type="ISO:II" />
                     </xs:sequence>
                 </xs:extension>

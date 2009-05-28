@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 
 /**
@@ -69,14 +71,21 @@ public class StudyParticipationContactServiceClient extends StudyParticipationCo
         }
     }
 
-    private static  void getForStudyPartConts(StudyParticipationContactServiceClient client) throws RemoteException {
+    private static void getForStudyPartConts(StudyParticipationContactServiceClient client) throws RemoteException {
 
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
         id.setExtension("27432");
         StudyParticipationContact[] stCont = client.getByStudyProtocol(id);
-        System.out.println("get by study protocol brought back set sized " + stCont.length);
+        if (stCont != null) {
+            System.out.println(stCont.length + " results found");
+            for (int i = 0; i < stCont.length; i++) {
+                System.out.println(ToStringBuilder.reflectionToString(stCont[i], ToStringStyle.MULTI_LINE_STYLE));
+            }
+        } else {
+            System.out.println("No results found");
+        }
     }
 
     private static void getStudyPartConts(StudyParticipationContactServiceClient client) throws RemoteException {

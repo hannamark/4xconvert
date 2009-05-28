@@ -88,7 +88,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyContact;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyContactTransformer;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -99,26 +99,20 @@ public class StudyContactTransformerTest
     @Override
     public StudyContactDTO makeDtoSimple() {
         StudyContactDTO result = new StudyContactDTO();
-        //II
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         result.setClinicalResearchStaffIi(new IITransformerTest().makeDtoSimple());
         result.setHealthCareProviderIi(new IITransformerTest().makeDtoSimple());
 
-        //BL
         result.setPrimaryIndicator(new BLTransformerTest().makeDtoSimple());
 
-        //AD
         result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
 
-        //CD
         result.setRoleCode(new CDTransformerTest().makeDtoSimple());
         result.setStatusCode(new CDTransformerTest().makeDtoSimple());
 
-        //TS
-        result.setStatusDateRangeLow(new TSTransformerTest().makeDtoSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
 
-        //DSETTEL
         result.setTelecomAddresses(new DSETTelTransformerTest().makeDtoSimple());
 
         return result;
@@ -127,26 +121,20 @@ public class StudyContactTransformerTest
     @Override
     public StudyContact makeXmlSimple() {
         StudyContact result = new StudyContact();
-        //II
         result.setIdentifier(new IITransformerTest().makeXmlSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
         result.setClinicalResearchStaff(new IITransformerTest().makeXmlSimple());
         result.setHealthCareProvider(new IITransformerTest().makeXmlSimple());
 
-        //BL
         result.setPrimaryIndicator(new BLTransformerTest().makeXmlSimple());
 
-        //AD
         result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
 
-        //CD
         result.setRoleCode(new CDTransformerTest().makeXmlSimple());
         result.setStatusCode(new CDTransformerTest().makeXmlSimple());
 
-        //TS
-        result.setStatusDateRangeLow(new TSTransformerTest().makeXmlSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
 
-        //DSETTEL
         result.setTelecomAddresses(new DSETTelTransformerTest().makeXmlSimple());
 
         return result;
@@ -162,7 +150,7 @@ public class StudyContactTransformerTest
         new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
         new CDTransformerTest().verifyDtoSimple(x.getRoleCode());
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
-        new TSTransformerTest().verifyDtoSimple(x.getStatusDateRangeLow());
+        new IVLTSTransformerTest().verifyDtoSimple(x.getStatusDateRange());
         new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddresses());
     }
 
@@ -176,7 +164,7 @@ public class StudyContactTransformerTest
         new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());
         new CDTransformerTest().verifyXmlSimple(x.getRoleCode());
         new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
-        new TSTransformerTest().verifyXmlSimple(x.getStatusDateRangeLow());
+        new IVLTSTransformerTest().verifyXmlSimple(x.getStatusDateRange());
         new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddresses());
     }
 }

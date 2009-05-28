@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  */
 public interface StudyRegulatoryAuthorityServiceI {
 
-  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority create(gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
@@ -27,6 +27,12 @@ public interface StudyRegulatoryAuthorityServiceI {
    *	
    */
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

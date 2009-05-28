@@ -62,6 +62,7 @@ public class GenericStudyPaGridServiceImpl<DTO extends StudyDTO, XML extends Obj
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public XML[] getByStudyProtocol(Id id) throws RemoteException {
         XML[] xmls = null;
         try {
@@ -78,6 +79,7 @@ public class GenericStudyPaGridServiceImpl<DTO extends StudyDTO, XML extends Obj
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public XML[] getCurrentByStudyProtocol(Id id) throws RemoteException {
         XML[] xmls = null;
         try {

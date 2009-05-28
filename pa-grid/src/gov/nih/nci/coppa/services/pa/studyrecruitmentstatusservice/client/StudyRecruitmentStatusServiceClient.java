@@ -71,17 +71,33 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
     }
 
     private static void getStudyRecruitmentStatus(StudyRecruitmentStatusServiceClient client) throws RemoteException {
+        System.out.println("getting by study protocol");
         Id id = new Id();
+        id.setExtension("27426");
+
         StudyRecruitmentStatus[] result = client.getByStudyProtocol(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        printResults(result);
 
     }
 
     private static void getCurrentStudyRecruitmentStatus(StudyRecruitmentStatusServiceClient client) throws RemoteException {
+        System.out.println("getting current by study protocol");
         Id id = new Id();
+        id.setExtension("27426");
         StudyRecruitmentStatus[] result = client.getCurrentByStudyProtocol(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        printResults(result);
 
+    }
+
+    private static void printResults(StudyRecruitmentStatus[] result) {
+        if (result != null) {
+            System.out.println(result.length + " results found");
+            for (int i = 0; i < result.length; i++) {
+                System.out.println(ToStringBuilder.reflectionToString(result[i], ToStringStyle.MULTI_LINE_STYLE));
+            }
+        } else {
+            System.out.println("No results found");
+        }
     }
 
   public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

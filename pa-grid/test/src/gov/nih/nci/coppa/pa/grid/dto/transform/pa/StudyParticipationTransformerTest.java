@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyParticipation;
@@ -116,7 +117,9 @@ public class StudyParticipationTransformerTest
 
         //TS
         result.setReviewBoardApprovalDate(new TSTransformerTest().makeDtoSimple());
-        result.setStatusDateRangeLow(new TSTransformerTest().makeDtoSimple());
+
+        //IVLTS
+        result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
 
         //INT
         result.setTargetAccrualNumber(new INTTransformerTest().makeDtoSimple());
@@ -145,7 +148,9 @@ public class StudyParticipationTransformerTest
 
         //TS
         result.setReviewBoardApprovalDate(new TSTransformerTest().makeXmlSimple());
-        result.setStatusDateRangeLow(new TSTransformerTest().makeXmlSimple());
+
+        //IVLTS
+        result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
 
         //INT
         result.setTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
@@ -163,7 +168,7 @@ public class StudyParticipationTransformerTest
         new CDTransformerTest().verifyDtoSimple(x.getFunctionalCode());
         new STTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalNumber());
         new STTransformerTest().verifyDtoSimple(x.getLocalStudyProtocolIdentifier());
-        new TSTransformerTest().verifyDtoSimple(x.getStatusDateRangeLow());
+        new IVLTSTransformerTest().verifyDtoSimple(x.getStatusDateRange());
         new TSTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalDate());
         new INTTransformerTest().verifyDtoSimple(x.getTargetAccrualNumber());
     }
@@ -179,7 +184,7 @@ public class StudyParticipationTransformerTest
         new CDTransformerTest().verifyXmlSimple(x.getFunctionalCode());
         new STTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalNumber());
         new STTransformerTest().verifyXmlSimple(x.getLocalStudyProtocolIdentifier());
-        new TSTransformerTest().verifyXmlSimple(x.getStatusDateRangeLow());
+        new IVLTSTransformerTest().verifyXmlSimple(x.getStatusDateRange());
         new TSTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalDate());
         new INTTransformerTest().verifyXmlSimple(x.getTargetAccrualNumber());
     }

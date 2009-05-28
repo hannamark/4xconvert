@@ -88,6 +88,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.coppa.services.pa.StudyParticipation;
@@ -134,7 +135,9 @@ public final class StudyParticipationTransformer
 
         //TS
         result.setReviewBoardApprovalDate(TSTransformer.INSTANCE.toDto(input.getReviewBoardApprovalDate()));
-        result.setStatusDateRangeLow(TSTransformer.INSTANCE.toDto(input.getStatusDateRangeLow()));
+
+        //IVLTS
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toDto(input.getStatusDateRange()));
 
         //INT
         result.setTargetAccrualNumber(INTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
@@ -167,7 +170,9 @@ public final class StudyParticipationTransformer
 
         //TS
         result.setReviewBoardApprovalDate(TSTransformer.INSTANCE.toXml(input.getReviewBoardApprovalDate()));
-        result.setStatusDateRangeLow(TSTransformer.INSTANCE.toXml(input.getStatusDateRangeLow()));
+
+        //IVLTS
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(input.getStatusDateRange()));
 
         //INT
         result.setTargetAccrualNumber(INTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
