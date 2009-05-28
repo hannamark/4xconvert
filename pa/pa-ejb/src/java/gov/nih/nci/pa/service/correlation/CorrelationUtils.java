@@ -723,7 +723,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @return Organization o
      * @throws PAException pe
      */
-    Organization createPAOrganization(OrganizationDTO poOrg) throws PAException {
+    public Organization createPAOrganization(OrganizationDTO poOrg) throws PAException {
         return createPAOrganization(convertPOToPAOrganization(poOrg));
     }
 

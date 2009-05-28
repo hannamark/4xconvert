@@ -82,8 +82,11 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -107,13 +110,19 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -182,6 +191,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
     @EJB
     OrganizationCorrelationServiceRemote ocsr = null;
+    @EJB 
+    StudyContactServiceRemote studyContactService = null;
+    private static final String PROTOCOL_ID_NULL = "Study Protocol Identifer is null";
+    private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
+    
 //    @EJB
 //    DocumentWorkflowStatusServiceLocal dwsService = null;
     private SessionContext ejbContext;
@@ -665,35 +679,139 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 summaryFourFundingCategoryCode = SummaryFourFundingCategoryCode.getByCode(
                         summary4studyResourcingDTO.getTypeCode().getCode());
             }
-            new PARelationServiceBean().createSummary4ReportedSource(organizationDto.getIdentifier()
-                    .getExtension(), summaryFourFundingCategoryCode, IiConverter
-                    .convertToLong(studyProtocolIi));
-
+            CorrelationUtils corrUtils = new CorrelationUtils();
+            String orgPoIdentifier = organizationDto.getIdentifier().getExtension();
+            if (orgPoIdentifier  == null) {
+                throw new PAException(" Organization PO Identifier is null");
+            }
+           
+            if (studyProtocolIi == null) {
+                throw new PAException(PROTOCOL_ID_NULL);
+            }
+            StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+            if (spDTO == null) {
+                throw new PAException(NO_PROTOCOL_FOUND + studyProtocolIi);
+            }
+            // Step 1 : get the PO Organization
+            OrganizationDTO poOrg = null;
+            try {
+                poOrg = PoRegistry.getOrganizationEntityService()
+                    .getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+            } catch (NullifiedEntityException e) {
+                // Map m = e.getNullifiedEntities();
+                // LOG.error("This Organization is no longer available instead use
+                // ");
+                throw new PAException("This Organization is no longer available instead use ", e);
+            }
+            // Step 3 : check for pa org, if not create one
+            Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null, orgPoIdentifier);
+            if (paOrg == null) {
+                paOrg = corrUtils.createPAOrganization(poOrg);
+            }
+            StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO();
+            summary4ResoureDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+            summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+            if (summaryFourFundingCategoryCode != null) {
+                summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
+            }
+            summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
+            studyResourcingService.createStudyResourcing(summary4ResoureDTO);
         }
-    }
+
+ }
+    
 
     private void createLeadOrganization(Ii studyProtocolIi , OrganizationDTO leadOrganizationDto ,
             StudyParticipationDTO leadOrganizationParticipationIdentifierDTO)
     throws PAException {
-        new PARelationServiceBean().createLeadOrganizationRelations(
-                leadOrganizationDto.getIdentifier().getExtension(),
-                IiConverter.convertToLong(studyProtocolIi),
-                leadOrganizationParticipationIdentifierDTO.getLocalStudyProtocolIdentifier().getValue());
+        String orgPoIdentifier = leadOrganizationDto.getIdentifier().getExtension();
+        if (orgPoIdentifier  == null) {
+            throw new PAException("Organization Identifer is null");
+        }
+        if (studyProtocolIi == null) {
+            throw new PAException(PROTOCOL_ID_NULL);
+        }
+        String localSpIdentifier = leadOrganizationParticipationIdentifierDTO
+            .getLocalStudyProtocolIdentifier().getValue();
+        if (localSpIdentifier  == null) {
+            throw new PAException("Local StudyProtocol Identifer is null");
+        }
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        
+        if (spDTO == null) {
+            throw new PAException(NO_PROTOCOL_FOUND + studyProtocolIi.getExtension());
+        }
+        Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
+        
+        StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
+        studyPartDTO.setFunctionalCode(CdConverter
+                .convertStringToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode()));
+        studyPartDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localSpIdentifier));
+        studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+        studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+        studyPartDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        studyPartDTO = studyParticipationService.create(studyPartDTO);
+      
     }
 
     private void createPrincipalInvestigator(Ii studyProtocolIi ,
             OrganizationDTO leadOrganizationDto ,
             PersonDTO principalInvestigatorDto ,
             StudyTypeCode studyTypeCode) throws PAException {
-        new PARelationServiceBean().createPrincipalInvestigatorRelations(
-                leadOrganizationDto.getIdentifier().getExtension() ,
-                principalInvestigatorDto.getIdentifier().getExtension(),
-                IiConverter.convertToLong(studyProtocolIi), studyTypeCode);
+        String orgPoIdentifier = leadOrganizationDto.getIdentifier().getExtension();
+        String personPoIdentifer = principalInvestigatorDto.getIdentifier().getExtension();
+        if (orgPoIdentifier == null) {
+            throw new PAException(" Organization PO Identifier is null");
+        }
+        if (personPoIdentifer == null) {
+            throw new PAException(" Person PO Identifier is null");
+        }
+        if (studyProtocolIi == null) {
+            throw new PAException(PROTOCOL_ID_NULL);
+        }
+        if (studyTypeCode == null) {
+            throw new PAException(" Study Protocol type is null");
+        }
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        if (spDTO == null) {
+            throw new PAException(NO_PROTOCOL_FOUND + studyProtocolIi.getExtension());
+        }
+        ClinicalResearchStaffCorrelationServiceBean crs = new ClinicalResearchStaffCorrelationServiceBean();
+        HealthCareProviderCorrelationBean hcp = new HealthCareProviderCorrelationBean();
+        Long crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
+        Long hcpId = null;
+        if (StudyTypeCode.INTERVENTIONAL.equals(studyTypeCode)) {
+            hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifer);
+        }
+        StudyContactDTO scDTO = new StudyContactDTO();
+        scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
+        scDTO.setHealthCareProviderIi(IiConverter.convertToIi(hcpId));
+        scDTO.setRoleCode(CdConverter.convertStringToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode()));
+        scDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+        scDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
+        studyContactService.create(scDTO);
     }
 
     private void createSponsor(Ii studyProtocolIi , OrganizationDTO sponsorOrganizationDto) throws PAException {
-        new PARelationServiceBean().createSponsorRelations(sponsorOrganizationDto.getIdentifier().getExtension(),
-                IiConverter.convertToLong(studyProtocolIi));
+        String orgPoIdentifier = sponsorOrganizationDto.getIdentifier().getExtension();
+        if (orgPoIdentifier == null) {
+            throw new PAException("Organization Identifer is null");
+        }
+        if (studyProtocolIi == null) {
+            throw new PAException(PROTOCOL_ID_NULL);
+        }
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        if (spDTO == null) {
+            throw new PAException(NO_PROTOCOL_FOUND + studyProtocolIi.getExtension());
+        }
+        Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
+        StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
+        studyPartDTO.setFunctionalCode(CdConverter
+                .convertStringToCd(StudyParticipationFunctionalCode.SPONSOR.getCode()));
+        studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+        studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+        studyPartDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        studyPartDTO = studyParticipationService.create(studyPartDTO);
     }
 
     private void createPIAsResponsibleParty(Ii studyProtocolIi ,
@@ -806,4 +924,4 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
 
     }
-}
+ }
