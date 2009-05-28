@@ -96,7 +96,7 @@ public final class EnPn extends En implements Cloneable {
      * Default ctor.
      */
     public EnPn() {
-        super(NotNullPredicate.getInstance());
+        super(NotNullPredicate.INSTANCE);
     }
 
     /**
