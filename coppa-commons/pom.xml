@@ -11,6 +11,7 @@
         <nci-commons.version>1.0.23</nci-commons.version>
         <compileSource>1.5</compileSource>
         <generatedStubsSrcDir>target/generated-sources/stubs</generatedStubsSrcDir>
+        <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
     </properties>
 
     <ciManagement>
@@ -152,7 +153,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                	<bindingDirectory>${basedir}/src/main/xjb</bindingDirectory>
+                    <bindingDirectory>${basedir}/src/main/xjb</bindingDirectory>
                     <schemaDirectory>${basedir}/src/main/xsd/</schemaDirectory>
                     <schemaFiles>CoppaCommons.xsd,ISO_datatypes_Narrative.xsd</schemaFiles>
                     <outputDirectory>${generatedStubsSrcDir}</outputDirectory>
@@ -308,7 +309,8 @@
                         </excludes>
                     </instrumentation>
                     <check>
-                        <totalBranchRate>96</totalBranchRate>
+                        <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
+                        <totalBranchRate>97</totalBranchRate>
                         <totalLineRate>92</totalLineRate>
                     </check>
                     <formats>
