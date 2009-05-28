@@ -3,5 +3,5 @@
 <head>
 </head>
 <body>
-    CTRO Welcome
+    To view CTRO Reports select from menu at left.
 </body>

@@ -22,7 +22,7 @@
     </package>
     <package name="public" namespace="/public" extends="default">
         <action name="welcome" class="gov.nih.nci.pa.viewer.action.WelcomeAction">
-            <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result> 
+            <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result>
             <result name="ctroWelcome" type="redirectAction">
                 <param name="namespace">../ctro</param>
                 <param name="actionName">welcome</param>
@@ -31,7 +31,7 @@
     </package>
     <package name="ctro" namespace="/ctro" extends="public">
         <action name="welcome" class="gov.nih.nci.pa.viewer.action.WelcomeAction">
-            <result name="ctroWelcome">/WEB-INF/jsp/ctroWelcome.jsp</result> 
+            <result name="ctroWelcome">/WEB-INF/jsp/ctroWelcome.jsp</result>
         </action>
         <action name="trialList*" class="gov.nih.nci.pa.viewer.action.TrialListAction" method="{1}">
             <result>/WEB-INF/jsp/trialList.jsp</result> 
@@ -44,6 +44,12 @@
         </action>
         <action name="summarySent*" class="gov.nih.nci.pa.viewer.action.SummarySentAction" method="{1}">
             <result>/WEB-INF/jsp/summarySent.jsp</result> 
+        </action>
+        <action name="criteria*" class="gov.nih.nci.pa.viewer.action.{1}">
+            <result>/WEB-INF/jsp/{1}.jsp</result> 
+        </action>
+        <action name="results*" class="gov.nih.nci.pa.viewer.action.{1}" method="getReport">
+            <result>/WEB-INF/jsp/{1}.jsp</result> 
         </action>
     </package>
 </struts>

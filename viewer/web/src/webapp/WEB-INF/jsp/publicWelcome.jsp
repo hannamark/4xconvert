@@ -3,5 +3,5 @@
 <head>
 </head>
 <body>
-    Public Welcome
+    CTRP Participating Site Reports have not yet been implemented.
 </body>

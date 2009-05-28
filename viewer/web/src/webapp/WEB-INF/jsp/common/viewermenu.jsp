@@ -13,6 +13,55 @@
             <c:when test="${pageContext.request.remoteUser != null}">
                 <c:if test="${(sessionScope.viewerRole == 'Abstractor')}">
                 <c:choose>
+                    <c:when test="${requestScope.topic == 'SummaryOfSubmission'}">
+                       <li><a href="criteriaSummaryOfSubmission.action" class="selected">Summary of Submission</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="criteriaSummaryOfSubmission.action" >Summary of Submission</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'TrialProcessing'}">
+                       <li><a href="criteriaTrialProcessing.action" class="selected">Trial Processing</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="criteriaTrialProcessing.action" >Trial Processing</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'AverageMilestone'}">
+                       <li><a href="criteriaAverageMilestone.action" class="selected">Portfolio Average Milestone</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="criteriaAverageMilestone.action" >Portfolio Average Milestone</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'SubmissionByDate'}">
+                       <li><a href="criteriaSubmissionByDate.action" class="selected">Trials Submitted by Date</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="criteriaSubmissionByDate.action" >Trials Submitted by Date</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'SubmissionByInstitution'}">
+                       <li><a href="criteriaSubmissionByInstitution.action" class="selected">Trials Submitted by Institution</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="criteriaSubmissionByInstitution.action" >Trials Submitted by Institution</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'CurrentMilestone'}">
+                       <li><a href="criteriaCurrentMilestone.action" class="selected">Current Milestone</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="criteriaCurrentMilestone.action" >Current Milestone</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <div class="line"></div>
+                <c:choose>
                     <c:when test="${requestScope.topic == 'trial_list'}">
                        <li><a href="trialList.action" class="selected">Trial List Report</a></li> 
                     </c:when>

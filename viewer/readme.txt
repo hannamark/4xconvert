@@ -1,7 +1,8 @@
 The reporting protection groups for now are:
 
 Abstractor - CTRO Staff (sample account is abstractor/pass)
-Submitter - Public (sample account is submitter/pass)
+Reporter - Read only group for PA also works with viewer
+Submitter - Public (can be created throu Registry)
 
 
 To build and deploy pa applications using project ant tasks:
@@ -21,3 +22,11 @@ To deploy only the viewer application:
 2.  run viewer/ant deploy-notest
         or
     viewer/ant deploy
+    
+    
+To run in eclipe.
+
+1.  run viewer/ant ivy-get
+2.  start eclipse and import project
+3.  create classpath variables CODE_PA (<coppa dir>/code/pa) and VIEWER_LIB (<coppa dir>/
+    
