@@ -454,6 +454,10 @@
           <run-client serviceendpointname="StudyDiseaseService" class="gov.nih.nci.coppa.services.pa.studydiseaseservice.client.StudyDiseaseServiceClient" debug-suspend="n" />
     </target>
 
+    <target name="runDocumentWorkflowStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample DocumentWorkflowStatusService Client">
+          <run-client serviceendpointname="DocumentWorkflowStatusService" class="gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.client.DocumentWorkflowStatusServiceClient" debug-suspend="n" />
+    </target>
+
     <target name="runStudyContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyContactService Client">
        <run-client serviceendpointname="StudyContactService" class="gov.nih.nci.coppa.services.pa.studycontactservice.client.StudyContactServiceClient" debug-suspend="n" />
     </target>
