@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -285,13 +286,18 @@ public class StudyParticipationServiceBean
             String hql = " select spart "
                        + " from StudyParticipation spart "
                        + " join spart.researchOrganization as ro "
+                       + " join spart.studyProtocol as sp "
+                       + " join sp.documentWorkflowStatuses as dws  "
                        + " where spart.localStudyProtocolIdentifier = :localStudyProtocolIdentifier "
                        + " and spart.functionalCode = '"
                        +   StudyParticipationFunctionalCode.LEAD_ORGANIZATION  + "'"
+                       + " and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'"
+                       + " and sp.statusCode ='" + ActStatusCode.ACTIVE + "'"
+                       + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                       + "  where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) "
                        + " and ro.id = :orgIdentifier";
 
             getLogger().info("query study_participation = " + hql + ".  ");
-
             // step 2: construct query object
             query = session.createQuery(hql);
             query.setParameter("localStudyProtocolIdentifier",
