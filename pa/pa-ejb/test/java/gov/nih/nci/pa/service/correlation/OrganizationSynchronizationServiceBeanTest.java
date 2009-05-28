@@ -101,6 +101,21 @@ public class OrganizationSynchronizationServiceBeanTest {
         remoteEjb.synchronizeOversightCommittee(roIi);
     }
     
+    @Test
+    public void synchronizeOrganization()  throws Exception {
+        Ii roIi = IiConverter.converToPoOrganizationIi("abc");
+        createTestData1();
+        remoteEjb.synchronizeOrganization(roIi);
+    }
+    
+    @Test
+    public void synchronizeOrganizationNullify()  throws Exception {
+        Ii roIi = IiConverter.converToPoOrganizationIi("abc");
+        roIi.setIdentifierName("NULLIFY");
+        createTestData1();
+        remoteEjb.synchronizeOrganization(roIi);
+    }
+
     private void createTestData1() {
 
         Organization o  = OrganizationTest.createOrganizationObj();

@@ -1,9 +1,5 @@
 package gov.nih.nci.pa.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -13,12 +9,16 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MockPoHealthCareFacilityCorrelationService implements HealthCareFacilityCorrelationServiceRemote {
 
     public Ii createCorrelation(HealthCareFacilityDTO arg0)
             throws EntityValidationException {
-        // TODO Auto-generated method stub
-        return null;
+        return IiConverter.converToPoHealthCareFacilityIi("1");
     }
 
     public HealthCareFacilityDTO getCorrelation(Ii ii)
@@ -40,9 +40,14 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
         return null;
     }
 
-    public List<HealthCareFacilityDTO> search(HealthCareFacilityDTO arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<HealthCareFacilityDTO> search(HealthCareFacilityDTO hcfDto) {
+        List<HealthCareFacilityDTO> ar = new ArrayList<HealthCareFacilityDTO>();
+        HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
+        hcf.setIdentifier(IiConverter.converToPoHealthCareFacilityIi("1"));
+        hcf.setPlayerIdentifier(IiConverter.converToPoOrganizationIi("1"));
+        hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));       
+        ar.add(hcf);
+        return ar;
     }
 
     public void updateCorrelation(HealthCareFacilityDTO arg0)

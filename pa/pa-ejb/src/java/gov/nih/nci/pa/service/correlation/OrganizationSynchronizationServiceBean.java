@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -123,7 +124,8 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.CyclomaticComplexity",  "PMD.NPathComplexity" })
+@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.CyclomaticComplexity",  "PMD.NPathComplexity" , 
+    "PMD.PreserveStackTrace" })
  
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -148,13 +150,26 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     public void synchronizeOrganization(Ii orgIdentifer) throws PAException {
 
         OrganizationDTO orgDto = null;
+        OrganizationDTO nullifiedOrg = null;
         LOG.debug("Entering synchronizeOrganization");
         try {
             orgDto = PoRegistry.getOrganizationEntityService().getOrganization(orgIdentifer);
-            updateOrganization(orgIdentifer , orgDto , orgDto);
+            updateOrganization(orgIdentifer , orgDto , nullifiedOrg);
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is nullified " + orgIdentifer.getExtension());
-           updateOrganization(orgIdentifer , orgDto , orgDto);
+//           Map<Ii , Ii > ii = e.getNullifiedEntities();
+//           LOG.info(" ii is " + ii.get(orgIdentifer));
+//           Ii duplicateIi = e.getNullifiedEntities().get(orgIdentifer);
+//           LOG.info("This Organization is nullified " + duplicateIi.getExtension());
+           try {
+               nullifiedOrg = PoRegistry.getOrganizationEntityService().getOrganization(
+                       IiConverter.converToPoOrganizationIi("584"));
+            } catch (NullifiedEntityException e1) {
+                // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
+                throw new PAException("This scenario is currrently not hanndled .... " 
+                        + "Duplicate Ii of nullified is also nullified" , e1);
+            }
+           updateOrganization(orgIdentifer , orgDto , nullifiedOrg);
         }
         LOG.debug("Leaving synchronizeOrganization");
     }
@@ -239,6 +254,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             session = HibernateUtil.getCurrentSession();
             if (roDto == null) {
                 ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                
             } else {
                 ro.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()));
             }
@@ -309,13 +325,13 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     private void updateOrganization(Ii ii , OrganizationDTO orgDto  , OrganizationDTO duplicateOrg) throws PAException {
         LOG.debug("Entering updateOrganization");
         Organization paOrg = cUtils.getPAOrganizationByIndetifers(null, ii.getExtension());
-        if (paOrg != null && duplicateOrg == null) {
+        if (paOrg != null) {
             // update the organization
             Session session = null;
             try {
                 session = HibernateUtil.getCurrentSession();
                 Organization organization = (Organization) session.get(Organization.class, paOrg.getId());
-                if (orgDto != null) {
+                if (duplicateOrg == null) {
                    // that means its not nullified
                     paOrg = cUtils.convertPOToPAOrganization(orgDto);
                     organization.setCity(paOrg.getCity());
@@ -334,9 +350,9 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                     organization.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
                 }
                 session.update(organization);
-//                if (duplicateOrg != null) {
-//                    
-//                }
+                if (duplicateOrg != null) {
+                    cascadeDuplicateEntity(paOrg , duplicateOrg);
+                }
             } catch (HibernateException hbe) {
                 throw new PAException("Hibernate exception while deleting Organization for id = " + paOrg.getId(), hbe);
             }
@@ -344,21 +360,42 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
         LOG.debug("Leaving updateOrganization");
     }
     
-//    private void cascaseDuplicateEntity(Organization nullfiedOrg  , OrganizationDTO duplicateOrg) throws PAException {
-//        // first create an entity 
-//        Organization dupPaOrg = 
-//    cUtils.getPAOrganizationByIndetifers(null, duplicateOrg.getIdentifier().getExtension());
-//        if (dupPaOrg == null) {
-//            dupPaOrg = cUtils.createPAOrganization(duplicateOrg);
-//        }
-//        // find if the old org has any hcf 
-//        HealthCareFacility nhcf = new HealthCareFacility();
-//        hcf.setOrganization(nullfiedOrg);
-//        hcf = cUtils.getPAHealthCareFacility(hcf);
-//        if (hcf != null) {
-//            
-//        }
-//        
-//    }
+    private void cascadeDuplicateEntity(Organization nullfiedOrg  , OrganizationDTO duplicateOrg) throws PAException {
+        // Step 1: Check if the duplicate org has an entry in pa, if not create one 
+        Organization dupPaOrg = 
+            cUtils.getPAOrganizationByIndetifers(null, duplicateOrg.getIdentifier().getExtension());
+        if (dupPaOrg == null) {
+            dupPaOrg = cUtils.createPAOrganization(duplicateOrg);
+        }
+        updateHealtcareFacility(nullfiedOrg  ,  duplicateOrg);
+    }
+    private void updateHealtcareFacility(Organization nullfiedOrg  , OrganizationDTO duplicateOrg) throws PAException {
+        Long hcfDuplicateId = null;
+        Long hcfNullifiedId = null;
+        
+        // Step 2 : find if the nullified org has any structural roles ? if yes, check the duplicate org has 
+        // that structural role, if it does not have an structural create one
+        HealthCareFacility nhcf = new HealthCareFacility();
+        nhcf.setOrganization(nullfiedOrg);
+        nhcf = cUtils.getPAHealthCareFacility(nhcf);
+        if (nhcf != null) {
+            hcfNullifiedId = nhcf.getId();
+            // create a Structural role the for the duplicate 
+            OrganizationCorrelationServiceBean ocb = new OrganizationCorrelationServiceBean();
+            hcfDuplicateId = ocb.createHealthCareFacilityCorrelations(duplicateOrg.getIdentifier().getExtension());
+            String sql = "update STUDY_PARTICIPATION set healthcare_facility_identifier = " + hcfDuplicateId 
+            + " where healthcare_facility_identifier = " + hcfNullifiedId;
+            Session session = HibernateUtil.getCurrentSession();
+            int i = session.createSQLQuery(sql).executeUpdate();
+            LOG.info("nullified hcf indentifier is " + hcfNullifiedId);
+            LOG.info("duplicate hcf indentifier is " + hcfDuplicateId);
+            LOG.info("total records got update in STUDY_PARTICIPATION us " + i);  
+            if (i > 0) {
+                spsLocal.cascadeRoleStatus(IiConverter.converToPoHealthCareFacilityIi(hcfDuplicateId.toString()) , 
+                                CdConverter.convertToCd(nhcf.getStatusCode()));
+            }
+        }
+        
+    }
     
 }

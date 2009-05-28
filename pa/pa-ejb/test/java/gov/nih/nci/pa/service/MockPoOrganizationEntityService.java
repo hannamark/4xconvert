@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -25,14 +27,45 @@ public class MockPoOrganizationEntityService implements
     static {
         orgDtoList = new ArrayList<OrganizationDTO>();
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToIi("1"));
+        dto.setIdentifier(IiConverter.convertToIi("abc"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
-        dto.setStatusCode(CdConverter.convertStringToCd("code"));
+        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
         dto.setPostalAddress(AddressConverterUtil.
                 create("streetAddressLine", "deliveryAddressLine", 
                         "cityOrMunicipality", "stateOrProvince",
                         "postalCode", "USA"));
         orgDtoList.add(dto);
+        
+        dto = new OrganizationDTO();
+        dto.setIdentifier(IiConverter.convertToIi("abc1"));
+        dto.setName(EnOnConverter.convertToEnOn("OrgName"));
+        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        dto.setPostalAddress(AddressConverterUtil.
+                create("streetAddressLine", "deliveryAddressLine", 
+                        "cityOrMunicipality", "stateOrProvince",
+                        "postalCode", "USA"));
+        orgDtoList.add(dto);    
+        
+        dto = new OrganizationDTO();
+        dto.setIdentifier(IiConverter.convertToIi("1"));
+        dto.setName(EnOnConverter.convertToEnOn("OrgName"));
+        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        dto.setPostalAddress(AddressConverterUtil.
+                create("streetAddressLine", "deliveryAddressLine", 
+                        "cityOrMunicipality", "stateOrProvince",
+                        "postalCode", "USA"));
+        orgDtoList.add(dto);
+        
+        dto = new OrganizationDTO();
+        dto.setIdentifier(IiConverter.convertToIi("584"));
+        dto.setName(EnOnConverter.convertToEnOn("OrgName"));
+        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        dto.setPostalAddress(AddressConverterUtil.
+                create("streetAddressLine", "deliveryAddressLine", 
+                        "cityOrMunicipality", "stateOrProvince",
+                        "postalCode", "USA"));
+        orgDtoList.add(dto);
+        
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#createOrganization(gov.nih.nci.services.organization.OrganizationDTO)
@@ -47,6 +80,12 @@ public class MockPoOrganizationEntityService implements
      */
     public OrganizationDTO getOrganization(Ii arg0)
             throws NullifiedEntityException {
+        if ("NULLIFY".equals(arg0.getIdentifierName())) {
+            Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+            nullifiedEntities.put(arg0, IiConverter.converToPoOrganizationIi("584"));
+            throw new NullifiedEntityException(nullifiedEntities);
+        }
+        
         for(OrganizationDTO dto:orgDtoList){
             if(dto.getIdentifier().getExtension().equals(arg0.getExtension())){
                 return dto;
