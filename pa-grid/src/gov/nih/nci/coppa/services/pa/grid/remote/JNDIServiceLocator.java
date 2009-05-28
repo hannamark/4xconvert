@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
@@ -115,6 +116,7 @@ import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
+import gov.nih.nci.pa.service.StudyRelationshipServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 
@@ -174,6 +176,8 @@ public final class JNDIServiceLocator implements ServiceLocator {
                     getInstance().getClass().getMethod("getStudyContactService"));
             values.put(StudyIndldeDTO.class,
                     getInstance().getClass().getMethod("getStudyIndldeService"));
+            values.put(StudyRelationshipDTO.class,
+                    getInstance().getClass().getMethod("getStudyRelationshipService"));
             values.put(DocumentWorkflowStatusDTO.class,
                     getInstance().getClass().getMethod("getDocumentWorkflowStatusService"));
         } catch (NoSuchMethodException e) {
@@ -351,6 +355,16 @@ public final class JNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    public StudyRelationshipServiceRemote getStudyRelationshipService()
+    throws NamingException {
+        StudyRelationshipServiceRemote result =
+            (StudyRelationshipServiceRemote) lookup("pa/StudyRelationshipServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService()
             throws NamingException {
         DocumentWorkflowStatusServiceRemote result =
@@ -369,8 +383,8 @@ public final class JNDIServiceLocator implements ServiceLocator {
             service = (BasePaService<Z>) serviceMethod.invoke(this);
         } catch (Exception e) {
 
-            throw new InvokeCoppaServiceException("Unable to invoke method, "
-                    + serviceMethod.getName() + " with exception " + e.getMessage());
+            throw new InvokeCoppaServiceException("Unable to invoke method "
+                    + serviceMethod.getName(), e);
         }
         if (service == null) {
             throw new IllegalArgumentException("Unable to locate service for type, " + type);
@@ -388,18 +402,16 @@ public final class JNDIServiceLocator implements ServiceLocator {
         try {
             service = (StudyPaService<S>) serviceMethod.invoke(this);
         } catch (Exception e) {
-            System.err.println("----------------can't find method-start st--------------");
-            System.err.println("error cause: " + e.getCause());
-            e.printStackTrace();
-            System.err.println("----------------end st---------------");
-            throw new InvokeCoppaServiceException("Unable to invoke method, "
-                    + serviceMethod.getName() + " with exception ");
+            throw new InvokeCoppaServiceException("Unable to invoke method "
+                    + serviceMethod.getName(), e);
         }
         if (service == null) {
             throw new IllegalArgumentException("Unable to locate service for type, " + type);
         }
         return service;
     }
+
+
 
 
 }

@@ -18,6 +18,7 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRecruitmentStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRegulatoryAuthorityTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRelationshipTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyResourcingTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.TransformerRegistry;
@@ -35,6 +36,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 
@@ -48,7 +50,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(16, tMap.size());
+        assertEquals(17, tMap.size());
         tMap.clear();
     }
 
@@ -101,6 +103,9 @@ public class TransformerRegistryTest {
         trans = TransformerRegistry.INSTANCE.getTransformer(StudyIndldeDTO.class);
         assertTrue(trans instanceof StudyIndldeTransformer);
         //#16
+        trans = TransformerRegistry.INSTANCE.getTransformer(StudyRelationshipDTO.class);
+        assertTrue(trans instanceof StudyRelationshipTransformer);
+        //#17
         trans = TransformerRegistry.INSTANCE.getTransformer(DocumentWorkflowStatusDTO.class);
         assertTrue(trans instanceof DocumentWorkflowStatusTransformer);
     }

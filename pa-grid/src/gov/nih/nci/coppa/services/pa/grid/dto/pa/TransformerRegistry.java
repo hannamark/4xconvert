@@ -97,6 +97,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 
@@ -130,6 +131,7 @@ public final class TransformerRegistry {
         values.put(StudyContactDTO.class, StudyContactTransformer.INSTANCE);
         values.put(StudyOnholdDTO.class, StudyOnholdTransformer.INSTANCE);
         values.put(StudyIndldeDTO.class, StudyIndldeTransformer.INSTANCE);
+        values.put(StudyRelationshipDTO.class, StudyRelationshipTransformer.INSTANCE);
         values.put(DocumentWorkflowStatusDTO.class, DocumentWorkflowStatusTransformer.INSTANCE);
     }
 

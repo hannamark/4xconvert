@@ -462,8 +462,12 @@
        <run-client serviceendpointname="StudyContactService" class="gov.nih.nci.coppa.services.pa.studycontactservice.client.StudyContactServiceClient" debug-suspend="n" />
     </target>
 
-  <target name="runStudyIndIdeClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyIndIdeService Client">
+    <target name="runStudyIndIdeClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyIndIdeService Client">
          <run-client serviceendpointname="StudyIndIdeService" class="gov.nih.nci.coppa.services.pa.studyindideservice.client.StudyIndIdeServiceClient" debug-suspend="n" />
+    </target>
+
+    <target name="runStudyRelationshipClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRelationshipService Client">
+       <run-client serviceendpointname="StudyRelationshipService" class="gov.nih.nci.coppa.services.pa.studyrelationshipservice.client.StudyRelationshipServiceClient" debug-suspend="n" />
   </target>
 
 </project>

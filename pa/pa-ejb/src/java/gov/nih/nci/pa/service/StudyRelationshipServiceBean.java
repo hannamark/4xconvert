@@ -79,11 +79,15 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.iso.convert.StudyRelationshipConverter;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +97,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Example;
 
 /**
  * @author Naveen Amiruddin
@@ -108,13 +115,16 @@ public class StudyRelationshipServiceBean extends
     AbstractBaseIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>
     implements StudyRelationshipServiceLocal , StudyRelationshipServiceRemote {
     private final transient StudyRelationshipConverter srConverter = new StudyRelationshipConverter();
+    private static final Logger LOG  = Logger.getLogger(StudyRelationshipServiceBean.class);
 
     /**
     *
     * @param dto of StudyRelationshipDTO
     * @return List StudyRelationshipDTOs
     * @throws PAException on error
+    * @deprecated
     */
+   @Deprecated
    @TransactionAttribute(TransactionAttributeType.REQUIRED)
    public List<StudyRelationshipDTO> search(final StudyRelationshipDTO dto) throws PAException {
        if (dto == null) {
@@ -129,7 +139,7 @@ public class StudyRelationshipServiceBean extends
 
 
            List<StudyRelationshipDTO> srDTOList = null;
-           
+
            if (srList != null) {
                srDTOList = new ArrayList<StudyRelationshipDTO>();
                for (StudyRelationship sp : srList) {
@@ -138,10 +148,55 @@ public class StudyRelationshipServiceBean extends
            }
            return srDTOList;
        }  catch (HibernateException hbe) {
-           throw new PAException(" Hibernate exception while retrieving "
-                   + "studyRelationship for dto = " +  hbe);
+           throw new PAException("Hibernate exception while retrieving StudyRelationship for dto", hbe);
        }
 
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+   public List<StudyRelationshipDTO> search(StudyRelationshipDTO dto, LimitOffset pagingParams) throws PAException,
+           TooManyResultsException {
+       if (dto == null) {
+           throw new PAException(" StudyRelationshipDTO should not be null ");
+       }
+       LOG.debug("Entering search");
+       Session session = null;
+       List <StudyRelationship> studyRelationshipList = null;
+       try {
+           session = HibernateUtil.getCurrentSession();
+           StudyRelationship exampleDO = new StudyRelationship();
+           exampleDO.setId(IiConverter.convertToLong(dto.getIdentifier()));
+           Example example = Example.create(exampleDO);
+           Criteria criteria = session.createCriteria(StudyRelationship.class).add(example);
+           int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+           criteria.setMaxResults(maxLimit);
+           criteria.setFirstResult(pagingParams.getOffset());
+           studyRelationshipList = criteria.list();
+           session.flush();
+       }  catch (HibernateException hbe) {
+           throw new PAException("Hibernate exception while retrieving StudyRelationship for dto", hbe);
+       }
+       if (studyRelationshipList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+           throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
+       }
+       List<StudyRelationshipDTO> studyRelationshipDTOList = convertFromDomainToDTO(studyRelationshipList);
+       LOG.debug("Leaving search");
+       return studyRelationshipDTOList;
+   }
+
+   private List<StudyRelationshipDTO> convertFromDomainToDTO(List<StudyRelationship> studyProtocolList) {
+       List<StudyRelationshipDTO> studyRelationshipDTOList = new ArrayList<StudyRelationshipDTO>();
+       StudyRelationshipConverter studyRelationshipConverter = new StudyRelationshipConverter();
+       if (studyProtocolList != null) {
+           studyRelationshipDTOList = new ArrayList<StudyRelationshipDTO>();
+           for (StudyRelationship sp : studyProtocolList) {
+               studyRelationshipDTOList.add(studyRelationshipConverter.convertFromDomainToDto(sp));
+           }
+       }
+       return studyRelationshipDTOList;
    }
 
 }

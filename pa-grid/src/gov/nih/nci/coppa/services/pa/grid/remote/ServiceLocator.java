@@ -98,6 +98,7 @@ import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
+import gov.nih.nci.pa.service.StudyRelationshipServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 
@@ -199,12 +200,20 @@ public interface ServiceLocator {
      * @throws NamingException if unable to lookup.
      */
     StudyContactServiceRemote getStudyContactService() throws NamingException;
+
     /**
      * Gets the StudyIndlde service.
      * @return the remote StudyIndlde service
      * @throws NamingException if unable to lookup.
      */
     StudyIndldeServiceRemote getStudyIndldeService() throws NamingException;
+
+    /**
+     * Gets the StudyRelationship service.
+     * @return the remote StudyRelationship service
+     * @throws NamingException if unable to lookup.
+     */
+    StudyRelationshipServiceRemote getStudyRelationshipService() throws NamingException;
 
     /**
     * Gets a base generic service.
