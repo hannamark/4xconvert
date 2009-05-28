@@ -271,7 +271,7 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
             params.put("ipname", on);
         }
         if (StringUtils.isNotBlank(ctepId)) {
-            hql.append(" AND ip.assignedIdentifier.root = '").append(CtepPersonImporter.CTEP_PERSON_OTHER_ROOT)
+            hql.append(" AND ltrim(ip.assignedIdentifier.root) = '").append(CtepPersonImporter.CTEP_PERSON_OTHER_ROOT)
                     .append("' AND lower(ip.assignedIdentifier.extension) like :ctepId");
             params.put("ctepId", ctepId.toLowerCase());
         }

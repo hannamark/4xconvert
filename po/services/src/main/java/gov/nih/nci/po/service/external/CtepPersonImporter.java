@@ -129,12 +129,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
      * The root value of the ctep ii's that reference the main db identifier of the person in ctep's system.
      */
     public static final String CTEP_PERSON_DB_ROOT = "Cancer Therapy Evaluation Program Person Identifier";
-    
+
     /**
      * The root value of the ctep ii's that reference the fiendly user known identifier of the person in ctep's system.
      */
     public static final String CTEP_PERSON_OTHER_ROOT = "Cancer Therapy Evaluation Program Person Other Identifier";
-    
+
     private static final Logger LOG = Logger.getLogger(CtepPersonImporter.class);
     private static final String LOG_SEP = " : ";
     private final CtepOrganizationImporter orgImporter;
@@ -332,7 +332,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             ClinicalResearchStaff persistedCrs = i.next();
             if (i.hasNext()) {
                 persistedCrs.setStatus(RoleStatus.NULLIFIED);
-                LOG.warn("Nullifying clinical research staff role during import, curator must of added new data.");
+                LOG.warn("Nullifying clinical research staff role during import, curator must have added new data.");
             } else {
                 // update the CRS by taking the dto from ctep, converting it to our data model, then copying
                 // in the values by hand
@@ -379,7 +379,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             HealthCareProvider persistedHcp = i.next();
             if (i.hasNext()) {
                 persistedHcp.setStatus(RoleStatus.NULLIFIED);
-                LOG.warn("Nullifying health care provider role during import, curator must of added new data.");
+                LOG.warn("Nullifying health care provider role during import, curator must have added new data.");
             } else {
                 // update the HCP by taking the dto from ctep, converting it to our data model, then copying
                 // in the values by hand

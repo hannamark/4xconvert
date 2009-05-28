@@ -286,7 +286,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return ctepOrg;
     }
 
-    private Organization updateCtepOrg(Organization ctepOrg, IdentifiedOrganization identifiedOrg, Ii assignedId) 
+    private Organization updateCtepOrg(Organization ctepOrg, IdentifiedOrganization identifiedOrg, Ii assignedId)
             throws JMSException {
         Organization org = identifiedOrg.getPlayer();
 
@@ -329,7 +329,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ResearchOrganization persistedRo = i.next();
             if (i.hasNext()) {
                 persistedRo.setStatus(RoleStatus.NULLIFIED);
-                LOG.warn("Nullifying research organization role during import, curator must of added new data.");
+                LOG.warn("Nullifying research organization role during import, curator must have added new data.");
             } else {
                 // really only type code can change from ctep, but since funding mech is related, we will
                 // clear it out as well

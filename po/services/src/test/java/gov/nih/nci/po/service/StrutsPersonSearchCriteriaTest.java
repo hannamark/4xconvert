@@ -1,6 +1,7 @@
 
 package gov.nih.nci.po.service;
 
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
@@ -10,9 +11,10 @@ import gov.nih.nci.po.service.correlation.ClinicalResearchStaffServiceTest;
 import gov.nih.nci.po.service.correlation.IdentifiedPersonServiceTest;
 import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
 import java.util.List;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -68,7 +70,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         assertEquals(1, l.size());
     }
 
-    
+
     @Test
     @SuppressWarnings("unchecked")
     public void testRoleEmail() throws Exception {
@@ -79,7 +81,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         Long id = pst.createPerson();
         id = pst.createPerson();
         PoHibernateUtil.getCurrentSession().load(Person.class, id);
-        
+
         ClinicalResearchStaffServiceTest crst = new ClinicalResearchStaffServiceTest();
         crst.setDefaultCountry(getDefaultCountry());
         crst.setUpData();
@@ -88,7 +90,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         Email e2 = new Email("crs@5amsolutions.com");
         c.getEmail().add(e2);
         PoHibernateUtil.getCurrentSession().update(c);
-        
+
         StrutsPersonSearchCriteria criteria = new StrutsPersonSearchCriteria();
         criteria.setEmail(e2.getValue());
         List<Person> l = criteria.getQuery("", false).list();
@@ -149,6 +151,13 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
 
         c.getAssignedIdentifier().setExtension("MY_CTEP_ID");
         c.getAssignedIdentifier().setRoot(CtepPersonImporter.CTEP_PERSON_OTHER_ROOT);
+        PoHibernateUtil.getCurrentSession().update(c);
+        l = criteria.getQuery("", false).list();
+        assertEquals(1, l.size());
+
+        // test for PO-1087
+        c.getAssignedIdentifier().setExtension("MY_CTEP_ID");
+        c.getAssignedIdentifier().setRoot(" " + CtepPersonImporter.CTEP_PERSON_OTHER_ROOT);
         PoHibernateUtil.getCurrentSession().update(c);
         l = criteria.getQuery("", false).list();
         assertEquals(1, l.size());
