@@ -223,6 +223,9 @@ public class TrialValidationAction extends ActionSupport {
                 //send mail
                 PoPaServiceBeanLookup.getMailManagerService()
                 .sendAmendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
+            } else {
+                PoPaServiceBeanLookup.getMailManagerService()
+                .sendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
             }
         } catch (PAException e) {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());

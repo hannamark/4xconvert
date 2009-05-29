@@ -165,3 +165,25 @@ If you have questions on this or other CTRP topics, please contact us at ncictro
 
 Thank you for registering your trial with NCI Clinical Trials Reporting Program (CTRP).
 ');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(21,'trial.accept.subject',
+'NCI Clinical Trials Reporting Program (CTRP) Trial Submission Acceptance Notice');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(22,'trial.accept.body',
+'Date: ${CurrentDate}
+
+Dear ${SubmitterName},
+
+The following trial was accepted by the NCI Clinical Trials Reporting Office (CTRO)
+
+NCI Trial Identifier: ${nciTrialIdentifier}
+
+Title: ${title}
+
+Trial will be abstracted by the CTRO staff. Upon completion of this abstraction, the CTRO will e-mail you a new Trial Summary Report that contains key data elements.
+
+We request that you review the Trial Summary Report for accuracy and respond to note your acceptance of this abstraction or to provide your changes to the report. 
+
+Note, that non-NCI supported trials will not be abstracted and no TSR report will be provided.
+
+If you have questions regarding this acceptance please contact us at ncictro@mail.nih.gov ');

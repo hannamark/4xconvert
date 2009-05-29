@@ -163,10 +163,6 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
           StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
                                           IiConverter.convertToLong(studyProtocolIi));
 
-          RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
-          
-
-          
           String body = "";
           if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
               body = lookUpTableService.getPropertyValue("tsr.amend.body");
@@ -174,8 +170,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
               body = lookUpTableService.getPropertyValue("tsr.body");
           }
           body = body.replace(currentDate, getFormatedCurrentDate());
-          body = body.replace(submitterName,
-                  registryUser.getFirstName() + " " + registryUser.getLastName());
+          body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
           body = body.replace("${leadOrgTrialId}", spDTO.getLocalStudyProtocolIdentifier().toString());
           body = body.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
           body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
@@ -315,11 +310,9 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         StudyProtocolQueryDTO spDTO = protocolQueryService
         .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
-        RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.body");
 
-        mailBody = mailBody.replace(submitterName,
-                user.getFirstName() + " " + user.getLastName());
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
@@ -341,16 +334,12 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         LOG.info("Entering send Amend Accept Email");
         StudyProtocolQueryDTO spDTO = protocolQueryService
                       .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-
-        RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
-
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.accept.body");
         String amendNumber = "";
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
         }
-        mailBody = mailBody.replace(submitterName,
-                  user.getFirstName() + " " + user.getLastName());
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
@@ -370,11 +359,9 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
     public void sendNotificationMail(Ii studyProtocolIi) throws PAException  {
         StudyProtocolQueryDTO spDTO = protocolQueryService
             .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-        RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
 
         String submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
-        submissionMailBody = submissionMailBody.replace(submitterName, 
-                registryUser.getFirstName() + " " + registryUser.getLastName());
+        submissionMailBody = submissionMailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ",
                 spDTO.getLocalStudyProtocolIdentifier());
         submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
@@ -393,16 +380,12 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         LOG.info("Entering send Amend reject Email");
         StudyProtocolQueryDTO spDTO = protocolQueryService
                       .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-
-        RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
-
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
         String amendNumber = "";
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
         }
-        mailBody = mailBody.replace(submitterName,
-                  user.getFirstName() + " " + user.getLastName());
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
@@ -424,7 +407,6 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         String commentText = "";
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
                                          IiConverter.convertToLong(studyProtocolIi));
-        RegistryUser registryUser = registryUserService.getUser(spDTO.getUserLastCreated());
         List<DocumentWorkflowStatusDTO> dtoList = 
             PoPaServiceBeanLookup.getDocumentWorkflowStatusService().getByStudyProtocol(
                                                     studyProtocolIi);
@@ -435,8 +417,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
             }
         }
         String body = lookUpTableService.getPropertyValue("rejection.body");
-        body = body.replace(submitterName, 
-                registryUser.getFirstName() + " " + registryUser.getLastName());
+        body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         body = body.replace("${leadOrgTrialId}", spDTO.getLocalStudyProtocolIdentifier());
         body = body.replace("${reasoncode}", commentText);
         // Send Message
@@ -456,4 +437,28 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         return format.format(date);
     }
+    private String getSumitterFullName(String userLastCreated) throws PAException {
+        RegistryUser registryUser = registryUserService.getUser(userLastCreated);
+        return  registryUser.getFirstName() + " " + registryUser.getLastName();
+    }
+    /**
+     * send mail to submitter when trial is accepted by CTRO staff.
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    public void sendAcceptEmail(Ii studyProtocolIi) throws PAException {
+        LOG.info("Entering send Accept Email");
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+                      .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+        String mailBody = lookUpTableService.getPropertyValue("trial.accept.body");
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
+        mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
+        mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
+        mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
+        sendMail(spDTO.getUserLastCreated(),
+                  lookUpTableService.getPropertyValue("trial.accept.subject"),
+                  mailBody);
+        LOG.info("Leaving send AcceptEmail");
+      }
+
 }
