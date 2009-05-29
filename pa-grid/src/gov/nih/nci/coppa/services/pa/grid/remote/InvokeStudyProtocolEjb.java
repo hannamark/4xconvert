@@ -1,7 +1,5 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -12,12 +10,59 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
+import java.util.List;
+
 /**
  * Wrapper class for invoking the StudyProtocol remote EJB.
  */
 public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+
+    /**
+     * {@inheritDoc}
+     */
+    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException {
+        try {
+            InterventionalStudyProtocolDTO result =
+                    locator.getStudyProtocolService().getInterventionalStudyProtocol(ii);
+            return result;
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
+        try {
+            StudyProtocolDTO result = locator.getStudyProtocolService().getStudyProtocol(ii);
+            return result;
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
+            TooManyResultsException {
+        try {
+            return locator.getStudyProtocolService().search(dto, pagingParams);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (TooManyResultsException tmre) {
+            throw tmre;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -30,26 +75,8 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii arg0) throws PAException {
-        try {
-            InterventionalStudyProtocolDTO result = locator.getStudyProtocolService().getInterventionalStudyProtocol(
-                    arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyProtocolDTO getStudyProtocol(Ii arg0) throws PAException {
-        try {
-            StudyProtocolDTO result = locator.getStudyProtocolService().getStudyProtocol(arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
+    public void deleteStudyProtocol(Ii arg0) throws PAException {
+        return;
     }
 
     /**
@@ -71,6 +98,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -81,6 +109,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -91,6 +120,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -102,35 +132,15 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * {@inheritDoc}
-     */
-    public List<StudyProtocolDTO> search(StudyProtocolDTO arg0, LimitOffset arg1) throws PAException,
-            TooManyResultsException {
-        try {
-            return locator.getStudyProtocolService().search(arg0, arg1);
-        } catch (PAException e) {
-            throw e;
-        } catch (TooManyResultsException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void deleteStudyProtocol(Ii arg0) throws PAException {
-        return;
-    }
-    
-    /**
-     * {@inheritDoc}
+     *
      * @deprecated -- DO NOT USE
      */
     @Deprecated
-    public List<StudyProtocolDTO> search(StudyProtocolDTO arg0) throws PAException {
+    public List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException {
         try {
-            return locator.getStudyProtocolService().search(arg0);
+            return locator.getStudyProtocolService().search(dto);
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

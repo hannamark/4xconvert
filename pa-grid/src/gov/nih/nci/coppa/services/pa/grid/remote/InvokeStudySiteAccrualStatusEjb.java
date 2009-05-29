@@ -13,34 +13,22 @@ import java.util.List;
  *
  * @author Hugh Reinhart
  */
-public class InvokeStudySiteAccrualStatusEjb implements
-        StudySiteAccrualStatusServiceRemote {
+public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(
-            Ii arg0) throws PAException {
-        try {
-            List<StudySiteAccrualStatusDTO> result = locator.getStudySiteAccrualStatusService()
-                    .getCurrentStudySiteAccrualStatusByStudyParticipation(arg0);
-            return result;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii arg0)
+    public List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
             throws PAException {
         try {
-            StudySiteAccrualStatusDTO result = locator.getStudySiteAccrualStatusService()
-                    .getStudySiteAccrualStatus(arg0);
+            StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
+            List<StudySiteAccrualStatusDTO> result =
+                    service.getCurrentStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -49,12 +37,13 @@ public class InvokeStudySiteAccrualStatusEjb implements
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(
-            Ii arg0) throws PAException {
+    public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
         try {
-            List<StudySiteAccrualStatusDTO> result = locator.getStudySiteAccrualStatusService()
-                    .getStudySiteAccrualStatusByStudyParticipation(arg0);
+            StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
+            StudySiteAccrualStatusDTO result = service.getStudySiteAccrualStatus(ii);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -63,16 +52,31 @@ public class InvokeStudySiteAccrualStatusEjb implements
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(
-            StudySiteAccrualStatusDTO arg0) throws PAException {
+    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
+            throws PAException {
+        try {
+            StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
+            List<StudySiteAccrualStatusDTO> result =
+                    service.getStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
+            return result;
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
         throw new PAException("Not yet implemented");
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(
-            StudySiteAccrualStatusDTO arg0) throws PAException {
+    public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
         throw new PAException("Not yet implemented");
     }
 

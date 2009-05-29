@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 
 /**
@@ -70,26 +72,32 @@ public class StudyIndIdeServiceClient extends StudyIndIdeServiceClientBase imple
     }
 
     private static void getStudyIndIdeByProtocol(StudyIndIdeServiceClient client) throws RemoteException {
-
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
         id.setExtension("27432");
-        StudyIndlde[] stCont = client.getByStudyProtocol(id);
-        System.out.println("get by study protocol brought back set sized " + stCont.length);
+        StudyIndlde[] results = client.getByStudyProtocol(id);
+        printResults(results);
     }
 
     private static void getStudyIndIde(StudyIndIdeServiceClient client) throws RemoteException {
-
         Id id = new Id();
         id.setExtension("27489");
-        StudyIndlde stCont = client.get(id);
-        if (stCont == null) {
-            System.out.println("could not find StudyIndIde");
+        StudyIndlde result = client.get(id);
+        printResults(result);
+    }
+
+    private static void printResults(StudyIndlde... result) {
+        if (result != null) {
+            System.out.println(result.length + " results found");
+            for (int i = 0; i < result.length; i++) {
+                System.out.println(ToStringBuilder.reflectionToString(result[i], ToStringStyle.MULTI_LINE_STYLE));
+            }
         } else {
-            System.out.println("StudyParticipant 27489 found.");
+            System.out.println("No results found");
         }
     }
+
 
   public gov.nih.nci.coppa.services.pa.StudyIndlde[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){

@@ -83,7 +83,6 @@ public class StudyContactServiceClient extends StudyContactServiceClientBase imp
     }
 
     private static void getStudyContact(StudyContactServiceClient client) throws RemoteException {
-
         Id id = new Id();
         id.setExtension("27439");
         StudyContact stCont = client.get(id);

@@ -425,7 +425,6 @@
         <run-client serviceendpointname="StudyRegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.client.StudyRegulatoryAuthorityServiceClient" debug-suspend="n" />
     </target>
 
-
     <target name="runStudyRecruitmentStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRecruitmentStatusService Client">
         <run-client serviceendpointname="StudyRecruitmentStatusService" class="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.client.StudyRecruitmentStatusServiceClient" debug-suspend="n" />
     </target>

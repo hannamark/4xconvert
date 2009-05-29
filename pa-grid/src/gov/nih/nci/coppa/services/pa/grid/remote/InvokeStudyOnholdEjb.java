@@ -10,9 +10,7 @@ import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 /**
  * Wrapper class for invoking the StudyOnhold remote EJB.
  */
-public class InvokeStudyOnholdEjb
-    extends InvokeStudyPaServiceEjb<StudyOnholdDTO>
-    implements StudyOnholdServiceRemote {
+public class InvokeStudyOnholdEjb extends InvokeStudyPaServiceEjb<StudyOnholdDTO> implements StudyOnholdServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
@@ -30,6 +28,8 @@ public class InvokeStudyOnholdEjb
         try {
             Bl result = locator.getStudyOnholdService().isOnhold(ii);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

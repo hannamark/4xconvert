@@ -10,14 +10,15 @@ import java.util.List;
 
 /**
  * Generic Invoke service for Study services.
+ *
  * @param <DTO> pa DTO type
  */
-public class InvokeStudyPaServiceEjb<DTO extends StudyDTO>
-    extends InvokePaServiceEjb<DTO>
-    implements StudyPaService<DTO> {
+public class InvokeStudyPaServiceEjb<DTO extends StudyDTO> extends InvokePaServiceEjb<DTO> implements
+        StudyPaService<DTO> {
 
     /**
      * Const.
+     *
      * @param type correlation DTO class
      */
     public InvokeStudyPaServiceEjb(Class<DTO> type) {
@@ -27,9 +28,11 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO>
     /**
      * {@inheritDoc}
      */
-    public void copy(Ii arg0, Ii arg1) throws PAException {
+    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         try {
-            getLocator().getStudyPaService(getType()).copy(arg0, arg1);
+            getLocator().getStudyPaService(getType()).copy(fromStudyProtocolIi, toStudyProtocolIi);
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -40,9 +43,11 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO>
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<DTO> getByStudyProtocol(Ii arg0) throws PAException {
+    public List<DTO> getByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            return (List<DTO>) getLocator().getStudyPaService(getType()).getByStudyProtocol(arg0);
+            return (List<DTO>) getLocator().getStudyPaService(getType()).getByStudyProtocol(studyProtocolIi);
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -52,9 +57,11 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO>
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<DTO> getCurrentByStudyProtocol(Ii arg0) throws PAException {
+    public List<DTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            return (List<DTO>) getLocator().getStudyPaService(getType()).getCurrentByStudyProtocol(arg0);
+            return (List<DTO>) getLocator().getStudyPaService(getType()).getCurrentByStudyProtocol(studyProtocolIi);
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

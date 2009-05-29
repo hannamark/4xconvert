@@ -27,10 +27,14 @@ public class InvokeStudyParticipationEjb extends InvokeStudyPaServiceEjb<StudyPa
     /**
      * {@inheritDoc}
      */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii arg0, StudyParticipationDTO arg1) throws PAException {
+    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi, StudyParticipationDTO dto)
+            throws PAException {
         try {
-            List<StudyParticipationDTO> result = locator.getStudyParticipationService().getByStudyProtocol(arg0, arg1);
+            List<StudyParticipationDTO> result =
+                    locator.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, dto);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -43,6 +47,8 @@ public class InvokeStudyParticipationEjb extends InvokeStudyPaServiceEjb<StudyPa
         try {
             List<StudyParticipationDTO> result = locator.getStudyParticipationService().getByStudyProtocol(ii, dto);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -51,11 +57,11 @@ public class InvokeStudyParticipationEjb extends InvokeStudyPaServiceEjb<StudyPa
     /**
      * {@inheritDoc}
      */
-    public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
+    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
         try {
             locator.getStudyParticipationService().cascadeRoleStatus(ii, roleStatusCode);
-        } catch (PAException e) {
-            throw e;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

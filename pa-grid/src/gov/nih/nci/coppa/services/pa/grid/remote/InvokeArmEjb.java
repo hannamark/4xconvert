@@ -31,6 +31,8 @@ public class InvokeArmEjb
         try {
             List<ArmDTO> result = locator.getArmService().getByPlannedActivity(ii);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

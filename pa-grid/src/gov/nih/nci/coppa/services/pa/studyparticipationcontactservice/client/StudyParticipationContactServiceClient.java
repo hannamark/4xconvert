@@ -72,7 +72,6 @@ public class StudyParticipationContactServiceClient extends StudyParticipationCo
     }
 
     private static void getForStudyPartConts(StudyParticipationContactServiceClient client) throws RemoteException {
-
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
@@ -89,7 +88,6 @@ public class StudyParticipationContactServiceClient extends StudyParticipationCo
     }
 
     private static void getStudyPartConts(StudyParticipationContactServiceClient client) throws RemoteException {
-
         Id id = new Id();
        // id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
        // id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);

@@ -28,12 +28,13 @@ public class InvokeStudyContactEjb
     /**
      * {@inheritDoc}
      */
-    public List<StudyContactDTO> getByStudyProtocol(Ii arg0,
-            StudyContactDTO arg1) throws PAException {
+    public List<StudyContactDTO> getByStudyProtocol(Ii studyProtocolIi, StudyContactDTO dto) throws PAException {
         try {
             List<StudyContactDTO> result =
-                locator.getStudyContactService().getByStudyProtocol(arg0, arg1);
+                locator.getStudyContactService().getByStudyProtocol(studyProtocolIi, dto);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -42,12 +43,13 @@ public class InvokeStudyContactEjb
     /**
      * {@inheritDoc}
      */
-    public List<StudyContactDTO> getByStudyProtocol(Ii arg0,
-            List<StudyContactDTO> arg1) throws PAException {
+    public List<StudyContactDTO> getByStudyProtocol(Ii studyProtocolIi, List<StudyContactDTO> dtos) throws PAException {
         try {
             List<StudyContactDTO> result =
-                locator.getStudyContactService().getByStudyProtocol(arg0, arg1);
+                locator.getStudyContactService().getByStudyProtocol(studyProtocolIi, dtos);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

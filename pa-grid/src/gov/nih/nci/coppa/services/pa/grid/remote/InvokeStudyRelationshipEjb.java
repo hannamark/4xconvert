@@ -12,9 +12,8 @@ import java.util.List;
 /**
  * Wrapper class for invoking the StudyRelationship remote EJB.
  */
-public class InvokeStudyRelationshipEjb
-    extends InvokePaServiceEjb<StudyRelationshipDTO>
-    implements StudyRelationshipServiceRemote {
+public class InvokeStudyRelationshipEjb extends InvokePaServiceEjb<StudyRelationshipDTO> implements
+        StudyRelationshipServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
@@ -43,11 +42,11 @@ public class InvokeStudyRelationshipEjb
 
     /**
      * {@inheritDoc}
+     *
      * @deprecated
      */
     @Deprecated
-    public List<StudyRelationshipDTO> search(StudyRelationshipDTO arg0)
-            throws PAException {
+    public List<StudyRelationshipDTO> search(StudyRelationshipDTO arg0) throws PAException {
         try {
             return locator.getStudyRelationshipService().search(arg0);
         } catch (PAException pae) {
@@ -56,7 +55,5 @@ public class InvokeStudyRelationshipEjb
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
-
-
 
 }

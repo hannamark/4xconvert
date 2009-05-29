@@ -22,6 +22,8 @@ public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
         try {
             StudyResourcingDTO result = locator.getStudyResourcingService().createStudyResourcing(studyResourcingDTO);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -34,6 +36,8 @@ public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
         try {
             Boolean result = locator.getStudyResourcingService().deleteStudyResourceByID(studyResourcingDTO);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -46,6 +50,8 @@ public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
         try {
             StudyResourcingDTO result = locator.getStudyResourcingService().getStudyResourceByID(ii);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -56,9 +62,11 @@ public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
      */
     public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            List<StudyResourcingDTO> result = locator.getStudyResourcingService().getstudyResourceByStudyProtocol(
-                    studyProtocolIi);
+            List<StudyResourcingDTO> result =
+                    locator.getStudyResourcingService().getstudyResourceByStudyProtocol(studyProtocolIi);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -69,9 +77,11 @@ public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
      */
     public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi) throws PAException {
         try {
-            StudyResourcingDTO result = locator.getStudyResourcingService()
-                    .getsummary4ReportedResource(studyProtocolIi);
+            StudyResourcingDTO result =
+                    locator.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -84,6 +94,8 @@ public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
         try {
             StudyResourcingDTO result = locator.getStudyResourcingService().updateStudyResourcing(studyResourcingDTO);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

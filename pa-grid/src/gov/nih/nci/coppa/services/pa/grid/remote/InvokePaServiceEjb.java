@@ -31,6 +31,8 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
         try {
             DTO result = (DTO) getLocator().getBasePaService(type).create(dto);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -42,6 +44,8 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
     public void delete(Ii id) throws PAException {
         try {
             getLocator().getBasePaService(type).delete(id);
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -56,6 +60,8 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
         try {
             DTO result = (DTO) getLocator().getBasePaService(type).get(id);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -69,6 +75,8 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
         try {
             DTO result = (DTO) getLocator().getBasePaService(type).update(dto);
             return result;
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
