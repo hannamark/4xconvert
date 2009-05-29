@@ -63,4 +63,9 @@ public class MockMailManagerService implements MailManagerServiceRemote {
 
     }
 
+    public void sendAcceptEmail(Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
