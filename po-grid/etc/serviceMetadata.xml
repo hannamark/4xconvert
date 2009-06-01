@@ -7,6 +7,11 @@
    <ns2:serviceContextCollection>
     <ns2:ServiceContext description="" name="CoreServices">
      <ns2:operationCollection>
+      <ns2:Operation description="" name="getServiceSecurityMetadata">
+       <ns2:inputParameterCollection/>
+       <ns2:Output qName="ns4:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+       <ns2:faultCollection/>
+      </ns2:Operation>
       <ns2:Operation description="" name="GetMultipleResourceProperties">
        <ns2:inputParameterCollection/>
        <ns2:faultCollection/>
@@ -17,11 +22,6 @@
       </ns2:Operation>
       <ns2:Operation description="" name="QueryResourceProperties">
        <ns2:inputParameterCollection/>
-       <ns2:faultCollection/>
-      </ns2:Operation>
-      <ns2:Operation description="" name="getServiceSecurityMetadata">
-       <ns2:inputParameterCollection/>
-       <ns2:Output qName="ns4:ServiceSecurityMetadata" dimensionality="1" isArray="false" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
        <ns2:faultCollection/>
       </ns2:Operation>
      </ns2:operationCollection>

@@ -6,7 +6,7 @@
 	<!-- file. DO NOT REMOVE ANY TARGETS                                -->
 	<!-- ============================================================== -->
     <property name="jboss.serverinstance.name" value="pogrid"/>
-    <property name="webapp.deploy.dir" value="${jboss.dir}/server/${jboss.serverinstance.name}/deploy/wsrf.war" />
+    <property name="webapp.deploy.dir" value="${jboss.dir}/server/${jboss.serverinstance.name}/deploy/${globus.webapp}.war" />
 
 
 	<!-- ============================================================== -->
