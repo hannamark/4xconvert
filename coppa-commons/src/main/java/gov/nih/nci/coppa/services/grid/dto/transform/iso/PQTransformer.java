@@ -1,6 +1,6 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
-import gov.nih.nci.coppa.iso.Pqv;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
@@ -12,15 +12,15 @@ import org.iso._21090.PQ;
  * Transforms strings.
  * @author mshestopalov
  */
-public final class PQVTransformer extends QTYTransformer<PQ, Pqv>
-    implements Transformer<PQ, Pqv> {
+public final class PQTransformer extends QTYTransformer<PQ, Pq>
+    implements Transformer<PQ, Pq> {
 
     /**
      * Public singleton.
      */
-    public static final PQVTransformer INSTANCE = new PQVTransformer();
+    public static final PQTransformer INSTANCE = new PQTransformer();
 
-    private PQVTransformer() {
+    private PQTransformer() {
 
     }
 
@@ -36,14 +36,14 @@ public final class PQVTransformer extends QTYTransformer<PQ, Pqv>
      * {@inheritDoc}
      */
     @Override
-    protected Pqv newDto() {
-        return new Pqv();
+    protected Pq newDto() {
+        return new Pq();
     }
 
     /**
      * {@inheritDoc}
      */
-    public PQ toXml(Pqv input) throws DtoTransformException {
+    public PQ toXml(Pq input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
@@ -55,7 +55,10 @@ public final class PQVTransformer extends QTYTransformer<PQ, Pqv>
             x.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(input.getNullFlavor()));
         }
         x.setPrecision(input.getPrecision());
-
+        x.setUnit(input.getUnit());
+        if (input.getValue() != null) {
+            x.setValue(input.getValue().doubleValue());
+        }
 
         return x;
     }
@@ -63,11 +66,11 @@ public final class PQVTransformer extends QTYTransformer<PQ, Pqv>
     /**
      * {@inheritDoc}
      */
-    public Pqv toDto(PQ input) throws DtoTransformException {
+    public Pq toDto(PQ input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        Pqv d = transformBaseDto(input);
+        Pq d = transformBaseDto(input);
         Double v = input.getValue();
         if (v != null) {
             d.setValue(BigDecimal.valueOf(v));
@@ -75,7 +78,11 @@ public final class PQVTransformer extends QTYTransformer<PQ, Pqv>
             d.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(input.getNullFlavor()));
         }
         d.setPrecision(input.getPrecision());
-
+        d.setUnit(input.getUnit());
+        if (input.getValue() != null) {
+            BigDecimal bd = new BigDecimal(input.getValue());
+            d.setValue(bd);
+        }
 
         return d;
     }

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ed;
 import gov.nih.nci.coppa.iso.EdText;
-import gov.nih.nci.coppa.iso.Pqv;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.UncertaintyType;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 
@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  *
  * @author max
- */public class PQVTransformerTest extends AbstractTransformerTestBase<PQVTransformer, PQ, Pqv>{
+ */public class PQTransformerTest extends AbstractTransformerTestBase<PQTransformer, PQ, Pq>{
 
         public Double VALUE_DOUBLE = new Double(12345);
 
@@ -50,8 +50,8 @@ import org.junit.Test;
         }
 
         @Override
-        public Pqv makeDtoSimple() {
-            Pqv x = new Pqv();
+        public Pq makeDtoSimple() {
+            Pq x = new Pq();
             x.setValue(BigDecimal.valueOf(VALUE_DOUBLE));
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
@@ -63,7 +63,7 @@ import org.junit.Test;
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
-            Pqv uncert = new Pqv();
+            Pq uncert = new Pq();
             uncert.setValue(BigDecimal.valueOf(VALUE_DOUBLE));
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
@@ -89,8 +89,8 @@ import org.junit.Test;
         }
 
         @Override
-        public void verifyDtoSimple(Pqv x) {
-            assertEquals(BigDecimal.valueOf(VALUE_DOUBLE), x.getValue());
+        public void verifyDtoSimple(Pq x) {
+            assertEquals(new BigDecimal(VALUE_DOUBLE), x.getValue());
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
             edText.setCharset(ed.getCharset());
@@ -101,7 +101,7 @@ import org.junit.Test;
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             assertEquals(edText, x.getOriginalText());
-            Pqv uncert = new Pqv();
+            Pq uncert = new Pq();
             uncert.setValue(BigDecimal.valueOf(VALUE_DOUBLE));
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
@@ -116,16 +116,16 @@ import org.junit.Test;
             return x;
         }
 
-        public void verifyDtoNullFlavored(Pqv dto) {
+        public void verifyDtoNullFlavored(Pq dto) {
             assertNull(dto.getValue());
             assertEquals(gov.nih.nci.coppa.iso.NullFlavor.NI, dto.getNullFlavor());
         }
 
         @Test
-        public void testPqvNull() throws Exception {
-            Pqv ts = new Pqv();
+        public void testPqNull() throws Exception {
+            Pq ts = new Pq();
             ts.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.ASKU);
-            PQ result = PQVTransformer.INSTANCE.toXml(ts);
+            PQ result = PQTransformer.INSTANCE.toXml(ts);
             assertNotNull(result);
             assertEquals(NullFlavor.ASKU, result.getNullFlavor());
             assertNull(result.getValue());

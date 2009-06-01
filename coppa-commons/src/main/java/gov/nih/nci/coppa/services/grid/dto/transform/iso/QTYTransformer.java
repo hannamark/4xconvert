@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Pqv;
 import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
@@ -56,7 +57,7 @@ public abstract class QTYTransformer<QTYX extends QTY, Qtyx extends Qty> extends
             if (input.getUncertainty() instanceof Int) {
                 x.setUncertainty(INTTransformer.INSTANCE.toXml((Int) input.getUncertainty()));
             } else if (input.getUncertainty() instanceof Pqv) {
-                x.setUncertainty(PQVTransformer.INSTANCE.toXml((Pqv) input.getUncertainty()));
+                x.setUncertainty(PQTransformer.INSTANCE.toXml((Pq) input.getUncertainty()));
             } else if (input.getUncertainty() instanceof Ts) {
                 x.setUncertainty(TSTransformer.INSTANCE.toXml((Ts) input.getUncertainty()));
             } else {
@@ -93,7 +94,7 @@ public abstract class QTYTransformer<QTYX extends QTY, Qtyx extends Qty> extends
             if (input.getUncertainty() instanceof INT) {
                 x.setUncertainty(INTTransformer.INSTANCE.toDto((INT) input.getUncertainty()));
             } else if (input.getUncertainty() instanceof PQ) {
-                x.setUncertainty(PQVTransformer.INSTANCE.toDto((PQ) input.getUncertainty()));
+                x.setUncertainty(PQTransformer.INSTANCE.toDto((PQ) input.getUncertainty()));
             } else if (input.getUncertainty() instanceof TS) {
                 x.setUncertainty(TSTransformer.INSTANCE.toDto((TS) input.getUncertainty()));
             } else {
