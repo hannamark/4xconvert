@@ -438,7 +438,7 @@ public class TestSchema {
             sPart.setStudyProtocol(sp);
             addUpdObject(sPart);
             studyParticipationIds.add(sPart.getId());
-            
+                       
             Country country = new Country();
             country.setAlpha2("ZZ");
             country.setAlpha3("ZZZ");

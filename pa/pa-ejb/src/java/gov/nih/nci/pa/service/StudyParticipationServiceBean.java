@@ -196,11 +196,21 @@ public class StudyParticipationServiceBean
     
     @SuppressWarnings("PMD.NPathComplexity")
     private StudyParticipationDTO businessRules(StudyParticipationDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
-            throw new PAException("Either healthcare facility or research organization must be set.  ");
+        if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi()) 
+                && PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+            throw new PAException("Either healthcare facility or research organization or Oversight committee" 
+                    + " must be set.  ");
         }
         if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
-            throw new PAException("Healthcare facility and research organization cannot both be set.  ");
+            throw new PAException("Healthcare facility , research organization cannot both be set.  ");
+        }
+        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+            throw new PAException("Healthcare facility and over sight " 
+                    + "committee cannot both be set.  ");
+        }
+        if (!PAUtil.isIiNull(dto.getResearchOrganizationIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+            throw new PAException("research organization and over sight " 
+                    + "committee cannot both be set.  ");
         }
         ReviewBoardApprovalStatusCode code = ReviewBoardApprovalStatusCode.getByCode(
                 CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode()));
@@ -231,9 +241,13 @@ public class StudyParticipationServiceBean
     }
 
     private Long getOrganizationId(StudyParticipationDTO dto) {
-        return (PAUtil.isIiNull(dto.getHealthcareFacilityIi())
-                ? IiConverter.convertToLong(dto.getResearchOrganizationIi())
-                : IiConverter.convertToLong(dto.getHealthcareFacilityIi()));
+        if (PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
+            return (PAUtil.isIiNull(dto.getResearchOrganizationIi())
+                    ? IiConverter.convertToLong(dto.getOversightCommitteeIi())
+                    : IiConverter.convertToLong(dto.getResearchOrganizationIi()));
+        } else {
+            return (IiConverter.convertToLong(dto.getHealthcareFacilityIi()));
+        }
     }
 
     private String getFunctionalCode(StudyParticipationDTO dto) {

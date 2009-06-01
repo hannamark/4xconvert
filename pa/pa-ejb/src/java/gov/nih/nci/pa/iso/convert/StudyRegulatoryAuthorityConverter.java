@@ -101,6 +101,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyRegulatoryAuthorityDTO, StudyR
      * @param sra as a parameter
      * @return StudyProtocolDTO is returned as DTO
      */
+    @Override
     public StudyRegulatoryAuthorityDTO convertFromDomainToDto(StudyRegulatoryAuthority sra) {
         StudyRegulatoryAuthorityDTO sriDTO = new StudyRegulatoryAuthorityDTO();
         sriDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sra.getStudyProtocol().getId()));
@@ -114,6 +115,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyRegulatoryAuthorityDTO, StudyR
      * @param dto to be converted
      * @return StudyRegulatoryAuthority as domain object 
      */
+    @Override
     public StudyRegulatoryAuthority convertFromDtoToDomain(StudyRegulatoryAuthorityDTO dto) {
         StudyRegulatoryAuthority authority = new StudyRegulatoryAuthority();
         if (dto.getIdentifier() != null) {

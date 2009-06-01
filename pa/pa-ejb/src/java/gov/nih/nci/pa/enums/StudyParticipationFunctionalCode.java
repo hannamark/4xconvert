@@ -137,9 +137,12 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
     /**
      * Laboratory.
      */
-    LABORATORY("Laboratory", true);
+    LABORATORY("Laboratory", true),
     
-    
+     /**
+     * Study Oversight Committee.
+     */
+    STUDY_OVERSIGHT_COMMITTEE("Study Oversight Committee", false);
      
           
      private String code;

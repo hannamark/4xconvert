@@ -546,11 +546,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
         List<StudyParticipationDTO> dtos = new ArrayList<StudyParticipationDTO>();
         StudyParticipationDTO dto = new StudyParticipationDTO();
+        dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
+        dtos.add(dto);
+       /* dto = new StudyParticipationDTO();
         dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         dtos.add(dto);
         dto = new StudyParticipationDTO();
         dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
-        dtos.add(dto);
+        dtos.add(dto);*/
 
         List<StudyParticipationDTO> spDTOs = studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), dtos);
            // PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(spDTO.getIdentifier(), dtos);
@@ -578,14 +581,15 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                     }
                     appendElement(irbInfo , createElement("name" ,  paOrg.getName() , doc));
-                    if (spart.getHealthcareFacilityIi() != null
+                   /* if (spart.getHealthcareFacilityIi() != null
                         && spart.getHealthcareFacilityIi().getExtension() != null) {
                       Organization affOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(
                           IiConverter.convertToLong(spart.getHealthcareFacilityIi()));
                       if (affOrg != null) {
                         appendElement(irbInfo , createElement("affiliation" ,  affOrg.getName() , doc));
                       }
-                    }
+                    }*/
+                    appendElement(irbInfo , createElement("affiliation" ,  spart.getBoardAffiliation() , doc));
                     Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
                     for (Object tel : telList) {
                         if (tel instanceof TelPhone) {

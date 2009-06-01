@@ -24,17 +24,11 @@ function statusChange() {
     var newStatus=document.irbForm.approvalStatus.value;
     var rads = document.irbForm.siteRelated;
     if(newStatus=="Submission not required"){
-        for(var i=0; i<rads.length;i++ ){
-            document.irbForm.siteRelated[i].disabled = true;
-        }
         document.irbForm.approvalNumber.disabled=true;
         document.getElementById('name').disabled=true;
         setContactDisabled(true);
         document.irbForm.contactAffiliation.disabled=true;
     }else if(newStatus=="Submitted, approved"){
-        for(var i=0; i<rads.length;i++ ){
-            document.irbForm.siteRelated[i].disabled = false;
-        }
         document.irbForm.approvalNumber.disabled=false;
         document.getElementById('name').disabled=false;
         if(document.irbForm.boardChanged.value!="true"){
@@ -42,9 +36,6 @@ function statusChange() {
         }
         document.irbForm.contactAffiliation.disabled=false;    
     }else if(newStatus=="Submitted, exempt"){
-        for(var i=0; i<rads.length;i++ ){
-            document.irbForm.siteRelated[i].disabled = false;
-        }
         document.irbForm.approvalNumber.disabled=false;
         document.getElementById('name').disabled=false;
         if(document.irbForm.boardChanged.value!="true"){
@@ -52,9 +43,6 @@ function statusChange() {
         }
         document.irbForm.contactAffiliation.disabled=false;    
     }else{
-        for(var i=0; i<rads.length;i++ ){
-            document.irbForm.siteRelated[i].disabled = true;
-        }
         document.irbForm.approvalNumber.disabled=true;
         document.getElementById('name').disabled=true;
         setContactDisabled(true);
@@ -74,7 +62,7 @@ function setContactDisabled(value){
     document.getElementById('email').disabled=value;
 }
 function changeName(){
-    var orgid = document.irbForm.name.value;
+    var orgid = document.irbForm.id.value;
     document.irbForm.action='irbfromPO.action?orgId='+orgid;
     document.irbForm.submit();
 }
@@ -111,6 +99,7 @@ function loadDiv(orgid){
         <s:hidden name="boardChanged"/> 
         <s:hidden name="newOrgId"/>
         <s:hidden name="newOrgName"/> 
+         <s:hidden name="ct.id"/> 
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td class="label">Board Approval Status:<span class="required">*</span></td>
@@ -121,23 +110,14 @@ function loadDiv(orgid){
                 onchange="statusChange()" onfocus="statusChange()"/></td>
         </tr>
         <tr>
-            <td class="label">Site Related Approval:</td>
-            <td class="value" colspan="2"><s:radio name="siteRelated" list="siteRelatedList" disabled="true"
-                onchange="statusChange()" onfocus="statusChange()"/></td>
-        </tr>
-        <tr>
             <td class="label">Board Approval Number:</td>
             <td class="value" colspan="2"><s:textfield name="approvalNumber" maxlength="30" size="30" cssStyle="width:200px;float:left"/></td>
         </tr>
         <tr>
              <td class="label">Board Name:</td>
-             <td class="value" style="width: 0">
-                <s:select cssStyle="width: 300px" headerKey="" headerValue="--Select--" 
-                          id="name" name="ct.name" list="candidateBoardList" onchange="changeName()"/>
-                <span class="info">Click <strong>Look Up</strong> to choose an organization.</span>
-             </td>
-             <td class="value">
-                <ul style="margin-top:-6px;">
+             <td class="value"> 
+               <s:textfield name="ct.name" id="name" size="30"  readonly="true" cssClass="readonly" onchange="changeName()"/></td>
+              <td>  <ul style="margin-top:-3px;">
                     <li style="padding-left:0">
                         <a href="#" class="btn" onclick="lookup();"><span class="btn_img"><span class="search">Look Up</span></span></a>
                     </li>
@@ -180,8 +160,8 @@ function loadDiv(orgid){
         </tr>
         <tr>
             <td class="label">Board Affiliation:</td>
-            <td class="value" colspan="2"><s:select  cssStyle="width: 300px" headerKey="" headerValue="--Select--" name="contactAffiliation" 
-                    list="candidateAffiliationList"/></td>
+             <td colspan="2" class="value">
+            <s:textarea name="contactAffiliation" cssStyle="width:606px" rows="4"/></td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">

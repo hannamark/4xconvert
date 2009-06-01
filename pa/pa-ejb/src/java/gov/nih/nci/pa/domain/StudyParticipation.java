@@ -117,7 +117,21 @@ public class StudyParticipation extends OrganizationFunctionalRole {
     private OversightCommittee oversightCommittee;
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
     private List<StudyParticipationContact> studyParticipationContacts;
-
+    private String boardAffiliation;
+   
+    /**
+     * @return the boardAffiliation
+     */
+    @Column(name = "BOARD_AFFILIATION")
+    public String getBoardAffiliation() {
+        return boardAffiliation;
+    }
+    /**
+     * @param boardAffiliation the boardAffiliation to set
+     */
+    public void setBoardAffiliation(String boardAffiliation) {
+        this.boardAffiliation = boardAffiliation;
+    }
     /**
      *
      * @return functionalCode

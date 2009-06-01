@@ -962,15 +962,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                           throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                       }
                       html.append(appendData("Board" , paOrg.getName(), true , true));
-                      if (part.getHealthcareFacilityIi() != null
-                           && part.getHealthcareFacilityIi().getExtension() != null) {
-                        Organization affOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
-                            IiConverter.convertToLong(part.getHealthcareFacilityIi()));
-                        if (affOrg != null) {
-                          html.append(appendData(" affiliated with " , affOrg.getName(), false , true));
-                        }
-                      }
-                      html.append(appendData("Full Address" , AddressConverterUtil.convertToAddress(
+                      //if (part.getHealthcareFacilityIi() != null
+                        //   && part.getHealthcareFacilityIi().getExtension() != null) {
+                        //Organization affOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
+                          //  IiConverter.convertToLong(part.getHealthcareFacilityIi()));
+                        //if (affOrg != null) {
+                         // html.append(appendData(" affiliated with " , affOrg.getName(), false , true));
+                        //}
+                     // }
+                     html.append(appendData(" affiliated with " , part.getBoardAffiliation().getValue(), false , true));
+                     html.append(appendData("Full Address" , AddressConverterUtil.convertToAddress(
                               poOrg.getPostalAddress()), true , true));
                       Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
                       for (Object tel : telList) {

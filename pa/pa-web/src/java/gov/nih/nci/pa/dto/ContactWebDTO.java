@@ -87,6 +87,7 @@ package gov.nih.nci.pa.dto;
  *        holder, NCI.
  */
 public class ContactWebDTO {
+    private String id;
     private String name;
     private String address;
     private String city;
@@ -190,6 +191,18 @@ public class ContactWebDTO {
      */
     public void setEmail(String email) {
         this.email = email;
+    }
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

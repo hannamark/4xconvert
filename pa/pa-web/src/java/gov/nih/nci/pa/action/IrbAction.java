@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.ContactWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -110,9 +111,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -130,17 +129,11 @@ import com.opensymphony.xwork2.Preparable;
 public class IrbAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1230909090L;
 
-    private static final String YES = "Yes";
-    private static final String NO = "No";
     private StudyParticipationServiceRemote sPartService;
     private StudyProtocolServiceRemote sProtService;
     private OrganizationCorrelationServiceBean orgCorrService;
     private CorrelationUtils correlationUtils;
     private Ii spIdIi;
-
-    private Map<String, String>  siteRelatedList;
-    private Map<String, String>  candidateBoardList;
-    private Map<String, String>  candidateAffiliationList;
 
     private String approvalStatus;
     private String approvalNumber;
@@ -164,9 +157,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
             .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
-        setSiteRelatedList();
-        setCandidateAffiliationList();
-    }
+      }
 
     /**
      * @return action
@@ -196,7 +187,6 @@ public class IrbAction extends ActionSupport implements Preparable {
     public String save() throws Exception {
         businessRules();
         if (hasActionErrors()) {
-            setCandidateBoardList();
             return SUCCESS;
         }
         try {
@@ -208,8 +198,7 @@ public class IrbAction extends ActionSupport implements Preparable {
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
-            setCandidateBoardList();
-            return SUCCESS;
+             return SUCCESS;
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         loadForm();
@@ -245,13 +234,6 @@ public class IrbAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @return the siteRelatedList
-     */
-    public Map<String, String> getSiteRelatedList() {
-        return siteRelatedList;
-    }
-
-    /**
      * @return the siteRelated
      */
     public String getSiteRelated() {
@@ -263,20 +245,6 @@ public class IrbAction extends ActionSupport implements Preparable {
      */
     public void setSiteRelated(String siteRelated) {
         this.siteRelated = siteRelated;
-    }
-
-    /**
-     * @return the candidateBoardList
-     */
-    public Map<String, String> getCandidateBoardList() {
-        return candidateBoardList;
-    }
-
-    /**
-     * @return the candidateAffiliationList
-     */
-    public Map<String, String> getCandidateAffiliationList() {
-        return candidateAffiliationList;
     }
 
     /**
@@ -355,8 +323,8 @@ public class IrbAction extends ActionSupport implements Preparable {
         }
         if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.equals(getApprovalStatusEnum())
             || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())) {
-            if (getSiteRelated() == null) {
-                addActionError("Must select if this is a site related board approval.  ");
+            if (getContactAffiliation() == null) {
+                addActionError("Must Enter a Board Affliation.  ");
             }
             if (PAUtil.isEmpty(ct.getName())) {
                 addActionError("The organziation name must be selected.  ");
@@ -388,122 +356,75 @@ public class IrbAction extends ActionSupport implements Preparable {
         
         List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
         for (StudyParticipationDTO sp : spList) {
-            if (!PAUtil.isCdNull(sp.getReviewBoardApprovalStatusCode())) {
-                sp.setReviewBoardApprovalStatusCode(null);
-                sPartService.update(sp);
+             if (StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().equals(
+                    sp.getFunctionalCode().getCode())) {
+                        sPartService.delete(sp.getIdentifier());
             }
         }
     }
 
     private void saveSubmissionRequired() throws Exception {
         Ii sPartToUpdate = this.getStudyParticipationToUpdate();
-        String poOrgId = ct.getName();
+        String poOrgId = getCt().getId();
         if (PAUtil.isEmpty(poOrgId)) {
             throw new PAException("Board name must be set for '" + getApprovalStatus() + "'.  ");
         }
-        Long oversightCommitteeId = orgCorrService.createOversightCommitteeCorrelations(poOrgId);
         
-        StudyParticipationDTO partDto = sPartService.get(sPartToUpdate);
+        Long oversightCommitteeId = orgCorrService.createOversightCommitteeCorrelations(poOrgId);
+        StudyParticipationDTO partDto  = null;
+        boolean newFlag = false;
+        if (sPartToUpdate != null) {
+         partDto = sPartService.get(sPartToUpdate);
+        } else {
+            newFlag = true;
+            partDto = new StudyParticipationDTO();
+            partDto.setStudyProtocolIdentifier(spIdIi);
+            partDto.setFunctionalCode(
+                    CdConverter.convertToCd(StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
+        }
         partDto.setOversightCommitteeIi(IiConverter.convertToIi(oversightCommitteeId));
         partDto.setReviewBoardApprovalNumber(StConverter.convertToSt(getApprovalNumber()));
         partDto.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(getApprovalStatusEnum()));
-        sPartService.update(partDto);
-        
+        partDto.setBoardAffiliation(StConverter.convertToSt(getContactAffiliation()));
+        partDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(null));
+        partDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        if (newFlag) {
+         sPartService.create(partDto);
+        } else {
+            sPartService.update(partDto);
+        }
+            
+        //update the study protocol
         StudyProtocolDTO studyDto = sProtService.getStudyProtocol(spIdIi);
         studyDto.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(true));
         sProtService.updateStudyProtocol(studyDto);
-    }
-
+    
+        
+        }
+    
+    
     private Ii getStudyParticipationToUpdate() throws Exception {
         Ii sPartToUpdate = null;
-        // if site related use candidate affiliation selected else use lead organization
-        if (getSiteRelated().equals(YES)) {
-            if (getContactAffiliation() == null || getContactAffiliation().equals("")) {
-                throw new PAException("Contact affiliation required for site related board.  ");
-            }
-            List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
+        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
             for (StudyParticipationDTO sp : spList) {
-                Long hcfId = IiConverter.convertToLong(sp.getHealthcareFacilityIi());
-                if (hcfId != null) {
-                    Organization paOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(hcfId);
-                    if (paOrg.getIdentifier().equals(getContactAffiliation())) {
-                        sPartToUpdate = sp.getIdentifier();
-                    }
-                }
-            }
-            if (sPartToUpdate == null) {
-                throw new PAException("Unable to locate study participation to store IRB data.  ");
-            }
-        } else {
-            List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
-            for (StudyParticipationDTO sp : spList) {
-                if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().equals(
+                if (StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().equals(
                         sp.getFunctionalCode().getCode())) {
                     sPartToUpdate = sp.getIdentifier();
                 }
             }
-            if (sPartToUpdate == null) {
-                throw new PAException("Unable to get lead organization to store IRB data.  ");
-            }
-        }
+                   
         return sPartToUpdate;
     }
 
-    private void setSiteRelatedList() {
-        siteRelatedList = new HashMap<String, String>();
-        siteRelatedList.put(YES, YES);
-        siteRelatedList.put(NO, NO);
-    }
-
-    private void setCandidateBoardList() throws Exception {
-        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
-        candidateBoardList = new HashMap<String, String>();
-        for (StudyParticipationDTO sp : spList) {
-            Long id = IiConverter.convertToLong(sp.getOversightCommitteeIi());
-            if (id != null) {
-                Organization org = correlationUtils.getPAOrganizationByPAOversightCommitteeId(id);
-                candidateBoardList.put(org.getIdentifier(), org.getName());
-            }
-            id = IiConverter.convertToLong(sp.getResearchOrganizationIi());
-            if (id != null) {
-                Organization org = correlationUtils.getPAOrganizationByPAResearchOrganizationId(id);
-                candidateBoardList.put(org.getIdentifier(), org.getName());
-            }
-            id = IiConverter.convertToLong(sp.getHealthcareFacilityIi());
-            if (id != null) {
-                Organization org = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(id);
-                candidateBoardList.put(org.getIdentifier(), org.getName());
-            }
-        }
-        if (!PAUtil.isEmpty(newOrgId)) {
-            candidateBoardList.put(newOrgId, newOrgName);
-        }
-    }
-
-    private void setCandidateAffiliationList() throws Exception {
-        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
-        candidateAffiliationList = new HashMap<String, String>();
-        for (StudyParticipationDTO sp : spList) {
-            if (CdConverter.convertCdToString(sp.getFunctionalCode()).equals(
-                    StudyParticipationFunctionalCode.TREATING_SITE.getCode())) {
-                Long id = IiConverter.convertToLong(sp.getHealthcareFacilityIi());
-                if (id != null) {
-                    Organization org = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
-                            IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
-                    candidateAffiliationList.put(org.getIdentifier(), org.getName());
-                }
-            }
-        }
-    }
+   
 
     private void loadForm() throws Exception {
-        setCandidateBoardList();
         StudyProtocolDTO study = sProtService.getStudyProtocol(spIdIi);
         Boolean b = BlConverter.covertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
         if (b == null || !b) {
             setApprovalStatus((b == null) ? null : ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
             setApprovalNumber(null);
-            setSiteRelated(null);
+            setContactAffiliation(null);
             ct.setName(null);
             ct.setAddress(null);
             ct.setCity(null);
@@ -512,8 +433,7 @@ public class IrbAction extends ActionSupport implements Preparable {
             ct.setCountry(null);
             ct.setPhone(null);
             ct.setEmail(null);
-            setContactAffiliation(null);
-        } else {
+           } else {
             List<StudyParticipationDTO> partList = sPartService.getByStudyProtocol(spIdIi);
             for (StudyParticipationDTO part : partList) {
                 if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
@@ -523,8 +443,7 @@ public class IrbAction extends ActionSupport implements Preparable {
                     
                   setApprovalStatus(part.getReviewBoardApprovalStatusCode().getCode());
                   setApprovalNumber(StConverter.convertToString(part.getReviewBoardApprovalNumber()));
-                  setSiteRelated(StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().
-                          equals(CdConverter.convertCdToString(part.getFunctionalCode())) ? NO : YES);
+                  setContactAffiliation(StConverter.convertToString(part.getBoardAffiliation()));
                   if (PAUtil.isIiNull(part.getOversightCommitteeIi())) {
                       loadOrg(null);
                   } else {
@@ -532,22 +451,14 @@ public class IrbAction extends ActionSupport implements Preparable {
                               IiConverter.convertToLong(part.getOversightCommitteeIi()));
                       loadOrg(paOrg.getIdentifier());
                   }
-                  if (getSiteRelated().equals(YES)) {
-                      Organization paOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
-                              IiConverter.convertToLong(part.getHealthcareFacilityIi()));
-                      setContactAffiliation(paOrg.getIdentifier());
-                  } else {
-                      setContactAffiliation(null);
-                  }
-                }
+               }
             }
         }
     }
 
     private void loadOrg(String poOrgId) throws Exception {
         if (PAUtil.isEmpty(poOrgId)) {
-            setCandidateBoardList();
-            ct = new ContactWebDTO();
+              ct = new ContactWebDTO();
             return;
         }
         OrganizationDTO poOrg = PoRegistry.getOrganizationEntityService().
@@ -558,10 +469,9 @@ public class IrbAction extends ActionSupport implements Preparable {
         }
         newOrgId = poOrgId;
         newOrgName = EnOnConverter.convertEnOnToString(poOrg.getName());
-        setCandidateBoardList();
         ct = new ContactWebDTO();
-        ct.setName(newOrgId);
-        
+        ct.setId(newOrgId);
+        ct.setName(newOrgName);
         List<Adxp> adxpList = poOrg.getPostalAddress().getPart();
         for (Adxp adxp : adxpList) {
             if (adxp instanceof AdxpAl) {
