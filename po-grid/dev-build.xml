@@ -18,6 +18,8 @@
 	<property file="local.properties" />
 	<property name="service.hostname" value="localhost" />
 	<property name="service.port" value="8080" />
+	<property name="build.dir" location="build" />
+	<property name="test.build.lib.dir" value="${build.dir}/test/lib" />
 
 	<property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory" />
 	<property name="java.naming.provider.url.host" value="localhost" />
@@ -138,6 +140,11 @@
 	<target name="postInit">
 		<copy todir="${build.lib.dir}">
 		  <fileset refid="compile.dependency.fileset" />
+		  <!-- This mapper strips off all leading directory information -->
+		  <mapper type="flatten" />
+		</copy>
+		<copy todir="${test.build.lib.dir}">
+		  <fileset refid="test.dependency.fileset" />
 		  <!-- This mapper strips off all leading directory information -->
 		  <mapper type="flatten" />
 		</copy>
