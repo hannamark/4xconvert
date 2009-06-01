@@ -98,7 +98,9 @@
 		
 		<path id="test.run.extended.classpath">
 		</path>
-		
+		<path id="run.extended.classpath">
+		</path>
+
 		<artifact:dependencies pomRefId="tools.pom.file"
 				pathId="tasks.run.extended.classpath"
 				filesetId="provided.dependency.fileset"
