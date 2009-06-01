@@ -128,7 +128,7 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         if (bo.getOversightCommittee() != null) {
             dto.setOversightCommitteeIi(IiConverter.convertToIi(bo.getOversightCommittee().getId()));
         }
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToStudyParticipationIi(bo.getId()));
         dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(bo.getLocalStudyProtocolIdentifier()));
         dto.setReviewBoardApprovalDate(TsConverter.convertToTs(bo.getReviewBoardApprovalDate()));
         dto.setReviewBoardApprovalNumber(StConverter.convertToSt(bo.getReviewBoardApprovalNumber()));

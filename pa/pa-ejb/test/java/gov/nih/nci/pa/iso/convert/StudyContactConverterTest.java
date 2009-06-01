@@ -131,11 +131,13 @@ public class StudyContactConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudyContactDTO dto = new StudyContactDTO();
-    dto.setIdentifier(IiConverter.convertToIi((Long) null));
+    dto.setIdentifier(IiConverter.converToStudyContactIi((Long) null));
     dto.setPrimaryIndicator(BlConverter.convertToBl((Boolean) null));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+    assertEquals(dto.getIdentifier().getIdentifierName(),"Study Contact identifier");
+    
     StudyContactConverter sg = new StudyContactConverter();
     StudyContact bo = sg.convertFromDtoToDomain(dto);
     assertStudyContactConverter(bo, dto);

@@ -126,7 +126,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
                     + "StudyParticipationContactDTO.convertFromDomainToDTO().  ");
         }
         StudyParticipationContactDTO dto = new StudyParticipationContactDTO();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToStudyParticipationContactIi(bo.getId()));
 //        dto.setPostalAddress(AddressConverterUtil.create(bo.getAddressLine(), bo.getDeliveryAddressLine(),
 //                bo.getCity(), bo.getState(), bo.getPostalCode(),
 //                (bo.getCountry() == null) ? "" : bo.getCountry().getAlpha3()));

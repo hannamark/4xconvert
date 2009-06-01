@@ -134,7 +134,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             dto.setClinicalResearchStaffIi(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
         }
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToStudyContactIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRange(
                 IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));

@@ -81,9 +81,11 @@ package gov.nih.nci.pa.iso.util;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
 
+
+
 /**
  * utility method for converting Ii and Id.
- *
+ * 
  * @author Naveen Amiruddin
  * @since 08/26/2008
  * copyright NCI 2008.  All rights reserved.
@@ -93,199 +95,233 @@ import gov.nih.nci.coppa.iso.NullFlavor;
 @SuppressWarnings({ "PMD.TooManyMethods" , "PMD.ExcessiveClassLength"  })
 public class IiConverter {
     
-    /** Study Protocol Root. **/
+    /** Study Protocol Root. * */
     public static final String STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
+    
     /** Study Protocol Identifier. */
     public static final String STUDY_PROTOCOL_IDENTIFIER_NAME = "NCI study protocol entity identifier";
-    /** Study Outcome Measure Root. **/
+    
+    /** Study Outcome Measure Root. * */
     public static final String STUDY_OUTCOME_MEASURE_ROOT = "2.16.840.1.113883.3.26.4.3.1";
+    
     /** Study Outcome Measure Identifier. */
     public static final String STUDY_OUTCOME_MEASURE_IDENTIFIER_NAME = "NCI study outcome measure entity identifier";
-    /** Study Ind Ide Root. **/
+    
+    /** Study Ind Ide Root. * */
     public static final String STUDY_IND_IDE_ROOT = "2.16.840.1.113883.3.26.4.3.2";
+    
     /** Study Ind Ide Identifier. */
     public static final String STUDY_IND_IDE_IDENTIFIER_NAME = "NCI study ind ide entity identifier";
-    /** Arm Root. **/
+    
+    /** Arm Root. * */
     public static final String ARM_ROOT = "2.16.840.1.113883.3.26.4.3.3";
+    
     /** Arm Identifier. */
     public static final String ARM_IDENTIFIER_NAME = "NCI arm entity identifier";
-    /** Stratum Group Root. **/
+    
+    /** Stratum Group Root. * */
     public static final String STRATUM_GROUP_ROOT = "2.16.840.1.113883.3.26.4.3.4";
+    
     /** Stratum Group Identifier. */
     public static final String STRATUM_GROUP_IDENTIFIER_NAME = "NCI stratum group entity identifier";
-    /** Study Overall Status Root. **/
+    
+    /** Study Overall Status Root. * */
     public static final String STUDY_OVERALL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.3.5";
+    
     /** Study Overall Status Identifier. */
     public static final String STUDY_OVERALL_STATUS_IDENTIFIER_NAME = "NCI study overall status entity identifier";
-    /** Activity Root. **/
+    
+    /** Activity Root. * */
     public static final String ACTIVITY_ROOT = "2.16.840.1.113883.3.26.4.3.6";
+    
     /** Activity Identifier. */
     public static final String ACTIVITY_IDENTIFIER_NAME = "NCI activity entity identifier";
-    /** Study Resourcing Root. **/
+    
+    /** Study Resourcing Root. * */
     public static final String STUDY_RESOURCING_ROOT = "2.16.840.1.113883.3.26.4.3.7";
+    
     /** Study Resourcing Identifier. */
     public static final String STUDY_RESOURCING_IDENTIFIER_NAME = "NCI study resourcing entity identifier";
-    /** Document Root. **/
+    
+    /** Document Root. * */
     public static final String DOCUMENT_ROOT = "2.16.840.1.113883.3.26.4.3.8";
+    
+    /** Document Identifier. */
+    public static final String DOCUMENT_WORKFLOW_STATUS_IDENTIFIER_NAME = "NCI document work flow status identifier";
+    
+    /** Document Root. * */
+    public static final String DOCUMENT_WORKFLOW_STATUS_ROOT = "2.16.840.1.113883.3.26.4.3.9";
+    
     /** Document Identifier. */
     public static final String DOCUMENT_IDENTIFIER_NAME = "NCI document entity identifier";
     
-    /**
-     * The identifier name for org ii's.
-     */
+    /** The identifier name for. */
+    public static final String STUDY_RELATIONSHIP_IDENTIFIER_NAME = "Study Relationship identifier";
+
+    /** The ii root value. */
+    public static final String STUDY_RELATIONSHIP_ROOT = "2.16.840.1.113883.3.26.4.3.10";
+
+    /** The identifier name for. */
+    public static final String STUDY_DISEASE_IDENTIFIER_NAME = "Study Disease identifier";
+
+    /** The ii root value. */
+    public static final String STUDY_DISEASE_ROOT = "2.16.840.1.113883.3.26.4.3.11";
+
+    /** The identifier name for. */
+    public static final String STUDY_RECRUITMENT_STATUS_IDENTIFIER_NAME = "Study recruitment status identifier";
+
+    /** The ii root value. */
+    public static final String STUDY_RECRUITMENT_STATUS_ROOT = "2.16.840.1.113883.3.26.4.3.12";
+
+    /** The identifier name for. */
+    public static final String PLANNED_ACTIVITY_IDENTIFIER_NAME = "Planned Activity identifier";
+
+    /** The ii root value. */
+    public static final String PLANNED_ACTIVITY_ROOT = "2.16.840.1.113883.3.26.4.3.13";
+ 
+    /** The identifier name for. */
+    public static final String STUDY_ONHOLD_IDENTIFIER_NAME = "Study OnHold identifier";
+
+    /** The ii root value. */
+    public static final String STUDY_ONHOLD_ROOT = "2.16.840.1.113883.3.26.4.3.14";
+ 
+   
+    
+    /** The identifier name for org ii's. */
     public static final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
 
-    /**
-     * The ii root value for orgs.
-     */
+    /** The ii root value for orgs. */
     public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
 
-    /**
-     * The identifier name for person ii's.
-     */
+    /** The identifier name for person ii's. */
     public static final String PERSON_IDENTIFIER_NAME = "NCI person entity identifier";
 
-    /**
-     * The ii root value for people.
-     */
+    
+    /** The ii root value for people. */
     public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME = "NCI clinical research staff identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String CLINICAL_RESEARCH_STAFF_ROOT = "2.16.840.1.113883.3.26.4.4.1";
 
-    /**
-     * The identifier name for.
-     */
+     /** The identifier name for. */
     public static final String HEALTH_CARE_PROVIDER_IDENTIFIER_NAME = "NCI health care provider identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String HEALTH_CARE_PROVIDER_ROOT = "2.16.840.1.113883.3.26.4.4.2";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String HEALTH_CARE_FACILITY_IDENTIFIER_NAME = "NCI health care facility identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String HEALTH_CARE_FACILITY_ROOT = "2.16.840.1.113883.3.26.4.4.3";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String OVERSIGHT_COMMITTEE_IDENTIFIER_NAME = "NCI oversight committee identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String OVERSIGHT_COMMITTEE_ROOT = "2.16.840.1.113883.3.26.4.4.4";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String RESEARCH_ORG_IDENTIFIER_NAME = "NCI Research Organization identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String RESEARCH_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.5";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String IDENTIFIED_ORG_IDENTIFIER_NAME = "Identified org identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String IDENTIFIED_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.6";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String IDENTIFIED_PERSON_IDENTIFIER_NAME = "Identified person identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String IDENTIFIED_PERSON_ROOT = "2.16.840.1.113883.3.26.4.4.7";
-    /**
-     * The identifier name for.
-     */
+    
+    /** The identifier name for. */
     public static final String ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME = "Organizational contact identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    
+    /** The identifier name for. */
+    public static final String REGULATORY_AUTHORITY_IDENTIFIER_NAME = "Regulatory authority identifier";
+
+    /** The ii root value. */
+    public static final String REGULATORY_AUTHORITY_ROOT = "2.16.840.1.113883.3.26.4.4.9";
+    
+    
 
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String PERSON_RESOURCE_PROVIDER_IDENTIFIER_NAME = "Person Resource Provider identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String PERSON_RESOURCE_PROVIDER_ROOT = "UID.for.nci.role.personresourceprovider";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String ORG_RESOURCE_PROVIDER_IDENTIFIER_NAME = "Org Resource Provider identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String ORG_RESOURCE_PROVIDER_ROOT = "UID.for.nci.role.orgresourceprovider";
 
-    /**
-     * The identifier name for.
-     */
+    /** The identifier name for. */
     public static final String QUALIFIED_ENTITY_IDENTIFIER_NAME = "Qualified entity identifier";
 
-    /**
-     * The ii root value.
-     */
+    /** The ii root value. */
     public static final String QUALIFIED_ENTITY_ROOT = "UID.for.nci.role.qualifiedentity";
     
-    /**
-     * The CTEP Person ii root value.
-     */
+    /** The CTEP Person ii root value. */
     public static final String CTEP_PERSON_IDENTIFIER_ROOT = 
                                     "Cancer Therapy Evaluation Program Person Other Identifier";
     
-    /**
-     * The CTEP Organization ii root value.
-     */
+    /** The CTEP Organization ii root value. */
     public static final String CTEP_ORG_IDENTIFIER_ROOT = 
                                     "Cancer Therapy Evaluation Program Organization Identifier";
     
-    /**
-     * The identifier name for.
-     */
-    public static final String STUDY_RELATIONSHIP_IDENTIFIER_NAME = "Study Relationship identifier";
+    
+   
 
+    
+    
+    
+    
+    /** The Constant STUDY_CONTACT_IDENTIFIER_NAME. */
+    public static final String STUDY_CONTACT_IDENTIFIER_NAME = "Study Contact identifier";
+    
+    /** The Constant STUDY_CONTACT_ROOT. */
+    public static final String STUDY_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.5.1";
+    
+    /** The Constant STUDY_PARTICIPATION_IDENTIFIER_NAME. */
+    public static final String STUDY_PARTICIPATION_IDENTIFIER_NAME = "Study Participation identifier";
+    
+    /** The Constant STUDY_PARTICIPATION_ROOT. */
+    public static final String STUDY_PARTICIPATION_ROOT = "2.16.840.1.113883.3.26.4.5.2";
+    
+    /** The Constant STUDY_PARTICIPATION_CONTACT_IDENTIFIER_NAME. */
+    public static final String STUDY_PARTICIPATION_CONTACT_IDENTIFIER_NAME = "Study Participation Contact identifier";
+    
+    /** The Constant STUDY_PARTICIPATION_CONTACT_ROOT. */
+    public static final String STUDY_PARTICIPATION_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.5.3";
+    
+    
+    /** The Constant STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME. */
+    public static final String STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME = "Study site accural status identifier";
+    
+   
+    /** The Constant STUDY_SITE_ACCURAL_STATUS_ROOT. */
+    public static final String STUDY_SITE_ACCURAL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.4";
+    
+    
     /**
-     * The ii root value.
-     */
-    public static final String STUDY_RELATIONSHIP_ROOT = "2.16.840.1.113883.3.26.4.4.9";
-
-
-    /**
+     * Convert to ii.
      * 
      * @param id id
+     * 
      * @return Ii ii
      */
     public static Ii convertToIi(Long id) {
@@ -300,8 +336,10 @@ public class IiConverter {
     }
     
     /**
+     * Convert to ii.
      * 
      * @param str string
+     * 
      * @return Ii
      */
     public static Ii convertToIi(String str) {
@@ -317,8 +355,10 @@ public class IiConverter {
     }
     
     /**
+     * Convert to long.
      * 
      * @param ii ii
+     * 
      * @return long
      */
     public static Long convertToLong(Ii ii) {
@@ -332,8 +372,10 @@ public class IiConverter {
     }
     
     /**
+     * Convert to string.
      * 
      * @param ii ii
+     * 
      * @return String str
      */
     public static String convertToString(Ii ii) {
@@ -349,7 +391,9 @@ public class IiConverter {
     
     /**
      * converts to StudyProtocol Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToStudyProtocolIi(Long id) {
@@ -361,7 +405,9 @@ public class IiConverter {
 
     /**
      * converts to StudyOutcomeMeasure Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToStudyOutcomeMeasureIi(Long id) {
@@ -373,7 +419,9 @@ public class IiConverter {
 
     /**
      * converts to StudyIndIde Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToStudyIndIdeIi(Long id) {
@@ -385,7 +433,9 @@ public class IiConverter {
 
     /**
      * converts to Arm Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToArmIi(Long id) {
@@ -397,7 +447,9 @@ public class IiConverter {
 
     /**
      * converts to StratumGroup Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToStratumGroupIi(Long id) {
@@ -409,7 +461,9 @@ public class IiConverter {
 
     /**
      * converts to StudyOverallStatus Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToStudyOverallStatusIi(Long id) {
@@ -421,7 +475,9 @@ public class IiConverter {
 
     /**
      * converts to Activity Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToActivityIi(Long id) {
@@ -433,7 +489,9 @@ public class IiConverter {
 
     /**
      * converts to StudyResourcing Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToStudyResourcingIi(Long id) {
@@ -445,7 +503,9 @@ public class IiConverter {
 
     /**
      * converts to Document Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToDocumentIi(Long id) {
@@ -457,7 +517,9 @@ public class IiConverter {
 
     /**
      * converts to Po Person Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoPersonIi(String id) {
@@ -469,7 +531,9 @@ public class IiConverter {
     
     /**
      * converts to Po Org Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoOrganizationIi(String id) {
@@ -481,7 +545,9 @@ public class IiConverter {
 
     /**
      * converts to Po Org Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToIdentifiedEntityIi(String id) {
@@ -493,7 +559,9 @@ public class IiConverter {
     
     /**
      * converts to Identified PO Org Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToIdentifiedOrgEntityIi(String id) {
@@ -504,7 +572,9 @@ public class IiConverter {
     
     /**
      * converts to Identified PO Person Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToIdentifiedPersonEntityIi(String id) {
@@ -515,7 +585,9 @@ public class IiConverter {
     
     /**
      * converts to Po Org contact  Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoOrganizationalContactIi(String id) {
@@ -527,7 +599,9 @@ public class IiConverter {
     
     /**
      * converts to Po crs contact  Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoClinicalResearchStaffIi(String id) {
@@ -539,7 +613,9 @@ public class IiConverter {
 
     /**
      * converts to Po crs contact  Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoHealtcareProviderIi(String id) {
@@ -551,7 +627,9 @@ public class IiConverter {
 
     /**
      * converts to Po crs contact  Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoHealthCareFacilityIi(String id) {
@@ -563,7 +641,9 @@ public class IiConverter {
 
     /**
      * converts to Po Research Organization Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoResearchOrganizationIi(String id) {
@@ -575,7 +655,9 @@ public class IiConverter {
     
     /**
      * converts to Po crs contact  Ii Ii.
+     * 
      * @param id id
+     * 
      * @return Ii
      */
     public static Ii converToPoOversightCommitteeIi(String id) {
@@ -598,5 +680,144 @@ public class IiConverter {
         ii.setRoot(STUDY_RELATIONSHIP_ROOT);
         return ii;
     }
-
+    
+    /**
+     * Conver to study contact ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyContactIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_CONTACT_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_CONTACT_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to study participation contact ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyParticipationContactIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_PARTICIPATION_CONTACT_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_PARTICIPATION_CONTACT_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to study participation ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyParticipationIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_PARTICIPATION_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_PARTICIPATION_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to study recruitment status ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyRecruitmentStatusIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_RECRUITMENT_STATUS_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_RECRUITMENT_STATUS_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to regulatory authority ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToRegulatoryAuthorityIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(REGULATORY_AUTHORITY_IDENTIFIER_NAME);
+        ii.setRoot(REGULATORY_AUTHORITY_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to study disease ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyDiseaseIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_DISEASE_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_DISEASE_ROOT);
+        return ii;
+    }
+    
+    /**
+     * converts to Document Ii.
+     * 
+     * @param id id
+     * 
+     * @return Ii
+     */
+    public static Ii converToDocumentWorkFlowStatusIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(DOCUMENT_WORKFLOW_STATUS_IDENTIFIER_NAME);
+        ii.setRoot(DOCUMENT_WORKFLOW_STATUS_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to study site accural status ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudySiteAccuralStatusIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_SITE_ACCURAL_STATUS_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to study on hold ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyOnHoldIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_ONHOLD_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_ONHOLD_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to planned activity ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToPlannedActivityIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(PLANNED_ACTIVITY_IDENTIFIER_NAME);
+        ii.setRoot(PLANNED_ACTIVITY_ROOT);
+        return ii;
+    }
 }

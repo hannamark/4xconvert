@@ -132,11 +132,13 @@ public class PlannedActivityConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     PlannedActivityDTO dto = new PlannedActivityDTO();
-    dto.setIdentifier(IiConverter.convertToIi((Long) null));
+    dto.setIdentifier(IiConverter.converToActivityIi((Long) null));
     dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
     dto.setLeadProductIndicator(BlConverter.convertToBl(Boolean.TRUE));
     dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DIETARY_SUPPLEMENT));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
+    assertEquals(dto.getIdentifier().getRoot(),"2.16.840.1.113883.3.26.4.3.6");
+    
     PlannedActivityConverter sg = new PlannedActivityConverter();
     PlannedActivity bo = sg.convertFromDtoToDomain(dto);
     assertPlannedActivityConverter(bo, dto);

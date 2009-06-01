@@ -129,11 +129,12 @@ public class StudyParticipationConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudyParticipationDTO dto = new StudyParticipationDTO();
-    dto.setIdentifier(IiConverter.convertToIi((Long) null));
+    dto.setIdentifier(IiConverter.converToStudyParticipationIi((Long) null));
     dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Ecog1"));
     dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+    assertEquals(dto.getIdentifier().getIdentifierName(),"Study Participation identifier");
     StudyParticipationConverter sg = new StudyParticipationConverter();
     StudyParticipation bo = sg.convertFromDtoToDomain(dto);
     assertStudyParticipationConverter(bo, dto);

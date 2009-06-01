@@ -104,7 +104,7 @@ public class StudyDiseaseConverter extends AbstractConverter<StudyDiseaseDTO, St
     public StudyDiseaseDTO convertFromDomainToDto(StudyDisease bo) throws PAException {
         StudyDiseaseDTO dto = new StudyDiseaseDTO();
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease().getId()));
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToStudyDiseaseIi(bo.getId()));
         dto.setLeadDiseaseIndicator(BlConverter.convertToBl(bo.getLeadDiseaseIndicator()));
         dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;

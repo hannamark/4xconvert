@@ -129,13 +129,15 @@ public class StudySiteAccrualStatusConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyParticipation sp = (StudyParticipation) sess.load(StudyParticipation.class, TestSchema.studyParticipationIds.get(0));
     StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-    dto.setIdentifier(IiConverter.convertToIi((Long) null));
+    dto.setIdentifier(IiConverter.converToStudySiteAccuralStatusIi((Long) null));
     dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
     dto.setStatusDate(TsConverter.convertToTs(new java.sql.Timestamp((new java.util.Date()).getTime())));
     dto.setStudyParticipationIi(IiConverter.convertToIi(sp.getId()));
-
+    assertEquals(dto.getIdentifier().getRoot(),"2.16.840.1.113883.3.26.4.5.4");
+    
     StudySiteAccrualStatusConverter sg = new StudySiteAccrualStatusConverter();
     StudySiteAccrualStatus bo = sg.convertFromDtoToDomain(dto);
     assertStudySiteAccrualStatusConverter(bo, dto);
+    
   }
 }

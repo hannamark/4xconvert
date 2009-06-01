@@ -129,11 +129,12 @@ public class DocumentWorkflowStatusConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
-    dto.setIdentifier(IiConverter.convertToIi((Long) null));
+    dto.setIdentifier(IiConverter.converToDocumentWorkFlowStatusIi((Long) null));
     dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
     dto.setCommentText(StConverter.convertToSt("Common text"));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
-
+    assertEquals(dto.getIdentifier().getRoot(),"2.16.840.1.113883.3.26.4.3.9");
+    
     DocumentWorkflowStatusConverter sg = new DocumentWorkflowStatusConverter();
     DocumentWorkflowStatus bo = sg.convertFromDtoToDomain(dto);
     assertDocumentWorkflowStatusConverter(bo, dto);

@@ -104,7 +104,7 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
     @Override
     public DocumentWorkflowStatusDTO convertFromDomainToDto(DocumentWorkflowStatus dws) {
         DocumentWorkflowStatusDTO dwsDTO = new DocumentWorkflowStatusDTO();
-        dwsDTO.setIdentifier(IiConverter.convertToIi(dws.getId()));
+        dwsDTO.setIdentifier(IiConverter.converToDocumentWorkFlowStatusIi(dws.getId()));
         dwsDTO.setCommentText(StConverter.convertToSt(dws.getCommentText()));
         dwsDTO.setStatusCode(CdConverter.convertToCd(dws.getStatusCode()));
         dwsDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(dws.getStudyProtocol().getId()));

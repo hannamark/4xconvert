@@ -113,7 +113,7 @@ public class StudySiteAccrualStatusConverter {
     public static StudySiteAccrualStatusDTO convertFromDomainToDTO(
             StudySiteAccrualStatus bo) throws PAException {
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.converToStudySiteAccuralStatusIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
         dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
