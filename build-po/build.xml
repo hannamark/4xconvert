@@ -295,8 +295,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     validate:pre:build,
     clean,
     init,
-    build:po, 
-  	build:po-grid
+    build:po,
+    build:po-grid
     "/>
 
   <!-- First Maven Target -->
@@ -485,7 +485,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <!-- Creates the installer distribution used by automated or manual remote installations -->
   <target name="dist:installer" depends="dist:installer:prep">
     <delete file="${dist.dir}/${po-ear.install.zip.file}"/>
-  	<delete file="${dist.dir}/${po-grid.install.zip.file}"/>
+    <delete file="${dist.dir}/${po-grid.install.zip.file}"/>
     <!-- Set environment name to external -->
     <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
     <obfuscate-properties-file

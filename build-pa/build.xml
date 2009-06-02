@@ -3,7 +3,7 @@
 $Id: build.xml 4753 2008-05-15 18:24:16Z saksass $
 $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 -->
-<project name="build-pa" default="build:all" basedir="." 
+<project name="build-pa" default="build:all" basedir="."
     xmlns:ivy="antlib:org.apache.ivy.ant"
     xmlns:cs="antlib:com.puppycrawl.tools.checkstyle"
     >
@@ -26,10 +26,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property file="${properties.file}" />
     <!-- Set application.base.path based on platform -->
     <condition property="application.base.path" value="${application.base.path.linux}">
-        <or>            
-            <os family="unix" />    
-            <os family="mac" />     
-        </or>           
+        <or>
+            <os family="unix" />
+            <os family="mac" />
+        </or>
     </condition>
 
     <condition property="application.base.path" value="${application.base.path.windows}">
@@ -72,7 +72,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     -->
     <property name="db-install.src.dir" location="${software.dir}/pa/dbscripts/db-install"/>
     <property name="db-upgrade.src.dir" location="${software.dir}/pa/dbscripts/db-upgrade"/>
-    
+
     <!-- Properties that relate to how to call build targets from sub-projects-->
     <!-- Working directory passed to Ant tasks -->
     <property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
@@ -89,7 +89,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="reg-web.build.file" value="build.xml"/>
     <property name="viewer-services.build.file" value="build.xml"/>
     <property name="viewer-web.build.file" value="build.xml"/>
-    
+
     <!-- The target name that should be called from the sub-project build file -->
     <property name="pa-clean.build.target" value="clean"/>
     <property name="viewer-clean.build.target" value="pre-clean"/>
@@ -100,7 +100,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="reg-web.build.target" value="package-notest"/>
     <property name="viewer-services.build.target" value="jar-notest"/>
     <property name="viewer-web.build.target" value="war-notest"/>
-    
+
     <!-- Distribution Structure properties, used to copy files into the distribution area.
             Use project.propertie relative dir names becasue they are used by install also-->
     <property name="dist.exploded.dir" location="${dist.dir}/exploded" />
@@ -125,7 +125,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-grid.build.target" value="clean:deployJBoss"/>
     <property name="pa-grid.artifact.dir" value="${pa-grid.base.dir}/target" />
     <property name="pa-grid.dist.dir" value="${dist.exploded.dir}/${pa-grid.dist.relative.dir}"/>
-    
+
     <!-- Selenium settings -->
     <property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
     <property name="selenium.browser" value="*firefox"/>
@@ -145,7 +145,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
     <property name="install.target" value="install"/>
     <property name="upgrade.target" value="upgrade"/>
-    
+
     <!-- Where grand stores it's outputed pdf reports of build files -->
     <property name="grand.rpt.dir" value="${common.dir}/grand"/>
 
@@ -198,7 +198,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Includes- include BDA marcos -->
     <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
 
-    <!-- Start logging --> 
+    <!-- Start logging -->
     <mkdir dir="${log.dir}" />
     <tstamp>
         <format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
@@ -212,7 +212,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="database.driver" value="org.postgresql.Driver"/>
             <property name="db-upgrade.list.file" value="${db-upgrade.postgresql.list.file}"/>
             <property name="db-upgrade.conf.file" value="${db-upgrade.postgresql.conf.file}"/>
-        </case> 
+        </case>
         <default>
             <fail message="Invalid database type ${database.type}"/>
         </default>
@@ -233,7 +233,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <delete dir="${temp.dir}"/>
         <delete dir="${pa-grid.artifact.dir}"/>
     </target>
-    
+
     <macrodef name="jboss-install-binaries2" description="Added params to support different types of installations, should be pulled up into BDA-utils">
         <attribute name="application.base.path" default="${application.base.path}"/>
         <attribute name="jboss.binaries.file" default="${tools.dir}/${jboss.binaries.file}" />
@@ -247,7 +247,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 regexp=".*.zip"
                 select="true"
                 />
-            <var name="jboss.file.is.jar" unset="true"/>                
+            <var name="jboss.file.is.jar" unset="true"/>
             <propertyregex property="jboss.file.is.jar"
                 input="@{jboss.binaries.file}"
                 regexp=".*.jar"
@@ -270,27 +270,27 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </if>
 
             <!-- make sure default server is renamed if applicable -->
-            <if>            
-                <not>                   
+            <if>
+                <not>
                     <equals arg1="@{jboss.server.name}" arg2="default"/>
-                </not>                  
-                <then>                  
+                </not>
+                <then>
                     <move todir="@{jboss.home}/server/@{jboss.server.name}">
                         <fileset dir="@{jboss.home}/server/default"/>
-                    </move>                         
-                </then>                 
-            </if>           
+                    </move>
+                </then>
+            </if>
 
-            <if>            
-                <os family="unix"/>     
-                <then>                  
-                    <chmod dir="@{jboss.home}/bin" perm="ugo+rx" 
-                        includes="**/*.sh"/>                    
-                </then>                 
-            </if>           
+            <if>
+                <os family="unix"/>
+                <then>
+                    <chmod dir="@{jboss.home}/bin" perm="ugo+rx"
+                        includes="**/*.sh"/>
+                </then>
+            </if>
         </sequential>
     </macrodef>
-    
+
     <target name="init">
         <mkdir dir="${target.dir}"/>
         <mkdir dir="${dist.dir}"/>
@@ -325,13 +325,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                     <then>
                         <echo message="LOCAL_JBOSS_HOME not found downloading."/>
                         <antcall target="dist:tools:retrieve:jboss"/>
-                        <jboss-install-binaries2 
+                        <jboss-install-binaries2
                             application.base.path="${local.jboss.home}"
-                            jboss.server.name="${jboss.server.name}" 
-                            jems.install.option="ejb3" 
+                            jboss.server.name="${jboss.server.name}"
+                            jems.install.option="ejb3"
                             jboss.binaries.file="${jboss.dest.file}"
                             jboss.home="${local.jboss.home}"
-                         />                        
+                         />
                     </then>
                     <else>
                         <echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
@@ -340,7 +340,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 </if>
             </else>
         </if>
-    	<echoproperties prefix="env"/>
+      <echoproperties prefix="env"/>
     </target>
 
     <target name="ivy:clean" description="Clean">
@@ -359,7 +359,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
         depends="
-    	validate:pre:build,
+      validate:pre:build,
         clean,
         init,
         build:pa-ear,
@@ -372,7 +372,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${pa-ear.base.dir}" >
             <property name="exclude.viewer" value="${exclude.viewer}"/>
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
-            <property name="jboss.port" value="${jboss.server.port}"/> 
+            <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
@@ -392,7 +392,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            
+
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
         </ant>
@@ -402,7 +402,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
             dir="${pa-web.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
-            <property name="jboss.port" value="${jboss.server.port}"/> 
+            <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
@@ -422,7 +422,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            
+
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-web.build.target}"/>
         </ant>
@@ -432,7 +432,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
             dir="${reg-web.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
-            <property name="jboss.port" value="${jboss.server.port}"/> 
+            <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
@@ -452,7 +452,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            
+
             <target name="${pa-clean.build.target}"/>
             <target name="${reg-web.build.target}"/>
         </ant>
@@ -462,7 +462,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             dir="${pa-ejb.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
-            <property name="jboss.port" value="${jboss.server.port}"/> 
+            <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
             <property name="db.username" value="${database.user}"/>
@@ -482,12 +482,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            
+
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
         </ant>
     </target>
-    
+
     <target name="build:viewer-services" depends="init" unless="exclude.viewer">
         <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
             dir="${viewer-services.base.dir}" >
@@ -507,7 +507,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <target name="${viewer-web.build.target}"/>
         </ant>
     </target>
-    
+
     <!-- Build pa-grid sub-project produces project level artifact -->
     <target name="build:pa-grid" depends="init" unless="exclude.pa-grid">
         <fail unless="jboss.server.hostname"/>
@@ -531,7 +531,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <zipfileset dir="${pa-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}/" />
         </zip>
         <delete dir="${pa-grid.artifact.dir}/server" />
-    </target>   
+    </target>
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="validate:pre:build">
         <validate-pre-build
@@ -585,7 +585,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </delete>
         <gui-installer-prep
             />
-        <ant inheritAll="false" inheritRefs="false" 
+        <ant inheritAll="false" inheritRefs="false"
             antfile="install.xml"
             target="build:installer"
             dir="${build.dir}/gui-installer"
@@ -601,18 +601,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             db-upgrade.* propertes are stored in project.properties because they are used in both
             install.xml and build.xml
         -->
-        
+
         <!-- Copy pa database scripts -->
         <copy todir="${db-install.dist.dir}" overwrite="true">
             <fileset dir="${db-install.src.dir}">
                 <include name="**/*"/>
             </fileset>
-        </copy> 
+        </copy>
         <copy todir="${db-upgrade.dist.dir}" overwrite="true">
             <fileset dir="${db-upgrade.src.dir}">
                 <include name="**/*"/>
             </fileset>
-        </copy> 
+        </copy>
 
     <dist-prep />
 
@@ -646,20 +646,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <fileset dir="${db-install.src.dir}">
                 <include name="**/*"/>
             </fileset>
-        </copy> 
-        
+        </copy>
+
         <!-- Copy pa database scripts -->
         <copy todir="${db-upgrade.dist.dir}" overwrite="true">
             <fileset dir="${db-upgrade.src.dir}">
                 <include name="**/*"/>
             </fileset>
-        </copy> 
+        </copy>
 
     <dist-prep
         copy.tools.flag="N"
         default.target="upgrade"
         />
-        
+
         <!-- This copies container jars which for deployment to the <server>/lib directory -->
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
             <fileset dir="${lib.dir}/pa-ear/container" />
@@ -670,10 +670,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="dist:upgrader" depends="dist:upgrader:prep">
         <delete file="${dist.dir}/${pa-ear.upgrade.zip.file}"/>
         <delete file="${dist.dir}/${pa-grid.upgrade.zip.file}"/>
-        
+
         <!-- Set environment name to external -->
         <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
-    
+
         <obfuscate-properties-file
             properties.file="${dist.exploded.dir}/install.properties"
             required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
@@ -686,14 +686,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </fileset>
         </copy>
         <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
-        
+
         <zip destfile="${dist.dir}/${pa-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}"/>
         <zip destfile="${dist.dir}/${pa-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
     </target>
 
 
     <target name="deploy:local:install" depends="build:all,local:install" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" />
-    
+
     <target name="local:install" depends="dist:installer:prep">
         <!--
         * Requires a database installation.
@@ -706,7 +706,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <deploy-local
                 target.name="${install.target}"
                 />
-    </target>   
+    </target>
 
     <target name="deploy:local:upgrade" depends="build:all,local:upgrade" description="Upgrades the application on the local machine, used for developer desktops and ci environments" />
 
@@ -720,7 +720,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         -->
         <deploy-local
             target.name="${upgrade.target}"
-            />  
+            />
     </target>
 
     <!-- Install the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into -->
@@ -749,14 +749,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
          remote.directory.property.name="pagrid.ssh.dir.temp"
          dist.file="${pa-grid.upgrade.zip.file}"
          />
-        <remote-ssh 
-            remoteSshUser="${pagrid.ssh.server.username}" 
-            remoteSshHost="${pagrid.ssh.server.hostname}" 
-            remoteSshPort="${pagrid.ssh.port}" 
-            remoteSshKeyfile="${pagrid.ssh.key.file}" 
+        <remote-ssh
+            remoteSshUser="${pagrid.ssh.server.username}"
+            remoteSshHost="${pagrid.ssh.server.hostname}"
+            remoteSshPort="${pagrid.ssh.port}"
+            remoteSshKeyfile="${pagrid.ssh.key.file}"
             remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${install.target}" />
     </target>
-    
+
     <!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
     <target name="deploy:remote:upgrade"
         depends="
@@ -765,7 +765,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         remote:upgrade
         ">
     </target>
-    
+
       <macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
         <attribute name="ssh.user" default="${ssh.server.username}" />
         <attribute name="ssh.host" default="${ssh.server.hostname}" />
@@ -803,7 +803,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
         </sequential>
       </macrodef>
-    
+
     <target name="remote:upgrade" depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid">
     </target>
 
@@ -890,14 +890,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             target="test-dynamic-analysis"
             dir="${pa-web.base.dir}" >
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
-            <property name="jboss.port" value="${jboss.server.port}"/> 
-            <property name="hibernate.dialect" value="${database.dialect}"/> 
-            <property name="db.username" value="${database.user}"/> 
-            <property name="db.password" value="${database.password}"/> 
-            <property name="jdbc.driver" value="${database.dirver}"/> 
-            <property name="jdbc.url" value="${database.url}"/> 
-            <property name="test.schema.showsql" value="false"/> 
-            <property name="test.java.naming.provider" value="localhost"/> 
+            <property name="jboss.port" value="${jboss.server.port}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.dirver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="test.schema.showsql" value="false"/>
+            <property name="test.java.naming.provider" value="localhost"/>
         </ant>
     </target>
     <target name="test:reg-web" depends="init">
@@ -905,11 +905,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             target="test-dynamic-analysis"
             dir="${reg-web.base.dir}" >
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
-            <property name="hibernate.dialect" value="${database.dialect}"/> 
-            <property name="db.username" value="${database.user}"/> 
-            <property name="db.password" value="${database.password}"/> 
-            <property name="jdbc.driver" value="${database.dirver}"/> 
-            <property name="jdbc.url" value="${database.url}"/> 
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.dirver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
         </ant>
     </target>
     <target name="test:pa-ejb" depends="init">
@@ -917,14 +917,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             target="test-dynamic-analysis"
             dir="${pa-ejb.base.dir}" >
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
-            <property name="jboss.port" value="${jboss.server.port}"/> 
-            <property name="hibernate.dialect" value="${database.dialect}"/> 
-            <property name="db.username" value="${database.user}"/> 
-            <property name="db.password" value="${database.password}"/> 
-            <property name="jdbc.driver" value="${database.dirver}"/> 
-            <property name="jdbc.url" value="${database.url}"/> 
-            <property name="test.schema.showsql" value="false"/> 
-            <property name="test.java.naming.provider" value="localhost"/> 
+            <property name="jboss.port" value="${jboss.server.port}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.dirver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="test.schema.showsql" value="false"/>
+            <property name="test.java.naming.provider" value="localhost"/>
         </ant>
     </target>
 
@@ -983,7 +983,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <fileset dir="${lib.dir}/test-selenium">
                 <include name="*.jar" />
             </fileset>
-        </path> 
+        </path>
     </target>
 
     <target name="test:seleniumrc:stop">
@@ -1023,7 +1023,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <arg line=" &quot;${selenium.report.dir}/${selenium.report.file}&quot;"/>
             <arg line=" -timeout 30"/>
             <arg line=" -log ${temp.dir}/selenium-debug.log"/>
-        </java> 
+        </java>
         -->
         <osfamily property="os.family"/>
         <if>
@@ -1036,7 +1036,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </then>
         </if>
         <taskdef resource="selenium-ant.properties"  classpathref="project.test.selenium.classpath"/>
-        <selenese 
+        <selenese
             suite="${selenium.test.suite}"
             browser="${selenium.browser}"
             results="${selenium.report.dir}/${selenium.report.file}"
@@ -1110,7 +1110,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </for>
     </target>
     <target name="ivy:module:add2repo">
-        <!-- you would want to use this value instead and you can get rid of the mkdir below 
+        <!-- you would want to use this value instead and you can get rid of the mkdir below
         <property name="ivy-repo.base.dir" location="${software.dir}/../../ivy-repo"/>
         -->
         <mkdir dir="${user.home}/tmp"/>
@@ -1166,7 +1166,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             />
     </target>
     <target name="report:erd">
-        <generate-erd   
+        <generate-erd
             schemaspy.jar="schemaspy-3.1.1.jar"
             database.driver.jar="mysql-connector-java-5.0.5.jar"
             />
@@ -1178,8 +1178,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <include name="**/*.jar" />
             </fileset>
         </path>
-        <generate-uml   
-            uml.dir="${uml.dir}"    
+        <generate-uml
+            uml.dir="${uml.dir}"
             src.java.dir="${bda-blueprints-webapp.base.dir}/src/java"
             uml.source.path="bda-blueprints.classpath.ref"
             />
