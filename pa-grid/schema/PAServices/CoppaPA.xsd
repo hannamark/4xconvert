@@ -209,15 +209,7 @@
     <xs:element name="PlannedActivity">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyProtocolType">
-                    <xs:sequence>
-                        <xs:element name="categoryCode" type="ISO:CD" />
-                        <xs:element name="interventionIdentifier" type="ISO:II" />
-                        <xs:element name="leadProductIndicator" type="ISO:BL" />
-                        <xs:element name="subcategoryCode" type="ISO:CD" />
-                        <xs:element name="textDescription" type="ISO:ST" />
-                    </xs:sequence>
-                </xs:extension>
+                <xs:extension base="COPPA-PA:PlannedActivityType"/>
             </xs:complexContent>
         </xs:complexType>
     </xs:element>

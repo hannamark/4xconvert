@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
@@ -214,6 +215,13 @@ public interface ServiceLocator {
      * @throws NamingException if unable to lookup.
      */
     StudyRelationshipServiceRemote getStudyRelationshipService() throws NamingException;
+
+    /**
+     * Gets the PlannedActivity service.
+     * @return the remote PlannedActivity service
+     * @throws NamingException if unable to lookup.
+     */
+    PlannedActivityServiceRemote getPlannedActivityService() throws NamingException;
 
     /**
     * Gets a base generic service.

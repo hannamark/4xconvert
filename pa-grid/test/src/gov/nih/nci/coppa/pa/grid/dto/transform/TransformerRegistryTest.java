@@ -7,6 +7,8 @@ import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.ArmTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentWorkflowStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedActivityTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedEligibilityCriterionTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyContactTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyDiseaseTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyIndldeTransformer;
@@ -25,6 +27,8 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.TransformerRegistry;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -50,7 +54,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(17, tMap.size());
+        assertEquals(19, tMap.size());
         tMap.clear();
     }
 
@@ -108,6 +112,12 @@ public class TransformerRegistryTest {
         //#17
         trans = TransformerRegistry.INSTANCE.getTransformer(DocumentWorkflowStatusDTO.class);
         assertTrue(trans instanceof DocumentWorkflowStatusTransformer);
+        //#18
+        trans = TransformerRegistry.INSTANCE.getTransformer(PlannedActivityDTO.class);
+        assertTrue(trans instanceof PlannedActivityTransformer);
+        //#19
+        trans = TransformerRegistry.INSTANCE.getTransformer(PlannedEligibilityCriterionDTO.class);
+        assertTrue(trans instanceof PlannedEligibilityCriterionTransformer);
     }
 
     @Test (expected=RuntimeException.class)

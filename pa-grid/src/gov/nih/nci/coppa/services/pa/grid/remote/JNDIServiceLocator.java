@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
@@ -180,6 +182,8 @@ public final class JNDIServiceLocator implements ServiceLocator {
                     getInstance().getClass().getMethod("getStudyRelationshipService"));
             values.put(DocumentWorkflowStatusDTO.class,
                     getInstance().getClass().getMethod("getDocumentWorkflowStatusService"));
+            values.put(PlannedActivityDTO.class,
+                    getInstance().getClass().getMethod("getPlannedActivityService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -375,6 +379,16 @@ public final class JNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    public PlannedActivityServiceRemote getPlannedActivityService()
+    throws NamingException {
+        PlannedActivityServiceRemote result =
+            (PlannedActivityServiceRemote) lookup("pa/PlannedActivityServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public <Z extends BaseDTO> BasePaService<Z> getBasePaService(Class<Z> type)
             throws NamingException {
         Method serviceMethod = values.get(type);
@@ -410,8 +424,4 @@ public final class JNDIServiceLocator implements ServiceLocator {
         }
         return service;
     }
-
-
-
-
 }
