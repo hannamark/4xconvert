@@ -52,7 +52,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="temp.dir" location="${target.dir}/temp" />
     <property name="reports.dir" location="${target.dir}/reports" />
     <property name="bda-utils.dir" location="${target.dir}/bda-utils" />
-    <property name="bda-download.dir" location="${target.dir}/bda-download" />
+    <property name="bda-download.dir" location="${common.dir}/bda-download" />
     <property name="log.dir" location="${target.dir}/logs" />
     <property name="dist.dir" location="${target.dir}/dist" />
     <property name="download.dir" location="${target.dir}/download" />
@@ -64,8 +64,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Ivy Related props -->
     <property name="ivy.bda.definition.file" value="ivy-bda.xml" />
     <property name="ivy.bda.settings.file" value="ivy-bda-settings.xml" />
-    <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
-    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
 
     <!-- Used by dist:*:prep to determin list of files to use for incremental build process.
         Directory and files must be in svn to work.
@@ -155,12 +153,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-web.src.dir" value="${pa-web.base.dir}/src/webapp"/>
     <property name="reg-web.src.dir" value="${reg-web.base.dir}/src/webapp"/>
 
-    <!-- retrive ivy files then retrieve bda files and librarires -->
+    <!-- retrive ivy files then retrieve bda files and librarires
     <mkdir dir="${bda-download.dir}" />
     <property name="bda-download.file" value="bda-ivy-build.xml"/>
     <property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}"/>
     <get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}"/>
-
+    -->
     <ant inheritAll="false" inheritRefs="false"
         antfile="${bda-download.file}"
         target="retrieve-bda"
@@ -181,8 +179,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </path>
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
-            <include name="${ivy.file}" />
-            <include name="${ivy-core.file}" />
+          <include name="*.jar" />
         </fileset>
     </path>
 
