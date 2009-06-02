@@ -239,15 +239,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <mkdir dir="${po-grid.dist.dir}"/>
     <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
-    <!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
-    <available file="${jboss.home}/lib/commons-httpclient.jar" property="rt.jboss.exists"/>
-    <if>
-      <isset property="rt.jboss.exists"/>
-      <then>
-        <property name="local.jboss.home" location="${jboss.home}"/>
-        <echo message="JBOSS_HOME exists ${jboss.home}"/>
-      </then>
-      <else>
+
         <property name="local.jboss.home" location="${pt.dir}/${jboss.binaries.relative.dir}"/>
         <available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
         <echo message="JBOSS_HOME does not exist checking for LOCAL_JBOSS_HOME ${local.jboss.home}"/>
@@ -266,8 +258,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
           </else>
         </if>
-      </else>
-    </if>
+
     <echoproperties prefix="env"/>
   </target>
 
