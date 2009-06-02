@@ -24,7 +24,7 @@ import java.util.Map;
 public class CurateOrganizationTest extends AbstractPoWebTest {
 
 
-    private static final int DEFAULT_TEXT_COL_LENGTH = 100;
+    private static final int DEFAULT_TEXT_COL_LENGTH = 160;
 
     private final Map<Ii, OrganizationDTO> catalogOrgs = new HashMap<Ii, OrganizationDTO>();
     private OrganizationEntityServiceRemote orgService;

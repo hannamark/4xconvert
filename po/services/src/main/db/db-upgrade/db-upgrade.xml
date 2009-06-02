@@ -12,4 +12,8 @@
 	   <comment>Upgrade for PO-787 - ctep oids</comment>
 	   <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1/ctepOids.sql"/>
     </changeSet>
+	<changeSet id="PO-933" author="smatyas">
+	   <comment>Upgrade for PO-933 - setting organization.name and organizationcr.name lengths to 160</comment>
+	   <sqlFile path="${db-upgrade.run.dir}/postgresql/1.3/PO-933.sql"/>
+    </changeSet>
 </databaseChangeLog>

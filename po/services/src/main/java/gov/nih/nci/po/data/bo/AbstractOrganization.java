@@ -124,7 +124,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @SuppressWarnings({ "PMD.UnusedPrivateMethod" })
 public abstract class AbstractOrganization implements PersistentObject, Contactable {
     private static final long serialVersionUID = 1L;
-    private static final int DEFAULT_TEXT_COL_LENGTH = 100;
+    private static final int DEFAULT_TEXT_COL_LENGTH = 160;
     private Long id;
     private String name;
     private Address postalAddress;

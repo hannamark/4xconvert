@@ -103,12 +103,15 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.junit.After;
@@ -234,14 +237,44 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     public void testCreateOrgWithInvalidInput() throws Exception {
         orgServiceBean.create(new Organization());
     }
+    
+    /**
+     * Test creating a Org with a name that exceed maximum limit.
+     */
+    @Test
+    public void testCreateOrgWithNameTooLong() {
+        Country country = new Country("testorg", "996", "IJ", "IJI");
+        PoHibernateUtil.getCurrentSession().save(country);
 
+        Organization org = new Organization();
+        //161 char long name string
+        String name = StringUtils.repeat("1", 161);
+        org.setName(name);
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        org.setPostalAddress(mailingAddress);
+        org.setStatusCode(EntityStatus.NULLIFIED);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
+
+        try {
+            long orgId = orgServiceBean.create(org);
+            fail("expected to receive an EntityValidationException on .name property");
+        } catch (EntityValidationException e) {
+            System.out.println(e.getErrors());
+            //ensure an error exists on the name field
+            assertNotNull(e.getErrors().get("name"));
+        }
+    }
+    
+    
     @Test
     public void testCreateOrg() throws EntityValidationException {
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
 
         Organization org = new Organization();
-        org.setName("testOrg");
+        //32 * 5 = 160 chars long
+        org.setName(StringUtils.repeat("testO",32));
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
         org.setStatusCode(EntityStatus.NULLIFIED);
