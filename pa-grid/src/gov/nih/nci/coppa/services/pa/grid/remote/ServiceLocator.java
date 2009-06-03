@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
+import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
@@ -217,13 +218,20 @@ public interface ServiceLocator {
     StudyRelationshipServiceRemote getStudyRelationshipService() throws NamingException;
 
     /**
+     * Gets the Document service.
+     * @return the remote Document service
+     * @throws NamingException if unable to lookup.
+     */
+    DocumentServiceRemote getDocumentService() throws NamingException;
+
+    /**
      * Gets the PlannedActivity service.
      * @return the remote PlannedActivity service
      * @throws NamingException if unable to lookup.
      */
     PlannedActivityServiceRemote getPlannedActivityService() throws NamingException;
 
-    /**
+   /**
     * Gets a base generic service.
     * @param <Z> BasePa DTO type
     * @param type Correlation DTO class

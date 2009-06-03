@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.ArmTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentWorkflowStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedActivityTransformer;
@@ -25,6 +26,7 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyResourcingTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.TransformerRegistry;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -54,7 +56,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(19, tMap.size());
+        assertEquals(20, tMap.size());
         tMap.clear();
     }
 
@@ -118,6 +120,9 @@ public class TransformerRegistryTest {
         //#19
         trans = TransformerRegistry.INSTANCE.getTransformer(PlannedEligibilityCriterionDTO.class);
         assertTrue(trans instanceof PlannedEligibilityCriterionTransformer);
+        //#20
+        trans = TransformerRegistry.INSTANCE.getTransformer(DocumentDTO.class);
+        assertTrue(trans instanceof DocumentTransformer);
     }
 
     @Test (expected=RuntimeException.class)

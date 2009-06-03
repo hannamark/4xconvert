@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
+import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -182,6 +184,8 @@ public final class JNDIServiceLocator implements ServiceLocator {
                     getInstance().getClass().getMethod("getStudyRelationshipService"));
             values.put(DocumentWorkflowStatusDTO.class,
                     getInstance().getClass().getMethod("getDocumentWorkflowStatusService"));
+            values.put(DocumentDTO.class,
+                    getInstance().getClass().getMethod("getDocumentService"));
             values.put(PlannedActivityDTO.class,
                     getInstance().getClass().getMethod("getPlannedActivityService"));
         } catch (NoSuchMethodException e) {
@@ -373,6 +377,16 @@ public final class JNDIServiceLocator implements ServiceLocator {
             throws NamingException {
         DocumentWorkflowStatusServiceRemote result =
             (DocumentWorkflowStatusServiceRemote) lookup("pa/DocumentWorkflowStatusServiceBean/remote");
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DocumentServiceRemote getDocumentService()
+            throws NamingException {
+        DocumentServiceRemote result =
+            (DocumentServiceRemote) lookup("pa/DocumentServiceBean/remote");
         return result;
     }
 
