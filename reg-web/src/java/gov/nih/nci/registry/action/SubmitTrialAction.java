@@ -212,13 +212,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
 
         } catch (Exception e) {
+            TrialValidator.addSessionAttributes(trialDTO);
             if (e != null && e.getMessage() != null) {
-                addActionError(e.getMessage());
+                ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             } else {
                 addActionError("Error occured, please try again");
             }
-            TrialValidator.addSessionAttributes(trialDTO);
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while submitting trial: " + e);
             return ERROR;
         }
