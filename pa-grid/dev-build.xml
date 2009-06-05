@@ -6,11 +6,11 @@
     <!-- file. DO NOT REMOVE ANY TARGETS                                -->
     <!-- ============================================================== -->
 
-	<path id="maven-ant-tasks.classpath" path="tools/lib/maven-ant-tasks-2.0.9.jar" />
-	<typedef 
-		resource="org/apache/maven/artifact/ant/antlib.xml" 
-		uri="urn:maven-artifact-ant" 
-		classpathref="maven-ant-tasks.classpath" />
+    <path id="maven-ant-tasks.classpath" path="tools/lib/maven-ant-tasks-2.0.9.jar" />
+    <typedef 
+        resource="org/apache/maven/artifact/ant/antlib.xml" 
+        uri="urn:maven-artifact-ant" 
+        classpathref="maven-ant-tasks.classpath" />
 
     <!-- ============================================================== -->
     <!-- Place any other properties you will need here                  -->
@@ -18,9 +18,9 @@
     <property file="local.properties" />
     <property name="service.hostname" value="localhost" />
     <property name="service.port" value="8080" />
-	<property name="build.dir" location="build" />
-	<property name="test.build.lib.dir" value="${build.dir}/test/lib" />
-	
+    <property name="build.dir" location="build" />
+    <property name="test.build.lib.dir" value="${build.dir}/test/lib" />
+
     <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory" />
     <property name="java.naming.provider.url.host" value="localhost" />
     <property name="java.naming.provider.url.port" value="1099" />
@@ -57,69 +57,70 @@
     <!-- ============================================================== -->
     <!-- Create any extended Classpaths here                            -->
     <!-- ============================================================== -->
-    <target name="defineExtendedClasspaths">
-		<artifact:pom file="pom.xml" id="pom.file" />
-		<artifact:pom file="tools.pom.xml" id="tools.pom.file" />
-		
-		<artifact:dependencies pomRefId="pom.file"
-				pathId="base.extended.classpath"
-				filesetId="compile.dependency.fileset"
-		        versionsId="compile.dependency.versions" useScope="compile">
-		</artifact:dependencies>
-		<property name="base.extended.classpath.prop" refid="base.extended.classpath"/>
-		<propertyregex property="base.extended.classpath.prop"
-		                  override="true"
-		                  input="${base.extended.classpath.prop}"
-		                  regexp="[:|;]"
-		                  replace="&#10;      "
-		                  casesensitive="false" />
-		<echo level="info">
-			base.extended.classpath is:
-			${base.extended.classpath.prop}
-  	    </echo>
-		<path id="service.build.extended.classpath">
-		</path>
-		<path id="service.run.extended.classpath">
-		</path>
-		<artifact:dependencies pomRefId="pom.file"
-				pathId="test.build.extended.classpath"
-				filesetId="test.dependency.fileset"
-		        versionsId="test.dependency.versions" useScope="test">
-		</artifact:dependencies>
-		<property name="test.build.extended.classpath.prop" refid="test.build.extended.classpath"/>
-		<propertyregex property="test.build.extended.classpath.prop"
-		                  override="true"
-		                  input="${test.build.extended.classpath.prop}"
-		                  regexp="[:|;]"
-		                  replace="&#10;      "
-		                  casesensitive="false" />
-		<echo level="info">
-			test.build.extended.classpath is:
-			${test.build.extended.classpath.prop}
-  	    </echo>		
-		
-		<path id="test.run.extended.classpath">
-		</path>
-		<path id="run.extended.classpath">
-		</path>
+    <target name="defineExtendedClasspaths" unless="base.extended.classpath.prop">
+        <artifact:pom file="pom.xml" id="pom.file" />
+        <artifact:pom file="tools.pom.xml" id="tools.pom.file" />
+        
+        <artifact:dependencies pomRefId="pom.file"
+                pathId="base.extended.classpath"
+                filesetId="compile.dependency.fileset"
+                versionsId="compile.dependency.versions" useScope="compile">
+        </artifact:dependencies>
+        <property name="base.extended.classpath.prop" refid="base.extended.classpath"/>
+        <propertyregex property="base.extended.classpath.prop"
+                          override="true"
+                          input="${base.extended.classpath.prop}"
+                          regexp="[:|;]"
+                          replace="&#10;      "
+                          casesensitive="false" />
+        <echo level="info">
+            base.extended.classpath is:
+            ${base.extended.classpath.prop}
+          </echo>
+        <path id="service.build.extended.classpath">
+        </path>
+        <path id="service.run.extended.classpath">
+        </path>
+        <artifact:dependencies pomRefId="pom.file"
+                pathId="test.build.extended.classpath"
+                filesetId="test.dependency.fileset"
+                versionsId="test.dependency.versions" useScope="test">
+        </artifact:dependencies>
+        <property name="test.build.extended.classpath.prop" refid="test.build.extended.classpath"/>
+        <propertyregex property="test.build.extended.classpath.prop"
+                          override="true"
+                          input="${test.build.extended.classpath.prop}"
+                          regexp="[:|;]"
+                          replace="&#10;      "
+                          casesensitive="false" />
+        <echo level="info">
+            test.build.extended.classpath is:
+            ${test.build.extended.classpath.prop}
+          </echo>        
+        
+        <path id="test.run.extended.classpath">
+        </path>
+        <path id="run.extended.classpath">
+        </path>
 
-		<artifact:dependencies pomRefId="tools.pom.file"
-				pathId="tasks.run.extended.classpath"
-				filesetId="provided.dependency.fileset"
-		        versionsId="provided.dependency.versions" useScope="compile">
-		</artifact:dependencies>
-		<property name="tasks.run.extended.classpath.prop" refid="tasks.run.extended.classpath"/>
-		<propertyregex property="tasks.run.extended.classpath.prop"
-		                  override="true"
-		                  input="${tasks.run.extended.classpath.prop}"
-		                  regexp="[:|;]"
-		                  replace="&#10;      "
-		                  casesensitive="false" />
-		<echo level="info">
-			tasks.run.extended.classpath is:
-			${tasks.run.extended.classpath.prop}
-  	    </echo>			
+        <artifact:dependencies pomRefId="tools.pom.file"
+                pathId="tasks.run.extended.classpath"
+                filesetId="provided.dependency.fileset"
+                versionsId="provided.dependency.versions" useScope="compile">
+        </artifact:dependencies>
+        <property name="tasks.run.extended.classpath.prop" refid="tasks.run.extended.classpath"/>
+        <propertyregex property="tasks.run.extended.classpath.prop"
+                          override="true"
+                          input="${tasks.run.extended.classpath.prop}"
+                          regexp="[:|;]"
+                          replace="&#10;      "
+                          casesensitive="false" />
+        <echo level="info">
+            tasks.run.extended.classpath is:
+            ${tasks.run.extended.classpath.prop}
+          </echo>            
     </target>
+
 
 
     <!-- ============================================================== -->
@@ -137,16 +138,16 @@
     <!-- Post Init Build Target                                         -->
     <!-- ============================================================== -->
     <target name="postInit">
-		<copy todir="${build.lib.dir}">
-		  <fileset refid="compile.dependency.fileset" />
-		  <!-- This mapper strips off all leading directory information -->
-		  <mapper type="flatten" />
-		</copy>
-		<copy todir="${test.build.lib.dir}">
-		  <fileset refid="test.dependency.fileset" />
-		  <!-- This mapper strips off all leading directory information -->
-		  <mapper type="flatten" />
-		</copy>    	
+        <copy todir="${build.lib.dir}">
+          <fileset refid="compile.dependency.fileset" />
+          <!-- This mapper strips off all leading directory information -->
+          <mapper type="flatten" />
+        </copy>
+        <copy todir="${test.build.lib.dir}">
+          <fileset refid="test.dependency.fileset" />
+          <!-- This mapper strips off all leading directory information -->
+          <mapper type="flatten" />
+        </copy>
     </target>
 
 
@@ -162,9 +163,9 @@
     <!-- ============================================================== -->
     <target name="postStubs">
         <java classname="com.sun.tools.xjc.XJCFacade" fork="true" failonerror="true">
-			<classpath>
-				<path refid="tasks.run.extended.classpath"/>
-			</classpath>
+            <classpath>
+                <path refid="tasks.run.extended.classpath"/>
+            </classpath>
             <arg value="-xmlschema" />
             <arg file="${basedir}/schema/PAServices/CoppaPA.xsd" />
             <arg file="${basedir}/schema/PAServices/ISO_datatypes_Narrative.xsd" />
@@ -374,6 +375,7 @@
 
         <fail if="junit.failure" message="There were JUnit failures." />
 
+
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
@@ -387,15 +389,15 @@
 
           If you get an error about invalid classpath, run 'ant compile checkstyle' and it should resolve.
       -->
-	<target name="checkstyle" depends="defineClasspaths, -checkstyle" description="Verify coding styles and conventions." />
-    <target name="-checkstyle" description="Verify coding styles and conventions.">
+    <target name="checkstyle" depends="defineClasspaths, -checkstyle" description="Verify coding styles and conventions." />
+    <target name="-checkstyle" description="Hidden to work with Introduce" >
         <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
             <classpath>
-				<path location="${build.dest}" />
-				<path location="${stubs.dest}" />
-				<path location="${basedir}/build/classes" />
-				<path refid="checkstyle.classpath" />
-				<path refid="base.classpath"/>
+                <path location="${build.dest}" />
+                <path location="${stubs.dest}" />
+                <path location="${basedir}/build/classes" />
+                <path refid="checkstyle.classpath" />
+                <path refid="base.classpath"/>
             </classpath>
             <!-- ADD PATHS FOR CHECKING HERE -->
             <fileset dir="src/gov/nih/nci/coppa/services/pa/grid" includes="**/*.java" />

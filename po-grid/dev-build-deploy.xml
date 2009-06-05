@@ -25,6 +25,7 @@
 
     </target>
 
+
     <!-- ============================================================== -->
     <!-- Pre Deploy JBOSS                                               -->
     <!-- ============================================================== -->
@@ -32,8 +33,9 @@
 
     </target>
 
+
     <!-- ============================================================== -->
-    <!-- Post UnDDeploy Tomcat                                              -->
+    <!-- Post UnDeploy Tomcat                                              -->
     <!-- ============================================================== -->
     <target name="postUndeployTomcat">
 
@@ -47,6 +49,7 @@
 
     </target>
 
+
     <!-- ============================================================== -->
     <!-- Post UnDeploy JBOSS                                               -->
     <!-- ============================================================== -->
@@ -57,7 +60,8 @@
     <target name="clean:deployJBoss" depends="clean, deployJBoss" description="Clean then deploy to JBoss"/>
 
     <target name="deploy:jboss:all:quick" depends="all-full,setDeploymentProperties" description="Deploys to JBOSS_HOME (to set the services properties file set the ant command line variable -Dservice.properties.file)">
-        <property name="webapp.deploy.dir" value="${jboss.dir}/server/default/deploy/wsrf.war" />
+
+        <property name="webapp.deploy.dir" value="${jboss.dir}/server/${jboss.serverinstance.name}/deploy/wsrf.war" />
         <property name="webapp.deploy.lib.dir" value="${webapp.deploy.dir}/WEB-INF/lib" />
         <property name="webapp.deploy.schema.dir" value="${webapp.deploy.dir}/share/schema" />
         <property name="webapp.deploy.etc.dir" value="${webapp.deploy.dir}/WEB-INF/etc" />
@@ -76,7 +80,8 @@
     </target>
 
     <target name="deploy:jboss:quick" depends="init,setDeploymentProperties" description="Deploys to JBOSS_HOME (to set the services properties file set the ant command line variable -Dservice.properties.file)">
-        <property name="webapp.deploy.dir" value="${jboss.dir}/server/default/deploy/wsrf.war" />
+
+        <property name="webapp.deploy.dir" value="${jboss.dir}/server/${jboss.serverinstance.name}/deploy/wsrf.war" />
         <property name="webapp.deploy.lib.dir" value="${webapp.deploy.dir}/WEB-INF/lib" />
         <property name="webapp.deploy.schema.dir" value="${webapp.deploy.dir}/share/schema" />
         <property name="webapp.deploy.etc.dir" value="${webapp.deploy.dir}/WEB-INF/etc" />

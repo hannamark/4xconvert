@@ -6,7 +6,8 @@
     <!-- file. DO NOT REMOVE ANY TARGETS                                -->
     <!-- ============================================================== -->
     <property name="jboss.serverinstance.name" value="pagrid"/>
-    <property name="webapp.deploy.dir" value="${jboss.dir}/server/${jboss.serverinstance.name}/deploy/wsrf.war" />
+    <property name="globus.webapp" value="wsrf" />
+    <property name="webapp.deploy.dir" value="${jboss.dir}/server/${jboss.serverinstance.name}/deploy/${globus.webapp}.war" />
 
 
     <!-- ============================================================== -->
@@ -55,6 +56,7 @@
     <target name="postUndeployJBoss">
 
     </target>
+
     <target name="clean:deployJBoss" depends="clean, deployJBoss" description="Clean then deploy to JBoss"/>
 
     <target name="deploy:jboss:all:quick" depends="all-full,setDeploymentProperties" description="Deploys to JBOSS_HOME (to set the services properties file set the ant command line variable -Dservice.properties.file)">
@@ -76,6 +78,7 @@
         <runtarget target="preDeployJBoss" />
         <runtarget target="deployWebApp" />
     </target>
+
     <target name="deploy:jboss:quick" depends="init,setDeploymentProperties" description="Deploys to JBOSS_HOME (to set the services properties file set the ant command line variable -Dservice.properties.file)">
 
         <property name="webapp.deploy.dir" value="${jboss.dir}/server/${jboss.serverinstance.name}/deploy/wsrf.war" />

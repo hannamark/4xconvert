@@ -1,379 +1,379 @@
 <?xml version="1.0"?>
 <project name="Developer Modified Build File" basedir="." xmlns:artifact="urn:maven-artifact-ant">
-	<!-- ============================================================== -->
-	<!-- This file is designed to allow the developer to extend the     -->
-	<!-- build process without having to edit the master build.xml      -->
-	<!-- file. DO NOT REMOVE ANY TARGETS                                -->
-	<!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- This file is designed to allow the developer to extend the     -->
+    <!-- build process without having to edit the master build.xml      -->
+    <!-- file. DO NOT REMOVE ANY TARGETS                                -->
+    <!-- ============================================================== -->
 
-	<path id="maven-ant-tasks.classpath" path="tools/lib/maven-ant-tasks-2.0.9.jar" />
-	<typedef 
-		resource="org/apache/maven/artifact/ant/antlib.xml" 
-		uri="urn:maven-artifact-ant" 
-		classpathref="maven-ant-tasks.classpath" />
+    <path id="maven-ant-tasks.classpath" path="tools/lib/maven-ant-tasks-2.0.9.jar" />
+    <typedef 
+        resource="org/apache/maven/artifact/ant/antlib.xml" 
+        uri="urn:maven-artifact-ant" 
+        classpathref="maven-ant-tasks.classpath" />
 
-	<!-- ============================================================== -->
-	<!-- Place any other properties you will need here                  -->
-	<!-- ============================================================== -->
-	<property file="local.properties" />
-	<property name="service.hostname" value="localhost" />
-	<property name="service.port" value="8080" />
-	<property name="build.dir" location="build" />
-	<property name="test.build.lib.dir" value="${build.dir}/test/lib" />
+    <!-- ============================================================== -->
+    <!-- Place any other properties you will need here                  -->
+    <!-- ============================================================== -->
+    <property file="local.properties" />
+    <property name="service.hostname" value="localhost" />
+    <property name="service.port" value="8080" />
+    <property name="build.dir" location="build" />
+    <property name="test.build.lib.dir" value="${build.dir}/test/lib" />
 
-	<property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory" />
-	<property name="java.naming.provider.url.host" value="localhost" />
-	<property name="java.naming.provider.url.port" value="1099" />
-	<property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}" />
-	<property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces" />
-	<property name="java.naming.security.principal" value="ejbclient" />
-	<property name="java.naming.security.credentials" value="pass" />
-	<property name="cobertura.dir" value="tools/cobertura" />
+    <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory" />
+    <property name="java.naming.provider.url.host" value="localhost" />
+    <property name="java.naming.provider.url.port" value="1099" />
+    <property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}" />
+    <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces" />
+    <property name="java.naming.security.principal" value="ejbclient" />
+    <property name="java.naming.security.credentials" value="pass" />
+    <property name="cobertura.dir" value="tools/cobertura" />
 
-	<path id="cobertura.classpath">
-		<fileset dir="${cobertura.dir}">
-			<include name="cobertura.jar" />
-			<include name="lib/**/*.jar" />
-		</fileset>
-	</path>
+    <path id="cobertura.classpath">
+        <fileset dir="${cobertura.dir}">
+            <include name="cobertura.jar" />
+            <include name="lib/**/*.jar" />
+        </fileset>
+    </path>
 
-	<path id="checkstyle.classpath">
-		<fileset dir="${basedir}">
-			<include name="tools/checkstyle/*.jar" />
-		</fileset>
-	</path>
+    <path id="checkstyle.classpath">
+        <fileset dir="${basedir}">
+            <include name="tools/checkstyle/*.jar" />
+        </fileset>
+    </path>
 
-	<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
-	<taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
+    <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+    <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
 
-	<patternset id="dependent.schema.folders.ps">
-		<include name="core/**/*" />
-		<include name="pkgdata/**/*" />
-		<include name="ws/**/*" />
-		<include name="wsrf/**/*" />
-	</patternset>
-	<property name="gar.name" value="${service.deployment.dir.name}.gar" />
+    <patternset id="dependent.schema.folders.ps">
+        <include name="core/**/*" />
+        <include name="pkgdata/**/*" />
+        <include name="ws/**/*" />
+        <include name="wsrf/**/*" />
+    </patternset>
+    <property name="gar.name" value="${service.deployment.dir.name}.gar" />
 
-	<!-- ============================================================== -->
-	<!-- Create any extended Classpaths here                            -->
-	<!-- ============================================================== -->
-	<target name="defineExtendedClasspaths" unless="base.extended.classpath.prop">
-		<artifact:pom file="pom.xml" id="pom.file" />
-		<artifact:pom file="tools.pom.xml" id="tools.pom.file" />
-		
-		<artifact:dependencies pomRefId="pom.file"
-				pathId="base.extended.classpath"
-				filesetId="compile.dependency.fileset"
-		        versionsId="compile.dependency.versions" useScope="compile">
-		</artifact:dependencies>
-		<property name="base.extended.classpath.prop" refid="base.extended.classpath"/>
-		<propertyregex property="base.extended.classpath.prop"
-		                  override="true"
-		                  input="${base.extended.classpath.prop}"
-		                  regexp="[:|;]"
-		                  replace="&#10;      "
-		                  casesensitive="false" />
-		<echo level="info">
-			base.extended.classpath is:
-			${base.extended.classpath.prop}
-  	    </echo>
-		<path id="service.build.extended.classpath">
-		</path>
-		<path id="service.run.extended.classpath">
-		</path>
-		<artifact:dependencies pomRefId="pom.file"
-				pathId="test.build.extended.classpath"
-				filesetId="test.dependency.fileset"
-		        versionsId="test.dependency.versions" useScope="test">
-		</artifact:dependencies>
-		<property name="test.build.extended.classpath.prop" refid="test.build.extended.classpath"/>
-		<propertyregex property="test.build.extended.classpath.prop"
-		                  override="true"
-		                  input="${test.build.extended.classpath.prop}"
-		                  regexp="[:|;]"
-		                  replace="&#10;      "
-		                  casesensitive="false" />
-		<echo level="info">
-			test.build.extended.classpath is:
-			${test.build.extended.classpath.prop}
-  	    </echo>		
-		
-		<path id="test.run.extended.classpath">
-		</path>
-		<path id="run.extended.classpath">
-		</path>
+    <!-- ============================================================== -->
+    <!-- Create any extended Classpaths here                            -->
+    <!-- ============================================================== -->
+    <target name="defineExtendedClasspaths" unless="base.extended.classpath.prop">
+        <artifact:pom file="pom.xml" id="pom.file" />
+        <artifact:pom file="tools.pom.xml" id="tools.pom.file" />
+        
+        <artifact:dependencies pomRefId="pom.file"
+                pathId="base.extended.classpath"
+                filesetId="compile.dependency.fileset"
+                versionsId="compile.dependency.versions" useScope="compile">
+        </artifact:dependencies>
+        <property name="base.extended.classpath.prop" refid="base.extended.classpath"/>
+        <propertyregex property="base.extended.classpath.prop"
+                          override="true"
+                          input="${base.extended.classpath.prop}"
+                          regexp="[:|;]"
+                          replace="&#10;      "
+                          casesensitive="false" />
+        <echo level="info">
+            base.extended.classpath is:
+            ${base.extended.classpath.prop}
+          </echo>
+        <path id="service.build.extended.classpath">
+        </path>
+        <path id="service.run.extended.classpath">
+        </path>
+        <artifact:dependencies pomRefId="pom.file"
+                pathId="test.build.extended.classpath"
+                filesetId="test.dependency.fileset"
+                versionsId="test.dependency.versions" useScope="test">
+        </artifact:dependencies>
+        <property name="test.build.extended.classpath.prop" refid="test.build.extended.classpath"/>
+        <propertyregex property="test.build.extended.classpath.prop"
+                          override="true"
+                          input="${test.build.extended.classpath.prop}"
+                          regexp="[:|;]"
+                          replace="&#10;      "
+                          casesensitive="false" />
+        <echo level="info">
+            test.build.extended.classpath is:
+            ${test.build.extended.classpath.prop}
+          </echo>        
+        
+        <path id="test.run.extended.classpath">
+        </path>
+        <path id="run.extended.classpath">
+        </path>
 
-		<artifact:dependencies pomRefId="tools.pom.file"
-				pathId="tasks.run.extended.classpath"
-				filesetId="provided.dependency.fileset"
-		        versionsId="provided.dependency.versions" useScope="compile">
-		</artifact:dependencies>
-		<property name="tasks.run.extended.classpath.prop" refid="tasks.run.extended.classpath"/>
-		<propertyregex property="tasks.run.extended.classpath.prop"
-		                  override="true"
-		                  input="${tasks.run.extended.classpath.prop}"
-		                  regexp="[:|;]"
-		                  replace="&#10;      "
-		                  casesensitive="false" />
-		<echo level="info">
-			tasks.run.extended.classpath is:
-			${tasks.run.extended.classpath.prop}
-  	    </echo>			
-	</target>
-
-
-
-	<!-- ============================================================== -->
-	<!-- Pre Init Target                                                -->
-	<!-- ============================================================== -->
-	<target name="preInit">
-		<copy todir="${schema.dir}">
-			<fileset dir="${ext.globus.dir}/schema">
-				<patternset refid="dependent.schema.folders.ps" />
-			</fileset>
-		</copy>
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Init Build Target                                         -->
-	<!-- ============================================================== -->
-	<target name="postInit">
-		<copy todir="${build.lib.dir}">
-		  <fileset refid="compile.dependency.fileset" />
-		  <!-- This mapper strips off all leading directory information -->
-		  <mapper type="flatten" />
-		</copy>
-		<copy todir="${test.build.lib.dir}">
-		  <fileset refid="test.dependency.fileset" />
-		  <!-- This mapper strips off all leading directory information -->
-		  <mapper type="flatten" />
-		</copy>
-	</target>
+        <artifact:dependencies pomRefId="tools.pom.file"
+                pathId="tasks.run.extended.classpath"
+                filesetId="provided.dependency.fileset"
+                versionsId="provided.dependency.versions" useScope="compile">
+        </artifact:dependencies>
+        <property name="tasks.run.extended.classpath.prop" refid="tasks.run.extended.classpath"/>
+        <propertyregex property="tasks.run.extended.classpath.prop"
+                          override="true"
+                          input="${tasks.run.extended.classpath.prop}"
+                          regexp="[:|;]"
+                          replace="&#10;      "
+                          casesensitive="false" />
+        <echo level="info">
+            tasks.run.extended.classpath is:
+            ${tasks.run.extended.classpath.prop}
+          </echo>            
+    </target>
 
 
-	<!-- ============================================================== -->
-	<!-- Pre Stubs Target                                               -->
-	<!-- ============================================================== -->
-	<target name="preStubs">
 
-	</target>
+    <!-- ============================================================== -->
+    <!-- Pre Init Target                                                -->
+    <!-- ============================================================== -->
+    <target name="preInit">
+        <copy todir="${schema.dir}">
+            <fileset dir="${ext.globus.dir}/schema">
+                <patternset refid="dependent.schema.folders.ps" />
+            </fileset>
+        </copy>
+    </target>
 
-	<!-- ============================================================== -->
-	<!-- Post Stubs Build Target                                        -->
-	<!-- ============================================================== -->
-	<target name="postStubs">
-		<java classname="com.sun.tools.xjc.XJCFacade" fork="true" failonerror="true">
-			<classpath>
-				<path refid="tasks.run.extended.classpath"/>
-			</classpath>
-			<arg value="-xmlschema" />
-			<arg file="${basedir}/schema/CoreServices/CoppaPO.xsd" />
-			<arg file="${basedir}/schema/CoreServices/ISO_datatypes_Narrative.xsd" />
-			<arg value="-d" />
-			<arg file="${stubs.src}" />
-			<arg value="-b" />
-			<arg file="${basedir}/schema/CoreServices/jaxb-config.xjb" />
-			<arg value="-nv" />
-			<arg value="-verbose" />
-		</java>
-		<delete dir="${stubs.src}/org" />
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Pre Compile Stubs Build Target                                 -->
-	<!-- ============================================================== -->
-	<target name="preCompileStubs">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Compile Stubs Build Target                                -->
-	<!-- ============================================================== -->
-	<target name="postCompileStubs">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Pre Jar Stubs Build Target                                     -->
-	<!-- ============================================================== -->
-	<target name="preJarStubs">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Jar Stubs Build Target                                    -->
-	<!-- ============================================================== -->
-	<target name="postJarStubs">
-
-	</target>
-
-	<target name="compile-quick" depends="compileStubs-quick, init">
-		<runtarget target="preCompile" />
-		<javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
-
-		<!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
-		<copy toDir="${build.dest}">
-			<fileset dir="${src.dir}">
-				<include name="**/*" />
-			</fileset>
-		</copy>
-		<runtarget target="postCompile" />
-	</target>
-	<target name="compileStubs-quick" depends="init">
-		<runtarget target="preCompileStubs" />
-		<javac srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
-			<include name="**/*.java" />
-		</javac>
-		<runtarget target="postCompileStubs" />
-	</target>
-	<!-- ============================================================== -->
-	<!-- Pre Compile Build Target                                       -->
-	<!-- ============================================================== -->
-	<target name="preCompile">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Compile Build Target                                       -->
-	<!-- ============================================================== -->
-	<target name="postCompile">
-		<runtarget target="-checkstyle" />
-		<!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
-		<copy toDir="${build.dest}" filtering="true" overwrite="true">
-			<filterset begintoken="$${" endtoken="}">
-				<filter token="java.naming.factory.initial" value="${java.naming.factory.initial}" />
-				<filter token="java.naming.provider.url.host" value="${java.naming.provider.url.host}" />
-				<filter token="java.naming.provider.url.port" value="${java.naming.provider.url.port}" />
-				<filter token="java.naming.provider.url" value="${java.naming.provider.url}" />
-				<filter token="java.naming.factory.url.pkgs" value="${java.naming.factory.url.pkgs}" />
-				<filter token="java.naming.security.principal" value="${java.naming.security.principal}" />
-				<filter token="java.naming.security.credentials" value="${java.naming.security.credentials}" />
-			</filterset>
-			<fileset dir="${src.dir}">
-				<include name="**/*" />
-			</fileset>
-		</copy>
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Pre Jar Build Target                                       -->
-	<!-- ============================================================== -->
-	<target name="preJar">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Jar Build Target                                          -->
-	<!-- ============================================================== -->
-	<target name="postJar">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Pre Compile Tests Build Target                                 -->
-	<!-- ============================================================== -->
-	<target name="preCompileTests">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Compile Tests Build Target                                -->
-	<!-- ============================================================== -->
-	<target name="postCompileTests">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Pre Jar Tests Build Target                                     -->
-	<!-- ============================================================== -->
-	<target name="preJarTests">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Jar Tests Build Target                                    -->
-	<!-- ============================================================== -->
-	<target name="postJarTests">
-
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Pre Clean Target                                               -->
-	<!-- ============================================================== -->
-	<target name="preClean">
-		<delete>
-			<fileset dir="${schema.dir}">
-				<patternset refid="dependent.schema.folders.ps" />
-			</fileset>
-		</delete>
-		<delete>
-			<dirset dir="${schema.dir}">
-				<include name="**/*" />
-				<exclude name="${introduce.skeleton.service.name}/**" />
-			</dirset>
-		</delete>
-	</target>
-
-	<!-- ============================================================== -->
-	<!-- Post Clean Target                                              -->
-	<!-- ============================================================== -->
-	<target name="postClean">
-
-	</target>
+    <!-- ============================================================== -->
+    <!-- Post Init Build Target                                         -->
+    <!-- ============================================================== -->
+    <target name="postInit">
+        <copy todir="${build.lib.dir}">
+          <fileset refid="compile.dependency.fileset" />
+          <!-- This mapper strips off all leading directory information -->
+          <mapper type="flatten" />
+        </copy>
+        <copy todir="${test.build.lib.dir}">
+          <fileset refid="test.dependency.fileset" />
+          <!-- This mapper strips off all leading directory information -->
+          <mapper type="flatten" />
+        </copy>
+    </target>
 
 
-	<!-- Compile the test implementation classes (service, resource, etc.) -->
-	<target name="compileTests-quick" depends="compile-quick">
-		<runtarget target="preCompileTests" />
-		<javac srcdir="${test.src.dir}" classpathref="test.build.classpath" destdir="${test.build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
-		<runtarget target="postCompileTests" />
-	</target>
+    <!-- ============================================================== -->
+    <!-- Pre Stubs Target                                               -->
+    <!-- ============================================================== -->
+    <target name="preStubs">
 
-	<!-- ============================================================== -->
-	<!-- Call any tests.                                                -->
-	<!-- ============================================================== -->
-	<target name="test-quick" depends="checkGlobus, compileTests-quick, -test" description="Runs the service's tests (without recompiling the stubs)." />
+    </target>
 
-	<!-- ============================================================== -->
-	<!-- Call any tests.                                                -->
-	<!-- ============================================================== -->
-	<target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests." />
-	<target name="-test" depends="-checkstyle">
-		<delete file="build/cobertura.ser" />
+    <!-- ============================================================== -->
+    <!-- Post Stubs Build Target                                        -->
+    <!-- ============================================================== -->
+    <target name="postStubs">
+        <java classname="com.sun.tools.xjc.XJCFacade" fork="true" failonerror="true">
+            <classpath>
+                <path refid="tasks.run.extended.classpath"/>
+            </classpath>
+            <arg value="-xmlschema" />
+            <arg file="${basedir}/schema/CoreServices/CoppaPO.xsd" />
+            <arg file="${basedir}/schema/CoreServices/ISO_datatypes_Narrative.xsd" />
+            <arg value="-d" />
+            <arg file="${stubs.src}" />
+            <arg value="-b" />
+            <arg file="${basedir}/schema/CoreServices/jaxb-config.xjb" />
+            <arg value="-nv" />
+            <arg value="-verbose" />
+        </java>
+        <delete dir="${stubs.src}/org" />
+    </target>
 
-		<cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
-			<fileset dir="${build.dest}">
-				<include name="**/dto/**/*.class" />
-				<exclude name="**/*Test.class" />
-			</fileset>
-		</cobertura-instrument>
+    <!-- ============================================================== -->
+    <!-- Pre Compile Stubs Build Target                                 -->
+    <!-- ============================================================== -->
+    <target name="preCompileStubs">
 
-		<echo message="Test results dir: ${junit.results.dir}" />
-		<mkdir dir="${junit.results.dir}" />
-		<junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="no" failureproperty="junit.failure">
-			<sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/build/cobertura.ser" />
-			<classpath location="${build.dir}/intrumented" />
-			<classpath refid="test.run.classpath" />
-			<classpath refid="cobertura.classpath" />
-			<formatter type="xml" />
-			<formatter type="plain" />
-			<batchtest fork="yes" todir="${junit.results.dir}">
-				<fileset dir="${test.src.dir}">
-					<include name="**/Test*.java" />
-					<include name="**/*Test.java" />
-					<include name="**/*TestCase.java" />
-				</fileset>
-			</batchtest>
-		</junit>
+    </target>
 
-		<junitreport todir="${junit.results.dir}">
-			<fileset dir="${junit.results.dir}">
-				<include name="TEST-*.xml" />
-			</fileset>
-			<report format="frames" todir="${junit.results.dir}" />
-		</junitreport>
+    <!-- ============================================================== -->
+    <!-- Post Compile Stubs Build Target                                -->
+    <!-- ============================================================== -->
+    <target name="postCompileStubs">
 
-		<fail if="junit.failure" message="There were JUnit failures." />
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Pre Jar Stubs Build Target                                     -->
+    <!-- ============================================================== -->
+    <target name="preJarStubs">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Post Jar Stubs Build Target                                    -->
+    <!-- ============================================================== -->
+    <target name="postJarStubs">
+
+    </target>
+
+    <target name="compile-quick" depends="compileStubs-quick, init">
+        <runtarget target="preCompile" />
+        <javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+
+        <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
+        <copy toDir="${build.dest}">
+            <fileset dir="${src.dir}">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <runtarget target="postCompile" />
+    </target>
+    <target name="compileStubs-quick" depends="init">
+        <runtarget target="preCompileStubs" />
+        <javac srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
+            <include name="**/*.java" />
+        </javac>
+        <runtarget target="postCompileStubs" />
+    </target>
+    <!-- ============================================================== -->
+    <!-- Pre Compile Build Target                                       -->
+    <!-- ============================================================== -->
+    <target name="preCompile">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Post Compile Build Target                                       -->
+    <!-- ============================================================== -->
+    <target name="postCompile">
+        <runtarget target="-checkstyle" />
+        <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
+        <copy toDir="${build.dest}" filtering="true" overwrite="true">
+            <filterset begintoken="$${" endtoken="}">
+                <filter token="java.naming.factory.initial" value="${java.naming.factory.initial}" />
+                <filter token="java.naming.provider.url.host" value="${java.naming.provider.url.host}" />
+                <filter token="java.naming.provider.url.port" value="${java.naming.provider.url.port}" />
+                <filter token="java.naming.provider.url" value="${java.naming.provider.url}" />
+                <filter token="java.naming.factory.url.pkgs" value="${java.naming.factory.url.pkgs}" />
+                <filter token="java.naming.security.principal" value="${java.naming.security.principal}" />
+                <filter token="java.naming.security.credentials" value="${java.naming.security.credentials}" />
+            </filterset>
+            <fileset dir="${src.dir}">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Pre Jar Build Target                                       -->
+    <!-- ============================================================== -->
+    <target name="preJar">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Post Jar Build Target                                          -->
+    <!-- ============================================================== -->
+    <target name="postJar">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Pre Compile Tests Build Target                                 -->
+    <!-- ============================================================== -->
+    <target name="preCompileTests">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Post Compile Tests Build Target                                -->
+    <!-- ============================================================== -->
+    <target name="postCompileTests">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Pre Jar Tests Build Target                                     -->
+    <!-- ============================================================== -->
+    <target name="preJarTests">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Post Jar Tests Build Target                                    -->
+    <!-- ============================================================== -->
+    <target name="postJarTests">
+
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Pre Clean Target                                               -->
+    <!-- ============================================================== -->
+    <target name="preClean">
+        <delete>
+            <fileset dir="${schema.dir}">
+                <patternset refid="dependent.schema.folders.ps" />
+            </fileset>
+        </delete>
+        <delete>
+            <dirset dir="${schema.dir}">
+                <include name="**/*" />
+                <exclude name="${introduce.skeleton.service.name}/**" />
+            </dirset>
+        </delete>
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Post Clean Target                                              -->
+    <!-- ============================================================== -->
+    <target name="postClean">
+
+    </target>
+
+
+    <!-- Compile the test implementation classes (service, resource, etc.) -->
+    <target name="compileTests-quick" depends="compile-quick">
+        <runtarget target="preCompileTests" />
+        <javac srcdir="${test.src.dir}" classpathref="test.build.classpath" destdir="${test.build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+        <runtarget target="postCompileTests" />
+    </target>
+
+    <!-- ============================================================== -->
+    <!-- Call any tests.                                                -->
+    <!-- ============================================================== -->
+    <target name="test-quick" depends="checkGlobus, compileTests-quick, -test" description="Runs the service's tests (without recompiling the stubs)." />
+
+    <!-- ============================================================== -->
+    <!-- Call any tests.                                                -->
+    <!-- ============================================================== -->
+    <target name="test" depends="checkGlobus, compileTests, -test" description="Runs the service's tests." />
+    <target name="-test" depends="-checkstyle">
+        <delete file="build/cobertura.ser" />
+
+        <cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
+            <fileset dir="${build.dest}">
+                <include name="**/dto/**/*.class" />
+                <exclude name="**/*Test.class" />
+            </fileset>
+        </cobertura-instrument>
+
+        <echo message="Test results dir: ${junit.results.dir}" />
+        <mkdir dir="${junit.results.dir}" />
+        <junit dir="${basedir}" printsummary="yes" showoutput="true" fork="true" haltonfailure="no" failureproperty="junit.failure">
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/build/cobertura.ser" />
+            <classpath location="${build.dir}/intrumented" />
+            <classpath refid="test.run.classpath" />
+            <classpath refid="cobertura.classpath" />
+            <formatter type="xml" />
+            <formatter type="plain" />
+            <batchtest fork="yes" todir="${junit.results.dir}">
+                <fileset dir="${test.src.dir}">
+                    <include name="**/Test*.java" />
+                    <include name="**/*Test.java" />
+                    <include name="**/*TestCase.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="${junit.results.dir}">
+            <fileset dir="${junit.results.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${junit.results.dir}" />
+        </junitreport>
+
+        <fail if="junit.failure" message="There were JUnit failures." />
 
 
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
@@ -381,127 +381,128 @@
         <!-- Increase these as unit tests are written -->
         <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="87" totallinerate="91" />
     </target>
+
     <!--
         A note about this target: Checkstyle has a bug that requires exception classes to be on the execution
         classpath (http://jira.codehaus.org/browse/MPCHECKSTYLE-20).  Thus, in reality, this target should depend
         on the compile target.  However, compile takes a long time, and in typical use this shouldn't be needed.
 
-        If you get an error about invalid classpath, run 'ant compile checkstyle' and it should resolve.
-    -->
-	<target name="checkstyle" depends="defineClasspaths, -checkstyle" description="Verify coding styles and conventions." />
-	<target name="-checkstyle" description="Hidden to work with Introduce" >
-		<checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
-			<classpath>
-				<path location="${build.dest}" />
-				<path location="${stubs.dest}" />
-				<path location="${basedir}/build/classes" />
-				<path refid="checkstyle.classpath" />
-				<path refid="base.classpath"/>
-			</classpath>
-			<!-- ADD PATHS FOR CHECKING HERE -->
-			<fileset dir="src/gov/nih/nci/coppa/po/grid" includes="**/*.java" />
-			<formatter type="plain" />
-			<formatter type="xml" toFile="build/checkstyle_errors.xml" />
-		</checkstyle>
-	</target>
+          If you get an error about invalid classpath, run 'ant compile checkstyle' and it should resolve.
+      -->
+    <target name="checkstyle" depends="defineClasspaths, -checkstyle" description="Verify coding styles and conventions." />
+    <target name="-checkstyle" description="Hidden to work with Introduce" >
+        <checkstyle configurl="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle.xml">
+            <classpath>
+                <path location="${build.dest}" />
+                <path location="${stubs.dest}" />
+                <path location="${basedir}/build/classes" />
+                <path refid="checkstyle.classpath" />
+                <path refid="base.classpath"/>
+            </classpath>
+            <!-- ADD PATHS FOR CHECKING HERE -->
+            <fileset dir="src/gov/nih/nci/coppa/po/grid" includes="**/*.java" />
+            <formatter type="plain" />
+            <formatter type="xml" toFile="build/checkstyle_errors.xml" />
+        </checkstyle>
+    </target>
 
-	<!-- Create a JAR file with the implementation classes -->
-	<target name="jar-quick" depends="compile-quick">
-		<runtarget target="preJar" />
-		<jar jarfile="${build.lib.dir}/${client.jar.name}" basedir="${build.dest}">
-			<include name="**/client/**" />
-		</jar>
-		<jar jarfile="${build.lib.dir}/${service.jar.name}" basedir="${build.dest}">
-			<include name="**/service/**" />
-		</jar>
-		<jar jarfile="${build.lib.dir}/${common.jar.name}" basedir="${build.dest}">
-			<include name="**/*" />
-			<exclude name="**/client/**" />
-			<exclude name="**/service/**" />
-		</jar>
-		<runtarget target="postJar" />
-	</target>
-
-
-	<!-- Create a JAR file with the test implementation classes -->
-	<target name="jarTests-quick" depends="jar-quick,compileTests-quick">
-		<runtarget target="preJarTests" />
-		<jar jarfile="${build.lib.dir}/${test.jar.name}" basedir="${test.build.dest}" />
-		<runtarget target="postJarTests" />
-	</target>
+    <!-- Create a JAR file with the implementation classes -->
+    <target name="jar-quick" depends="compile-quick">
+        <runtarget target="preJar" />
+        <jar jarfile="${build.lib.dir}/${client.jar.name}" basedir="${build.dest}">
+            <include name="**/client/**" />
+        </jar>
+        <jar jarfile="${build.lib.dir}/${service.jar.name}" basedir="${build.dest}">
+            <include name="**/service/**" />
+        </jar>
+        <jar jarfile="${build.lib.dir}/${common.jar.name}" basedir="${build.dest}">
+            <include name="**/*" />
+            <exclude name="**/client/**" />
+            <exclude name="**/service/**" />
+        </jar>
+        <runtarget target="postJar" />
+    </target>
 
 
-	<!-- Create a JAR file with the stub classes -->
-	<target name="jarStubs-quick" depends="compileStubs-quick">
-		<runtarget target="preJarStubs" />
-		<jar destfile="${build.lib.dir}/${stubs.jar.name}" basedir="${stubs.dest}" />
-		<runtarget target="postJarStubs" />
-	</target>
+    <!-- Create a JAR file with the test implementation classes -->
+    <target name="jarTests-quick" depends="jar-quick,compileTests-quick">
+        <runtarget target="preJarTests" />
+        <jar jarfile="${build.lib.dir}/${test.jar.name}" basedir="${test.build.dest}" />
+        <runtarget target="postJarTests" />
+    </target>
 
 
-	<!-- Empty target, in case we simply want to generate the JAR files -->
-	<target name="jars-quick" depends="jarStubs-quick, jar-quick, jarTests-quick" />
+    <!-- Create a JAR file with the stub classes -->
+    <target name="jarStubs-quick" depends="compileStubs-quick">
+        <runtarget target="preJarStubs" />
+        <jar destfile="${build.lib.dir}/${stubs.jar.name}" basedir="${stubs.dest}" />
+        <runtarget target="postJarStubs" />
+    </target>
 
-	<target name="all-quick" depends="jars-quick" description="RE-COMPILE, RE-JAR QUICKLY" />
 
-	<target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY" />
+    <!-- Empty target, in case we simply want to generate the JAR files -->
+    <target name="jars-quick" depends="jarStubs-quick, jar-quick, jarTests-quick" />
 
-	<macrodef name="run-client">
-		<attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient" />
-		<attribute name="serviceEndpointName" default="CoreServices" />
-		<attribute name="hostname" default="${service.hostname}" />
-		<attribute name="port" default="${service.port}" />
-		<attribute name="debug-suspend" default="n" />
-		<sequential>
-			<var name="run-client.service.url" unset="true" />
-			<var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceEndpointName}" />
-			<property name="runclasspath" refid="run.classpath" />
-			<echo message="Connecting to service: ${run-client.service.url}" />
-			<java failonerror="true" classname="@{class}" classpathref="run.classpath" fork="yes">
-				<jvmarg value="-Xdebug" />
-				<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=@{debug-suspend}" />
-				<jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
-				<arg value="-url" />
-				<arg value="${run-client.service.url}" />
-			</java>
-		</sequential>
-	</macrodef>
+    <target name="all-quick" depends="jars-quick" description="RE-COMPILE, RE-JAR QUICKLY" />
 
-	<target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
-		<run-client serviceEndpointName="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient" debug-suspend="n" />
-	</target>
+    <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY" />
 
-	<target name="runOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample Organization Client">
-		<run-client serviceEndpointName="Organization" class="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient" />
-	</target>
+    <macrodef name="run-client">
+        <attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient" />
+        <attribute name="serviceEndpointName" default="CoreServices" />
+        <attribute name="hostname" default="${service.hostname}" />
+        <attribute name="port" default="${service.port}" />
+        <attribute name="debug-suspend" default="n" />
+        <sequential>
+            <var name="run-client.service.url" unset="true" />
+            <var name="run-client.service.url" value="http://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceEndpointName}" />
+            <property name="runclasspath" refid="run.classpath" />
+            <echo message="Connecting to service: ${run-client.service.url}" />
+            <java failonerror="true" classname="@{class}" classpathref="run.classpath" fork="yes">
+                <jvmarg value="-Xdebug" />
+                <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=@{debug-suspend}" />
+                <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
+                <arg value="-url" />
+                <arg value="${run-client.service.url}" />
+            </java>
+        </sequential>
+    </macrodef>
 
-	<target name="runHealthCareFacilityClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareFacility Client">
-		<run-client serviceEndpointName="HealthCareFacility" class="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client.HealthCareFacilityClient" />
-	</target>
+    <target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
+        <run-client serviceEndpointName="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient" debug-suspend="n" />
+    </target>
 
-	<target name="runHealthCareProviderClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareProvider Client">
-		<run-client serviceEndpointName="HealthCareProvider" class="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client.HealthCareProviderClient" />
-	</target>
+    <target name="runOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample Organization Client">
+        <run-client serviceEndpointName="Organization" class="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient" />
+    </target>
 
-	<target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths" description="Run the sample ClinicalResearchStaff Client">
-		<run-client serviceEndpointName="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient" />
-	</target>
+    <target name="runHealthCareFacilityClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareFacility Client">
+        <run-client serviceEndpointName="HealthCareFacility" class="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client.HealthCareFacilityClient" />
+    </target>
 
-	<target name="runIdentifiedPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedPerson Client">
-		<run-client serviceEndpointName="IdentifiedPerson" class="gov.nih.nci.coppa.services.structuralroles.identifiedperson.client.IdentifiedPersonClient" />
-	</target>
+    <target name="runHealthCareProviderClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareProvider Client">
+        <run-client serviceEndpointName="HealthCareProvider" class="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client.HealthCareProviderClient" />
+    </target>
 
-	<target name="runIdentifiedOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedOrganization Client">
-		<run-client serviceEndpointName="IdentifiedOrganization" class="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClient" />
-	</target>
+    <target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths" description="Run the sample ClinicalResearchStaff Client">
+        <run-client serviceEndpointName="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient" />
+    </target>
 
-	<target name="runResearchOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample ResearchOrganization Client">
-		<run-client serviceEndpointName="ResearchOrganization" class="gov.nih.nci.coppa.services.structuralroles.researchorganization.client.ResearchOrganizationClient" />
-	</target>
-	<target name="runOversightCommitteeClient" depends="checkGlobus, defineClasspaths" description="Run the sample OversightCommitteeClient Client">
-		<run-client serviceEndpointName="OversightCommittee" class="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client.OversightCommitteeClient" />
-	</target>
-	<target name="runOrganizationalContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample OrganizationalContact Client">
-		<run-client serviceEndpointName="OrganizationalContact" class="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client.OrganizationalContactClient" />
-	</target>
+    <target name="runIdentifiedPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedPerson Client">
+        <run-client serviceEndpointName="IdentifiedPerson" class="gov.nih.nci.coppa.services.structuralroles.identifiedperson.client.IdentifiedPersonClient" />
+    </target>
+
+    <target name="runIdentifiedOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedOrganization Client">
+        <run-client serviceEndpointName="IdentifiedOrganization" class="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClient" />
+    </target>
+
+    <target name="runResearchOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample ResearchOrganization Client">
+        <run-client serviceEndpointName="ResearchOrganization" class="gov.nih.nci.coppa.services.structuralroles.researchorganization.client.ResearchOrganizationClient" />
+    </target>
+    <target name="runOversightCommitteeClient" depends="checkGlobus, defineClasspaths" description="Run the sample OversightCommitteeClient Client">
+        <run-client serviceEndpointName="OversightCommittee" class="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client.OversightCommitteeClient" />
+    </target>
+    <target name="runOrganizationalContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample OrganizationalContact Client">
+        <run-client serviceEndpointName="OrganizationalContact" class="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client.OrganizationalContactClient" />
+    </target>
 </project>
