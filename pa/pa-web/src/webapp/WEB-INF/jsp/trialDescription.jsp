@@ -35,6 +35,7 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>
+<pa:failureMessage/>
 <s:form name="trialDescription">
     <s:if test="hasActionErrors()">
     <div class="error_msg"><s:actionerror/></div>
