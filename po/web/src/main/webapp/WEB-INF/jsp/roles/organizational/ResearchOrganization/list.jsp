@@ -9,7 +9,7 @@
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         <display:column titleKey="researchOrganization.id" property="id" sortable="true" sortProperty="ID"/>
         <display:column titleKey="researchOrganization.typeCode" sortable="true" sortProperty="TYPE_DESC">
-            ${row.typeCode.description} (${row.typeCode.code})
+            ${row.typeCode.description}
         </display:column>
         <display:column titleKey="researchOrganization.fundingMechanism" property="fundingMechanism.code" sortable="true" sortProperty="FUNDING"/>
         <display:column titleKey="researchOrganization.status" sortable="true" sortProperty="ROLE_STATUS">
