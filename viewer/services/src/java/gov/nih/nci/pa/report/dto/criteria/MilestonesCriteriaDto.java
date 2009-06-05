@@ -77,7 +77,9 @@
 package gov.nih.nci.pa.report.dto.criteria;
 
 import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * @author Hugh Reinhart
@@ -86,6 +88,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 public class MilestonesCriteriaDto extends AbstractBaseCriteriaDto {
 
     private Bl currentMilestoneOnly = BlConverter.convertToBl(null);
+    private St assignedIdentifier = StConverter.convertToSt(null);
 
     /**
      * @return the currentMilestoneOnly
@@ -93,11 +96,22 @@ public class MilestonesCriteriaDto extends AbstractBaseCriteriaDto {
     public Bl getCurrentMilestoneOnly() {
         return currentMilestoneOnly;
     }
-
     /**
      * @param currentMilestoneOnly the currentMilestoneOnly to set
      */
     public void setCurrentMilestoneOnly(Bl currentMilestoneOnly) {
         this.currentMilestoneOnly = currentMilestoneOnly;
+    }
+    /**
+     * @return the assignedIdentifier
+     */
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
     }
 }

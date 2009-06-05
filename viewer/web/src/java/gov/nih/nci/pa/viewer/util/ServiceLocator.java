@@ -82,6 +82,7 @@ import gov.nih.nci.pa.report.service.MilestonesLocal;
 import gov.nih.nci.pa.report.service.SummarySentLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
+import gov.nih.nci.pa.report.service.TrialProcessingLocal;
 
 /**
  * @author Hugh Reinhart
@@ -105,6 +106,8 @@ public interface ServiceLocator {
      * @return trial list report service
      */
     TrialListLocal getTrialListReportService();
-
-
+    /**
+     * @return trial processing report service
+     */
+    TrialProcessingLocal getTrialProcessingReportService();
 }

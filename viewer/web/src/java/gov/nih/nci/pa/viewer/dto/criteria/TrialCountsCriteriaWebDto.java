@@ -87,18 +87,16 @@ import gov.nih.nci.pa.report.enums.TimeUnitsCode;
  */
 public class TrialCountsCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialCountsCriteriaDto> {
 
-    private String groupByTimeUnit = TimeUnitsCode.DAY.getDisplayName();
-    private Boolean groupBySubmissionType = false;
+    private String groupByTimeUnit = TimeUnitsCode.NONE.getDisplayName();
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public TrialCountsCriteriaDto getIsoDto() {
         TrialCountsCriteriaDto result = new TrialCountsCriteriaDto();
         super.setInterval(result);
         result.setGroupByTimeUnit(CdConverter.convertStringToCd(getGroupByTimeUnit()));
-        result.setGroupBySubmissionType(BlConverter.convertToBl(getGroupBySubmissionType()));
+        result.setCtep(BlConverter.convertToBl(getCtep()));
         return result;
     }
 
@@ -108,25 +106,10 @@ public class TrialCountsCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialC
     public String getGroupByTimeUnit() {
         return groupByTimeUnit;
     }
-
     /**
      * @param groupByTimeUnit the groupByTimeUnit to set
      */
     public void setGroupByTimeUnit(String groupByTimeUnit) {
         this.groupByTimeUnit = groupByTimeUnit;
-    }
-
-    /**
-     * @return the groupBySubmissionType
-     */
-    public Boolean getGroupBySubmissionType() {
-        return groupBySubmissionType;
-    }
-
-    /**
-     * @param groupBySubmissionType the groupBySubmissionType to set
-     */
-    public void setGroupBySubmissionType(Boolean groupBySubmissionType) {
-        this.groupBySubmissionType = groupBySubmissionType;
     }
 }

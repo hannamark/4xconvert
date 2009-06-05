@@ -82,6 +82,7 @@ import gov.nih.nci.pa.report.service.MilestonesLocal;
 import gov.nih.nci.pa.report.service.SummarySentLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
+import gov.nih.nci.pa.report.service.TrialProcessingLocal;
 
 
 /**
@@ -96,48 +97,62 @@ public final class ViewerServiceLocator implements ServiceLocator {
      * Constructor for the singleton instance.
      */
     private ViewerServiceLocator() {
-        this.serviceLocator = new JndiServiceLocator();
+        serviceLocator = new JndiServiceLocator();
     }
+
     /**
      * @return the regServiceLocator
      */
     public static ViewerServiceLocator getInstance() {
         return REG_REGISTRY;
     }
+
     /**
      * @return the serviceLocator
      */
     public ServiceLocator getServiceLocator() {
-        return this.serviceLocator;
+        return serviceLocator;
     }
+
     /**
      * @param serviceLocator the serviceLocator to set
      */
     public void setServiceLocator(ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
     }
+
     /**
      * {@inheritDoc}
      */
     public TrialListLocal getTrialListReportService() {
         return serviceLocator.getTrialListReportService();
     }
+
     /**
      * {@inheritDoc}
      */
     public MilestonesLocal getMilestonesReportService() {
         return serviceLocator.getMilestonesReportService();
     }
+
     /**
      * {@inheritDoc}
      */
     public SummarySentLocal getSummarySentReportService() {
         return serviceLocator.getSummarySentReportService();
     }
+
     /**
      * {@inheritDoc}
      */
     public TrialCountsLocal getTrialCountsReportService() {
         return serviceLocator.getTrialCountsReportService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TrialProcessingLocal getTrialProcessingReportService() {
+        return serviceLocator.getTrialProcessingReportService();
     }
 }

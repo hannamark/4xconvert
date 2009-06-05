@@ -33,10 +33,10 @@ public class TrialCountsTest {
         System.out.println("Year:  " + ReportUtil.getYear(testTs));
         System.out.println("Month:  " + ReportUtil.getMonth(testTs));
         System.out.println("Day:  " + ReportUtil.getDay(testTs));
-        TrialCountsReportBean.Group xxx = bean.new Group("Test org", testTs, 1, TimeUnitsCode.MONTH, false);
-        System.out.println("Year:  " + ReportUtil.getYear(xxx.getTs()));
-        System.out.println("Month:  " + ReportUtil.getMonth(xxx.getTs()));
-        System.out.println("Day:  " + ReportUtil.getDay(xxx.getTs()));
+        TrialCountsReportBean.Group xxx = bean.new Group("Test org", testTs, TimeUnitsCode.MONTH);
+        System.out.println("Year:  " + ReportUtil.getYear(xxx.ts));
+        System.out.println("Month:  " + ReportUtil.getMonth(xxx.ts));
+        System.out.println("Day:  " + ReportUtil.getDay(xxx.ts));
         assertTrue(true);
         String x = null;
         System.out.println(x);

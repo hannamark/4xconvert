@@ -18,7 +18,7 @@ import org.hibernate.SQLQuery;
  * @param <RESULT> result dto
  */
 public class AbstractMilestoneReportBean<CRITERIA extends AbstractBaseCriteriaDto, RESULT>
-        extends AbstractBaseReportBean<CRITERIA, RESULT> {
+        extends AbstractBCReportBean<CRITERIA, RESULT> {
 
     /** study protocol identifier. */
     protected static final int SP_IDENTIFIER_IDX = 0;

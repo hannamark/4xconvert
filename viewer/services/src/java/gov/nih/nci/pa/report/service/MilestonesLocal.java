@@ -86,5 +86,5 @@ import javax.ejb.Local;
  * @since 05/12/2009
  */
 @Local
-public interface MilestonesLocal extends BaseReportInterface<MilestonesCriteriaDto, MilestonesResultDto> {
+public interface MilestonesLocal extends ViewerReport<MilestonesCriteriaDto, MilestonesResultDto> {
 }

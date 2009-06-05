@@ -74,39 +74,18 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto.criteria;
+package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
+import gov.nih.nci.pa.viewer.dto.criteria.TrialCountsCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
 
 /**
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 4/28/2009
  */
-public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
+public class AverageMilestoneAction extends AbstractReportAction
+        <TrialCountsCriteriaWebDto, TrialCountsResultWebDto> {
 
-    private Boolean currentMilestoneOnly = true;
+    private static final long serialVersionUID = 4648183253616800952L;
 
-    /**
-     * {@inheritDoc}
-     */
-    public MilestonesCriteriaDto getIsoDto() {
-        MilestonesCriteriaDto result = new MilestonesCriteriaDto();
-        super.setInterval(result);
-        result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
-        return result;
-    }
-
-    /**
-     * @return the currentMilestoneOnly
-     */
-    public Boolean getCurrentMilestoneOnly() {
-        return currentMilestoneOnly;
-    }
-    /**
-     * @param currentMilestoneOnly the currentMilestoneOnly to set
-     */
-    public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
-        this.currentMilestoneOnly = currentMilestoneOnly;
-    }
 }

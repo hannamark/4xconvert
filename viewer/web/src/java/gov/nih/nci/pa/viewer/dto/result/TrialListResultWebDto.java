@@ -117,21 +117,21 @@ public class TrialListResultWebDto {
      * @param dto the service iso dto
      */
     public TrialListResultWebDto(TrialListResultDto dto) {
-        super();
-        this.organization = StConverter.convertToString(dto.getOrganization());
-        this.dateLastCreated = TsConverter.convertToString(dto.getDateLastCreated());
-        this.assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
-        this.officialTitle = StConverter.convertToString(dto.getOfficialTitle());
+        if (dto == null) { return; }
+        organization = StConverter.convertToString(dto.getOrganization());
+        dateLastCreated = TsConverter.convertToString(dto.getDateLastCreated());
+        assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
+        officialTitle = StConverter.convertToString(dto.getOfficialTitle());
         Integer submissionNumber = IntConverter.convertToInteger(dto.getSubmissionNumber());
         if (submissionNumber != null) {
             if (submissionNumber == 1) {
-                this.submissionType = ViewerConstants.INITIAL_SUBMISSION;
+                submissionType = ViewerConstants.INITIAL_SUBMISSION;
             }
             if (submissionNumber > 1) {
-                this.submissionType = ViewerConstants.AMENDMENT;
+                submissionType = ViewerConstants.AMENDMENT;
             }
         }
-        this.statusCode = CdConverter.convertCdToString(dto.getStatusCode());
+        statusCode = CdConverter.convertCdToString(dto.getStatusCode());
     }
 
     /**

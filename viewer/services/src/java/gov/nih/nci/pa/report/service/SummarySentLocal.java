@@ -86,5 +86,5 @@ import javax.ejb.Local;
  * @since 05/12/2009
  */
 @Local
-public interface SummarySentLocal extends BaseReportInterface<SummarySentCriteriaDto, SummarySentResultDto> {
+public interface SummarySentLocal extends ViewerReport<SummarySentCriteriaDto, SummarySentResultDto> {
 }

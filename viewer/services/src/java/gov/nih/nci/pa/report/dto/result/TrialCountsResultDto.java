@@ -76,10 +76,8 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
-import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -93,8 +91,8 @@ public class TrialCountsResultDto {
     private Int year = IntConverter.convertToInt((Integer) null);
     private Int month = IntConverter.convertToInt((Integer) null);
     private Int day = IntConverter.convertToInt((Integer) null);
-    private Bl initialSubmission = BlConverter.convertToBl(null);
-    private Int count = IntConverter.convertToInt((Integer) null);
+    private Int initial = IntConverter.convertToInt((Integer) null);
+    private Int amendment = IntConverter.convertToInt((Integer) null);
 
     /**
      * @return the organization
@@ -145,27 +143,27 @@ public class TrialCountsResultDto {
         this.day = day;
     }
     /**
-     * @return the initialSubmission
+     * @return the initial
      */
-    public Bl getInitialSubmission() {
-        return initialSubmission;
+    public Int getInitial() {
+        return initial;
     }
     /**
-     * @param initialSubmission the initialSubmission to set
+     * @param initial the initial to set
      */
-    public void setInitialSubmission(Bl initialSubmission) {
-        this.initialSubmission = initialSubmission;
+    public void setInitial(Int initial) {
+        this.initial = initial;
     }
     /**
-     * @return the count
+     * @return the amendment
      */
-    public gov.nih.nci.coppa.iso.Int getCount() {
-        return count;
+    public Int getAmendment() {
+        return amendment;
     }
     /**
-     * @param count the count to set
+     * @param amendment the amendment to set
      */
-    public void setCount(gov.nih.nci.coppa.iso.Int count) {
-        this.count = count;
+    public void setAmendment(Int amendment) {
+        this.amendment = amendment;
     }
 }

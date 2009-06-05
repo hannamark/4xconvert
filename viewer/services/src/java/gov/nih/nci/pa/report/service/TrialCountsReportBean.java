@@ -76,11 +76,7 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
@@ -109,11 +105,11 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCriteriaDto, TrialCountsResultDto>
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class TrialCountsReportBean extends AbstractBCReportBean<TrialCountsCriteriaDto, TrialCountsResultDto>
         implements TrialCountsLocal {
 
     /** Enumerator used to sort by submission type. */
-    private static enum SubmissionType { INITIAL, AMENDMENT, INVALID_UNUSED };
     private static final int HASH_CONSTANT = 33;
 
     /**
@@ -123,28 +119,23 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
     public List<TrialCountsResultDto> get(TrialCountsCriteriaDto criteria)
             throws PAException {
         super.get(criteria);
-        TimeUnitsCode timeUnits =  TimeUnitsCode.valueOf(CdConverter.convertCdToString(criteria.getGroupByTimeUnit()));
-        Map<Group, Integer> counts;
+        TimeUnitsCode timeUnits = TimeUnitsCode.NONE;
+        Map<Group, Count> counts;
         try {
             session = ViewerHibernateUtil.getCurrentSession();
-            String sss = CdConverter.convertCdToString(criteria.getGroupByTimeUnit());
-            TimeUnitsCode.valueOf(sss);
-            IvlConverter.convertTs().convertLow(criteria.getTimeInterval());
-            IvlConverter.convertTs().convertHigh(criteria.getTimeInterval());
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer("SELECT organization, date_last_created, submission_number ");
             sql.append("FROM study_protocol AS sp "
                      + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
                      + "WHERE 1=1 ");
+            sql.append(ctepSql(criteria));
             sql.append(getDateRangeClauses(criteria, "sp.date_last_created"));
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
-            counts = generateCounts(queryList,
-                    TimeUnitsCode.valueOf(CdConverter.convertCdToString(criteria.getGroupByTimeUnit())),
-                    BlConverter.covertToBoolean(criteria.getGroupBySubmissionType()));
+            counts = generateCounts(queryList, timeUnits);
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
@@ -153,21 +144,19 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
     }
 
     /**
-     * Used to group output for summation.
+     * Used to group counts.
      */
-    @SuppressWarnings("PMD.CyclomaticComplexity")
     class Group implements Comparable<TrialCountsReportBean.Group> {
 
-        private final String org;
-        private final Timestamp ts;
-        private final SubmissionType st;
+        final String org;
+        final Timestamp ts;
 
         /**
          * @param org organization
          * @param ts creation date
          * @param tu time units
          */
-        Group(String org, Timestamp ts, Integer sn, TimeUnitsCode tu, boolean groupByType) {
+        Group(String org, Timestamp ts, TimeUnitsCode tu) {
             int year = 1;
             int month = 1;
             int day = 1;
@@ -184,36 +173,7 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
                 year = ReportUtil.getYear(ts);
             }
             this.org = (org == null) ? "" : org.trim();
-            if (groupByType && (sn != null)) {
-                if (sn == 1) {
-                    this.st = SubmissionType.INITIAL;
-                } else if (sn > 1) {
-                    this.st = SubmissionType.AMENDMENT;
-                } else  {
-                    this.st = SubmissionType.INVALID_UNUSED;
-                }
-            } else {
-                this.st = SubmissionType.INVALID_UNUSED;
-            }
             this.ts = ReportUtil.makeTimestamp(year, month, day);
-        }
-        /**
-         * @return the org
-         */
-        String getOrg() {
-            return org;
-        }
-        /**
-         * @return the ts
-         */
-        Timestamp getTs() {
-            return ts;
-        }
-        /**
-         * @return the st
-         */
-        public SubmissionType getSt() {
-            return st;
         }
         /**
          * {@inheritDoc}
@@ -228,16 +188,14 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
             }
             Group test = (Group) obj;
             return ((ts == test.ts) || (ts != null && ts.equals(test.ts))
-                    && (org == test.org || (org != null && org.equals(test.org)))
-                    && (st == test.st));
+                    && (org == test.org || (org != null && org.equals(test.org))));
         }
         /**
          * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            int hash = st.hashCode();
-            hash += HASH_CONSTANT * ts.hashCode();
+            int hash = HASH_CONSTANT * ts.hashCode();
             hash += org.hashCode();
             return hash;
         }
@@ -245,32 +203,43 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
          * {@inheritDoc}
          */
         public int compareTo(Group o) {
-            if (this.org.compareTo(o.org) != 0) {
-                return this.org.compareTo(o.org);
+            if (org.compareTo(o.org) != 0) {
+                return org.compareTo(o.org);
             }
-            if (this.ts.compareTo(o.ts) != 0) {
-                return this.ts.compareTo(o.ts);
-            }
-            return this.st.compareTo(o.st);
+            return ts.compareTo(o.ts);
         }
     }
 
-    private Map<Group, Integer> generateCounts(List<Object[]> sqlList, TimeUnitsCode timeUnits, boolean groupByType) {
-        HashMap<Group, Integer> hm = new HashMap<Group, Integer>();
+    /**
+     * Used to store counts.
+     */
+    private class Count {
+        int initial = 0;
+        int amendment = 0;
+    }
+
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    private Map<Group, Count> generateCounts(List<Object[]> sqlList, TimeUnitsCode timeUnits) {
+        HashMap<Group, Count> counts = new HashMap<Group, Count>();
+
         for (Object[] sr : sqlList) {
-            Group gp = new TrialCountsReportBean.Group((String) sr[0], (Timestamp) sr[1], (Integer) sr[2],
-                    timeUnits, groupByType);
-            if (hm.containsKey(gp)) {
-                hm.put(gp, hm.get(gp) + 1);
-            } else {
-                hm.put(gp, 1);
+            Group gp = new TrialCountsReportBean.Group((String) sr[0], (Timestamp) sr[1], timeUnits);
+            Integer sn = (Integer) sr[2];
+            if (!counts.containsKey(gp)) {
+                counts.put(gp, new Count());
+            }
+            if (sn != null && sn.equals(1)) {
+                counts.get(gp).initial++;
+            }
+            if ((sn != null) && (sn > 1)) {
+                counts.get(gp).amendment++;
             }
         }
-        return hm;
+        return counts;
     }
 
     @SuppressWarnings("unchecked")
-    private List<TrialCountsResultDto> generateIsoResultList(Map<Group, Integer> counts, TimeUnitsCode timeUnits)
+    private List<TrialCountsResultDto> generateIsoResultList(Map<Group, Count> counts, TimeUnitsCode timeUnits)
             throws PAException {
         ArrayList<Group> group = new ArrayList<Group>();
         group.addAll(counts.keySet());
@@ -279,33 +248,23 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
         ArrayList<TrialCountsResultDto> isoList = new ArrayList<TrialCountsResultDto>();
         for (Group g : counts.keySet()) {
             TrialCountsResultDto iso = new TrialCountsResultDto();
-            iso.setCount(IntConverter.convertToInt(counts.get(g)));
             if (timeUnits == TimeUnitsCode.DAY) {
-                iso.setDay(IntConverter.convertToInt(ReportUtil.getDay(g.getTs())));
-                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.getTs())));
-                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.getTs())));
+                iso.setDay(IntConverter.convertToInt(ReportUtil.getDay(g.ts)));
+                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.ts)));
+                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.ts)));
             }
             if (timeUnits == TimeUnitsCode.MONTH) {
-                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.getTs())));
-                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.getTs())));
+                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.ts)));
+                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.ts)));
             }
             if (timeUnits == TimeUnitsCode.YEAR) {
-                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.getTs())));
+                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.ts)));
             }
-            iso.setOrganization(StConverter.convertToSt(g.getOrg()));
-            iso.setInitialSubmission(convertSubmissionTypeToInitialSubmissionBl(g.getSt()));
+            iso.setOrganization(StConverter.convertToSt(g.org));
+            iso.setInitial(IntConverter.convertToInt(counts.get(g).initial));
+            iso.setAmendment(IntConverter.convertToInt(counts.get(g).amendment));
             isoList.add(iso);
         }
         return isoList;
-    }
-
-    private Bl convertSubmissionTypeToInitialSubmissionBl(SubmissionType st) {
-        if (SubmissionType.INITIAL.equals(st)) {
-            return BlConverter.convertToBl(true);
-        } else if (SubmissionType.AMENDMENT.equals(st)) {
-            return BlConverter.convertToBl(false);
-        } else {
-            return BlConverter.convertToBl(null);
-        }
     }
 }

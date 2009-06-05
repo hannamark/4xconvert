@@ -70,14 +70,6 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'trial_counts'}">
-                       <li><a href="trialCounts.action" class="selected">Trial Counts Report</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="trialCounts.action" >Trial Counts Report</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
                     <c:when test="${requestScope.topic == 'milestones'}">
                        <li><a href="milestones.action" class="selected">Milestones Report</a></li> 
                     </c:when>

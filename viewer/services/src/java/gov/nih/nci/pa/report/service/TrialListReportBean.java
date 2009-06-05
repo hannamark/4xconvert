@@ -102,7 +102,7 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteriaDto, TrialListResultDto>
+public class TrialListReportBean extends AbstractBCReportBean<TrialListCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
 
     private static final int ORGANIZATION_IDX = 0;

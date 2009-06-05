@@ -76,37 +76,34 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.util.ReportUtil;
 
 /**
  * @author Hugh Reinhart
  * @since 05/12/2009
  */
-public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
+public class TrialProcessingCriteriaWebDto implements CriteriaWebDto<St> {
 
-    private Boolean currentMilestoneOnly = true;
+    private String assignedIdentifier = "";
 
     /**
      * {@inheritDoc}
      */
-    public MilestonesCriteriaDto getIsoDto() {
-        MilestonesCriteriaDto result = new MilestonesCriteriaDto();
-        super.setInterval(result);
-        result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
-        return result;
-    }
-
-    /**
-     * @return the currentMilestoneOnly
-     */
-    public Boolean getCurrentMilestoneOnly() {
-        return currentMilestoneOnly;
+    public St getIsoDto() {
+        return StConverter.convertToSt(getAssignedIdentifier());
     }
     /**
-     * @param currentMilestoneOnly the currentMilestoneOnly to set
+     * @return the assignedIdentifier
      */
-    public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
-        this.currentMilestoneOnly = currentMilestoneOnly;
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = ReportUtil.assignedIdentifierSetter(assignedIdentifier);
     }
 }

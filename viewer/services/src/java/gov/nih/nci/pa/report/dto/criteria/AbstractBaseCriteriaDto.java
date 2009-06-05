@@ -76,8 +76,10 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 
 /**
@@ -88,6 +90,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 public abstract class AbstractBaseCriteriaDto {
 
     private Ivl<Ts> timeInterval = IvlConverter.convertTs().convertToIvl(null, null);
+    private Bl ctep = BlConverter.convertToBl(null);
 
     /**
      * @return the timeInterval
@@ -100,5 +103,17 @@ public abstract class AbstractBaseCriteriaDto {
      */
     public void setTimeInterval(Ivl<Ts> timeInterval) {
         this.timeInterval = timeInterval;
+    }
+    /**
+     * @return the ctep
+     */
+    public Bl getCtep() {
+        return ctep;
+    }
+    /**
+     * @param ctep the ctep to set
+     */
+    public void setCtep(Bl ctep) {
+        this.ctep = ctep;
     }
 }

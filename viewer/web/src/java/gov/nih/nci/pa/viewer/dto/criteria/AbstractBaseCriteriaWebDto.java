@@ -85,15 +85,12 @@ import gov.nih.nci.pa.util.PAUtil;
  * @since 05/06/2009
  * @param <ISODTO> corresponding service iso dto
  */
-public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractBaseCriteriaDto> {
+public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractBaseCriteriaDto>
+        implements CriteriaWebDto<ISODTO> {
 
-    private String intervalStartDate;
-    private String intervalEndDate;
-
-    /**
-     * @return an iso dto instance
-     */
-    public abstract ISODTO getIsoDto();
+    private String intervalStartDate = "01/01/2009";
+    private String intervalEndDate = PAUtil.today();
+    private Boolean ctep = true;
 
     /**
      * @param isodto the iso dto
@@ -132,5 +129,17 @@ public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractBaseCrit
      */
     public void setIntervalEndDate(String intervalEndDate) {
         this.intervalEndDate = PAUtil.normalizeDateString(intervalEndDate);
+    }
+    /**
+     * @return the ctep
+     */
+    public Boolean getCtep() {
+        return ctep;
+    }
+    /**
+     * @param ctep the ctep to set
+     */
+    public void setCtep(Boolean ctep) {
+        this.ctep = ctep;
     }
 }

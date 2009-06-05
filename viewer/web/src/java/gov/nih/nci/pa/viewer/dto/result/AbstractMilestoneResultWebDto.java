@@ -96,10 +96,11 @@ public abstract class AbstractMilestoneResultWebDto {
      * @param dto the service iso dto
      */
     public AbstractMilestoneResultWebDto(AbstractMilestoneResultDto dto) {
-        this.assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
-        this.milestoneDate = TsConverter.convertToString(dto.getMilestoneDate());
-        this.officialTitle = StConverter.convertToString(dto.getOfficialTitle());
-        this.organization = StConverter.convertToString(dto.getOrganization());
+        if (dto == null) { return; }
+        assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
+        milestoneDate = TsConverter.convertToString(dto.getMilestoneDate());
+        officialTitle = StConverter.convertToString(dto.getOfficialTitle());
+        organization = StConverter.convertToString(dto.getOrganization());
     }
 
     /**

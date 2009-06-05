@@ -76,37 +76,15 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-
 /**
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 06/04/2009
+ * @param <ISODTO> corresponding service iso dto
  */
-public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
-
-    private Boolean currentMilestoneOnly = true;
+public interface CriteriaWebDto<ISODTO> {
 
     /**
-     * {@inheritDoc}
+     * @return an iso dto instance
      */
-    public MilestonesCriteriaDto getIsoDto() {
-        MilestonesCriteriaDto result = new MilestonesCriteriaDto();
-        super.setInterval(result);
-        result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
-        return result;
-    }
-
-    /**
-     * @return the currentMilestoneOnly
-     */
-    public Boolean getCurrentMilestoneOnly() {
-        return currentMilestoneOnly;
-    }
-    /**
-     * @param currentMilestoneOnly the currentMilestoneOnly to set
-     */
-    public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
-        this.currentMilestoneOnly = currentMilestoneOnly;
-    }
+    ISODTO getIsoDto();
 }

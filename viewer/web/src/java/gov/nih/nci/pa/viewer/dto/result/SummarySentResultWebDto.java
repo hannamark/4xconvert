@@ -111,14 +111,15 @@ public class SummarySentResultWebDto extends AbstractMilestoneResultWebDto {
      */
     public SummarySentResultWebDto(SummarySentResultDto dto) {
         super(dto);
-        this.feedbackDate = TsConverter.convertToString(dto.getFeedbackDate());
+        if (dto == null) { return; }
+        feedbackDate = TsConverter.convertToString(dto.getFeedbackDate());
         Boolean onTime = BlConverter.covertToBoolean(dto.getFeedbackOnTime());
         if (onTime == null) {
-            this.feedbackOnTime = "";
+            feedbackOnTime = "";
         } else if (onTime) {
-            this.feedbackOnTime = "Yes";
+            feedbackOnTime = "Yes";
         } else {
-            this.feedbackOnTime = "No";
+            feedbackOnTime = "No";
         }
     }
 

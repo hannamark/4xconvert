@@ -86,7 +86,7 @@ import org.apache.struts2.ServletActionContext;
 /**
  * Base class for report actions.
  *
- * @author hreinhart
+ * @author Hugh Reinhart
  * @since 04/29/2009
  *
  * @param <CRITERIA> criteria web dto used to generate report

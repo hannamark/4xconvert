@@ -11,10 +11,11 @@ import java.util.List;
  * @param <CRITERIA> criteria dto
  * @param <RESULT> result dto
  */
-public interface BaseReportInterface<CRITERIA, RESULT> {
+public interface ViewerReport<CRITERIA, RESULT> {
     /**
+     * Return run the report and return the results.
      * @param criteria criteria
-     * @return report
+     * @return report results
      * @throws PAException exception
      */
     List<RESULT> get(CRITERIA criteria) throws PAException;

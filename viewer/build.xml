@@ -47,6 +47,13 @@
     <!-- Deploy targets                                                         -->
     <!-- ====================================================================== -->
 
+    <target name="echoTime">
+        <tstamp>
+            <format property="now" pattern="yyyy MMMM dd HH:mm:ss" locale="en"/>
+        </tstamp>
+        <echo message="Build completed at ${now}" />
+    </target>
+
     <target name="ear">
         <available file="${paEarFile}" type="file" property="paEarPresent"/>
         <fail unless="paEarPresent" message="File pa.ear not available(should be at ${paEarFile}).  Please build pa first before viewer."/>
@@ -77,11 +84,12 @@
         <copy todir="${jboss.deploy.directory}" file="${viewerEarFile}"/>
     </target>
     
-    <target name="deploy" depends="package, ear, deploy-ear" 
+    <target name="deploy" depends="package, ear, deploy-ear, echoTime" 
             description="Build test and deploy."/>
             
-    <target name="deploy-notest" depends="package-notest-noivy, ear, deploy-ear" 
-            description="Build and deploy without testing or getting dependencies."/>
+    <target name="deploy-notest" depends="package-notest-noivy, ear, deploy-ear, echoTime" 
+            description="Build and deploy without testing or getting dependencies.">
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Ivy targets                                                            -->

@@ -86,5 +86,5 @@ import javax.ejb.Local;
  * @since 03/19/2009
  */
 @Local
-public interface TrialListLocal extends BaseReportInterface<TrialListCriteriaDto, TrialListResultDto> {
+public interface TrialListLocal extends ViewerReport<TrialListCriteriaDto, TrialListResultDto> {
 }

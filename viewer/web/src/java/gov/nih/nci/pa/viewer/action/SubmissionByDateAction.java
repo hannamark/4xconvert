@@ -74,91 +74,17 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.service;
+package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
-import gov.nih.nci.pa.report.util.ReportUtil;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
-
-import java.lang.reflect.ParameterizedType;
-import java.sql.Timestamp;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
+import gov.nih.nci.pa.viewer.dto.criteria.TrialCountsCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
 
 /**
  * @author Hugh Reinhart
- * @since 05/04/2009
- *
- * @param <CRITERIA> criteria dto
- * @param <RESULT> result dto
+ * @since 4/16/2009
  */
-public abstract class AbstractBaseReportBean<CRITERIA extends AbstractBaseCriteriaDto, RESULT>
-        implements BaseReportInterface<CRITERIA, RESULT> {
+public class SubmissionByDateAction extends AbstractReportAction
+        <TrialCountsCriteriaWebDto, TrialCountsResultWebDto> {
 
-    private final Class<RESULT> resultType;
-
-    /** Static spring to suppress conversion warnings. */
-    protected static final String UNCHECKED = "unchecked";
-
-    /** Logger. */
-    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
-    protected final Logger logger;
-
-    /** Hibernate session. */
-    protected Session session;
-
-    /** Default constructor. */
-    @SuppressWarnings(UNCHECKED)
-    public AbstractBaseReportBean() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-        resultType = (Class) parameterizedType.getActualTypeArguments()[1];
-        logger = Logger.getLogger(resultType);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<RESULT> get(CRITERIA criteria) throws PAException {
-        logger.info("Calling get(" + resultType.getName() + ")...");
-        if (criteria == null) {
-            throw new PAException("Report criteria dto must not be null.");
-        }
-        return null;
-    }
-
-    /**
-     * @param criteria criteria
-     * @param field field to run date checks
-     * @return date range clauses
-     */
-    protected String getDateRangeClauses(CRITERIA criteria, String field) {
-        StringBuffer sql = new StringBuffer();
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
-            sql.append("AND " + field + " >= :LOW ");
-        }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
-            sql.append("AND " + field + " < :HIGH ");
-        }
-        return sql.toString();
-    }
-
-    /**
-     * @param criteria criteria
-     * @param query query
-     */
-    protected void setDateRangeParameters(CRITERIA criteria, SQLQuery query) {
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
-            query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
-        }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
-            Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
-            query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
-                    ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
-        }
-    }
+    private static final long serialVersionUID = 2272623477532897394L;
 }

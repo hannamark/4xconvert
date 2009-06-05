@@ -82,6 +82,7 @@ import gov.nih.nci.pa.report.service.MilestonesLocal;
 import gov.nih.nci.pa.report.service.SummarySentLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
+import gov.nih.nci.pa.report.service.TrialProcessingLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
 
 /**
@@ -115,5 +116,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public TrialListLocal getTrialListReportService() {
         return (TrialListLocal) JNDIUtil.lookup("pa/TrialListReportBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TrialProcessingLocal getTrialProcessingReportService() {
+        return (TrialProcessingLocal) JNDIUtil.lookup("pa/TrialProcessingReportBean/local");
     }
 }

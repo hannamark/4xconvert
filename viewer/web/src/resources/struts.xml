@@ -36,19 +36,16 @@
         <action name="trialList*" class="gov.nih.nci.pa.viewer.action.TrialListAction" method="{1}">
             <result>/WEB-INF/jsp/trialList.jsp</result> 
         </action>
-        <action name="trialCounts*" class="gov.nih.nci.pa.viewer.action.TrialCountsAction" method="{1}">
-            <result>/WEB-INF/jsp/trialCounts.jsp</result> 
-        </action>
         <action name="milestones*" class="gov.nih.nci.pa.viewer.action.MilestonesAction" method="{1}">
              <result>/WEB-INF/jsp/milestones.jsp</result> 
         </action>
         <action name="summarySent*" class="gov.nih.nci.pa.viewer.action.SummarySentAction" method="{1}">
             <result>/WEB-INF/jsp/summarySent.jsp</result> 
         </action>
-        <action name="criteria*" class="gov.nih.nci.pa.viewer.action.{1}">
+        <action name="criteria*" class="gov.nih.nci.pa.viewer.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result> 
         </action>
-        <action name="results*" class="gov.nih.nci.pa.viewer.action.{1}" method="getReport">
+        <action name="results*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getReport">
             <result>/WEB-INF/jsp/{1}.jsp</result> 
         </action>
     </package>

@@ -109,7 +109,8 @@ public class MilestonesResultWebDto extends AbstractMilestoneResultWebDto {
      */
     public MilestonesResultWebDto(MilestonesResultDto dto) {
         super(dto);
-        this.milestoneCode = CdConverter.convertCdToString(dto.getMilestoneCode());
+        if (dto == null) { return; }
+        milestoneCode = CdConverter.convertCdToString(dto.getMilestoneCode());
     }
 
     /**

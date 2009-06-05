@@ -84,6 +84,8 @@ import org.apache.struts2.ServletActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
+ * Base action class used for all actions within the CTRP reporting web application.
+ *
  * @author Hugh Reinhart
  * @since 4/16/2009
  */

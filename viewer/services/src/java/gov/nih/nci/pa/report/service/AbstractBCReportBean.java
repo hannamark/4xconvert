@@ -74,39 +74,70 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto.criteria;
+package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
+import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.sql.Timestamp;
+
+import org.hibernate.SQLQuery;
 
 /**
+ * Abstract class used for report ejb's which use criteria that extend AbstractBaseCriteriaDto.
+
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 05/04/2009
+ *
+ * @param <CRITERIA> criteria dto
+ * @param <RESULT> result dto
  */
-public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
-
-    private Boolean currentMilestoneOnly = true;
+public abstract class AbstractBCReportBean<CRITERIA extends AbstractBaseCriteriaDto, RESULT>
+        extends AbstractReportBean<CRITERIA, RESULT> {
 
     /**
-     * {@inheritDoc}
+     * @param criteria criteria
+     * @param field field to run date checks
+     * @return date range clauses
      */
-    public MilestonesCriteriaDto getIsoDto() {
-        MilestonesCriteriaDto result = new MilestonesCriteriaDto();
-        super.setInterval(result);
-        result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
-        return result;
+    protected String getDateRangeClauses(CRITERIA criteria, String field) {
+        StringBuffer sql = new StringBuffer();
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
+            sql.append("AND " + field + " >= :LOW ");
+        }
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
+            sql.append("AND " + field + " < :HIGH ");
+        }
+        return sql.toString();
     }
 
     /**
-     * @return the currentMilestoneOnly
+     * @param criteria criteria
+     * @param query query
      */
-    public Boolean getCurrentMilestoneOnly() {
-        return currentMilestoneOnly;
+    protected void setDateRangeParameters(CRITERIA criteria, SQLQuery query) {
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
+            query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
+        }
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
+            Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
+            query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
+                    ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
+        }
     }
+
     /**
-     * @param currentMilestoneOnly the currentMilestoneOnly to set
+     * @param criteria criteria
+     * @return sql to include or exclude ctep trials as appropriate
      */
-    public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
-        this.currentMilestoneOnly = currentMilestoneOnly;
+    protected String ctepSql(CRITERIA criteria) {
+        if (BlConverter.covertToBool(criteria.getCtep())) {
+            return "";
+        }
+        return "AND (sp.user_last_created NOT IN ('brownph2@mail.nih.gov', 'pb8593@yahoo.com') "
+                  + "OR sp.user_last_created IS NULL) ";
     }
 }

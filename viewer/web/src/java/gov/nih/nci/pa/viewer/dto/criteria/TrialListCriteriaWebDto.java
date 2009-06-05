@@ -87,7 +87,6 @@ public class TrialListCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialLis
     /**
      * {@inheritDoc}
      */
-    @Override
     public TrialListCriteriaDto getIsoDto() {
         TrialListCriteriaDto result = new TrialListCriteriaDto();
         super.setInterval(result);

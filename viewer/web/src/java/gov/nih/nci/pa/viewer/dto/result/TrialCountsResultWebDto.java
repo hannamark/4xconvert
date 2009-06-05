@@ -76,11 +76,9 @@
 */
 package gov.nih.nci.pa.viewer.dto.result;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
-import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,8 +93,8 @@ public class TrialCountsResultWebDto {
     private Integer year;
     private Integer month;
     private Integer day;
-    private String submissionType;
-    private Integer count;
+    private Integer initial;
+    private Integer amendment;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -116,103 +114,91 @@ public class TrialCountsResultWebDto {
      * @param dto the service iso dto
      */
     public TrialCountsResultWebDto(TrialCountsResultDto dto) {
-        super();
-        this.organization = StConverter.convertToString(dto.getOrganization());
-        this.year = IntConverter.convertToInteger(dto.getYear());
-        this.month = IntConverter.convertToInteger(dto.getMonth());
-        this.day = IntConverter.convertToInteger(dto.getDay());
-        Boolean initial = BlConverter.covertToBoolean(dto.getInitialSubmission());
-        if (initial != null) {
-            if (initial) {
-                this.submissionType = ViewerConstants.INITIAL_SUBMISSION;
-            } else {
-                this.submissionType = ViewerConstants.AMENDMENT;
-            }
-        }
-        this.count = IntConverter.convertToInteger(dto.getCount());
+        if (dto == null) { return; }
+        organization = StConverter.convertToString(dto.getOrganization());
+        year = IntConverter.convertToInteger(dto.getYear());
+        month = IntConverter.convertToInteger(dto.getMonth());
+        day = IntConverter.convertToInteger(dto.getDay());
+        initial = IntConverter.convertToInteger(dto.getInitial());
+        amendment = IntConverter.convertToInteger(dto.getAmendment());
     }
 
+    /**
+     * @return the total
+     */
+    public Integer getTotal() {
+        return initial + amendment;
+    }
     /**
      * @return the organization
      */
     public String getOrganization() {
         return organization;
     }
-
     /**
      * @param organization the organization to set
      */
     public void setOrganization(String organization) {
         this.organization = organization;
     }
-
     /**
      * @return the year
      */
     public Integer getYear() {
         return year;
     }
-
     /**
      * @param year the year to set
      */
     public void setYear(Integer year) {
         this.year = year;
     }
-
     /**
      * @return the month
      */
     public Integer getMonth() {
         return month;
     }
-
     /**
      * @param month the month to set
      */
     public void setMonth(Integer month) {
         this.month = month;
     }
-
     /**
      * @return the day
      */
     public Integer getDay() {
         return day;
     }
-
     /**
      * @param day the day to set
      */
     public void setDay(Integer day) {
         this.day = day;
     }
-
     /**
-     * @return the submissionType
+     * @return the initial
      */
-    public String getSubmissionType() {
-        return submissionType;
+    public Integer getInitial() {
+        return initial;
     }
-
     /**
-     * @param submissionType the submissionType to set
+     * @param initial the initial to set
      */
-    public void setSubmissionType(String submissionType) {
-        this.submissionType = submissionType;
+    public void setInitial(Integer initial) {
+        this.initial = initial;
     }
-
     /**
-     * @return the count
+     * @return the amendment
      */
-    public Integer getCount() {
-        return count;
+    public Integer getAmendment() {
+        return amendment;
     }
-
     /**
-     * @param count the count to set
+     * @param amendment the amendment to set
      */
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setAmendment(Integer amendment) {
+        this.amendment = amendment;
     }
 }

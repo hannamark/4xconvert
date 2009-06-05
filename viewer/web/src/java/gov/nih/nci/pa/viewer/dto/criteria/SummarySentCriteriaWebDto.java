@@ -90,7 +90,6 @@ public class SummarySentCriteriaWebDto extends AbstractBaseCriteriaWebDto<Summar
     /**
      * {@inheritDoc}
      */
-    @Override
     public SummarySentCriteriaDto getIsoDto() {
         SummarySentCriteriaDto result = new SummarySentCriteriaDto();
         super.setInterval(result);

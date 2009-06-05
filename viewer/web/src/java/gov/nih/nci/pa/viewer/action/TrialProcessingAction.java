@@ -74,39 +74,80 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto.criteria;
+package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
+import gov.nih.nci.pa.report.dto.result.TrialProcessingResultDto;
+import gov.nih.nci.pa.report.service.TrialProcessingLocal;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.viewer.dto.criteria.TrialProcessingCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialProcessingHeaderResultWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialProcessingResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
+
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 4/16/2009
  */
-public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
+public class TrialProcessingAction
+        extends AbstractReportAction <TrialProcessingCriteriaWebDto, TrialProcessingResultWebDto> {
 
-    private Boolean currentMilestoneOnly = true;
+    private static final long serialVersionUID = 7222372874396709972L;
+    private TrialProcessingCriteriaWebDto criteria;
+    private TrialProcessingHeaderResultWebDto header;
 
     /**
      * {@inheritDoc}
      */
-    public MilestonesCriteriaDto getIsoDto() {
-        MilestonesCriteriaDto result = new MilestonesCriteriaDto();
-        super.setInterval(result);
-        result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
-        return result;
+    @Override
+    public String execute() throws PAException {
+        criteria = new TrialProcessingCriteriaWebDto();
+        return super.execute();
     }
 
     /**
-     * @return the currentMilestoneOnly
+     * {@inheritDoc}
      */
-    public Boolean getCurrentMilestoneOnly() {
-        return currentMilestoneOnly;
+    @Override
+    public String getReport() throws PAException {
+        TrialProcessingLocal local = ViewerServiceLocator.getInstance().getTrialProcessingReportService();
+        TrialProcessingHeaderResultDto isoHeader = local.getHeader(getCriteria().getIsoDto());
+        if (isoHeader != null) {
+            setHeader(new TrialProcessingHeaderResultWebDto(isoHeader));
+            List<TrialProcessingResultDto> isoList = local.get(getCriteria().getIsoDto());
+            setResultList(TrialProcessingResultWebDto.getWebList(isoList));
+        } else {
+            addActionError("Trial not found.");
+            setHeader(null);
+            setResultList(null);
+        }
+        return super.getReport();
+    }
+
+    /**
+     * @return the criteria
+     */
+    public TrialProcessingCriteriaWebDto getCriteria() {
+        return criteria;
     }
     /**
-     * @param currentMilestoneOnly the currentMilestoneOnly to set
+     * @param criteria the criteria to set
      */
-    public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
-        this.currentMilestoneOnly = currentMilestoneOnly;
+    public void setCriteria(TrialProcessingCriteriaWebDto criteria) {
+        this.criteria = criteria;
+    }
+    /**
+     * @return the header
+     */
+    public TrialProcessingHeaderResultWebDto getHeader() {
+        return header;
+    }
+    /**
+     * @param header the header to set
+     */
+    public void setHeader(TrialProcessingHeaderResultWebDto header) {
+        this.header = header;
     }
 }
