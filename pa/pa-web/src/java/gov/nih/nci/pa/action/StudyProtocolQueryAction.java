@@ -250,7 +250,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(
                     IiConverter.convertToIi(pId));
 
-            servletResponse.setContentType("text/html");
+            servletResponse.setContentType("text/html;charset=ISO-8859-1");
             servletResponse.setContentLength(htmlData.length());
             ServletOutputStream servletout = servletResponse.getOutputStream();
             servletout.write(htmlData.getBytes());

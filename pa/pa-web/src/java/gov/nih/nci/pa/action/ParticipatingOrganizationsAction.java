@@ -176,6 +176,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private static final String DISPLAY_STUDY_PART_CONTACTS = "display_StudyPartipants";
     private static final String ERROR_PRIMARY_CONTACTS = "error_prim_contacts";
 
+    
+    private String statusCode;
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws PAException on error
@@ -306,6 +308,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (PAUtil.isNotEmpty(tab.getFacilityOrganization().getName())) {
             setOrganizationName("for " + tab.getFacilityOrganization().getName());
         }
+        setStatusCode(sp.getStatusCode().getCode());
         setCurrentAction("edit");
     }
 
@@ -334,6 +337,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         } else {
             setTargetAccrualNumber(IntConverter.convertToInteger(spDto.getTargetAccrualNumber()).toString());
         }
+        setStatusCode(spDto.getStatusCode().getCode());
         setNewParticipation(false);
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(cbValue);
@@ -407,6 +411,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             } else {
                 orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
             }
+            setStatusCode(sp.getStatusCode().getCode());
             List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
                 .getPersonsByStudyParticpationId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
                     StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
@@ -1040,5 +1045,19 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         } catch (NumberFormatException e) {
             this.targetAccrualNumber = null;
         }
+    }
+
+    /**
+     * @return the statusCode
+     */
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 }

@@ -970,7 +970,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                          // html.append(appendData(" affiliated with " , affOrg.getName(), false , true));
                         //}
                      // }
-                     html.append(appendData(" affiliated with " , part.getBoardAffiliation().getValue(), false , true));
+                     html.append(appendData(" affiliated with " , 
+                             part.getReviewBoardOrganizationalAffiliation().getValue(), false , true));
                      html.append(appendData("Full Address" , AddressConverterUtil.convertToAddress(
                               poOrg.getPostalAddress()), true , true));
                       Object[] telList = poOrg.getTelecomAddress().getItem().toArray();

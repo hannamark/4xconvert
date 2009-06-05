@@ -385,7 +385,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         partDto.setOversightCommitteeIi(IiConverter.convertToIi(oversightCommitteeId));
         partDto.setReviewBoardApprovalNumber(StConverter.convertToSt(getApprovalNumber()));
         partDto.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(getApprovalStatusEnum()));
-        partDto.setBoardAffiliation(StConverter.convertToSt(getContactAffiliation()));
+        partDto.setReviewBoardOrganizationalAffiliation(StConverter.convertToSt(getContactAffiliation()));
         partDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(null));
         partDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         if (newFlag) {
@@ -443,7 +443,7 @@ public class IrbAction extends ActionSupport implements Preparable {
                     
                   setApprovalStatus(part.getReviewBoardApprovalStatusCode().getCode());
                   setApprovalNumber(StConverter.convertToString(part.getReviewBoardApprovalNumber()));
-                  setContactAffiliation(StConverter.convertToString(part.getBoardAffiliation()));
+                  setContactAffiliation(StConverter.convertToString(part.getReviewBoardOrganizationalAffiliation()));
                   if (PAUtil.isIiNull(part.getOversightCommitteeIi())) {
                       loadOrg(null);
                   } else {

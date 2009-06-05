@@ -160,6 +160,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             //personWebDTO.setSelectedPersId(Long.valueOf(((HealthCareProvider) searchResult[TWO]).getIdentifier()));
             personWebDTO.setSelectedPersId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
             personWebDTO.setPaPersonId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
+            personWebDTO.setStatusCode((((StudyParticipationContact) searchResult[1]).getStatusCode()));
             retList.add(personWebDTO);
         }
         return retList;

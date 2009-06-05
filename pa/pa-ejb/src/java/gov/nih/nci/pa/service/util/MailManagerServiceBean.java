@@ -91,7 +91,11 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -116,8 +120,18 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xml.internal.serialize.LineSeparator;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * @author Bala Nair
@@ -130,11 +144,12 @@ import org.apache.log4j.Logger;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
+@SuppressWarnings({"PMD.FinalFieldCouldBeStatic", "PMD.TooManyMethods" })
 public class MailManagerServiceBean implements MailManagerServiceRemote,
                             MailManagerServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(MailManagerServiceBean.class);
+    private static final int VAL = 65;
     private static final String TSR = "TSR_";
     private static final String HTML = ".html";
     private final String currentDate = "${CurrentDate}";
@@ -181,8 +196,9 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
 
           protocolQueryService.getTrialSummaryByStudyProtocolId(
               IiConverter.convertToLong(studyProtocolIi));
-          String xmlData = ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi);
-
+          //Format the xml
+          String xmlData = format(ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi));
+        
           String folderPath = PaEarPropertyReader.getDocUploadPath();
           StringBuffer sb  = new StringBuffer(folderPath);
 
@@ -191,7 +207,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
           OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
           oos.write(xmlData);
           oos.close();
-
+          
           StringBuffer sb2  = new StringBuffer(folderPath);
           String outputFile = new String(sb2.append(File.separator).append(TSR).append(
               spDTO.getNciIdentifier().toString() + HTML));
@@ -461,4 +477,50 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         LOG.info("Leaving send AcceptEmail");
       }
 
+    /**
+     * Format.
+     * 
+     * @param unformattedXml the unformatted xml
+     * 
+     * @return the string
+     */
+    private String format(String unformattedXml) {
+        Writer out = new StringWriter();
+        try {
+            final Document document = parseXmlFile(unformattedXml);
+
+            OutputFormat format = new OutputFormat(document);
+            format.setLineWidth(VAL);
+            format.setEncoding("ISO-8859-1");
+            format.setIndenting(true);
+            format.setIndent(2);
+            format.setLineSeparator(LineSeparator.Web);
+            XMLSerializer serializer = new XMLSerializer(out, format);
+            serializer.serialize(document);
+
+          
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage());
+        }
+        return out.toString();
+    }
+
+    private Document parseXmlFile(String in) {
+        DocumentBuilder db = null;
+        Document doc = null;
+        InputSource is = null;
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            db = dbf.newDocumentBuilder();
+            is = new InputSource(new StringReader(in));
+            doc = db.parse(is);
+        } catch (ParserConfigurationException e) {
+            LOG.error(e.getLocalizedMessage());
+        } catch (SAXException e) {
+            LOG.error(e.getLocalizedMessage());
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage());
+        }
+        return doc;
+    }
 }

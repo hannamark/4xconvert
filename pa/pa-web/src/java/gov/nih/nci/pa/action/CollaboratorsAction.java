@@ -142,7 +142,21 @@ public class CollaboratorsAction extends ActionSupport
     private String functionalCode;
     private String currentAction;
     private PaOrganizationDTO orgFromPO = new PaOrganizationDTO();
+    private String statusCode;
 
+    /**
+     * @return the statusCode
+     */
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
 
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -267,7 +281,7 @@ public class CollaboratorsAction extends ActionSupport
         orgFromPO.setName(editOrg.getName());
         orgFromPO.setZip(editOrg.getPostalCode());
         setFunctionalCode(spDto.getFunctionalCode().getCode());
-
+        setStatusCode(spDto.getStatusCode().getCode());
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(cbValue);
         tab.setFacilityOrganization(null);

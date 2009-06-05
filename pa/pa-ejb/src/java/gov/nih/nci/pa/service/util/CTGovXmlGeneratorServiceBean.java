@@ -185,6 +185,7 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -266,7 +267,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final String PHONE = "phone";
     private static final String EMAIL = "email";
     private static final String NA = "N/A";
-
+    private static final String TAB = "     ";
+    private static final String DASH = "- ";
+  
     private static Map<String , String> nv = new HashMap<String, String>();
     /**
      * @param studyProtocolIi ii of studyprotocol
@@ -350,6 +353,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             StreamResult result = new StreamResult(writer);
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty("encoding", "ISO-8859-1");
+              // set indentation 
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(domSource, result);
             return writer.toString();
         } catch (Exception e) {
@@ -589,7 +595,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         appendElement(irbInfo , createElement("affiliation" ,  affOrg.getName() , doc));
                       }
                     }*/
-                    appendElement(irbInfo , createElement("affiliation" ,  spart.getBoardAffiliation() , doc));
+                    appendElement(irbInfo , createElement("affiliation" ,  
+                            spart.getReviewBoardOrganizationalAffiliation() , doc));
                     Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
                     for (Object tel : telList) {
                         if (tel instanceof TelPhone) {
@@ -704,12 +711,18 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 maxUnit = pq.getUnit();
             } else if (descriptionText != null) {
                 if (incIndicator == null) {
+                    nullCrit.append(TAB);
+                    nullCrit.append(DASH);
                     nullCrit.append(descriptionText);
                     nullCrit.append('\n');
                 } else if (incIndicator) {
+                    incCrit.append(TAB);
+                    incCrit.append(DASH);
                     incCrit.append(descriptionText);
                     incCrit.append('\n');
                 } else {
+                    exCrit.append(TAB);
+                    exCrit.append(DASH);
                     exCrit.append(descriptionText);
                     exCrit.append('\n');
                 }
@@ -717,16 +730,20 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 value = pq.getValue();
                 unit = pq.getUnit();
                 if (incIndicator == null) {
-                    nullCrit.append(criterionName).append(' ').append(value).append(' ').append(unit).append('\n');
+                    nullCrit.append(TAB).append(DASH).append(criterionName).append(' ').append(value).append(' ').
+                        append(unit).append('\n');
                 } else if (incIndicator) {
-                    incCrit.append(criterionName).append(' ').append(value).append(' ').append(unit).append('\n');
+                    incCrit.append(TAB).append(DASH).append(criterionName).append(' ').append(value).append(' ').
+                        append(unit).append('\n');
                 } else {
-                    exCrit.append(criterionName).append(' ').append(value).append(' ').append(unit).append('\n');
+                    exCrit.append(TAB).append(DASH).append(criterionName).append(' ').append(value).append(' ').
+                        append(unit).append('\n');
                 }
             }
 
         } // for loop
         StringBuffer data = new StringBuffer();
+        data.append('\n');
         if (nullCrit.length() > 1) {
             data.append("Criteria \n" + nullCrit.toString() + "\n");
         }
@@ -749,6 +766,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(root , eligibility);
         }
     }
+   
     private static String convertToYears(BigDecimal b , String unit) {
         int age = 0;
         if (b.intValue() == 0 || b.intValue() ==  MAX_AGE) {

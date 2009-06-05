@@ -84,7 +84,12 @@ function loadDiv(orgid){
                     <td class="value" colspan="2"><s:select headerKey=""
                         headerValue="--Select--" name="functionalCode" list="#functionalCodeValues" /></td>
                 </tr>
-
+                <tr>
+                    <td class="label"><s:label for="statusCode">Status:</s:label></td>
+                    <td class="value" colspan="2">
+                        <s:textfield name="statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
+                    </td>               
+                </tr>
             </table>
         </s:form>
         <div class="actionsrow"><del class="btnwrapper">

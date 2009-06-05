@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 
 /**
@@ -116,6 +117,11 @@ public class PaPersonDTO {
      */
     private Long selectedPersId;
     private Long paPersonId;
+    
+    /*
+     * For displaying the status code 
+     */
+    private FunctionalRoleStatusCode statusCode;
 
     /**
      *
@@ -425,4 +431,20 @@ public class PaPersonDTO {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    /**
+     * @return the statusCode
+     */
+    public FunctionalRoleStatusCode getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(FunctionalRoleStatusCode statusCode) {
+        this.statusCode = statusCode;
+    }
+
+   
 }

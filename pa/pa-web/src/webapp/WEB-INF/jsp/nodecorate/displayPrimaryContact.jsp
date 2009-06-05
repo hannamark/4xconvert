@@ -1,5 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>	
-
+<pa:failureMessage/>
+<pa:sucessMessage /> 
 <div id="saveAndShowPersons">
 	<%@ include file="/WEB-INF/jsp/nodecorate/selectedName.jsp" %>
 </div>	
@@ -32,4 +33,10 @@
 	    </td>
 	     
 	</tr>
+	 <tr>
+                    <td class="label"><s:label for="statusCode">Status:</s:label></td>
+                    <td class="value" colspan="2">
+                        <s:textfield name="personContactWebDTO.statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
+                    </td>               
+                </tr>
 </table>

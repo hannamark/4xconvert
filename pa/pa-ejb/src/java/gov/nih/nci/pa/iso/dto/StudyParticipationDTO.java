@@ -80,7 +80,7 @@ public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
     private St reviewBoardApprovalNumber;
     private Ts reviewBoardApprovalDate;
     private Int targetAccrualNumber;
-    private St boardAffiliation;
+    private St reviewBoardOrganizationalAffiliation;
     
     /**
      * @return the healthcareFacilityIi
@@ -191,15 +191,17 @@ public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
         this.targetAccrualNumber = targetAccrualNumber;
     }
     /**
-     * @return the boardAffiliation
+     * @return the reviewBoardOrganizationalAffiliation
      */
-    public St getBoardAffiliation() {
-        return boardAffiliation;
+    public St getReviewBoardOrganizationalAffiliation() {
+        return reviewBoardOrganizationalAffiliation;
     }
     /**
-     * @param boardAffiliation the boardAffiliation to set
+     * @param reviewBoardOrganizationalAffiliation the reviewBoardOrganizationalAffiliation to set
      */
-    public void setBoardAffiliation(St boardAffiliation) {
-        this.boardAffiliation = boardAffiliation;
+    public void setReviewBoardOrganizationalAffiliation(
+            St reviewBoardOrganizationalAffiliation) {
+        this.reviewBoardOrganizationalAffiliation = reviewBoardOrganizationalAffiliation;
     }
+    
 }

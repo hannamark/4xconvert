@@ -135,7 +135,8 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         dto.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(bo.getReviewBoardApprovalStatusCode()));
         dto.setTargetAccrualNumber(IntConverter.convertToInt(bo.getTargetAccrualNumber()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setBoardAffiliation(StConverter.convertToSt(bo.getBoardAffiliation()));
+        dto.setReviewBoardOrganizationalAffiliation(
+                StConverter.convertToSt(bo.getReviewBoardOrganizationalAffiliation()));
         dto.setStatusDateRange(
                 IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
@@ -187,7 +188,8 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         bo.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
         bo.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));
         bo.setTargetAccrualNumber(IntConverter.convertToInteger(dto.getTargetAccrualNumber()));
-        bo.setBoardAffiliation(StConverter.convertToString(dto.getBoardAffiliation()));
+        bo.setReviewBoardOrganizationalAffiliation(
+                StConverter.convertToString(dto.getReviewBoardOrganizationalAffiliation()));
         if (dto.getReviewBoardApprovalStatusCode() != null) {
             bo.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
                     dto.getReviewBoardApprovalStatusCode().getCode()));
