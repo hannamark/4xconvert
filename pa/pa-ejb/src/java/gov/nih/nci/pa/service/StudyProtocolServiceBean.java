@@ -139,14 +139,14 @@ import org.hibernate.criterion.Example;
     private static final int FIVE_5 = 5;
     @EJB
     StudyRelationshipServiceLocal studyRelationshipService = null;
-    
+
     private SessionContext ejbContext;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
     }
-    
+
      /**
      *
      * @param ii primary id of StudyProtocol
@@ -184,7 +184,7 @@ import org.hibernate.criterion.Example;
     }
 
     /**
-     * 
+     *
      * @param dto of StudyProtocolDTO
      * @return List StudyProtocolDTO
      * @throws PAException PAException
@@ -218,7 +218,7 @@ import org.hibernate.criterion.Example;
         return studyProtocolDTOList;
 
     }
-    
+
     /**
      *
      * @param studyProtocolDTO studyProtocolDTO
@@ -729,10 +729,11 @@ import org.hibernate.criterion.Example;
 
 
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
@@ -742,7 +743,7 @@ import org.hibernate.criterion.Example;
         }
         LOG.info("Entering search");
         Session session = null;
-        List <StudyProtocol> studyProtocolList = null;
+        List<StudyProtocol> studyProtocolList = null;
         try {
             session = HibernateUtil.getCurrentSession();
             StudyProtocol exampleDO = new StudyProtocol();
@@ -755,10 +756,9 @@ import org.hibernate.criterion.Example;
             studyProtocolList = criteria.list();
             session.flush();
 
-        }  catch (HibernateException hbe) {
+        } catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while retrieving StudyProtocol for dto = " + hbe);
-            throw new PAException(" Hibernate exception while retrieving "
-                    + "StudyProtocol for dto = " +  hbe);
+            throw new PAException(" Hibernate exception while retrieving " + "StudyProtocol for dto = " + hbe);
         }
 
         if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
@@ -780,5 +780,5 @@ import org.hibernate.criterion.Example;
         }
         return studyProtocolDTOList;
     }
-    
+
 }
