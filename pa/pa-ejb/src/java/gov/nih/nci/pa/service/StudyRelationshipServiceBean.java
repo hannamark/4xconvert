@@ -159,7 +159,6 @@ public class StudyRelationshipServiceBean extends
    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
    public List<StudyRelationshipDTO> search(StudyRelationshipDTO dto, LimitOffset pagingParams) throws PAException,
            TooManyResultsException {
-       // TODO: make this method consistent with the search(StudyRelationshipDTO) method
        if (dto == null) {
            throw new PAException(" StudyRelationshipDTO should not be null ");
        }
