@@ -2,8 +2,10 @@ package gov.nih.nci.coppa.services.pa.plannedactivityservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.PlannedActivity;
 import gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion;
+import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedActivityTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedEligibilityCriterionTransformer;
@@ -20,6 +22,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Impl of the Planned Activity service.
+ *
  * @author mshestopalov
  */
 public class PlannedActivityServiceImpl extends PlannedActivityServiceImplBase {
@@ -27,15 +30,15 @@ public class PlannedActivityServiceImpl extends PlannedActivityServiceImplBase {
     private static final Logger logger = LogManager.getLogger(PlannedActivityServiceImpl.class);
     private final InvokePlannedActivityEjb planActService = new InvokePlannedActivityEjb();
 
-    private GenericStudyPaGridServiceImpl<PlannedActivityDTO, PlannedActivity> impl
-    = new GenericStudyPaGridServiceImpl<PlannedActivityDTO, PlannedActivity>(PlannedActivity.class, PlannedActivityDTO.class);
-
+    private GenericStudyPaGridServiceImpl<PlannedActivityDTO, PlannedActivity> impl =
+            new GenericStudyPaGridServiceImpl<PlannedActivityDTO, PlannedActivity>(PlannedActivity.class,
+                    PlannedActivityDTO.class);
 
     public PlannedActivityServiceImpl() throws RemoteException {
         super();
     }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByArm(gov.nih.nci.coppa.services.pa.Id armId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    public PlannedActivity[] getByArm(Id armId) throws RemoteException, PAFault {
         PlannedActivity[] result = null;
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(armId);
@@ -46,85 +49,89 @@ public class PlannedActivityServiceImpl extends PlannedActivityServiceImplBase {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
         }
-  }
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion[] getPlannedEligibilityCriterionByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      PlannedEligibilityCriterion[] result = null;
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          List<PlannedEligibilityCriterionDTO> dtosList = planActService.getPlannedEligibilityCriterionByStudyProtocol(iiDto);
-          result = PlannedEligibilityCriterionTransformer.INSTANCE.convert(dtosList);
-          return result;
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
-  }
+    public PlannedEligibilityCriterion[] getPlannedEligibilityCriterionByStudyProtocol(Id id) throws RemoteException,
+            PAFault {
+        PlannedEligibilityCriterion[] result = null;
+        try {
+            Ii iiDto = IITransformer.INSTANCE.toDto(id);
+            List<PlannedEligibilityCriterionDTO> dtosList =
+                    planActService.getPlannedEligibilityCriterionByStudyProtocol(iiDto);
+            result = PlannedEligibilityCriterionTransformer.INSTANCE.convert(dtosList);
+            return result;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion getPlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      PlannedEligibilityCriterion result = null;
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          PlannedEligibilityCriterionDTO planCrit = planActService.getPlannedEligibilityCriterion(iiDto);
-          result = PlannedEligibilityCriterionTransformer.INSTANCE.toXml(planCrit);
-          return result;
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
-  }
+    public PlannedEligibilityCriterion getPlannedEligibilityCriterion(Id id) throws RemoteException, PAFault {
+        PlannedEligibilityCriterion result = null;
+        try {
+            Ii iiDto = IITransformer.INSTANCE.toDto(id);
+            PlannedEligibilityCriterionDTO planCrit = planActService.getPlannedEligibilityCriterion(iiDto);
+            result = PlannedEligibilityCriterionTransformer.INSTANCE.toXml(planCrit);
+            return result;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion createPlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion plannedEligibilityCriterion) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public PlannedActivity[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
+        return impl.getByStudyProtocol(id);
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion updatePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion plannedEligibilityCriterion) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public PlannedActivity[] getCurrentByStudyProtocol(Id id) throws RemoteException, PAFault {
+        return impl.getCurrentByStudyProtocol(id);
+    }
 
-  public void deletePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public PlannedActivity get(Id id) throws RemoteException, PAFault {
+        return impl.get(id);
+    }
 
-  public void copyPlannedEligibilityStudyCriterions(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public PlannedEligibilityCriterion createPlannedEligibilityCriterion(
+            PlannedEligibilityCriterion plannedEligibilityCriterion) throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    return impl.getByStudyProtocol(id);
-  }
+    public PlannedEligibilityCriterion updatePlannedEligibilityCriterion(
+            PlannedEligibilityCriterion plannedEligibilityCriterion) throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public void deletePlannedEligibilityCriterion(Id id) throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    return impl.getCurrentByStudyProtocol(id);
-  }
+    public void copyPlannedEligibilityStudyCriterions(Id fromStudyProtocolId, Id toStudyProtocolId)
+            throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    return impl.get(id);
-  }
+    public void copy(Id fromStudyProtocolId, Id toStudyProtocolId) throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity create(gov.nih.nci.coppa.services.pa.PlannedActivity plannedActivity) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public PlannedActivity create(PlannedActivity plannedActivity) throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity update(gov.nih.nci.coppa.services.pa.PlannedActivity plannedActivity) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public PlannedActivity update(PlannedActivity plannedActivity) throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    //TODO: Implement this autogenerated method
-    throw new RemoteException("Not yet implemented");
-  }
+    public void delete(Id id) throws RemoteException, PAFault {
+        // TODO: Implement this autogenerated method
+        throw new RemoteException("Not yet implemented");
+    }
 
 }
-

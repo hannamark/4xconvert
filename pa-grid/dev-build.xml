@@ -7,9 +7,9 @@
     <!-- ============================================================== -->
 
     <path id="maven-ant-tasks.classpath" path="tools/lib/maven-ant-tasks-2.0.9.jar" />
-    <typedef 
-        resource="org/apache/maven/artifact/ant/antlib.xml" 
-        uri="urn:maven-artifact-ant" 
+    <typedef
+        resource="org/apache/maven/artifact/ant/antlib.xml"
+        uri="urn:maven-artifact-ant"
         classpathref="maven-ant-tasks.classpath" />
 
     <!-- ============================================================== -->
@@ -60,7 +60,7 @@
     <target name="defineExtendedClasspaths" unless="base.extended.classpath.prop">
         <artifact:pom file="pom.xml" id="pom.file" />
         <artifact:pom file="tools.pom.xml" id="tools.pom.file" />
-        
+
         <artifact:dependencies pomRefId="pom.file"
                 pathId="base.extended.classpath"
                 filesetId="compile.dependency.fileset"
@@ -96,8 +96,8 @@
         <echo level="info">
             test.build.extended.classpath is:
             ${test.build.extended.classpath.prop}
-          </echo>        
-        
+          </echo>
+
         <path id="test.run.extended.classpath">
         </path>
         <path id="run.extended.classpath">
@@ -118,7 +118,7 @@
         <echo level="info">
             tasks.run.extended.classpath is:
             ${tasks.run.extended.classpath.prop}
-          </echo>            
+          </echo>
     </target>
 
 
@@ -379,7 +379,7 @@
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="93" totallinerate="94" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="94" totallinerate="94" />
     </target>
 
     <!--
@@ -533,6 +533,10 @@
 
     <target name="runStudyRelationshipClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRelationshipService Client">
        <run-client serviceendpointname="StudyRelationshipService" class="gov.nih.nci.coppa.services.pa.studyrelationshipservice.client.StudyRelationshipServiceClient" debug-suspend="n" />
+  </target>
+
+    <target name="runPlannedActivityClient" depends="checkGlobus, defineClasspaths" description="Run the sample PlannedActivityService Client">
+       <run-client serviceendpointname="PlannedActivityService" class="gov.nih.nci.coppa.services.pa.plannedactivityservice.client.PlannedActivityServiceClient" debug-suspend="n" />
   </target>
 
 </project>

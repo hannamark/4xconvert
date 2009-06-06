@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.services.pa.studyprotocolservice.client;
 
+import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
@@ -60,6 +61,10 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
 
               System.out.println("Getting interventional study protocol");
               getInterventionalStudyProtocol(client);
+
+              System.out.println("searching for study protocols");
+              search(client);
+
             } else {
                 usage();
                 System.exit(1);
@@ -91,6 +96,20 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
+
+    private static void search(StudyProtocolServiceClient client) throws RemoteException {
+        StudyProtocol sp = new StudyProtocol();
+
+        LimitOffset limit = new LimitOffset();
+        limit.setLimit(10);
+        limit.setOffset(0);
+        StudyProtocol[] results = client.search(sp, limit);
+        System.out.println("search found " + results.length + " study relationship objects based on source protocol");
+        for (int i = 0; i < results.length; i++) {
+            System.out.println(ToStringBuilder.reflectionToString(results[i], ToStringStyle.MULTI_LINE_STYLE));
+        }
+    }
+
 
   public gov.nih.nci.coppa.services.pa.StudyProtocol getStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
