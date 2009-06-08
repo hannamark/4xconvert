@@ -154,7 +154,6 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
 
             // enforce business rules
             List<StudyOverallStatusDTO> oldStatus = getCurrentByStudyProtocol(
@@ -202,7 +201,6 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
             if (srs != null) {
                 session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
             }
-            session.flush();
             resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
         throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);

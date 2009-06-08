@@ -372,11 +372,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         Ii oldPaIi;
         Ii newPaIi;
         for (PlannedActivityDTO dto : dtos) {
-            oldPaIi = dto.getIdentifier();
-            dto.setIdentifier(null);
-            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
-            newPaIi = plannedActivityService.create(dto).getIdentifier();
-            paMap.put(oldPaIi.getExtension(), newPaIi);
+            if (CdConverter.convertCdToString(dto.getCategoryCode()).equalsIgnoreCase("INTERVENTION")) {
+                oldPaIi = dto.getIdentifier();
+                dto.setIdentifier(null);
+                dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+                newPaIi = plannedActivityService.create(dto).getIdentifier();
+                paMap.put(oldPaIi.getExtension(), newPaIi);
+            }
         }
 
         List<ArmDTO> armDtos = armService.getByStudyProtocol(fromStudyProtocolIi);
