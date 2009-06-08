@@ -20,7 +20,7 @@ import java.util.List;
  * @author Vrushali
  *
  */
-public class MockStudyParticipationService implements
+public class MockStudyParticipationService extends MockAbstractRoleIsoService implements
         StudyParticipationServiceRemote {
      static List<StudyParticipationDTO> list;
      static{
@@ -120,9 +120,5 @@ public class MockStudyParticipationService implements
         return null;
     }
 
-    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
-        // TODO Auto-generated method stub
-        
-    }
 
 }

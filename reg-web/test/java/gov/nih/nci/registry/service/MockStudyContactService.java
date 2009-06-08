@@ -15,7 +15,7 @@ import gov.nih.nci.pa.service.StudyContactServiceRemote;
  * @author Vrushali
  *
  */
-public class MockStudyContactService implements StudyContactServiceRemote {
+public class MockStudyContactService extends MockAbstractRoleIsoService implements StudyContactServiceRemote {
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.RolePaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii, java.lang.Object)
