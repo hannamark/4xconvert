@@ -193,7 +193,9 @@ public class IrbAction extends ActionSupport implements Preparable {
             if (ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.equals(getApprovalStatusEnum())) {
                 saveSubmissionNotRequired();
             } else if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.equals(getApprovalStatusEnum()) 
-                    || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())) {
+                    || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())
+                    || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.equals(getApprovalStatusEnum())
+                    || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.equals(getApprovalStatusEnum())) {
                 saveSubmissionRequired();
             }
         } catch (PAException e) {
@@ -322,7 +324,9 @@ public class IrbAction extends ActionSupport implements Preparable {
             addActionError("Must select an approval status.  ");
         }
         if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.equals(getApprovalStatusEnum())
-            || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())) {
+            || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())
+            || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.equals(getApprovalStatusEnum())
+            || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.equals(getApprovalStatusEnum())) {
             if (getContactAffiliation() == null) {
                 addActionError("Must Enter a Board Affliation.  ");
             }
@@ -439,7 +443,11 @@ public class IrbAction extends ActionSupport implements Preparable {
                 if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
                         part.getReviewBoardApprovalStatusCode().getCode())
                     || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
-                            part.getReviewBoardApprovalStatusCode().getCode())) {
+                            part.getReviewBoardApprovalStatusCode().getCode())
+                    || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().equals(
+                            part.getReviewBoardApprovalStatusCode().getCode())
+                    || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().equals(
+                                    part.getReviewBoardApprovalStatusCode().getCode())) {
                     
                   setApprovalStatus(part.getReviewBoardApprovalStatusCode().getCode());
                   setApprovalNumber(StConverter.convertToString(part.getReviewBoardApprovalNumber()));

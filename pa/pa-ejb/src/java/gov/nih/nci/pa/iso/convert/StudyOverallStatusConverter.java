@@ -134,12 +134,12 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOverallStatusDTO, StudyOverall
     @Override
     public StudyOverallStatus convertFromDtoToDomain(
             StudyOverallStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        /*if (!PAUtil.isIiNull(dto.getIdentifier())) {
             String errmsg = " convertFromDtoToDomain has been implemented for new domain"
                           + " objects only.  StudyOverallStatusDTO.ii must be null. ";
             LOG.error(errmsg);
             throw new PAException(errmsg);
-        }
+        }*/
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             String errmsg = " StudyOverallStatus.studyProtocol cannot be null. ";
             LOG.error(errmsg);

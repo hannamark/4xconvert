@@ -85,6 +85,8 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -93,7 +95,10 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -109,6 +114,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyOverallStatusServiceBean
 extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
         implements StudyOverallStatusServiceRemote, StudyOverallStatusServiceLocal {
@@ -116,7 +122,8 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
     private static final Logger LOG  = Logger.getLogger(StudyOverallStatusServiceBean.class);
     /** Standard error message for empty methods to be overridden. */
     protected static String errMsgMethodNotImplemented = "Method not yet implemented.";
-
+    @EJB
+       StudyProtocolServiceLocal studyProtocolService = null;
     /**
      * @return log4j Logger
      */
@@ -210,7 +217,41 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
      */
     @Override
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
-    throw new PAException(errMsgMethodNotImplemented);
+        StudyOverallStatusDTO resultDto = null;
+        Session session = null;
+        
+        StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
+        Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
+        if (newCode == null) {
+            throw new PAException("Study status must be set.  ");
+        }
+        if (newDate == null) {
+            throw new PAException("Study status date must be set.  ");
+        }
+        StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
+        if (IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1) {
+            throw new PAException("Study status Cannot be updated.  ");
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
+            if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
+               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
+               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
+               || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
+                if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
+                throw new PAException("A reason must be entered when the study status is set to "
+                             + bo.getStatusCode().getCode() + ".  ");
+                }
+            } else {
+                bo.setCommentText(null);
+            }
+            session.merge(bo);
+            resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
+        } catch (HibernateException hbe) {
+        throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);
+        }
+        return resultDto;
     }
 
     /**

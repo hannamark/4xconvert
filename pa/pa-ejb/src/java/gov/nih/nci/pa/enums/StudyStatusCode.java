@@ -82,9 +82,12 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -98,7 +101,14 @@ import java.util.Set;
  * copyright holder, NCI.
  */
 public enum StudyStatusCode implements CodedEnum<String> {
-
+    /**
+     * In Review.
+     */
+     IN_REVIEW("In Review") , 
+     /**
+      * In Review.
+      */
+     DISAPPROVED("Disapproved") , 
      /**
       * Approved.
       */
@@ -196,8 +206,16 @@ public enum StudyStatusCode implements CodedEnum<String> {
 
      static {
          Map<StudyStatusCode, Set<StudyStatusCode>> tmp = new HashMap<StudyStatusCode, Set<StudyStatusCode>>();
-
+         
          Set<StudyStatusCode> tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(APPROVED);
+         tmpSet.add(DISAPPROVED);
+         tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
+         
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmp.put(DISAPPROVED, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
          tmpSet.add(ACTIVE);
          tmpSet.add(WITHDRAWN);
          tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
@@ -253,4 +271,17 @@ public enum StudyStatusCode implements CodedEnum<String> {
      public boolean canTransitionTo(StudyStatusCode newStatus) {
          return TRANSITIONS.get(this).contains(newStatus);
      }
+     /**
+      * construct a array of display names for Study Status coded Enum for amend.
+      * @return String[] display names for StudyStatusCode
+      */
+     @SuppressWarnings({"PMD.UseStringBufferForStringAppends" })
+     public static String[]  getDisplayNamesForAmend() {
+         String[] codedNames = getDisplayNames();
+         List<String> list = new ArrayList<String>(Arrays.asList(codedNames)); 
+         list.remove("Disapproved");
+         codedNames = new String[list.size()];
+         codedNames = list.toArray(codedNames);
+         return codedNames;
+     }    
 }

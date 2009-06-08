@@ -945,7 +945,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
                       part.getReviewBoardApprovalStatusCode().getCode())
                   || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
-                          part.getReviewBoardApprovalStatusCode().getCode())) {
+                          part.getReviewBoardApprovalStatusCode().getCode())
+                  || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().equals(
+                                  part.getReviewBoardApprovalStatusCode().getCode())
+                  || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().equals(
+                                                  part.getReviewBoardApprovalStatusCode().getCode())) {
 
                   html.append(appendData("Board Approval Status" , getData(part.getReviewBoardApprovalStatusCode(),
                       true),  true , true));

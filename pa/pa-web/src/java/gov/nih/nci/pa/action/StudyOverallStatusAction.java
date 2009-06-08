@@ -87,11 +87,13 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -127,7 +129,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private Map<String, String>  dateTypeList;
     private StudyProtocolServiceRemote spService;
     private StudyOverallStatusServiceRemote sosService;
-
+    private ProtocolQueryServiceLocal spqService;
     private Ii spIdIi;
     private String currentTrialStatus;
     private String statusDate;
@@ -149,12 +151,12 @@ public class StudyOverallStatusAction extends ActionSupport implements
 
         spService = PaRegistry.getStudyProtocolService();
         sosService = PaRegistry.getStudyOverallStatusService();
-
+        spqService = PaRegistry.getProtocolQueryService();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
-
         spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
+        spDTO = spqService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIdIi));
     }
 
     /**
@@ -178,9 +180,10 @@ public class StudyOverallStatusAction extends ActionSupport implements
         if (hasActionErrors()) {
             return Action.SUCCESS;
         }
-
+        
+        
         if (statusChanged) {
-            insertStudyOverallStatus();
+                insertOrUpdateStudyOverallStatus();
         }
         if (!hasActionErrors()) {
            updateStudyProtocol();
@@ -330,7 +333,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     public void setOverallStatusList(List<StudyOverallStatusWebDTO> overallStatusList) {
         this.overallStatusList = overallStatusList;
     }
-    private void insertStudyOverallStatus() {
+    private void insertOrUpdateStudyOverallStatus() throws PAException {
         if (currentTrialStatus != null) {
             StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
             dto.setIdentifier(IiConverter.convertToIi((Long) null));
@@ -339,20 +342,32 @@ public class StudyOverallStatusAction extends ActionSupport implements
             dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
             dto.setStudyProtocolIdentifier(spIdIi);
 
-            try {
-                sosService.create(dto);
+            StudyProtocolQueryDTO spqDTO = spqService.getTrialSummaryByStudyProtocolId(
+                        IiConverter.convertToLong(spIdIi));
+
+            StudyProtocolDTO spDTO = spService.getStudyProtocol(spIdIi);
+                //original submission
+                if (spqDTO.getDocumentWorkflowStatusCode() != null 
+                        && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED") 
+                && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
+                    StudyOverallStatusDTO sosDto = null;
+                    List<StudyOverallStatusDTO> sosList = sosService.getCurrentByStudyProtocol(spIdIi);
+                    if (!sosList.isEmpty()) {
+                        sosDto = sosList.get(0);
+                    }
+                    dto.setIdentifier(sosDto.getIdentifier());
+                    sosService.update(dto);
+                } else {
+                    sosService.create(dto);
+                }
                 // set the current date and status to the session
-                StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-                .getRequest().getSession()
-                .getAttribute(Constants.TRIAL_SUMMARY);
-                spDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
-                spDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp(statusDate));
+/*                StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+                .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+*/                spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
+                spqDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp(statusDate));
                 // set the nee object back to session
                 ServletActionContext.getRequest().getSession().setAttribute(
-                        Constants.TRIAL_SUMMARY, spDTO);
-            } catch (PAException e) {
-                addActionError(e.getMessage());
-            }
+                        Constants.TRIAL_SUMMARY, spqDTO);
         }
     }
 
@@ -443,13 +458,20 @@ public class StudyOverallStatusAction extends ActionSupport implements
         if (!codeChanged && !dateChanged && !reasonChanged) {
             return false;
         }
-
-        // enforce status transition rules (this must be first check per Tracker 17366
-        if ((oldCode != null) && !oldCode.canTransitionTo(newCode)) {
-            addActionError("Illegal study status transition from '" + oldCode.getCode()
-                    + "' to '" + newCode.getCode() + "'.  ");
-        }
-
+        StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
+        .getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIdIi);
+            //original submission don't check status transition
+            if (!(spqDTO.getDocumentWorkflowStatusCode() != null 
+                    && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED") 
+            && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) //{ 
+             // enforce status transition rules (this must be first check per Tracker 17366
+                 && ((oldCode != null) && !oldCode.canTransitionTo(newCode))) {
+                    addActionError("Illegal study status transition from '" + oldCode.getCode()
+                            + "' to '" + newCode.getCode() + "'.  ");
+              //}
+            }
         // enforce date rules related to status transitions
         if ((startDateType != null) && (completionDateType != null)) {
             if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
@@ -463,11 +485,13 @@ public class StudyOverallStatusAction extends ActionSupport implements
                 }
             }
             if (!StudyStatusCode.APPROVED.equals(newCode) && !StudyStatusCode.WITHDRAWN.equals(newCode)
+                    && !StudyStatusCode.IN_REVIEW.equals(newCode) && !StudyStatusCode.DISAPPROVED.equals(newCode)
                     && startDateType.equals(anticipatedString)) {
                 addActionError("Trial start date can be 'Anticipated' only if the status is "
                             + "'Approved' or 'Withdrawn'.");
             }
             if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.WITHDRAWN.equals(newCode)
+                    && !StudyStatusCode.IN_REVIEW.equals(newCode) && !StudyStatusCode.DISAPPROVED.equals(newCode)
                     && startDateType.equals(actualString)) {
                 addActionError("Trial Start date type should be ‘Anticipated’ and Trial Start date "
                             + "should be future date if Trial Status is changed from ‘Approved’ to ‘Withdrawn’.  ");

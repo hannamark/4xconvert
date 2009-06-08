@@ -413,31 +413,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         StudyParticipationDTO searchCode = null;
 
         // check for site related of IRB
-        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(fromStudyProtocolIi);
-        if (BlConverter.covertToBool(spDTO.getReviewBoardApprovalRequiredIndicator())) {
-            // update the lead organization record
-            searchCode = new StudyParticipationDTO();
-            searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
-            List<StudyParticipationDTO> fromDtos =
-                    studyParticipationService.getByStudyProtocol(fromStudyProtocolIi, searchCode);
-            List<StudyParticipationDTO> toDtos =
-                    studyParticipationService.getByStudyProtocol(toStudyProtocolIi, searchCode);
-            StudyParticipationDTO fromDto = null;
-            StudyParticipationDTO toDto = null;
-            if (fromDtos != null && !fromDtos.isEmpty()) {
-                fromDto = fromDtos.get(0);
-            }
-            if (toDtos != null && !toDtos.isEmpty()) {
-                toDto = toDtos.get(0);
-            }
-            if (fromDto != null && toDto != null) {
-                toDto.setReviewBoardApprovalNumber(fromDto.getReviewBoardApprovalNumber());
-                toDto.setReviewBoardApprovalStatusCode(fromDto.getReviewBoardApprovalStatusCode());
-                toDto.setOversightCommitteeIi(fromDto.getOversightCommitteeIi());
-                studyParticipationService.update(toDto);
-            }
-
-        }
         criteriaList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
             if (cd.isCollaboratorCode()) {
@@ -449,7 +424,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         searchCode = new StudyParticipationDTO();
         searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         criteriaList.add(searchCode);
-
+        //IRB
+        searchCode = new StudyParticipationDTO();
+        searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode
+                .STUDY_OVERSIGHT_COMMITTEE));
+        criteriaList.add(searchCode);
+        
         List<StudyParticipationDTO> dtos =  studyParticipationService.getByStudyProtocol(
                 fromStudyProtocolIi , criteriaList);
         StudyParticipationDTO newSpDto = null;
@@ -924,4 +904,5 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
 
     }
+
  }

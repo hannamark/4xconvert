@@ -155,6 +155,12 @@ public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" }) 
    public static StudyRecruitmentStatusCode getByStudyStatusCode(StudyStatusCode code) {
        if (code != null) {
+           if (code.equals(StudyStatusCode.IN_REVIEW)) {
+               return StudyRecruitmentStatusCode.NOT_YET_RECRUITING;
+           }
+           if (code.equals(StudyStatusCode.DISAPPROVED)) {
+               return StudyRecruitmentStatusCode.NOT_YET_RECRUITING;
+           }
            if (code.equals(StudyStatusCode.APPROVED)) {
                return StudyRecruitmentStatusCode.NOT_YET_RECRUITING;
            }

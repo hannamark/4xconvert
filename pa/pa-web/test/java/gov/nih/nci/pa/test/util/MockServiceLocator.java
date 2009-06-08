@@ -118,6 +118,7 @@ import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
 import gov.nih.nci.service.MockPAHealthCareProviderService;
 import gov.nih.nci.service.MockPlannedActivityService;
+import gov.nih.nci.service.MockProtocolQueryService;
 import gov.nih.nci.service.MockStudyOnholdService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyParticipationService;
@@ -147,7 +148,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final PlannedActivityServiceRemote plannedActivityService = new MockPlannedActivityService();
     private final StudyOnholdServiceRemote studyOnholdService = new MockStudyOnholdService();
     private final PAHealthCareProviderRemote healthCareProviderRemote = new MockPAHealthCareProviderService();
-    
+    private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
     /**
      * @return mock service
      */
@@ -262,8 +263,7 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getProtocolQueryService()
      */
     public ProtocolQueryServiceLocal getProtocolQueryService() {
-        // TODO Auto-generated method stub
-        return null;
+        return protocolQueryService;
     }
 
 

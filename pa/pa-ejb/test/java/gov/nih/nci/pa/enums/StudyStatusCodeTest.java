@@ -195,5 +195,9 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.WITHDRAWN));
     }
-
+    @Test
+    public void testGetDisplayNamesForAmend() {
+        StudyStatusCode.getDisplayNamesForAmend();
+    }
 }
+

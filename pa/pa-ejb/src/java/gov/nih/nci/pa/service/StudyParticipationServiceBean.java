@@ -175,8 +175,10 @@ public class StudyParticipationServiceBean
                         + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "'.  ");
             }
             if (ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().toString().equals(code.getCode().toString())
-                    && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
-                dto.setReviewBoardApprovalNumber(StConverter.convertToSt(PAUtil.today()));
+             || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().toString().equals(code.getCode().toString())
+             || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().toString()
+                 .equals(code.getCode().toString()) && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
+                dto.setReviewBoardApprovalNumber(StConverter.convertToSt(null));
             }
             if (PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
                 throw new PAException("Oversight committee (board) must be set when review board approval status is '"

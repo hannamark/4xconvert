@@ -567,8 +567,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         for (StudyParticipationDTO spart : spDTOs) {
             if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
                         spart.getReviewBoardApprovalStatusCode().getCode())
-                        || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
-                        spart.getReviewBoardApprovalStatusCode().getCode())) {
+               || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
+                        spart.getReviewBoardApprovalStatusCode().getCode())
+               || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().equals(
+                                spart.getReviewBoardApprovalStatusCode().getCode())
+               || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().equals(
+                                        spart.getReviewBoardApprovalStatusCode().getCode())) {
 
                 appendElement(irbInfo , createElement("approval_status" ,
                         spart.getReviewBoardApprovalStatusCode() , doc));

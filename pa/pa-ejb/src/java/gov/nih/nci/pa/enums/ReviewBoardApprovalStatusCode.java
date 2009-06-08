@@ -95,7 +95,11 @@ public enum ReviewBoardApprovalStatusCode implements CodedEnum<String> {
     /** Submitted, exempt. */
     SUBMITTED_EXEMPT("Submitted, exempt"),
     /** Submission not required. */
-    SUBMISSION_NOT_REQUIRED("Submission not required");
+    SUBMISSION_NOT_REQUIRED("Submission not required"),
+    /** Submitted, Pending.    */
+    SUBMITTED_PENDING("Submitted, pending"),
+    /** Submitted, Disapproved.     */
+    SUBMITTED_DENIED("Submitted, denied");
     
     private String code;
     /**
