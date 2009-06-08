@@ -111,14 +111,15 @@ import org.hibernate.Session;
  * 
  */
 @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "providerAdapterJNDI", propertyValue = "java:/PoTopicJMSProvider"),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "topic/POTopic"),
-        @ActivationConfigProperty(propertyName = "useDLQ", propertyValue = "false"),
-        @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = "Durable"),
-        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "AUTO_ACKNOWLEDGE"),
-        @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "PAApp") })
- @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
+@ActivationConfigProperty(propertyName = "providerAdapterJNDI", propertyValue = "java:/PoTopicJMSProvider"),
+@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
+@ActivationConfigProperty(propertyName = "destination", propertyValue = "topic/POTopic"),
+@ActivationConfigProperty(propertyName = "useDLQ", propertyValue = "false"),
+@ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = "Durable"),
+@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "AUTO_ACKNOWLEDGE"),
+@ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "PAApp") })
+
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class PAMessageDrivenBean implements MessageListener {
     private static final Logger LOG = Logger.getLogger(PAMessageDrivenBean.class);
 
@@ -126,7 +127,7 @@ public class PAMessageDrivenBean implements MessageListener {
      * @param message Message
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void onMessage(Message message) {
+    public void onMessage(final Message message) {
         LOG.info("Entering PAMessageDrivenBean onMessage()");
         ObjectMessage msg = null;
         Long msgId = null;
@@ -149,13 +150,13 @@ public class PAMessageDrivenBean implements MessageListener {
                         orgRemote.synchronizeOrganization(updateMessage.getId());                        
                     }
                     if (identifierName.equals(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME)) {
-                        spIds = orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
+                        orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)) {
-                        spIds = orgRemote.synchronizeOversightCommittee(updateMessage.getId());
+                        orgRemote.synchronizeOversightCommittee(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME)) {
-                        spIds = orgRemote.synchronizeResearchOrganization(updateMessage.getId());
+                        orgRemote.synchronizeResearchOrganization(updateMessage.getId());
                     }
                     if (identifierName.equals(IiConverter.PERSON_IDENTIFIER_NAME)) {
                         perRemote.synchronizePerson(updateMessage.getId());

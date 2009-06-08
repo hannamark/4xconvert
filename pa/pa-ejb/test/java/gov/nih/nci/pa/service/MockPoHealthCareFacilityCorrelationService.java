@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -23,13 +24,14 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
 
     public HealthCareFacilityDTO getCorrelation(Ii ii)
             throws NullifiedRoleException {
-        if ("NULLIFY".equals(ii.getIdentifierName())) {
+        if (NullFlavor.NA.equals(ii.getNullFlavor())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+            nullifiedEntities.put(ii, IiConverter.converToPoHealthCareFacilityIi("1"));
             throw new NullifiedRoleException(nullifiedEntities);
         }
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
         hcf.setIdentifier(ii);
-        hcf.setPlayerIdentifier(IiConverter.converToPoOrganizationIi("1"));
+        hcf.setPlayerIdentifier(IiConverter.converToPoOrganizationIi("584"));
         hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return hcf;
     }

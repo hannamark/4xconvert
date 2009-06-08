@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 
 import java.util.List;
@@ -107,4 +108,14 @@ public interface RolePaService<DTO> extends StudyPaService<DTO> {
      * @throws PAException on error
      */
     List<DTO> getByStudyProtocol(Ii studyProtocolIi, List<DTO> dto) throws PAException;
+    
+    /**
+     * 
+     * @param ii ii of the structural roles
+     * @param roleStatusCode role status code
+     * @throws PAException on error
+     */
+    
+    void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException;
+    
 }

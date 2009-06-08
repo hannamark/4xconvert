@@ -83,7 +83,11 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -92,16 +96,15 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -121,13 +124,16 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.PreserveStackTrace" , "PMD.ExcessiveMethodLength" })
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(PersonSynchronizationServiceBean.class);
-
+    private static  CorrelationUtils cUtils = new CorrelationUtils();
     private SessionContext ejbContext;
+    @EJB
+    StudyContactServiceLocal scLocal = null;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
@@ -139,7 +145,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      * @param perIdentifer ii of Person
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    
     public void synchronizePerson(Ii perIdentifer) throws PAException {
 
         PersonDTO personDto = null;
@@ -149,54 +155,221 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             updatePerson(personDto);
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is nullified " + perIdentifer.getExtension());
-           nulifyPerson(perIdentifer);
+           //nulifyPerson(perIdentifer);
         }
         LOG.debug("Leaving synchronizePerson");
     }
 
     /***
      * @return List list of sp ids
-     * @param crsIdentifer po ClinicalResearchStaff identifier
+     * @param crsIdentifier po ClinicalResearchStaff identifier
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Long> synchronizeClinicalResearchStaff(Ii crsIdentifer) throws PAException {
+    public List<Long> synchronizeClinicalResearchStaff(Ii crsIdentifier) throws PAException {
 
         ClinicalResearchStaffDTO crsDto = null;
         LOG.debug("Entering synchronizeClinicalResearchStaff");
-        List<Long> spIds = getAffectedStudyProtocolIds("clinicalResearchStaff" , crsIdentifer.getExtension());
+        List<Long> spIds = null;
         try {
-            crsDto = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(crsIdentifer);
-            updateClinicalResearchStaff(crsDto);
+            crsDto = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(crsIdentifier);
+            updateClinicalResearchStaff(crsIdentifier , crsDto);
         } catch (NullifiedRoleException e) {
-           LOG.error("This ClinicalResearchStaff is nullified " + crsIdentifer.getExtension());
-           nulifyClinicalResearchStaff(crsIdentifer);
+           LOG.info("This ClinicalResearchStaff is nullified " + crsIdentifier.getExtension());
+           updateClinicalResearchStaff(crsIdentifier , null);
         }
         LOG.debug("Leaving synchronizeClinicalResearchStaff");
         return spIds;
     }
-
+    
     /***
      * @return List list of sp ids
-     * @param hcpIdentifer po HealthCareProvider identifier
+     * @param hcpIdentifier po HealthCareProvider identifier
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Long> synchronizeHealthCareProvider(Ii hcpIdentifer) throws PAException {
+    public List<Long> synchronizeHealthCareProvider(Ii hcpIdentifier) throws PAException {
 
         HealthCareProviderDTO hcpDto = null;
         LOG.debug("Entering synchronizeHealthCareProvider");
-        List<Long> spIds = getAffectedStudyProtocolIds("healthCareProvider" , hcpIdentifer.getExtension());
+        List<Long> spIds = null;
         try {
-            hcpDto = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(hcpIdentifer);
-            updateHealthCareProvider(hcpDto);
+            hcpDto = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(hcpIdentifier);
+            updateHealthCareProvider(hcpIdentifier , hcpDto);
         } catch (NullifiedRoleException e) {
-           LOG.error("This HealthCareProvider is nullified " + hcpIdentifer.getExtension());
-           nulifyHealthCareProvider(hcpIdentifer);
+           LOG.info("This HealthCareProvider is nullified " + hcpIdentifier.getExtension());
+           updateHealthCareProvider(hcpIdentifier , null);
+
         }
         LOG.debug("Leaving synchronizeHealthCareProvider");
         return spIds;
     }
+
+    private void updateClinicalResearchStaff(Ii crsIdentifier , ClinicalResearchStaffDTO crsDto) throws PAException {
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        crs.setIdentifier(crsIdentifier.getExtension());
+        crs = cUtils.getPAClinicalResearchStaff(crs);
+        Session session = null;
+        StructuralRoleStatusCode newRoleCode = null;
+        if (crs != null) {
+            // process only if pa has any clinical research staff records
+            session = HibernateUtil.getCurrentSession();
+            if (crsDto == null) { 
+                // this is a nullified, so treat it in a special manner
+                // step 1: get the po person,org identifier (player)
+                Long paOrgId = crs.getOrganization().getId();
+                Long paPerId = crs.getPerson().getId();
+                Long duplicateCrsId = null;
+                String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+                String poPerId = cUtils.getPAPersonByIndetifers(paPerId, null).getIdentifier();
+                PersonDTO personDto = getPoPerson(poPerId);
+                OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+                if (personDto != null && organizationDto != null) {
+                    // create a new crs 
+                    ClinicalResearchStaffCorrelationServiceBean crsBean = 
+                        new ClinicalResearchStaffCorrelationServiceBean();
+                    duplicateCrsId = crsBean.createClinicalResearchStaffCorrelations(
+                            organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
+                    ClinicalResearchStaff dupCrs = new ClinicalResearchStaff();
+                    dupCrs.setId(duplicateCrsId);
+                    dupCrs = cUtils.getPAClinicalResearchStaff(dupCrs);
+                    newRoleCode = dupCrs.getStatusCode();
+                    // replace the old, with the new change identifiers
+                    replaceStudyContactIdentifiers(
+                                IiConverter.converToPoClinicalResearchStaffIi(crs.getId().toString()), 
+                                IiConverter.converToPoClinicalResearchStaffIi(duplicateCrsId.toString()));
+                    // nullify the current 
+                    crs.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                } else {
+                    // this is nullified scenario with no org or person associated, in that case nullify the role
+                    crs.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                    newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+                }
+            } else if (!crs.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus()))) {
+                // this is a update scenario with a status change
+                newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus());
+                crs.setStatusCode(newRoleCode);
+                
+            }
+            crs.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+            session.update(crs);
+            scLocal.cascadeRoleStatus(crsIdentifier, CdConverter.convertToCd(newRoleCode));
+        }
+        
+    }
+    
+    private void updateHealthCareProvider(Ii hcpIdentifier , HealthCareProviderDTO hcpDto) throws PAException {
+        HealthCareProvider hcp = new HealthCareProvider();
+        hcp.setIdentifier(hcpIdentifier.getExtension());
+        hcp = cUtils.getPAHealthCareProvider(hcp);
+        Session session = null;
+        StructuralRoleStatusCode newRoleCode = null;
+        if (hcp != null) {
+            // process only if pa has any clinical research staff records
+            session = HibernateUtil.getCurrentSession();
+            if (hcpDto == null) { 
+                // this is a nullified, so treat it in a special manner
+                // step 1: get the po person,org identifier (player)
+                Long paOrgId = hcp.getOrganization().getId();
+                Long paPerId = hcp.getPerson().getId();
+                Long duplicateHcpId = null;
+                String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+                String poPerId = cUtils.getPAPersonByIndetifers(paPerId, null).getIdentifier();
+                PersonDTO personDto = getPoPerson(poPerId);
+                OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+                if (personDto != null && organizationDto != null) {
+                    // create a new hcp 
+                    HealthCareProviderCorrelationBean hcpBean = new HealthCareProviderCorrelationBean();
+                    duplicateHcpId = hcpBean.createHealthCareProviderCorrelationBeans(
+                            organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
+                    HealthCareProvider dupHcp = new HealthCareProvider();
+                    dupHcp.setId(duplicateHcpId);
+                    dupHcp = cUtils.getPAHealthCareProvider(dupHcp);
+                    newRoleCode = dupHcp.getStatusCode();
+                    // replace the old, with the new change identifiers
+                    replaceStudyContactIdentifiers(
+                                IiConverter.converToPoHealtcareProviderIi(hcp.getId().toString()), 
+                                IiConverter.converToPoHealtcareProviderIi(duplicateHcpId.toString()));
+                    // nullify the current 
+                    hcp.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                } else {
+                    // this is nullified scenario with no org or person associated, in that case nullify the role
+                    hcp.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                    newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+                }
+            } else if (!hcp.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcpDto.getStatus()))) {
+                // this is a update scenario with a status change
+                newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(hcpDto.getStatus());
+                hcp.setStatusCode(newRoleCode);
+            }
+            hcp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+            session.update(hcp);
+            scLocal.cascadeRoleStatus(hcpIdentifier, CdConverter.convertToCd(newRoleCode));
+        }
+        
+    }
+
+    private void replaceStudyContactIdentifiers(Ii from  , Ii to) {
+
+        String sql = null;
+        if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(from.getIdentifierName())) {    
+            sql = "update STUDY_CONTACT set clinical_research_staff_identifier = " + to.getExtension() 
+            + " where clinical_research_staff_identifier = " + from.getExtension();
+            
+        }
+
+        Session session = HibernateUtil.getCurrentSession();
+        int i = session.createSQLQuery(sql).executeUpdate();
+        LOG.info("nullified crs indentifier is " + from.getExtension());
+        LOG.info("duplicate hcf indentifier is " + to.getExtension());
+        LOG.info("total records got update in STUDY_CONTACT IS " + i);  
+    }    
+    
+    private PersonDTO getPoPerson(String poPersonIdentifier) throws PAException {
+
+        PersonDTO personDto = null;
+        Ii personIi = null;
+        try {
+            personDto = PoRegistry.getPersonEntityService().getPerson(
+                     IiConverter.converToPoPersonIi(poPersonIdentifier));
+        } catch (NullifiedEntityException e) {
+               // org is nullified, find out if it has any duplicates
+            //personIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poPersonIdentifier));
+            personIi = IiConverter.converToPoPersonIi("1428");
+            if (personIi != null) {
+                   try {
+                       personDto = PoRegistry.getPersonEntityService().getPerson(personIi);
+                   } catch (NullifiedEntityException e1) {
+                       // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
+                       throw new PAException("This scenario is currrently not hanndled .... " 
+                               + "Duplicate Ii of nullified is also nullified" , e1);
+                   }
+               }
+       }
+       return personDto; 
+    }
+
+    private OrganizationDTO getPoOrganization(String poOrganizationIdentifier) throws PAException {
+
+        OrganizationDTO organizationDto = null;
+        Ii organizationIi = null;
+        try {
+            organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(
+                     IiConverter.converToPoOrganizationIi(poOrganizationIdentifier));
+        } catch (NullifiedEntityException e) {
+               // org is nullified, find out if it has any duplicates
+            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poOrganizationIdentifier));
+            if (organizationIi != null) {
+                   try {
+                       organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(organizationIi);
+                   } catch (NullifiedEntityException e1) {
+                       // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
+                       throw new PAException("This scenario is currrently not hanndled .... " 
+                               + "Duplicate Ii of nullified is also nullified" , e1);
+                   }
+               }
+       }
+       return organizationDto; 
+    }
+    
 
 
     /***
@@ -205,12 +378,11 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      * @param ocIdentifer oc HealthCareProvider identifier
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public  List<Long> synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException {
 
         OrganizationalContactDTO ocDto = null;
         LOG.debug("Entering synchronizeOrganizationalContact");
-        List<Long> spIds = getAffectedStudyProtocolIds("organizationalContact" , ocIdentifer.getExtension());
+        List<Long> spIds = null;
         try {
             ocDto = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifer);
             updateOrganizationalContact(ocDto);
@@ -222,29 +394,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         return spIds;
     }
 
-    private void nulifyPerson(Ii personIdentifer) throws PAException {
-        LOG.debug("Entering nulifyPerson");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        Person per = cUtils.getPAPersonByIndetifers(null, personIdentifer.getExtension());
-        if (per != null) {
-            // delete the Person and all of on delete cascade will delete the entire child
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                Person person = (Person) session.get(Person.class, per.getId());
-                session.delete(person);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting Person for id = " + per.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving nulifyPerson");
-
-    }
-
     private void updatePerson(PersonDTO perDto) throws PAException {
         LOG.debug("Entering updatePerson");
-        CorrelationUtils cUtils = new CorrelationUtils();
         Person per = cUtils.getPAPersonByIndetifers(null, perDto.getIdentifier().getExtension());
         if (per != null) {
             // update the organization
@@ -271,113 +422,9 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     }
 
 
-    private void nulifyClinicalResearchStaff(Ii crsdentifer) throws PAException {
-        LOG.debug("Entering nulifyClinicalResearchStaff");
-        ClinicalResearchStaff crs = new ClinicalResearchStaff();
-        CorrelationUtils cUtils = new CorrelationUtils();
-        crs.setIdentifier(crsdentifer.getExtension());
-        crs = cUtils.getPAClinicalResearchStaff(crs);
-        if (crs != null) {
-            // delete the hcf and all of on delete cascade will delete the entire child
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                ClinicalResearchStaff clinicalResearchStaff =
-                        (ClinicalResearchStaff) session.get(ClinicalResearchStaff.class, crs.getId());
-                session.delete(clinicalResearchStaff);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting ClinicalResearchStaff for id = "
-                        + crs.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving nulifyClinicalResearchStaff");
-    }
-
-    private void updateClinicalResearchStaff(ClinicalResearchStaffDTO crsDto) throws PAException {
-        LOG.debug("Entering updateClinicalResearchStaff");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        ClinicalResearchStaff crs = new ClinicalResearchStaff();
-        crs.setIdentifier(crsDto.getIdentifier().getExtension());
-        crs = cUtils.getPAClinicalResearchStaff(crs);
-        if (crs != null) {
-            // update the organization
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                ClinicalResearchStaff clinicalResearchStaff = (ClinicalResearchStaff)
-                    session.get(ClinicalResearchStaff.class, crs.getId());
-                clinicalResearchStaff.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus()));
-                clinicalResearchStaff.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-                if (ejbContext != null) {
-                    clinicalResearchStaff.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-                }
-                session.update(clinicalResearchStaff);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while updating ClinicalResearchStaff for id = "
-                        + crs.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving updateClinicalResearchStaff");
-    }
-
-    private void nulifyHealthCareProvider(Ii hcpIdentifer) throws PAException {
-        LOG.debug("Entering nulifyupdateHealthCareProvider");
-        HealthCareProvider hcp = new HealthCareProvider();
-        CorrelationUtils cUtils = new CorrelationUtils();
-        hcp.setIdentifier(hcpIdentifer.getExtension());
-        hcp = cUtils.getPAHealthCareProvider(hcp);
-        if (hcp != null) {
-            // delete the hcf and all of on delete cascade will delete the entire child
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                HealthCareProvider healthCareProvider =
-                        (HealthCareProvider) session.get(HealthCareProvider.class, hcp.getId());
-                session.delete(healthCareProvider);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting HealthCareProvider for id = "
-                        + hcp.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving nulifyHealthCareProvider");
-    }
-
-    private void updateHealthCareProvider(HealthCareProviderDTO hcpDto) throws PAException {
-        LOG.debug("Entering updateHealthCareProvider");
-        CorrelationUtils cUtils = new CorrelationUtils();
-        HealthCareProvider hcp = new HealthCareProvider();
-        hcp.setIdentifier(hcpDto.getIdentifier().getExtension());
-        hcp = cUtils.getPAHealthCareProvider(hcp);
-        if (hcp != null) {
-            // update the organization
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                HealthCareProvider healthCareProvider = (HealthCareProvider)
-                    session.get(HealthCareProvider.class, hcp.getId());
-                healthCareProvider.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(hcpDto.getStatus()));
-                healthCareProvider.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-                if (ejbContext != null) {
-                    healthCareProvider.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-                }
-                session.update(healthCareProvider);
-                session.flush();
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while updating ClinicalResearchStaff for id = "
-                        + hcp.getId() , hbe);
-            }
-        }
-        LOG.debug("Leaving updateClinicalResearchStaff");
-    }
-
-
     private void nulifyOrganizationalContact(Ii ocIdentifer) throws PAException {
         LOG.debug("Entering nulifyOrganizationalContact");
         OrganizationalContact oc = new OrganizationalContact();
-        CorrelationUtils cUtils = new CorrelationUtils();
         oc.setIdentifier(ocIdentifer.getExtension());
         oc = cUtils.getPAOrganizationalContact(oc);
         if (oc != null) {
@@ -399,7 +446,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
     private void updateOrganizationalContact(OrganizationalContactDTO ocDto) throws PAException {
         LOG.debug("Entering updateOrganizationalContact");
-        CorrelationUtils cUtils = new CorrelationUtils();
         OrganizationalContact oc = new OrganizationalContact();
         oc.setIdentifier(ocDto.getIdentifier().getExtension());
         oc = cUtils.getPAOrganizationalContact(oc);
@@ -425,59 +471,5 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         LOG.debug("Leaving updateOrganizationalContact");
     }
 
-
-    private List<Long> getAffectedStudyProtocolIds(String className , String identifier)  {
-        List<Long> retList = new ArrayList<Long>();
-        Set<Long> ids = new HashSet<Long>();
-        List<Long> scIds = new ArrayList<Long>();
-        if (!"organizationalContact".equals(className)) {
-            scIds = getAffectedStudyProtocolIds(className , identifier , true);
-        }
-        List<Long> sptIds = getAffectedStudyProtocolIds(className , identifier , false);
-        for (Long id : scIds) {
-            if (ids.add(id)) {
-                retList.add(id);
-            }
-        }
-        for (Long id : sptIds) {
-            if (ids.add(id)) {
-                retList.add(id);
-            }
-        }
-        return retList;
-    }
-
-
-    /***
-     *
-     * @param className as String
-     * @param identifier as String
-     * @return List list of sp ids
-     */
-    @SuppressWarnings("unchecked")
-    private List<Long> getAffectedStudyProtocolIds(String className , String identifier , boolean studyContact)  {
-        Session session = null;
-        List<Long> spIds = null;
-        String hql = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            if (studyContact) {
-              hql  = " Select distinct sp.id from StudyProtocol sp  "
-                    + " join sp.studyContacts as scs"
-                    + " join scs." + className + " as cl where cl.identifier = '" + identifier + "'";
-
-            } else {
-                hql  = " Select distinct sp.id from StudyProtocol sp  "
-                    + " join sp.studyParticipations as sps"
-                    + " join sps.studyParticipationContacts as spc"
-                    + " join spc." + className + " as cl where cl.identifier = '" + identifier + "'";
-
-            }
-            spIds =  session.createQuery(hql).list();
-        } catch (HibernateException hbe) {
-            LOG.error("Exception in getAffectedStudyProtocolIds method exception is - ", hbe);
-        }
-        return spIds;
-    }
 
 }

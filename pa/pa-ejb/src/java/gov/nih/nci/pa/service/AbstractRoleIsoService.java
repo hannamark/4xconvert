@@ -1,7 +1,11 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.FunctionalRole;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -34,7 +38,7 @@ import org.hibernate.Session;
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class
-    AbstractRoleIsoService<DTO extends StudyDTO, BO extends AbstractEntity,
+    AbstractRoleIsoService<DTO extends StudyDTO, BO extends FunctionalRole,
     CONVERTER extends AbstractConverter<DTO, BO>>
     extends AbstractStudyIsoService<DTO, BO, CONVERTER>
     implements RolePaService<DTO> {
@@ -132,4 +136,70 @@ public abstract class
         spDtoList.add(dto);
         return getByStudyProtocol(studyProtocolIi, spDtoList);
     }
+    
+    /**
+     * 
+     * @param ii ii of the structural roles
+     * @param roleStatusCode role status code
+     * @throws PAException on error
+     */
+    public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
+        List<BO> sps = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StringBuffer hql = new StringBuffer("select sps from ");
+            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipation")) {
+                  if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                      hql.append(" StudyParticipation sps join sps.healthCareFacility as hcp where hcp.identifier = '" 
+                              + ii.getExtension() + "'");
+                  }
+                  if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                      hql.append(" StudyParticipation sps join sps.researchOrganization as ro where ro.identifier = '" 
+                              + ii.getExtension() + "'");
+                  }
+                  if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                      hql.append(" StudyParticipation sps join sps.oversightCommittee as oc where oc.identifier = '" 
+                              + ii.getExtension() + "'");
+                  }
+                  if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                      hql.append(" StudyParticipation sps join sps.oversightCommittee as oc where oc.identifier = '" 
+                              + ii.getExtension() + "'");
+                  }                
+            }
+            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
+                  if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                      hql.append(" StudyContact sps join sps.clinicalResearchStaff as crs where crs.identifier = '" 
+                          + ii.getExtension() + "'");
+                  }
+                  if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                      hql.append(" StudyContact sps join sps.clinicalResearchStaff as crs where crs.identifier = '" 
+                          + ii.getExtension() + "'");
+                  }
+
+            }
+    
+            sps = session.createQuery(hql.toString()).list();
+            for (BO sp : sps) {
+                sp.setStatusCode(newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE));
+                session.update(sp);
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException(hbe);
+        }
+    }
+
+    private FunctionalRoleStatusCode newFRStatusCode(Cd roleStatusCode , ActStatusCode actStatusCode) {
+        FunctionalRoleStatusCode returnStatusCode = null;
+        StructuralRoleStatusCode roleCode = StructuralRoleStatusCode.getByCode(roleStatusCode.getCode());
+        if (StructuralRoleStatusCode.NULLIFIED.equals(roleCode)) {
+            returnStatusCode = FunctionalRoleStatusCode.NULLIFIED;
+        } else if (ActStatusCode.NULLIFIED.equals(actStatusCode)) {
+            returnStatusCode = FunctionalRoleStatusCode.NULLIFIED;
+        } else {
+            returnStatusCode = FunctionalRoleStatusCode.PENDING;
+        }
+        return returnStatusCode;
+    }
+    
 }

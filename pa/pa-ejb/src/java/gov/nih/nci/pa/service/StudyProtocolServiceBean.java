@@ -748,6 +748,7 @@ import org.hibernate.criterion.Example;
             session = HibernateUtil.getCurrentSession();
             StudyProtocol exampleDO = new StudyProtocol();
             exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+            exampleDO.setStatusCode(ActStatusCode.ACTIVE);
             Example example = Example.create(exampleDO);
             Criteria criteria = session.createCriteria(StudyProtocol.class).add(example);
             int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);

@@ -101,7 +101,6 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -112,7 +111,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -147,255 +145,289 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
      * @param orgIdentifer ii of organization
      * @throws PAException on error
      */
-    public void synchronizeOrganization(Ii orgIdentifer) throws PAException {
+    public void synchronizeOrganization(final Ii orgIdentifer) throws PAException {
 
         OrganizationDTO orgDto = null;
-        OrganizationDTO nullifiedOrg = null;
         LOG.debug("Entering synchronizeOrganization");
         try {
             orgDto = PoRegistry.getOrganizationEntityService().getOrganization(orgIdentifer);
-            updateOrganization(orgIdentifer , orgDto , nullifiedOrg);
+            updateOrganization(orgIdentifer , orgDto);
         } catch (NullifiedEntityException e) {
-           LOG.error("This Organization is nullified " + orgIdentifer.getExtension());
-//           Map<Ii , Ii > ii = e.getNullifiedEntities();
-//           LOG.info(" ii is " + ii.get(orgIdentifer));
-//           Ii duplicateIi = e.getNullifiedEntities().get(orgIdentifer);
-//           LOG.info("This Organization is nullified " + duplicateIi.getExtension());
-           try {
-               nullifiedOrg = PoRegistry.getOrganizationEntityService().getOrganization(
-                       IiConverter.converToPoOrganizationIi("584"));
-            } catch (NullifiedEntityException e1) {
-                // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
-                throw new PAException("This scenario is currrently not hanndled .... " 
-                        + "Duplicate Ii of nullified is also nullified" , e1);
-            }
-           updateOrganization(orgIdentifer , orgDto , nullifiedOrg);
+           LOG.info("This Organization is nullified " + orgIdentifer.getExtension());
+           updateOrganization(orgIdentifer , null);
         }
         LOG.debug("Leaving synchronizeOrganization");
     }
 
     /***
-     *
-     * @param oscIdentifer po OversightCommittee identifier
-     * @return List list of sp ids
-     * @throws PAException on error
-     */
-    public List<Long> synchronizeOversightCommittee(Ii oscIdentifer) throws PAException {
+    *
+    * @param hcfIdentifer po HealthCareFacility identifier
+    * @throws PAException on error
+    */
+   public void synchronizeHealthCareFacility(final Ii hcfIdentifer) throws PAException {
 
-        OversightCommitteeDTO oscDto = null;
-        LOG.debug("Entering synchronizeOversightCommittee");
-        try {
-            oscDto = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifer);
-            updateOversightCommittee(oscIdentifer , oscDto);
-        } catch (NullifiedRoleException e) {
-           LOG.info("This OversightCommittee is nullified " + oscIdentifer.getExtension());
-           updateOversightCommittee(oscIdentifer , null);
-        }
-        LOG.debug("Leaving synchronizeOversightCommittee");
-        return null;
-    }
+       HealthCareFacilityDTO hcfDto = null;
+       LOG.debug("Entering synchronizeHealthCareFacility");
+       try {
+           hcfDto = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifer);
+           updateHealthCareFacility(hcfIdentifer , hcfDto);
+       } catch (NullifiedRoleException e) {
+          LOG.info("This HealthCareFacility is nullified " + hcfIdentifer.getExtension());
+          updateHealthCareFacility(hcfIdentifer , null);
+       }
+       LOG.debug("Leaving synchronizeOrganization");
+   }
+   
+   /***
+   *
+   * @param oscIdentifer po OversightCommittee identifier
+   * @throws PAException on error
+   */
+   public void synchronizeOversightCommittee(final Ii oscIdentifer) throws PAException {
+      OversightCommitteeDTO oscDto = null;
+      LOG.debug("Entering synchronizeOversightCommittee");
+      try {
+          oscDto = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifer);
+          updateOversightCommittee(oscIdentifer , oscDto);
+      } catch (NullifiedRoleException e) {
+         LOG.info("This OversightCommittee is nullified " + oscIdentifer.getExtension());
+         updateOversightCommittee(oscIdentifer , null);
+      }
+      LOG.debug("Leaving synchronizeOversightCommittee");
+   }
 
-
-    /***
-     *
-     * @param hcfIdentifer po HealthCareFacility identifier
-     * @return List list of sp ids
-     * @throws PAException on error
-     */
-    public List<Long> synchronizeHealthCareFacility(Ii hcfIdentifer) throws PAException {
-
-        HealthCareFacilityDTO hcfDto = null;
-        LOG.debug("Entering synchronizeHealthCareFacility");
-        List<Long> spIds = null;
-        try {
-            hcfDto = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifer);
-            updateHealthCareFacility(hcfIdentifer , hcfDto);
-        } catch (NullifiedRoleException e) {
-           LOG.error("This HealthCareFacility is nullified " + hcfIdentifer.getExtension());
-           updateHealthCareFacility(hcfIdentifer , null);
-        }
-        LOG.debug("Leaving synchronizeOrganization");
-        return spIds;
-    }
-
-    /***
-     *
-     * @param roIdentifier po ResearchOrganization identifier
-     * @return List list of sp ids
-     * @throws PAException on error
-     */
-    public List<Long> synchronizeResearchOrganization(Ii roIdentifier) throws PAException {
-
-        ResearchOrganizationDTO roDto = null;
-        LOG.debug("Entering synchronizeResearchOrganization");
-        try {
-            roDto = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(roIdentifier);
-            updateResearchOrganization(roIdentifier , roDto);
-        } catch (NullifiedRoleException e) {
+   /***
+   *
+   * @param roIdentifier po ResearchOrganization identifier
+   * @throws PAException on error
+   */
+   public void synchronizeResearchOrganization(final Ii roIdentifier) throws PAException {
+       ResearchOrganizationDTO roDto = null;
+       LOG.debug("Entering synchronizeResearchOrganization");
+       try {
+           roDto = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(roIdentifier);
+           updateResearchOrganization(roIdentifier , roDto);
+       } catch (NullifiedRoleException e) {
            LOG.info("This ResearchOrganization is nullified " + roIdentifier.getExtension());
            updateResearchOrganization(roIdentifier , null);
-        }
-        LOG.debug("Leaving synchronizeResearchOrganization");
-        return null;
-    }
+           
+       }
+       LOG.debug("Leaving synchronizeResearchOrganization");
+   }
 
-    private void updateResearchOrganization(Ii ii , ResearchOrganizationDTO roDto) throws PAException {
-        LOG.debug("Entering updateResearchOrganization");
-        Session session = null;
-        ResearchOrganization ro = new ResearchOrganization();
-        ro.setIdentifier(ii.getExtension());
-        ro = cUtils.getPAResearchOrganization(ro);
-        boolean cascadeRole = false;
-        if (ro != null) {
-            if (roDto == null 
-                    || !ro.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()))) {
-                cascadeRole = true;
-            }
-            session = HibernateUtil.getCurrentSession();
-            if (roDto == null) {
-                ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                
-            } else {
-                ro.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()));
-            }
-            ro.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            session.update(ro);
-            if (cascadeRole) {
-                spsLocal.cascadeRoleStatus(ii , CdConverter.convertToCd(ro.getStatusCode()));
-                
-            }
-        }
-        LOG.debug("Leaving updateResearchOrganization");
+   private void updateOrganization(final Ii ii , final OrganizationDTO orgDto) throws PAException {
+       LOG.debug("Entering updateOrganization");
+       Organization paOrg = cUtils.getPAOrganizationByIndetifers(null, ii.getExtension());
 
-    }
-    
-    private void updateOversightCommittee(Ii ii , OversightCommitteeDTO ocDto) throws PAException {
-        Session session = null;
-        OversightCommittee oc = new OversightCommittee();
-        oc.setIdentifier(ii.getExtension());
-        oc = cUtils.getPAOversightCommittee(oc);
-        if (oc != null) {
-          session = HibernateUtil.getCurrentSession();
-          if (ocDto == null) {
-              oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-          } else {
-              oc.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()));
-          }
-          oc.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-          session.update(oc);
-          if (ocDto == null 
-               || !oc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()))) {
-              spsLocal.cascadeRoleStatus(ii , CdConverter.convertToCd(oc.getStatusCode()));
-          }
-        }
-    }
+       if (paOrg != null) {
+           Session session = null;
+           session = HibernateUtil.getCurrentSession();
+           // update the organization
+           Organization organization = (Organization) session.get(Organization.class, paOrg.getId());
 
-    private void updateHealthCareFacility(Ii ii , HealthCareFacilityDTO hcfDto) throws PAException {
-        Session session = null;
-      HealthCareFacility hcf = new HealthCareFacility();
-      hcf.setIdentifier(ii.getExtension());
-      hcf = cUtils.getPAHealthCareFacility(hcf);
-      boolean cascadeRole = false;
-      if (hcf != null) {
-        try {
-            session = HibernateUtil.getCurrentSession();
-            if (hcfDto == null 
-                    || !hcf.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()))) {
-                cascadeRole = true;
-            }
+           if (orgDto == null) {
+               // its nullified
+               organization.setStatusCode(EntityStatusCode.NULLIFIED);
+           } else {
+               // that means its not nullified
+               paOrg = cUtils.convertPOToPAOrganization(orgDto);
+               organization.setCity(paOrg.getCity());
+               organization.setCountryName(paOrg.getCountryName());
+               organization.setName(paOrg.getName());
+               organization.setPostalCode(paOrg.getPostalCode());
+               organization.setState(paOrg.getState());
+               organization.setStatusCode(paOrg.getStatusCode());
+           }
+           organization.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+           if (ejbContext != null) {
+               organization.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+           }
+           session.update(organization);
+       }
+       LOG.debug("Leaving updateOrganization");
+   }
+   
+   private void updateResearchOrganization(final Ii roIdentifier , final ResearchOrganizationDTO roDto) 
+   throws PAException {
+       Session session = null;
+       ResearchOrganization ro = new ResearchOrganization();
+       ro.setIdentifier(roIdentifier.getExtension());
+       ro = cUtils.getPAResearchOrganization(ro);
+       StructuralRoleStatusCode newRoleCode = null;
+       Ii roCurrentIi = roIdentifier;
+       if (ro != null) {
+           session = HibernateUtil.getCurrentSession();
+           if (roDto == null) {
+               // this is a nullified scenario .....
+               // check if it does have an valid organization 
+               Long paOrgId = ro.getOrganization().getId();
+               String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+               OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+               if (organizationDto != null) {
+                   OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
+                   Long duplicateRoId = osb.createResearchOrganizationCorrelations(
+                           organizationDto.getIdentifier().getExtension());
+                   ResearchOrganization dupRo = new ResearchOrganization();
+                   dupRo.setId(duplicateRoId);
+                   dupRo = cUtils.getPAResearchOrganization(dupRo);
+                   newRoleCode = dupRo.getStatusCode();
+                   roCurrentIi = IiConverter.converToPoResearchOrganizationIi(duplicateRoId.toString());
+                   replaceStudyParticipationIdentifiers(
+                           IiConverter.converToPoResearchOrganizationIi(ro.getId().toString()),  roCurrentIi);     
+                   ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+               } else {
+                   // this is nullified scenario with no org 
+                   ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                   newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+               }
+           } else if (!ro.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()))) {
+               // this is a update scenario with a status change
+               newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus());
+               ro.setStatusCode(newRoleCode);
+           }
+           ro.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+           session.update(ro);
+           spsLocal.cascadeRoleStatus(roCurrentIi, CdConverter.convertToCd(newRoleCode));           
+       }
+   }
 
-            if (hcfDto == null) {
-                hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-            } else {
-                hcf.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()));
-            }
-            hcf.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            session.update(hcf);
-            if (cascadeRole) {
-                spsLocal.cascadeRoleStatus(ii , CdConverter.convertToCd(hcf.getStatusCode()));
-            }
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception while updating HealthCareFacility for id = "
-                    + hcf.getId() , hbe);
-        }
-        LOG.debug("Leaving updateHealthCareFacility");
-      }
-    }
-    
-    private void updateOrganization(Ii ii , OrganizationDTO orgDto  , OrganizationDTO duplicateOrg) throws PAException {
-        LOG.debug("Entering updateOrganization");
-        Organization paOrg = cUtils.getPAOrganizationByIndetifers(null, ii.getExtension());
-        if (paOrg != null) {
-            // update the organization
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                Organization organization = (Organization) session.get(Organization.class, paOrg.getId());
-                if (duplicateOrg == null) {
-                   // that means its not nullified
-                    paOrg = cUtils.convertPOToPAOrganization(orgDto);
-                    organization.setCity(paOrg.getCity());
-                    organization.setCountryName(paOrg.getCountryName());
-                    organization.setName(paOrg.getName());
-                    organization.setPostalCode(paOrg.getPostalCode());
-                    organization.setState(paOrg.getState());
-                    organization.setStatusCode(paOrg.getStatusCode());
-                } else {
-                    // its means its nullified
-                    organization.setStatusCode(EntityStatusCode.NULLIFIED);
-                    
-                }
-                organization.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-                if (ejbContext != null) {
-                    organization.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-                }
-                session.update(organization);
-                if (duplicateOrg != null) {
-                    cascadeDuplicateEntity(paOrg , duplicateOrg);
-                }
-            } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception while deleting Organization for id = " + paOrg.getId(), hbe);
-            }
-        }
-        LOG.debug("Leaving updateOrganization");
-    }
-    
-    private void cascadeDuplicateEntity(Organization nullfiedOrg  , OrganizationDTO duplicateOrg) throws PAException {
-        // Step 1: Check if the duplicate org has an entry in pa, if not create one 
-        Organization dupPaOrg = 
-            cUtils.getPAOrganizationByIndetifers(null, duplicateOrg.getIdentifier().getExtension());
-        if (dupPaOrg == null) {
-            dupPaOrg = cUtils.createPAOrganization(duplicateOrg);
-        }
-        updateHealtcareFacility(nullfiedOrg  ,  duplicateOrg);
-    }
-    private void updateHealtcareFacility(Organization nullfiedOrg  , OrganizationDTO duplicateOrg) throws PAException {
-        Long hcfDuplicateId = null;
-        Long hcfNullifiedId = null;
-        
-        // Step 2 : find if the nullified org has any structural roles ? if yes, check the duplicate org has 
-        // that structural role, if it does not have an structural create one
-        HealthCareFacility nhcf = new HealthCareFacility();
-        nhcf.setOrganization(nullfiedOrg);
-        nhcf = cUtils.getPAHealthCareFacility(nhcf);
-        if (nhcf != null) {
-            hcfNullifiedId = nhcf.getId();
-            // create a Structural role the for the duplicate 
-            OrganizationCorrelationServiceBean ocb = new OrganizationCorrelationServiceBean();
-            hcfDuplicateId = ocb.createHealthCareFacilityCorrelations(duplicateOrg.getIdentifier().getExtension());
-            String sql = "update STUDY_PARTICIPATION set healthcare_facility_identifier = " + hcfDuplicateId 
-            + " where healthcare_facility_identifier = " + hcfNullifiedId;
-            Session session = HibernateUtil.getCurrentSession();
-            int i = session.createSQLQuery(sql).executeUpdate();
-            LOG.info("nullified hcf indentifier is " + hcfNullifiedId);
-            LOG.info("duplicate hcf indentifier is " + hcfDuplicateId);
-            LOG.info("total records got update in STUDY_PARTICIPATION us " + i);  
-            if (i > 0) {
-                spsLocal.cascadeRoleStatus(IiConverter.converToPoHealthCareFacilityIi(hcfDuplicateId.toString()) , 
-                                CdConverter.convertToCd(nhcf.getStatusCode()));
-            }
-        }
-        
-    }
+   private void updateOversightCommittee(final Ii oscIdentifier , final OversightCommitteeDTO oscDto) 
+   throws PAException {
+       Session session = null;
+       OversightCommittee osc = new OversightCommittee();
+       osc.setIdentifier(oscIdentifier.getExtension());
+       osc = cUtils.getPAOversightCommittee(osc);
+       StructuralRoleStatusCode newRoleCode = null;
+       Ii hcfCurrentIi = oscIdentifier;
+       if (osc != null) {
+           session = HibernateUtil.getCurrentSession();
+           if (oscDto == null) {
+               // this is a nullified scenario .....
+               // check if it does have an valid organization 
+               Long paOrgId = osc.getOrganization().getId();
+               
+               String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+               OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+               
+               if (organizationDto != null) {
+                   OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
+                   Long duplicateOscId = osb.createOversightCommitteeCorrelations(
+                           organizationDto.getIdentifier().getExtension());
+                   
+                   OversightCommittee dupOsc = new OversightCommittee();
+                   dupOsc.setId(duplicateOscId);
+                   dupOsc = cUtils.getPAOversightCommittee(dupOsc);
+                   newRoleCode = dupOsc.getStatusCode();
+                   hcfCurrentIi = IiConverter.converToPoOversightCommitteeIi(duplicateOscId.toString());
+                   replaceStudyParticipationIdentifiers(
+                           IiConverter.converToPoOversightCommitteeIi(osc.getId().toString()),  hcfCurrentIi);     
+                   osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+               } else {
+                   // this is nullified scenario with no org 
+                   osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                   newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+               }
+           } else if (!osc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(oscDto.getStatus()))) {
+               // this is a update scenario with a status change
+               newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(oscDto.getStatus());
+               osc.setStatusCode(newRoleCode);
+           }
+           osc.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+           session.update(osc);
+           spsLocal.cascadeRoleStatus(hcfCurrentIi, CdConverter.convertToCd(newRoleCode));           
+       }
+   }
+   
+   private void updateHealthCareFacility(final Ii hcfIdentifier , final HealthCareFacilityDTO hcfDto) 
+   throws PAException {
+       Session session = null;
+       HealthCareFacility hcf = new HealthCareFacility();
+       hcf.setIdentifier(hcfIdentifier.getExtension());
+       hcf = cUtils.getPAHealthCareFacility(hcf);
+       StructuralRoleStatusCode newRoleCode = null;
+       Ii hcfCurrentIi = hcfIdentifier;
+       if (hcf != null) {
+           session = HibernateUtil.getCurrentSession();
+           if (hcfDto == null) {
+               // this is a nullified scenario .....
+               // check if it does have an valid organization 
+               Long paOrgId = hcf.getOrganization().getId();
+               
+               String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+               OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+               
+               if (organizationDto != null) {
+                   OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
+                   Long duplicateHcfId = osb.createHealthCareFacilityCorrelations(
+                           organizationDto.getIdentifier().getExtension());
+                   
+                   HealthCareFacility dupHcf = new HealthCareFacility();
+                   dupHcf.setId(duplicateHcfId);
+                   dupHcf = cUtils.getPAHealthCareFacility(dupHcf);
+                   newRoleCode = dupHcf.getStatusCode();
+                   hcfCurrentIi = IiConverter.converToPoHealthCareFacilityIi(duplicateHcfId.toString());
+                   replaceStudyParticipationIdentifiers(
+                           IiConverter.converToPoHealthCareFacilityIi(hcf.getId().toString()),  hcfCurrentIi);     
+                   hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+               } else {
+                   // this is nullified scenario with no org 
+                   hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                   newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+               }
+           } else if (!hcf.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()))) {
+               // this is a update scenario with a status change
+               newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus());
+               hcf.setStatusCode(newRoleCode);
+           }
+           hcf.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+           session.update(hcf);
+           spsLocal.cascadeRoleStatus(hcfCurrentIi, CdConverter.convertToCd(newRoleCode));           
+       }
+   }
+       
+   private void replaceStudyParticipationIdentifiers(final Ii from  , final Ii to) {
+
+       String sql = null;
+       if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(from.getIdentifierName())) {    
+           sql = "update STUDY_PARTICIPATION set healthcare_facility_identifier = " + to.getExtension() 
+           + " where healthcare_facility_identifier = " + from.getExtension();
+       }
+       if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(from.getIdentifierName())) {
+           sql = "update STUDY_PARTICIPATION set research_organization_identifier = " + to.getExtension() 
+           + " where research_organization_identifier = " + from.getExtension();
+       }
+       if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(from.getIdentifierName())) {    
+           sql = "update STUDY_PARTICIPATION set oversight_committee_identifier = " + to.getExtension() 
+           + " where oversight_committee_identifier = " + from.getExtension();
+       }
+
+       int i = HibernateUtil.getCurrentSession().createSQLQuery(sql).executeUpdate();
+       LOG.info("Sql for update " + sql);
+       LOG.info("total records got update in STUDY_PARTICIPATION IS " + i);  
+   }    
+       
+     
+   private OrganizationDTO getPoOrganization(final String poOrgIdentifier) throws PAException {
+       OrganizationDTO organizationDto = null;
+       Ii organizationIi = null;
+       try {
+           organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(
+                   IiConverter.converToPoOrganizationIi(poOrgIdentifier));
+       } catch (NullifiedEntityException e) {
+            // org is nullified, find out if it has any duplicates
+            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poOrgIdentifier));
+            //organizationIi = IiConverter.converToPoPersonIi("584");
+           if (organizationIi != null) {
+               try {
+                   organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(organizationIi);
+               } catch (NullifiedEntityException e1) {
+                   // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
+                   throw new PAException("This scenario is currrently not hanndled .... " 
+                           + "Duplicate Ii of nullified is also nullified" , e1);
+               }
+           }
+       }
+       return organizationDto; 
+   }    
     
 }

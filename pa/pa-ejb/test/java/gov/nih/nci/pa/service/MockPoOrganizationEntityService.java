@@ -7,6 +7,7 @@ import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -80,7 +81,7 @@ public class MockPoOrganizationEntityService implements
      */
     public OrganizationDTO getOrganization(Ii arg0)
             throws NullifiedEntityException {
-        if ("NULLIFY".equals(arg0.getIdentifierName())) {
+        if (NullFlavor.NA.equals(arg0.getNullFlavor())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
             nullifiedEntities.put(arg0, IiConverter.converToPoOrganizationIi("584"));
             throw new NullifiedEntityException(nullifiedEntities);

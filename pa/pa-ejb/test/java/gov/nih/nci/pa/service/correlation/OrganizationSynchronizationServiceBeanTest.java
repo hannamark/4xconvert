@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service.correlation;
 
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareFacilityTest;
 import gov.nih.nci.pa.domain.Organization;
@@ -48,13 +49,7 @@ public class OrganizationSynchronizationServiceBeanTest {
         Ii hcfIi = IiConverter.converToPoHealthCareFacilityIi("abc");
         createTestData1();
         remoteEjb.synchronizeHealthCareFacility(hcfIi);
-        
-//        HealthCareFacility savedhc = (HealthCareFacility) session.load(HealthCareFacility.class, createdHcfId);
-//        StudyParticipation savedSps = (StudyParticipation) session.load(StudyParticipation.class, createdSpsId);
-//        System.out.println(" -------after hcf id "+ savedhc.getId());
-//        System.out.println(" ---------after hcf satus -----------"+ savedhc.getStatusCode());
-//        System.out.println(" ---------after ----- in sps id "+ savedSps.getId());
-//        System.out.println(" ---------after sps satus -----------"+ savedSps.getStatusCode());
+
     
 
     }
@@ -63,7 +58,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     @Test
     public void synchronizeHealthCareFacilityNullify() throws Exception {
         Ii hcfIi = IiConverter.converToPoHealthCareFacilityIi("abc");
-        hcfIi.setIdentifierName("NULLIFY");
+        hcfIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeHealthCareFacility(hcfIi);
         
@@ -80,7 +75,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     @Test
     public void synchronizeResearchOrganizationNullify() throws Exception {
         Ii roIi = IiConverter.converToPoResearchOrganizationIi("abc");
-        roIi.setIdentifierName("NULLIFY");
+        roIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeResearchOrganization(roIi);
     }
@@ -96,7 +91,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     @Test
     public void synchronizeOversightCommitteeNullify() throws Exception {
         Ii roIi = IiConverter.converToPoOversightCommitteeIi("abc");
-        roIi.setIdentifierName("NULLIFY");
+        roIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeOversightCommittee(roIi);
     }
@@ -111,7 +106,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     @Test
     public void synchronizeOrganizationNullify()  throws Exception {
         Ii roIi = IiConverter.converToPoOrganizationIi("abc");
-        roIi.setIdentifierName("NULLIFY");
+        roIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeOrganization(roIi);
     }
@@ -125,8 +120,6 @@ public class OrganizationSynchronizationServiceBeanTest {
         HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
         TestSchema.addUpdObject(hcf);
         HealthCareFacility savedhc = (HealthCareFacility) session.load(HealthCareFacility.class, hcf.getId());
-//        System.out.println(" ---before----------------- in hcf id "+ savedhc.getId());
-//        System.out.println(" in before hcf id status "+ savedhc.getStatusCode());
         createdHcfId = savedhc.getId();
 
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
@@ -138,8 +131,6 @@ public class OrganizationSynchronizationServiceBeanTest {
         TestSchema.addUpdObject(create);
         assertNotNull(create.getId());
         StudyParticipation saved = (StudyParticipation) session.load(StudyParticipation.class, create.getId());
-//        System.out.println(" befre sps is "+ saved.getId());
-//        System.out.println(" in before sps status "+ saved.getStatusCode());
         createdSpsId = saved.getId();
     }
 
