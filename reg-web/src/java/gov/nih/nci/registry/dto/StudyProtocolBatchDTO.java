@@ -131,6 +131,7 @@ public class StudyProtocolBatchDTO {
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private static final int SERIAL_NUM_MIN = 5;
     private static final int SERIAL_NUM_MAX  = 6;
+    private static final int ORG_NAME_MAX_LENGTH = 160;
        
     /**
      * . Default Constructor
@@ -246,6 +247,8 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgName
      */
+    @org.hibernate.validator.Length(message = "Lead Organization's Name must be 160 characters max.\n", 
+            max = ORG_NAME_MAX_LENGTH)
     @NotEmpty(message = "Lead Organization's Name is required.\n")
     public String getLeadOrgName() {
         return leadOrgName;
@@ -1031,6 +1034,7 @@ public class StudyProtocolBatchDTO {
      * @return the sponsorOrgName
      */
     @NotEmpty(message = "Sponsor Organization's Name is required.\n")
+    @Length(message = "Sponsor Organization's Name must be 160 characters max.\n", max = ORG_NAME_MAX_LENGTH)
     public String getSponsorOrgName() {
         return sponsorOrgName;
     }
@@ -1346,7 +1350,7 @@ public class StudyProtocolBatchDTO {
      * @return the title
      */
     @NotEmpty(message = "Trial Title is required")  
-    @Length(message = "Trial Title must be 4000 characters max", max = TRIAL_TITLE_MAX_LENGTH)
+    @org.hibernate.validator.Length(message = "Trial Title must be 4000 characters max", max = TRIAL_TITLE_MAX_LENGTH)
     public String getTitle() {
         return title;
     }

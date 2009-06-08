@@ -562,4 +562,24 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         assertEquals("error", trialAction.review());
         assertNotNull(trialAction.getActionErrors());
     }
+    @Test
+    public void testInReviewStatus() throws Exception{
+        trialAction = new AmendmentTrialAction();
+        TrialDTO dto = getMockTrialDTO();
+        dto.setStatusCode("In Review");
+        trialAction.setTrialDTO(dto);
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
+        
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+        assertEquals("error", trialAction.review());
+       
+        
+    }
 }

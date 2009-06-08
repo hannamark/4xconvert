@@ -14,10 +14,13 @@ public class OrganizationBatchDTO extends AddressDTO {
     private String name;
     private String orgCTEPId;
     private String type;
+    private static final int ORG_NAME_MAX_LENGTH = 160;
     
     /**
      * @return the name
      */
+    @org.hibernate.validator.Length(message = "(fieldName) Name must be 160 characters max.\n", 
+            max = ORG_NAME_MAX_LENGTH)
     @NotEmpty(message = "(fieldName) Name is required.\n")
     public String getName() {
         return name;

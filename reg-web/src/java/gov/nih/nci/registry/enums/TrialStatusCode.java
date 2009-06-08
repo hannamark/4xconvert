@@ -13,7 +13,11 @@ import gov.nih.nci.pa.enums.CodedEnum;
  */
 public enum TrialStatusCode implements CodedEnum<String> {
 
-     /**
+    /**
+     * In Review.
+     */
+     IN_REVIEW("In Review") , 
+    /**
       * Approved.
       */
      APPROVED("Approved") ,

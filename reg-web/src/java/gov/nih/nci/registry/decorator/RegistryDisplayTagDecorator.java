@@ -1,15 +1,17 @@
 package gov.nih.nci.registry.decorator;
 
-import java.util.Date;
-import org.displaytag.decorator.TableDecorator;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.struts2.ServletActionContext;
-
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+
+import java.util.Date;
+
+import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.struts2.ServletActionContext;
+import org.displaytag.decorator.TableDecorator;
 
 /**
  * tag decorator registry.
@@ -43,10 +45,14 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         
         DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
+        StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 
+                this.getCurrentRowObject()).getStudyStatusCode();
+        
         if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
-                && loginUser.equalsIgnoreCase(userCreated)) {
+                && loginUser.equalsIgnoreCase(userCreated)
+                && (!(statusCode.equals(StudyStatusCode.DISAPPROVED)))) {
             return "Amend";
         } else  {
             return "";

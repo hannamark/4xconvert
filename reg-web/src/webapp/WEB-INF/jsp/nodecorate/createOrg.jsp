@@ -2,7 +2,7 @@
 <h2>Add Organization</h2>
 <table  class="form">  
    <tr> 	
- 		<td scope="row" class="label"><label for="poOrganizations_createOrg_orgName;"> Organization Name :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgName;"  maxlength="100" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="poOrganizations_createOrg_orgName;"> Organization Name :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgName;"  maxlength="159" size="100"  cssStyle="width:200px" /></td>
  		<td scope="row" class="label"><label for="poOrganizations_createOrg_orgStreetAddress">Street Address :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgStreetAddress"  maxlength="254" size="100"  cssStyle="width:200px" /></td>		
    </tr>
    <tr>        

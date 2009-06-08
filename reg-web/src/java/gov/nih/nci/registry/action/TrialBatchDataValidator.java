@@ -46,6 +46,7 @@ public class TrialBatchDataValidator {
     private static List<String> countryList = null;
 
     private static final int AUS_STATE_CODE_LEN = 3;
+    private static final int ORG_FIELD = 8;
     
     /**
      * 
@@ -335,7 +336,8 @@ public class TrialBatchDataValidator {
         }
         // Constraint/Rule: 26 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
         //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
-          if (TrialStatusCode.APPROVED.getCode().equals(dto.getCurrentTrialStatus())) {
+          if (TrialStatusCode.APPROVED.getCode().equals(dto.getCurrentTrialStatus())
+                  || TrialStatusCode.IN_REVIEW.getCode().equals(dto.getCurrentTrialStatus())) {
               if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
                   errors.append("If Current Trial Status is Approved, Trial Start Date must be Anticipated.\n");
               } 
@@ -544,7 +546,7 @@ public class TrialBatchDataValidator {
         if (PAUtil.isEmpty(dto.getPhone())) {
             nullCount += 1;
         }
-        if (nullCount == 0) {
+        if (nullCount > 0 && nullCount < ORG_FIELD) {
             return false;
         }
         return true;

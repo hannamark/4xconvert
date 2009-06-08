@@ -70,42 +70,7 @@ public class MailManager {
             logger.error("Send confirmation mail error", e);
         }
     }
-    
-    /**
-     * Sends an email notifying the submitter that the protocol is registered in the system.
-     * @param mailTo mailTo
-     * @param nciIdentifier nciIdentifier
-     * @param localProtocolIdentifier localProtocolIdentifier
-     */
-    public void sendNotificationMail(
-            String mailTo, 
-            String nciIdentifier, 
-            String localProtocolIdentifier)  {
-    
-        try {
-
-            String[] params = {mailTo , };
-            
-            MessageFormat formatterSubject = new MessageFormat(
-                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("trial.register.subject"));
-            String emailSubject = formatterSubject.format(params);
-            logger.info("emailSubject is: " + emailSubject);
-            String submissionMailBody = RegistryServiceLocator.getLookUpTableService().
-                                    getPropertyValue("trial.register.body");
-            submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ", localProtocolIdentifier);
-            submissionMailBody = submissionMailBody.replace("${nciTrialIdentifier}", nciIdentifier);
-            MessageFormat formatterBody = new MessageFormat(submissionMailBody);
-            String emailBody =  formatterBody.format(params);
-
-            logger.info("emailBody is: " + emailBody);
-            sendMail(mailTo, null, emailBody, emailSubject);
-        } catch (Exception e) {
-            logger.error("Send submission notification mail error", e);
-        }
-     }
-
-
-    /**
+   /**
      * 
      * @return String
      */
