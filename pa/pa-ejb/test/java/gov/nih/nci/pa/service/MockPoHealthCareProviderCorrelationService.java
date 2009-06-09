@@ -3,12 +3,17 @@
  */
 package gov.nih.nci.pa.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -25,17 +30,24 @@ public class MockPoHealthCareProviderCorrelationService implements
      */
     public Ii createCorrelation(HealthCareProviderDTO arg0)
             throws EntityValidationException {
-        // TODO Auto-generated method stub
-        return null;
+        return IiConverter.converToPoHealtcareProviderIi("1");    
     }
 
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.coppa.iso.Ii)
      */
-    public HealthCareProviderDTO getCorrelation(Ii arg0)
-            throws NullifiedRoleException {
-        // TODO Auto-generated method stub
-        return null;
+    public HealthCareProviderDTO getCorrelation(Ii ii) throws NullifiedRoleException {
+    if (NullFlavor.NA.equals(ii.getNullFlavor())) {
+        Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+        nullifiedEntities.put(ii, IiConverter.converToPoHealtcareProviderIi("1"));
+        throw new NullifiedRoleException(nullifiedEntities);
+    }
+    HealthCareProviderDTO hcp = new HealthCareProviderDTO();
+    hcp.setIdentifier(ii);
+    hcp.setPlayerIdentifier(IiConverter.converToPoPersonIi("abc"));
+    hcp.setScoperIdentifier(IiConverter.converToPoOrganizationIi("abc"));
+    hcp.setStatus(CdConverter.convertStringToCd("ACTIVE"));
+    return hcp;
     }
 
     /* (non-Javadoc)

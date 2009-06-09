@@ -36,9 +36,8 @@ import org.hibernate.Session;
  * @param <BO> domain object
  * @param <CONVERTER> converter class
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public abstract class
-    AbstractRoleIsoService<DTO extends StudyDTO, BO extends FunctionalRole,
+@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity" })
+public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends FunctionalRole,
     CONVERTER extends AbstractConverter<DTO, BO>>
     extends AbstractStudyIsoService<DTO, BO, CONVERTER>
     implements RolePaService<DTO> {
@@ -51,7 +50,7 @@ public abstract class
      * @return list StudyParticipationDTO
      * @throws PAException on error
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity", "unchecked" })
+    @SuppressWarnings({"PMD.ExcessiveMethodLength", "unchecked" })
     public List<DTO> getByStudyProtocol(
             Ii studyProtocolIi , List<DTO> dtos) throws PAException {
         if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
@@ -143,6 +142,7 @@ public abstract class
      * @param roleStatusCode role status code
      * @throws PAException on error
      */
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" , "PMD.ConsecutiveLiteralAppends" })
     public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
         List<BO> sps = null;
         Session session = null;
@@ -173,17 +173,31 @@ public abstract class
                           + ii.getExtension() + "'");
                   }
                   if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudyContact sps join sps.clinicalResearchStaff as crs where crs.identifier = '" 
+                      hql.append(" StudyContact sps join sps.healthCareProvider as hcp where hcp.identifier = '" 
                           + ii.getExtension() + "'");
                   }
 
             }
+            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipationContact")) {
+                if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                    hql.append(" StudyParticipationContact sps join sps.clinicalResearchStaff as crs " 
+                            + "where crs.identifier = '" + ii.getExtension() + "'");
+                }
+                if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                    hql.append(" StudyParticipationContact sps join sps.HealthCareProvider as hcp " 
+                            + "where hcp.identifier = '" + ii.getExtension() + "'");
+                }
+                if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                    hql.append(" StudyParticipationContact sps join sps.organizationalContact as oc " 
+                            + " where oc.identifier = '" + ii.getExtension() + "'");
+                }
+          }
     
-            sps = session.createQuery(hql.toString()).list();
-            for (BO sp : sps) {
-                sp.setStatusCode(newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE));
-                session.update(sp);
-            }
+        sps = session.createQuery(hql.toString()).list();
+        for (BO sp : sps) {
+            sp.setStatusCode(newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE));
+            session.update(sp);
+        }
         } catch (HibernateException hbe) {
             throw new PAException(hbe);
         }

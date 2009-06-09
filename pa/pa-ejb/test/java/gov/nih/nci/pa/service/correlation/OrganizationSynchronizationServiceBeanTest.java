@@ -49,9 +49,6 @@ public class OrganizationSynchronizationServiceBeanTest {
         Ii hcfIi = IiConverter.converToPoHealthCareFacilityIi("abc");
         createTestData1();
         remoteEjb.synchronizeHealthCareFacility(hcfIi);
-
-    
-
     }
     
     

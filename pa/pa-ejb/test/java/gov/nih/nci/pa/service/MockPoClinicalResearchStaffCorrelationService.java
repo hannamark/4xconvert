@@ -3,14 +3,19 @@
  */
 package gov.nih.nci.pa.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 /**
@@ -25,17 +30,25 @@ public class MockPoClinicalResearchStaffCorrelationService implements
      */
     public Ii createCorrelation(ClinicalResearchStaffDTO arg0)
             throws EntityValidationException {
-        // TODO Auto-generated method stub
-        return null;
+        return IiConverter.converToPoClinicalResearchStaffIi("1");
     }
 
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.coppa.iso.Ii)
      */
-    public ClinicalResearchStaffDTO getCorrelation(Ii arg0)
+    public ClinicalResearchStaffDTO getCorrelation(Ii ii)
             throws NullifiedRoleException {
-        // TODO Auto-generated method stub
-        return null;
+        if (NullFlavor.NA.equals(ii.getNullFlavor())) {
+            Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+            nullifiedEntities.put(ii, IiConverter.converToPoClinicalResearchStaffIi("1"));
+            throw new NullifiedRoleException(nullifiedEntities);
+        }
+        ClinicalResearchStaffDTO crs = new ClinicalResearchStaffDTO();
+        crs.setIdentifier(ii);
+        crs.setPlayerIdentifier(IiConverter.converToPoPersonIi("abc"));
+        crs.setScoperIdentifier(IiConverter.converToPoOrganizationIi("abc"));
+        crs.setStatus(CdConverter.convertStringToCd("ACTIVE"));
+        return crs;
     }
 
     /* (non-Javadoc)
