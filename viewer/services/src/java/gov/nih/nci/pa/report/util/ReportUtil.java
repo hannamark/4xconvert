@@ -191,4 +191,14 @@ public final class ReportUtil {
         }
         return result.toString();
     }
+
+    /**
+     * Test interval value's.
+     * @param t1 early date
+     * @param t2 late date
+     * @return true if neither is null and early <= late
+     */
+    public static boolean invalidIntervalValues(Timestamp t1, Timestamp t2) {
+        return t1 == null || t2 == null || t2.before(t1);
+    }
 }

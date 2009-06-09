@@ -76,16 +76,61 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.viewer.dto.criteria.TrialCountsCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
+import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
+import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
+import gov.nih.nci.pa.viewer.dto.criteria.AverageMilestoneCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.AverageMilestoneResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
+
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
  * @since 4/28/2009
  */
 public class AverageMilestoneAction extends AbstractReportAction
-        <TrialCountsCriteriaWebDto, TrialCountsResultWebDto> {
+        <AverageMilestoneCriteriaWebDto, AverageMilestoneResultWebDto> {
 
     private static final long serialVersionUID = 4648183253616800952L;
 
+    private AverageMilestoneCriteriaWebDto criteria;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute() {
+        setCriteria(new AverageMilestoneCriteriaWebDto());
+        return super.execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getReport() {
+        AverageMilestoneLocal local = ViewerServiceLocator.getInstance().getAverageMilestoneReportService();
+        List<AverageMilestoneResultDto> isoList;
+        try {
+            isoList = local.get(criteria.getIsoDto());
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+            return super.execute();
+        }
+        setResultList(AverageMilestoneResultWebDto.getWebList(isoList));
+        return super.getReport();
+    }
+
+    /**
+     * @return the criteria
+     */
+    public AverageMilestoneCriteriaWebDto getCriteria() {
+        return criteria;
+    }
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(AverageMilestoneCriteriaWebDto criteria) {
+        this.criteria = criteria;
+    }
 }

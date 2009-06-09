@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.report.dto.criteria.AbstractCriteriaDto;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * @param <CRITERIA> criteria dto
  * @param <RESULT> result dto
  */
-public interface ViewerReport<CRITERIA, RESULT> {
+public interface ViewerReport<CRITERIA extends AbstractCriteriaDto, RESULT> {
     /**
      * Return run the report and return the results.
      * @param criteria criteria

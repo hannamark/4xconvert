@@ -30,12 +30,13 @@ function handleReset(){
     <h1><fmt:message key="summaryOfSubmission.header"/></h1>
     <s:form name="criteria">
         <table class="form">
+            <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
             <tr><td colspan="2">
-                <p style="margin:0; padding:20"><fmt:message key="summaryOfSubmission.dates"/></p>
+                <p style="margin:0; padding:20"><fmt:message key="report.dates"/></p>
             </td></tr>
             <tr> 
                 <td class="label">
-                    <label><fmt:message key="summaryOfSubmission.criteria.intervalStartDate"/></label>
+                    <label><fmt:message key="report.criteria.intervalStartDate"/></label>
                     <span class="required">*</span>
                 </td>
                 <td class="value">
@@ -47,7 +48,7 @@ function handleReset(){
             </tr>
             <tr> 
                 <td class="label">
-                    <label><fmt:message key="summaryOfSubmission.criteria.intervalEndDate"/></label>
+                    <label><fmt:message key="report.criteria.intervalEndDate"/></label>
                     <span class="required">*</span>
                 </td>
                 <td class="value">
@@ -60,7 +61,7 @@ function handleReset(){
             <tr><td class="space"><br/></td></tr>
             <tr> 
                 <td class="label">
-                    <label><fmt:message key="summaryOfSubmission.criteria.ctep"/></label>
+                    <label><fmt:message key="report.criteria.ctep"/></label>
                     <span class="required">*</span>
                 </td>
                 <td class="value">

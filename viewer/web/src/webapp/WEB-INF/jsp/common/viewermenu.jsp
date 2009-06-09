@@ -69,22 +69,6 @@
                        <li><a href="trialList.action" >Trial List Report</a></li>
                     </c:otherwise>
                 </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'milestones'}">
-                       <li><a href="milestones.action" class="selected">Milestones Report</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="milestones.action" >Milestones Report</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'summary_sent'}">
-                       <li><a href="summarySent.action" class="selected">Summary Sent Report</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="summarySent.action" >Summary Sent Report</a></li>
-                    </c:otherwise>
-                </c:choose>
               </c:if>  
               <li><a href="/viewer/logout.action" >Log Out</a></li>
             </c:when>

@@ -76,24 +76,27 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.dto.criteria.TrialProcessingCriteriaDto;
 import gov.nih.nci.pa.report.util.ReportUtil;
 
 /**
  * @author Hugh Reinhart
  * @since 05/12/2009
  */
-public class TrialProcessingCriteriaWebDto implements CriteriaWebDto<St> {
+public class TrialProcessingCriteriaWebDto implements CriteriaWebDto<TrialProcessingCriteriaDto> {
 
     private String assignedIdentifier = "";
 
     /**
      * {@inheritDoc}
      */
-    public St getIsoDto() {
-        return StConverter.convertToSt(getAssignedIdentifier());
+    public TrialProcessingCriteriaDto getIsoDto() {
+        TrialProcessingCriteriaDto dto = new TrialProcessingCriteriaDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
+        return dto;
     }
+
     /**
      * @return the assignedIdentifier
      */

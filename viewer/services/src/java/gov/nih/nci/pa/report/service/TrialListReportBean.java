@@ -102,7 +102,7 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialListReportBean extends AbstractBCReportBean<TrialListCriteriaDto, TrialListResultDto>
+public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
 
     private static final int ORGANIZATION_IDX = 0;
@@ -115,9 +115,8 @@ public class TrialListReportBean extends AbstractBCReportBean<TrialListCriteriaD
     /**
      * {@inheritDoc}
      */
-    @Override
     public List<TrialListResultDto> get(TrialListCriteriaDto criteria) throws PAException {
-        super.get(criteria);
+        TrialListCriteriaDto.validate(criteria);
         ArrayList<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
         try {
             session = ViewerHibernateUtil.getCurrentSession();
@@ -132,7 +131,7 @@ public class TrialListReportBean extends AbstractBCReportBean<TrialListCriteriaD
                 + "      ( select max(identifier) "
                 + "        from document_workflow_status "
                 + "        group by study_protocol_identifier ) ");
-            sql.append(getDateRangeClauses(criteria, "sp.date_last_created"));
+            sql.append(getDateRangeClauses("sp.date_last_created"));
             sql.append("ORDER BY cm.organization, sp.date_last_created, sp.identifier ");
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());

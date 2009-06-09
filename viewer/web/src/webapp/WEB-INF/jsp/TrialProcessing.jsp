@@ -30,6 +30,7 @@ function handleReset(){
     <h1><fmt:message key="trialProcessing.header"/></h1>
     <s:form name="criteria">
         <table class="form">    
+            <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
             <tr><td colspan="2">
                 <p style="margin:0; padding:20"><fmt:message key="trialProcessing.select"/></p>
             </td></tr>
@@ -55,7 +56,6 @@ function handleReset(){
                 </ul>   
             </del>
         </div>
-        <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if> 
         <s:if test="%{header != null}">
             <table width="100%">
             <tr><td colspan="2">

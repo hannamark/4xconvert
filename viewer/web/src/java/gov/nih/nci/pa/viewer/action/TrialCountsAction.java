@@ -103,9 +103,15 @@ public class TrialCountsAction extends AbstractReportAction
      * {@inheritDoc}
      */
     @Override
-    public String getReport() throws PAException {
+    public String getReport() {
         TrialCountsLocal local = ViewerServiceLocator.getInstance().getTrialCountsReportService();
-        List<TrialCountsResultDto> isoList = local.get(criteria.getIsoDto());
+        List<TrialCountsResultDto> isoList;
+        try {
+            isoList = local.get(criteria.getIsoDto());
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return super.execute();
+        }
         setResultList(TrialCountsResultWebDto.getWebList(isoList));
         ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_TIME_UNITS,
                 criteria.getGroupByTimeUnit());

@@ -74,51 +74,233 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.dto.result;
 
-import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
-import gov.nih.nci.pa.report.service.SummarySentLocal;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.dto.criteria.SummarySentCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.SummarySentResultWebDto;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
-
-import java.util.List;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
- * @author hreinhart
- * @since 04/29/2009
+ * @author Hugh Reinhart
+ * @since 06/08/2009
  */
-public class SummarySentAction extends AbstractReportAction
-        <SummarySentCriteriaWebDto, SummarySentResultWebDto> {
+/**
+ * @author hreinhart
+ *
+ */
+@SuppressWarnings("PMD.TooManyFields")
+public class AverageMilestoneResultDto {
 
-    private static final long serialVersionUID = 1753836643932684365L;
-
-    private SummarySentCriteriaWebDto criteria = new SummarySentCriteriaWebDto();
+    private Cd milestoneCode = CdConverter.convertToCd(null);
+    private Int order = IntConverter.convertToInt((Integer) null);
+    private Int day01 = IntConverter.convertToInt((Integer) null);
+    private Int day02 = IntConverter.convertToInt((Integer) null);
+    private Int day03 = IntConverter.convertToInt((Integer) null);
+    private Int day04 = IntConverter.convertToInt((Integer) null);
+    private Int day05 = IntConverter.convertToInt((Integer) null);
+    private Int day06 = IntConverter.convertToInt((Integer) null);
+    private Int day07 = IntConverter.convertToInt((Integer) null);
+    private Int day08 = IntConverter.convertToInt((Integer) null);
+    private Int day09 = IntConverter.convertToInt((Integer) null);
+    private Int day10 = IntConverter.convertToInt((Integer) null);
+    private Int gtTenDays = IntConverter.convertToInt((Integer) null);
+    private St average = StConverter.convertToSt(null);
+    private St low = StConverter.convertToSt(null);
+    private St high = StConverter.convertToSt(null);
 
     /**
-     * {@inheritDoc}
+     * @return the milestoneCode
      */
-    @Override
-    public String getReport() throws PAException {
-        SummarySentLocal local = ViewerServiceLocator.getInstance().getSummarySentReportService();
-        List<SummarySentResultDto> isoList = local.get(criteria.getIsoDto());
-        setResultList(SummarySentResultWebDto.getWebList(isoList));
-        return super.getReport();
+    public Cd getMilestoneCode() {
+        return milestoneCode;
     }
-
     /**
-     * @return the criteria
+     * @param milestoneCode the milestoneCode to set
      */
-    public SummarySentCriteriaWebDto getCriteria() {
-        return criteria;
+    public void setMilestoneCode(Cd milestoneCode) {
+        this.milestoneCode = milestoneCode;
     }
-
     /**
-     * @param criteria the criteria to set
+     * @return the order
      */
-    public void setCriteria(SummarySentCriteriaWebDto criteria) {
-        this.criteria = criteria;
+    public Int getOrder() {
+        return order;
     }
-
+    /**
+     * @param order the order to set
+     */
+    public void setOrder(Int order) {
+        this.order = order;
+    }
+    /**
+     * @return the day01
+     */
+    public Int getDay01() {
+        return day01;
+    }
+    /**
+     * @param day01 the day01 to set
+     */
+    public void setDay01(Int day01) {
+        this.day01 = day01;
+    }
+    /**
+     * @return the day02
+     */
+    public Int getDay02() {
+        return day02;
+    }
+    /**
+     * @param day02 the day02 to set
+     */
+    public void setDay02(Int day02) {
+        this.day02 = day02;
+    }
+    /**
+     * @return the day03
+     */
+    public Int getDay03() {
+        return day03;
+    }
+    /**
+     * @param day03 the day03 to set
+     */
+    public void setDay03(Int day03) {
+        this.day03 = day03;
+    }
+    /**
+     * @return the day04
+     */
+    public Int getDay04() {
+        return day04;
+    }
+    /**
+     * @param day04 the day04 to set
+     */
+    public void setDay04(Int day04) {
+        this.day04 = day04;
+    }
+    /**
+     * @return the day05
+     */
+    public Int getDay05() {
+        return day05;
+    }
+    /**
+     * @param day05 the day05 to set
+     */
+    public void setDay05(Int day05) {
+        this.day05 = day05;
+    }
+    /**
+     * @return the day06
+     */
+    public Int getDay06() {
+        return day06;
+    }
+    /**
+     * @param day06 the day06 to set
+     */
+    public void setDay06(Int day06) {
+        this.day06 = day06;
+    }
+    /**
+     * @return the day07
+     */
+    public Int getDay07() {
+        return day07;
+    }
+    /**
+     * @param day07 the day07 to set
+     */
+    public void setDay07(Int day07) {
+        this.day07 = day07;
+    }
+    /**
+     * @return the day08
+     */
+    public Int getDay08() {
+        return day08;
+    }
+    /**
+     * @param day08 the day08 to set
+     */
+    public void setDay08(Int day08) {
+        this.day08 = day08;
+    }
+    /**
+     * @return the day09
+     */
+    public Int getDay09() {
+        return day09;
+    }
+    /**
+     * @param day09 the day09 to set
+     */
+    public void setDay09(Int day09) {
+        this.day09 = day09;
+    }
+    /**
+     * @return the day10
+     */
+    public Int getDay10() {
+        return day10;
+    }
+    /**
+     * @param day10 the day10 to set
+     */
+    public void setDay10(Int day10) {
+        this.day10 = day10;
+    }
+    /**
+     * @return the gtTenDays
+     */
+    public Int getGtTenDays() {
+        return gtTenDays;
+    }
+    /**
+     * @param gtTenDays the gtTenDays to set
+     */
+    public void setGtTenDays(Int gtTenDays) {
+        this.gtTenDays = gtTenDays;
+    }
+    /**
+     * @return the average
+     */
+    public St getAverage() {
+        return average;
+    }
+    /**
+     * @param average the average to set
+     */
+    public void setAverage(St average) {
+        this.average = average;
+    }
+    /**
+     * @return the low
+     */
+    public St getLow() {
+        return low;
+    }
+    /**
+     * @param low the low to set
+     */
+    public void setLow(St low) {
+        this.low = low;
+    }
+    /**
+     * @return the high
+     */
+    public St getHigh() {
+        return high;
+    }
+    /**
+     * @param high the high to set
+     */
+    public void setHigh(St high) {
+        this.high = high;
+    }
 }

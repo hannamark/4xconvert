@@ -74,29 +74,262 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.dto.result;
+package gov.nih.nci.pa.viewer.dto.result;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 06/08/2009
  */
-public class MilestonesResultDto extends AbstractMilestoneResultDto {
+@SuppressWarnings("PMD.TooManyFields")
+public final class AverageMilestoneResultWebDto {
 
-    private Cd milestoneCode = CdConverter.convertToCd(null);
+    private String milestoneCode;
+    private Integer order;
+    private Integer day01;
+    private Integer day02;
+    private Integer day03;
+    private Integer day04;
+    private Integer day05;
+    private Integer day06;
+    private Integer day07;
+    private Integer day08;
+    private Integer day09;
+    private Integer day10;
+    private Integer gtTenDays;
+    private String average;
+    private String low;
+    private String high;
+
+    /**
+     * Static method for generating a list of web dto's from a list of service dto's.
+     * @param serviceDtoList service dto list
+     * @return web dto list
+     */
+    public static List<AverageMilestoneResultWebDto> getWebList(List<AverageMilestoneResultDto> serviceDtoList) {
+        List<AverageMilestoneResultWebDto> resultList = new ArrayList<AverageMilestoneResultWebDto>();
+        for (AverageMilestoneResultDto dto : serviceDtoList) {
+            resultList.add(new AverageMilestoneResultWebDto(dto));
+        }
+        return resultList;
+    }
+
+    private AverageMilestoneResultWebDto(AverageMilestoneResultDto dto) {
+        milestoneCode = CdConverter.convertCdToString(dto.getMilestoneCode());
+        order = IntConverter.convertToInteger(dto.getOrder());
+        day01 = IntConverter.convertToInteger(dto.getDay01());
+        day02 = IntConverter.convertToInteger(dto.getDay02());
+        day03 = IntConverter.convertToInteger(dto.getDay03());
+        day04 = IntConverter.convertToInteger(dto.getDay04());
+        day05 = IntConverter.convertToInteger(dto.getDay05());
+        day06 = IntConverter.convertToInteger(dto.getDay06());
+        day07 = IntConverter.convertToInteger(dto.getDay07());
+        day08 = IntConverter.convertToInteger(dto.getDay08());
+        day09 = IntConverter.convertToInteger(dto.getDay09());
+        day10 = IntConverter.convertToInteger(dto.getDay10());
+        gtTenDays = IntConverter.convertToInteger(dto.getGtTenDays());
+        average = StConverter.convertToString(dto.getAverage());
+        low = StConverter.convertToString(dto.getLow());
+        high = StConverter.convertToString(dto.getHigh());
+    }
 
     /**
      * @return the milestoneCode
      */
-    public Cd getMilestoneCode() {
+    public String getMilestoneCode() {
         return milestoneCode;
     }
     /**
      * @param milestoneCode the milestoneCode to set
      */
-    public void setMilestoneCode(Cd milestoneCode) {
+    public void setMilestoneCode(String milestoneCode) {
         this.milestoneCode = milestoneCode;
+    }
+    /**
+     * @return the order
+     */
+    public Integer getOrder() {
+        return order;
+    }
+    /**
+     * @param order the order to set
+     */
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+    /**
+     * @return the day01
+     */
+    public Integer getDay01() {
+        return day01;
+    }
+    /**
+     * @param day01 the day01 to set
+     */
+    public void setDay01(Integer day01) {
+        this.day01 = day01;
+    }
+    /**
+     * @return the day02
+     */
+    public Integer getDay02() {
+        return day02;
+    }
+    /**
+     * @param day02 the day02 to set
+     */
+    public void setDay02(Integer day02) {
+        this.day02 = day02;
+    }
+    /**
+     * @return the day03
+     */
+    public Integer getDay03() {
+        return day03;
+    }
+    /**
+     * @param day03 the day03 to set
+     */
+    public void setDay03(Integer day03) {
+        this.day03 = day03;
+    }
+    /**
+     * @return the day04
+     */
+    public Integer getDay04() {
+        return day04;
+    }
+    /**
+     * @param day04 the day04 to set
+     */
+    public void setDay04(Integer day04) {
+        this.day04 = day04;
+    }
+    /**
+     * @return the day05
+     */
+    public Integer getDay05() {
+        return day05;
+    }
+    /**
+     * @param day05 the day05 to set
+     */
+    public void setDay05(Integer day05) {
+        this.day05 = day05;
+    }
+    /**
+     * @return the day06
+     */
+    public Integer getDay06() {
+        return day06;
+    }
+    /**
+     * @param day06 the day06 to set
+     */
+    public void setDay06(Integer day06) {
+        this.day06 = day06;
+    }
+    /**
+     * @return the day07
+     */
+    public Integer getDay07() {
+        return day07;
+    }
+    /**
+     * @param day07 the day07 to set
+     */
+    public void setDay07(Integer day07) {
+        this.day07 = day07;
+    }
+    /**
+     * @return the day08
+     */
+    public Integer getDay08() {
+        return day08;
+    }
+    /**
+     * @param day08 the day08 to set
+     */
+    public void setDay08(Integer day08) {
+        this.day08 = day08;
+    }
+    /**
+     * @return the day09
+     */
+    public Integer getDay09() {
+        return day09;
+    }
+    /**
+     * @param day09 the day09 to set
+     */
+    public void setDay09(Integer day09) {
+        this.day09 = day09;
+    }
+    /**
+     * @return the day10
+     */
+    public Integer getDay10() {
+        return day10;
+    }
+    /**
+     * @param day10 the day10 to set
+     */
+    public void setDay10(Integer day10) {
+        this.day10 = day10;
+    }
+    /**
+     * @return the gtTenDays
+     */
+    public Integer getGtTenDays() {
+        return gtTenDays;
+    }
+    /**
+     * @param gtTenDays the gtTenDays to set
+     */
+    public void setGtTenDays(Integer gtTenDays) {
+        this.gtTenDays = gtTenDays;
+    }
+    /**
+     * @return the average
+     */
+    public String getAverage() {
+        return average;
+    }
+    /**
+     * @param average the average to set
+     */
+    public void setAverage(String average) {
+        this.average = average;
+    }
+    /**
+     * @return the low
+     */
+    public String getLow() {
+        return low;
+    }
+    /**
+     * @param low the low to set
+     */
+    public void setLow(String low) {
+        this.low = low;
+    }
+    /**
+     * @return the high
+     */
+    public String getHigh() {
+        return high;
+    }
+    /**
+     * @param high the high to set
+     */
+    public void setHigh(String high) {
+        this.high = high;
     }
 }

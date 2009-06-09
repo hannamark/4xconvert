@@ -36,12 +36,6 @@
         <action name="trialList*" class="gov.nih.nci.pa.viewer.action.TrialListAction" method="{1}">
             <result>/WEB-INF/jsp/trialList.jsp</result> 
         </action>
-        <action name="milestones*" class="gov.nih.nci.pa.viewer.action.MilestonesAction" method="{1}">
-             <result>/WEB-INF/jsp/milestones.jsp</result> 
-        </action>
-        <action name="summarySent*" class="gov.nih.nci.pa.viewer.action.SummarySentAction" method="{1}">
-            <result>/WEB-INF/jsp/summarySent.jsp</result> 
-        </action>
         <action name="criteria*" class="gov.nih.nci.pa.viewer.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result> 
         </action>

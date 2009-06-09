@@ -100,9 +100,15 @@ public class TrialListAction extends AbstractReportAction<TrialListCriteriaWebDt
      * {@inheritDoc}
      */
     @Override
-    public String getReport() throws PAException {
+    public String getReport() {
         TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
-        List<TrialListResultDto> isoList = local.get(criteria.getIsoDto());
+        List<TrialListResultDto> isoList;
+        try {
+            isoList = local.get(criteria.getIsoDto());
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return super.execute();
+        }
         setResultList(TrialListResultWebDto.getWebList(isoList));
         return super.getReport();
     }

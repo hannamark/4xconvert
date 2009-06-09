@@ -78,8 +78,7 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
-import gov.nih.nci.pa.report.service.MilestonesLocal;
-import gov.nih.nci.pa.report.service.SummarySentLocal;
+import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
@@ -131,20 +130,6 @@ public final class ViewerServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public MilestonesLocal getMilestonesReportService() {
-        return serviceLocator.getMilestonesReportService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SummarySentLocal getSummarySentReportService() {
-        return serviceLocator.getSummarySentReportService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public TrialCountsLocal getTrialCountsReportService() {
         return serviceLocator.getTrialCountsReportService();
     }
@@ -154,5 +139,12 @@ public final class ViewerServiceLocator implements ServiceLocator {
      */
     public TrialProcessingLocal getTrialProcessingReportService() {
         return serviceLocator.getTrialProcessingReportService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AverageMilestoneLocal getAverageMilestoneReportService() {
+        return serviceLocator.getAverageMilestoneReportService();
     }
 }

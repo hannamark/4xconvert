@@ -78,8 +78,7 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
-import gov.nih.nci.pa.report.service.MilestonesLocal;
-import gov.nih.nci.pa.report.service.SummarySentLocal;
+import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
@@ -90,14 +89,6 @@ import gov.nih.nci.pa.report.service.TrialProcessingLocal;
  */
 public interface ServiceLocator {
 
-    /**
-     * @return milestones report service
-     */
-    MilestonesLocal getMilestonesReportService();
-    /**
-     * @return summary sent report service
-     */
-    SummarySentLocal getSummarySentReportService();
     /**
      * @return trial counts report service
      */
@@ -110,4 +101,8 @@ public interface ServiceLocator {
      * @return trial processing report service
      */
     TrialProcessingLocal getTrialProcessingReportService();
+    /**
+     * @return average milestone report service
+     */
+    AverageMilestoneLocal getAverageMilestoneReportService();
 }

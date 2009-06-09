@@ -106,7 +106,7 @@ import org.hibernate.SQLQuery;
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class TrialCountsReportBean extends AbstractBCReportBean<TrialCountsCriteriaDto, TrialCountsResultDto>
+public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCriteriaDto, TrialCountsResultDto>
         implements TrialCountsLocal {
 
     /** Enumerator used to sort by submission type. */
@@ -115,10 +115,9 @@ public class TrialCountsReportBean extends AbstractBCReportBean<TrialCountsCrite
     /**
      * {@inheritDoc}
      */
-    @Override
     public List<TrialCountsResultDto> get(TrialCountsCriteriaDto criteria)
             throws PAException {
-        super.get(criteria);
+        TrialCountsCriteriaDto.validate(criteria);
         TimeUnitsCode timeUnits = TimeUnitsCode.NONE;
         Map<Group, Count> counts;
         try {
@@ -129,7 +128,7 @@ public class TrialCountsReportBean extends AbstractBCReportBean<TrialCountsCrite
                      + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
                      + "WHERE 1=1 ");
             sql.append(ctepSql(criteria));
-            sql.append(getDateRangeClauses(criteria, "sp.date_last_created"));
+            sql.append(getDateRangeClauses("sp.date_last_created"));
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);

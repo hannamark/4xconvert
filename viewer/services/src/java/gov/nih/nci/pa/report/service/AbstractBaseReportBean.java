@@ -76,112 +76,55 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.SummarySentCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.SummarySentResultDto;
+import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
 import gov.nih.nci.pa.report.util.ReportUtil;
-import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import org.hibernate.SQLQuery;
 
 /**
-* @author Hugh Reinhart
-* @since 5/12/2009
-*/
-@Stateless
-@Interceptors(ViewerHibernateSessionInterceptor.class)
-public class SummarySentReportBean extends AbstractMilestoneReportBean<SummarySentCriteriaDto, SummarySentResultDto>
-        implements SummarySentLocal {
+ * Abstract class used for report ejb's which use criteria that extend AbstractBaseCriteriaDto.
 
-    private static final int DAYS_TILL_OVERDUE = 7;    // 5 business days
+ * @author Hugh Reinhart
+ * @since 05/04/2009
+ *
+ * @param <CRITERIA> criteria dto
+ * @param <RESULT> result dto
+ */
+public abstract class AbstractBaseReportBean<CRITERIA extends AbstractBaseCriteriaDto, RESULT>
+        extends AbstractReportBean<CRITERIA, RESULT> {
 
     /**
-     * {@inheritDoc}
+     * @param field field to run date checks
+     * @return date range clauses
      */
-    @Override
-    public List<SummarySentResultDto> get(SummarySentCriteriaDto criteria)
-        throws PAException {
-        super.get(criteria);
-        List<Object[]> queryList = this.getMilestones(criteria, false, true);
-        HashMap<BigInteger, SummarySentResultDto> ssMap = new HashMap<BigInteger, SummarySentResultDto>();
-        for (Object[] sr : queryList) {
-            BigInteger spId = (BigInteger) sr[SP_IDENTIFIER_IDX];
-            if (!ssMap.containsKey(spId)) {
-                ssMap.put(spId, new SummarySentResultDto());
-            }
-            ssMap.get(spId).setAssignedIdentifier(StConverter.convertToSt((String) sr[ASSIGNED_IDENTIFIER_IDX]));
-            ssMap.get(spId).setOfficialTitle(StConverter.convertToSt((String) sr[OFFICIAL_TITLE_IDX]));
-            ssMap.get(spId).setOrganization(StConverter.convertToSt((String) sr[ORGANIZATION_IDX]));
-            if (MilestoneCode.TRIAL_SUMMARY_FEEDBACK.getName().equals(sr[MILESTONE_CODE_IDX])) {
-                ssMap.get(spId).setFeedbackDate(TsConverter.convertToTs((Timestamp) sr[MILESTONE_DATE_IDX]));
-            } else {
-                ssMap.get(spId).setMilestoneDate(TsConverter.convertToTs((Timestamp) sr[MILESTONE_DATE_IDX]));
-            }
-        }
-        List<SummarySentResultDto> rList = new ArrayList<SummarySentResultDto>();
-        rList.addAll(ssMap.values());
-        rList = removeIfOnlyFeedback(rList);
-        if (BlConverter.covertToBool(criteria.getOverdueOnly())) {
-            rList = removeIfNotOverdue(rList);
-        } else {
-            rList = setOnTimeFlag(rList);
-        }
-        return rList;
+    protected String getDateRangeClauses(String field) {
+        return "AND " + field + " >= :LOW AND " + field + " < :HIGH ";
     }
 
-    private static List<SummarySentResultDto> removeIfOnlyFeedback(List<SummarySentResultDto> rList) {
-        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
-        for (SummarySentResultDto r : rList) {
-            if (!PAUtil.isTsNull(r.getMilestoneDate())) {
-                resultList.add(r);
-            }
-        }
-        return resultList;
+    /**
+     * @param criteria criteria
+     * @param query query
+     */
+    protected void setDateRangeParameters(CRITERIA criteria, SQLQuery query) {
+        query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
+        Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
+        query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
+            ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
     }
 
-    private static List<SummarySentResultDto> removeIfNotOverdue(List<SummarySentResultDto> rList) {
-        Calendar testDate = Calendar.getInstance();
-        testDate.add(Calendar.DAY_OF_MONTH, -DAYS_TILL_OVERDUE);
-        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
-        for (SummarySentResultDto r : rList) {
-            if (PAUtil.isTsNull(r.getFeedbackDate())
-                    && TsConverter.convertToTimestamp(r.getMilestoneDate()).before(testDate.getTime())) {
-                resultList.add(r);
-            }
+    /**
+     * @param criteria criteria
+     * @return sql to include or exclude ctep trials as appropriate
+     */
+    protected String ctepSql(CRITERIA criteria) {
+        if (BlConverter.covertToBool(criteria.getCtep())) {
+            return "";
         }
-        return resultList;
-    }
-
-    private static List<SummarySentResultDto> setOnTimeFlag(List<SummarySentResultDto> rList) {
-        Calendar testDate = Calendar.getInstance();
-        testDate.add(Calendar.DAY_OF_MONTH, -DAYS_TILL_OVERDUE);
-        List<SummarySentResultDto> resultList = new ArrayList<SummarySentResultDto>();
-        for (SummarySentResultDto r : rList) {
-            if (PAUtil.isTsNull(r.getFeedbackDate())
-                    && TsConverter.convertToTimestamp(r.getMilestoneDate()).before(testDate.getTime())) {
-                r.setFeedbackOnTime(BlConverter.convertToBl(false));
-            } else {
-                Timestamp sent = TsConverter.convertToTimestamp(r.getMilestoneDate());
-                Timestamp fbRequired = ReportUtil.makeTimestamp(ReportUtil.getYear(sent),
-                        ReportUtil.getMonth(sent), ReportUtil.getDay(sent) + DAYS_TILL_OVERDUE);
-                Timestamp fb = TsConverter.convertToTimestamp(r.getFeedbackDate());
-                r.setFeedbackOnTime(BlConverter.convertToBl(!fb.after(fbRequired)));
-            }
-            resultList.add(r);
-        }
-        return resultList;
+        return "AND (sp.user_last_created NOT IN ('brownph2@mail.nih.gov', 'pb8593@yahoo.com') "
+                  + "OR sp.user_last_created IS NULL) ";
     }
 }

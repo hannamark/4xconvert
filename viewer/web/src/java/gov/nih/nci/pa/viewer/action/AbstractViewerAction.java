@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import org.apache.struts2.ServletActionContext;
@@ -94,11 +93,10 @@ public abstract class AbstractViewerAction extends ActionSupport {
 
     /**
      * Default implementation throws derived exception.
-     * @throws PAException exception
      * @return action result
      */
     @Override
-    public String execute() throws PAException {
+    public String execute() {
         return SUCCESS;
     }
 

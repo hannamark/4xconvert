@@ -74,70 +74,40 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.service;
+package gov.nih.nci.pa.report.enums;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
-import gov.nih.nci.pa.report.util.ReportUtil;
-import gov.nih.nci.pa.util.PAUtil;
-
-import java.sql.Timestamp;
-
-import org.hibernate.SQLQuery;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
 
 /**
- * Abstract class used for report ejb's which use criteria that extend AbstractBaseCriteriaDto.
-
  * @author Hugh Reinhart
- * @since 05/04/2009
- *
- * @param <CRITERIA> criteria dto
- * @param <RESULT> result dto
+ * @since 06/08/2009
  */
-public abstract class AbstractBCReportBean<CRITERIA extends AbstractBaseCriteriaDto, RESULT>
-        extends AbstractReportBean<CRITERIA, RESULT> {
+public enum OrigAmendBothCode implements CodedEnum<String> {
+    /** Original. */
+    ORIGINAL("Original"),
+    /** Amendment. */
+    AMENDMENT("Amendment"),
+    /** Both. */
+    BOTH("Both");
 
-    /**
-     * @param criteria criteria
-     * @param field field to run date checks
-     * @return date range clauses
-     */
-    protected String getDateRangeClauses(CRITERIA criteria, String field) {
-        StringBuffer sql = new StringBuffer();
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
-            sql.append("AND " + field + " >= :LOW ");
-        }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
-            sql.append("AND " + field + " < :HIGH ");
-        }
-        return sql.toString();
+    private String code;
+
+    private OrigAmendBothCode(String code) {
+        this.code = code;
     }
 
     /**
-     * @param criteria criteria
-     * @param query query
+     * {@inheritDoc}
      */
-    protected void setDateRangeParameters(CRITERIA criteria, SQLQuery query) {
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
-            query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
-        }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
-            Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
-            query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
-                    ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
-        }
+    public String getCode() {
+        return code;
     }
 
     /**
-     * @param criteria criteria
-     * @return sql to include or exclude ctep trials as appropriate
+     * {@inheritDoc}
      */
-    protected String ctepSql(CRITERIA criteria) {
-        if (BlConverter.covertToBool(criteria.getCtep())) {
-            return "";
-        }
-        return "AND (sp.user_last_created NOT IN ('brownph2@mail.nih.gov', 'pb8593@yahoo.com') "
-                  + "OR sp.user_last_created IS NULL) ";
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
 }

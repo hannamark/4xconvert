@@ -74,39 +74,29 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto.criteria;
+package gov.nih.nci.pa.report.dto.criteria;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 /**
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 06/08/2009
  */
-public class MilestonesCriteriaWebDto extends AbstractBaseCriteriaWebDto<MilestonesCriteriaDto> {
+public class AverageMilestoneCriteriaDto extends AbstractBaseCriteriaDto {
 
-    private Boolean currentMilestoneOnly = true;
-
-    /**
-     * {@inheritDoc}
-     */
-    public MilestonesCriteriaDto getIsoDto() {
-        MilestonesCriteriaDto result = new MilestonesCriteriaDto();
-        super.setInterval(result);
-        result.setCurrentMilestoneOnly(BlConverter.convertToBl(getCurrentMilestoneOnly()));
-        return result;
-    }
+    private Cd submissionType = CdConverter.convertToCd(null);
 
     /**
-     * @return the currentMilestoneOnly
+     * @return the submissionType
      */
-    public Boolean getCurrentMilestoneOnly() {
-        return currentMilestoneOnly;
+    public Cd getSubmissionType() {
+        return submissionType;
     }
     /**
-     * @param currentMilestoneOnly the currentMilestoneOnly to set
+     * @param submissionType the submissionType to set
      */
-    public void setCurrentMilestoneOnly(Boolean currentMilestoneOnly) {
-        this.currentMilestoneOnly = currentMilestoneOnly;
+    public void setSubmissionType(Cd submissionType) {
+        this.submissionType = submissionType;
     }
 }

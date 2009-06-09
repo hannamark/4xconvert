@@ -23,7 +23,7 @@ public class SummaryOfSubmissionAction extends AbstractReportAction
      * {@inheritDoc}
      */
     @Override
-    public String execute() throws PAException {
+    public String execute() {
         criteria = new TrialCountsCriteriaWebDto();
         return super.execute();
     }
@@ -32,10 +32,16 @@ public class SummaryOfSubmissionAction extends AbstractReportAction
      * {@inheritDoc}
      */
     @Override
-    public String getReport() throws PAException {
+    public String getReport() {
         TrialCountsLocal local = ViewerServiceLocator.getInstance().getTrialCountsReportService();
         criteria.setGroupByTimeUnit(NONE);
-        List<TrialCountsResultDto> isoList = local.get(criteria.getIsoDto());
+        List<TrialCountsResultDto> isoList;
+        try {
+            isoList = local.get(criteria.getIsoDto());
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return super.execute();
+        }
         setResultList(TrialCountsResultWebDto.getWebList(isoList));
         return super.getReport();
     }

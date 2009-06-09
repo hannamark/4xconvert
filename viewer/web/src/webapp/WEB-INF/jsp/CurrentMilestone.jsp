@@ -26,6 +26,7 @@ function handleAction(){
     <h1><fmt:message key="trialCounts.header"/></h1>
     <s:form name="criteria">
         <table class="form">    
+           <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
            <tr> 
                 <td class="label">
                     <label><fmt:message key="trialCounts.criteria.groupByTimeUnit"/></label>

@@ -81,16 +81,44 @@ import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.service.PAException;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * All reports will have a date range as the part of the criteria.
  * @author Hugh Reinhart
  * @since 05/22/2009
  */
-public abstract class AbstractBaseCriteriaDto {
+public abstract class AbstractBaseCriteriaDto extends AbstractCriteriaDto {
 
     private Ivl<Ts> timeInterval = IvlConverter.convertTs().convertToIvl(null, null);
     private Bl ctep = BlConverter.convertToBl(null);
+
+
+    /**
+     * Validate that the criteria is good.
+     * @param criteria criterie iso dto
+     * @throws PAException exception
+     */
+    public static void validate(AbstractBaseCriteriaDto criteria) throws PAException {
+        AbstractCriteriaDto.validate(criteria);
+        Timestamp start = IvlConverter.convertTs().convertLow(criteria.getTimeInterval());
+        Timestamp end = IvlConverter.convertTs().convertHigh(criteria.getTimeInterval());
+        if (start == null) {
+            throw new PAException("ERROR:  Start date must be set.");
+        }
+        if (end == null) {
+            throw new PAException("ERROR:  End date must be set.");
+        }
+        if (end.before(start)) {
+            throw new PAException("ERROR:  End date must not be before start date.");
+        }
+        if (end.after(new Timestamp(new Date().getTime()))) {
+            throw new PAException("ERROR:  End date must not be in the future.");
+        }
+    }
 
     /**
      * @return the timeInterval

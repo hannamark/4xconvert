@@ -74,56 +74,42 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto.result;
+package gov.nih.nci.pa.viewer.dto.criteria;
 
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
-
-import java.util.ArrayList;
-import java.util.List;
+import gov.nih.nci.pa.report.dto.criteria.AverageMilestoneCriteriaDto;
+import gov.nih.nci.pa.report.enums.OrigAmendBothCode;
 
 /**
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 06/08/2009
  */
-public class MilestonesResultWebDto extends AbstractMilestoneResultWebDto {
+public class AverageMilestoneCriteriaWebDto extends AbstractBaseCriteriaWebDto<AverageMilestoneCriteriaDto> {
 
-    private String milestoneCode;
+    private String submissionType = OrigAmendBothCode.BOTH.name();
 
     /**
-     * Static method for generating a list of web dto's from a list of service dto's.
-     * @param serviceDtoList service dto list
-     * @return web dto list
+     * {@inheritDoc}
      */
-    public static List<MilestonesResultWebDto> getWebList(List<MilestonesResultDto> serviceDtoList) {
-        List<MilestonesResultWebDto> resultList = new ArrayList<MilestonesResultWebDto>();
-        for (MilestonesResultDto dto : serviceDtoList) {
-            resultList.add(new MilestonesResultWebDto(dto));
-        }
-        return resultList;
+    public AverageMilestoneCriteriaDto getIsoDto() {
+        AverageMilestoneCriteriaDto result = new AverageMilestoneCriteriaDto();
+        super.setInterval(result);
+        result.setSubmissionType(CdConverter.convertStringToCd(getSubmissionType()));
+        result.setCtep(BlConverter.convertToBl(getCtep()));
+        return result;
     }
 
     /**
-     * Constructor using service dto.
-     * @param dto the service iso dto
+     * @return the submissionType
      */
-    public MilestonesResultWebDto(MilestonesResultDto dto) {
-        super(dto);
-        if (dto == null) { return; }
-        milestoneCode = CdConverter.convertCdToString(dto.getMilestoneCode());
+    public String getSubmissionType() {
+        return submissionType;
     }
-
     /**
-     * @return the milestoneCode
+     * @param submissionType the submissionType to set
      */
-    public String getMilestoneCode() {
-        return milestoneCode;
-    }
-
-    /**
-     * @param milestoneCode the milestoneCode to set
-     */
-    public void setMilestoneCode(String milestoneCode) {
-        this.milestoneCode = milestoneCode;
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
     }
 }

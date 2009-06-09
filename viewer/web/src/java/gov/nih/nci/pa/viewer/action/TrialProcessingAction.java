@@ -102,8 +102,9 @@ public class TrialProcessingAction
      * {@inheritDoc}
      */
     @Override
-    public String execute() throws PAException {
+    public String execute() {
         criteria = new TrialProcessingCriteriaWebDto();
+        setHeader(null);
         return super.execute();
     }
 
@@ -111,18 +112,26 @@ public class TrialProcessingAction
      * {@inheritDoc}
      */
     @Override
-    public String getReport() throws PAException {
+    public String getReport() {
         TrialProcessingLocal local = ViewerServiceLocator.getInstance().getTrialProcessingReportService();
-        TrialProcessingHeaderResultDto isoHeader = local.getHeader(getCriteria().getIsoDto());
-        if (isoHeader != null) {
-            setHeader(new TrialProcessingHeaderResultWebDto(isoHeader));
-            List<TrialProcessingResultDto> isoList = local.get(getCriteria().getIsoDto());
-            setResultList(TrialProcessingResultWebDto.getWebList(isoList));
-        } else {
-            addActionError("Trial not found.");
+        TrialProcessingHeaderResultDto isoHeader;
+        try {
+            isoHeader = local.getHeader(getCriteria().getIsoDto());
+        } catch (PAException e) {
+            addActionError(e.getMessage());
             setHeader(null);
-            setResultList(null);
+            return super.execute();
         }
+        setHeader(new TrialProcessingHeaderResultWebDto(isoHeader));
+        List<TrialProcessingResultDto> isoList;
+        try {
+            isoList = local.get(getCriteria().getIsoDto());
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            setHeader(null);
+            return super.execute();
+        }
+        setResultList(TrialProcessingResultWebDto.getWebList(isoList));
         return super.getReport();
     }
 

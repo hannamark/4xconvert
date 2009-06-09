@@ -76,15 +76,15 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.report.dto.criteria.MilestonesCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.MilestonesResultDto;
+import gov.nih.nci.pa.report.dto.criteria.AverageMilestoneCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
 
 import javax.ejb.Local;
 
 /**
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 06/08/2009
  */
 @Local
-public interface MilestonesLocal extends ViewerReport<MilestonesCriteriaDto, MilestonesResultDto> {
+public interface AverageMilestoneLocal extends ViewerReport<AverageMilestoneCriteriaDto, AverageMilestoneResultDto> {
 }

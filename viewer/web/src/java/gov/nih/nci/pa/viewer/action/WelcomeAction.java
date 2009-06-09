@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import org.apache.struts2.ServletActionContext;
@@ -89,11 +88,10 @@ public class WelcomeAction extends AbstractViewerAction {
     private static final long serialVersionUID = -8671171197398815729L;
 
     /**
-     * @throws PAException exception
-     * @return action result
+     * {@inheritDoc}
      */
     @Override
-    public String execute() throws PAException {
+    public String execute() {
         String actionResult = null;
         if (ServletActionContext.getRequest().isUserInRole(ViewerConstants.ROLE_CTRO)) {
             ServletActionContext.getRequest().getSession().setAttribute(
@@ -107,10 +105,6 @@ public class WelcomeAction extends AbstractViewerAction {
             ServletActionContext.getRequest().getSession().setAttribute(
                     ViewerConstants.SESSION_ATTR_ROLE, ViewerConstants.ROLE_PUBLIC);
             actionResult = "publicWelcome";
-        }
-        if (actionResult == null) {
-            throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
-                    + "for this application.");
         }
         return actionResult;
     }

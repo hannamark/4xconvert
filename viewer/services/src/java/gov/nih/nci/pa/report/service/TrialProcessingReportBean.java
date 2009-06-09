@@ -82,8 +82,10 @@ import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.dto.criteria.TrialProcessingCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingResultDto;
+import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
@@ -106,7 +108,7 @@ import org.hibernate.SQLQuery;
  */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialProcessingReportBean extends AbstractReportBean<St, TrialProcessingResultDto>
+public class TrialProcessingReportBean extends AbstractReportBean<TrialProcessingCriteriaDto, TrialProcessingResultDto>
         implements TrialProcessingLocal {
 
     private static final int HDR_FIRST_NAME = 1;
@@ -132,8 +134,8 @@ public class TrialProcessingReportBean extends AbstractReportBean<St, TrialProce
     /**
      * {@inheritDoc}
      */
-    public TrialProcessingHeaderResultDto getHeader(St criteria) throws PAException {
-        super.get(criteria);
+    public TrialProcessingHeaderResultDto getHeader(TrialProcessingCriteriaDto criteria) throws PAException {
+        TrialProcessingCriteriaDto.validate(criteria);
         TrialProcessingHeaderResultDto result = null;
         try {
             session = ViewerHibernateUtil.getCurrentSession();
@@ -154,9 +156,12 @@ public class TrialProcessingReportBean extends AbstractReportBean<St, TrialProce
                 + "       WHERE assigned_identifier = :ASSIGNED_IDENTIFIER ) ");
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
-            setStParameter(query, "ASSIGNED_IDENTIFIER", criteria);
+            setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
+            if (queryList.size() < 1) {
+                throw new PAException("ERROR:  Trial not found.");
+            }
             for (Object[] sr : queryList) {
                 result = new TrialProcessingHeaderResultDto();
                 result.setAssignedIdentifier(StConverter.convertToSt((String) sr[HDR_ASSIGNED_IDENTIFIER]));
@@ -180,9 +185,8 @@ public class TrialProcessingReportBean extends AbstractReportBean<St, TrialProce
     /**
      * {@inheritDoc}
      */
-    @Override
-    public List<TrialProcessingResultDto> get(St criteria) throws PAException {
-        super.get(criteria);
+    public List<TrialProcessingResultDto> get(TrialProcessingCriteriaDto criteria) throws PAException {
+        TrialProcessingCriteriaDto.validate(criteria);
         List<TrialProcessingResultDto> rList = new ArrayList<TrialProcessingResultDto>();
         try {
             session = ViewerHibernateUtil.getCurrentSession();
@@ -195,7 +199,7 @@ public class TrialProcessingReportBean extends AbstractReportBean<St, TrialProce
                        + "ORDER BY sp.submission_number, sm.identifier ";
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql);
-            setStParameter(query, "ASSIGNED_IDENTIFIER", criteria);
+            setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());
             query.setParameterList("REPORTING_MILESTONES", REPORTING_MILESTONES);
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
@@ -230,7 +234,7 @@ public class TrialProcessingReportBean extends AbstractReportBean<St, TrialProce
      * @return iso St
      */
     static St intervalToSt(Timestamp t1, Timestamp t2) {
-        if (invalidIntervalValues(t1, t2)) {
+        if (ReportUtil.invalidIntervalValues(t1, t2)) {
             return StConverter.convertToSt(null);
         }
         Calendar c1 = Calendar.getInstance();
@@ -246,10 +250,6 @@ public class TrialProcessingReportBean extends AbstractReportBean<St, TrialProce
             return StConverter.convertToSt("<1");
         }
         return StConverter.convertToSt(Long.toString(daysBetween));
-    }
-
-    private static boolean invalidIntervalValues(Timestamp t1, Timestamp t2) {
-        return t1 == null || t2 == null || t2.before(t1);
     }
 
     private String getLeadOrganization(BigInteger studyProtocolIdentifier) throws PAException {

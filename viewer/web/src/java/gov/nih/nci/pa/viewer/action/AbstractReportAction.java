@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import java.util.List;
@@ -99,11 +98,19 @@ public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractVie
     private List<RESULT> resultList;
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute() {
+        setResultList(null);
+        return super.execute();
+    }
+
+    /**
      * Method used get the report.
      * @return action result
-     * @throws PAException exception
      */
-    public String getReport() throws PAException {
+    public String getReport() {
         ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_LIST, resultList);
         return SUCCESS;
     }
