@@ -10,7 +10,7 @@
 	<display:column title="Address" property="address"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Email" property="email"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Action" class="action" sortable="false"  headerScope="col">	
-	<a href="#" class="btn" onclick="submitform('${row.id}','${row.lastName}'+','+'${row.firstName}')">
+	<a href="#" class="btn" onclick="submitform('${row.id}','${fn:replace(row.lastName,'\'','')}'+','+'${fn:replace(row.firstName,'\'','')}')">
 							<span class="btn_img"><span class="confirm">Select</span></span></a>	
 	</display:column>
 </display:table>
