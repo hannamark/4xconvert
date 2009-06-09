@@ -84,6 +84,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -109,6 +110,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -118,6 +120,7 @@ import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -193,6 +196,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     OrganizationCorrelationServiceRemote ocsr = null;
     @EJB 
     StudyContactServiceRemote studyContactService = null;
+    @EJB
+    TSRReportGeneratorServiceRemote tsrReportService = null;
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifer is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
     
@@ -506,6 +511,14 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         if (isAmend) {
             studyProtocolDTO.setAmendmentReasonCode(null);
             oldIdentifier = studyProtocolDTO.getIdentifier();
+            //Amendment UC generate the TSR and add in document
+            String strTSR = tsrReportService.generateTSRHtml(oldIdentifier);
+            DocumentDTO docDto = new DocumentDTO();
+            docDto.setStudyProtocolIdentifier(oldIdentifier);
+            docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
+            docDto.setText(EdConverter.convertToEd(strTSR.getBytes()));
+            docDto.setFileName(StConverter.convertToSt("TSR.html"));
+            documentService.create(docDto);
             oldSpDto = studyProtocolService.getStudyProtocol(oldIdentifier);
             oldSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
             studyProtocolService.updateStudyProtocol(oldSpDto);

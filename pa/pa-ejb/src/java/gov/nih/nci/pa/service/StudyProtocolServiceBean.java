@@ -87,9 +87,11 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -139,6 +141,8 @@ import org.hibernate.criterion.Example;
     private static final int FIVE_5 = 5;
     @EJB
     StudyRelationshipServiceLocal studyRelationshipService = null;
+    @EJB
+    DocumentServiceLocal docService = null;
 
     private SessionContext ejbContext;
 
@@ -587,6 +591,14 @@ import org.hibernate.criterion.Example;
                 spTarget.setStatusCode(ActStatusCode.ACTIVE);
                 spTarget.setStatusDate(new Timestamp(spTarget.getDateLastCreated().getTime()));
                 session.update(spTarget);
+                //remove the TSR from the document
+                List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
+                resultList = docService.getDocumentsByStudyProtocol(targetSpIi);
+                for (DocumentDTO docDTO : resultList) {
+                    if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.TSR.getCode())) {
+                        docService.delete(docDTO);                        
+                    }
+                }
             }
         } catch (HibernateException hbe) {
             ejbContext.setRollbackOnly();

@@ -104,7 +104,9 @@ public enum DocumentTypeCode implements CodedEnum<String> {
     /** Change Memo Document.*/
     CHANGE_MEMO_DOCUMENT("Change Memo Document"),
     /**Protocol Highlighted Document.     */
-    PROTOCOL_HIGHLIGHTED_DOCUMENT("Protocol Highlighted Document");
+    PROTOCOL_HIGHLIGHTED_DOCUMENT("Protocol Highlighted Document"),
+    /** */
+    TSR("TSR");
  
     private String code;
 
