@@ -20,6 +20,7 @@
     <dependency org="apache"                 name="struts2-spring-plugin"   rev="2.1.6"           conf="runtime->default"/>
     <dependency org="apache"                 name="taglibs-standard"        rev="1.1.2"           conf="runtime->master"/>
     <dependency org="displaytag"             name="displaytag"              rev="1.2"             conf="runtime->master"/>
+    <dependency org="displaytag"             name="displaytag-export-poi"   rev="1.2"             conf="runtime->master"/>
     <dependency org="freemarker"             name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
     <dependency org="itext"                  name="itext"                   rev="2.0.6"           conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-beanutils"       rev="1.7.0"           conf="runtime->master"/>
