@@ -184,8 +184,9 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             session = HibernateUtil.getCurrentSession();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             if (bo == null) {
-                throw new PAException("Object not found using get() for id = "
+                logger.error("Object not found using get() for id = "
                         + IiConverter.convertToString(ii) + ".");
+             return resultDto;  
             }
             resultDto = convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
