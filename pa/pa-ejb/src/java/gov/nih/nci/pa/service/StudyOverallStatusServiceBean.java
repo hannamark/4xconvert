@@ -93,7 +93,6 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -156,15 +155,13 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
             session = HibernateUtil.getCurrentSession();
 
             // enforce business rules
-            List<StudyOverallStatusDTO> oldStatus = getCurrentByStudyProtocol(
-                    dto.getStudyProtocolIdentifier());
-
+           StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
             StudyStatusCode oldCode = null;
             Timestamp oldDate = null;
 
-            if (!oldStatus.isEmpty()) {
-                oldCode = StudyStatusCode.getByCode(oldStatus.get(0).getStatusCode().getCode());
-                oldDate = TsConverter.convertToTimestamp(oldStatus.get(0).getStatusDate());
+            if (oldStatus != null) {
+                oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
+                oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
             }
             StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
             Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());

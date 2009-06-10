@@ -80,7 +80,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -159,8 +159,8 @@ public class StudyParticipationContactServiceTest {
     public void delete() throws Exception {
         remoteEjb.delete(contactIi);
         try {
-            remoteEjb.get(contactIi);
-            fail("get() should have thrown an exception after delete().");
+            StudyParticipationContactDTO spc = remoteEjb.get(contactIi);
+            assertNull(spc);
         } catch(PAException e) {
             // expected behavior
         }

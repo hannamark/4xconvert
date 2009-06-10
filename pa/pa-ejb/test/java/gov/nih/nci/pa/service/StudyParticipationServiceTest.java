@@ -174,8 +174,8 @@ public class StudyParticipationServiceTest {
     public void delete() throws Exception {
         remoteEjb.delete(participationIi);
         try {
-            remoteEjb.get(participationIi);
-            fail("get() should have thrown an exception after delete().");
+            StudyParticipationDTO spDto = remoteEjb.get(participationIi);
+            assertNull(spDto);
         } catch(PAException e) {
             // expected behavior
         }

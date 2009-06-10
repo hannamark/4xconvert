@@ -871,9 +871,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           appendTDAndData(html, getTableData(fund.getNihInstitutionCode(), true));
           appendTDAndData(html, getData(fund.getSerialNumber(), true));
           appendTDAndData(html, getTableData(fund.getNciDivisionProgramCode(), true));
-          /*appendTDAndData(html, getData(fund.getFundingTypeCode(), true));
-          appendTDAndData(html, getData(fund.getSuffixGrantYear(), true));
-          appendTDAndData(html, getData(fund.getSuffixOther(), true));*/
           html.append(TR_E);
       }
       html.append(first ? "" : TBL_E);
@@ -966,15 +963,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                           throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                       }
                       html.append(appendData("Board" , paOrg.getName(), true , true));
-                      //if (part.getHealthcareFacilityIi() != null
-                        //   && part.getHealthcareFacilityIi().getExtension() != null) {
-                        //Organization affOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
-                          //  IiConverter.convertToLong(part.getHealthcareFacilityIi()));
-                        //if (affOrg != null) {
-                         // html.append(appendData(" affiliated with " , affOrg.getName(), false , true));
-                        //}
-                     // }
-                     html.append(appendData(" affiliated with " , 
+                      html.append(appendData(" affiliated with " , 
                              part.getReviewBoardOrganizationalAffiliation().getValue(), false , true));
                      html.append(appendData("Full Address" , AddressConverterUtil.convertToAddress(
                               poOrg.getPostalAddress()), true , true));
@@ -1010,16 +999,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    */
   private void appendRegulatoryInformation(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
 
-//    html.append(appendData("Reporting Dataset Method",
-//        getData(spDto.getAccrualReportingMethodCode(), true), true , false));
       appendTitle(html, appendBoldData("Regulatory Information"));
       html.append(BR);
-      List<StudyRegulatoryAuthorityDTO> sraDTOList = 
+      StudyRegulatoryAuthorityDTO sraDTO = 
               studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDto.getIdentifier());
-      StudyRegulatoryAuthorityDTO sraDTO = null;
-      if (!sraDTOList.isEmpty()) {
-          sraDTO = sraDTOList.get(0);
-      }  
+     
       if (sraDTO != null) {
            String data = null;
            RegulatoryAuthority ra = regulatoryInformationService.

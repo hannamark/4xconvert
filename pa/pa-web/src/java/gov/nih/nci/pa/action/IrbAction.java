@@ -319,7 +319,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         this.newOrgName = newOrgName;
     }
 
-    private void businessRules() {
+    private void businessRules() throws PAException {
         if (PAUtil.isEmpty(getApprovalStatus())) {
             addActionError("Must select an approval status.  ");
         }
@@ -327,6 +327,7 @@ public class IrbAction extends ActionSupport implements Preparable {
             || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())
             || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.equals(getApprovalStatusEnum())
             || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.equals(getApprovalStatusEnum())) {
+            
             if (getContactAffiliation() == null) {
                 addActionError("Must Enter a Board Affliation.  ");
             }

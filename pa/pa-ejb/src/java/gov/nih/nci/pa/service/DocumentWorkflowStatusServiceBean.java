@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.DocumentWorkflowStatusConverter;
@@ -156,21 +155,6 @@ public class DocumentWorkflowStatusServiceBean extends
                     + dto.getStudyProtocolIdentifier().getExtension() , hbe);
         }
         return null;
-    }
-
-    /**
-     * @param studyProtocolIi study ii
-     * @return dto
-     * @throws PAException exception
-     */
-    @Override
-    public List<DocumentWorkflowStatusDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
-        List<DocumentWorkflowStatusDTO> dwfList = getByStudyProtocol(studyProtocolIi);
-        List<DocumentWorkflowStatusDTO> resultList = new ArrayList<DocumentWorkflowStatusDTO>();
-        if (!dwfList.isEmpty()) {
-            resultList.add(dwfList.get(dwfList.size() - 1));
-        }
-        return resultList;
     }
 
   }

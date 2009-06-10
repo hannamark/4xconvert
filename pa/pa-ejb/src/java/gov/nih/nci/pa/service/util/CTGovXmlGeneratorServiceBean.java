@@ -105,7 +105,6 @@ import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
-import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
@@ -285,8 +284,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         StudyProtocolDTO spDTO = null;
         try {
-            //HJ test PO lookups uncomment this
-//            OrganizationDTO org = PoPaRegistry.getOrganizationEntityService().getOrganization(studyProtocolIi);
+
             spDTO = getStudyProtocol(studyProtocolIi); 
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
@@ -298,8 +296,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     convertBLToString(spDTO.getFdaRegulatedIndicator()) , doc , root);
             createElement("is_section_801" ,
                     convertBLToString(spDTO.getSection801Indicator()) , doc , root);
-            if (YES.equalsIgnoreCase(convertBLToString(spDTO.getSection801Indicator())) 
-                    && isDeviceFound(studyProtocolIi)) {
+            if (YES.equalsIgnoreCase(convertBLToString(spDTO.getSection801Indicator()))) { //device doesn't matter
                 createElement("delayed_posting" ,
                         convertBLToString(spDTO.getDelayedpostingIndicator()) , doc , root);
             }
@@ -329,7 +326,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
             appendElement(root , createStudyDesign(spDTO, doc));
             List<StudyOutcomeMeasureDTO> somDtos = studyOutcomeMeasureService.getByStudyProtocol(spDTO.getIdentifier());
-               // PoPaServiceBeanLookup.getStudyOutcomeMeasureService().getByStudyProtocol(spDTO.getIdentifier());
             createPrimaryOutcome(somDtos , doc , root);
             createSecondaryOutcome(somDtos , doc , root);
             createCondition(studyProtocolIi, doc, root);
@@ -342,11 +338,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createOverallContact(spDTO.getIdentifier(), doc , root);
             createLocation(spDTO , doc , root);
             appendElement(root ,  createElement("keyword", spDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD , doc));
-            List<DocumentWorkflowStatusDTO> dto  = 
-                                            documentWorkflowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
-                //PoPaServiceBeanLookup.getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
+            DocumentWorkflowStatusDTO dto = documentWorkflowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
             appendElement(root ,  createElement("verification_date", PAUtil.convertTsToFormarttedDate(
-                    dto.get(0).getStatusDateRange() , "yyyy-MM"), doc));
+                    dto.getStatusDateRange() , "yyyy-MM"), doc));
 
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();
@@ -400,34 +394,31 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     private void createOverallStatus(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
-        List<StudyOverallStatusDTO> soDTOs = studyOverallStatusService.getCurrentByStudyProtocol(spDTO.getIdentifier());
-        if (soDTOs == null || soDTOs.isEmpty()) {
+       StudyOverallStatusDTO soDTOs = studyOverallStatusService.getCurrentByStudyProtocol(spDTO.getIdentifier());
+        if (soDTOs == null) {
             return;
         }
         StudyRecruitmentStatusServiceBean srb = new StudyRecruitmentStatusServiceBean();
-        List<StudyRecruitmentStatusDTO> srsDtos = srb.getCurrentByStudyProtocol(spDTO.getIdentifier());
-
-        if (srsDtos != null && !srsDtos.isEmpty()) {
-            appendElement(root, createElement("overall_status", srsDtos.get(0).getStatusCode() , doc));
+        StudyRecruitmentStatusDTO srsDtos = srb.getCurrentByStudyProtocol(spDTO.getIdentifier());
+        if (srsDtos != null) {
+            appendElement(root, createElement("overall_status", srsDtos.getStatusCode() , doc));
         }
 
-        StudyStatusCode overStatusCode = StudyStatusCode.getByCode(soDTOs.get(0).getStatusCode().getCode());
+        StudyStatusCode overStatusCode = StudyStatusCode.getByCode(soDTOs.getStatusCode().getCode());
 
         if (StudyStatusCode.WITHDRAWN.equals(overStatusCode)
                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(overStatusCode)
                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(overStatusCode)) {
 
             appendElement(root, createElement("why_stopped",
-                    soDTOs.get(0).getReasonText(), PAAttributeMaxLen.LEN_160 ,  doc));
+                    soDTOs.getReasonText(), PAAttributeMaxLen.LEN_160 ,  doc));
         }
     }
 
     private void createCondition(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
-            //PoPaServiceBeanLookup.getStudyDiseaseService().getByStudyProtocol(studyProtocolIi);
         for (StudyDiseaseDTO sdDto : sdDtos) {
             if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
-              //PoPaServiceBeanLookup.getDiseaseService()
                 DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                 appendElement(root, createElement("condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
             }
@@ -439,7 +430,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
         List<StudyContactDTO> scDTOs = studyContactService.getByStudyProtocol(studyProtocolIi , scDto);
-            //PoPaServiceBeanLookup.getStudyContactService().getByStudyProtocol(studyProtocolIi , scDto);
         CorrelationUtils  cUtils = new CorrelationUtils();
         for (StudyContactDTO scDTO : scDTOs) {
             Person p  = cUtils.getPAPersonByPAClinicalResearchStaffId(
@@ -471,7 +461,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDTOs = studyContactService.getByStudyProtocol(studyProtocolIi , scDto);
-            //PoPaServiceBeanLookup.getStudyContactService().getByStudyProtocol(studyProtocolIi , scDto);
         CorrelationUtils  cUtils = new CorrelationUtils();
         for (StudyContactDTO scDTO : scDTOs) {
             if (StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode().equals(scDTO.getRoleCode().getCode())) {
@@ -487,7 +476,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
                 List<StudyParticipationDTO> sParts = 
                                 studyParticipationService.getByStudyProtocol(studyProtocolIi, spartDTO);
-                   //PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, spartDTO);
+
                 for (StudyParticipationDTO spart : sParts) {
                     Organization o = cUtils.getPAOrganizationByPAResearchOrganizationId(
                             Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
@@ -513,20 +502,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     private Element createRegulatoryAuthority(StudyProtocolDTO spDTO , Document doc) throws PAException {
-        List<StudyRegulatoryAuthorityDTO> sraDTOList = 
-                studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDTO.getIdentifier());
-        StudyRegulatoryAuthorityDTO sraDTO = null;
-        if (!sraDTOList.isEmpty()) {
-            sraDTO = sraDTOList.get(0);
-        }
-            //PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService().getByStudyProtocol(spDTO.getIdentifier());
+        StudyRegulatoryAuthorityDTO sraDTO = 
+                        studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDTO.getIdentifier());
         if (sraDTO == null) {
             return null;
         }
         String data = null;
-        RegulatoryAuthority ra = //PoPaServiceBeanLookup.getRegulatoryInformationService().
-            regulatoryInformationService.get(Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
-      //PoPaServiceBeanLookup.getRegulatoryInformationService()
+        RegulatoryAuthority ra = regulatoryInformationService.
+                    get(Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
         Country country =  regulatoryInformationService.getRegulatoryAuthorityCountry(
                 Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
         if (country != null && ra != null) {
@@ -554,15 +537,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StudyParticipationDTO dto = new StudyParticipationDTO();
         dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
         dtos.add(dto);
-       /* dto = new StudyParticipationDTO();
-        dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
-        dtos.add(dto);
-        dto = new StudyParticipationDTO();
-        dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
-        dtos.add(dto);*/
-
         List<StudyParticipationDTO> spDTOs = studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), dtos);
-           // PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(spDTO.getIdentifier(), dtos);
         CorrelationUtils cUtils = new CorrelationUtils();
         for (StudyParticipationDTO spart : spDTOs) {
             if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
@@ -591,14 +566,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                     }
                     appendElement(irbInfo , createElement("name" ,  paOrg.getName() , doc));
-                   /* if (spart.getHealthcareFacilityIi() != null
-                        && spart.getHealthcareFacilityIi().getExtension() != null) {
-                      Organization affOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(
-                          IiConverter.convertToLong(spart.getHealthcareFacilityIi()));
-                      if (affOrg != null) {
-                        appendElement(irbInfo , createElement("affiliation" ,  affOrg.getName() , doc));
-                      }
-                    }*/
                     appendElement(irbInfo , createElement("affiliation" ,  
                             spart.getReviewBoardOrganizationalAffiliation() , doc));
                     Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
@@ -637,7 +604,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
         StudyParticipationDTO spartDTO = new StudyParticipationDTO();
         spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
-        List<StudyParticipationDTO> sParts = //PoPaServiceBeanLookup.getStudyParticipationService()
+        List<StudyParticipationDTO> sParts = 
                                          studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), spartDTO);
         for (StudyParticipationDTO spart : sParts) {
             appendElement(idInfo , createElement("secondary_id" , spart.getLocalStudyProtocolIdentifier() , doc));
@@ -656,8 +623,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         //create info element
 
         List<StudyIndldeDTO> ideDtos = studyIndldeService.getByStudyProtocol(spDTO.getIdentifier());
-            //PoPaServiceBeanLookup.getStudyIndldeService().getByStudyProtocol(spDTO.getIdentifier());
-
         if (ideDtos == null || ideDtos.isEmpty()) {
             appendElement(root , createElement("is_ind_study" , NO, doc));
             return;
@@ -679,7 +644,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private void createEligibility(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<PlannedEligibilityCriterionDTO> paECs = plannedActivityService
                                             .getPlannedEligibilityCriterionByStudyProtocol(spDTO.getIdentifier());
-           // PoPaServiceBeanLookup.getPlannedActivityService().
+       
             
         if (paECs == null || paECs.isEmpty()) {
             return;
@@ -794,7 +759,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
     private void createArmGroup(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<ArmDTO> arms = armService.getByStudyProtocol(spDTO.getIdentifier());
-         //PoPaServiceBeanLookup.getArmService().getByStudyProtocol(spDTO.getIdentifier());
+       
         if (arms == null || arms.isEmpty()) {
             return;
         }
@@ -810,31 +775,13 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
     }
 
-    private boolean isDeviceFound(Ii studyProtocolIi) throws PAException {
-        boolean found = false;
-        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolIi);
-            //PoPaServiceBeanLookup.getPlannedActivityService().getByStudyProtocol(studyProtocolIi);
-        for (PlannedActivityDTO pa : paList) {
-            if (pa.getCategoryCode() != null 
-                    && ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
-                    .convertCdToString(pa.getCategoryCode()))) 
-                    &&  pa.getSubcategoryCode() != null && pa.getSubcategoryCode().getCode() != null 
-                        && InterventionTypeCode.DEVICE.getCode().equalsIgnoreCase(pa.getSubcategoryCode().getCode())) {
-                    found = true;
-                    break;
-            }
-        }
-        return found;
-    }
-
-    private void createIntervention(Ii studyProtocolIi , Document doc , Element root) throws PAException {
+      private void createIntervention(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<PlannedActivityDTO> paList =  plannedActivityService.getByStudyProtocol(studyProtocolIi);
-            //PoPaServiceBeanLookup.getPlannedActivityService().getByStudyProtocol(studyProtocolIi);
+      
         for (PlannedActivityDTO pa : paList) {
             if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
                     .convertCdToString(pa.getCategoryCode())))) {
                 Element intervention = doc.createElement("intervention");
-                //PoPaServiceBeanLookup.getInterventionService()
                 InterventionDTO i = interventionService.get(pa.getInterventionIdentifier());
                 if (pa.getSubcategoryCode() != null && pa.getSubcategoryCode().getCode() != null) {
                     appendElement(intervention, createElement("intervention_type" , 
@@ -846,8 +793,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         PAAttributeMaxLen.LEN_1000 , doc, intervention);
                 List<InterventionAlternateNameDTO> ianList = 
                                         interventionAlternateNameService.getByIntervention(i.getIdentifier()); 
-                    //PoPaServiceBeanLookup.getInterventionAlternateNameService()
-                    
+                          
                 int cnt = 1; 
                 for (InterventionAlternateNameDTO ian : ianList) {
                     appendElement(intervention,
@@ -858,7 +804,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 }
 
                 List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());
-                    //PoPaServiceBeanLookup.getArmService().getByPlannedActivity(pa.getIdentifier());
                 for (ArmDTO armDTO : armDtos) {
                     appendElement(intervention,
                             createElement("arm_group_label" , armDTO.getName() , PAAttributeMaxLen.LEN_62 , doc));
@@ -889,7 +834,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private Element createInterventional(StudyProtocolDTO spDTO , Document doc) throws PAException {
         InterventionalStudyProtocolDTO ispDTO = studyProtocolService
                                                     .getInterventionalStudyProtocol(spDTO.getIdentifier());
-            //PoPaServiceBeanLookup.getStudyProtocolService().getInterventionalStudyProtocol(spDTO.getIdentifier());
+      
         Element invDesign = doc.createElement("interventional_design");
         appendElement(invDesign, createElement("interventional_subtype", ispDTO.getPrimaryPurposeCode(), doc));
         appendElement(invDesign, createElement("phase", ispDTO.getPhaseCode(), doc));
@@ -920,7 +865,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private Element createObservational(StudyProtocolDTO spDTO , Document doc) throws PAException {
         ObservationalStudyProtocolDTO ospDTO = 
                                         studyProtocolService.getObservationalStudyProtocol(spDTO.getIdentifier());
-            //PoPaServiceBeanLookup.getStudyProtocolService().getObservationalStudyProtocol(spDTO.getIdentifier());
+      
         Element obsDesign = doc.createElement("observational_design");
         appendElement(obsDesign, createElement("timing", ospDTO.getTimePerspectiveCode(), doc));
         appendElement(obsDesign, createElement("observational_study_design", ospDTO.getStudyModelCode(), doc));
@@ -995,7 +940,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         Element responsibleParty = doc.createElement("resp_party");
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = //PoPaServiceBeanLookup.getStudyContactService().
+        List<StudyContactDTO> scDtos = 
                studyContactService.getByStudyProtocol(studyProtocolIi, scDto);
         DSet<Tel> dset = null;
         CorrelationUtils cUtils = new CorrelationUtils();
@@ -1032,8 +977,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             StudyParticipationDTO spDto = new StudyParticipationDTO();
             spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
             List<StudyParticipationDTO> spDtos =
-               // PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, spDto);
-                studyParticipationService.getByStudyProtocol(studyProtocolIi, spDto);
+                           studyParticipationService.getByStudyProtocol(studyProtocolIi, spDto);
             if (spDtos != null && !spDtos.isEmpty()) {
                 spDto = spDtos.get(0);
                 sponsor = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
@@ -1063,7 +1007,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StudyParticipationDTO srDTO = new StudyParticipationDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(studyProtocolIi, srDTO);
-           // PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, srDTO);
         CorrelationUtils cUtils = new CorrelationUtils();
         Element lead = doc.createElement("lead_sponsor");
         for (StudyParticipationDTO sp : spList) {
@@ -1099,7 +1042,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StudyParticipationDTO srDTO = new StudyParticipationDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), srDTO);
-           // PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(spDTO.getIdentifier(), srDTO);
         CorrelationUtils cUtils = new CorrelationUtils();
         for (StudyParticipationDTO sp : spList) {
             Element location = doc.createElement("location");
@@ -1108,9 +1050,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
             List<StudySiteAccrualStatusDTO> ssasList = studySiteAccrualStatusService
                                               .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
-             //PoPaServiceBeanLookup.getStudySiteAccrualStatusService()
-                //.getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
-
+        
             Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(
                     IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
 
@@ -1127,8 +1067,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
             List<StudyParticipationContactDTO> spcDTOs = studyParticipationContactService
                                                                 .getByStudyParticipation(sp.getIdentifier());
-            //PoPaServiceBeanLookup.getStudyParticipationContactService().getByStudyParticipation(sp.getIdentifier());
-
             appendElement(root , location);
             createContact(spcDTOs , location , doc);
             createInvestigators(spcDTOs , location , doc);
@@ -1291,9 +1229,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     ///////////////////////////////////// methods for get the data
 
     private StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) throws PAException {
-        //StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        //HJ- Uncomment this to test the PA lookups
-        //StudyProtocolDTO spDTO = PoPaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         if (spDTO == null) {
             throw new PAException("Study Protocol is not available for given id = " + studyProtocolIi.getExtension());

@@ -112,5 +112,5 @@ public interface StudyPaService<DTO> extends BasePaService<DTO> {
      * @return the current by study protocol 
      * @throws PAException the PA exception
      */
-    List<DTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException; 
+   DTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException; 
 }

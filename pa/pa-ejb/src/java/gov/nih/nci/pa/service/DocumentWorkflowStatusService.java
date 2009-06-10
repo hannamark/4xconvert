@@ -78,10 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-
-import java.util.List;
 
 /**
  * @author Bala Nair
@@ -92,11 +89,6 @@ import java.util.List;
  */
 public interface DocumentWorkflowStatusService extends StudyPaService<DocumentWorkflowStatusDTO> {
     
-    /**
-     * @param studyProtocolIi ii of study
-     * @return StudyRecruitmentStatusDTO dto
-     * @throws PAException exception
-     */
-    List<DocumentWorkflowStatusDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
 
 }

@@ -127,13 +127,13 @@ public class MockStudyOnholdService implements StudyOnholdServiceRemote {
         return resultList;
     }
    
-    public List<StudyOnholdDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+    public StudyOnholdDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<StudyOnholdDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
-        List<StudyOnholdDTO> resultList = new ArrayList<StudyOnholdDTO>();
+        StudyOnholdDTO result = null;
         if (!dtoList.isEmpty()) {
-            resultList.add(dtoList.get(dtoList.size() - 1));
+            result = dtoList.get(dtoList.size() - 1);
         }
-        return resultList;
+        return result;
     }
 
     public StudyOnholdDTO create(StudyOnholdDTO dto) throws PAException {

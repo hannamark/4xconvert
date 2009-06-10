@@ -150,9 +150,11 @@ implements StudyOnholdServiceRemote {
     @Override
     public StudyOnholdDTO update(StudyOnholdDTO dto) throws PAException {
         StudyOnholdDTO wrkDto = super.get(dto.getIdentifier());
+        if (wrkDto != null) {
         wrkDto.getOnholdDate().setHigh(dto.getOnholdDate().getHigh());
         setTimeIfToday(wrkDto);
         dateRules(wrkDto);
+        } 
         return super.update(wrkDto);
     }
 

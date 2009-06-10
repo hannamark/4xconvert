@@ -160,13 +160,13 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
         return resultList;
     }
     
-    public List<StudyParticipationDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+    public StudyParticipationDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<StudyParticipationDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
+        StudyParticipationDTO result = null;
         if (!dtoList.isEmpty()) {
-            resultList.add(dtoList.get(dtoList.size() - 1));
+            result = dtoList.get(dtoList.size() - 1);
         }
-        return resultList;
+        return result;
     }
     /**
      * @param dto

@@ -354,9 +354,9 @@ public class StudyMilestoneServiceTest {
         assertEquals(dwsCount, dwsList.size());
 
         // complete qc only changes dws if current dws is accepted
-        dwsList = dws.getCurrentByStudyProtocol(spIi);
+        DocumentWorkflowStatusDTO dtoDwf = dws.getCurrentByStudyProtocol(spIi);
         assertFalse(DocumentWorkflowStatusCode.ACCEPTED.equals(
-                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsList.get(0).getStatusCode()))));
+                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dtoDwf.getStatusCode()))));
         dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.QC_COMPLETE));
         remote.create(dto);
         dwsList = dws.getByStudyProtocol(spIi);
@@ -366,9 +366,9 @@ public class StudyMilestoneServiceTest {
         assertFalse(bean.milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto));
         dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
         remote.create(dto);
-        dwsList = dws.getCurrentByStudyProtocol(spIi);
+        dtoDwf = dws.getCurrentByStudyProtocol(spIi);
         assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(
-                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsList.get(0).getStatusCode()))));
+                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dtoDwf.getStatusCode()))));
         dwsList = dws.getByStudyProtocol(spIi);
         assertEquals(++dwsCount, dwsList.size());
 
@@ -390,7 +390,7 @@ public class StudyMilestoneServiceTest {
         // ongoing verifications set to verified-response after feedback
         dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
         remote.create(dto);
-        dwsList = dws.getCurrentByStudyProtocol(spIi);
+        dtoDwf = dws.getCurrentByStudyProtocol(spIi);
         //TODO this testing was failing. Need to revisit.
         //assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.equals(
         //        DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsList.get(0).getStatusCode()))));

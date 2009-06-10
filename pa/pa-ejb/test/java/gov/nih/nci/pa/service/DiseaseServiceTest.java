@@ -157,13 +157,14 @@ public class DiseaseServiceTest {
     @Test 
     public void deleteTest() throws Exception {
         remote.delete(ii);
+        DiseaseDTO dto;
         try {
-            remote.get(ii);
+          dto =  remote.get(ii);
         } catch (PAException e) {
             // expected behavior
             return;
         }
-        fail();
+        assertNull(dto);
     }
     @Test
     public void searchTest() throws Exception {

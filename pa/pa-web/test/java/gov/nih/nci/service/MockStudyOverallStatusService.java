@@ -128,15 +128,15 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusService#getCurrentStudyOverallStatusByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
      */
-    public List<StudyOverallStatusDTO> getCurrentByStudyProtocol(
+    public StudyOverallStatusDTO getCurrentByStudyProtocol(
             Ii studyProtocolId) throws PAException {
         
         List<StudyOverallStatusDTO> dtoList = getByStudyProtocol(studyProtocolId);
-        List<StudyOverallStatusDTO> returnList = new ArrayList<StudyOverallStatusDTO>();
+        StudyOverallStatusDTO result = null;
         if(dtoList.size() > 0) {
-            returnList.add(dtoList.get(dtoList.size() - 1));
+            result = dtoList.get(dtoList.size() - 1);
         }
-        return returnList;
+        return result;
     }
 
     /* (non-Javadoc)

@@ -167,7 +167,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         }
     }
     
-    /**
+   /**
      * Gets the current by study protocol.
      * 
      * @param studyProtocolIi the study protocol ii
@@ -176,12 +176,12 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
      * 
      * @throws PAException the PA exception
      */
-    public List<DTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+    public DTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<DTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
-        List<DTO> resultList = new ArrayList<DTO>();
+        DTO result = null;
         if (!dtoList.isEmpty()) {
-            resultList.add(dtoList.get(dtoList.size() - 1));
+            result = dtoList.get(dtoList.size() - 1);
         }
-        return resultList;
+        return result;
     }
 }

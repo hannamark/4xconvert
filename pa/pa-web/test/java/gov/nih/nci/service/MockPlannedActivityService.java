@@ -236,13 +236,13 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
      */
-    public List<PlannedActivityDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+    public PlannedActivityDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<PlannedActivityDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
-        List<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
+        PlannedActivityDTO result = null;
         if (!dtoList.isEmpty()) {
-            resultList.add(dtoList.get(dtoList.size() - 1));
+            result = dtoList.get(dtoList.size() - 1);
         }
-        return resultList;
+        return result;
     }
 
     /**

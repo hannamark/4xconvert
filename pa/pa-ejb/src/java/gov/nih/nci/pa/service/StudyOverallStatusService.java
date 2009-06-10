@@ -81,8 +81,6 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 
-import java.util.List;
-
 /**
  * @author Bala Nair
  * @since 03/23/2009
@@ -98,6 +96,6 @@ public interface StudyOverallStatusService extends StudyPaService<StudyOverallSt
      * @return List Current status StudyOverllStatusDTO.
      * @throws PAException Exception.
      */
-    List<StudyOverallStatusDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    StudyOverallStatusDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException;
 
 }

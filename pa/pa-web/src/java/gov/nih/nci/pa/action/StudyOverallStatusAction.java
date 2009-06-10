@@ -351,19 +351,14 @@ public class StudyOverallStatusAction extends ActionSupport implements
                         && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED") 
                 && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
                     StudyOverallStatusDTO sosDto = null;
-                    List<StudyOverallStatusDTO> sosList = sosService.getCurrentByStudyProtocol(spIdIi);
-                    if (!sosList.isEmpty()) {
-                        sosDto = sosList.get(0);
-                    }
+                    sosDto = sosService.getCurrentByStudyProtocol(spIdIi);
                     dto.setIdentifier(sosDto.getIdentifier());
                     sosService.update(dto);
                 } else {
                     sosService.create(dto);
                 }
                 // set the current date and status to the session
-/*                StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-*/                spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
+                spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
                 spqDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp(statusDate));
                 // set the nee object back to session
                 ServletActionContext.getRequest().getSession().setAttribute(
@@ -389,11 +384,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private void loadForm() throws Exception {
         StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
         StudyOverallStatusDTO sosDto = null;
-        List<StudyOverallStatusDTO> sosList = sosService.getCurrentByStudyProtocol(spIdIi);
-        if (!sosList.isEmpty()) {
-            sosDto = sosList.get(0);
-        }
-
+        sosDto = sosService.getCurrentByStudyProtocol(spIdIi);
         Timestamp tsTemp;
         if (spDto != null) {
             tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
@@ -445,11 +436,11 @@ public class StudyOverallStatusAction extends ActionSupport implements
         StudyStatusCode oldCode = null;
         Timestamp oldDate = null;
         String oldReason = null;
-        List<StudyOverallStatusDTO> sosList = sosService.getCurrentByStudyProtocol(spIdIi);
-        if (!sosList.isEmpty()) {
-            oldCode = StudyStatusCode.getByCode(CdConverter.convertCdToString(sosList.get(0).getStatusCode()));
-            oldDate = TsConverter.convertToTimestamp(sosList.get(0).getStatusDate());
-            oldReason = StConverter.convertToString(sosList.get(0).getReasonText());
+        StudyOverallStatusDTO sos = sosService.getCurrentByStudyProtocol(spIdIi);
+        if (sos != null) {
+            oldCode = StudyStatusCode.getByCode(CdConverter.convertCdToString(sos.getStatusCode()));
+            oldDate = TsConverter.convertToTimestamp(sos.getStatusDate());
+            oldReason = StConverter.convertToString(sos.getReasonText());
         }
 
         boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);

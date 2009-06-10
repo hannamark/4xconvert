@@ -80,8 +80,8 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -164,8 +164,8 @@ public class StudyOutcomeMeasureServiceBeanTest {
         
         remoteEjb.delete(dto2.getIdentifier());
         try {
-            remoteEjb.get(dto2.getIdentifier());
-            fail("get() should have thrown an exception after delete().");
+            dto = remoteEjb.get(dto2.getIdentifier());
+            assertNull(dto);
         } catch(PAException e) {
             // expected behavior
         }

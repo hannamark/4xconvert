@@ -140,7 +140,7 @@ public class TrialRegistrationServiceTest {
     @Test
     public void createInterventionalStudyProtocolTest() throws Exception {
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
-        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi).get(0);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getstudyResourceByStudyProtocol(spIi);
         List<DocumentDTO> documentDTOs = documentService.getDocumentsByStudyProtocol(spIi);
