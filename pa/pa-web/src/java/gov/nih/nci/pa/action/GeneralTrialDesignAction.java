@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -360,6 +361,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 PaRegistry.getStudyParticipationService().create(spDto);
             } else {
                 spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
+                spDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
                 PaRegistry.getStudyParticipationService().update(spDto);
             }
         } else if (spDto != null) {
@@ -410,6 +412,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
             spDto = srDtos.get(0);
             spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
             spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
+            // todo : currently hard coded to pending, will have to change later prob 2.2
+            spDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
             PaRegistry.getStudyParticipationService().update(spDto);
         }
 
@@ -425,12 +429,9 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     + " given Study Protocol id = " +  studyProtocolIi.getExtension());
         }
         StudyContactDTO scDto = srDtos.get(0);
-
         StudyProtocolQueryDTO spqDto = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession().
                 getAttribute(Constants.TRIAL_SUMMARY);
-
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
-
         Long crs = crbb.createClinicalResearchStaffCorrelations(
                                     gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier());
         scDto.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));
@@ -441,6 +442,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier());
             scDto.setHealthCareProviderIi(IiConverter.convertToIi(hcp));
         }
+        scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         PaRegistry.getStudyContactService().update(scDto);
     }
 
@@ -505,6 +507,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         dsetList =  DSetConverter.convertListToDSet(phones, "PHONE", dsetList);
         dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
         scDTO.setTelecomAddresses(dsetList);
+        scDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         return scDTO;
     }
 

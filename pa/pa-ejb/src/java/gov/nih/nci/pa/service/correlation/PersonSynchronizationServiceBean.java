@@ -236,6 +236,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 person.setFirstName(paPer.getFirstName());
                 person.setLastName(paPer.getLastName());
                 person.setMiddleName(paPer.getMiddleName());
+                person.setStatusCode(paPer.getStatusCode());
 
             }
             person.setDateLastUpdated(new Timestamp((new Date()).getTime()));
@@ -427,7 +428,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             + " where healthcare_provider_identifier = " + fromId.getExtension();
         }
         if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {    
-            sql = "update " + tableName + " set healthcare_provider_identifier = " + toId.getExtension() 
+            sql = "update " + tableName + " set organizational_contact_identifier = " + toId.getExtension() 
             + " where organizational_contact_identifier = " + fromId.getExtension();
         }
 
@@ -446,9 +447,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             personDto = PoRegistry.getPersonEntityService().getPerson(
                      IiConverter.converToPoPersonIi(poPersonId));
         } catch (NullifiedEntityException e) {
-               // org is nullified, find out if it has any duplicates
-            //personIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poPersonIdentifier));
-            personIi = IiConverter.converToPoPersonIi("1428");
+               // Person is nullified, find out if it has any duplicates
+            personIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poPersonId));
             if (personIi != null) {
                    try {
                        personDto = PoRegistry.getPersonEntityService().getPerson(personIi);

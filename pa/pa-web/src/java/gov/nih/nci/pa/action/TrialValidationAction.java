@@ -91,6 +91,7 @@ import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -576,6 +577,8 @@ public class TrialValidationAction extends ActionSupport {
             spDto = srDtos.get(0);
             spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
             spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
+            // todo : currently hard coded to pending, will have to change later prob 2.2
+            spDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));            
             PaRegistry.getStudyParticipationService().update(spDto);
         }
     }
@@ -602,6 +605,7 @@ public class TrialValidationAction extends ActionSupport {
                     .getPiIdentifier());
             scDto.setHealthCareProviderIi(IiConverter.convertToIi(hcp));
         }
+        scDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         PaRegistry.getStudyContactService().update(scDto);
     }
 

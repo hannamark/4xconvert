@@ -162,10 +162,6 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
                       hql.append(" StudyParticipation sps join sps.oversightCommittee as oc where oc.identifier = '" 
                               + ii.getExtension() + "'");
                   }
-                  if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudyParticipation sps join sps.oversightCommittee as oc where oc.identifier = '" 
-                              + ii.getExtension() + "'");
-                  }                
             }
             if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
                   if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
@@ -184,7 +180,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
                             + "where crs.identifier = '" + ii.getExtension() + "'");
                 }
                 if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                    hql.append(" StudyParticipationContact sps join sps.HealthCareProvider as hcp " 
+                    hql.append(" StudyParticipationContact sps join sps.healthCareProvider as hcp " 
                             + "where hcp.identifier = '" + ii.getExtension() + "'");
                 }
                 if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
