@@ -80,7 +80,7 @@ public class MockStudyParticipationService extends MockAbstractRoleIsoService im
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
      */
-    public List<StudyParticipationDTO> getCurrentByStudyProtocol(
+    public StudyParticipationDTO getCurrentByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
         return null;

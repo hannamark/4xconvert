@@ -632,11 +632,8 @@ public class TrialUtil {
        }
        //copy the reason for trial
        StudyOverallStatusDTO sosDto = null;
-       List<StudyOverallStatusDTO> sosList = RegistryServiceLocator.getStudyOverallStatusService()
-                   .getCurrentByStudyProtocol(studyProtocolIi);
-       if (!sosList.isEmpty()) {
-           sosDto = sosList.get(0);
-       }
+       sosDto = RegistryServiceLocator.getStudyOverallStatusService()
+.getCurrentByStudyProtocol(studyProtocolIi);
        if (sosDto != null) {
            trialDTO.setReason(StConverter.convertToString(sosDto.getReasonText()));
        } else {

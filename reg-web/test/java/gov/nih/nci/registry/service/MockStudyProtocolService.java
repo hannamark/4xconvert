@@ -53,7 +53,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
         isp.setOfficialTitle("officialTitle");
         isplist.add(isp);
     }
-    
+    @Deprecated
     public List<StudyProtocolDTO> search(StudyProtocolDTO spDTO) throws PAException{
     	return null;
     }

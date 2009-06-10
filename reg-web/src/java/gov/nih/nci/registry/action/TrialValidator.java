@@ -224,12 +224,12 @@ public class TrialValidator {
      */
     private StudyOverallStatusWebDTO getStatusDTO(String id) throws PAException {
         StudyOverallStatusWebDTO webDTO = new StudyOverallStatusWebDTO();    
-        List<StudyOverallStatusDTO> sosList = RegistryServiceLocator.getStudyOverallStatusService()
+       StudyOverallStatusDTO sos = RegistryServiceLocator.getStudyOverallStatusService()
         .getCurrentByStudyProtocol(IiConverter.convertToIi(id));
-        if (!sosList.isEmpty()) {
-            webDTO.setStatusCode(CdConverter.convertCdToString(sosList.get(0).getStatusCode()));
-            webDTO.setStatusDate(TsConverter.convertToString(sosList.get(0).getStatusDate()));
-            webDTO.setReason(StConverter.convertToString(sosList.get(0).getReasonText()));
+        if (sos != null) {
+            webDTO.setStatusCode(CdConverter.convertCdToString(sos.getStatusCode()));
+            webDTO.setStatusDate(TsConverter.convertToString(sos.getStatusDate()));
+            webDTO.setReason(StConverter.convertToString(sos.getReasonText()));
         }
         return webDTO;
     }

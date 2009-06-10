@@ -53,12 +53,12 @@ public class MockStudyOverallStatusService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
      */
-    public List<StudyOverallStatusDTO> getCurrentByStudyProtocol(
+    public StudyOverallStatusDTO getCurrentByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
-        List<StudyOverallStatusDTO> listMatchingDto = new ArrayList<StudyOverallStatusDTO>();
+        StudyOverallStatusDTO listMatchingDto = null;
         for (StudyOverallStatusDTO sp: list) {
             if(sp.getIdentifier().getExtension().equals(studyProtocolIi.getExtension())) {
-                listMatchingDto.add(sp);
+                listMatchingDto = sp;
             }
         }
         return listMatchingDto;

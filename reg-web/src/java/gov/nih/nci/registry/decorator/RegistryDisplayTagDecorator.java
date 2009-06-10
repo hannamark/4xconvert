@@ -48,8 +48,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getStudyStatusCode();
         
-        if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED)
-                || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
+        if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
                 && loginUser.equalsIgnoreCase(userCreated)
                 && (!(statusCode.equals(StudyStatusCode.DISAPPROVED)))) {

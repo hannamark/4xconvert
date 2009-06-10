@@ -176,13 +176,15 @@ public class SearchTrialAction extends ActionSupport {
             }
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_OVERALL_STATUS);
-            List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
+           /* List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
                     .getCurrentByStudyProtocol(studyProtocolIi);
-            // List <StudyOverallStatusWebDTO> overallStatusList;
-            if (!(overallStatusISOList.isEmpty())) {
+           */ // List <StudyOverallStatusWebDTO> overallStatusList;
+            StudyOverallStatusDTO overallStatusISO = RegistryServiceLocator.getStudyOverallStatusService()
+            .getCurrentByStudyProtocol(studyProtocolIi);
+            if (overallStatusISO != null) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.TRIAL_OVERALL_STATUS,
-                        overallStatusISOList.get(0));
+                        overallStatusISO);
             }
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
@@ -406,13 +408,15 @@ public class SearchTrialAction extends ActionSupport {
             }
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_OVERALL_STATUS);
-            List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
-                    .getCurrentByStudyProtocol(studyProtocolIi);
+           // List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
+            //        .getCurrentByStudyProtocol(studyProtocolIi);
             // List <StudyOverallStatusWebDTO> overallStatusList;
-            if (!(overallStatusISOList.isEmpty())) {
+            StudyOverallStatusDTO overallStatusISO = RegistryServiceLocator.getStudyOverallStatusService()
+                    .getCurrentByStudyProtocol(studyProtocolIi);
+            if (overallStatusISO != null) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.TRIAL_OVERALL_STATUS,
-                        overallStatusISOList.get(0));
+                        overallStatusISO);
             }
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
