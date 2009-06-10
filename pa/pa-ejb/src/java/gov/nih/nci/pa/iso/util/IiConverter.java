@@ -744,7 +744,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToRegulatoryAuthorityIi(Long id) {
+    public static Ii converToStudyRegulatoryAuthorityIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(REGULATORY_AUTHORITY_IDENTIFIER_NAME);
         ii.setRoot(REGULATORY_AUTHORITY_ROOT);
