@@ -60,11 +60,11 @@ function handleReset(){
             </tr>
             <tr><td class="space"><br/></td></tr>
             <tr><td colspan="2">
-                <p style="margin:0; padding:20"><fmt:message key="averageMilestone.type"/></p>
+                <p style="margin:0; padding:20"><fmt:message key="report.submissionType"/></p>
             </td></tr>
             <tr> 
                 <td class="label">
-                    <label><fmt:message key="averageMilestone.criteria.submissionType"/></label>
+                    <label><fmt:message key="report.criteria.submissionType"/></label>
                     <span class="required">*</span>
                 </td>
                 <td class="value"><s:select

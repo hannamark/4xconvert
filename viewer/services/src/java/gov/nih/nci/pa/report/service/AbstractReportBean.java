@@ -1,12 +1,18 @@
 package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractCriteriaDto;
+import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
+import gov.nih.nci.pa.service.PAException;
 
 import java.lang.reflect.ParameterizedType;
+import java.math.BigInteger;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -51,5 +57,45 @@ public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, R
             sValue = "";
         }
         query.setParameter(parameter, sValue);
+    }
+
+    /** Store data on lead organization. */
+    protected class LeadOrgInfo {
+        String name;
+        String localSpIdentifier;
+    };
+
+    /**
+     * @param studyProtocolIdentifier the studyProtocol primary key
+     * @return string representation of lead organization
+     * @throws PAException exception
+     */
+    protected LeadOrgInfo getLeadOrganization(BigInteger studyProtocolIdentifier) throws PAException {
+        if (studyProtocolIdentifier == null) { return null; }
+        LeadOrgInfo result = new LeadOrgInfo();
+        try {
+            session = ViewerHibernateUtil.getCurrentSession();
+            SQLQuery query = null;
+            StringBuffer sql = new StringBuffer(
+                      "select org.name, spart.local_sp_indentifier "
+                    + "from study_participation AS spart "
+                    + "  join healthcare_facility AS hf ON (spart.healthcare_facility_identifier = hf.identifier) "
+                    + "  join organization AS org ON (hf.organization_identifier = org.identifier) "
+                    + "where study_protocol_identifier = :SP_ID "
+                    + "  and spart.functional_code = :LEAD_ORGANIZATION ");
+            query = session.createSQLQuery(sql.toString());
+            query.setParameter("SP_ID", studyProtocolIdentifier);
+            query.setParameter("LEAD_ORGANIZATION", StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getName());
+            @SuppressWarnings(UNCHECKED)
+            List<Object[]> queryList = query.list();
+            if (queryList.size() >= 1) {
+                result.name = (String) queryList.get(0)[0];
+                result.localSpIdentifier = (String) queryList.get(0)[1];
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in " + this.getClass(), hbe);
+        }
+        logger.info("Leaving getLeadOrganization(Long).");
+        return result;
     }
 }

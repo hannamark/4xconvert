@@ -33,9 +33,6 @@
         <action name="welcome" class="gov.nih.nci.pa.viewer.action.WelcomeAction">
             <result name="ctroWelcome">/WEB-INF/jsp/ctroWelcome.jsp</result>
         </action>
-        <action name="trialList*" class="gov.nih.nci.pa.viewer.action.TrialListAction" method="{1}">
-            <result>/WEB-INF/jsp/trialList.jsp</result> 
-        </action>
         <action name="criteria*" class="gov.nih.nci.pa.viewer.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result> 
         </action>

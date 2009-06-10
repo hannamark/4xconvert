@@ -2,10 +2,9 @@ package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.TimeUnitsCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
@@ -44,15 +43,12 @@ public class TrialCountsTest {
 
 //    @Test
     public void getTest() throws Exception {
-        TrialListCriteriaDto crit = new TrialListCriteriaDto();
+        SubmissionTypeCriteriaDto crit = new SubmissionTypeCriteriaDto();
         List<TrialListResultDto> resultList = localSvc.get(crit);
         assertEquals(1, resultList.size());
         for (TrialListResultDto dto : resultList) {
             System.out.println(StConverter.convertToString(dto.getAssignedIdentifier()));
-            System.out.println(StConverter.convertToString(dto.getOfficialTitle()));
-            System.out.println(StConverter.convertToString(dto.getOrganization()));
             System.out.println(TsConverter.convertToString(dto.getDateLastCreated()));
-            System.out.println(CdConverter.convertCdToString(dto.getStatusCode()));
         }
     }
 }

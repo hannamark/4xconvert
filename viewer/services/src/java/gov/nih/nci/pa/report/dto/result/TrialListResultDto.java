@@ -91,24 +91,76 @@ import gov.nih.nci.pa.iso.util.TsConverter;
  */
 public class TrialListResultDto {
 
-    private St organization = StConverter.convertToSt(null);
-    private Ts dateLastCreated = TsConverter.convertToTs(null);
     private St assignedIdentifier = StConverter.convertToSt(null);
-    private St officialTitle = StConverter.convertToSt(null);
-    private Cd statusCode = CdConverter.convertToCd(null);
     private Int submissionNumber = IntConverter.convertToInt((Integer) null);
+    private St submitterOrg = StConverter.convertToSt(null);
+    private St leadOrgTrialIdentifier = StConverter.convertToSt(null);
+    private St leadOrg = StConverter.convertToSt(null);
+    private Ts dateLastCreated = TsConverter.convertToTs(null);
+    private Cd dws = CdConverter.convertToCd(null);
+    private Ts dwsDate = TsConverter.convertToTs(null);
+    private Cd milestone = CdConverter.convertToCd(null);
+    private Ts milestoneDate = TsConverter.convertToTs(null);
 
     /**
-     * @return the organization
+     * @return the assignedIdentifier
      */
-    public St getOrganization() {
-        return organization;
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
     }
     /**
-     * @param organization the organization to set
+     * @param assignedIdentifier the assignedIdentifier to set
      */
-    public void setOrganization(St organization) {
-        this.organization = organization;
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+    /**
+     * @return the submissionNumber
+     */
+    public Int getSubmissionNumber() {
+        return submissionNumber;
+    }
+    /**
+     * @param submissionNumber the submissionNumber to set
+     */
+    public void setSubmissionNumber(Int submissionNumber) {
+        this.submissionNumber = submissionNumber;
+    }
+    /**
+     * @return the submitterOrg
+     */
+    public St getSubmitterOrg() {
+        return submitterOrg;
+    }
+    /**
+     * @param submitterOrg the submitterOrg to set
+     */
+    public void setSubmitterOrg(St submitterOrg) {
+        this.submitterOrg = submitterOrg;
+    }
+    /**
+     * @return the leadOrgTrialIdentifier
+     */
+    public St getLeadOrgTrialIdentifier() {
+        return leadOrgTrialIdentifier;
+    }
+    /**
+     * @param leadOrgTrialIdentifier the leadOrgTrialIdentifier to set
+     */
+    public void setLeadOrgTrialIdentifier(St leadOrgTrialIdentifier) {
+        this.leadOrgTrialIdentifier = leadOrgTrialIdentifier;
+    }
+    /**
+     * @return the leadOrg
+     */
+    public St getLeadOrg() {
+        return leadOrg;
+    }
+    /**
+     * @param leadOrg the leadOrg to set
+     */
+    public void setLeadOrg(St leadOrg) {
+        this.leadOrg = leadOrg;
     }
     /**
      * @return the dateLastCreated
@@ -123,51 +175,51 @@ public class TrialListResultDto {
         this.dateLastCreated = dateLastCreated;
     }
     /**
-     * @return the assignedIdentifier
+     * @return the dws
      */
-    public St getAssignedIdentifier() {
-        return assignedIdentifier;
+    public Cd getDws() {
+        return dws;
     }
     /**
-     * @param assignedIdentifier the assignedIdentifier to set
+     * @param dws the dws to set
      */
-    public void setAssignedIdentifier(St assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
+    public void setDws(Cd dws) {
+        this.dws = dws;
     }
     /**
-     * @return the officialTitle
+     * @return the dwsDate
      */
-    public St getOfficialTitle() {
-        return officialTitle;
+    public Ts getDwsDate() {
+        return dwsDate;
     }
     /**
-     * @param officialTitle the officialTitle to set
+     * @param dwsDate the dwsDate to set
      */
-    public void setOfficialTitle(St officialTitle) {
-        this.officialTitle = officialTitle;
+    public void setDwsDate(Ts dwsDate) {
+        this.dwsDate = dwsDate;
     }
     /**
-     * @return the statusCode
+     * @return the milestone
      */
-    public Cd getStatusCode() {
-        return statusCode;
+    public Cd getMilestone() {
+        return milestone;
     }
     /**
-     * @param statusCode the statusCode to set
+     * @param milestone the milestone to set
      */
-    public void setStatusCode(Cd statusCode) {
-        this.statusCode = statusCode;
+    public void setMilestone(Cd milestone) {
+        this.milestone = milestone;
     }
     /**
-     * @return the submissionNumber
+     * @return the milestoneDate
      */
-    public Int getSubmissionNumber() {
-        return submissionNumber;
+    public Ts getMilestoneDate() {
+        return milestoneDate;
     }
     /**
-     * @param submissionNumber the submissionNumber to set
+     * @param milestoneDate the milestoneDate to set
      */
-    public void setSubmissionNumber(Int submissionNumber) {
-        this.submissionNumber = submissionNumber;
+    public void setMilestoneDate(Ts milestoneDate) {
+        this.milestoneDate = milestoneDate;
     }
 }

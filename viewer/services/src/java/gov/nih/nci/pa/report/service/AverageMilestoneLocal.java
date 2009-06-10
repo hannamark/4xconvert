@@ -76,7 +76,7 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.report.dto.criteria.AverageMilestoneCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
 
 import javax.ejb.Local;
@@ -86,5 +86,5 @@ import javax.ejb.Local;
  * @since 06/08/2009
  */
 @Local
-public interface AverageMilestoneLocal extends ViewerReport<AverageMilestoneCriteriaDto, AverageMilestoneResultDto> {
+public interface AverageMilestoneLocal extends ViewerReport<SubmissionTypeCriteriaDto, AverageMilestoneResultDto> {
 }

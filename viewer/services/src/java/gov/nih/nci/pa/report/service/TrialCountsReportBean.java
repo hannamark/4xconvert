@@ -78,7 +78,7 @@ package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
 import gov.nih.nci.pa.report.enums.TimeUnitsCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
@@ -106,7 +106,7 @@ import org.hibernate.SQLQuery;
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCriteriaDto, TrialCountsResultDto>
+public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCriteriaDto, TrialCountsResultDto>
         implements TrialCountsLocal {
 
     /** Enumerator used to sort by submission type. */
@@ -115,9 +115,9 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
     /**
      * {@inheritDoc}
      */
-    public List<TrialCountsResultDto> get(TrialCountsCriteriaDto criteria)
+    public List<TrialCountsResultDto> get(StandardCriteriaDto criteria)
             throws PAException {
-        TrialCountsCriteriaDto.validate(criteria);
+        StandardCriteriaDto.validate(criteria);
         TimeUnitsCode timeUnits = TimeUnitsCode.NONE;
         Map<Group, Count> counts;
         try {
@@ -128,7 +128,7 @@ public class TrialCountsReportBean extends AbstractBaseReportBean<TrialCountsCri
                      + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
                      + "WHERE 1=1 ");
             sql.append(ctepSql(criteria));
-            sql.append(getDateRangeClauses("sp.date_last_created"));
+            sql.append(dateRangeSql("sp.date_last_created"));
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);

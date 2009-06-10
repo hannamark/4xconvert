@@ -80,7 +80,7 @@ import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingResultDto;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.dto.criteria.TrialProcessingCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.criteria.AssignedIdentifierCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialProcessingHeaderResultWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialProcessingResultWebDto;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
@@ -92,10 +92,10 @@ import java.util.List;
  * @since 4/16/2009
  */
 public class TrialProcessingAction
-        extends AbstractReportAction <TrialProcessingCriteriaWebDto, TrialProcessingResultWebDto> {
+        extends AbstractReportAction <AssignedIdentifierCriteriaWebDto, TrialProcessingResultWebDto> {
 
     private static final long serialVersionUID = 7222372874396709972L;
-    private TrialProcessingCriteriaWebDto criteria;
+    private AssignedIdentifierCriteriaWebDto criteria;
     private TrialProcessingHeaderResultWebDto header;
 
     /**
@@ -103,7 +103,7 @@ public class TrialProcessingAction
      */
     @Override
     public String execute() {
-        criteria = new TrialProcessingCriteriaWebDto();
+        criteria = new AssignedIdentifierCriteriaWebDto();
         setHeader(null);
         return super.execute();
     }
@@ -138,13 +138,13 @@ public class TrialProcessingAction
     /**
      * @return the criteria
      */
-    public TrialProcessingCriteriaWebDto getCriteria() {
+    public AssignedIdentifierCriteriaWebDto getCriteria() {
         return criteria;
     }
     /**
      * @param criteria the criteria to set
      */
-    public void setCriteria(TrialProcessingCriteriaWebDto criteria) {
+    public void setCriteria(AssignedIdentifierCriteriaWebDto criteria) {
         this.criteria = criteria;
     }
     /**

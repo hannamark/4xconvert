@@ -74,40 +74,29 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.enums;
+package gov.nih.nci.pa.report.dto.criteria;
 
-import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
-import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 /**
  * @author Hugh Reinhart
  * @since 06/08/2009
  */
-public enum OrigAmendBothCode implements CodedEnum<String> {
-    /** Original. */
-    ORIGINAL("Original"),
-    /** Amendment. */
-    AMENDMENT("Amendment"),
-    /** Both. */
-    BOTH("Both");
+public class SubmissionTypeCriteriaDto extends AbstractStandardCriteriaDto {
 
-    private String code;
-
-    private OrigAmendBothCode(String code) {
-        this.code = code;
-    }
+    private Cd submissionType = CdConverter.convertToCd(null);
 
     /**
-     * {@inheritDoc}
+     * @return the submissionType
      */
-    public String getCode() {
-        return code;
+    public Cd getSubmissionType() {
+        return submissionType;
     }
-
     /**
-     * {@inheritDoc}
+     * @param submissionType the submissionType to set
      */
-    public String getDisplayName() {
-        return sentenceCasedName(this);
+    public void setSubmissionType(Cd submissionType) {
+        this.submissionType = submissionType;
     }
 }

@@ -76,6 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.dto.result;
 
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -92,12 +94,21 @@ import java.util.List;
  */
 public class TrialListResultWebDto {
 
-    private String organization;
-    private String dateLastCreated;
+//  private static String TOTAL_ORIG = "Total of original submissions";
+//  private static String TOTAL_AMEND = "Total of amendments";
+//  private static String TOTAL_ALL = "Total all submission";
+
+
     private String assignedIdentifier;
-    private String officialTitle;
     private String submissionType;
-    private String statusCode;
+    private String submitterOrg;
+    private String leadOrgTrialIdentifier;
+    private String leadOrg;
+    private String dateLastCreated;
+    private String dws;
+    private String dwsDate;
+    private String milestone;
+    private String milestoneDate;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -118,48 +129,23 @@ public class TrialListResultWebDto {
      */
     public TrialListResultWebDto(TrialListResultDto dto) {
         if (dto == null) { return; }
-        organization = StConverter.convertToString(dto.getOrganization());
-        dateLastCreated = TsConverter.convertToString(dto.getDateLastCreated());
         assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
-        officialTitle = StConverter.convertToString(dto.getOfficialTitle());
         Integer submissionNumber = IntConverter.convertToInteger(dto.getSubmissionNumber());
         if (submissionNumber != null) {
             if (submissionNumber == 1) {
                 submissionType = ViewerConstants.INITIAL_SUBMISSION;
-            }
-            if (submissionNumber > 1) {
+            } else if (submissionNumber > 1) {
                 submissionType = ViewerConstants.AMENDMENT;
             }
         }
-        statusCode = CdConverter.convertCdToString(dto.getStatusCode());
-    }
-
-    /**
-     * @return the organization
-     */
-    public String getOrganization() {
-        return organization;
-    }
-
-    /**
-     * @param organization the organization to set
-     */
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
-
-    /**
-     * @return the dateLastCreated
-     */
-    public String getDateLastCreated() {
-        return dateLastCreated;
-    }
-
-    /**
-     * @param dateLastCreated the dateLastCreated to set
-     */
-    public void setDateLastCreated(String dateLastCreated) {
-        this.dateLastCreated = dateLastCreated;
+        submitterOrg = StConverter.convertToString(dto.getSubmitterOrg());
+        leadOrgTrialIdentifier = StConverter.convertToString(dto.getLeadOrgTrialIdentifier());
+        leadOrg = StConverter.convertToString(dto.getLeadOrg());
+        dateLastCreated = TsConverter.convertToString(dto.getDateLastCreated());
+        dws = DocumentWorkflowStatusCode.valueOf(CdConverter.convertCdToString(dto.getDws())).getCode();
+        dwsDate = TsConverter.convertToString(dto.getDwsDate());
+        milestone = MilestoneCode.valueOf(CdConverter.convertCdToString(dto.getMilestone())).getCode();
+        milestoneDate = TsConverter.convertToString(dto.getMilestoneDate());
     }
 
     /**
@@ -168,53 +154,118 @@ public class TrialListResultWebDto {
     public String getAssignedIdentifier() {
         return assignedIdentifier;
     }
-
     /**
      * @param assignedIdentifier the assignedIdentifier to set
      */
     public void setAssignedIdentifier(String assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
-
-    /**
-     * @return the officialTitle
-     */
-    public String getOfficialTitle() {
-        return officialTitle;
-    }
-
-    /**
-     * @param officialTitle the officialTitle to set
-     */
-    public void setOfficialTitle(String officialTitle) {
-        this.officialTitle = officialTitle;
-    }
-
     /**
      * @return the submissionType
      */
     public String getSubmissionType() {
         return submissionType;
     }
-
     /**
      * @param submissionType the submissionType to set
      */
     public void setSubmissionType(String submissionType) {
         this.submissionType = submissionType;
     }
-
     /**
-     * @return the statusCode
+     * @return the submitterOrg
      */
-    public String getStatusCode() {
-        return statusCode;
+    public String getSubmitterOrg() {
+        return submitterOrg;
     }
-
     /**
-     * @param statusCode the statusCode to set
+     * @param submitterOrg the submitterOrg to set
      */
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+    public void setSubmitterOrg(String submitterOrg) {
+        this.submitterOrg = submitterOrg;
+    }
+    /**
+     * @return the leadOrgTrialIdentifier
+     */
+    public String getLeadOrgTrialIdentifier() {
+        return leadOrgTrialIdentifier;
+    }
+    /**
+     * @param leadOrgTrialIdentifier the leadOrgTrialIdentifier to set
+     */
+    public void setLeadOrgTrialIdentifier(String leadOrgTrialIdentifier) {
+        this.leadOrgTrialIdentifier = leadOrgTrialIdentifier;
+    }
+    /**
+     * @return the leadOrg
+     */
+    public String getLeadOrg() {
+        return leadOrg;
+    }
+    /**
+     * @param leadOrg the leadOrg to set
+     */
+    public void setLeadOrg(String leadOrg) {
+        this.leadOrg = leadOrg;
+    }
+    /**
+     * @return the dateLastCreated
+     */
+    public String getDateLastCreated() {
+        return dateLastCreated;
+    }
+    /**
+     * @param dateLastCreated the dateLastCreated to set
+     */
+    public void setDateLastCreated(String dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
+    }
+    /**
+     * @return the dws
+     */
+    public String getDws() {
+        return dws;
+    }
+    /**
+     * @param dws the dws to set
+     */
+    public void setDws(String dws) {
+        this.dws = dws;
+    }
+    /**
+     * @return the dwsDate
+     */
+    public String getDwsDate() {
+        return dwsDate;
+    }
+    /**
+     * @param dwsDate the dwsDate to set
+     */
+    public void setDwsDate(String dwsDate) {
+        this.dwsDate = dwsDate;
+    }
+    /**
+     * @return the milestone
+     */
+    public String getMilestone() {
+        return milestone;
+    }
+    /**
+     * @param milestone the milestone to set
+     */
+    public void setMilestone(String milestone) {
+        this.milestone = milestone;
+    }
+    /**
+     * @return the milestoneDate
+     */
+    public String getMilestoneDate() {
+        return milestoneDate;
+    }
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(String milestoneDate) {
+        this.milestoneDate = milestoneDate;
     }
 }

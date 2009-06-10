@@ -60,15 +60,6 @@
                        <li><a href="criteriaCurrentMilestone.action" >Current Milestone</a></li>
                     </c:otherwise>
                 </c:choose>
-                <div class="line"></div>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'trial_list'}">
-                       <li><a href="trialList.action" class="selected">Trial List Report</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="trialList.action" >Trial List Report</a></li>
-                    </c:otherwise>
-                </c:choose>
               </c:if>  
               <li><a href="/viewer/logout.action" >Log Out</a></li>
             </c:when>

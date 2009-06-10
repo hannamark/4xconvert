@@ -74,22 +74,40 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto.criteria;
+package gov.nih.nci.pa.report.enums;
 
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
 
 /**
  * @author Hugh Reinhart
- * @since 05/06/2009
+ * @since 06/08/2009
  */
-public class TrialListCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialListCriteriaDto> {
+public enum SubmissionTypeCode implements CodedEnum<String> {
+    /** Original. */
+    ORIGINAL("Original"),
+    /** Amendment. */
+    AMENDMENT("Amendment"),
+    /** Both. */
+    BOTH("Both");
+
+    private String code;
+
+    private SubmissionTypeCode(String code) {
+        this.code = code;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public TrialListCriteriaDto getIsoDto() {
-        TrialListCriteriaDto result = new TrialListCriteriaDto();
-        super.setInterval(result);
-        return result;
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
 }

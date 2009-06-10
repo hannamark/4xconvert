@@ -78,11 +78,10 @@ package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.criteria.TrialProcessingCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingResultDto;
 import gov.nih.nci.pa.report.util.ReportUtil;
@@ -108,7 +107,8 @@ import org.hibernate.SQLQuery;
  */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialProcessingReportBean extends AbstractReportBean<TrialProcessingCriteriaDto, TrialProcessingResultDto>
+public class TrialProcessingReportBean
+        extends AbstractReportBean<AssignedIdentifierCriteriaDto, TrialProcessingResultDto>
         implements TrialProcessingLocal {
 
     private static final int HDR_FIRST_NAME = 1;
@@ -134,8 +134,8 @@ public class TrialProcessingReportBean extends AbstractReportBean<TrialProcessin
     /**
      * {@inheritDoc}
      */
-    public TrialProcessingHeaderResultDto getHeader(TrialProcessingCriteriaDto criteria) throws PAException {
-        TrialProcessingCriteriaDto.validate(criteria);
+    public TrialProcessingHeaderResultDto getHeader(AssignedIdentifierCriteriaDto criteria) throws PAException {
+        AssignedIdentifierCriteriaDto.validate(criteria);
         TrialProcessingHeaderResultDto result = null;
         try {
             session = ViewerHibernateUtil.getCurrentSession();
@@ -166,7 +166,8 @@ public class TrialProcessingReportBean extends AbstractReportBean<TrialProcessin
                 result = new TrialProcessingHeaderResultDto();
                 result.setAssignedIdentifier(StConverter.convertToSt((String) sr[HDR_ASSIGNED_IDENTIFIER]));
                 result.setOfficialTitle(StConverter.convertToSt((String) sr[HDR_OFFICIAL_TITLE]));
-                result.setLeadOrganization(StConverter.convertToSt(getLeadOrganization((BigInteger) sr[HDR_SP_ID])));
+                result.setLeadOrganization(
+                        StConverter.convertToSt(getLeadOrganization((BigInteger) sr[HDR_SP_ID]).name));
                 result.setStatusCode(CdConverter.convertStringToCd((String) sr[HDR_STATUS_CODE]));
                 String name = (String) sr[HDR_FIRST_NAME];
                 if (name == null || name.length() == 0) {
@@ -185,8 +186,8 @@ public class TrialProcessingReportBean extends AbstractReportBean<TrialProcessin
     /**
      * {@inheritDoc}
      */
-    public List<TrialProcessingResultDto> get(TrialProcessingCriteriaDto criteria) throws PAException {
-        TrialProcessingCriteriaDto.validate(criteria);
+    public List<TrialProcessingResultDto> get(AssignedIdentifierCriteriaDto criteria) throws PAException {
+        AssignedIdentifierCriteriaDto.validate(criteria);
         List<TrialProcessingResultDto> rList = new ArrayList<TrialProcessingResultDto>();
         try {
             session = ViewerHibernateUtil.getCurrentSession();
@@ -250,35 +251,5 @@ public class TrialProcessingReportBean extends AbstractReportBean<TrialProcessin
             return StConverter.convertToSt("<1");
         }
         return StConverter.convertToSt(Long.toString(daysBetween));
-    }
-
-    private String getLeadOrganization(BigInteger studyProtocolIdentifier) throws PAException {
-        if (studyProtocolIdentifier == null) { return null; }
-        String result = null;
-        try {
-            session = ViewerHibernateUtil.getCurrentSession();
-            SQLQuery query = null;
-            StringBuffer sql = new StringBuffer(
-                      "select org.name "
-                    + "from study_participation AS spart "
-                    + "  join healthcare_facility AS hf ON (spart.healthcare_facility_identifier = hf.identifier) "
-                    + "  join organization AS org ON (hf.organization_identifier = org.identifier) "
-                    + "where study_protocol_identifier = :SP_ID "
-                    + "  and spart.functional_code = :LEAD_ORGANIZATION ");
-            logger.info("query = " + sql);
-            query = session.createSQLQuery(sql.toString());
-            query.setParameter("SP_ID", studyProtocolIdentifier);
-            query.setParameter("LEAD_ORGANIZATION", StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getName());
-            @SuppressWarnings(UNCHECKED)
-            List<String> queryList = query.list();
-            logger.info("Found " + queryList.size() + " lead organizations.");
-            if (queryList.size() > 0) {
-                result = queryList.get(0);
-            }
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in " + this.getClass(), hbe);
-        }
-        logger.info("Leaving getLeadOrganization(Long).");
-        return result;
     }
 }

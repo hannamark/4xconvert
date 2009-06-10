@@ -76,7 +76,7 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
 
 import javax.ejb.Local;
@@ -86,5 +86,5 @@ import javax.ejb.Local;
  * @since 05/12/2009
  */
 @Local
-public interface TrialCountsLocal extends ViewerReport<TrialCountsCriteriaDto, TrialCountsResultDto> {
+public interface TrialCountsLocal extends ViewerReport<StandardCriteriaDto, TrialCountsResultDto> {
 }

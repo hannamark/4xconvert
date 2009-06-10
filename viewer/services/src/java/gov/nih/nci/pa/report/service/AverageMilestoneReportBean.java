@@ -82,9 +82,9 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.criteria.AverageMilestoneCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
-import gov.nih.nci.pa.report.enums.OrigAmendBothCode;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
@@ -111,7 +111,7 @@ import org.hibernate.SQLQuery;
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
 public class AverageMilestoneReportBean
-        extends AbstractBaseReportBean<AverageMilestoneCriteriaDto, AverageMilestoneResultDto>
+        extends AbstractStandardReportBean<SubmissionTypeCriteriaDto, AverageMilestoneResultDto>
         implements AverageMilestoneLocal {
 
     private static final int DAY01_IDX = 0;
@@ -143,8 +143,8 @@ public class AverageMilestoneReportBean
      * {@inheritDoc}
      */
     public List<AverageMilestoneResultDto> get(
-            AverageMilestoneCriteriaDto criteria) throws PAException {
-        AverageMilestoneCriteriaDto.validate(criteria);
+            SubmissionTypeCriteriaDto criteria) throws PAException {
+        SubmissionTypeCriteriaDto.validate(criteria);
         List<Counts> cList = getMilestoneList(getTrialList(criteria));
         return createResultList(createResultHash(cList));
     }
@@ -202,7 +202,7 @@ public class AverageMilestoneReportBean
         return IntConverter.convertToInt(result);
     }
 
-    private static St setResultLow(Integer[] array) {
+    static St setResultLow(Integer[] array) {
         int low = -1;
         for (int x = DAY01_IDX; x <= GT10_IDX; x++) {
             if (array[x] > 0) {
@@ -216,7 +216,7 @@ public class AverageMilestoneReportBean
         return StConverter.convertToSt(Integer.toString(low + 1));
     }
 
-    private static St setResultHigh(Integer[] array) {
+    static St setResultHigh(Integer[] array) {
         int high = -1;
         for (int x = DAY01_IDX; x <= GT10_IDX; x++) {
             if (array[x] > 0) {
@@ -229,9 +229,9 @@ public class AverageMilestoneReportBean
         return StConverter.convertToSt(Integer.toString(high + 1));
     }
 
-    private static St setResultAverage(Integer[] array) {
+    static St setResultAverage(Integer[] array) {
         int count = array[GT10_IDX];
-        int total = array[GT10_TOTAL_IDX];
+        float total = array[GT10_TOTAL_IDX];
         for (int x = DAY01_IDX; x < DAY10_IDX; x++) {
             count = count + array[x];
             total = total + array[x] * (x + 1);
@@ -273,7 +273,7 @@ public class AverageMilestoneReportBean
         Integer days;
     }
 
-    private List<BigInteger> getTrialList(AverageMilestoneCriteriaDto criteria) throws PAException {
+    private List<BigInteger> getTrialList(SubmissionTypeCriteriaDto criteria) throws PAException {
         List<BigInteger> rList = new ArrayList<BigInteger>();
         try {
             session = ViewerHibernateUtil.getCurrentSession();
@@ -284,13 +284,13 @@ public class AverageMilestoneReportBean
                 + "  JOIN study_milestone AS sm ON (sm.study_protocol_identifier = sp.identifier) "
                 + "WHERE sm.milestone_code IN (:REPORTING_MILESTONES) ");
             if (CdConverter.convertCdToString(criteria.getSubmissionType()).
-                    equals(OrigAmendBothCode.ORIGINAL.name())) {
+                    equals(SubmissionTypeCode.ORIGINAL.name())) {
                 sql.append("  AND sp.submission_number = 1 ");
             } else if (CdConverter.convertCdToString(criteria.getSubmissionType()).
-                    equals(OrigAmendBothCode.AMENDMENT.name())) {
+                    equals(SubmissionTypeCode.AMENDMENT.name())) {
                 sql.append("  AND sp.submission_number > 1 ");
             }
-            sql.append(getDateRangeClauses("sm.milestone_date"));
+            sql.append(dateRangeSql("sm.milestone_date"));
             sql.append(ctepSql(criteria));
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());

@@ -7,8 +7,9 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.service.PAException;
 
@@ -28,24 +29,22 @@ public class TrialListTest {
 
     @Test
     public void getTest() throws Exception {
-        TrialListCriteriaDto crit = new TrialListCriteriaDto();
+        SubmissionTypeCriteriaDto crit = new SubmissionTypeCriteriaDto();
         crit.setCtep(BlConverter.convertToBl(true));
         crit.setTimeInterval(IvlConverter.convertTs().convertToIvl("1/1/2000", "6/1/2009"));
+        crit.setSubmissionType(CdConverter.convertStringToCd(SubmissionTypeCode.BOTH.name()));
         List<TrialListResultDto> resultList = localSvc.get(crit);
         assertEquals(1, resultList.size());
         for (TrialListResultDto dto : resultList) {
             System.out.println(StConverter.convertToString(dto.getAssignedIdentifier()));
-            System.out.println(StConverter.convertToString(dto.getOfficialTitle()));
-            System.out.println(StConverter.convertToString(dto.getOrganization()));
             System.out.println(TsConverter.convertToString(dto.getDateLastCreated()));
             System.out.println(IntConverter.convertToInteger(dto.getSubmissionNumber()));
-            System.out.println(CdConverter.convertCdToString(dto.getStatusCode()));
         }
     }
 
     @Test (expected=PAException.class)
     public void criteriaValidateTest() throws Exception {
-        TrialListCriteriaDto crit = new TrialListCriteriaDto();
+        SubmissionTypeCriteriaDto crit = new SubmissionTypeCriteriaDto();
         localSvc.get(crit);
     }
 }

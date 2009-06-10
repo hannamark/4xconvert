@@ -76,7 +76,7 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.viewer.dto.criteria.TrialCountsCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.criteria.StandardCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
 
 /**
@@ -84,7 +84,7 @@ import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
  * @since 4/16/2009
  */
 public class SubmissionByInstitutionAction extends AbstractReportAction
-        <TrialCountsCriteriaWebDto, TrialCountsResultWebDto> {
+        <StandardCriteriaWebDto, TrialCountsResultWebDto> {
 
     private static final long serialVersionUID = 7044286786372431982L;
 

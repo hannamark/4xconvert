@@ -78,38 +78,38 @@ package gov.nih.nci.pa.viewer.dto.criteria;
 
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.report.dto.criteria.TrialCountsCriteriaDto;
-import gov.nih.nci.pa.report.enums.TimeUnitsCode;
+import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 
 /**
  * @author Hugh Reinhart
- * @since 05/12/2009
+ * @since 06/08/2009
  */
-public class TrialCountsCriteriaWebDto extends AbstractBaseCriteriaWebDto<TrialCountsCriteriaDto> {
+public class SubmissionTypeCriteriaWebDto extends AbstractBaseCriteriaWebDto<SubmissionTypeCriteriaDto> {
 
-    private String groupByTimeUnit = TimeUnitsCode.NONE.getDisplayName();
+    private String submissionType = SubmissionTypeCode.BOTH.name();
 
     /**
      * {@inheritDoc}
      */
-    public TrialCountsCriteriaDto getIsoDto() {
-        TrialCountsCriteriaDto result = new TrialCountsCriteriaDto();
+    public SubmissionTypeCriteriaDto getIsoDto() {
+        SubmissionTypeCriteriaDto result = new SubmissionTypeCriteriaDto();
         super.setInterval(result);
-        result.setGroupByTimeUnit(CdConverter.convertStringToCd(getGroupByTimeUnit()));
+        result.setSubmissionType(CdConverter.convertStringToCd(getSubmissionType()));
         result.setCtep(BlConverter.convertToBl(getCtep()));
         return result;
     }
 
     /**
-     * @return the groupByTimeUnit
+     * @return the submissionType
      */
-    public String getGroupByTimeUnit() {
-        return groupByTimeUnit;
+    public String getSubmissionType() {
+        return submissionType;
     }
     /**
-     * @param groupByTimeUnit the groupByTimeUnit to set
+     * @param submissionType the submissionType to set
      */
-    public void setGroupByTimeUnit(String groupByTimeUnit) {
-        this.groupByTimeUnit = groupByTimeUnit;
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
     }
 }

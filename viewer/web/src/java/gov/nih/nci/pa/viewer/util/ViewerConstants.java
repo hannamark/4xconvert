@@ -100,7 +100,7 @@ public final class ViewerConstants {
     public static final String RESULT_TIME_UNITS = "timeUnitsCode";
 
     /** String to be displayed for initial submissions. */
-    public static final String INITIAL_SUBMISSION = "Initial Submission";
+    public static final String INITIAL_SUBMISSION = "Original";
     /** String to be displayed for amendments. */
     public static final String AMENDMENT = "Amendment";
 }

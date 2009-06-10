@@ -74,61 +74,57 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
-import gov.nih.nci.pa.report.service.TrialCountsLocal;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.dto.criteria.TrialCountsCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
-import gov.nih.nci.pa.viewer.util.ViewerConstants;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
+import gov.nih.nci.pa.report.util.ReportUtil;
 
-import java.util.List;
+import java.sql.Timestamp;
 
-import org.apache.struts2.ServletActionContext;
+import org.hibernate.SQLQuery;
 
 /**
+ * Abstract class used for report ejb's which use criteria that extend AbstractBaseCriteriaDto.
+
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/04/2009
+ *
+ * @param <CRITERIA> criteria dto
+ * @param <RESULT> result dto
  */
-public class TrialCountsAction extends AbstractReportAction
-        <TrialCountsCriteriaWebDto, TrialCountsResultWebDto> {
-
-    private static final long serialVersionUID = 8863596924457440094L;
-
-    private TrialCountsCriteriaWebDto criteria = new TrialCountsCriteriaWebDto();
+public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStandardCriteriaDto, RESULT>
+        extends AbstractReportBean<CRITERIA, RESULT> {
 
     /**
-     * {@inheritDoc}
+     * @param field field to run date checks
+     * @return date range clauses
      */
-    @Override
-    public String getReport() {
-        TrialCountsLocal local = ViewerServiceLocator.getInstance().getTrialCountsReportService();
-        List<TrialCountsResultDto> isoList;
-        try {
-            isoList = local.get(criteria.getIsoDto());
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            return super.execute();
+    protected String dateRangeSql(String field) {
+        return "AND " + field + " >= :LOW AND " + field + " < :HIGH ";
+    }
+
+    /**
+     * @param criteria criteria
+     * @param query query
+     */
+    protected void setDateRangeParameters(CRITERIA criteria, SQLQuery query) {
+        query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
+        Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
+        query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
+            ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
+    }
+
+    /**
+     * @param criteria criteria
+     * @return sql to include or exclude ctep trials as appropriate
+     */
+    protected String ctepSql(CRITERIA criteria) {
+        if (BlConverter.covertToBool(criteria.getCtep())) {
+            return "";
         }
-        setResultList(TrialCountsResultWebDto.getWebList(isoList));
-        ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_TIME_UNITS,
-                criteria.getGroupByTimeUnit());
-        return super.getReport();
-    }
-
-    /**
-     * @return the criteria
-     */
-    public TrialCountsCriteriaWebDto getCriteria() {
-        return criteria;
-    }
-
-    /**
-     * @param criteria the criteria to set
-     */
-    public void setCriteria(TrialCountsCriteriaWebDto criteria) {
-        this.criteria = criteria;
+        return "AND (sp.user_last_created NOT IN ('brownph2@mail.nih.gov', 'pb8593@yahoo.com') "
+                  + "OR sp.user_last_created IS NULL) ";
     }
 }

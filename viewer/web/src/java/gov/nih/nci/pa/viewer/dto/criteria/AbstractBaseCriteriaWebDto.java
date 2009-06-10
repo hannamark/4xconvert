@@ -77,7 +77,7 @@
 package gov.nih.nci.pa.viewer.dto.criteria;
 
 import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.report.dto.criteria.AbstractBaseCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.util.PAUtil;
 
 /**
@@ -85,7 +85,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @since 05/06/2009
  * @param <ISODTO> corresponding service iso dto
  */
-public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractBaseCriteriaDto>
+public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractStandardCriteriaDto>
         implements CriteriaWebDto<ISODTO> {
 
     private String intervalStartDate = "01/01/2009";

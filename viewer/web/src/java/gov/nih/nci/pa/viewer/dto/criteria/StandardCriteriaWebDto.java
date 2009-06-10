@@ -74,29 +74,24 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.dto.criteria;
+package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 
 /**
  * @author Hugh Reinhart
- * @since 06/08/2009
+ * @since 05/12/2009
  */
-public class AverageMilestoneCriteriaDto extends AbstractBaseCriteriaDto {
-
-    private Cd submissionType = CdConverter.convertToCd(null);
+public class StandardCriteriaWebDto extends AbstractBaseCriteriaWebDto<StandardCriteriaDto> {
 
     /**
-     * @return the submissionType
+     * {@inheritDoc}
      */
-    public Cd getSubmissionType() {
-        return submissionType;
-    }
-    /**
-     * @param submissionType the submissionType to set
-     */
-    public void setSubmissionType(Cd submissionType) {
-        this.submissionType = submissionType;
+    public StandardCriteriaDto getIsoDto() {
+        StandardCriteriaDto result = new StandardCriteriaDto();
+        super.setInterval(result);
+        result.setCtep(BlConverter.convertToBl(getCtep()));
+        return result;
     }
 }

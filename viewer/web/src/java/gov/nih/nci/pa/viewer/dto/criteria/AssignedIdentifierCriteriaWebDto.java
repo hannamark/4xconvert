@@ -74,12 +74,39 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.dto.criteria;
+package gov.nih.nci.pa.viewer.dto.criteria;
 
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
+import gov.nih.nci.pa.report.util.ReportUtil;
 
 /**
  * @author Hugh Reinhart
- * @since 03/19/2009
+ * @since 05/12/2009
  */
-public class TrialListCriteriaDto extends AbstractBaseCriteriaDto {
+public class AssignedIdentifierCriteriaWebDto implements CriteriaWebDto<AssignedIdentifierCriteriaDto> {
+
+    private String assignedIdentifier = "";
+
+    /**
+     * {@inheritDoc}
+     */
+    public AssignedIdentifierCriteriaDto getIsoDto() {
+        AssignedIdentifierCriteriaDto dto = new AssignedIdentifierCriteriaDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
+        return dto;
+    }
+
+    /**
+     * @return the assignedIdentifier
+     */
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = ReportUtil.assignedIdentifierSetter(assignedIdentifier);
+    }
 }

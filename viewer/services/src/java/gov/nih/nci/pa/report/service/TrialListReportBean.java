@@ -80,12 +80,15 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.report.dto.criteria.TrialListCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,50 +105,67 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteriaDto, TrialListResultDto>
+@SuppressWarnings("PMD")
+public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTypeCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
 
-    private static final int ORGANIZATION_IDX = 0;
-    private static final int DATE_LAST_CREATED_IDX = 1;
-    private static final int ASSIGNED_IDENTIFIER_IDX = 2;
-    private static final int OFFICIAL_TITLE_IDX = 3;
-    private static final int SUBMISSION_NUMBER_IDX = 4;
-    private static final int STATUS_CODE_IDX = 5;
+    private static final int IDENT_IDX = 0;
+    private static final int SUBMISSION_NUM_IDX = 1;
+    private static final int SUBMITTER_IDX = 2;
+    private static final int SUB_DATE_IDX = 3;
+    private static final int DWS_IDX = 4;
+    private static final int DWS_DATE_IDX = 5;
+    private static final int MS_IDX = 6;
+    private static final int MS_DATE_IDX = 7;
+    private static final int SP_KEY_IDX = 8;
 
     /**
      * {@inheritDoc}
      */
-    public List<TrialListResultDto> get(TrialListCriteriaDto criteria) throws PAException {
-        TrialListCriteriaDto.validate(criteria);
+    public List<TrialListResultDto> get(SubmissionTypeCriteriaDto criteria) throws PAException {
+        StandardCriteriaDto.validate(criteria);
         ArrayList<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
         try {
             session = ViewerHibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
-                  "SELECT cm.organization, sp.date_last_created, sp.assigned_identifier "
-                + "       , sp.official_title, sp.submission_number, dws.status_code "
-                + "FROM study_protocol AS sp "
-                + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
-                + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
-                + "WHERE dws.identifier in "
-                + "      ( select max(identifier) "
-                + "        from document_workflow_status "
-                + "        group by study_protocol_identifier ) ");
-            sql.append(getDateRangeClauses("sp.date_last_created"));
+                "SELECT sp.assigned_identifier, sp.submission_number, cm.organization, sp.date_last_created "
+              + "    , dws.status_code, dws.status_date_range_low "
+              + "    , sm.milestone_code, sm.milestone_date, sp.identifier "
+              + "FROM study_protocol AS sp "
+              + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
+              + "INNER JOIN study_milestone AS sm ON (sp.identifier = sm.study_protocol_identifier) "
+              + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
+              + "WHERE dws.identifier in "
+              + "      ( select max(identifier) "
+              + "        from document_workflow_status "
+              + "        group by study_protocol_identifier ) "
+              + "  AND sm.identifier in "
+              + "      ( select max(identifier) "
+              + "        from study_milestone "
+              + "        group by study_protocol_identifier ) ");
+            sql.append(dateRangeSql("sp.date_last_created"));
+            sql.append(ctepSql(criteria));
+            sql.append(submissionTypeSql(criteria));
             sql.append("ORDER BY cm.organization, sp.date_last_created, sp.identifier ");
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
-            for (Object[] sr : queryList) {
+            for (Object[] q : queryList) {
                 TrialListResultDto rdto = new TrialListResultDto();
-                rdto.setOrganization(StConverter.convertToSt((String) sr[ORGANIZATION_IDX]));
-                rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) sr[DATE_LAST_CREATED_IDX]));
-                rdto.setAssignedIdentifier(StConverter.convertToSt((String) sr[ASSIGNED_IDENTIFIER_IDX]));
-                rdto.setOfficialTitle(StConverter.convertToSt((String) sr[OFFICIAL_TITLE_IDX]));
-                rdto.setSubmissionNumber(IntConverter.convertToInt((Integer) sr[SUBMISSION_NUMBER_IDX]));
-                rdto.setStatusCode(CdConverter.convertStringToCd((String) sr[STATUS_CODE_IDX]));
+                rdto.setAssignedIdentifier(StConverter.convertToSt((String) q[IDENT_IDX]));
+                rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) q[SUB_DATE_IDX]));
+                rdto.setDws(CdConverter.convertStringToCd((String) q[DWS_IDX]));
+                rdto.setDwsDate(TsConverter.convertToTs((Timestamp) q[DWS_DATE_IDX]));
+                LeadOrgInfo loi = getLeadOrganization((BigInteger) q[SP_KEY_IDX]);
+                rdto.setLeadOrg(StConverter.convertToSt(loi.name));
+                rdto.setLeadOrgTrialIdentifier(StConverter.convertToSt(loi.localSpIdentifier));
+                rdto.setMilestone(CdConverter.convertStringToCd((String) q[MS_IDX]));
+                rdto.setMilestoneDate(TsConverter.convertToTs((Timestamp) q[MS_DATE_IDX]));
+                rdto.setSubmissionNumber(IntConverter.convertToInt((Integer) q[SUBMISSION_NUM_IDX]));
+                rdto.setSubmitterOrg(StConverter.convertToSt((String) q[SUBMITTER_IDX]));
                 rList.add(rdto);
             }
         } catch (HibernateException hbe) {
@@ -153,5 +173,17 @@ public class TrialListReportBean extends AbstractBaseReportBean<TrialListCriteri
         }
         logger.info("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
         return rList;
+    }
+
+    private String submissionTypeSql(SubmissionTypeCriteriaDto criteria) {
+        String result = "";
+        SubmissionTypeCode type = SubmissionTypeCode.valueOf(
+                CdConverter.convertCdToString(criteria.getSubmissionType()));
+        if (SubmissionTypeCode.AMENDMENT.equals(type)) {
+            result = "AND sp.submission_number > 1 ";
+        } else if (SubmissionTypeCode.ORIGINAL.equals(type)) {
+            result = "AND sp.submission_number = 1 ";
+        }
+        return result;
     }
 }

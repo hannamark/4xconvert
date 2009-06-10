@@ -76,27 +76,72 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.service.PAException;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
+ * All reports will have a date range as the part of the criteria.
  * @author Hugh Reinhart
- * @since 04/29/2009
+ * @since 05/22/2009
  */
-public class TrialCountsCriteriaDto extends AbstractBaseCriteriaDto {
+public abstract class AbstractStandardCriteriaDto extends AbstractCriteriaDto {
 
-    private Cd groupByTimeUnit = CdConverter.convertToCd(null);
+    private Ivl<Ts> timeInterval = IvlConverter.convertTs().convertToIvl(null, null);
+    private Bl ctep = BlConverter.convertToBl(null);
+
 
     /**
-     * @return the groupByTimeUnits
+     * Validate that the criteria is good.
+     * @param criteria criterie iso dto
+     * @throws PAException exception
      */
-    public Cd getGroupByTimeUnit() {
-        return groupByTimeUnit;
+    public static void validate(AbstractStandardCriteriaDto criteria) throws PAException {
+        AbstractCriteriaDto.validate(criteria);
+        Timestamp start = IvlConverter.convertTs().convertLow(criteria.getTimeInterval());
+        Timestamp end = IvlConverter.convertTs().convertHigh(criteria.getTimeInterval());
+        if (start == null) {
+            throw new PAException("ERROR:  Start date must be set.");
+        }
+        if (end == null) {
+            throw new PAException("ERROR:  End date must be set.");
+        }
+        if (end.before(start)) {
+            throw new PAException("ERROR:  End date must not be before start date.");
+        }
+        if (end.after(new Timestamp(new Date().getTime()))) {
+            throw new PAException("ERROR:  End date must not be in the future.");
+        }
+    }
+
+    /**
+     * @return the timeInterval
+     */
+    public Ivl<Ts> getTimeInterval() {
+        return timeInterval;
     }
     /**
-     * @param groupByTimeUnit the groupByTimeUnits to set
+     * @param timeInterval the timeInterval to set
      */
-    public void setGroupByTimeUnit(Cd groupByTimeUnit) {
-        this.groupByTimeUnit = groupByTimeUnit;
+    public void setTimeInterval(Ivl<Ts> timeInterval) {
+        this.timeInterval = timeInterval;
+    }
+    /**
+     * @return the ctep
+     */
+    public Bl getCtep() {
+        return ctep;
+    }
+    /**
+     * @param ctep the ctep to set
+     */
+    public void setCtep(Bl ctep) {
+        this.ctep = ctep;
     }
 }

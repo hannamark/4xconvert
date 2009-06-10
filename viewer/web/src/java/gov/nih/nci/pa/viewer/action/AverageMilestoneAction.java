@@ -78,7 +78,7 @@ package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
 import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
-import gov.nih.nci.pa.viewer.dto.criteria.AverageMilestoneCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.criteria.SubmissionTypeCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.AverageMilestoneResultWebDto;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
@@ -89,18 +89,18 @@ import java.util.List;
  * @since 4/28/2009
  */
 public class AverageMilestoneAction extends AbstractReportAction
-        <AverageMilestoneCriteriaWebDto, AverageMilestoneResultWebDto> {
+        <SubmissionTypeCriteriaWebDto, AverageMilestoneResultWebDto> {
 
     private static final long serialVersionUID = 4648183253616800952L;
 
-    private AverageMilestoneCriteriaWebDto criteria;
+    private SubmissionTypeCriteriaWebDto criteria;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String execute() {
-        setCriteria(new AverageMilestoneCriteriaWebDto());
+        setCriteria(new SubmissionTypeCriteriaWebDto());
         return super.execute();
     }
 
@@ -124,13 +124,13 @@ public class AverageMilestoneAction extends AbstractReportAction
     /**
      * @return the criteria
      */
-    public AverageMilestoneCriteriaWebDto getCriteria() {
+    public SubmissionTypeCriteriaWebDto getCriteria() {
         return criteria;
     }
     /**
      * @param criteria the criteria to set
      */
-    public void setCriteria(AverageMilestoneCriteriaWebDto criteria) {
+    public void setCriteria(SubmissionTypeCriteriaWebDto criteria) {
         this.criteria = criteria;
     }
 }

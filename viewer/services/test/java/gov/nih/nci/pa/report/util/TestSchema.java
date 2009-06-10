@@ -1,9 +1,11 @@
 package gov.nih.nci.pa.report.util;
 
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -89,6 +91,13 @@ public class TestSchema {
         dws.setCommentText("Accepted by CTRO staff");
         dws.setUserLastCreated("testUser");
         addUpdObject(dws);
+
+        StudyMilestone sm = new StudyMilestone();
+        sm.setCommentText("test data");
+        sm.setMilestoneCode(MilestoneCode.SUBMISSION_RECEIVED);
+        sm.setMilestoneDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        sm.setStudyProtocol(sp);
+        addUpdObject(sm);
 
         dataLoaded = true;
     }

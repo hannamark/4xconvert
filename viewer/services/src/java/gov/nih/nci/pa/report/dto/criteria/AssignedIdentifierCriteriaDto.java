@@ -9,7 +9,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Hugh Reinhart
  * @since 06/09/2009
  */
-public class TrialProcessingCriteriaDto extends AbstractCriteriaDto {
+public class AssignedIdentifierCriteriaDto extends AbstractCriteriaDto {
 
     private St assignedIdentifier = StConverter.convertToSt(null);
 
@@ -18,7 +18,7 @@ public class TrialProcessingCriteriaDto extends AbstractCriteriaDto {
      * @param criteria criteria iso dto
      * @throws PAException exception
      */
-    public static void validate(TrialProcessingCriteriaDto criteria) throws PAException {
+    public static void validate(AssignedIdentifierCriteriaDto criteria) throws PAException {
         AbstractCriteriaDto.validate(criteria);
         if (PAUtil.isStNull(criteria.getAssignedIdentifier())) {
             throw new PAException("ERROR:  Identifier criteria not entered.");

@@ -74,42 +74,12 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.dto.criteria;
+package gov.nih.nci.pa.report.dto.criteria;
 
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.report.dto.criteria.AverageMilestoneCriteriaDto;
-import gov.nih.nci.pa.report.enums.OrigAmendBothCode;
 
 /**
  * @author Hugh Reinhart
- * @since 06/08/2009
+ * @since 04/29/2009
  */
-public class AverageMilestoneCriteriaWebDto extends AbstractBaseCriteriaWebDto<AverageMilestoneCriteriaDto> {
-
-    private String submissionType = OrigAmendBothCode.BOTH.name();
-
-    /**
-     * {@inheritDoc}
-     */
-    public AverageMilestoneCriteriaDto getIsoDto() {
-        AverageMilestoneCriteriaDto result = new AverageMilestoneCriteriaDto();
-        super.setInterval(result);
-        result.setSubmissionType(CdConverter.convertStringToCd(getSubmissionType()));
-        result.setCtep(BlConverter.convertToBl(getCtep()));
-        return result;
-    }
-
-    /**
-     * @return the submissionType
-     */
-    public String getSubmissionType() {
-        return submissionType;
-    }
-    /**
-     * @param submissionType the submissionType to set
-     */
-    public void setSubmissionType(String submissionType) {
-        this.submissionType = submissionType;
-    }
+public class StandardCriteriaDto extends AbstractStandardCriteriaDto {
 }
