@@ -137,6 +137,19 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject>
     }
 
     /**
+     * Adds the correct helper and calls super.
+     * @param orderByProperty order by
+     * @param leftJoinClause the left join clause
+     * @param isCountOnly perform count query
+     * @return hibernate query
+     */
+     @Override
+     public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
+         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
+                 leftJoinClause, getSession(), new NullifiedHelper(disallowNullified));
+     }
+
+    /**
      * {@inheritDoc}
      */
     @Override

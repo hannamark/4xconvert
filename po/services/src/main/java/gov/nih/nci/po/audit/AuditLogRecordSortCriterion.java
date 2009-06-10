@@ -94,30 +94,33 @@ import java.util.List;
 public enum AuditLogRecordSortCriterion implements PoSortCriterion<AuditLogRecord> {
 
     /** Sorty by record id. */
-    AUDIT_ID("id"),
+    AUDIT_ID("id", null),
     /** Sort by audit type. */
-    AUDIT_TYPE("type"),
+    AUDIT_TYPE("type", null),
     /** Sort by entity name (class). */
-    ENTITY_NAME("entityName"),
+    ENTITY_NAME("entityName", null),
     /** Sort by record's entity id. */
-    ENTITY_ID("entityId"),
+    ENTITY_ID("entityId", null),
     /** Sort by username. */
-    USERNAME("username"),
+    USERNAME("username", null),
     /** Sort by created date. */
-    CREATED_DATE("createdDate"),
+    CREATED_DATE("createdDate", null),
     /** Sort by transaction id. */
-    TRANSACTION_ID("transactionId");
+    TRANSACTION_ID("transactionId", null);
 
     private final String orderField;
+    private final String leftJoinField;
     private final List<AuditLogRecordSortCriterion> fields;
 
-    private AuditLogRecordSortCriterion(String orderField) {
+    private AuditLogRecordSortCriterion(String orderField, String leftJoinField) {
         this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
         this.fields = null;
     }
 
     private AuditLogRecordSortCriterion(AuditLogRecordSortCriterion... fields) {
         this.orderField = null;
+        this.leftJoinField = null;
         this.fields = Arrays.asList(fields);
     }
 
@@ -136,5 +139,12 @@ public enum AuditLogRecordSortCriterion implements PoSortCriterion<AuditLogRecor
             return Collections.singletonList(this);
         }
         return fields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return this.leftJoinField;
     }
 }

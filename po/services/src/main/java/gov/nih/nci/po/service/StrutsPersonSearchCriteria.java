@@ -285,4 +285,16 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
         return query;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
+        if (leftJoinClause != null && StringUtils.isNotBlank(leftJoinClause)) {
+            throw new IllegalArgumentException("The use of the left join clause is currently not supported."
+                    + " Please ref jira issues PO-1115, PO-1116, PO-1118");
+        }
+
+        return getQuery(orderByProperty, isCountOnly);
+    }
+
 }

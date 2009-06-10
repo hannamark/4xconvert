@@ -97,38 +97,41 @@ public enum OrganizationalContactSortCriterion implements PoSortCriterion<Organi
     /**
      * Sort by OrganizationalContact's id.
      */
-    ID("id"),
+    ID("id", null),
 
     /**
      * Sort by OrganizationalContact's status.
      */
-    ROLE_STATUS("status"),
+    ROLE_STATUS("status", null),
 
     /**
      * Sort by OrganizationalContact's scoper's name.
      */
-    SCOPER_NAME("scoper.name"),
+    SCOPER_NAME("scoper.name", null),
 
     /**
      * Sort by OrganizationalContact's scoper's name.
      */
-    SCOPER_ID("scoper.id"),
+    SCOPER_ID("scoper.id", null),
 
     /**
      * Sort by OrganizationalContact's status date.
      */
-    STATUS_DATE("statusDate");
+    STATUS_DATE("statusDate", null);
 
     private final String orderField;
+    private final String leftJoinField;
     private final List<OrganizationalContactSortCriterion> fields;
 
-    private OrganizationalContactSortCriterion(String orderField) {
+    private OrganizationalContactSortCriterion(String orderField, String leftJoinField) {
         this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
         this.fields = null;
     }
 
     private OrganizationalContactSortCriterion(OrganizationalContactSortCriterion... fields) {
         this.orderField = null;
+        this.leftJoinField = null;
         this.fields = Arrays.asList(fields);
     }
 
@@ -147,5 +150,12 @@ public enum OrganizationalContactSortCriterion implements PoSortCriterion<Organi
             return Collections.singletonList(this);
         }
         return fields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return this.leftJoinField;
     }
 }

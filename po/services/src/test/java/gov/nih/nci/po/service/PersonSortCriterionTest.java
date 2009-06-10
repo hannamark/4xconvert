@@ -24,6 +24,7 @@ public class PersonSortCriterionTest {
         assertEquals(
                 Arrays.asList(PersonSortCriterion.PERSON_LASTNAME, PersonSortCriterion.PERSON_FIRSTNAME, PersonSortCriterion.PERSON_MIDDLENAME),
                 PersonSortCriterion.PERSON_FULLNAME.getOrderByList());
+        SortCriterionTest.testSortCriteriaNull(PersonSortCriterion.values());
     }
 
 }

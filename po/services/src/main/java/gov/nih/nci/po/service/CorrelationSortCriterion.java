@@ -96,18 +96,21 @@ public enum CorrelationSortCriterion implements PoSortCriterion<Correlation> {
     /**
      * Sort by id.
      */
-    ID("id");
-    
+    ID("id", null);
+
     private final String orderField;
+    private final String leftJoinField;
     private final List<CorrelationSortCriterion> fields;
 
-    private CorrelationSortCriterion(String orderField) {
+    private CorrelationSortCriterion(String orderField, String leftJoinField) {
         this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
         this.fields = null;
     }
 
     private CorrelationSortCriterion(CorrelationSortCriterion... fields) {
         this.orderField = null;
+        this.leftJoinField = null;
         this.fields = Arrays.asList(fields);
     }
 
@@ -126,5 +129,12 @@ public enum CorrelationSortCriterion implements PoSortCriterion<Correlation> {
             return Collections.singletonList(this);
         }
         return fields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return this.leftJoinField;
     }
 }

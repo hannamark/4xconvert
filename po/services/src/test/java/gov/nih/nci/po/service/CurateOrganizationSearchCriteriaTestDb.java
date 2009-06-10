@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.audit.AuditLogRecordSearchCriteria;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
@@ -13,6 +14,7 @@ import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.correlation.IdentifiedOrganizationServiceTest;
 import gov.nih.nci.po.service.correlation.OversightCommitteeServiceTest;
@@ -27,8 +29,11 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTestCase {
     CurateOrganizationSearchCriteria sc = new CurateOrganizationSearchCriteria();
@@ -300,6 +305,12 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalArgExc() throws Exception {
+        CurateOrganizationSearchCriteria criteria = new CurateOrganizationSearchCriteria();
+        criteria.getQuery("id", "notnull", false);
     }
 
 }

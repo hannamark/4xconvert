@@ -96,25 +96,29 @@ public enum OrganizationSortCriterion implements PoSortCriterion<Organization> {
     /**
      * Sort by organization's id.
      */
-    ORGANIZATION_ID("id"),
+    ORGANIZATION_ID("id", null),
     /**
      * Sort by organization's status.
      */
-    ORGANIZATION_STATUS("statusCode"),
+    ORGANIZATION_STATUS("statusCode", null),
     /**
      * Sort by organization's name.
      */
-    ORGANIZATION_NAME("name");
+    ORGANIZATION_NAME("name", null);
+
     private final String orderField;
+    private final String leftJoinField;
     private final List<OrganizationSortCriterion> fields;
 
-    private OrganizationSortCriterion(String orderField) {
+    private OrganizationSortCriterion(String orderField, String leftJoinField) {
         this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
         this.fields = null;
     }
 
     private OrganizationSortCriterion(OrganizationSortCriterion... fields) {
         this.orderField = null;
+        this.leftJoinField = null;
         this.fields = Arrays.asList(fields);
     }
 
@@ -133,5 +137,12 @@ public enum OrganizationSortCriterion implements PoSortCriterion<Organization> {
             return Collections.singletonList(this);
         }
         return fields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return leftJoinField;
     }
 }

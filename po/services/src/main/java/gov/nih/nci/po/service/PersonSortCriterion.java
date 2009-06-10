@@ -98,23 +98,23 @@ public enum PersonSortCriterion implements PoSortCriterion<Person> {
     /**
      * Sort by person's id.
      */
-    PERSON_ID("id"),
+    PERSON_ID("id", null),
     /**
      * Sort by person's status.
      */
-    PERSON_STATUS("statusCode"),
+    PERSON_STATUS("statusCode", null),
     /**
      * Sort by person's first name.
      */
-    PERSON_FIRSTNAME("firstName"),
+    PERSON_FIRSTNAME("firstName", null),
     /**
      * Sort by person's middle name.
      */
-    PERSON_MIDDLENAME("middleName"),
+    PERSON_MIDDLENAME("middleName", null),
     /**
      * Sort by person's last name.
      */
-    PERSON_LASTNAME("lastName"),
+    PERSON_LASTNAME("lastName", null),
     /**
      * Sort by person's full name.
      */
@@ -122,23 +122,26 @@ public enum PersonSortCriterion implements PoSortCriterion<Person> {
     /**
      * Sort by person's suffix.
      */
-    PERSON_SUFFIX("suffix"),
+    PERSON_SUFFIX("suffix", null),
     /**
      * Sort by person's prefix.
      */
-    PERSON_PREFIX("prefix");
+    PERSON_PREFIX("prefix", null);
 
 
     private final String orderField;
+    private final String leftJoinField;
     private final List<PersonSortCriterion> fields;
 
-    private PersonSortCriterion(String orderField) {
+    private PersonSortCriterion(String orderField, String leftJoinField) {
         this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
         this.fields = null;
     }
 
     private PersonSortCriterion(PersonSortCriterion... fields) {
         this.orderField = null;
+        this.leftJoinField = null;
         this.fields = Arrays.asList(fields);
     }
 
@@ -157,5 +160,12 @@ public enum PersonSortCriterion implements PoSortCriterion<Person> {
             return Collections.singletonList(this);
         }
         return fields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return this.leftJoinField;
     }
 }

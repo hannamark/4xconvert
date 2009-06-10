@@ -104,9 +104,14 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
- * Test casses for the AuditableServiceBean.
+ * Test classes for the AuditableServiceBean.
  */
 public class AuditableServiceBeanTest extends AbstractHibernateTestCase {
+
+    @Test
+    public void testSortCrit() {
+        SortCriterionTest.testSortCriteriaNull(AuditLogRecordSortCriterion.values());
+    }
 
     @Test
     public void testSearch() throws Exception {
@@ -232,5 +237,17 @@ public class AuditableServiceBeanTest extends AbstractHibernateTestCase {
         }
         assertTrue(expected.isEmpty());
         assertTrue(foundExact);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalArgExc() throws Exception {
+        UsernameHolder.setUser("a");
+        Session s = PoHibernateUtil.getCurrentSession();
+        URL url = new URL("http://www.example.com/");
+        s.save(url);
+        s.flush();
+
+        AuditLogRecordSearchCriteria criteria = new AuditLogRecordSearchCriteria(url.getId(), null);
+        criteria.getQuery("id", "notnull", false);
     }
 }

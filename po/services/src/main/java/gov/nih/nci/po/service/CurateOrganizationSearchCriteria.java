@@ -84,8 +84,9 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
-
 import gov.nih.nci.po.util.PoHibernateUtil;
+
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
 /**
@@ -113,8 +114,8 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
      */
     @Override
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        final String prehql = 
-                " from Organization o" 
+        final String prehql =
+                " from Organization o"
                 + " LEFT OUTER JOIN o.changeRequests as ocr"
                 + " LEFT OUTER JOIN o.researchOrganizations as ro"
                 + " LEFT OUTER JOIN ro.changeRequests as rocr"
@@ -123,7 +124,7 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
                 + " LEFT OUTER JOIN o.healthCareFacilities as hcf"
                 + " LEFT OUTER JOIN hcf.changeRequests as hcfcr"
                 + " LEFT OUTER JOIN o.identifiedOrganizations as io"
-                + " LEFT OUTER JOIN io.changeRequests as iocr"
+                + " LEFT OUTER JOIN io.changeRequests as iocr "
                 + " where (o.statusCode != '" + EntityStatus.NULLIFIED + "') AND ("
                 + " o.statusCode = 'PENDING' "
                 + " or ocr.processed = 'false'"
@@ -137,7 +138,7 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
                 + " or iocr.processed = 'false' )";
 
         StringBuffer hql = new StringBuffer("select ");
-        
+
         if (isCountOnly) {
             hql.append("COUNT(DISTINCT o)");
         } else {
@@ -149,6 +150,18 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
         }
 
         return PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
+        if (StringUtils.isNotBlank(leftJoinClause)) {
+            throw new IllegalArgumentException("The use of the left join clause is currently not supported."
+                    + " Please ref jira issues PO-1115, PO-1116, PO-1118");
+        }
+
+        return getQuery(orderByProperty, isCountOnly);
     }
 
 }

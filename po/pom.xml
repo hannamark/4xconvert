@@ -19,7 +19,7 @@
         <jboss.configuration>default</jboss.configuration>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.0.22</nci-commons.version>
+        <nci-commons.version>1.0.23</nci-commons.version>
         <compileSource>1.5</compileSource>
         <hibernate.version>3.2.0.ga</hibernate.version>
         <hibernate.annotations.version>3.2.0.ga</hibernate.annotations.version>

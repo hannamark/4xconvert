@@ -1,12 +1,15 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 
 public class SortCriterionTest {
@@ -16,6 +19,13 @@ public class SortCriterionTest {
         assertEquals(Collections.singletonList(criterion), criterion.getOrderByList());
     }
 
+    public static void testSortCriteriaNull(PoSortCriterion<? extends PersistentObject> [] item) {
+        for(PoSortCriterion<? extends PersistentObject> ind : item) {
+            assertNull(ind.getLeftJoinField());
+        }
+    }
+
+
     @Test
     public void ClinicalResearchStaffSortCriterion_getOrderField() {
         verifySortCriterion("id", ClinicalResearchStaffSortCriterion.ID);
@@ -23,6 +33,9 @@ public class SortCriterionTest {
         verifySortCriterion("statusDate", ClinicalResearchStaffSortCriterion.STATUS_DATE);
         verifySortCriterion("scoper.id", ClinicalResearchStaffSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", ClinicalResearchStaffSortCriterion.SCOPER_NAME);
+
+        testSortCriteriaNull(ClinicalResearchStaffSortCriterion.values());
+
     }
 
     @Test
@@ -32,6 +45,8 @@ public class SortCriterionTest {
         verifySortCriterion("statusDate", HealthCareProviderSortCriterion.STATUS_DATE);
         verifySortCriterion("scoper.id", HealthCareProviderSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", HealthCareProviderSortCriterion.SCOPER_NAME);
+
+        testSortCriteriaNull(HealthCareProviderSortCriterion.values());
     }
 
     @Test
@@ -41,6 +56,8 @@ public class SortCriterionTest {
         verifySortCriterion("statusDate", OrganizationalContactSortCriterion.STATUS_DATE);
         verifySortCriterion("scoper.id", OrganizationalContactSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", OrganizationalContactSortCriterion.SCOPER_NAME);
+
+        testSortCriteriaNull(OrganizationalContactSortCriterion.values());
     }
 
     @Test
@@ -51,6 +68,8 @@ public class SortCriterionTest {
         verifySortCriterion("typeCode.description", ResearchOrganizationSortCriterion.TYPE_DESC);
         verifySortCriterion("statusDate", ResearchOrganizationSortCriterion.STATUS_DATE);
         verifySortCriterion("fundingMechanism.code", ResearchOrganizationSortCriterion.FUNDING);
+
+        testSortCriteriaNull(ResearchOrganizationSortCriterion.values());
     }
 
     @Test
@@ -60,6 +79,8 @@ public class SortCriterionTest {
         verifySortCriterion("typeCode.code", OversightCommitteeSortCriterion.TYPE_CODE);
         verifySortCriterion("typeCode.description", OversightCommitteeSortCriterion.TYPE_DESC);
         verifySortCriterion("statusDate", OversightCommitteeSortCriterion.STATUS_DATE);
+
+        testSortCriteriaNull(OversightCommitteeSortCriterion.values());
     }
 
     @Test
@@ -71,6 +92,8 @@ public class SortCriterionTest {
         verifySortCriterion("statusDate", IdentifiedOrganizationSortCriterion.STATUS_DATE);
         verifySortCriterion("scoper.id", IdentifiedOrganizationSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", IdentifiedOrganizationSortCriterion.SCOPER_NAME);
+
+        testSortCriteriaNull(IdentifiedOrganizationSortCriterion.values());
     }
 
     @Test
@@ -82,6 +105,8 @@ public class SortCriterionTest {
         verifySortCriterion("statusDate", IdentifiedPersonSortCriterion.STATUS_DATE);
         verifySortCriterion("scoper.id", IdentifiedPersonSortCriterion.SCOPER_ID);
         verifySortCriterion("scoper.name", IdentifiedPersonSortCriterion.SCOPER_NAME);
+
+        testSortCriteriaNull(IdentifiedPersonSortCriterion.values());
     }
 
     @Test
@@ -100,6 +125,8 @@ public class SortCriterionTest {
         verifySortCriterion("prefix", PersonSortCriterion.PERSON_PREFIX);
         verifySortCriterion("statusCode", PersonSortCriterion.PERSON_STATUS);
         verifySortCriterion("suffix", PersonSortCriterion.PERSON_SUFFIX);
+
+        testSortCriteriaNull(PersonSortCriterion.values());
     }
 
     @Test
@@ -107,5 +134,7 @@ public class SortCriterionTest {
         verifySortCriterion("id", OrganizationSortCriterion.ORGANIZATION_ID);
         verifySortCriterion("name", OrganizationSortCriterion.ORGANIZATION_NAME);
         verifySortCriterion("statusCode", OrganizationSortCriterion.ORGANIZATION_STATUS);
+
+        testSortCriteriaNull(OrganizationSortCriterion.values());
     }
 }

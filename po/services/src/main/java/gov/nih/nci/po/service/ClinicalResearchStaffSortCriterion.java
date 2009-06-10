@@ -97,38 +97,41 @@ public enum ClinicalResearchStaffSortCriterion implements PoSortCriterion<Clinic
     /**
      * Sort by ClinicalResearchStaff's id.
      */
-    ID("id"),
+    ID("id", null),
 
     /**
      * Sort by ClinicalResearchStaff's status.
      */
-    ROLE_STATUS("status"),
+    ROLE_STATUS("status", null),
 
     /**
      * Sort by ClinicalResearchStaff's scoper's name.
      */
-    SCOPER_NAME("scoper.name"),
+    SCOPER_NAME("scoper.name", null),
 
     /**
      * Sort by ClinicalResearchStaff's scoper's name.
      */
-    SCOPER_ID("scoper.id"),
+    SCOPER_ID("scoper.id", null),
 
     /**
      * Sort by ClinicalResearchStaff's status date.
      */
-    STATUS_DATE("statusDate");
+    STATUS_DATE("statusDate", null);
 
     private final String orderField;
+    private final String leftJoinField;
     private final List<ClinicalResearchStaffSortCriterion> fields;
 
-    private ClinicalResearchStaffSortCriterion(String orderField) {
+    private ClinicalResearchStaffSortCriterion(String orderField, String leftJoinField) {
         this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
         this.fields = null;
     }
 
     private ClinicalResearchStaffSortCriterion(ClinicalResearchStaffSortCriterion... fields) {
         this.orderField = null;
+        this.leftJoinField = null;
         this.fields = Arrays.asList(fields);
     }
 
@@ -147,5 +150,12 @@ public enum ClinicalResearchStaffSortCriterion implements PoSortCriterion<Clinic
             return Collections.singletonList(this);
         }
         return fields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return this.leftJoinField;
     }
 }

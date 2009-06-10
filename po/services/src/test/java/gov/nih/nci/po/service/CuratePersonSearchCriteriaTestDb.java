@@ -300,4 +300,10 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         assertEquals(0, results.size());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalArgExc() throws Exception {
+        CuratePersonSearchCriteria criteria = new CuratePersonSearchCriteria();
+        criteria.getQuery("id", "notnull", false);
+    }
+
 }

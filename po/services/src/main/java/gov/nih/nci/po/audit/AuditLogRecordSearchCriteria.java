@@ -86,6 +86,7 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -159,11 +160,36 @@ public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria<AuditLo
                 + AuditLogRecord.class.getName() + " " + ROOT_ALIAS + "," + AuditLogDetail.class.getName()
                 + " ald WHERE ");
 
+        return helpBuildQuery(session, query, orderByProperty);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRootAlias() {
+        return ROOT_ALIAS;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
+       if (StringUtils.isNotBlank(leftJoinClause)) {
+           throw new IllegalArgumentException("The use of the left join clause is currently not supported."
+                   + " Please ref jira issues PO-1115, PO-1116, PO-1118");
+       }
+
+       return getQuery(orderByProperty, isCountOnly);
+
+    }
+
+    private Query helpBuildQuery(Session session, StringBuffer query, String orderByProperty) {
         if (id != null) {
             query.append(String.format(" %s.entityId = :entityId OR ", ROOT_ALIAS));
             query.append(String.format("  (ald in elements(%s.details) ", ROOT_ALIAS));
-            query.append("    AND (ald.oldValue = :entityIdStr OR ald.newValue = :entityIdStr) ");
-            query.append("    AND ald.foreignKey = :foreignKey)");
+            query.append("    AND (ald.oldValue = :entityIdStr OR ald.newValue = :entityIdStr) "
+                + "    AND ald.foreignKey = :foreignKey)");
         } else {
             query.append(String.format(" %s.transactionId in (:transactionIds) ", ROOT_ALIAS));
         }
@@ -180,13 +206,5 @@ public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria<AuditLo
         }
 
         return q;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getRootAlias() {
-        return ROOT_ALIAS;
     }
 }

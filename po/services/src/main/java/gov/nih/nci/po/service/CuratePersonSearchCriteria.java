@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
 /**
@@ -151,6 +152,19 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria<Per
         }
 
         return PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
+        if (StringUtils.isNotBlank(leftJoinClause)) {
+            throw new IllegalArgumentException("The use of the left join clause is currently not supported."
+                    + " Please ref jira issues PO-1115, PO-1116, PO-1118");
+        }
+
+        return getQuery(orderByProperty, isCountOnly);
     }
 
 }
