@@ -96,4 +96,8 @@
             <comment>execute studyParticipationColumnRename.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyParticipationColumnRename.sql"/>
     </changeSet>
+       <changeSet id="22" author="Anupama">
+            <comment>execute documentWorkflowStatusUpdate.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/documentWorkflowStatusUpdate.sql"/>
+    </changeSet>
 </databaseChangeLog>

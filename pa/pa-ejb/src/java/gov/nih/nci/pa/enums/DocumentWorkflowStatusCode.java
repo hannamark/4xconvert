@@ -103,8 +103,8 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     REJECTED("Rejected"),
     /** Abstracted. */
     ABSTRACTED("Abstracted"),
-    /** Abstraction Verified. */
-    ABSTRACTION_VERIFIED("Abstraction Verified"),
+    /** Verification Pending. */
+    VERIFICATION_PENDING("Verification Pending"),
     /** Abstraction Verified Response. */
     ABSTRACTION_VERIFIED_RESPONSE("Abstraction Verified Response"),
     /** Abstraction Verified No Response. */

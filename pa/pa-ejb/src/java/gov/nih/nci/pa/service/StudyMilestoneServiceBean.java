@@ -97,6 +97,7 @@ import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -109,7 +110,7 @@ import javax.interceptor.Interceptors;
 * @since 1/15/2009
 */
 @Stateless
-@SuppressWarnings("PMD.CyclomaticComplexity")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 @Interceptors(HibernateSessionInterceptor.class)
 public class StudyMilestoneServiceBean
         extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
@@ -179,10 +180,9 @@ public class StudyMilestoneServiceBean
     }
 
     private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
-        List<DocumentWorkflowStatusDTO> dwList = getDocumentWorkflowStatusService()
-                .getCurrentByStudyProtocol(studyProtocolIi);
-        return  (dwList.isEmpty()) ? null
-                : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwList.get(0).getStatusCode()));
+        DocumentWorkflowStatusDTO dw = getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
+        return  (dw == null) ? null
+                : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw.getStatusCode()));
     }
 
     @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
@@ -247,6 +247,9 @@ public class StudyMilestoneServiceBean
                 }
             }
         }
+        
+        newValidations(newCode, existingDtoList);
+        
         // document work flow status rules
         DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
         if ((!newCode.equals(MilestoneCode.SUBMISSION_RECEIVED)
@@ -271,6 +274,8 @@ public class StudyMilestoneServiceBean
                     + "status is " + ((dwStatus == null) ? "null." : "'" + dwStatus.getCode() + "'."));
             throw new PAException(errMsg.toString());
         }
+       
+        
         // validate abstraction
         if (validateAbstractions && newCode.isValidationTrigger()) {
             if (abstractionCompletionService == null) {
@@ -278,14 +283,111 @@ public class StudyMilestoneServiceBean
             }
             List<AbstractionCompletionDTO> errorList =
                 abstractionCompletionService.validateAbstractionCompletion(dto.getStudyProtocolIdentifier());
-            if (!errorList.isEmpty()) {
+            if (!errorList.isEmpty() && hasAnyAbstractionErrors(errorList)) {
                 throw new PAException("The milestone '" + newCode.getCode() + "' can only be recorded if the "
                         + "abstraction is valid.  There is a problem with the current abstraction.  Select "
                         + "'Abstraction Validation' under 'Completion' menu to view details.");
             }
+             
         }
         return dto;
     }
+    
+    @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })  
+    private void newValidations(MilestoneCode newCode,  List<StudyMilestoneDTO> existingDtoList) throws PAException
+    {
+        //check if the administrative and sceintific processing is completed.
+        if (newCode.equals(MilestoneCode.READY_FOR_QC)) {
+           List<String> mileStones = getExistingMilestones(existingDtoList);  
+            if (!(mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode()) 
+                     && mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode()))) {
+                 throw new PAException("Both Administrative and Sceintific processing must be completed");
+             }
+         } 
+       
+        //if Admin processing already started ::
+        //check if the administrative processing is completed before the start of Sceintific processing 
+        if (newCode.equals(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE)) {
+            List<String> mileStones = getExistingMilestones(existingDtoList); 
+             if (mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode()) 
+                 && !mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
+                 throw new PAException("Administrative processing must be completed");
+             }
+         } 
+        //if Scientific processing already started ::
+        //check if the sceintific processing is completed before the start of admin processing 
+        if (newCode.equals(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE)) {
+           List<String> mileStones = getExistingMilestones(existingDtoList); 
+             if (mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode()) 
+                     && !mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
+                 throw new PAException("Sceintific processing must be completed");
+             }
+           } 
+        
+        if (newCode.equals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE)) {
+            List<String> mileStones = getExistingMilestones(existingDtoList); 
+              if (!canBePaired(mileStones, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode(),
+                      MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
+                  throw new PAException("Administartive processing start date must be completed");
+              }
+            } 
+        
+        if (newCode.equals(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE)) {
+            List<String> mileStones = getExistingMilestones(existingDtoList); 
+            if (!canBePaired(mileStones, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode(),
+                    MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
+                throw new PAException("Scientific processing start date must be completed");
+            }
+            } 
+        
+       }
+    
+    private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
+        boolean errorExist = false;
+         for (AbstractionCompletionDTO  absDto : errorList) {
+            if (absDto.getErrorType().equalsIgnoreCase("error")) {
+                errorExist = true;
+                break;
+            }
+         }
+        return errorExist;
+    }
+    
+    private List<String> getExistingMilestones(List<StudyMilestoneDTO> existingDTOs)
+    {
+     List<String> existingMilestones = null;
+     if (existingDTOs != null) {
+         existingMilestones = new ArrayList<String>();
+         for (StudyMilestoneDTO edto : existingDTOs) {
+             existingMilestones.add(edto.getMilestoneCode().getCode());
+         }
+     }
+      return existingMilestones;
+    }
+    
+    private boolean canBePaired(List<String> mileStones, String mileStone1, String mileStone2) {
+       int mileStone1Count = 0;
+       int mileStone2Count = 0;
+       for (String mileStone : mileStones) {
+           if (mileStone.equals(mileStone1)) {
+               mileStone1Count++;
+           }
+           if (mileStone.equals(mileStone2)) {
+               mileStone2Count++;
+           }
+       }
+       if (mileStone1Count == 1 && mileStone2Count == 0) {
+           return true;
+       } else if (mileStone1Count == 1 && mileStone2Count == 1) {
+           return false;
+       } else if (mileStone1Count % 2 == 0 && mileStone2Count % 2 == 0) {
+           return false;
+       } else if (mileStone1Count % 2 != 0) {
+           return true;
+       } 
+       return true;
+    }
+       
     @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
@@ -320,6 +422,13 @@ public class StudyMilestoneServiceBean
             if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(dwStatus)
                     && milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
                 createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, dto);
+            }
+        }
+        
+        if (newCode.equals(MilestoneCode.TRIAL_SUMMARY_SENT)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)) {
+                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.VERIFICATION_PENDING, dto);
             }
         }
     }
