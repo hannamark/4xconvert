@@ -174,16 +174,17 @@ insert into pa_properties(IDENTIFIER,name,value) VALUES(22,'trial.accept.body',
 
 Dear ${SubmitterName},
 
-The following trial was accepted by the NCI Clinical Trials Reporting Office (CTRO)
+Thank you for submitting your trial for registration.  NCI Clinical Trials Reporting Office (CTRO) has accepted and will abstract  the following trial:
 
 NCI Trial Identifier: ${nciTrialIdentifier}
 
 Title: ${title}
 
-Trial will be abstracted by the CTRO staff. Upon completion of this abstraction, the CTRO will e-mail you a new Trial Summary Report that contains key data elements.
+If you submitted a protocol document with your registration, CTRO will email you a Trial Summary Report for your review once abstracting is complete. Attached to that email will be a file with data in a format that can be used to upload to ClinicalTrials.gov (XML format). 
 
-We request that you review the Trial Summary Report for accuracy and respond to note your acceptance of this abstraction or to provide your changes to the report. 
+Abstracting by the CTRO is expected to not take more than ten (10) business days.  Upon receipt of the Trial Summary Report, you will have five (5) business days to review the Trial Summary Report and inform the CTRO of required changes.
 
-Note, that non-NCI supported trials will not be abstracted and no TSR report will be provided.
+If you did not submit a protocol document (i.e., for a proprietary trial), you will not receive a Trial Summary Report or XML file. 
 
-If you have questions regarding this acceptance please contact us at ncictro@mail.nih.gov ');
+If you have any questions about the processing of this trial, please contact CTRO at ncictro@mail.nih.gov
+');
