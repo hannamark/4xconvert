@@ -98,9 +98,4 @@ public final class ViewerConstants {
     public static final String RESULT_LIST = "displayTagList";
     /** Attribute used to store the time units for report in session. */
     public static final String RESULT_TIME_UNITS = "timeUnitsCode";
-
-    /** String to be displayed for initial submissions. */
-    public static final String INITIAL_SUBMISSION = "Original";
-    /** String to be displayed for amendments. */
-    public static final String AMENDMENT = "Amendment";
 }

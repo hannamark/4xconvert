@@ -77,6 +77,7 @@
 package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.SubmissionTypeCriteriaWebDto;
@@ -118,7 +119,8 @@ public class SubmissionByDateAction extends AbstractReportAction
             addActionError(e.getMessage());
             return super.execute();
         }
-        setResultList(TrialListResultWebDto.getWebList(isoList));
+        setResultList(TrialListResultWebDto.getWebList(isoList,
+                SubmissionTypeCode.valueOf(getCriteria().getSubmissionType())));
         return super.getReport();
     }
 

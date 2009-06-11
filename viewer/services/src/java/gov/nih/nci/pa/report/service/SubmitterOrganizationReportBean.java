@@ -74,89 +74,67 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
-import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
+import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
+import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.dto.criteria.InstitutionCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+
 /**
+ * This beans sole purpose is to return list of submitter organizations for
+ * generating report criteria selection fields.
+ *
  * @author Hugh Reinhart
- * @since 4/16/2009
+ * @since 06/11/2009
  */
-public class SubmissionByInstitutionAction
-        extends AbstractReportAction<InstitutionCriteriaWebDto, TrialListResultWebDto> {
+@Stateless
+@Interceptors(ViewerHibernateSessionInterceptor.class)
+public class SubmitterOrganizationReportBean implements SubmitterOrganizationLocal {
 
-    private static final long serialVersionUID = 7044286786372431982L;
-
-    private InstitutionCriteriaWebDto criteria;
-    private static List<String> submitterOrganizations;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String execute() {
-        setCriteria(new InstitutionCriteriaWebDto());
-        return super.execute();
-    }
+    private static final long REFRESH_TIME = 1000 * 60 * 10;  // 10 minutes
+    private static List<St> orgList = null;
+    private static Timestamp lastUpdate = null;
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String getReport() {
-        TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
-        List<TrialListResultDto> isoList;
-        try {
-            isoList = local.get(criteria.getIsoDto());
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            return super.execute();
+    public List<St> get() throws PAException {
+        if ((lastUpdate == null)
+                || ((lastUpdate.getTime() + REFRESH_TIME) < new Timestamp(new Date().getTime()).getTime())) {
+            try {
+                Session session = ViewerHibernateUtil.getCurrentSession();
+                SQLQuery query = null;
+                String sql = "SELECT DISTINCT cm.organization "
+                           + "FROM study_protocol AS sp "
+                           + "  JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
+                           + "ORDER BY cm.organization ";
+                query = session.createSQLQuery(sql);
+                @SuppressWarnings("unchecked")
+                List<String> queryList = query.list();
+                orgList = new ArrayList<St>();
+                for (String q : queryList) {
+                    orgList.add(StConverter.convertToSt(q));
+                }
+                lastUpdate = new Timestamp(new Date().getTime());
+            } catch (HibernateException hbe) {
+                throw new PAException("Hibernate exception in " + this.getClass(), hbe);
+            }
         }
-        setResultList(TrialListResultWebDto.getWebList(isoList,
-                SubmissionTypeCode.valueOf(getCriteria().getSubmissionType())));
-        return super.getReport();
+        return orgList;
     }
 
-    /**
-     * @return the criteria
-     */
-    public InstitutionCriteriaWebDto getCriteria() {
-        return criteria;
-    }
-    /**
-     * @param criteria the criteria to set
-     */
-    public void setCriteria(InstitutionCriteriaWebDto criteria) {
-        this.criteria = criteria;
-    }
-    /**
-     * @return the submitterOrganizations
-     */
-    public List<String> getSubmitterOrganizations() {
-        SubmitterOrganizationLocal local = ViewerServiceLocator.getInstance().
-                getSubmitterOrganizationReportService();
-        List<St> isoList = null;
-        try {
-            isoList = local.get();
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-        }
-        submitterOrganizations = new ArrayList<String>();
-        for (St iso : isoList) {
-            submitterOrganizations.add(StConverter.convertToString(iso));
-        }
-        return submitterOrganizations;
-    }
 }

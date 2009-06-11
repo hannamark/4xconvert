@@ -116,7 +116,7 @@ function handleReset(){
             <tr>
             <td colspan="2">
             <display:table class="data" pagesize="20" id="row" name="sessionScope.displayTagList" 
-                    requestURI="submissionByDate.action" export="true">
+                    requestURI="resultsSubmissionByDate.action" export="true">
                 <display:setProperty name="export.excel" value="true" />
                 <display:column titleKey="report.result.assignedIdentifier" property="assignedIdentifier"/>
                 <display:column titleKey="report.result.submissionType" property="submissionType"/>

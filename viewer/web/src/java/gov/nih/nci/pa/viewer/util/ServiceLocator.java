@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
+import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
@@ -105,4 +106,8 @@ public interface ServiceLocator {
      * @return average milestone report service
      */
     AverageMilestoneLocal getAverageMilestoneReportService();
+    /**
+     * @return average milestone report service
+     */
+    SubmitterOrganizationLocal getSubmitterOrganizationReportService();
 }

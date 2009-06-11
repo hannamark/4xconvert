@@ -74,89 +74,65 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.viewer.dto.criteria;
 
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
-import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.dto.criteria.InstitutionCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
+import gov.nih.nci.pa.report.service.TrialListReportBean;
+import gov.nih.nci.pa.report.util.ReportUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Hugh Reinhart
- * @since 4/16/2009
+ * @since 06/11/2009
  */
-public class SubmissionByInstitutionAction
-        extends AbstractReportAction<InstitutionCriteriaWebDto, TrialListResultWebDto> {
+public class InstitutionCriteriaWebDto extends AbstractBaseCriteriaWebDto<InstitutionCriteriaDto>
+        implements CriteriaWebDto<InstitutionCriteriaDto> {
 
-    private static final long serialVersionUID = 7044286786372431982L;
+    private static final String[] DEFAULT_INSTITUTIONS = {TrialListReportBean.ALL_ORGANIZATIONS_KEY };
 
-    private InstitutionCriteriaWebDto criteria;
-    private static List<String> submitterOrganizations;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String execute() {
-        setCriteria(new InstitutionCriteriaWebDto());
-        return super.execute();
-    }
+    private String submissionType = SubmissionTypeCode.BOTH.name();
+    private Set<String> institutions = new HashSet<String>(Arrays.asList(DEFAULT_INSTITUTIONS));
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String getReport() {
-        TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
-        List<TrialListResultDto> isoList;
-        try {
-            isoList = local.get(criteria.getIsoDto());
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            return super.execute();
-        }
-        setResultList(TrialListResultWebDto.getWebList(isoList,
-                SubmissionTypeCode.valueOf(getCriteria().getSubmissionType())));
-        return super.getReport();
+    public InstitutionCriteriaDto getIsoDto() {
+        InstitutionCriteriaDto result = new InstitutionCriteriaDto();
+        super.setInterval(result);
+        result.setSubmissionType(CdConverter.convertStringToCd(getSubmissionType()));
+        result.setCtep(BlConverter.convertToBl(getCtep()));
+        result.setInstitutions(ReportUtil.convertToDSet(institutions));
+        return result;
     }
 
     /**
-     * @return the criteria
+     * @return the submissionType
      */
-    public InstitutionCriteriaWebDto getCriteria() {
-        return criteria;
+    public String getSubmissionType() {
+        return submissionType;
     }
     /**
-     * @param criteria the criteria to set
+     * @param submissionType the submissionType to set
      */
-    public void setCriteria(InstitutionCriteriaWebDto criteria) {
-        this.criteria = criteria;
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
     }
     /**
-     * @return the submitterOrganizations
+     * @return the institutions
      */
-    public List<String> getSubmitterOrganizations() {
-        SubmitterOrganizationLocal local = ViewerServiceLocator.getInstance().
-                getSubmitterOrganizationReportService();
-        List<St> isoList = null;
-        try {
-            isoList = local.get();
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-        }
-        submitterOrganizations = new ArrayList<String>();
-        for (St iso : isoList) {
-            submitterOrganizations.add(StConverter.convertToString(iso));
-        }
-        return submitterOrganizations;
+    public Set<String> getInstitutions() {
+        return institutions;
+    }
+    /**
+     * @param institutions the institutions to set
+     */
+    public void setInstitutions(Set<String> institutions) {
+        this.institutions = institutions;
     }
 }

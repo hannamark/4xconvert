@@ -80,10 +80,12 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
@@ -92,6 +94,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -105,9 +108,11 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-@SuppressWarnings("PMD")
 public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTypeCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
+
+    /** The value indicating results should not be filtered by organization. */
+    public static final String ALL_ORGANIZATIONS_KEY = "1";
 
     private static final int IDENT_IDX = 0;
     private static final int SUBMISSION_NUM_IDX = 1;
@@ -124,7 +129,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
      */
     public List<TrialListResultDto> get(SubmissionTypeCriteriaDto criteria) throws PAException {
         StandardCriteriaDto.validate(criteria);
-        ArrayList<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
+        List<TrialListResultDto> rList = null;
         try {
             session = ViewerHibernateUtil.getCurrentSession();
             SQLQuery query = null;
@@ -147,27 +152,14 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
             sql.append(dateRangeSql("sp.date_last_created"));
             sql.append(ctepSql(criteria));
             sql.append(submissionTypeSql(criteria));
+            sql.append(submitterOrgSql(criteria));
             sql.append("ORDER BY cm.organization, sp.date_last_created, sp.identifier ");
-            logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
+            setSubmitterOrgParameter(criteria, query);
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
-            for (Object[] q : queryList) {
-                TrialListResultDto rdto = new TrialListResultDto();
-                rdto.setAssignedIdentifier(StConverter.convertToSt((String) q[IDENT_IDX]));
-                rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) q[SUB_DATE_IDX]));
-                rdto.setDws(CdConverter.convertStringToCd((String) q[DWS_IDX]));
-                rdto.setDwsDate(TsConverter.convertToTs((Timestamp) q[DWS_DATE_IDX]));
-                LeadOrgInfo loi = getLeadOrganization((BigInteger) q[SP_KEY_IDX]);
-                rdto.setLeadOrg(StConverter.convertToSt(loi.name));
-                rdto.setLeadOrgTrialIdentifier(StConverter.convertToSt(loi.localSpIdentifier));
-                rdto.setMilestone(CdConverter.convertStringToCd((String) q[MS_IDX]));
-                rdto.setMilestoneDate(TsConverter.convertToTs((Timestamp) q[MS_DATE_IDX]));
-                rdto.setSubmissionNumber(IntConverter.convertToInt((Integer) q[SUBMISSION_NUM_IDX]));
-                rdto.setSubmitterOrg(StConverter.convertToSt((String) q[SUBMITTER_IDX]));
-                rList.add(rdto);
-            }
+            rList = getResultList(queryList);
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
@@ -175,7 +167,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
         return rList;
     }
 
-    private String submissionTypeSql(SubmissionTypeCriteriaDto criteria) {
+    private static String submissionTypeSql(SubmissionTypeCriteriaDto criteria) {
         String result = "";
         SubmissionTypeCode type = SubmissionTypeCode.valueOf(
                 CdConverter.convertCdToString(criteria.getSubmissionType()));
@@ -185,5 +177,49 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
             result = "AND sp.submission_number = 1 ";
         }
         return result;
+    }
+
+    private static boolean filterBySubmitterOrg(SubmissionTypeCriteriaDto criteria) {
+        if (criteria instanceof InstitutionCriteriaDto) {
+            Set<String> orgs = ReportUtil.convertToString(((InstitutionCriteriaDto) criteria).getInstitutions());
+            if (!orgs.contains(ALL_ORGANIZATIONS_KEY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String submitterOrgSql(SubmissionTypeCriteriaDto criteria) {
+        if (filterBySubmitterOrg(criteria)) {
+            return "AND cm.organization IN (:ORGS) ";
+        }
+        return "";
+    }
+
+    private static void setSubmitterOrgParameter(SubmissionTypeCriteriaDto criteria, SQLQuery query) {
+        if (filterBySubmitterOrg(criteria)) {
+            Set<String> orgs = ReportUtil.convertToString(((InstitutionCriteriaDto) criteria).getInstitutions());
+            query.setParameterList("ORGS", orgs);
+        }
+    }
+
+    private List<TrialListResultDto> getResultList(List<Object[]> queryList) throws PAException {
+        ArrayList<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
+        for (Object[] q : queryList) {
+            TrialListResultDto rdto = new TrialListResultDto();
+            rdto.setAssignedIdentifier(StConverter.convertToSt((String) q[IDENT_IDX]));
+            rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) q[SUB_DATE_IDX]));
+            rdto.setDws(CdConverter.convertStringToCd((String) q[DWS_IDX]));
+            rdto.setDwsDate(TsConverter.convertToTs((Timestamp) q[DWS_DATE_IDX]));
+            LeadOrgInfo loi = getLeadOrganization((BigInteger) q[SP_KEY_IDX]);
+            rdto.setLeadOrg(StConverter.convertToSt(loi.name));
+            rdto.setLeadOrgTrialIdentifier(StConverter.convertToSt(loi.localSpIdentifier));
+            rdto.setMilestone(CdConverter.convertStringToCd((String) q[MS_IDX]));
+            rdto.setMilestoneDate(TsConverter.convertToTs((Timestamp) q[MS_DATE_IDX]));
+            rdto.setSubmissionNumber(IntConverter.convertToInt((Integer) q[SUBMISSION_NUM_IDX]));
+            rdto.setSubmitterOrg(StConverter.convertToSt((String) q[SUBMITTER_IDX]));
+            rList.add(rdto);
+        }
+        return rList;
     }
 }

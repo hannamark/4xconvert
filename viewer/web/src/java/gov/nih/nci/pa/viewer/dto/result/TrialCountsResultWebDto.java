@@ -89,6 +89,8 @@ import java.util.List;
  */
 public class TrialCountsResultWebDto {
 
+    private static final String TOTAL_ALL = "All Sites";
+
     private String organization;
     private Integer year;
     private Integer month;
@@ -103,10 +105,23 @@ public class TrialCountsResultWebDto {
      */
     public static List<TrialCountsResultWebDto> getWebList(List<TrialCountsResultDto> serviceDtoList) {
         List<TrialCountsResultWebDto> resultList = new ArrayList<TrialCountsResultWebDto>();
+        int original = 0;
+        int amendments = 0;
         for (TrialCountsResultDto dto : serviceDtoList) {
-            resultList.add(new TrialCountsResultWebDto(dto));
+            TrialCountsResultWebDto webDto = new TrialCountsResultWebDto(dto);
+            original += webDto.getInitial();
+            amendments += webDto.getAmendment();
+            resultList.add(webDto);
         }
+        TrialCountsResultWebDto webDto = new TrialCountsResultWebDto();
+        webDto.setOrganization(TOTAL_ALL);
+        webDto.setInitial(original);
+        webDto.setAmendment(amendments);
+        resultList.add(webDto);
         return resultList;
+    }
+
+    private TrialCountsResultWebDto() {
     }
 
     /**

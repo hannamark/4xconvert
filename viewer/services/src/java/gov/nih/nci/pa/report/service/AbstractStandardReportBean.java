@@ -101,7 +101,7 @@ public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStanda
      * @param field field to run date checks
      * @return date range clauses
      */
-    protected String dateRangeSql(String field) {
+    protected static String dateRangeSql(String field) {
         return "AND " + field + " >= :LOW AND " + field + " < :HIGH ";
     }
 

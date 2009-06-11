@@ -76,14 +76,19 @@
 */
 package gov.nih.nci.pa.report.util;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Hugh Reinhart
@@ -116,6 +121,43 @@ public final class ReportUtil {
             throw new PAException("Error converting Double to Int.  Value is out of range.");
         }
         return IntConverter.convertToInt(intValue);
+    }
+
+    /**
+     * Convert string list to DSet.
+     * @param inSet string set
+     * @return iso DSet
+     */
+    public static DSet<St> convertToDSet(Set<String> inSet) {
+        Set<St> set = new HashSet<St>();
+
+        DSet<St> result = new DSet<St>();
+        if (inSet == null || inSet.isEmpty()) {
+            return result;
+        }
+        for (String item : inSet) {
+            set.add(StConverter.convertToSt(item));
+        }
+        result.setItem(set);
+        return result;
+    }
+
+    /**
+     * Convert DSet to string list.
+     * @param dSet DSet
+     * @return string list
+     */
+    public static Set<String> convertToString(DSet<St> dSet) {
+        Set<String> result = new HashSet<String>();
+
+        if (dSet == null || dSet.getItem() == null) {
+            return result;
+        }
+        Set<St> set = dSet.getItem();
+        for (St item : set) {
+            result.add(StConverter.convertToString(item));
+        }
+        return result;
     }
 
     /**

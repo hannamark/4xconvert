@@ -74,89 +74,21 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
-import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.viewer.dto.criteria.InstitutionCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Hugh Reinhart
- * @since 4/16/2009
+ * @since 06/11/2009
  */
-public class SubmissionByInstitutionAction
-        extends AbstractReportAction<InstitutionCriteriaWebDto, TrialListResultWebDto> {
-
-    private static final long serialVersionUID = 7044286786372431982L;
-
-    private InstitutionCriteriaWebDto criteria;
-    private static List<String> submitterOrganizations;
-
+public interface SubmitterOrganizationLocal {
     /**
-     * {@inheritDoc}
+     * @return ordered list of organizations from which users have submitted trials.
+     * @throws PAException exception
      */
-    @Override
-    public String execute() {
-        setCriteria(new InstitutionCriteriaWebDto());
-        return super.execute();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getReport() {
-        TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
-        List<TrialListResultDto> isoList;
-        try {
-            isoList = local.get(criteria.getIsoDto());
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            return super.execute();
-        }
-        setResultList(TrialListResultWebDto.getWebList(isoList,
-                SubmissionTypeCode.valueOf(getCriteria().getSubmissionType())));
-        return super.getReport();
-    }
-
-    /**
-     * @return the criteria
-     */
-    public InstitutionCriteriaWebDto getCriteria() {
-        return criteria;
-    }
-    /**
-     * @param criteria the criteria to set
-     */
-    public void setCriteria(InstitutionCriteriaWebDto criteria) {
-        this.criteria = criteria;
-    }
-    /**
-     * @return the submitterOrganizations
-     */
-    public List<String> getSubmitterOrganizations() {
-        SubmitterOrganizationLocal local = ViewerServiceLocator.getInstance().
-                getSubmitterOrganizationReportService();
-        List<St> isoList = null;
-        try {
-            isoList = local.get();
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-        }
-        submitterOrganizations = new ArrayList<String>();
-        for (St iso : isoList) {
-            submitterOrganizations.add(StConverter.convertToString(iso));
-        }
-        return submitterOrganizations;
-    }
+    List<St> get() throws PAException;
 }
