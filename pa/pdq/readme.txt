@@ -1,0 +1,1 @@
+This application takes XML dump of PDQ data and generates DML to load CTRP database.
