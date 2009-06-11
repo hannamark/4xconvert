@@ -154,7 +154,6 @@ public class TrialProcessingReportBean
                 + "     ( SELECT MAX(identifier) "
                 + "       FROM study_protocol "
                 + "       WHERE assigned_identifier = :ASSIGNED_IDENTIFIER ) ");
-            logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());
             @SuppressWarnings(UNCHECKED)
