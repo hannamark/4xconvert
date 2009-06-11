@@ -154,6 +154,8 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -168,6 +170,7 @@ import org.apache.log4j.Logger;
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods",
   "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {
     
     @EJB
@@ -327,6 +330,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * @return String xml output 
    * @throws PAException on error
    */
+  @TransactionAttribute(TransactionAttributeType.SUPPORTS)
   public String generateTSRHtml(Ii studyProtocolIi) throws PAException {
       LOG.debug("Entering generateTSRXml");
 

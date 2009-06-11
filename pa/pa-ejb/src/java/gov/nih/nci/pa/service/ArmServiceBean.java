@@ -92,6 +92,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -107,6 +109,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter>
         implements ArmServiceRemote , ArmServiceLocal {
@@ -116,6 +119,7 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
      * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<ArmDTO> getByPlannedActivity(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");

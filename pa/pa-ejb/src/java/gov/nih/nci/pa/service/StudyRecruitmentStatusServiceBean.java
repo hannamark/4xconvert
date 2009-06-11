@@ -87,6 +87,8 @@ import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -101,6 +103,7 @@ import org.apache.log4j.Logger;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyRecruitmentStatusServiceBean
 extends AbstractStudyIsoService<StudyRecruitmentStatusDTO, StudyRecruitmentStatus, StudyRecruitmentStatusConverter>
         implements StudyRecruitmentStatusServiceRemote {

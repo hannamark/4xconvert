@@ -109,7 +109,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({"PMD.ExcessiveMethodLength" , "PMD.CyclomaticComplexity" })
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
 public class StudyParticipationContactServiceBean extends
 AbstractRoleIsoService<StudyParticipationContactDTO, StudyParticipationContact, StudyParticipationContactConverter>
@@ -132,6 +132,7 @@ implements StudyParticipationContactServiceRemote , StudyParticipationContactSer
      * @throws PAException on error
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyParticipationContactDTO> getByStudyParticipation(Ii studyParticipationIi) throws PAException {
         if ((studyParticipationIi == null) || PAUtil.isIiNull(studyParticipationIi)) {
         throw new PAException(" Ii should not be null ");

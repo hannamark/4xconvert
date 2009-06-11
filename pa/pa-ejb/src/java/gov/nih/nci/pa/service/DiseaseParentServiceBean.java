@@ -91,6 +91,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -106,6 +108,7 @@ import org.hibernate.Session;
 */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseParentServiceBean
         extends AbstractBaseIsoService<DiseaseParentDTO, DiseaseParent, DiseaseParentConverter>
         implements DiseaseParentServiceRemote {
@@ -153,6 +156,7 @@ public class DiseaseParentServiceBean
      * @return list of DiseaseParent associations for children of disease
      * @throws PAException exception
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseParentDTO> getByChildDisease(Ii ii)
             throws PAException {
         return getByDisease(ii, "disease");
@@ -163,6 +167,7 @@ public class DiseaseParentServiceBean
      * @return list of DiseaseParent associations for parents of disease
      * @throws PAException exception
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseParentDTO> getByParentDisease(Ii ii)
             throws PAException {
         return getByDisease(ii, "parentDisease");
@@ -172,6 +177,7 @@ public class DiseaseParentServiceBean
      * @return list of DiseaseParent associations for children of disease
      * @throws PAException exception
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseParentDTO> getByChildDisease(Ii[] iis) throws PAException {
         ArrayList<DiseaseParentDTO> resultList = new ArrayList<DiseaseParentDTO>();
         for (Ii ii : iis) {

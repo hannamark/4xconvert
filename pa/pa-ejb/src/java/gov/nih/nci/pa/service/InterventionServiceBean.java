@@ -90,6 +90,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -105,6 +107,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class InterventionServiceBean
         extends AbstractBaseIsoService<InterventionDTO, Intervention, InterventionConverter>
         implements InterventionServiceRemote {
@@ -115,6 +118,7 @@ public class InterventionServiceBean
      * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<InterventionDTO> search(InterventionDTO searchCriteria) throws PAException {
         if (searchCriteria == null) {
             throw new PAException("Must pass in search criteria when calling search().");

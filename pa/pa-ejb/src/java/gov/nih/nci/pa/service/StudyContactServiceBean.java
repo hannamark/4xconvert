@@ -95,7 +95,7 @@ import javax.interceptor.Interceptors;
  *        holder, NCI.
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({"PMD.CyclomaticComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 public class StudyContactServiceBean

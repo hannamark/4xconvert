@@ -91,6 +91,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -107,6 +109,7 @@ import org.hibernate.Session;
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class RegistryUserServiceBean implements RegistryUserServiceRemote {
 
     private static final Logger LOG = Logger
@@ -126,9 +129,7 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
         try {
             // first create the Registry user
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             session.saveOrUpdate(user);
-            session.flush();
         } catch (HibernateException hbe) {
             LOG.error(" Hibernate Exception while " + "creating registry user ",
                                                             hbe);
@@ -154,9 +155,7 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
         try {
             // first create the Registry user
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             session.saveOrUpdate(user);
-            session.flush();
         } catch (HibernateException hbe) {
             LOG.error(" Hibernate Exception while updating registry user ",
                                                     hbe);
@@ -176,6 +175,7 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
      * @throws PAException PAException
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public RegistryUser getUser(String loginName)
                             throws PAException {
         RegistryUser registryUser = null;

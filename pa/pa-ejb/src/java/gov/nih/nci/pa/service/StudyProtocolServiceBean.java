@@ -134,6 +134,7 @@ import org.hibernate.criterion.Example;
  */
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.TooManyMethods" })
     public class StudyProtocolServiceBean
@@ -232,7 +233,6 @@ import org.hibernate.criterion.Example;
      * @throws PAException PAException
      */
     @SuppressWarnings("PMD.NPathComplexity")
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // enforce business rules
         if (studyProtocolDTO == null) {
@@ -320,7 +320,6 @@ import org.hibernate.criterion.Example;
      * @return InterventionalStudyProtocolDTO
      * @throws PAException PAException
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
             InterventionalStudyProtocolDTO ispDTO) throws PAException {
         // enforce business rules
@@ -390,7 +389,6 @@ import org.hibernate.criterion.Example;
      * @return ii ii
      * @throws PAException exception
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
     throws PAException {
         if (ispDTO == null) {
@@ -474,7 +472,6 @@ import org.hibernate.criterion.Example;
      * @return ObservationalStudyProtocolDTO
      * @throws PAException PAException
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
             ObservationalStudyProtocolDTO ospDTO) throws PAException {
         // enforce business rules
@@ -522,7 +519,6 @@ import org.hibernate.criterion.Example;
      * @return ii ii
      * @throws PAException exception
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO)
     throws PAException {
         if (ospDTO == null) {
@@ -564,7 +560,6 @@ import org.hibernate.criterion.Example;
      * @param ii ii of study Protocol
      * @throws PAException on any error
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             LOG.error(" Ii should not be null ");

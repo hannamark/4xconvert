@@ -108,7 +108,7 @@ import org.hibernate.criterion.Example;
  * @since 04/01/2009
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class StudyRelationshipServiceBean extends
@@ -125,7 +125,6 @@ public class StudyRelationshipServiceBean extends
     * @deprecated
     */
    @Deprecated
-   @TransactionAttribute(TransactionAttributeType.REQUIRED)
    public List<StudyRelationshipDTO> search(final StudyRelationshipDTO dto) throws PAException {
        if (dto == null) {
            throw new PAException(" StudyRelationship should not be null ");

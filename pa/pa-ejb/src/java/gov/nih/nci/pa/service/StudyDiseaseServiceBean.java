@@ -89,6 +89,8 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -101,6 +103,7 @@ import javax.interceptor.Interceptors;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyDiseaseServiceBean
         extends AbstractStudyIsoService<StudyDiseaseDTO, StudyDisease, StudyDiseaseConverter>
         implements StudyDiseaseServiceRemote, StudyDiseaseServiceLocal {

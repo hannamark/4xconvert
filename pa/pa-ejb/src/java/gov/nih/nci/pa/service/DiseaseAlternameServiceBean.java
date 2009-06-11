@@ -91,6 +91,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -106,6 +108,7 @@ import org.hibernate.Session;
 */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseAlternameServiceBean
         extends AbstractBaseIsoService<DiseaseAlternameDTO, DiseaseAltername, DiseaseAlternameConverter>
         implements DiseaseAlternameServiceRemote {
@@ -116,6 +119,7 @@ public class DiseaseAlternameServiceBean
      * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseAlternameDTO> getByDisease(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");

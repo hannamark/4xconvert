@@ -116,7 +116,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
 public class PlannedActivityServiceBean
  extends AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter>
@@ -203,6 +203,7 @@ public class PlannedActivityServiceBean
      * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
@@ -246,6 +247,7 @@ public class PlannedActivityServiceBean
      *  @throws PAException exception
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii)
             throws PAException {
         if (PAUtil.isIiNull(ii)) {
@@ -286,6 +288,7 @@ public class PlannedActivityServiceBean
      * @return the PlannedEligibilityCriterion
      * @throws PAException exception.
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii) throws PAException {
         if ((ii == null) || PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; found null.  ");

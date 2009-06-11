@@ -91,6 +91,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -105,6 +107,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class InterventionAlternateNameServiceBean
         extends AbstractBaseIsoService
                 <InterventionAlternateNameDTO, InterventionAlternateName, InterventionAlternateNameConverter>
@@ -116,6 +119,7 @@ public class InterventionAlternateNameServiceBean
      * @throws PAException Exception.
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<InterventionAlternateNameDTO> getByIntervention(
             Ii interventionIi) throws PAException {
         if (PAUtil.isIiNull(interventionIi)) {
@@ -158,6 +162,7 @@ public class InterventionAlternateNameServiceBean
      * @return list of InterventionAlternateNameDTO
      * @throws PAException exception
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<InterventionAlternateNameDTO> getByIntervention(Ii[] interventionsIi) throws PAException {
         ArrayList<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
         for (Ii ii : interventionsIi) {

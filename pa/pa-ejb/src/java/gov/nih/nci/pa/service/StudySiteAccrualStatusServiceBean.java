@@ -94,6 +94,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -110,6 +112,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteAccrualStatusServiceBean implements
     StudySiteAccrualStatusServiceRemote , StudySiteAccrualStatusServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudySiteAccrualStatusServiceBean.class);
@@ -121,6 +124,7 @@ public class StudySiteAccrualStatusServiceBean implements
      * @return StudySiteAccrualStatusDTO
      * @throws PAException PAException
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
         LOG.error(errMsgMethodNotImplemented);
         throw new PAException(errMsgMethodNotImplemented);
@@ -141,7 +145,6 @@ public class StudySiteAccrualStatusServiceBean implements
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             List<StudySiteAccrualStatusDTO> currentList
                     = getCurrentStudySiteAccrualStatusByStudyParticipation(dto.getStudyParticipationIi());
             RecruitmentStatusCode oldCode = null;
@@ -163,7 +166,6 @@ public class StudySiteAccrualStatusServiceBean implements
             if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
                 StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);
                 session.saveOrUpdate(bo);
-                session.flush();
                 resultDto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
             }
         } catch (HibernateException hbe) {
@@ -192,6 +194,7 @@ public class StudySiteAccrualStatusServiceBean implements
      * @throws PAException on error
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
             throws PAException {
         if (PAUtil.isIiNull(studyParticipationIi)) {
@@ -239,6 +242,7 @@ public class StudySiteAccrualStatusServiceBean implements
      * @return StudySiteAccrualStatusDTO Current status.
      * @throws PAException Exception.
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(
             Ii studyParticipationIi) throws PAException {
         List<StudySiteAccrualStatusDTO> ssasList =

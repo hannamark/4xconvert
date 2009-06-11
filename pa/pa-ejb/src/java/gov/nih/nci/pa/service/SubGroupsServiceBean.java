@@ -84,6 +84,8 @@ import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -95,6 +97,7 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SubGroupsServiceBean extends AbstractStudyIsoService<StratumGroupDTO, StratumGroup, StratumGroupConverter>
 implements SubGroupsServiceRemote , SubGroupsServiceLocal {
 

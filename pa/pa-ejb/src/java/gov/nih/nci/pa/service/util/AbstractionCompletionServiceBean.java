@@ -139,6 +139,8 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -154,6 +156,7 @@ import javax.interceptor.Interceptors;
   "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
     
@@ -196,6 +199,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
    * @return AbstractionCompletionDTO list
    * @throws PAException on error
    */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
   public List<AbstractionCompletionDTO> validateAbstractionCompletion(Ii studyProtocolIi) throws PAException {
     if (studyProtocolIi == null) {
       throw new PAException("Study Protocol Identifer is null");

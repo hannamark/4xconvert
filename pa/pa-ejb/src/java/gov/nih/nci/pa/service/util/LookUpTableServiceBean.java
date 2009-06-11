@@ -109,7 +109,7 @@ import org.hibernate.Session;
 * copyright holder, NCI.
 */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
@@ -122,6 +122,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @throws PAException PAException
      */
     @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
@@ -148,6 +149,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @throws PAException PAException
      */
     @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<NIHinstitute> getNihInstitutes() throws PAException {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
@@ -174,6 +176,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @throws PAException PAException
      */
     @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Country> getCountries() throws PAException {
         LOG.info("Entering getCountries");
         Session session = null;
@@ -198,6 +201,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @throws PAException PAException
      */
     @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String getPropertyValue(String name) throws PAException {
         LOG.info("Entering getPropertyValue");
         Session session = null;

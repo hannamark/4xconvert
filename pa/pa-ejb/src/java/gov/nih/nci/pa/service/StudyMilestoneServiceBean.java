@@ -103,6 +103,8 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -112,6 +114,7 @@ import javax.interceptor.Interceptors;
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyMilestoneServiceBean
         extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
         implements StudyMilestoneServiceRemote, StudyMilestoneServicelocal {

@@ -121,6 +121,7 @@ import org.hibernate.Session;
 @SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals",
   "PMD.CyclomaticComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyResourcingServiceBean
             implements StudyResourcingServiceRemote, StudyResourcingServiceLocal {
 
@@ -198,7 +199,6 @@ public class StudyResourcingServiceBean
      * @throws PAException PAException
      */
     @SuppressWarnings("unchecked")
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         final int serialNumMin = 5;
         final int serialNumMax = 6;
@@ -270,7 +270,6 @@ public class StudyResourcingServiceBean
      * @throws PAException PAException
      */
     @SuppressWarnings("PMD.NPathComplexity")
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         final int serialNumMin = 5;
         final int serialNumMax = 6;
@@ -430,7 +429,6 @@ public class StudyResourcingServiceBean
      * @throws PAException PAException
      */
     @SuppressWarnings("unchecked")
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO) throws PAException {
         if (studyResourcingDTO == null) {
             LOG.error(" studyResourcingDTO should not be null ");

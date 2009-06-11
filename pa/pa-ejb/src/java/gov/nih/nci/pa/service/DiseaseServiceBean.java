@@ -90,6 +90,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -105,6 +107,7 @@ import org.hibernate.Session;
 */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseServiceBean
         extends AbstractBaseIsoService<DiseaseDTO, Disease, DiseaseConverter>
         implements DiseaseServiceRemote {
@@ -114,6 +117,7 @@ public class DiseaseServiceBean
      * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseDTO> search(DiseaseDTO searchCriteria) throws PAException {
         if (searchCriteria == null) {
             throw new PAException("Must pass in search criteria when calling search().");

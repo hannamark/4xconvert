@@ -90,6 +90,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -106,6 +108,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
     private static final Logger LOG = Logger.getLogger(PAHealthCareProviderServiceBean.class);
     private static final int THREE = 3;
@@ -119,6 +122,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
      * @throws PAException on error
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PaPersonDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException {
         LOG.debug("Entering  getPersonsByStudyParticpationId");
         Session session = null;
@@ -173,6 +177,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
      * @throws PAException on error
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PaPersonDTO getIdentifierBySPCId(Long id) throws PAException {
         LOG.debug("Entering  getIdentifierBySPCId");
         Session session = null;

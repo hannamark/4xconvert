@@ -100,7 +100,7 @@ import javax.interceptor.Interceptors;
  * copyright holder, NCI.
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
 public class StudyIndldeServiceBean extends

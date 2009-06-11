@@ -114,6 +114,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({  "PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAOrganizationServiceBean implements
     PAOrganizationServiceRemote {
 
@@ -143,6 +144,7 @@ public class PAOrganizationServiceBean implements
      * @throws PAException PAException
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Organization getOrganizationByIndetifers(Organization organization) throws PAException {
         Organization org = null;
 

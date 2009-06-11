@@ -106,7 +106,7 @@ import org.hibernate.Session;
  *
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
 public class PAPersonServiceBean implements PAPersonServiceRemote {
 

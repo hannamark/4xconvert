@@ -181,6 +181,8 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -208,6 +210,7 @@ import org.w3c.dom.Text;
     "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods" , "PMD.TooManyFields" , "PMD.NPathComplexity"  })
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
     
@@ -275,6 +278,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
      * @return String xml output
      * @throws PAException on error
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String generateCTGovXml(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException("Study Protocol Identifier is null");

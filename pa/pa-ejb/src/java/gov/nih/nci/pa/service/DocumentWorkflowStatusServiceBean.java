@@ -94,6 +94,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -107,6 +109,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DocumentWorkflowStatusServiceBean extends
     AbstractStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus, DocumentWorkflowStatusConverter>
     implements DocumentWorkflowStatusServiceRemote, DocumentWorkflowStatusServiceLocal {
