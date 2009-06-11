@@ -327,6 +327,7 @@ public class CollaboratorsAction extends ActionSupport
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
             orgWebDTO.setFunctionalRole(sp.getFunctionalCode().getCode());
+            orgWebDTO.setStatus(sp.getStatusCode().getCode());
             organizationList.add(orgWebDTO);
         }
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);

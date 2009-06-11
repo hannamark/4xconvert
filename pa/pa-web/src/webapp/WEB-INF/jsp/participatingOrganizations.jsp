@@ -50,8 +50,9 @@ function handleDelete(studyResourcingId){
     <tr><td colspan="2">
     <input type="hidden" name="cbValue" />
     <display:table name="organizationList" id="row" class="data">  
-        <display:column property="name" titleKey="participatingOrganizations.name" class="sortable" />
         <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
+        <display:column property="name" titleKey="participatingOrganizations.name" class="sortable" />
+        <display:column property="status" titleKey="participatingOrganizations.status" class="sortable" />
         <display:column property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" class="sortable" />
         <display:column property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" class="sortable" />
         <display:column property="investigator" titleKey="participatingOrganizations.investigators"/>

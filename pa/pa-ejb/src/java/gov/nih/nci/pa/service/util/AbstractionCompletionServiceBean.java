@@ -114,6 +114,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -128,7 +129,6 @@ import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -185,7 +185,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusServicLocal = null;
     @EJB
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
-   
+    @EJB
+    DocumentServiceLocal documentServicLocal = null;
      
     private static final String YES = "Yes";
     private static final String NO = "No";
@@ -200,19 +201,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       throw new PAException("Study Protocol Identifer is null");
     }
     List<AbstractionCompletionDTO> abstractionList = new ArrayList<AbstractionCompletionDTO>();
+    List<AbstractionCompletionDTO> abstractionWarnList = new ArrayList<AbstractionCompletionDTO>();
+    
     StudyProtocolDTO studyProtocolDTO = studyProtocolService .getStudyProtocol(studyProtocolIi); 
    
     enforceIdentifierLength(studyProtocolDTO, abstractionList);
     enforceGeneralTrailDetails(studyProtocolDTO, abstractionList);
     enforceNCISpecificInfo(studyProtocolDTO, abstractionList);
     enforceRegulatoryInfo(studyProtocolIi, abstractionList);
-    enforceIRBInfo(studyProtocolDTO, abstractionList);
+    enforceIRBInfo(studyProtocolDTO, abstractionList, abstractionWarnList);
     enforceTrialINDIDE(studyProtocolDTO, abstractionList);
     enforceTrialStatus(studyProtocolDTO, abstractionList);
     enforceRecruitmentStatus(studyProtocolIi, abstractionList);
     
-    List<DocumentDTO> isoList = PoPaServiceBeanLookup.getDocumentService()
-    .getDocumentsByStudyProtocol(studyProtocolIi);
+    List<DocumentDTO> isoList = documentServicLocal.getDocumentsByStudyProtocol(studyProtocolIi);
     String protocolDoc = null;
     String irbDoc = null;
     if (!(isoList.isEmpty())) {
@@ -257,19 +259,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceOutcomeMeasure(studyProtocolIi, abstractionList);
     enforceInterventions(studyProtocolIi, abstractionList);
     enforceTreatingSite(studyProtocolIi, abstractionList);
-    enforceStudyContactNullification(studyProtocolIi, abstractionList);
-    enforceStudyParticipationNullification(studyProtocolIi, abstractionList);
-    enforceStudyParticipationContactNullification(studyProtocolIi, abstractionList);
+    enforceStudyContactNullification(studyProtocolIi, abstractionWarnList);
+    enforceStudyParticipationNullification(studyProtocolIi, abstractionWarnList);
+    enforceStudyParticipationContactNullification(studyProtocolIi, abstractionWarnList);
     enforceArmGroup(studyProtocolIi, studyProtocolDTO, abstractionList);
     enforceTrialFunding(studyProtocolIi, abstractionList);
     enforceDisease(studyProtocolIi, abstractionList);
     enforceArmInterventional(studyProtocolIi, abstractionList);
     enforceEligibility(studyProtocolIi, abstractionList);
+    abstractionList.addAll(abstractionWarnList);
     return abstractionList;
   }
   
   private void enforceStudyContactNullification(
-          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) throws PAException {
+          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList) throws PAException {
       
       List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolIi);
             
@@ -282,7 +285,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(studyContactDTO.
                       getRoleCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Prinicipal Investigator status has been set to nullified, " 
                                + "Please select another Principal Investigator")); 
@@ -290,7 +293,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyContactRoleCode.CENTRAL_CONTACT.getCode().equalsIgnoreCase(studyContactDTO.
                       getRoleCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Central Contact status has been set to nullified, " 
                                + "Please select another Central contact")); 
@@ -298,7 +301,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR.getCode().
                       equalsIgnoreCase(studyContactDTO.getRoleCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Responsible Party Study Principal Investigator status has been set to nullified, " 
                                + "Please select another Responsible Party Study Principal Investigator")); 
@@ -309,7 +312,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       
   }
   private void enforceStudyParticipationNullification(
-          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)  throws PAException {
+          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)  throws PAException {
       
       List<StudyParticipationDTO> scDtos = studyParticipationService.getByStudyProtocol(studyProtocolIi);
      
@@ -323,7 +326,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
              if (StudyParticipationFunctionalCode.FUNDING_SOURCE.getCode().
                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                 abstractionWarnList.add(createError("Warning", 
                                "Select Collaborators from Administrative Data menu.",
                                "Funding Source status has been set to nullified, " 
                                + "Please select another Funding Source")); 
@@ -331,7 +334,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationFunctionalCode.AGENT_SOURCE.getCode().
                       equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select Collaborators from Administrative Data menu.",
                                "Agent Source status has been set to nullified, " 
                                + "Please select another Agent Source")); 
@@ -339,7 +342,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationFunctionalCode.LABORATORY.getCode().
                       equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select Collaborators from Administrative Data menu.",
                                "Laboratory status has been set to nullified, " 
                                + "Please select another Laboratory")); 
@@ -347,7 +350,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().
                       equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Lead Organization status has been set to nullified, " 
                                + "Please select another Lead Organization")); 
@@ -355,7 +358,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR.getCode().
                       equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Responsible Party Sponsor status has been set to nullified, " 
                                + "Please select another Responsible Party Sponsor")); 
@@ -363,7 +366,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationFunctionalCode.SPONSOR.getCode().
                       equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                       
-                       abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Sponsor status has been set to nullified, " 
                                + "Please select another Sponsor")); 
@@ -371,7 +374,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationFunctionalCode.TREATING_SITE.getCode().
                       equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                      
-                      abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                                "Select Participating Sites from Administrative Data menu.",
                                "Participating Site status has been set to nullified, " 
                                + "Please select another Participating Site")); 
@@ -379,7 +382,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().
                       equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
                       
-                      abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                              "Select Human Subject Safety under Regulatory Information from Administrative Data menu.",
                              "Board status has been set to nullified, " 
                              + "Please select another Board")); 
@@ -390,7 +393,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
   
   private void enforceStudyParticipationContactNullification(
-          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)  throws PAException {
+          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)  throws PAException {
       
         List<StudyParticipationContactDTO> scDtos = 
           studyParticipationContactService.getByStudyProtocol(studyProtocolIi);
@@ -405,7 +408,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
                       equalsIgnoreCase(studyParticipationContactDTO.getRoleCode().getCode())) {
           
-                  abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                    "Select Contact tab under Participating Sites from Administrative Data menu.",
                    "Primary Contact status has been set to nullified, " 
                    + "Please select another Primary Contact")); 
@@ -414,7 +417,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().
                       equalsIgnoreCase(studyParticipationContactDTO.getRoleCode().getCode())) {
           
-                  abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                    "Select Investigators tab under Participating sites from Administrative Data menu.",
                    "Investigator status has been set to nullified, " 
                    + "Please select another Investigator")); 
@@ -423,7 +426,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT.getCode().
                       equalsIgnoreCase(studyParticipationContactDTO.getRoleCode().getCode())) {
           
-                  abstractionList.add(createError("Warning", 
+                  abstractionWarnList.add(createError("Warning", 
                    "Select General Trial Details from Administrative Data menu.",
                    "Responsible Party Sponsor Contact status has been set to nullified, " 
                    + "Please select another Responsible Party Sponsor Contact")); 
@@ -575,7 +578,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
        
   }
   
-  private void enforceIRBInfo(StudyProtocolDTO spDto, List<AbstractionCompletionDTO> abstractionList)
+  private void enforceIRBInfo(StudyProtocolDTO spDto, List<AbstractionCompletionDTO> abstractionList, 
+          List<AbstractionCompletionDTO> abstractionWarnList)
   throws PAException {
       
       Boolean reviewBoardIndicator = spDto.getReviewBoardApprovalRequiredIndicator().getValue();
@@ -595,7 +599,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (StudyStatusCode.IN_REVIEW.getCode().equalsIgnoreCase(sos.getStatusCode().getCode()) 
                 && !studyParticipation.getReviewBoardApprovalStatusCode().getCode()
                 .equals(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode())) {
-            abstractionList.add(createError("Warning", "Select Human Subject Safety under Regulatory Information",
+            abstractionWarnList.add(createError("Warning", "Select Human Subject Safety under Regulatory Information",
                     "Data inconsistency: \'Submitted, pending\' value (Review Board Approval Status) " 
                     + "is only valid for the current trial status \'In-Review\'."));
             
@@ -603,7 +607,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (StudyStatusCode.DISAPPROVED.getCode().equalsIgnoreCase(sos.getStatusCode().getCode()) 
                 && !studyParticipation.getReviewBoardApprovalStatusCode().getCode()
                 .equals(ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode())) {
-            abstractionList.add(createError("Warning", "Select Human Subject Safety under Regulatory Information",
+            abstractionWarnList.add(createError("Warning", "Select Human Subject Safety under Regulatory Information",
                     "Data inconsistency: \'Submitted, denied\' value (Review Board Approval Status) is"
                     + "only valid for the current trial status \'Disapproved\'."));
             
@@ -625,7 +629,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      
       if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
               equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
-          boolean notRecruiting = true;
+          boolean recruiting = false;
           List<StudySiteAccrualStatusDTO> studySiteList =  new ArrayList<StudySiteAccrualStatusDTO>();
           for (StudyParticipationDTO spartDto : spList) {
               
@@ -636,12 +640,12 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           for (StudySiteAccrualStatusDTO studySiteAccuralStatus : studySiteList) {
               if (RecruitmentStatusCode.RECRUITING.getCode().
                   equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
-                  notRecruiting = false;
+                  recruiting = true;
                   break;
               }
            }
       
-          if (!notRecruiting) {
+          if (!recruiting) {
               abstractionList.add(createError("Error", "Select Participating Sites from "
                       + "Administrative Data menu.", "Data inconsistency: Atleast one location needs to be recruiting"
                       + " if the overall status recruitment status is\'Recruiting\'"));   

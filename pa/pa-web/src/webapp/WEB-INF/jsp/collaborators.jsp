@@ -48,11 +48,13 @@ function handleCreate(){
 		<tr>
 			<td colspan="2"><input type="hidden" name="cbValue" /> <display:table
 				name="organizationList" id="row" class="data">
+				<display:column property="nciNumber"
+                    titleKey="participatingOrganizations.nciNumber" class="sortable" />
 				<display:column property="name"
 					titleKey="participatingOrganizations.name" class="sortable" />
-				<display:column property="nciNumber"
-					titleKey="participatingOrganizations.nciNumber" class="sortable" />
-				<display:column property="functionalRole"
+				<display:column property="status"
+                    titleKey="participatingOrganizations.status" class="sortable" />	
+			    <display:column property="functionalRole"
 					titleKey="participatingOrganizations.functionalRole"
 					class="sortable" />
 				<display:column titleKey="participatingOrganizations.edit"

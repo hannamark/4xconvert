@@ -107,7 +107,7 @@ public class PaOrganizationDTO implements Serializable {
     private String nciIdentifier;
     private String investigator;
     private String primarycontact;
-
+    private String status;
     /**
      * @return the id
      */
@@ -302,5 +302,19 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setPrimarycontact(String primarycontact) {
         this.primarycontact = primarycontact;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

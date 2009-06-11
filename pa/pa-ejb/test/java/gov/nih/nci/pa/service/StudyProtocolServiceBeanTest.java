@@ -83,6 +83,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
@@ -102,6 +103,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -287,7 +290,20 @@ public class StudyProtocolServiceBeanTest {
             e.printStackTrace();
         }
     }    
-
+    @Test
+    public void searchWithLimits() throws Exception {
+        try {
+        InterventionalStudyProtocolDTO ispDTO =
+                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        assertNotNull(ii.getExtension());
+        LimitOffset limit = new LimitOffset(5,0);
+        List <StudyProtocolDTO> studyList = remoteEjb.search(ispDTO,limit);
+        assertNotNull(studyList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }    
     @Test
     public void getInterventionalStudyProtocol() throws Exception {
         InterventionalStudyProtocolDTO create =

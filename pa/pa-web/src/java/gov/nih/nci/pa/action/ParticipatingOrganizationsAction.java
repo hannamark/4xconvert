@@ -412,6 +412,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
             }
             setStatusCode(sp.getStatusCode().getCode());
+            orgWebDTO.setStatus(sp.getStatusCode().getCode());
             List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
                 .getPersonsByStudyParticpationId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
                     StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
@@ -426,20 +427,29 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             StringBuffer primContactList = new StringBuffer();
             if (!principalInvresults.isEmpty()) {
                 for (PaPersonDTO per : principalInvresults) {
-                    invList.append(per.getFullName() + "-" + per.getRoleName());
-                    invList.append("<br>");
-                }
+                   String fullName = per.getFullName() != null ? per.getFullName() : "";
+                   String roleName = per.getRoleName() != null ? per.getRoleName().getCode() : "";
+                   String status = per.getStatusCode() != null ? per.getStatusCode().getCode() : "";
+                  invList.append(" [ " + fullName + " - " + roleName + " , "
+                            + status + " ]<br>");
+                   }
             }
             if (!sublInvresults.isEmpty()) {
                 for (PaPersonDTO per : sublInvresults) {
-                    invList.append(per.getFullName() + "-" + per.getRoleName());
-                    invList.append("<br>");
+                    String fullName = per.getFullName() != null ? per.getFullName() : "";
+                    String roleName = per.getRoleName() != null ? per.getRoleName().getCode() : "";
+                    String status = per.getStatusCode() != null ? per.getStatusCode().getCode() : "";
+                    invList.append(" [ " + fullName + " - " + roleName + " , "
+                            + status + " ]<br>");
+                    
                 }
             }
 
             if (!primInvresults.isEmpty()) {
                 for (PaPersonDTO per : primInvresults) {
-                    primContactList.append(per.getFullName());
+                    String fullName = per.getFullName() != null ? per.getFullName() : "";
+                    String status = per.getStatusCode() != null ? per.getStatusCode().getCode() : "";
+                    primContactList.append(" [ " + fullName + " - " + status + " ]");
                 }
             }
             orgWebDTO.setInvestigator(invList.toString());

@@ -45,16 +45,17 @@
                         </span>                            
                     </td>               
                 </tr>
+                <tr> 
+                    <td/>
+                    <td class="info" colspan="2">Mandatory if Participating site/Lead organization is a cancer center</td>
+                </tr>
                 <tr>
                     <td class="label"><s:label for="statusCode">Status:</s:label></td>
                     <td class="value" colspan="2">
                         <s:textfield name="statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
                     </td>               
                 </tr>
-                <tr> 
-            		<td/>
-            		<td class="info" colspan="2">Mandatory if Participating site/Lead organization is a cancer center</td>
-        		</tr>
+                
 			</table>
 
 

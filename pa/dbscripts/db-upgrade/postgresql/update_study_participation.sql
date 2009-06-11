@@ -14,7 +14,7 @@ Insert into study_participation(identifier, functional_code ,local_sp_indentifie
 status_code, status_date_range_low, status_date_range_high,
 date_last_created, user_last_created, date_last_updated,
 user_last_updated, review_board_organizational_affiliation)
-select  nextval('study_participation_identifier_seq'),'STUDY_OVERSIGHT_COMMITTEE',rr.local_sp_indentifier, 
+select  nextval('hibernate_sequence'),'STUDY_OVERSIGHT_COMMITTEE',rr.local_sp_indentifier, 
  rr.review_board_approval_number, rr.review_board_approval_date, 
  rr.review_board_approval_status_code,
  rr.study_protocol_identifier, rr.oversight_committee_identifier,

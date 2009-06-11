@@ -88,6 +88,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
@@ -98,6 +99,7 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -759,9 +761,19 @@ import org.hibernate.criterion.Example;
         try {
             session = HibernateUtil.getCurrentSession();
             StudyProtocol exampleDO = new StudyProtocol();
-            exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+            if (dto.getAssignedIdentifier() != null) {
+             exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+            }
+            if (dto.getPhaseCode() != null) {
+                exampleDO.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));
+            }
+            if (dto.getOfficialTitle() != null) {
+                String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";
+                exampleDO.setOfficialTitle(title);
+            }
             exampleDO.setStatusCode(ActStatusCode.ACTIVE);
             Example example = Example.create(exampleDO);
+            example.enableLike();
             Criteria criteria = session.createCriteria(StudyProtocol.class).add(example);
             int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
             criteria.setMaxResults(maxLimit);
