@@ -186,7 +186,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     @EJB
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
     @EJB
-    DocumentServiceLocal documentServicLocal = null;
+    DocumentServiceLocal documentServiceLocal = null;
      
     private static final String YES = "Yes";
     private static final String NO = "No";
@@ -213,8 +213,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceTrialINDIDE(studyProtocolDTO, abstractionList);
     enforceTrialStatus(studyProtocolDTO, abstractionList);
     enforceRecruitmentStatus(studyProtocolIi, abstractionList);
-    
-    List<DocumentDTO> isoList = documentServicLocal.getDocumentsByStudyProtocol(studyProtocolIi);
+
+    List<DocumentDTO> isoList = documentServiceLocal.getDocumentsByStudyProtocol(studyProtocolIi);
     String protocolDoc = null;
     String irbDoc = null;
     if (!(isoList.isEmpty())) {

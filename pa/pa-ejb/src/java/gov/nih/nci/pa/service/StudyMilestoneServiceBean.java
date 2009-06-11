@@ -301,7 +301,8 @@ public class StudyMilestoneServiceBean
            List<String> mileStones = getExistingMilestones(existingDtoList);  
             if (!(mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode()) 
                      && mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode()))) {
-                 throw new PAException("Both Administrative and Sceintific processing must be completed");
+                 throw new PAException("Ready for QC can only be recorded after " 
+                         + "Administrative and Sceintific processing are completed");
              }
          } 
        
@@ -311,7 +312,8 @@ public class StudyMilestoneServiceBean
             List<String> mileStones = getExistingMilestones(existingDtoList); 
              if (mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode()) 
                  && !mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
-                 throw new PAException("Administrative processing must be completed");
+                 throw new PAException("Sceintific Processing Start Date cannot be recorded" 
+                         + " if Administrative Processing started but was not completed");
              }
          } 
         //if Scientific processing already started ::
@@ -320,7 +322,8 @@ public class StudyMilestoneServiceBean
            List<String> mileStones = getExistingMilestones(existingDtoList); 
              if (mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode()) 
                      && !mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
-                 throw new PAException("Sceintific processing must be completed");
+                 throw new PAException("Administrative Processing Start Date cannot be recorded" 
+                         + " if Sceintific Processing started but was not completed");
              }
            } 
         
@@ -328,7 +331,8 @@ public class StudyMilestoneServiceBean
             List<String> mileStones = getExistingMilestones(existingDtoList); 
               if (!canBePaired(mileStones, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode(),
                       MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
-                  throw new PAException("Administartive processing start date must be completed");
+                  throw new PAException("Administartive Processing Completion Date must be preceded by " 
+                          + " Administrative Processing Start Date");
               }
             } 
         
@@ -336,7 +340,8 @@ public class StudyMilestoneServiceBean
             List<String> mileStones = getExistingMilestones(existingDtoList); 
             if (!canBePaired(mileStones, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode(),
                     MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
-                throw new PAException("Scientific processing start date must be completed");
+                throw new PAException("Sceintific Processing Completion Date must be preceded by " 
+                          + " Sceintific Processing Start Date");
             }
             } 
         
