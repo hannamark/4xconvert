@@ -74,13 +74,9 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
 
     @SuppressWarnings({ "PMD.AvoidThrowingRawExceptionTypes", "unchecked" })
     private <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
-        try {
-            String className = CGLIBUtils.unEnhanceCBLIBClass(roleType).getSimpleName();
-            String serviceName = String.format("po/%sServiceBean/local", className);
-            return (GenericStructrualRoleServiceLocal<R>) JNDIUtil.lookup(serviceName);
-        } catch (ClassNotFoundException cnf) {
-            throw new RuntimeException(cnf);
-        }
+        String className = CGLIBUtils.unEnhanceCBLIBClass(roleType).getSimpleName();
+        String serviceName = String.format("po/%sServiceBean/local", className);
+        return (GenericStructrualRoleServiceLocal<R>) JNDIUtil.lookup(serviceName);
     }
 
     /**

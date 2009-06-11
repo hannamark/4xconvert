@@ -17,6 +17,8 @@ import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
 
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+
 /**
  * Build a proxy to a Session EJB, that will invoke declared interceptors.
  * TODO
@@ -67,7 +69,12 @@ public class EjbInterceptorHandler implements InvocationHandler {
                 Method[] ims = getInterceptorMethods(ic);
                 for (Method m : ims) {
                     chain.add(m);
-                    ints.add(ic.newInstance());
+                    Object i = ic.newInstance();
+                    if (i instanceof AuthorizationInterceptor) {
+                        AuthorizationInterceptor ai = (AuthorizationInterceptor) i;
+                        ai.setSessionContext(new TestSessionContext());
+                    }
+                    ints.add(i);
                 }
             }
 

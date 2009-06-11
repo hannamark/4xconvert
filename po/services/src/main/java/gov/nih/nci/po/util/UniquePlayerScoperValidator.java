@@ -52,12 +52,7 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
             AbstractPersonRole apr = (AbstractPersonRole) value;
-            Criteria c = null;
-            try {
-                c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(apr.getClass()));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            Criteria c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(apr.getClass()));
             LogicalExpression scoperPlayerComposite = Restrictions.and(Restrictions.eq("player", apr.getPlayer()),
                     Restrictions.eq("scoper", apr.getScoper()));
             c.add(Restrictions.and(Restrictions.ne("status", RoleStatus.NULLIFIED), scoperPlayerComposite));

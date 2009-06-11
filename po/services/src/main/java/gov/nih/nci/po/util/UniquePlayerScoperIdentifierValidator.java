@@ -54,12 +54,7 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
             AbstractIdentifiedEntity<?> ie = (AbstractIdentifiedEntity<?>) value;
-            Criteria c = null;
-            try {
-                c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(ie.getClass()));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            Criteria c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(ie.getClass()));
             LogicalExpression and = Restrictions.and(Restrictions.eq("player", ie.getPlayer()),
                     Restrictions.eq("scoper", ie.getScoper()));
             and = Restrictions.and(

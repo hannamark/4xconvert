@@ -116,6 +116,7 @@ import javax.interceptor.Interceptors;
 import org.jboss.annotation.security.SecurityDomain;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 
 /**
 *
@@ -123,7 +124,8 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class, NullifiedEntityInterceptor.class  })
+@Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, 
+    NullifiedEntityInterceptor.class  })
 @SecurityDomain("po")
 public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 

@@ -102,12 +102,14 @@ import javax.interceptor.Interceptors;
 
 import org.jboss.annotation.security.SecurityDomain;
 
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+
 /**
  * Service implementation.
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
+@Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
 @SecurityDomain("po")
 public class HealthCareFacilityCorrelationServiceBean
     extends AbstractCorrelationServiceBean<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityDTO>

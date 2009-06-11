@@ -139,12 +139,7 @@ public class IdConverterRegistry {
      */
     @SuppressWarnings("PMD.SystemPrintln")
     public static IdConverter find(Class<? extends PersistentObject> clz) {
-        Class<? extends PersistentObject> tmp = clz;
-        try {
-            tmp = CGLIBUtils.unEnhanceCBLIBClass(clz);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
+        Class<?> tmp = CGLIBUtils.unEnhanceCBLIBClass(clz);
         IdConverter idConverter = REGISTRY.get(tmp);
         if (idConverter == null) {
             throw new IllegalArgumentException(tmp.getName() + " is unsupported.");

@@ -197,7 +197,7 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
         query = yesCrit.getQuery("", false);
         assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
                 + "gov.nih.nci.po.data.bo.Email obj_email "
-                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  ( lower( obj_email.value) like :emailvalue0 )  ) ",
+                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  (  lower( obj_email.value) like :emailvalue0  )  ) ",
                 query.getQueryString());
 
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
@@ -206,7 +206,7 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
         query = yesCrit.getQuery("", false);
         assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
                 + "gov.nih.nci.po.data.bo.Email obj_email "
-                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  ( lower( obj_email.value) like :emailvalue0 )  ) ",
+                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  (  lower( obj_email.value) like :emailvalue0  )  ) ",
                 query.getQueryString());
 
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
@@ -215,7 +215,7 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
         query = yesCrit.getQuery("", false);
         assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
                 + "gov.nih.nci.po.data.bo.Email obj_email "
-                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  ( lower( obj_email.value) like :emailvalue0 OR lower( obj_email.value) like :emailvalue1 )  ) ",
+                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  (  lower( obj_email.value) like :emailvalue0  OR  lower( obj_email.value) like :emailvalue1  )  ) ",
                 query.getQueryString());
 
     }
