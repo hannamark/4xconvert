@@ -407,7 +407,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
      //CorrelationUtils cUtils = new CorrelationUtils();
      for (StudyParticipationDTO sp : spList) {
 
-         List<StudySiteAccrualStatusDTO> ssasList = studySiteAccrualStatusService
+         StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
          .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
 
          Organization orgBo = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
@@ -415,10 +415,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
          html.append(appendData("Facility Name" , orgBo.getName() , true , true));
          html.append(appendData("Location" , getLocation(orgBo), true , true));
-         if (ssasList != null && (!ssasList.isEmpty())) {
-           html.append(appendData("Site Recruitment Status" , getData(ssasList.get(0).getStatusCode() , true)
+         if (ssas != null) {
+           html.append(appendData("Site Recruitment Status" , getData(ssas.getStatusCode() , true)
                + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                   ssasList.get(0).getStatusDate()).toString()) , true , true));
+                   ssas.getStatusDate()).toString()) , true , true));
          }
          html.append(appendData("Target Accrual" , getData(sp.getTargetAccrualNumber(), true) , true , true));
          List<StudyParticipationContactDTO> spcDTOs = 

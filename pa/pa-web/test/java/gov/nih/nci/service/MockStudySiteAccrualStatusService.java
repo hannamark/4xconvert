@@ -83,7 +83,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -109,9 +108,9 @@ public class MockStudySiteAccrualStatusService implements
      * @return
      * @throws PAException
      */
-    public List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(
             Ii studyParticipationIi) throws PAException {
-        List<StudySiteAccrualStatusDTO> result = new ArrayList<StudySiteAccrualStatusDTO>();
+        StudySiteAccrualStatusDTO result = new StudySiteAccrualStatusDTO();
         return result;
     }
 

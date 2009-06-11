@@ -145,13 +145,13 @@ public class StudySiteAccrualStatusServiceBean implements
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            List<StudySiteAccrualStatusDTO> currentList
+          StudySiteAccrualStatusDTO current
                     = getCurrentStudySiteAccrualStatusByStudyParticipation(dto.getStudyParticipationIi());
             RecruitmentStatusCode oldCode = null;
             Timestamp oldDate = null;
-            if (!currentList.isEmpty()) {
-                oldCode = RecruitmentStatusCode.getByCode(currentList.get(0).getStatusCode().getCode());
-                oldDate = TsConverter.convertToTimestamp(currentList.get(0).getStatusDate());
+            if (current != null) {
+                oldCode = RecruitmentStatusCode.getByCode(current.getStatusCode().getCode());
+                oldDate = TsConverter.convertToTimestamp(current.getStatusDate());
             }
 
             RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
@@ -242,15 +242,15 @@ public class StudySiteAccrualStatusServiceBean implements
      * @return StudySiteAccrualStatusDTO Current status.
      * @throws PAException Exception.
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS) 
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(
             Ii studyParticipationIi) throws PAException {
         List<StudySiteAccrualStatusDTO> ssasList =
                 this.getStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
-        ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();
+        StudySiteAccrualStatusDTO result = null;
         if (!ssasList.isEmpty()) {
-            resultList.add(ssasList.get(ssasList.size() - 1));
+            result = ssasList.get(ssasList.size() - 1);
         }
-        return resultList;
+        return result;
     }
 }

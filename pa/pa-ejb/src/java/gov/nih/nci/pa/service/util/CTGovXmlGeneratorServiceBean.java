@@ -1052,7 +1052,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Element facility = doc.createElement("facility");
             Element address = doc.createElement("address");
 
-            List<StudySiteAccrualStatusDTO> ssasList = studySiteAccrualStatusService
+            StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
                                               .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
         
             Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(
@@ -1065,8 +1065,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(address , createElement("country" , orgBo.getCountryName() , doc));
             appendElement(facility , address);
             appendElement(location , facility);
-            if (ssasList != null && (!ssasList.isEmpty())) {
-                appendElement(location , createElement("status" , ssasList.get(0).getStatusCode() , doc));
+            if (ssas != null) {
+                appendElement(location , createElement("status" , ssas.getStatusCode() , doc));
             }
 
             List<StudyParticipationContactDTO> spcDTOs = studyParticipationContactService

@@ -79,9 +79,9 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -110,9 +110,9 @@ public class StudySiteAccrualStatusServiceBeanTest {
       remoteEjb.getStudySiteAccrualStatusByStudyParticipation(studyParticipationId);
     assertEquals(1, statusList.size());
 
-    List<StudySiteAccrualStatusDTO> dto =
+    StudySiteAccrualStatusDTO dto =
       remoteEjb.getCurrentStudySiteAccrualStatusByStudyParticipation(statusList.get(0).getStudyParticipationIi());
-    assertEquals(statusList.size(), dto.size());   
+    assertNotNull(dto);   
     
     StudySiteAccrualStatusDTO dto2 = null;
     try {

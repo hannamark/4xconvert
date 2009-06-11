@@ -292,16 +292,18 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 return;
             }
         }
-        List<StudySiteAccrualStatusDTO> currentStatus = ssasService
+        StudySiteAccrualStatusDTO currentStatus = ssasService
                 .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
-        if (currentStatus.isEmpty() || !currentStatus.get(0).getStatusCode().getCode().equals(recStatus)
-                || !currentStatus.get(0).getStatusDate().equals(PAUtil.dateStringToTimestamp(recStatusDate))) {
-            StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
-            ssas.setIdentifier(IiConverter.convertToIi((Long) null));
-            ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
-            ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
-            ssas.setStudyParticipationIi(sp.getIdentifier());
-            ssas = ssasService.createStudySiteAccrualStatus(ssas);
+        if (currentStatus != null && currentStatus.getStatusCode() != null && currentStatus.getStatusDate() != null 
+                && (!currentStatus.getStatusCode().getCode().equals(recStatus) 
+                        || !currentStatus.getStatusDate().equals(PAUtil.dateStringToTimestamp(recStatusDate)))) {
+            
+                 StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
+                 ssas.setIdentifier(IiConverter.convertToIi((Long) null));
+                 ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
+                 ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
+                 ssas.setStudyParticipationIi(sp.getIdentifier());
+                 ssas = ssasService.createStudySiteAccrualStatus(ssas);
         }
         tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
         ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
@@ -326,11 +328,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         orgFromPO.setName(editOrg.getName());
         orgFromPO.setState(editOrg.getState());
         orgFromPO.setZip(editOrg.getPostalCode());
-        List<StudySiteAccrualStatusDTO> statusList = ssasService
+        StudySiteAccrualStatusDTO status = ssasService
                 .getCurrentStudySiteAccrualStatusByStudyParticipation(spDto.getIdentifier());
-        if (!statusList.isEmpty()) {
-            this.setRecStatus(statusList.get(0).getStatusCode().getCode());
-            this.setRecStatusDate(TsConverter.convertToTimestamp(statusList.get(0).getStatusDate()).toString());
+        if (status != null) {
+            this.setRecStatus(status.getStatusCode().getCode());
+            this.setRecStatusDate(TsConverter.convertToTimestamp(status.getStatusDate()).toString());
         }
         if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) == null) {
             setTargetAccrualNumber(null);
@@ -390,7 +392,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                         .getCode()));
         List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi, srDTO);
         for (StudyParticipationDTO sp : spList) {
-            List<StudySiteAccrualStatusDTO> ssasList = ssasService
+            StudySiteAccrualStatusDTO ssas = ssasService
                     .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
             Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(sp
                     .getHealthcareFacilityIi()));
@@ -398,13 +400,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
-            if (ssasList.isEmpty()) {
+            if (ssas != null) {
                 orgWebDTO.setRecruitmentStatus("unknown");
                 orgWebDTO.setRecruitmentStatusDate("unknown");
             } else {
-                orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(ssasList.get(0).getStatusCode()));
+                orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(ssas.getStatusCode()));
                 orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                        ssasList.get(0).getStatusDate()).toString()));
+                        ssas.getStatusDate()).toString()));
             }
             if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) == null) {
                 orgWebDTO.setTargetAccrualNumber(null);

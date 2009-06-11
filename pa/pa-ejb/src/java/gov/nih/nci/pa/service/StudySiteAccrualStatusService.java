@@ -129,7 +129,7 @@ public interface StudySiteAccrualStatusService {
      * @return StudySiteAccrualStatusDTO Current status.
      * @throws PAException Exception.
      */
-    List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi) 
+    StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi) 
             throws PAException;
 
 }
