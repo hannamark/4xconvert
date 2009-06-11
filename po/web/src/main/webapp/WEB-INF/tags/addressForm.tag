@@ -47,35 +47,25 @@ function loadStateProvince(code, v) {
 
 
 
-<s:textfield name="%{#attr.addressKeyBase + '.streetAddressLine'}" required="%{#attr.required}" cssClass="%{cssClass}" size="70"
-             label="%{getText(#attr.addressKeyBase + '.streetAddressLine')}" />
+<s:select
+    name="%{#attr.addressKeyBase + '.country'}"
+    label="%{getText(#attr.addressKeyBase + '.country')}"
+    list="#countryService.countries" listKey="id" listValue="name"
+    cssClass="%{cssClass}" required="%{#attr.required}"
+    headerKey="" headerValue="--Select a Country--"
+    value="#attr.address.country.id"
+    onchange="loadStateProvince(this.value);"
+    id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
+</s:select>
+<s:textfield name="%{#attr.addressKeyBase + '.streetAddressLine'}" 
+    required="%{#attr.required}" cssClass="%{cssClass}" size="70"
+    label="%{getText(#attr.addressKeyBase + '.streetAddressLine')}" />
 <s:textfield name="%{#attr.addressKeyBase + '.deliveryAddressLine'}" size="70"
-             label="%{getText(#attr.addressKeyBase + '.deliveryAddressLine')}" />
+    label="%{getText(#attr.addressKeyBase + '.deliveryAddressLine')}" />
+<s:textfield name="%{#attr.addressKeyBase + '.cityOrMunicipality'}"
+    required="%{#attr.required}" cssClass="%{cssClass}" size="25"
+    label="%{getText(#attr.addressKeyBase + '.cityOrMunicipality')}" />
 <po:inputRow>
-    <po:inputRowElement>
-        <s:textfield name="%{#attr.addressKeyBase + '.postalCode'}"
-            required="%{#attr.required}" cssClass="%{cssClass}" size="18"
-            label="%{getText(#attr.addressKeyBase + '.postalCode')}" />
-    </po:inputRowElement>
-    <po:inputRowElement>
-        <s:select
-            name="%{#attr.addressKeyBase + '.country'}"
-            label="%{getText(#attr.addressKeyBase + '.country')}"
-            list="#countryService.countries" listKey="id" listValue="name"
-            cssClass="%{cssClass}" required="%{#attr.required}"
-            headerKey="" headerValue="--Select a Country--"
-            value="#attr.address.country.id"
-            onchange="loadStateProvince(this.value);"
-            id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
-        </s:select>
-    </po:inputRowElement>
-</po:inputRow>
-<po:inputRow>
-    <po:inputRowElement>
-        <s:textfield name="%{#attr.addressKeyBase + '.cityOrMunicipality'}"
-            required="%{#attr.required}" cssClass="%{cssClass}" size="25"
-            label="%{getText(#attr.addressKeyBase + '.cityOrMunicipality')}" />
-    </po:inputRowElement>
     <po:inputRowElement>
 	    <div id="${addressKeyBase}.div_stateOrProvince">
             Loading States...
@@ -83,6 +73,11 @@ function loadStateProvince(code, v) {
         <script type="text/javascript"><!--
             loadStateProvince($('${formNameBase}.${addressKeyBase}.country').value, '${address.stateOrProvince}');
         --></script>
+    </po:inputRowElement>
+    <po:inputRowElement>
+        <s:textfield name="%{#attr.addressKeyBase + '.postalCode'}"
+            required="%{#attr.required}" cssClass="%{cssClass}" size="18"
+            label="%{getText(#attr.addressKeyBase + '.postalCode')}" />
     </po:inputRowElement>
 </po:inputRow>
 
