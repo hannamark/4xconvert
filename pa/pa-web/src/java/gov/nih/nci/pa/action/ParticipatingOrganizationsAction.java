@@ -400,7 +400,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
-            if (ssas == null) {
+            if (ssas == null || ssas.getStatusCode() == null || ssas.getStatusDate() == null) {
                 orgWebDTO.setRecruitmentStatus("unknown");
                 orgWebDTO.setRecruitmentStatusDate("unknown");
             } else {

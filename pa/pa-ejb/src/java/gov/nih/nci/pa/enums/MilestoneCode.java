@@ -228,10 +228,12 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(TRIAL_SUMMARY_FEEDBACK, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(INITIAL_ABSTRACTION_VERIFY, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
