@@ -220,7 +220,7 @@ public abstract class AbstractIdentifiedEntity<T extends CuratableEntity<?, ?>>
     @NotEmptyIiExtension
     @NotEmptyIiRoot
     @Searchable(fields = {"extension", "root" },
-            matchMode = Searchable.MATCH_MODE_START)
+            matchMode = Searchable.MATCH_MODE_CONTAINS)
     public Ii getAssignedIdentifier() {
         return this.assignedIdentifier;
     }

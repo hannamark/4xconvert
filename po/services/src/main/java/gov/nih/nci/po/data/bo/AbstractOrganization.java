@@ -167,7 +167,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      */
     @NotEmpty
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
     public String getName() {
         return name;
@@ -192,7 +192,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     @ForeignKey(name = "ORG_POSTAL_ADDRESS_FK")
     @Valid
     @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_START)
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "address")
     public Address getPostalAddress() {
         return postalAddress;

@@ -174,7 +174,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Length(max = LONG_COL_LENGTH)
     @NotEmpty
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fname")
     public String getFirstName() {
         return firstName;
@@ -191,7 +191,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * @return the middleName
      */
     @Length(max = LONG_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "mname")
     public String getMiddleName() {
         return this.middleName;
@@ -209,7 +209,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Length(max = LONG_COL_LENGTH)
     @NotEmpty
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "lname")
     public String getLastName() {
         return lastName;
@@ -226,7 +226,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * @return name prefix
      */
     @Length(max = SHORT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "prefix")
     public String getPrefix() {
         return prefix;
@@ -243,7 +243,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * @return name suffix
      */
     @Length(max = SHORT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "suffix")
     public String getSuffix() {
         return suffix;
@@ -268,7 +268,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @ForeignKey(name = "PER_POSTAL_ADDRESS_FK")
     @Valid
     @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_START)
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "address")
     public Address getPostalAddress() {
         return postalAddress;

@@ -240,11 +240,11 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
         hql.append(" WHERE p.statusCode <> 'NULLIFIED'");
         if (StringUtils.isNotBlank(firstName)) {
             hql.append(" AND lower(p.firstName) LIKE :firstName");
-            params.put("firstName", firstName.toLowerCase() + "%");
+            params.put("firstName", "%" + firstName.toLowerCase() + "%");
         }
         if (StringUtils.isNotBlank(lastName)) {
             hql.append(" AND lower(p.lastName) LIKE :lastName");
-            params.put("lastName", lastName.toLowerCase() + "%");
+            params.put("lastName", "%" + lastName.toLowerCase() + "%");
         }
         if (StringUtils.isNotBlank(email)) {
             hql.append(" AND (lower(pemail.value) LIKE :pemail")
@@ -252,7 +252,7 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
                     .append(" OR lower(crsemail.value) LIKE :crsemail")
                     .append(" OR lower(hcpemail.value) LIKE :hcpemail")
                     .append(')');
-            final String em = email.toLowerCase();
+            final String em = "%" + email.toLowerCase() + "%";
             params.put("pemail", em);
             params.put("ocemail", em);
             params.put("crsemail", em);
@@ -264,7 +264,7 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
                     .append(" OR lower(hcpscoper.name) LIKE :hcpname")
                     .append(" OR lower(ipscoper.name) LIKE :ipname")
                     .append(')');
-            final String on = org.toLowerCase() + "%";
+            final String on = "%" + org.toLowerCase() + "%";
             params.put("ocname", on);
             params.put("crsname", on);
             params.put("hcpname", on);

@@ -116,7 +116,7 @@ public abstract class AbstractHealthCareProvider extends AbstractPersonRole impl
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
     @Length(max = CERTIFICATE_LICENSE_TEXT_LENGHT)
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "cert")
     public String getCertificateLicenseText() {
         return this.certificateLicenseText;

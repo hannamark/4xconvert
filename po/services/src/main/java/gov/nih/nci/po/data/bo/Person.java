@@ -153,7 +153,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
     @Valid
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     @NotEmpty(message = "{validator.notEmpty.collection}")
     public List<Email> getEmail() {
         return super.getEmail();
@@ -175,7 +175,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @Column(name = "fax")
     @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -196,7 +196,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @Column(name = "phone")
     @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -217,7 +217,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @Column(name = "url")
     @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -238,7 +238,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @Column(name = "tty")
     @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }

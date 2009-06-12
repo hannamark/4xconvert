@@ -117,7 +117,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fundingMech")
     public FundingMechanism getFundingMechanism() {
         return fundingMechanism;

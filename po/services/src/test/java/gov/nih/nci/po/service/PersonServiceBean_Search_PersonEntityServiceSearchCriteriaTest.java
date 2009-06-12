@@ -215,12 +215,12 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     @Test
     public void findByAddressStreetAddressLine() throws EntityValidationException {
         createPeopleWithAddresses();
-
+        // contains
         personSc.setPostalAddress(new Address());
         personSc.getPostalAddress().setStreetAddressLine("BoX");
-        assertEquals(0, getPersonServiceBean().count(sc));
-        assertEquals(0, getPersonServiceBean().search(sc).size());
-
+        assertEquals(2, getPersonServiceBean().count(sc));
+        assertEquals(2, getPersonServiceBean().search(sc).size());
+        // starts with (included in contains)
         personSc.getPostalAddress().setStreetAddressLine("P.o.");
         assertEquals(2, getPersonServiceBean().count(sc));
         assertEquals(2, getPersonServiceBean().search(sc).size());
@@ -228,7 +228,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         personSc.getPostalAddress().setStreetAddressLine("P.o. BoX 12346");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
-
+        // no match at all
         personSc.getPostalAddress().setStreetAddressLine("Z");
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
@@ -237,19 +237,23 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     @Test
     public void findByAddressDeliveryAddressLine() throws EntityValidationException {
         createPeopleWithAddresses();
-
+        // starts with (part of contains)
         personSc.setPostalAddress(new Address());
         personSc.getPostalAddress().setDeliveryAddressLine("c/O");
         assertEquals(2, getPersonServiceBean().count(sc));
         assertEquals(2, getPersonServiceBean().search(sc).size());
-
+        // contains
         personSc.getPostalAddress().setDeliveryAddressLine("JoHn");
-        assertEquals(0, getPersonServiceBean().count(sc));
-        assertEquals(0, getPersonServiceBean().search(sc).size());
-
+        assertEquals(1, getPersonServiceBean().count(sc));
+        assertEquals(1, getPersonServiceBean().search(sc).size());
+        // full match
         personSc.getPostalAddress().setDeliveryAddressLine("c/o JoHn");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
+        // no match
+        personSc.getPostalAddress().setDeliveryAddressLine("c/oJoHn");
+        assertEquals(0, getPersonServiceBean().count(sc));
+        assertEquals(0, getPersonServiceBean().search(sc).size());
 
         try {
             personSc.getPostalAddress().setDeliveryAddressLine("");
@@ -265,10 +269,17 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     public void findByAddressCity() throws EntityValidationException {
         createPeopleWithAddresses();
 
+        // contains
         personSc.setPostalAddress(new Address());
-        personSc.getPostalAddress().setCityOrMunicipality("-");
+        personSc.getPostalAddress().setCityOrMunicipality("1-1");
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
+
+        // contains
+        personSc.setPostalAddress(new Address());
+        personSc.getPostalAddress().setCityOrMunicipality("-");
+        assertEquals(2, getPersonServiceBean().count(sc));
+        assertEquals(2, getPersonServiceBean().search(sc).size());
 
         personSc.getPostalAddress().setCityOrMunicipality("NeW");
         assertEquals(1, getPersonServiceBean().count(sc));
@@ -294,8 +305,8 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
 
         personSc.setPostalAddress(new Address());
         personSc.getPostalAddress().setPostalCode("-");
-        assertEquals(0, getPersonServiceBean().count(sc));
-        assertEquals(0, getPersonServiceBean().search(sc).size());
+        assertEquals(3, getPersonServiceBean().count(sc));
+        assertEquals(3, getPersonServiceBean().search(sc).size());
 
         personSc.getPostalAddress().setPostalCode("1234");
         assertEquals(2, getPersonServiceBean().count(sc));

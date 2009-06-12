@@ -191,13 +191,15 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
         List<Email> emails = new ArrayList<Email>();
         emails.add(new Email(hcp.getEmail().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, emails, null, null, null, null, 1);
-
+        // substring search will work with contains.
         emails.get(0).setValue(emails.get(0).getValue().substring(1));
-        doSearch(hcp, null, null, null, null, null, emails, null, null, null, null, 0);
+        doSearch(hcp, null, null, null, null, null, emails, null, null, null, null, 1);
 
+        // contains search will find substring.
         emails.get(0).setValue(emails.get(0).getValue().substring(0, 3));
-        doSearch(hcp, null, null, null, null, null, emails, null, null, null, null, 0);
+        doSearch(hcp, null, null, null, null, null, emails, null, null, null, null, 1);
 
+        emails.clear();
         emails.add(new Email("idontexist"));
         doSearch(hcp, null, null, null, null, null, emails, null, null, null, null, 0);
 
@@ -208,9 +210,9 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
         List<PhoneNumber> phones = new ArrayList<PhoneNumber>();
         phones.add(new PhoneNumber(hcp.getPhone().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, null, phones, null, null, null, 1);
-
+        // contains search will find substring.
         phones.get(0).setValue(phones.get(0).getValue().substring(1));
-        doSearch(hcp, null, null, null, null, null, null, phones, null, null, null, 0);
+        doSearch(hcp, null, null, null, null, null, null, phones, null, null, null, 1);
 
         phones.add(new PhoneNumber(hcp.getPhone().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, null, phones, null, null, null, 1);
@@ -220,8 +222,14 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
         faxes.add(new PhoneNumber(hcp.getFax().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, null, null, faxes, null, null, 1);
 
+        // contains search will find substring
         faxes.get(0).setValue(faxes.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, null, faxes, null, null, 1);
+        // clear and search for non-existing
+        faxes.clear();
+        faxes.add(new PhoneNumber("666-666-6666"));
         doSearch(hcp, null, null, null, null, null, null, null, faxes, null, null, 0);
+
 
         faxes.add(new PhoneNumber(hcp.getFax().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, null, null, faxes, null, null, 1);
@@ -230,8 +238,13 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
         List<PhoneNumber> ttys = new ArrayList<PhoneNumber>();
         ttys.add(new PhoneNumber(hcp.getTty().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, null, null, null, ttys, null, 1);
-
+        // constains will find substring
         ttys.get(0).setValue(ttys.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, null, null, ttys, null, 1);
+
+        // clear and attempt to find non-existing
+        ttys.clear();
+        ttys.add(new PhoneNumber("777-777-7777"));
         doSearch(hcp, null, null, null, null, null, null, null, null, ttys, null, 0);
 
         ttys.add(new PhoneNumber(hcp.getTty().get(0).getValue()));
@@ -242,7 +255,13 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
         urls.add(new URL(hcp.getUrl().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, null, null, null, null, urls, 1);
 
+        // constains will find substring
         urls.get(0).setValue(urls.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, urls, 1);
+
+        // clear and search for non-existing
+        urls.clear();
+        urls.add(new URL("can'tfind"));
         doSearch(hcp, null, null, null, null, null, null, null, null, null, urls, 0);
 
         urls.add(new URL(hcp.getUrl().get(0).getValue()));

@@ -207,13 +207,14 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         List<Email> emails = new ArrayList<Email>();
         emails.add(new Email(oc.getEmail().get(0).getValue()));
         doSearch(oc, null, null, null, null, emails, null, null, null, null, 1);
-
+        // contains search will work
         emails.get(0).setValue(emails.get(0).getValue().substring(1));
-        doSearch(oc, null, null, null, null, emails, null, null, null, null, 0);
-
+        doSearch(oc, null, null, null, null, emails, null, null, null, null, 1);
+        // substring is picked up by contains search.
         emails.get(0).setValue(emails.get(0).getValue().substring(0, 3));
-        doSearch(oc, null, null, null, null, emails, null, null, null, null, 0);
+        doSearch(oc, null, null, null, null, emails, null, null, null, null, 1);
 
+        emails.clear();
         emails.add(new Email("idontexist"));
         doSearch(oc, null, null, null, null, emails, null, null, null, null, 0);
 
@@ -224,9 +225,9 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         List<PhoneNumber> phones = new ArrayList<PhoneNumber>();
         phones.add(new PhoneNumber(oc.getPhone().get(0).getValue()));
         doSearch(oc, null, null, null, null, null, phones, null, null, null, 1);
-
+        //contains search will find substring.
         phones.get(0).setValue(phones.get(0).getValue().substring(1));
-        doSearch(oc, null, null, null, null, null, phones, null, null, null, 0);
+        doSearch(oc, null, null, null, null, null, phones, null, null, null, 1);
 
         phones.add(new PhoneNumber(oc.getPhone().get(0).getValue()));
         doSearch(oc, null, null, null, null, null, phones, null, null, null, 1);
@@ -235,8 +236,12 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         List<PhoneNumber> faxes = new ArrayList<PhoneNumber>();
         faxes.add(new PhoneNumber(oc.getFax().get(0).getValue()));
         doSearch(oc, null, null, null, null, null, null, faxes, null, null, 1);
-
+        // contains search will find substring
         faxes.get(0).setValue(faxes.get(0).getValue().substring(1));
+        doSearch(oc, null, null, null, null, null, null, faxes, null, null, 1);
+        // clear and search for non-existing
+        faxes.clear();
+        faxes.add(new PhoneNumber("666-666-6666"));
         doSearch(oc, null, null, null, null, null, null, faxes, null, null, 0);
 
         faxes.add(new PhoneNumber(oc.getFax().get(0).getValue()));
@@ -247,7 +252,13 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         ttys.add(new PhoneNumber(oc.getTty().get(0).getValue()));
         doSearch(oc, null, null, null, null, null, null, null, ttys, null, 1);
 
+        //contains will find substring
         ttys.get(0).setValue(ttys.get(0).getValue().substring(1));
+        doSearch(oc, null, null, null, null, null, null, null, ttys, null, 1);
+
+        //clear and search for non-existing
+        ttys.clear();
+        ttys.add(new PhoneNumber("777-777-7777"));
         doSearch(oc, null, null, null, null, null, null, null, ttys, null, 0);
 
         ttys.add(new PhoneNumber(oc.getTty().get(0).getValue()));
@@ -258,7 +269,13 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         urls.add(new URL(oc.getUrl().get(0).getValue()));
         doSearch(oc, null, null, null, null, null, null, null, null, urls, 1);
 
+        //contains will find substring
         urls.get(0).setValue(urls.get(0).getValue().substring(1));
+        doSearch(oc, null, null, null, null, null, null, null, null, urls, 1);
+
+        //clear and search for non-existing
+        urls.clear();
+        urls.add(new URL("won'tfindurl"));
         doSearch(oc, null, null, null, null, null, null, null, null, urls, 0);
 
         urls.add(new URL(oc.getUrl().get(0).getValue()));

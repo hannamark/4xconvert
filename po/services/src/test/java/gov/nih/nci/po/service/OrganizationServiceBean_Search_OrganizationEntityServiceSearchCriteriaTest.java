@@ -216,10 +216,10 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         sc.getCriteria().getPostalAddress().setStreetAddressLine("P.O. Box 1234");
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
-
+        // contains will find substring
         sc.getCriteria().getPostalAddress().setStreetAddressLine("345");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
 
         sc.getCriteria().getPostalAddress().setStreetAddressLine("Z");
         assertEquals(0, getOrgServiceBean().count(sc));
@@ -260,14 +260,15 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         sc.getCriteria().getPostalAddress().setCityOrMunicipality("New-");
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
-
+        // contains will find the substring
         sc.getCriteria().getPostalAddress().setCityOrMunicipality("-City");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        assertEquals(2, getOrgServiceBean().count(sc));
+        assertEquals(2, getOrgServiceBean().search(sc).size());
 
+        // contains search will find substrings in Harper's Ferry.
         sc.getCriteria().getPostalAddress().setCityOrMunicipality("'");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
 
         sc.getCriteria().getPostalAddress().setCityOrMunicipality("Harper'");
         assertEquals(1, getOrgServiceBean().count(sc));
@@ -286,10 +287,10 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         sc.getCriteria().getPostalAddress().setPostalCode("12345-");
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
-
+        // contains will find substring dash between all zip codes.
         sc.getCriteria().getPostalAddress().setPostalCode("-");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        assertEquals(3, getOrgServiceBean().count(sc));
+        assertEquals(3, getOrgServiceBean().search(sc).size());
 
         sc.getCriteria().getPostalAddress().setPostalCode("123");
         assertEquals(2, getOrgServiceBean().count(sc));
