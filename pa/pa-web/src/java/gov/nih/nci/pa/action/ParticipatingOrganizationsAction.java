@@ -294,9 +294,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         StudySiteAccrualStatusDTO currentStatus = ssasService
                 .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
-        if (currentStatus != null && currentStatus.getStatusCode() != null && currentStatus.getStatusDate() != null 
-                && (!currentStatus.getStatusCode().getCode().equals(recStatus) 
-                        || !currentStatus.getStatusDate().equals(PAUtil.dateStringToTimestamp(recStatusDate)))) {
+        if (currentStatus == null || currentStatus.getStatusCode() == null 
+                || currentStatus.getStatusDate() == null 
+                || !currentStatus.getStatusCode().getCode().equals(recStatus) 
+                || !currentStatus.getStatusDate().equals(PAUtil.dateStringToTimestamp(recStatusDate))) {
             
                  StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
                  ssas.setIdentifier(IiConverter.convertToIi((Long) null));
