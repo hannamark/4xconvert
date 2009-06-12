@@ -79,6 +79,9 @@ package gov.nih.nci.pa.report.dto.criteria;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.service.PAException;
+
+import java.util.Set;
 
 /**
  * @author Hugh Reinhart
@@ -86,6 +89,19 @@ import gov.nih.nci.pa.report.util.ReportUtil;
  */
 public class InstitutionCriteriaDto extends SubmissionTypeCriteriaDto {
     private DSet<St> institutions = ReportUtil.convertToDSet(null);
+
+    /**
+     * Validate that the criteria is good.
+     * @param criteria criterie iso dto
+     * @throws PAException exception
+     */
+    public static void validate(Object criteria) throws PAException {
+        SubmissionTypeCriteriaDto.validate(criteria);
+        Set<St> insts = ((InstitutionCriteriaDto) criteria).getInstitutions().getItem();
+        if (insts == null || insts.isEmpty()) {
+            throw new PAException("ERROR:  Institutions must be selected.");
+        }
+    }
 
     /**
      * @return the institutions

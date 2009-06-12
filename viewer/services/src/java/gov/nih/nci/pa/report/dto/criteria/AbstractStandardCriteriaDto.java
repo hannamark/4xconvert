@@ -96,27 +96,43 @@ public abstract class AbstractStandardCriteriaDto extends AbstractCriteriaDto {
     private Ivl<Ts> timeInterval = IvlConverter.convertTs().convertToIvl(null, null);
     private Bl ctep = BlConverter.convertToBl(null);
 
+    /**
+     * Validate that the criteria is good.
+     * @param criteria criterie iso dto
+     * @throws PAException exception
+     */
+    public static void validate(Object criteria) throws PAException {
+        AbstractCriteriaDto.validate(criteria);
+        Timestamp start = IvlConverter.convertTs().
+                convertLow(((AbstractStandardCriteriaDto) criteria).getTimeInterval());
+        Timestamp end = IvlConverter.convertTs().
+                convertHigh(((AbstractStandardCriteriaDto) criteria).getTimeInterval());
+        if (end != null) {
+            if (start != null && end.before(start)) {
+                throw new PAException("ERROR:  End date must not be before start date.");
+            }
+            if (end.after(new Timestamp(new Date().getTime()))) {
+                throw new PAException("ERROR:  End date must not be in the future.");
+            }
+        }
+    }
 
     /**
      * Validate that the criteria is good.
      * @param criteria criterie iso dto
      * @throws PAException exception
      */
-    public static void validate(AbstractStandardCriteriaDto criteria) throws PAException {
-        AbstractCriteriaDto.validate(criteria);
-        Timestamp start = IvlConverter.convertTs().convertLow(criteria.getTimeInterval());
-        Timestamp end = IvlConverter.convertTs().convertHigh(criteria.getTimeInterval());
+    public static void validateDatesRequired(Object criteria) throws PAException {
+        validate(criteria);
+        Timestamp start = IvlConverter.convertTs().
+                convertLow(((AbstractStandardCriteriaDto) criteria).getTimeInterval());
         if (start == null) {
-            throw new PAException("ERROR:  Start date must be set.");
+            throw new PAException("ERROR:  Start date criteria must be set.");
         }
+        Timestamp end = IvlConverter.convertTs().
+                convertHigh(((AbstractStandardCriteriaDto) criteria).getTimeInterval());
         if (end == null) {
-            throw new PAException("ERROR:  End date must be set.");
-        }
-        if (end.before(start)) {
-            throw new PAException("ERROR:  End date must not be before start date.");
-        }
-        if (end.after(new Timestamp(new Date().getTime()))) {
-            throw new PAException("ERROR:  End date must not be in the future.");
+            throw new PAException("ERROR:  End date criteria must be set.");
         }
     }
 

@@ -80,8 +80,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
-import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
@@ -90,6 +90,8 @@ import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -108,7 +110,7 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTypeCriteriaDto, TrialListResultDto>
+public class TrialListReportBean extends AbstractStandardReportBean<AbstractStandardCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
 
     /** The value indicating results should not be filtered by organization. */
@@ -127,8 +129,15 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
     /**
      * {@inheritDoc}
      */
-    public List<TrialListResultDto> get(SubmissionTypeCriteriaDto criteria) throws PAException {
-        StandardCriteriaDto.validate(criteria);
+    public List<TrialListResultDto> get(AbstractStandardCriteriaDto criteria) throws PAException {
+        try {
+            Method validate = criteria.getClass().getMethod("validate", Object.class);
+            validate.invoke(criteria.getClass(), criteria);
+        } catch (InvocationTargetException e) {
+            throw new PAException(e.getTargetException().getMessage(), e);
+        } catch (Exception e) {
+            throw new PAException("Exception in " + this.getClass(), e);
+        }
         List<TrialListResultDto> rList = null;
         try {
             session = ViewerHibernateUtil.getCurrentSession();
@@ -149,7 +158,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
               + "      ( select max(identifier) "
               + "        from study_milestone "
               + "        group by study_protocol_identifier ) ");
-            sql.append(dateRangeSql("sp.date_last_created"));
+            sql.append(dateRangeSql(criteria, "sp.date_last_created"));
             sql.append(ctepSql(criteria));
             sql.append(submissionTypeSql(criteria));
             sql.append(submitterOrgSql(criteria));
@@ -167,19 +176,21 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
         return rList;
     }
 
-    private static String submissionTypeSql(SubmissionTypeCriteriaDto criteria) {
+    private static String submissionTypeSql(AbstractStandardCriteriaDto criteria) {
         String result = "";
-        SubmissionTypeCode type = SubmissionTypeCode.valueOf(
-                CdConverter.convertCdToString(criteria.getSubmissionType()));
-        if (SubmissionTypeCode.AMENDMENT.equals(type)) {
-            result = "AND sp.submission_number > 1 ";
-        } else if (SubmissionTypeCode.ORIGINAL.equals(type)) {
-            result = "AND sp.submission_number = 1 ";
+        if (criteria instanceof SubmissionTypeCriteriaDto) {
+            SubmissionTypeCode type = SubmissionTypeCode.valueOf(
+                    CdConverter.convertCdToString(((SubmissionTypeCriteriaDto) criteria).getSubmissionType()));
+            if (SubmissionTypeCode.AMENDMENT.equals(type)) {
+                result = "AND sp.submission_number > 1 ";
+            } else if (SubmissionTypeCode.ORIGINAL.equals(type)) {
+                result = "AND sp.submission_number = 1 ";
+            }
         }
         return result;
     }
 
-    private static boolean filterBySubmitterOrg(SubmissionTypeCriteriaDto criteria) {
+    private static boolean filterBySubmitterOrg(AbstractStandardCriteriaDto criteria) {
         if (criteria instanceof InstitutionCriteriaDto) {
             Set<String> orgs = ReportUtil.convertToString(((InstitutionCriteriaDto) criteria).getInstitutions());
             if (!orgs.contains(ALL_ORGANIZATIONS_KEY)) {
@@ -189,14 +200,14 @@ public class TrialListReportBean extends AbstractStandardReportBean<SubmissionTy
         return false;
     }
 
-    private static String submitterOrgSql(SubmissionTypeCriteriaDto criteria) {
+    private static String submitterOrgSql(AbstractStandardCriteriaDto criteria) {
         if (filterBySubmitterOrg(criteria)) {
             return "AND cm.organization IN (:ORGS) ";
         }
         return "";
     }
 
-    private static void setSubmitterOrgParameter(SubmissionTypeCriteriaDto criteria, SQLQuery query) {
+    private static void setSubmitterOrgParameter(AbstractStandardCriteriaDto criteria, SQLQuery query) {
         if (filterBySubmitterOrg(criteria)) {
             Set<String> orgs = ReportUtil.convertToString(((InstitutionCriteriaDto) criteria).getInstitutions());
             query.setParameterList("ORGS", orgs);

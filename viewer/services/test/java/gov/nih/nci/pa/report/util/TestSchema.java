@@ -75,7 +75,7 @@ public class TestSchema {
         sp.setIdentifier("NCI-2009-00001");
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setUserLastCreated("testUser");
-        sp.setDateLastCreated(PAUtil.dateStringToTimestamp("1/1/2000"));
+        sp.setDateLastCreated(PAUtil.dateStringToTimestamp("1/1/2009"));
         addUpdObject(sp);
 
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();

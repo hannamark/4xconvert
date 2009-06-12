@@ -290,7 +290,7 @@ public class AverageMilestoneReportBean
                     equals(SubmissionTypeCode.AMENDMENT.name())) {
                 sql.append("  AND sp.submission_number > 1 ");
             }
-            sql.append(dateRangeSql("sm.milestone_date"));
+            sql.append(dateRangeSql(criteria, "sm.milestone_date"));
             sql.append(ctepSql(criteria));
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql.toString());

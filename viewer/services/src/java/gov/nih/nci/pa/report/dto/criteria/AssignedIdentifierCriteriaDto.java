@@ -18,9 +18,9 @@ public class AssignedIdentifierCriteriaDto extends AbstractCriteriaDto {
      * @param criteria criteria iso dto
      * @throws PAException exception
      */
-    public static void validate(AssignedIdentifierCriteriaDto criteria) throws PAException {
+    public static void validate(Object criteria) throws PAException {
         AbstractCriteriaDto.validate(criteria);
-        if (PAUtil.isStNull(criteria.getAssignedIdentifier())) {
+        if (PAUtil.isStNull(((AssignedIdentifierCriteriaDto) criteria).getAssignedIdentifier())) {
             throw new PAException("ERROR:  Identifier criteria not entered.");
         }
     }

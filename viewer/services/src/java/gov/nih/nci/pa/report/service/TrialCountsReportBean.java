@@ -78,15 +78,13 @@ package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
-import gov.nih.nci.pa.report.enums.TimeUnitsCode;
-import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -105,108 +103,35 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(ViewerHibernateSessionInterceptor.class)
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCriteriaDto, TrialCountsResultDto>
         implements TrialCountsLocal {
-
-    /** Enumerator used to sort by submission type. */
-    private static final int HASH_CONSTANT = 33;
 
     /**
      * {@inheritDoc}
      */
     public List<TrialCountsResultDto> get(StandardCriteriaDto criteria)
             throws PAException {
-        StandardCriteriaDto.validate(criteria);
-        TimeUnitsCode timeUnits = TimeUnitsCode.NONE;
-        Map<Group, Count> counts;
+        AbstractStandardCriteriaDto.validateDatesRequired(criteria);
+        Map<String, Count> counts;
         try {
             session = ViewerHibernateUtil.getCurrentSession();
             SQLQuery query = null;
-            StringBuffer sql = new StringBuffer("SELECT organization, date_last_created, submission_number ");
+            StringBuffer sql = new StringBuffer("SELECT organization, submission_number ");
             sql.append("FROM study_protocol AS sp "
                      + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
                      + "WHERE 1=1 ");
             sql.append(ctepSql(criteria));
-            sql.append(dateRangeSql("sp.date_last_created"));
-            logger.info("query = " + sql);
+            sql.append(dateRangeSql(criteria, "sp.date_last_created"));
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
-            counts = generateCounts(queryList, timeUnits);
+            counts = generateCounts(queryList);
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
         logger.info("Leaving get(TrialCountsCriteriaDto), returning " + counts.size() + " object(s).");
-        return generateIsoResultList(counts, timeUnits);
-    }
-
-    /**
-     * Used to group counts.
-     */
-    class Group implements Comparable<TrialCountsReportBean.Group> {
-
-        final String org;
-        final Timestamp ts;
-
-        /**
-         * @param org organization
-         * @param ts creation date
-         * @param tu time units
-         */
-        Group(String org, Timestamp ts, TimeUnitsCode tu) {
-            int year = 1;
-            int month = 1;
-            int day = 1;
-            if (TimeUnitsCode.DAY.equals(tu)) {
-                year = ReportUtil.getYear(ts);
-                month = ReportUtil.getMonth(ts);
-                day = ReportUtil.getDay(ts);
-            }
-            if (TimeUnitsCode.MONTH.equals(tu)) {
-                year = ReportUtil.getYear(ts);
-                month = ReportUtil.getMonth(ts);
-            }
-            if (TimeUnitsCode.YEAR.equals(tu)) {
-                year = ReportUtil.getYear(ts);
-            }
-            this.org = (org == null) ? "" : org.trim();
-            this.ts = ReportUtil.makeTimestamp(year, month, day);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if ((obj == null) || (obj.getClass() != this.getClass())) {
-                return false;
-            }
-            Group test = (Group) obj;
-            return ((ts == test.ts) || (ts != null && ts.equals(test.ts))
-                    && (org == test.org || (org != null && org.equals(test.org))));
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-            int hash = HASH_CONSTANT * ts.hashCode();
-            hash += org.hashCode();
-            return hash;
-        }
-        /**
-         * {@inheritDoc}
-         */
-        public int compareTo(Group o) {
-            if (org.compareTo(o.org) != 0) {
-                return org.compareTo(o.org);
-            }
-            return ts.compareTo(o.ts);
-        }
+        return generateIsoResultList(counts);
     }
 
     /**
@@ -215,51 +140,38 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
     private class Count {
         int initial = 0;
         int amendment = 0;
+
+        void increment(Integer submissionNumber) {
+            if (submissionNumber == null) { return; }
+            if (submissionNumber == 1) { initial++; }
+            if (submissionNumber > 1) { amendment++; }
+        }
     }
 
-    @SuppressWarnings("PMD.CyclomaticComplexity")
-    private Map<Group, Count> generateCounts(List<Object[]> sqlList, TimeUnitsCode timeUnits) {
-        HashMap<Group, Count> counts = new HashMap<Group, Count>();
+    private Map<String, Count> generateCounts(List<Object[]> sqlList) {
+        HashMap<String, Count> counts = new HashMap<String, Count>();
 
         for (Object[] sr : sqlList) {
-            Group gp = new TrialCountsReportBean.Group((String) sr[0], (Timestamp) sr[1], timeUnits);
-            Integer sn = (Integer) sr[2];
-            if (!counts.containsKey(gp)) {
-                counts.put(gp, new Count());
+            String group = (sr[0] == null) ? "" : (String) sr[0];
+            Integer subNum = (Integer) sr[1];
+            if (!counts.containsKey(group)) {
+                counts.put(group, new Count());
             }
-            if (sn != null && sn.equals(1)) {
-                counts.get(gp).initial++;
-            }
-            if ((sn != null) && (sn > 1)) {
-                counts.get(gp).amendment++;
-            }
+            counts.get(group).increment(subNum);
         }
         return counts;
     }
 
-    @SuppressWarnings("unchecked")
-    private List<TrialCountsResultDto> generateIsoResultList(Map<Group, Count> counts, TimeUnitsCode timeUnits)
+    private List<TrialCountsResultDto> generateIsoResultList(Map<String, Count> counts)
             throws PAException {
-        ArrayList<Group> group = new ArrayList<Group>();
+        ArrayList<String> group = new ArrayList<String>();
         group.addAll(counts.keySet());
         Collections.sort(group);
 
         ArrayList<TrialCountsResultDto> isoList = new ArrayList<TrialCountsResultDto>();
-        for (Group g : counts.keySet()) {
+        for (String g : counts.keySet()) {
             TrialCountsResultDto iso = new TrialCountsResultDto();
-            if (timeUnits == TimeUnitsCode.DAY) {
-                iso.setDay(IntConverter.convertToInt(ReportUtil.getDay(g.ts)));
-                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.ts)));
-                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.ts)));
-            }
-            if (timeUnits == TimeUnitsCode.MONTH) {
-                iso.setMonth(IntConverter.convertToInt(ReportUtil.getMonth(g.ts)));
-                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.ts)));
-            }
-            if (timeUnits == TimeUnitsCode.YEAR) {
-                iso.setYear(IntConverter.convertToInt(ReportUtil.getYear(g.ts)));
-            }
-            iso.setOrganization(StConverter.convertToSt(g.org));
+            iso.setOrganization(StConverter.convertToSt(g));
             iso.setInitial(IntConverter.convertToInt(counts.get(g).initial));
             iso.setAmendment(IntConverter.convertToInt(counts.get(g).amendment));
             isoList.add(iso);

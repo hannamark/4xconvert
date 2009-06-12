@@ -78,6 +78,8 @@ package gov.nih.nci.pa.report.dto.criteria;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * @author Hugh Reinhart
@@ -86,6 +88,18 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 public class SubmissionTypeCriteriaDto extends AbstractStandardCriteriaDto {
 
     private Cd submissionType = CdConverter.convertToCd(null);
+
+    /**
+     * Validate that the criteria is good.
+     * @param criteria criterie iso dto
+     * @throws PAException exception
+     */
+    public static void validate(Object criteria) throws PAException {
+        AbstractStandardCriteriaDto.validateDatesRequired(criteria);
+        if (PAUtil.isCdNull(((SubmissionTypeCriteriaDto) criteria).getSubmissionType())) {
+            throw new PAException("ERROR:  Submission type criteria must be set.");
+        }
+    }
 
     /**
      * @return the submissionType

@@ -147,7 +147,7 @@ public final class TrialListResultWebDto {
             webDto.setSubmitterOrg(Integer.toString(amendment));
             resultList.add(webDto);
         }
-        if (SubmissionTypeCode.BOTH.equals(subTypeCriteria)) {
+        if (includeOverallTotal(subTypeCriteria)) {
             TrialListResultWebDto webDto = new TrialListResultWebDto();
             webDto.setAssignedIdentifier(TOTAL_BOTH);
             webDto.setSubmissionType(SUB_TYPE_BOTH);
@@ -158,11 +158,15 @@ public final class TrialListResultWebDto {
     }
 
     private static boolean includeOriginalTotal(SubmissionTypeCode code) {
-        return SubmissionTypeCode.ORIGINAL.equals(code) || SubmissionTypeCode.BOTH.equals(code);
+        return code != null && (SubmissionTypeCode.ORIGINAL.equals(code) || SubmissionTypeCode.BOTH.equals(code));
     }
 
     private static boolean includeAmendmentTotal(SubmissionTypeCode code) {
-        return SubmissionTypeCode.AMENDMENT.equals(code) || SubmissionTypeCode.BOTH.equals(code);
+        return code != null && (SubmissionTypeCode.AMENDMENT.equals(code) || SubmissionTypeCode.BOTH.equals(code));
+    }
+
+    private static boolean includeOverallTotal(SubmissionTypeCode code) {
+        return code != null && SubmissionTypeCode.BOTH.equals(code);
     }
 
     /**

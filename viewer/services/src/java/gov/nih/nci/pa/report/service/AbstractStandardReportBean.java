@@ -80,6 +80,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 
@@ -98,29 +99,41 @@ public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStanda
         extends AbstractReportBean<CRITERIA, RESULT> {
 
     /**
+     * @param criteria criteria
      * @param field field to run date checks
      * @return date range clauses
      */
-    protected static String dateRangeSql(String field) {
-        return "AND " + field + " >= :LOW AND " + field + " < :HIGH ";
+    protected String dateRangeSql(AbstractStandardCriteriaDto criteria, String field) {
+        StringBuffer sql = new StringBuffer();
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
+            sql.append("AND " + field + " >= :LOW ");
+        }
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
+            sql.append("AND " + field + " < :HIGH ");
+        }
+        return sql.toString();
     }
 
     /**
      * @param criteria criteria
      * @param query query
      */
-    protected void setDateRangeParameters(CRITERIA criteria, SQLQuery query) {
-        query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
-        Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
-        query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
-            ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
+    protected void setDateRangeParameters(AbstractStandardCriteriaDto criteria, SQLQuery query) {
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
+            query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
+        }
+        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
+            Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
+            query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
+                    ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));
+        }
     }
 
     /**
      * @param criteria criteria
      * @return sql to include or exclude ctep trials as appropriate
      */
-    protected String ctepSql(CRITERIA criteria) {
+    protected String ctepSql(AbstractStandardCriteriaDto criteria) {
         if (BlConverter.covertToBool(criteria.getCtep())) {
             return "";
         }
