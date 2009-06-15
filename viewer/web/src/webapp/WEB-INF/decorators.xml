@@ -7,16 +7,14 @@
         <pattern>/styles/*</pattern>
         <pattern>/scripts/*</pattern>
         <pattern>/images/*</pattern>
-        <pattern>/dojo/*</pattern>
-        <pattern>/struts/*</pattern>
-        <pattern>*popup*</pattern>  
-        <pattern>*Ajax.action*</pattern>  
-        <pattern>*ajax*</pattern>
-        <pattern>*nodecor*</pattern>   
-        <pattern>*lookup*</pattern>
         <pattern>/helpDocs/*</pattern> 
     </excludes>
 
+
+    <decorator name="mainNoHelp" page="mainNoHelp.jsp">
+        <pattern>*home.action</pattern>
+        <pattern>*welcome.action</pattern>
+    </decorator>
     <decorator name="main" page="main.jsp">
         <pattern>/*</pattern>
     </decorator>

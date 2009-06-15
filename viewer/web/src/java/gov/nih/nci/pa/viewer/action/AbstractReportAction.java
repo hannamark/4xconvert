@@ -111,6 +111,9 @@ public abstract class AbstractReportAction<CRITERIA, RESULT> extends AbstractVie
      * @return action result
      */
     public String getReport() {
+        if (getUserRole() == null) {
+            return ViewerConstants.AR_LOGOUT;
+        }
         ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.RESULT_LIST, resultList);
         return SUCCESS;
     }

@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:set var="topic" scope="request" value="welcome"/> 
-<head>
-</head>
+<c:set var="topic" scope="request" value="run_reports"/> 
 <body>
-    CTRP Participating Site Reports have not yet been implemented.
+    <p class="intro">
+        CTRP Participating Site Reports have not yet been implemented.
+    </p>
 </body>

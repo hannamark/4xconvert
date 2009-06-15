@@ -1,9 +1,5 @@
-<!DOCTYPE html PUBLIC 
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<html>
-<c:set var="topic" scope="request" value="TrialProcessing"/> 
+<c:set var="topic" scope="request" value="run_trial_process"/> 
 <head>
 <title><fmt:message key="trialProcessing.header" /></title>
 <s:head />
@@ -114,4 +110,3 @@ function handleReset(){
         </s:if>
     </s:form>
 </body>
-</html>

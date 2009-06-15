@@ -98,4 +98,7 @@ public final class ViewerConstants {
     public static final String RESULT_LIST = "displayTagList";
     /** Attribute used to store the time units for report in session. */
     public static final String RESULT_TIME_UNITS = "timeUnitsCode";
+
+    /** Action result for the global log out result. */
+    public static final String AR_LOGOUT = "logout";
 }

@@ -2,18 +2,18 @@
 <li class="stdnav"><div>NCI CTRP Viewer</div>
     <ul>
         <c:choose>
-           <c:when test="${requestScope.topic == 'welcome'}">
-              <li><a href="home.action" class="selected">Home</a></li>
+           <c:when test="${requestScope.topic == 'run_reports'}">
+              <li><a href="welcome.action" class="selected">Home</a></li>
            </c:when>
            <c:otherwise>
-              <li><a href="home.action">Home</a></li>
+              <li><a href="welcome.action">Home</a></li>
            </c:otherwise>
         </c:choose>
         <c:choose>
             <c:when test="${pageContext.request.remoteUser != null}">
                 <c:if test="${(sessionScope.viewerRole == 'Abstractor')}">
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'SummaryOfSubmission'}">
+                    <c:when test="${requestScope.topic == 'run_summary_submission'}">
                        <li><a href="criteriaSummaryOfSubmission.action" class="selected">Summary of Submission</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -21,7 +21,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'TrialProcessing'}">
+                    <c:when test="${requestScope.topic == 'run_trial_process'}">
                        <li><a href="criteriaTrialProcessing.action" class="selected">Trial Processing</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -29,7 +29,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'AverageMilestone'}">
+                    <c:when test="${requestScope.topic == 'run_portfolio_average'}">
                        <li><a href="criteriaAverageMilestone.action" class="selected">Portfolio Average Milestone</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -37,7 +37,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'SubmissionByDate'}">
+                    <c:when test="${requestScope.topic == 'run_submitted_date'}">
                        <li><a href="criteriaSubmissionByDate.action" class="selected">Trials Submitted by Date</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -45,7 +45,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'SubmissionByInstitution'}">
+                    <c:when test="${requestScope.topic == 'run_submitted_institution'}">
                        <li><a href="criteriaSubmissionByInstitution.action" class="selected">Trials Submitted by Institution</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -53,7 +53,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'CurrentMilestone'}">
+                    <c:when test="${requestScope.topic == 'run_current_milestone'}">
                        <li><a href="criteriaCurrentMilestone.action" class="selected">Current Milestone</a></li> 
                     </c:when>
                     <c:otherwise>

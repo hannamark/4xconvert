@@ -97,6 +97,9 @@ public abstract class AbstractViewerAction extends ActionSupport {
      */
     @Override
     public String execute() {
+        if (getUserRole() == null) {
+            return ViewerConstants.AR_LOGOUT;
+        }
         return SUCCESS;
     }
 

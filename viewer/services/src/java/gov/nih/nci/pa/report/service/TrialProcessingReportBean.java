@@ -122,6 +122,10 @@ public class TrialProcessingReportBean
         MilestoneCode.SUBMISSION_RECEIVED.getName(),
         MilestoneCode.SUBMISSION_ACCEPTED.getName(),
         MilestoneCode.SUBMISSION_REJECTED.getName(),
+        MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getName(),
+        MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getName(),
+        MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getName(),
+        MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getName(),
         MilestoneCode.READY_FOR_QC.getName(),
         MilestoneCode.QC_START.getName(),
         MilestoneCode.QC_COMPLETE.getName(),
@@ -196,7 +200,7 @@ public class TrialProcessingReportBean
                        + "  INNER JOIN study_protocol AS sp ON (sm.study_protocol_identifier = sp.identifier) "
                        + "WHERE sp.assigned_identifier = :ASSIGNED_IDENTIFIER "
                        + "  AND sm.milestone_code IN (:REPORTING_MILESTONES) "
-                       + "ORDER BY sp.submission_number, sm.identifier ";
+                       + "ORDER BY sp.submission_number, sm.milestone_date, sm.identifier ";
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql);
             setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());

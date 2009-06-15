@@ -9,7 +9,11 @@
     <package name="default" extends="struts-default">
         <global-results>
             <result name="applicationError">error.jsp</result>
-        </global-results>     
+            <result name="logout" type="redirectAction">
+                <param name="namespace">/</param>
+                <param name="actionName">logout</param>
+            </result>
+        </global-results> 
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
         </action>

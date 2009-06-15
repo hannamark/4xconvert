@@ -21,6 +21,7 @@
     <div id="main">    
        <div id="contentwrapper">
            <div id="content">
+               <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
                <decorator:body/>
            </div> 
            <div class="clear"></div>
