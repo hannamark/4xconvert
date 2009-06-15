@@ -305,7 +305,7 @@ public class StudyMilestoneServiceBean
             if (!(mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode()) 
                      && mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode()))) {
                  throw new PAException("Ready for QC can only be recorded after " 
-                         + "Administrative and Sceintific processing are completed");
+                         + "Administrative and Scientific processing are completed");
              }
          } 
        
@@ -315,7 +315,7 @@ public class StudyMilestoneServiceBean
             List<String> mileStones = getExistingMilestones(existingDtoList); 
              if (mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode()) 
                  && !mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
-                 throw new PAException("Sceintific Processing Start Date cannot be recorded" 
+                 throw new PAException("Scientific Processing Start Date cannot be recorded" 
                          + " if Administrative Processing started but was not completed");
              }
          } 
@@ -326,7 +326,7 @@ public class StudyMilestoneServiceBean
              if (mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode()) 
                      && !mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
                  throw new PAException("Administrative Processing Start Date cannot be recorded" 
-                         + " if Sceintific Processing started but was not completed");
+                         + " if Scientific Processing started but was not completed");
              }
            } 
         
@@ -343,8 +343,8 @@ public class StudyMilestoneServiceBean
             List<String> mileStones = getExistingMilestones(existingDtoList); 
             if (!canBePaired(mileStones, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode(),
                     MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
-                throw new PAException("Sceintific Processing Completion Date must be preceded by " 
-                          + " Sceintific Processing Start Date");
+                throw new PAException("Scientific Processing Completion Date must be preceded by " 
+                          + " Scientific Processing Start Date");
             }
             } 
         
