@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.test.integration.test;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
@@ -8,6 +9,14 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected static final String DEFAULT_EMAIL = "default@example.com";
     private static int PAGE_SIZE = 20;
     private static final Logger LOG = Logger.getLogger(AbstractPoWebTest.class);
+
+    protected static final String SELECT_A_COUNTRY = "--Select a Country--";
+
+    protected static final String SELECT_A_STATUS = "--Select a Status--";
+
+    protected static final String COUNTRY_MUST_BE_SET = "Country must be set";
+
+    protected static final String STATUS_MUST_BE_SET = "Status must be set";
 
     protected void login(String username, String password) {
         selenium.open("/po-web");
@@ -48,7 +57,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         waitForPageToLoad();
         waitForTelecomFormsToLoad();
     }
-    
+
     protected void waitForTelecomFormsToLoad() {
         waitForElementById("emailEntry_value", 10);
         waitForElementById("phoneEntry_value", 10);
@@ -56,7 +65,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         waitForElementById("ttyEntry_value", 10);
         waitForElementById("urlEntry_value", 10);
     }
-    
+
     private void goHome() {
         if (!isLoggedIn()) {
             loginAsCurator();
@@ -255,14 +264,75 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected void verifyPostalAddress(ENTITYTYPE type) {
         assertEquals("123 abc ave.", selenium.getValue("curateEntityForm_" + type.name()
                 + "_postalAddress_streetAddressLine"));
-        assertEquals("", selenium.getValue("curateEntityForm_" + type.name()
-                + "_postalAddress_deliveryAddressLine"));
+        assertEquals("", selenium.getValue("curateEntityForm_" + type.name() + "_postalAddress_deliveryAddressLine"));
         assertEquals("mycity", selenium.getValue("curateEntityForm_" + type.name()
                 + "_postalAddress_cityOrMunicipality"));
-        assertEquals("VA", selenium.getValue(type.name()
-                + ".postalAddress.stateOrProvince"));
-        assertEquals("12345", selenium.getValue("curateEntityForm_" + type.name()
-                + "_postalAddress_postalCode"));
+        assertEquals("VA", selenium.getValue(type.name() + ".postalAddress.stateOrProvince"));
+        assertEquals("12345", selenium.getValue("curateEntityForm_" + type.name() + "_postalAddress_postalCode"));
+    }
+
+    protected void createPerson(String status, String prefix, String fName, String mName, String lName, String suffix,
+            Address address, String email, String phone, String url, String fax) {
+        // wait for ajax page content to load
+        waitForElementById("emailEntry_value", 10);
+        waitForElementById("phoneEntry_value", 10);
+        waitForElementById("urlEntry_value", 10);
+        waitForElementById("faxEntry_value", 10);
+        // add person info
+        selenium.select("curateEntityForm.person.statusCode", "label=" + status);
+        selenium.type("curateEntityForm_person_prefix", prefix);
+        selenium.type("curateEntityForm_person_firstName", fName);
+        selenium.type("curateEntityForm_person_middleName", mName);
+        selenium.type("curateEntityForm_person_lastName", lName);
+        selenium.type("curateEntityForm_person_suffix", suffix);
+        // add postal addresss info
+        selenium.type("curateEntityForm_person_postalAddress_streetAddressLine", address.getStreetAddressLine());
+        selenium.type("curateEntityForm_person_postalAddress_deliveryAddressLine", address.getDeliveryAddressLine());
+        selenium.type("curateEntityForm_person_postalAddress_postalCode", address.getPostalCode());
+        selenium.select("curateEntityForm.person.postalAddress.country", "label=" + address.getCountry());
+        waitForElementById("person.postalAddress.stateOrProvince", 10);
+        selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", address.getCityOrMunicipality());
+        selenium.select("person.postalAddress.stateOrProvince", "value=" + address.getStateOrProvince());
+        // add contact info
+        inputContactInfo(email, phone, url, fax);
+        //save the person
+        clickAndWaitSaveButton();
+        //verify person created message
+        assertTrue("Success message is missing", selenium.isTextPresent("Person was successfully created"));
+    }
+
+    private void inputContactInfo(String email, String phone, String url, String fax) {
+        if (StringUtils.isNotBlank(email)) {
+            selenium.type("emailEntry_value", email);
+            selenium.click("email-add");
+            waitForElementById("email-entry-0", 5);
+        }
+        if (StringUtils.isNotBlank(phone)) {
+            selenium.type("phoneEntry_value", phone);
+            selenium.click("phone-add");
+            waitForElementById("phone-entry-0", 5);
+        }
+        if (StringUtils.isNotBlank(url)) {
+            selenium.type("urlEntry_value", url);
+            selenium.click("url-add");
+            waitForElementById("url-entry-0", 5);
+        }
+        if (StringUtils.isNotBlank(fax)) {
+            selenium.type("faxEntry_value", fax);
+            selenium.click("fax-add");
+            waitForElementById("fax-entry-0", 5);
+        }
+    }
+
+    public Address getAddress() {
+        return new Address("123 Main Street", "40 5th Street", "Ashburn", "VA", "20147", "United States");
+    }
+
+    protected String createPerson() {
+        String lname = "lastName" + Long.toString(System.currentTimeMillis());
+        createPerson("PENDING", "Dr", "Jakson", "L", lname, "III",
+                getAddress(), "sample@email.com", "703-111-2345", "http://www.createperson.com", "703-111-1234");
+        return lname;
     }
 
     public enum ENTITYTYPE {

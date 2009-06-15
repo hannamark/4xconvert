@@ -17,15 +17,15 @@ public class CreateOrganizationTest extends AbstractPoWebTest {
         assertEquals("United States", selenium.getSelectedLabel("curateEntityForm.organization.postalAddress.country"));
         verifyDefaultFieldErrorMessages();
         
-        selenium.select("curateEntityForm.organization.statusCode", "label=--Select a Status--");
-        selenium.select("curateEntityForm.organization.postalAddress.country", "label=--Select a Country--");
+        selenium.select("curateEntityForm.organization.statusCode", "label=" + SELECT_A_STATUS);
+        selenium.select("curateEntityForm.organization.postalAddress.country", "label=" + SELECT_A_COUNTRY);
         clickAndWaitSaveButton();
         assertEquals("", selenium.getSelectedValue("curateEntityForm.organization.statusCode"));
-        assertEquals("--Select a Status--", selenium.getSelectedLabel("curateEntityForm.organization.statusCode"));
-        assertEquals("Status must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.organization.statusCode']/div"));
+        assertEquals(SELECT_A_STATUS, selenium.getSelectedLabel("curateEntityForm.organization.statusCode"));
+        assertEquals(STATUS_MUST_BE_SET, selenium.getText("//div[@id='wwerr_curateEntityForm.organization.statusCode']/div"));
         assertEquals("", selenium.getSelectedValue("curateEntityForm.organization.postalAddress.country"));
-        assertEquals("--Select a Country--", selenium.getSelectedLabel("curateEntityForm.organization.postalAddress.country"));
-        assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.organization.postalAddress.country']/div"));
+        assertEquals(SELECT_A_COUNTRY, selenium.getSelectedLabel("curateEntityForm.organization.postalAddress.country"));
+        assertEquals(COUNTRY_MUST_BE_SET, selenium.getText("//div[@id='wwerr_curateEntityForm.organization.postalAddress.country']/div"));
         verifyDefaultFieldErrorMessages();
     }
 

@@ -8,14 +8,17 @@ package gov.nih.nci.coppa.test.integration.test;
  *
  */
 public class SearchPersonTest extends AbstractPoWebTest {
-	private String lastName="lastName"+Long.toString(System.currentTimeMillis());
+	private String lastName ="lastName" + Long.toString(System.currentTimeMillis());
 	private String firstName = "Jakson";
+	private String email = "email@email.com";
 	private String poId = null;
 	
 	public void testSearchPerson(){
 		loginAsCurator();
         openCreatePerson();
-        addPerson();
+        
+        createPerson("PENDING", "Dr", firstName, "L", lastName, "III",
+                getAddress(), email, "703-111-2345", "http://www.createperson.com", "703-111-1234");
         openSearchPerson();
         verifySearchForm();
         searchByName();
@@ -40,7 +43,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
 	}
 
 	private void searchByEmail() {
-    	selenium.type("searchPersonForm_criteria_email", "email@emial.com");
+    	selenium.type("searchPersonForm_criteria_email", email);
     	clickAndWaitButton("submitSearchOrganizationForm");
 		verify();
 	}
@@ -81,42 +84,6 @@ public class SearchPersonTest extends AbstractPoWebTest {
         assertTrue("Person email is missing", selenium.isElementPresent("searchPersonForm_criteria_email"));
         assertTrue("Organization Affiliation is missing", selenium.isElementPresent("searchPersonForm_criteria_org"));
         assertTrue("Investigator CTEP Identifier is missing", selenium.isElementPresent("searchPersonForm_criteria_ctepId"));
-	}
-    
-    private void addPerson(){
-        waitForElementById("emailEntry_value", 10); //email is in ajax div. wait for it.
-    	selenium.select("curateEntityForm.person.statusCode", "label=PENDING");
-		selenium.type("curateEntityForm_person_prefix", "Dr");
-		selenium.type("curateEntityForm_person_firstName", firstName);
-		selenium.type("curateEntityForm_person_middleName", "L");
-		selenium.type("curateEntityForm_person_lastName", lastName);
-		selenium.type("curateEntityForm_person_suffix", "III");
-		selenium.type("curateEntityForm_person_postalAddress_streetAddressLine", "123 Main Street");
-		selenium.type("curateEntityForm_person_postalAddress_deliveryAddressLine", "40 5th Street");
-        selenium.type("curateEntityForm_person_postalAddress_postalCode", "20147");
-        selenium.select("curateEntityForm.person.postalAddress.country", "label=United States");        
-        waitForElementById("person.postalAddress.stateOrProvince", 10);
-        selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", "Ashburn");
-        selenium.select("person.postalAddress.stateOrProvince", "label=VA (VIRGINIA)");
-        
-		selenium.type("emailEntry_value", "email@emial.com");
-		selenium.click("email-add");
-        waitForElementById("email-entry-0", 5);
-        
-		selenium.type("phoneEntry_value", "703-234-2345");
-		selenium.click("phone-add");
-        waitForElementById("phone-entry-0", 5);
-        
-		selenium.type("urlEntry_value", "http://www.site.com");
-		selenium.click("url-add");
-        waitForElementById("url-entry-0", 5);
-        
-		selenium.type("faxEntry_value", "703-909-1234");
-		selenium.click("fax-add");
-        waitForElementById("fax-entry-0", 5);
-        
-		clickAndWaitSaveButton();
-		assertTrue("Person was successfully created!", selenium.isTextPresent("Person was successfully created"));
 	}
     
 	private void clear() {

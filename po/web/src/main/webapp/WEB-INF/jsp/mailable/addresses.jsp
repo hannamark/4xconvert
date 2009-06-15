@@ -4,7 +4,7 @@
 No Postal Address(es) found.
 </c:if>
 <c:forEach items="${mailable.postalAddresses}" var="addy" varStatus="e">
-<fieldset>
+<fieldset id="postalAddress${e.index}">
     <legend>Address ${e.index + 1}</legend>
     <div>
     <po:address address="${addy}"/>
