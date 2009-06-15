@@ -88,7 +88,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-ejb-client</artifactId>
-            <version>2.1-milestone1</version>
+            <version>2.1-milestone3</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

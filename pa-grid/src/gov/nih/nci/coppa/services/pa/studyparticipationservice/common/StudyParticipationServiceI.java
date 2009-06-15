@@ -46,7 +46,7 @@ public interface StudyParticipationServiceI {
    */
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.StudyParticipation getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.StudyParticipation get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 

@@ -1,11 +1,7 @@
 package gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.pa.Id;
-import gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus;
-import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudySiteAccrualStatusEjb;
@@ -60,11 +56,11 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     /**
      * {@inheritDoc}
      */
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getCurrentStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyParticipationId);
-            List<StudySiteAccrualStatusDTO> dtoList = ejb.getCurrentStudySiteAccrualStatusByStudyParticipation(iiDto);
-            return StudySiteAccrualStatusTransformer.INSTANCE.convert(dtoList);
+            StudySiteAccrualStatusDTO dto = ejb.getCurrentStudySiteAccrualStatusByStudyParticipation(iiDto);
+            return StudySiteAccrualStatusTransformer.INSTANCE.toXml(dto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);

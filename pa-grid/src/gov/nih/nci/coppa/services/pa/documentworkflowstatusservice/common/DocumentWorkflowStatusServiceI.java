@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  */
 public interface DocumentWorkflowStatusServiceI {
 
-  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 

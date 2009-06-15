@@ -29,7 +29,7 @@ public class StudyIndIdeServiceImpl extends StudyIndIdeServiceImplBase {
     throw new RemoteException("Not yet implemented");
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyIndlde[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyIndlde getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       return impl.getCurrentByStudyProtocol(studyProtocolId);
   }
 

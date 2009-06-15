@@ -1,8 +1,6 @@
 package gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.service;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority;
-import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 
@@ -25,8 +23,8 @@ public class StudyRegulatoryAuthorityServiceImpl extends StudyRegulatoryAuthorit
         return impl.getByStudyProtocol(studyProtocolId);
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        return impl.getCurrentByStudyProtocol(studyProtocolId);
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+      return impl.getCurrentByStudyProtocol(studyProtocolId);
     }
 
   public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

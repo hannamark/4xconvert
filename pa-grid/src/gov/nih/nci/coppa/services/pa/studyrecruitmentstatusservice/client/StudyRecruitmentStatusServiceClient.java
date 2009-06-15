@@ -84,12 +84,12 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
         System.out.println("getting current by study protocol");
         Id id = new Id();
         id.setExtension("27426");
-        StudyRecruitmentStatus[] result = client.getCurrentByStudyProtocol(id);
+        StudyRecruitmentStatus result = client.getCurrentByStudyProtocol(id);
         printResults(result);
 
     }
 
-    private static void printResults(StudyRecruitmentStatus[] result) {
+    private static void printResults(StudyRecruitmentStatus... result) {
         if (result != null) {
             System.out.println(result.length + " results found");
             for (int i = 0; i < result.length; i++) {
@@ -126,7 +126,7 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetCurrentByStudyProtocolRequest();

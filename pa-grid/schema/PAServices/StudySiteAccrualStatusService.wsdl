@@ -139,7 +139,7 @@
       <element name="GetCurrentStudySiteAccrualStatusByStudyParticipationResponse">
         <complexType>
           <sequence>
-            <element ref="ns5:StudySiteAccrualStatus" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns5:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>

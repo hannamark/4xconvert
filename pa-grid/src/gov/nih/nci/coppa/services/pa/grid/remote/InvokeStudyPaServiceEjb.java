@@ -57,9 +57,9 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO> extends InvokePaServi
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<DTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+    public DTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            return (List<DTO>) getLocator().getStudyPaService(getType()).getCurrentByStudyProtocol(studyProtocolIi);
+            return (DTO) getLocator().getStudyPaService(getType()).getCurrentByStudyProtocol(studyProtocolIi);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

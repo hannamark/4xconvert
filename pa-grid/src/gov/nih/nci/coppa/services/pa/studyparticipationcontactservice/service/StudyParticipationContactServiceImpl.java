@@ -120,8 +120,8 @@ public class StudyParticipationContactServiceImpl extends StudyParticipationCont
     /**
      * {@inheritDoc}
      */
-  public gov.nih.nci.coppa.services.pa.StudyParticipationContact[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        return impl.getCurrentByStudyProtocol(studyProtocolId);
+  public gov.nih.nci.coppa.services.pa.StudyParticipationContact getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+      return impl.getCurrentByStudyProtocol(studyProtocolId);
     }
 
     /**

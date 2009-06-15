@@ -98,7 +98,6 @@ public class StudyIndIdeServiceClient extends StudyIndIdeServiceClientBase imple
         }
     }
 
-
   public gov.nih.nci.coppa.services.pa.StudyIndlde[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
@@ -125,7 +124,7 @@ public class StudyIndIdeServiceClient extends StudyIndIdeServiceClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyIndlde[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyIndlde getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetCurrentByStudyProtocolRequest();

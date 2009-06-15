@@ -20,13 +20,11 @@ public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusSe
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
             throws PAException {
         try {
             StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
-            List<StudySiteAccrualStatusDTO> result =
-                    service.getCurrentStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
-            return result;
+            return service.getCurrentStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

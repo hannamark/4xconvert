@@ -145,7 +145,7 @@ public class StudyParticipationServiceClient extends StudyParticipationServiceCl
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyParticipation getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetCurrentByStudyProtocolRequest();

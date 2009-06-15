@@ -99,7 +99,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
         System.out.println("Getting current planned activity by study protocol");
         Id id = new Id();
         id.setExtension("27426");
-        printResults(client.getByStudyProtocol(id));
+        printResults(client.getCurrentByStudyProtocol(id));
     }
 
     private static void getPlannedEligibilityCriterion(PlannedActivityServiceClient client) throws RemoteException {
@@ -129,236 +129,174 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
 
     }
 
-    public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByArm(gov.nih.nci.coppa.services.pa.Id armId)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getByArm");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequestArmId armIdContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequestArmId();
-            armIdContainer.setId(armId);
-            params.setArmId(armIdContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmResponse boxedResult =
-                    portType.getByArm(params);
-            return boxedResult.getPlannedActivity();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByArm(gov.nih.nci.coppa.services.pa.Id armId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByArm");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequestArmId armIdContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequestArmId();
+    armIdContainer.setId(armId);
+    params.setArmId(armIdContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmResponse boxedResult = portType.getByArm(params);
+    return boxedResult.getPlannedActivity();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion[] getPlannedEligibilityCriterionByStudyProtocol(
-            gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getPlannedEligibilityCriterionByStudyProtocol");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolResponse boxedResult =
-                    portType.getPlannedEligibilityCriterionByStudyProtocol(params);
-            return boxedResult.getPlannedEligibilityCriterion();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion[] getPlannedEligibilityCriterionByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getPlannedEligibilityCriterionByStudyProtocol");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolResponse boxedResult = portType.getPlannedEligibilityCriterionByStudyProtocol(params);
+    return boxedResult.getPlannedEligibilityCriterion();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion getPlannedEligibilityCriterion(
-            gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getPlannedEligibilityCriterion");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionResponse boxedResult =
-                    portType.getPlannedEligibilityCriterion(params);
-            return boxedResult.getPlannedEligibilityCriterion();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion getPlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getPlannedEligibilityCriterion");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionResponse boxedResult = portType.getPlannedEligibilityCriterion(params);
+    return boxedResult.getPlannedEligibilityCriterion();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion createPlannedEligibilityCriterion(
-            gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion plannedEligibilityCriterion)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "createPlannedEligibilityCriterion");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion plannedEligibilityCriterionContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion();
-            plannedEligibilityCriterionContainer.setPlannedEligibilityCriterion(plannedEligibilityCriterion);
-            params.setPlannedEligibilityCriterion(plannedEligibilityCriterionContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionResponse boxedResult =
-                    portType.createPlannedEligibilityCriterion(params);
-            return boxedResult.getPlannedEligibilityCriterion();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion createPlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion plannedEligibilityCriterion) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"createPlannedEligibilityCriterion");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion plannedEligibilityCriterionContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion();
+    plannedEligibilityCriterionContainer.setPlannedEligibilityCriterion(plannedEligibilityCriterion);
+    params.setPlannedEligibilityCriterion(plannedEligibilityCriterionContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreatePlannedEligibilityCriterionResponse boxedResult = portType.createPlannedEligibilityCriterion(params);
+    return boxedResult.getPlannedEligibilityCriterion();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion updatePlannedEligibilityCriterion(
-            gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion plannedEligibilityCriterion)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "updatePlannedEligibilityCriterion");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion plannedEligibilityCriterionContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion();
-            plannedEligibilityCriterionContainer.setPlannedEligibilityCriterion(plannedEligibilityCriterion);
-            params.setPlannedEligibilityCriterion(plannedEligibilityCriterionContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionResponse boxedResult =
-                    portType.updatePlannedEligibilityCriterion(params);
-            return boxedResult.getPlannedEligibilityCriterion();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion updatePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion plannedEligibilityCriterion) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"updatePlannedEligibilityCriterion");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion plannedEligibilityCriterionContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionRequestPlannedEligibilityCriterion();
+    plannedEligibilityCriterionContainer.setPlannedEligibilityCriterion(plannedEligibilityCriterion);
+    params.setPlannedEligibilityCriterion(plannedEligibilityCriterionContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdatePlannedEligibilityCriterionResponse boxedResult = portType.updatePlannedEligibilityCriterion(params);
+    return boxedResult.getPlannedEligibilityCriterion();
     }
+  }
 
-    public void deletePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "deletePlannedEligibilityCriterion");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionResponse boxedResult =
-                    portType.deletePlannedEligibilityCriterion(params);
-        }
+  public void deletePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"deletePlannedEligibilityCriterion");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionResponse boxedResult = portType.deletePlannedEligibilityCriterion(params);
     }
+  }
 
-    public void copyPlannedEligibilityStudyCriterions(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,
-            gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "copyPlannedEligibilityStudyCriterions");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestFromStudyProtocolId fromStudyProtocolIdContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestFromStudyProtocolId();
-            fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
-            params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestToStudyProtocolId toStudyProtocolIdContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestToStudyProtocolId();
-            toStudyProtocolIdContainer.setId(toStudyProtocolId);
-            params.setToStudyProtocolId(toStudyProtocolIdContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsResponse boxedResult =
-                    portType.copyPlannedEligibilityStudyCriterions(params);
-        }
+  public void copyPlannedEligibilityStudyCriterions(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"copyPlannedEligibilityStudyCriterions");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestFromStudyProtocolId fromStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestFromStudyProtocolId();
+    fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
+    params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestToStudyProtocolId toStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequestToStudyProtocolId();
+    toStudyProtocolIdContainer.setId(toStudyProtocolId);
+    params.setToStudyProtocolId(toStudyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsResponse boxedResult = portType.copyPlannedEligibilityStudyCriterions(params);
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getByStudyProtocol");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolResponse boxedResult =
-                    portType.getByStudyProtocol(params);
-            return boxedResult.getPlannedActivity();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByStudyProtocol");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
+    return boxedResult.getPlannedActivity();
     }
+  }
 
-    public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,
-            gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "copy");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestFromStudyProtocolId fromStudyProtocolIdContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestFromStudyProtocolId();
-            fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
-            params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestToStudyProtocolId();
-            toStudyProtocolIdContainer.setId(toStudyProtocolId);
-            params.setToStudyProtocolId(toStudyProtocolIdContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyResponse boxedResult = portType.copy(params);
-        }
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"copy");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestFromStudyProtocolId fromStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestFromStudyProtocolId();
+    fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
+    params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequestToStudyProtocolId();
+    toStudyProtocolIdContainer.setId(toStudyProtocolId);
+    params.setToStudyProtocolId(toStudyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyResponse boxedResult = portType.copy(params);
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedActivity[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getCurrentByStudyProtocol");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse boxedResult =
-                    portType.getCurrentByStudyProtocol(params);
-            return boxedResult.getPlannedActivity();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedActivity getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
+    return boxedResult.getPlannedActivity();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedActivity get(gov.nih.nci.coppa.services.pa.Id id)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "get");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse boxedResult = portType.get(params);
-            return boxedResult.getPlannedActivity();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedActivity get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"get");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse boxedResult = portType.get(params);
+    return boxedResult.getPlannedActivity();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedActivity create(
-            gov.nih.nci.coppa.services.pa.PlannedActivity plannedActivity) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "create");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequestPlannedActivity plannedActivityContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequestPlannedActivity();
-            plannedActivityContainer.setPlannedActivity(plannedActivity);
-            params.setPlannedActivity(plannedActivityContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateResponse boxedResult =
-                    portType.create(params);
-            return boxedResult.getPlannedActivity();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedActivity create(gov.nih.nci.coppa.services.pa.PlannedActivity plannedActivity) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"create");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequestPlannedActivity plannedActivityContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateRequestPlannedActivity();
+    plannedActivityContainer.setPlannedActivity(plannedActivity);
+    params.setPlannedActivity(plannedActivityContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CreateResponse boxedResult = portType.create(params);
+    return boxedResult.getPlannedActivity();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.PlannedActivity update(
-            gov.nih.nci.coppa.services.pa.PlannedActivity plannedActivity) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "update");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequestPlannedActivity plannedActivityContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequestPlannedActivity();
-            plannedActivityContainer.setPlannedActivity(plannedActivity);
-            params.setPlannedActivity(plannedActivityContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateResponse boxedResult =
-                    portType.update(params);
-            return boxedResult.getPlannedActivity();
-        }
+  public gov.nih.nci.coppa.services.pa.PlannedActivity update(gov.nih.nci.coppa.services.pa.PlannedActivity plannedActivity) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"update");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequestPlannedActivity plannedActivityContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateRequestPlannedActivity();
+    plannedActivityContainer.setPlannedActivity(plannedActivity);
+    params.setPlannedActivity(plannedActivityContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.UpdateResponse boxedResult = portType.update(params);
+    return boxedResult.getPlannedActivity();
     }
+  }
 
-    public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "delete");
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequest params =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequest();
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteResponse boxedResult =
-                    portType.delete(params);
-        }
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"delete");
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequest();
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
+  }
 
 }

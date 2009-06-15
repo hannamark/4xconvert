@@ -72,7 +72,6 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
         }
     }
 
-  
   private static void testGet(StudyOnholdServiceClient client) throws RemoteException {
       Id id = new Id();
       id.setExtension("1");
@@ -104,12 +103,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
       id.setExtension("1");
 
       System.out.println("Testing StudyOnhold.getCurrentByStudyProtocol()...");
-      StudyOnhold[] result = client.getCurrentByStudyProtocol(id);
-      if (result == null) {
-          System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
-      } else {
-          System.out.println("StudyOnhold record(s) found for StudyProtocol = 1.");
-      }
+      System.out.println(client.getCurrentByStudyProtocol(id));
   }
 
   private static void testIsOnhold(StudyOnholdServiceClient client) throws RemoteException {
@@ -151,7 +145,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOnhold[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequest();

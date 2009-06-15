@@ -80,13 +80,11 @@ public class GenericStudyPaGridServiceImpl<DTO extends StudyDTO, XML extends Obj
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public XML[] getCurrentByStudyProtocol(Id id) throws RemoteException {
-        XML[] xmls = null;
+    public XML getCurrentByStudyProtocol(Id id) throws RemoteException {
         try {
             Ii iiIso = IITransformer.INSTANCE.toDto(id);
-            List<DTO> dtos = (List<DTO>) getService().getCurrentByStudyProtocol(iiIso);
-            xmls = (XML[]) getTransformer().convert(dtos);
-            return xmls;
+            DTO dto = (DTO) getService().getCurrentByStudyProtocol(iiIso);
+            return (XML) getTransformer().toXml(dto);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);

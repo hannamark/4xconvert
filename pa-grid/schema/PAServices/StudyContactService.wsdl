@@ -158,7 +158,7 @@
       <element name="GetCurrentByStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns5:StudyContact" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns5:StudyContact" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>

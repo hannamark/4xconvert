@@ -139,7 +139,7 @@ public class DocumentServiceClient extends DocumentServiceClientBase implements 
     gov.nih.nci.coppa.services.pa.documentservice.stubs.DeleteRequestDocument documentContainer = new gov.nih.nci.coppa.services.pa.documentservice.stubs.DeleteRequestDocument();
     documentContainer.setDocument(document);
     params.setDocument(documentContainer);
-    portType.delete(params);
+    gov.nih.nci.coppa.services.pa.documentservice.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
   }
 

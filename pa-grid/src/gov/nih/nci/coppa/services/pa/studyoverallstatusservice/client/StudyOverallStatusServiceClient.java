@@ -106,32 +106,32 @@ import org.globus.gsi.GlobusCredential;
  */
 public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceClientBase implements StudyOverallStatusServiceI {
 
-	public StudyOverallStatusServiceClient(String url) throws MalformedURIException, RemoteException {
-		this(url,null);
-	}
+    public StudyOverallStatusServiceClient(String url) throws MalformedURIException, RemoteException {
+        this(url,null);
+    }
 
-	public StudyOverallStatusServiceClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(url,proxy);
-	}
+    public StudyOverallStatusServiceClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(url,proxy);
+    }
 
-	public StudyOverallStatusServiceClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-	   	this(epr,null);
-	}
+    public StudyOverallStatusServiceClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
+           this(epr,null);
+    }
 
-	public StudyOverallStatusServiceClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(epr,proxy);
-	}
+    public StudyOverallStatusServiceClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(epr,proxy);
+    }
 
-	public static void usage(){
-		System.out.println(StudyOverallStatusServiceClient.class.getName() + " -url <service url>");
-	}
+    public static void usage(){
+        System.out.println(StudyOverallStatusServiceClient.class.getName() + " -url <service url>");
+    }
 
-	public static void main(String [] args){
-	    System.out.println("Running the Grid Service Client");
-		try{
-		if(!(args.length < 2)){
-			if(args[0].equals("-url")){
-			  StudyOverallStatusServiceClient client = new StudyOverallStatusServiceClient(args[1]);
+    public static void main(String [] args){
+        System.out.println("Running the Grid Service Client");
+        try{
+        if(!(args.length < 2)){
+            if(args[0].equals("-url")){
+              StudyOverallStatusServiceClient client = new StudyOverallStatusServiceClient(args[1]);
 
               System.out.println("Testing StudyOverallStatus.copy...");
               try {
@@ -172,28 +172,28 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
               System.out.println(rList);
 
               System.out.println("Testing StudySiteAccrualStatus.getCurrentByStudyProtocol...");
-              rList = client.getCurrentByStudyProtocol(id);
-              System.out.println(rList);
-
-              System.out.println("Testing StudySiteAccrualStatus.get...");
-              StudyOverallStatus result = client.get(id);
+              StudyOverallStatus result = client.getCurrentByStudyProtocol(id);
               System.out.println(result);
 
-			  // place client calls here if you want to use this main as a
-			  // test....
-			} else {
-				usage();
-				System.exit(1);
-			}
-		} else {
-			usage();
-			System.exit(1);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
+              System.out.println("Testing StudySiteAccrualStatus.get...");
+              result = client.get(id);
+              System.out.println(result);
+
+              // place client calls here if you want to use this main as a
+              // test....
+            } else {
+                usage();
+                System.exit(1);
+            }
+        } else {
+            usage();
+            System.exit(1);
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
   public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
@@ -221,7 +221,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetCurrentByStudyProtocolRequest();

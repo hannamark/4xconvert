@@ -65,7 +65,7 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     /**
      * {@inheritDoc}
      */
-  public gov.nih.nci.coppa.services.pa.Arm[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       return impl.getCurrentByStudyProtocol(studyProtocolId);
     }
 

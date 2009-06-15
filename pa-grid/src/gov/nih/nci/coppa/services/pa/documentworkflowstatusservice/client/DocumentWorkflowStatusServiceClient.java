@@ -2,27 +2,6 @@ package gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.client;
 import gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus;
 import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.common.DocumentWorkflowStatusServiceI;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequest;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequestFromStudyProtocolId;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequestToStudyProtocolId;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateRequest;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateRequestDocumentWorkflowStatus;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateResponse;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequest;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequestId;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequest;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequestId;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolResponse;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequest;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequestId;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolResponse;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequest;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequestId;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetResponse;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateRequest;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateRequestDocumentWorkflowStatus;
-import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateResponse;
-import gov.nih.nci.coppa.services.pa.faults.PAFault;
 
 import java.rmi.RemoteException;
 
@@ -108,92 +87,92 @@ public class DocumentWorkflowStatusServiceClient extends DocumentWorkflowStatusS
     private static void getCurrentByStudyProtocolTest(DocumentWorkflowStatusServiceClient client) throws RemoteException {
         Id id = new Id();
         id.setExtension("1");
-        DocumentWorkflowStatus[] result = client.getCurrentByStudyProtocol(id);
+        DocumentWorkflowStatus result = client.getCurrentByStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
-  public DocumentWorkflowStatus[] getCurrentByStudyProtocol(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
-    GetCurrentByStudyProtocolRequest params = new GetCurrentByStudyProtocolRequest();
-    GetCurrentByStudyProtocolRequestId idContainer = new GetCurrentByStudyProtocolRequestId();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequestId();
     idContainer.setId(id);
     params.setId(idContainer);
-    GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
     return boxedResult.getDocumentWorkflowStatus();
     }
   }
 
-  public DocumentWorkflowStatus[] getByStudyProtocol(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
-    GetByStudyProtocolRequest params = new GetByStudyProtocolRequest();
-    GetByStudyProtocolRequestId idContainer = new GetByStudyProtocolRequestId();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequestId();
     idContainer.setId(id);
     params.setId(idContainer);
-    GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
     return boxedResult.getDocumentWorkflowStatus();
     }
   }
 
-  public void copy(Id fromStudyProtocolId,Id toStudyProtocolId) throws RemoteException, PAFault {
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
-    CopyRequest params = new CopyRequest();
-    CopyRequestFromStudyProtocolId fromStudyProtocolIdContainer = new CopyRequestFromStudyProtocolId();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequest();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequestFromStudyProtocolId fromStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequestFromStudyProtocolId();
     fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
     params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
-    CopyRequestToStudyProtocolId toStudyProtocolIdContainer = new CopyRequestToStudyProtocolId();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequestToStudyProtocolId();
     toStudyProtocolIdContainer.setId(toStudyProtocolId);
     params.setToStudyProtocolId(toStudyProtocolIdContainer);
-    portType.copy(params);
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyResponse boxedResult = portType.copy(params);
     }
   }
 
-  public DocumentWorkflowStatus get(Id id) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
-    GetRequest params = new GetRequest();
-    GetRequestId idContainer = new GetRequestId();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequest();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequestId idContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequestId();
     idContainer.setId(id);
     params.setId(idContainer);
-    GetResponse boxedResult = portType.get(params);
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetResponse boxedResult = portType.get(params);
     return boxedResult.getDocumentWorkflowStatus();
     }
   }
 
-  public DocumentWorkflowStatus create(DocumentWorkflowStatus documentWorkflowStatus) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus create(gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus documentWorkflowStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
-    CreateRequest params = new CreateRequest();
-    CreateRequestDocumentWorkflowStatus documentWorkflowStatusContainer = new CreateRequestDocumentWorkflowStatus();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateRequest();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateRequestDocumentWorkflowStatus documentWorkflowStatusContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateRequestDocumentWorkflowStatus();
     documentWorkflowStatusContainer.setDocumentWorkflowStatus(documentWorkflowStatus);
     params.setDocumentWorkflowStatus(documentWorkflowStatusContainer);
-    CreateResponse boxedResult = portType.create(params);
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CreateResponse boxedResult = portType.create(params);
     return boxedResult.getDocumentWorkflowStatus();
     }
   }
 
-  public DocumentWorkflowStatus update(DocumentWorkflowStatus documentWorkflowStatus) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus update(gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus documentWorkflowStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"update");
-    UpdateRequest params = new UpdateRequest();
-    UpdateRequestDocumentWorkflowStatus documentWorkflowStatusContainer = new UpdateRequestDocumentWorkflowStatus();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateRequest();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateRequestDocumentWorkflowStatus documentWorkflowStatusContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateRequestDocumentWorkflowStatus();
     documentWorkflowStatusContainer.setDocumentWorkflowStatus(documentWorkflowStatus);
     params.setDocumentWorkflowStatus(documentWorkflowStatusContainer);
-    UpdateResponse boxedResult = portType.update(params);
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.UpdateResponse boxedResult = portType.update(params);
     return boxedResult.getDocumentWorkflowStatus();
     }
   }
 
-  public void delete(Id id) throws RemoteException, PAFault {
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
-    DeleteRequest params = new DeleteRequest();
-    DeleteRequestId idContainer = new DeleteRequestId();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequest();
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequestId();
     idContainer.setId(id);
     params.setId(idContainer);
-    portType.delete(params);
+    gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
   }
 

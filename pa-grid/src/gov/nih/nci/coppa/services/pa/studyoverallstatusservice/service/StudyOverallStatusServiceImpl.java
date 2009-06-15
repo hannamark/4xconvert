@@ -105,8 +105,8 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       return impl.getByStudyProtocol(id);
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      return impl.getByStudyProtocol(studyProtocolId);
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+      return impl.getCurrentByStudyProtocol(studyProtocolId);
   }
 
   public gov.nih.nci.coppa.services.pa.StudyOverallStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

@@ -31,11 +31,11 @@ public interface StudyPaGridService<DTO extends BaseDTO, XML extends Object>
     XML[] getByStudyProtocol(Id id) throws RemoteException;
 
     /**
-     * Get current objects by study protocol.
+     * Get current object by study protocol.
      * @param id id of the study protocol.
-     * @return array of XML objects.
+     * @return XML object.
      * @throws RemoteException for unexpected errors
      */
-    XML[] getCurrentByStudyProtocol(Id id) throws RemoteException;
+    XML getCurrentByStudyProtocol(Id id) throws RemoteException;
 
 }

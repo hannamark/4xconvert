@@ -320,7 +320,7 @@
      <ns15:Inputs>
       <ns15:Input qName="ns30:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns30="http://pa.services.coppa.nci.nih.gov"/>
      </ns15:Inputs>
-     <ns15:Output qName="ns31:Arm" description="" isArray="true" xmlns:ns31="http://pa.services.coppa.nci.nih.gov"/>
+     <ns15:Output qName="ns31:Arm" description="" isArray="false" xmlns:ns31="http://pa.services.coppa.nci.nih.gov"/>
      <ns15:Exceptions>
       <ns15:Exception description="" name="PAFault" qname="ns32:PAFault" xmlns:ns32="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns15:Exceptions>
@@ -488,7 +488,7 @@
      <ns66:Inputs>
       <ns66:Input qName="ns81:Id" description="" isArray="false" name="studyParticipationId" xmlns:ns81="http://pa.services.coppa.nci.nih.gov"/>
      </ns66:Inputs>
-     <ns66:Output qName="ns82:StudySiteAccrualStatus" description="" isArray="true" xmlns:ns82="http://pa.services.coppa.nci.nih.gov"/>
+     <ns66:Output qName="ns82:StudySiteAccrualStatus" description="" isArray="false" xmlns:ns82="http://pa.services.coppa.nci.nih.gov"/>
      <ns66:Exceptions>
       <ns66:Exception description="" name="PAFault" qname="ns83:PAFault" xmlns:ns83="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns66:Exceptions>
@@ -628,7 +628,7 @@
      <ns106:Inputs>
       <ns106:Input qName="ns121:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns121="http://pa.services.coppa.nci.nih.gov"/>
      </ns106:Inputs>
-     <ns106:Output qName="ns122:StudyRegulatoryAuthority" description="" isArray="true" xmlns:ns122="http://pa.services.coppa.nci.nih.gov"/>
+     <ns106:Output qName="ns122:StudyRegulatoryAuthority" description="" isArray="false" xmlns:ns122="http://pa.services.coppa.nci.nih.gov"/>
      <ns106:Exceptions>
       <ns106:Exception description="" name="PAFault" qname="ns123:PAFault" xmlns:ns123="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns106:Exceptions>
@@ -694,7 +694,7 @@
      <ns130:Inputs>
       <ns130:Input qName="ns139:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns139="http://pa.services.coppa.nci.nih.gov"/>
      </ns130:Inputs>
-     <ns130:Output qName="ns140:StudyRecruitmentStatus" description="" isArray="true" xmlns:ns140="http://pa.services.coppa.nci.nih.gov"/>
+     <ns130:Output qName="ns140:StudyRecruitmentStatus" description="" isArray="false" xmlns:ns140="http://pa.services.coppa.nci.nih.gov"/>
      <ns130:Exceptions>
       <ns130:Exception description="" name="PAFault" qname="ns141:PAFault" xmlns:ns141="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns130:Exceptions>
@@ -798,7 +798,7 @@
      <ns154:Inputs>
       <ns154:Input qName="ns171:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns171="http://pa.services.coppa.nci.nih.gov"/>
      </ns154:Inputs>
-     <ns154:Output qName="ns172:StudyParticipation" description="" isArray="true" xmlns:ns172="http://pa.services.coppa.nci.nih.gov"/>
+     <ns154:Output qName="ns172:StudyParticipation" description="" isArray="false" xmlns:ns172="http://pa.services.coppa.nci.nih.gov"/>
      <ns154:Exceptions>
       <ns154:Exception description="" name="PAFault" qname="ns173:PAFault" xmlns:ns173="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns154:Exceptions>
@@ -911,7 +911,7 @@
      <ns186:Inputs>
       <ns186:Input qName="ns206:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns206="http://pa.services.coppa.nci.nih.gov"/>
      </ns186:Inputs>
-     <ns186:Output qName="ns207:StudyParticipationContact" description="" isArray="true" xmlns:ns207="http://pa.services.coppa.nci.nih.gov"/>
+     <ns186:Output qName="ns207:StudyParticipationContact" description="" isArray="false" xmlns:ns207="http://pa.services.coppa.nci.nih.gov"/>
      <ns186:Exceptions>
       <ns186:Exception description="" name="PAFault" qname="ns208:PAFault" xmlns:ns208="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns186:Exceptions>
@@ -995,7 +995,7 @@
      <ns221:Inputs>
       <ns221:Input qName="ns230:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns230="http://pa.services.coppa.nci.nih.gov"/>
      </ns221:Inputs>
-     <ns221:Output qName="ns231:StudyOverallStatus" description="" isArray="true" xmlns:ns231="http://pa.services.coppa.nci.nih.gov"/>
+     <ns221:Output qName="ns231:StudyOverallStatus" description="" isArray="false" xmlns:ns231="http://pa.services.coppa.nci.nih.gov"/>
      <ns221:Exceptions>
       <ns221:Exception description="" name="PAFault" qname="ns232:PAFault" xmlns:ns232="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns221:Exceptions>
@@ -1079,7 +1079,7 @@
      <ns245:Inputs>
       <ns245:Input qName="ns254:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns254="http://pa.services.coppa.nci.nih.gov"/>
      </ns245:Inputs>
-     <ns245:Output qName="ns255:StudyOutcomeMeasure" description="" isArray="true" xmlns:ns255="http://pa.services.coppa.nci.nih.gov"/>
+     <ns245:Output qName="ns255:StudyOutcomeMeasure" description="" isArray="false" xmlns:ns255="http://pa.services.coppa.nci.nih.gov"/>
      <ns245:Exceptions>
       <ns245:Exception description="" name="PAFault" qname="ns256:PAFault" xmlns:ns256="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns245:Exceptions>
@@ -1163,7 +1163,7 @@
      <ns269:Inputs>
       <ns269:Input qName="ns278:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns278="http://pa.services.coppa.nci.nih.gov"/>
      </ns269:Inputs>
-     <ns269:Output qName="ns279:StudyOnhold" description="" isArray="true" xmlns:ns279="http://pa.services.coppa.nci.nih.gov"/>
+     <ns269:Output qName="ns279:StudyOnhold" description="" isArray="false" xmlns:ns279="http://pa.services.coppa.nci.nih.gov"/>
      <ns269:Exceptions>
       <ns269:Exception description="" name="PAFault" qname="ns280:PAFault" xmlns:ns280="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns269:Exceptions>
@@ -1256,7 +1256,7 @@
      <ns296:Inputs>
       <ns296:Input qName="ns305:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns305="http://pa.services.coppa.nci.nih.gov"/>
      </ns296:Inputs>
-     <ns296:Output qName="ns306:StudyIndlde" description="" isArray="true" xmlns:ns306="http://pa.services.coppa.nci.nih.gov"/>
+     <ns296:Output qName="ns306:StudyIndlde" description="" isArray="false" xmlns:ns306="http://pa.services.coppa.nci.nih.gov"/>
      <ns296:Exceptions>
       <ns296:Exception description="" name="PAFault" qname="ns307:PAFault" xmlns:ns307="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns296:Exceptions>
@@ -1340,7 +1340,7 @@
      <ns320:Inputs>
       <ns320:Input qName="ns329:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns329="http://pa.services.coppa.nci.nih.gov"/>
      </ns320:Inputs>
-     <ns320:Output qName="ns330:StudyDisease" description="" isArray="true" xmlns:ns330="http://pa.services.coppa.nci.nih.gov"/>
+     <ns320:Output qName="ns330:StudyDisease" description="" isArray="false" xmlns:ns330="http://pa.services.coppa.nci.nih.gov"/>
      <ns320:Exceptions>
       <ns320:Exception description="" name="PAFault" qname="ns331:PAFault" xmlns:ns331="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns320:Exceptions>
@@ -1444,7 +1444,7 @@
      <ns344:Inputs>
       <ns344:Input qName="ns361:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns361="http://pa.services.coppa.nci.nih.gov"/>
      </ns344:Inputs>
-     <ns344:Output qName="ns362:StudyContact" description="" isArray="true" xmlns:ns362="http://pa.services.coppa.nci.nih.gov"/>
+     <ns344:Output qName="ns362:StudyContact" description="" isArray="false" xmlns:ns362="http://pa.services.coppa.nci.nih.gov"/>
      <ns344:Exceptions>
       <ns344:Exception description="" name="PAFault" qname="ns363:PAFault" xmlns:ns363="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns344:Exceptions>
@@ -1592,7 +1592,7 @@
      <ns376:Inputs>
       <ns376:Input qName="ns405:Id" description="" isArray="false" name="id" xmlns:ns405="http://pa.services.coppa.nci.nih.gov"/>
      </ns376:Inputs>
-     <ns376:Output qName="ns406:PlannedActivity" description="" isArray="true" xmlns:ns406="http://pa.services.coppa.nci.nih.gov"/>
+     <ns376:Output qName="ns406:PlannedActivity" description="" isArray="false" xmlns:ns406="http://pa.services.coppa.nci.nih.gov"/>
      <ns376:Exceptions>
       <ns376:Exception description="" name="PAFault" qname="ns407:PAFault" xmlns:ns407="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns376:Exceptions>
@@ -1657,7 +1657,7 @@
      <ns420:Inputs>
       <ns420:Input qName="ns423:Id" description="" isArray="false" name="id" xmlns:ns423="http://pa.services.coppa.nci.nih.gov"/>
      </ns420:Inputs>
-     <ns420:Output qName="ns424:DocumentWorkflowStatus" description="" isArray="true" xmlns:ns424="http://pa.services.coppa.nci.nih.gov"/>
+     <ns420:Output qName="ns424:DocumentWorkflowStatus" description="" isArray="false" xmlns:ns424="http://pa.services.coppa.nci.nih.gov"/>
      <ns420:Exceptions>
       <ns420:Exception description="" name="PAFault" qname="ns425:PAFault" xmlns:ns425="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns420:Exceptions>

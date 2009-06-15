@@ -75,7 +75,7 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
     throw new RemoteException("Not yet implemented");
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyContact[] getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyContact getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       return impl.getCurrentByStudyProtocol(studyProtocolId);
   }
 
