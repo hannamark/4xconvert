@@ -48,7 +48,7 @@ function lookup4loadleadorg(){
     showPopWin('${lookupOrgUrl}', 900, 400, loadLeadOrgDiv, 'Select Lead Organization');
 }
 function lookup4loadleadpers(){
-    showPopWin('${lookupPersUrl}', 900, 400, loadLeadPersDiv, 'Select Principal Investigator');
+    showPopWin('${lookupPersUrl}', 900, 500, loadLeadPersDiv, 'Select Principal Investigator');
 }
 function lookup4sponsor(){
     showPopWin('${lookupOrgUrl}', 900, 400, loadSponsorDiv, 'Select Sponsor');
