@@ -1,16 +1,26 @@
 package gov.nih.nci.pa.report.util;
 
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,10 +32,19 @@ import org.hibernate.Transaction;
  * @since 05/05/2009
  */
 public class TestSchema {
+
+    public static List<User> user;
+    public static List<Organization> organization;
+    public static List<HealthCareFacility> healthCareFacility;
+    public static List<StudyProtocol> studyProtocol;
+    public static List<DocumentWorkflowStatus> documentWorkflowStatus;
+    public static List<StudyMilestone> studyMilestone;
+    public static List<StudyParticipation> studyParticipation;
+
     private static boolean dataLoaded = false;
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
-   /**
+    /**
      *
      */
     public static void reset() {
@@ -58,13 +77,45 @@ public class TestSchema {
     }
 
     public static void primeData() {
-        User user = new User();
-        user.setLoginName("testUser");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setOrganization("testOrganization");
-        user.setUpdateDate(new Date());
-        addUpdObject(user);
+        user = new ArrayList<User>();
+        organization = new ArrayList<Organization>();
+        healthCareFacility = new ArrayList<HealthCareFacility>();
+        studyProtocol = new ArrayList<StudyProtocol>();
+        documentWorkflowStatus = new ArrayList<DocumentWorkflowStatus>();
+        studyMilestone = new ArrayList<StudyMilestone>();
+        studyParticipation = new ArrayList<StudyParticipation>();
+
+        User usr = new User();
+        usr.setLoginName("testUser");
+        usr.setFirstName("John");
+        usr.setLastName("Doe");
+        usr.setOrganization("testOrganization");
+        usr.setUpdateDate(new Date());
+        user.add(usr);
+        addUpdObject(usr);
+
+        Organization org = new Organization();
+        org.setCity("city");
+        org.setCountryName("countryName");
+        org.setDateLastCreated(new Date());
+        org.setIdentifier("ORG ID");
+        org.setName("Duke");
+        org.setPostalCode("12345");
+        org.setState("NC");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        org.setUserLastCreated("abstractor");
+        organization.add(org);
+        addUpdObject(org);
+
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setDateLastCreated(new Date());
+        hcf.setIdentifier(org.getIdentifier());
+        hcf.setOrganization(org);
+        hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        hcf.setUserLastCreated("abstractor");
+        healthCareFacility.add(hcf);
+        addUpdObject(hcf);
 
         StudyProtocol sp = new StudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
@@ -76,6 +127,7 @@ public class TestSchema {
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setUserLastCreated("testUser");
         sp.setDateLastCreated(PAUtil.dateStringToTimestamp("1/1/2009"));
+        studyProtocol.add(sp);
         addUpdObject(sp);
 
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
@@ -90,6 +142,7 @@ public class TestSchema {
         dws.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         dws.setCommentText("Accepted by CTRO staff");
         dws.setUserLastCreated("testUser");
+        documentWorkflowStatus.add(dws);
         addUpdObject(dws);
 
         StudyMilestone sm = new StudyMilestone();
@@ -97,7 +150,20 @@ public class TestSchema {
         sm.setMilestoneCode(MilestoneCode.SUBMISSION_RECEIVED);
         sm.setMilestoneDate(PAUtil.dateStringToTimestamp("1/1/2000"));
         sm.setStudyProtocol(sp);
+        studyMilestone.add(sm);
         addUpdObject(sm);
+
+        StudyParticipation spart = new StudyParticipation();
+        spart.setDateLastCreated(new Date());
+        spart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
+        spart.setHealthCareFacility(hcf);
+        spart.setLocalStudyProtocolIdentifier("local sp id");
+        spart.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED);
+        spart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        spart.setStudyProtocol(sp);
+        spart.setUserLastCreated("abstractor");
+        studyParticipation.add(spart);
+        addUpdObject(spart);
 
         dataLoaded = true;
     }

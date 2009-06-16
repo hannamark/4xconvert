@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="web/src/java"/>
 	<classpathentry kind="src" path="web/test/java"/>
 	<classpathentry kind="src" path="services/src/java"/>
 	<classpathentry kind="src" path="services/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="CODE_PA"/>
 	<classpathentry kind="var" path="CODE_PA/pa-ejb/target/pa-ejb.jar" sourcepath="/CODE_PA/pa-ejb/src/java"/>
 	<classpathentry kind="var" path="VIEWER_LIB"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/xwork-2.1.2.jar"/>
