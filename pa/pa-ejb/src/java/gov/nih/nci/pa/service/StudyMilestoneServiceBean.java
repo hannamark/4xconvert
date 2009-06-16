@@ -307,6 +307,16 @@ public class StudyMilestoneServiceBean
                  throw new PAException("Ready for QC can only be recorded after " 
                          + "Administrative and Scientific processing are completed");
              }
+            if (!hasBeenPaired(mileStones, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode(),
+                    MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
+                throw new PAException("Scientific Processing Start Date must be followed by " 
+                          + " Scientific Processing Completion Date");
+            }
+            if (!hasBeenPaired(mileStones, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode(),
+                    MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
+                throw new PAException("Administartive Processing Start Date must be followed by " 
+                        + " Administrative Processing Completion Date");
+            }
          } 
        
         //if Admin processing already started ::
@@ -318,6 +328,17 @@ public class StudyMilestoneServiceBean
                  throw new PAException("Scientific Processing Start Date cannot be recorded" 
                          + " if Administrative Processing started but was not completed");
              }
+             if (!hasBeenPaired(mileStones, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode(),
+                     MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
+                 throw new PAException("Scientific Processing Start Date must be followed by " 
+                           + " Scientific Processing Completion Date");
+             }
+             if (!hasBeenPaired(mileStones, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode(),
+                     MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
+                 throw new PAException("Administartive Processing Start Date must be followed by " 
+                         + " Administrative Processing Completion Date");
+             }
+             
          } 
         //if Scientific processing already started ::
         //check if the sceintific processing is completed before the start of admin processing 
@@ -327,6 +348,17 @@ public class StudyMilestoneServiceBean
                      && !mileStones.contains(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
                  throw new PAException("Administrative Processing Start Date cannot be recorded" 
                          + " if Scientific Processing started but was not completed");
+             }
+             
+             if (!hasBeenPaired(mileStones, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE.getCode(),
+                     MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())) {
+                 throw new PAException("Administartive Processing Start Date must be followed by " 
+                         + " Administrative Processing Completion Date");
+             }
+             if (!hasBeenPaired(mileStones, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getCode(),
+                     MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE.getCode())) {
+                 throw new PAException("Scientific Processing Start Date must be followed by " 
+                           + " Scientific Processing Completion Date");
              }
            } 
         
@@ -384,17 +416,42 @@ public class StudyMilestoneServiceBean
                mileStone2Count++;
            }
        }
-       if (mileStone1Count == 1 && mileStone2Count == 0) {
-           return true;
-       } else if (mileStone1Count == 1 && mileStone2Count == 1) {
+       if (mileStone1Count == mileStone2Count) {
            return false;
+       } else if (mileStone1Count == 1 && mileStone2Count == 0) {
+           return true;
        } else if (mileStone1Count % 2 == 0 && mileStone2Count % 2 == 0) {
+           return false;
+       } else if ((mileStone1Count % 2 == 0 && mileStone2Count % 2 == 1) && (mileStone2Count > mileStone1Count)) {
            return false;
        } else if (mileStone1Count % 2 != 0) {
            return true;
        } 
        return true;
     }
+    
+    private boolean hasBeenPaired(List<String> mileStones, String mileStone1, String mileStone2) {
+        int mileStone1Count = 0;
+        int mileStone2Count = 0;
+        for (String mileStone : mileStones) {
+            if (mileStone.equals(mileStone1)) {
+                mileStone1Count++;
+            }
+            if (mileStone.equals(mileStone2)) {
+                mileStone2Count++;
+            }
+        }
+        if (mileStone1Count == mileStone2Count) {
+            return true;
+        } else if (mileStone1Count == 1 && mileStone2Count == 0) {
+            return false;
+        } else if (mileStone1Count % 2 == 0 && mileStone2Count % 2 == 0) {
+            return true;
+        } else if (mileStone1Count % 2 != 0) {
+            return false;
+        } 
+        return false;
+     }
        
     @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
