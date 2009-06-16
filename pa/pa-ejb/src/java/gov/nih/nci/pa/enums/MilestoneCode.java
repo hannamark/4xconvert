@@ -167,6 +167,7 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(ADMINISTRATIVE_PROCESSING_START_DATE, Collections.unmodifiableSet(tmpSet));
         
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
@@ -174,6 +175,7 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, Collections.unmodifiableSet(tmpSet));
         
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
@@ -181,6 +183,7 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(SCIENTIFIC_PROCESSING_START_DATE, Collections.unmodifiableSet(tmpSet));
         
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
@@ -188,6 +191,7 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(SCIENTIFIC_PROCESSING_COMPLETED_DATE, Collections.unmodifiableSet(tmpSet));
         
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
