@@ -35,7 +35,7 @@ function statusChange() {
             setContactDisabled(false);
         }
         document.irbForm.contactAffiliation.disabled=false;    
-    }else if(newStatus=="Submitted, exempt" || newStatus=="Submitted, pending" || newStatus=="Submitted, disapproved"){
+    }else if(newStatus=="Submitted, exempt" || newStatus=="Submitted, pending" || newStatus=="Submitted, denied"){
         document.irbForm.approvalNumber.disabled=false;
         document.getElementById('name').disabled=false;
         if(document.irbForm.boardChanged.value!="true"){
