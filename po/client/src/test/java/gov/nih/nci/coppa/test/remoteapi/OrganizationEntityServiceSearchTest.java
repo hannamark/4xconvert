@@ -46,14 +46,14 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             org.setTelecomAddress(telco);
-    
+
             TelEmail email = new TelEmail();
             email.setValue(new URI("mailto:default@example.com"));
             org.getTelecomAddress().getItem().add(email);
-    
+
             TelUrl url = new TelUrl();
             url.setValue(new URI("http://default.example.com"));
-            org.getTelecomAddress().getItem().add(url);        
+            org.getTelecomAddress().getItem().add(url);
         }
         return org;
     }
@@ -75,28 +75,28 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
             String state = "WY";
             remoteCreateAndCatalog(create("Z Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     state, "12345", "USA"), telecomAddress));
-            remoteCreateAndCatalog(create("A Inc.", createPostalAddress("123 abc ave.", null, "mycity",
+            remoteCreateAndCatalog(create("QQ Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     state, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("B Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     state, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("C Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     state, "12345", "USA"), telecomAddress));
-            remoteCreateAndCatalog(create("AB Inc.", createPostalAddress("123 abc ave.", null,
+            remoteCreateAndCatalog(create("QQB Inc.", createPostalAddress("123 abc ave.", null,
                     "mycity", state, "12345", "USA"), telecomAddress));
 
             remoteCreateAndCatalog(create("BC Inc.", createPostalAddress("123 abc ave.", null,
                     "mycity", state, "12345", "USA")));
-            remoteCreateAndCatalog(create("CA Inc.", createPostalAddress("123 abc ave.", null,
+            remoteCreateAndCatalog(create("CQQ Inc.", createPostalAddress("123 abc ave.", null,
                     "mycity", state, "12345", "USA")));
 
             // for street searches
-            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Rst", "delivery", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("QRQst", "delivery", "city", state,
                     "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Uvw", "delivery", "city", state,
                     "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Xyz", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Rsu", "delivery", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Rqsu", "delivery", "city", state,
                     "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", createPostalAddress("stu", "delivery", "city", state,
                     "zip", "USA")));
@@ -104,7 +104,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
             // for delivery searches
             remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Abc", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Dfg", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Dgf", "city", state,
                     "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Ghi", "city", state,
                     "zip", "USA")));
@@ -193,23 +193,23 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findOrgByNameSubstring() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(RemoteApiUtils.convertToEnOn("A"));
+        crit.setName(RemoteApiUtils.convertToEnOn("QQ"));
         List<OrganizationDTO> results = getOrgService().search(crit);
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
     }
 
     @Test
     public void findOrgByNameSubstringInsensitive() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(RemoteApiUtils.convertToEnOn("a"));
+        crit.setName(RemoteApiUtils.convertToEnOn("QQ"));
         List<OrganizationDTO> results = getOrgService().search(crit);
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
     }
 
     @Test
     public void findByStreetAddressLineExact() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress("Rst", null, null, null, null, null));
+        p.setPostalAddress(createPostalAddress("QRQst", null, null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(1, results.size());
     }
@@ -217,7 +217,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findByStreetAddressLineExactInsensitive() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress("rST", null, null, null, null, null));
+        p.setPostalAddress(createPostalAddress("qrqST", null, null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(1, results.size());
     }
@@ -225,7 +225,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findByStreetAddressLineSubstring() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress("yz", null, null, null, null, null));
+        p.setPostalAddress(createPostalAddress("yzz", null, null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(0, results.size());
     }
@@ -233,23 +233,23 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findByStreetAddressLineInsensitiveSubstring() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress("YZ", null, null, null, null, null));
+        p.setPostalAddress(createPostalAddress("YZZ", null, null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(0, results.size());
     }
 
     @Test
-    public void findByStreetAddressLineStartsWith() {
+    public void findByStreetAddressLineContains() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress("Rs", null, null, null, null, null));
+        p.setPostalAddress(createPostalAddress("RQs", null, null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(2, results.size());
     }
 
     @Test
-    public void findByStreetAddressLineInsensitiveStartsWith() {
+    public void findByStreetAddressLineInsensitiveContains() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress("rS", null, null, null, null, null));
+        p.setPostalAddress(createPostalAddress("rqS", null, null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(2, results.size());
     }
@@ -287,7 +287,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByDeliveryAddressLineStartsWith() {
+    public void findByDeliveryAddressLineContains() {
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, "Ab", null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -295,7 +295,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByDeliveryAddressLineInsensitiveStartsWith() {
+    public void findByDeliveryAddressLineInsensitiveContains() {
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, "aB", null, null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -323,6 +323,14 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, null, " Fal", null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
+        assertEquals(2, results.size());
+    }
+
+    @Test
+    public void findNoCitySubstring() {
+        OrganizationDTO p = new OrganizationDTO();
+        p.setPostalAddress(createPostalAddress(null, null, " Falz", null, null, null));
+        List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(0, results.size());
     }
 
@@ -331,11 +339,11 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, null, " fAL", null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
-    public void findByCityStartsWith() {
+    public void findByCityContains() {
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, null, "Res", null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -343,7 +351,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByCityInsensitiveStartsWith() {
+    public void findByCityInsensitiveContains() {
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, null, "rES", null, null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -383,7 +391,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByStateStartsWith() {
+    public void findByStateContains() {
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, null, null, "LA", null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -391,7 +399,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByStateInsensitiveStartsWith() {
+    public void findByStateInsensitiveContains() {
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, null, null, "la", null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -415,23 +423,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByZipSubstring() {
-        OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, null, "b", null));
-        List<OrganizationDTO> results = getOrgService().search(p);
-        assertEquals(0, results.size());
-    }
-
-    @Test
-    public void findByZipInsensitiveSubstring() {
-        OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, null, "B", null));
-        List<OrganizationDTO> results = getOrgService().search(p);
-        assertEquals(0, results.size());
-    }
-
-    @Test
-    public void findByZipStartsWith() {
+    public void findByZipContains() {
         OrganizationDTO p = new OrganizationDTO();
         p.setPostalAddress(createPostalAddress(null, null, null, null, "Ab", null));
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -439,11 +431,11 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByZipInsensitiveStartsWith() {
+    public void findByZipInsensitiveContains() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, null, "aB", null));
+        p.setPostalAddress(createPostalAddress(null, null, null, null, "bC", null));
         List<OrganizationDTO> results = getOrgService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -488,7 +480,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByCountryStartsWith() {
+    public void findByCountryContains() {
         OrganizationDTO p = new OrganizationDTO();
         try {
             p.setPostalAddress(createPostalAddress(null, null, null, null, null, "UM"));
@@ -499,7 +491,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     }
 
     @Test
-    public void findByCountryInsensitiveStartsWith() {
+    public void findByCountryInsensitiveContains() {
         OrganizationDTO p = new OrganizationDTO();
         try {
             p.setPostalAddress(createPostalAddress(null, null, null, null, null, "um"));
