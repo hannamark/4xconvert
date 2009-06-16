@@ -13,14 +13,14 @@ function bodyOnLoad() {
     alert('hi');
 }
 function submitForm(btnSelected){
-	if(btnSelected == 'accept') {
-		document.forms[0].action = "disClaimerActionaccept.action";
-		document.forms[0].submit();
-	} else{
-		document.forms[0].action="logout.action";
-	    document.forms[0].submit();
-	} 
-	
+    if(btnSelected == 'accept') {
+        document.forms[0].action = "disClaimerActionaccept.action";
+        document.forms[0].submit();
+    } else{
+        document.forms[0].action="logout.action";
+        document.forms[0].submit();
+    } 
+    
 }
 </SCRIPT>
 
@@ -34,10 +34,10 @@ function submitForm(btnSelected){
         The primary use <br>of this application is as an online mechanism for associating an investigator with a protocol to facilitate
   National Cancer Institute protocol portfolio management.<br> CTRP stores information securely between submissions 
   (i.e., subsequently you will only need to associate your person record with a protocol). 
-  <br> Collection of this information is authorized under Section 405 of the Public Health Service Act, 42 U.S.C. 284(b)(1) and 
-  Privacy Act System Notice 09-25-0200 (http://oma.od.nih.gov/ms/privacy/pa-files/0200.htm). This information may be disclosed 
-  to researchers for research purposes, contractors responsible for the <br>maintenance of the repository and to other registered 
-  repository users for non-commercial, scientific and educational purposes. Submission of this information<br> is voluntary,  
+  <br> Collection of this information is authorized under Section 405 of the Public Health Service Act, 42 U.S.C. 284(b)(1) and <br>
+  Privacy Act System Notice 09-25-0200 (http://oma.od.nih.gov/ms/privacy/pa-files/0200.htm). This information may be disclosed
+  to researchers for research purposes,<br> contractors responsible  for the maintenance of the repository and to other registered 
+  repository users for non-commercial, scientific and educational purposes. <br>Submission of this information is voluntary,  
   but it is required for registration with the National Cancer Institute to conduct a clinical trial.
   <br><br>
     The CTRP website also records IP addresses and aggregated user query information. However, the IP address is not associated 
