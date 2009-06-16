@@ -335,7 +335,7 @@ public class AverageMilestoneReportBean
             for (Object[] q : qList) {
                 Counts r = new Counts();
                 r.spId = (BigInteger) q[0];
-                if (currentId != r.spId) {
+                if (currentId == null || !currentId.equals(r.spId)) {
                     currentId = r.spId;
                     priorDate = null;
                     orderHash.clear();

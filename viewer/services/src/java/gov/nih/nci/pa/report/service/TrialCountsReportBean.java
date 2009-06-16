@@ -152,7 +152,7 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
         HashMap<String, Count> counts = new HashMap<String, Count>();
 
         for (Object[] sr : sqlList) {
-            String group = (sr[0] == null) ? "" : (String) sr[0];
+            String group = sr[0] == null ? "" : (String) sr[0];
             Integer subNum = (Integer) sr[1];
             if (!counts.containsKey(group)) {
                 counts.put(group, new Count());
@@ -169,7 +169,7 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
         Collections.sort(group);
 
         ArrayList<TrialCountsResultDto> isoList = new ArrayList<TrialCountsResultDto>();
-        for (String g : counts.keySet()) {
+        for (String g : group) {
             TrialCountsResultDto iso = new TrialCountsResultDto();
             iso.setOrganization(StConverter.convertToSt(g));
             iso.setInitial(IntConverter.convertToInt(counts.get(g).initial));
