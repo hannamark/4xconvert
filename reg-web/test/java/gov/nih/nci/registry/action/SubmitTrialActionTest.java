@@ -32,6 +32,11 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     @Test
     public void testExcute() throws Exception {
         submitAction = new SubmitTrialAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("disclaimer", "accept");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
         submitAction.execute();
         assertEquals("success",submitAction.execute());
     }

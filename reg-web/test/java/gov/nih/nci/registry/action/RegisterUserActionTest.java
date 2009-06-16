@@ -6,10 +6,9 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 
 import javax.servlet.http.HttpSession;
-
-import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
@@ -93,7 +92,10 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testShowMyAccountErr(){
             action = new RegisterUserAction();
             MockHttpServletRequest request = new MockHttpServletRequest();
+            HttpSession sess = new MockHttpSession();
+            sess.setAttribute("disclaimer", "accept");
             request.setRemoteUser("firstName");
+            request.setSession(sess);
             ServletActionContext.setRequest(request);
             assertEquals("applicationError", action.showMyAccount());
         }

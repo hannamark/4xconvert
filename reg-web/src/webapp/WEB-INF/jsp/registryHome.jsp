@@ -21,7 +21,7 @@
             </p>
             <ul class="padme10">
                 <li><a href="/registry/registerUser.action">Create an account</strong></a> to register your clinical trials </li>
-                <li><a href="/registry/protected/searchTrial.action">Log In</a> to your account and</li> 
+                <li><a href="/registry/protected/disClaimerAction.action?actionName=searchTrial.action">Log In</a> to your account and</li> 
                 	<menu> 
                 		<li>Register clinical trials</li>
                 		<li>Register multiple trials at one time using a <a href="http://ctrp.nci.nih.gov/docs/CTRP_Registry_Batch_Upload_Template.xls"> batch upload template</a></li>

@@ -152,6 +152,11 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * @return res
      */
     public String execute() {
+        //check if users accepted the desclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            return "show_Disclaimer_Page";
+        }
         trialDTO = new TrialDTO();
         trialDTO.setResponsiblePartyType("pi");
         trialDTO.setTrialType("Interventional");

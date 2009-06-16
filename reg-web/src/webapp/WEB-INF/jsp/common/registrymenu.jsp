@@ -56,14 +56,14 @@
 		                                </c:choose> 
                                     </c:otherwise>
                                 </c:choose>                         		
-                        		<li><a href="/registry/protected/submitTrial.action" >Register Trial</a></li>
-                                <li><a href="/registry/protected/searchTrial.action" >Search Trials</a></li>
+                        		<li><a href="/registry/protected/disClaimerAction.action?actionName=submitTrial.action" >Register Trial</a></li>
+                                <li><a href="/registry/protected/disClaimerAction.action?actionName=searchTrial.action" >Search Trials</a></li>
                                 <c:choose>
                                     <c:when test="${requestScope.topic == 'login'}">
-                                       <li><a href="/registry/protected/searchTrial.action" class="selected">Log In</a></li>
+                                       <li><a href="/registry/protected/disClaimerAction.action?actionName=searchTrial.action" class="selected">Log In</a></li>
                                     </c:when>
                                     <c:otherwise>
-                                       <li><a href="/registry/protected/searchTrial.action" >Log In</a></li>
+                                       <li><a href="/registry/protected/disClaimerAction.action?actionName=searchTrial.action" >Log In</a></li>
                                     </c:otherwise>
                                 </c:choose>
 				    </c:otherwise>

@@ -9,6 +9,7 @@
     <package name="default" extends="struts-default">
         <interceptors>
 			<interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
+			<interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
 			<interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
@@ -26,10 +27,15 @@
                 <interceptor-ref name="workflow">
                     <param name="excludeMethods">input,back,cancel</param>
                 </interceptor-ref>
+                <interceptor-ref name="parameterTrim">
+                    <param name="trimToNull">true</param>
+                    <param name="trimFromFront">true</param>
+                </interceptor-ref>
 			  </interceptor-stack>
         </interceptors>
         <global-results>
 			<result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
+			<result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
         </global-results>     
         <action name="logout" class="gov.nih.nci.registry.action.Logout" method="logout">
 			<result>/index.jsp</result>
@@ -121,6 +127,12 @@
 		<result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
 		<result name="display_org_created_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
 	</action>     
-	    
+	<action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
+        <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
+        <result name="redirect_to" type="redirect-action">
+             <param name="actionName">${actionName}</param>
+             <param name="parse">true</param>
+        </result>
+        </action>     
     </package>
 </struts>

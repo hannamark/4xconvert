@@ -139,6 +139,11 @@ public class SearchTrialAction extends ActionSupport {
      * @return res
      */
     public String execute() {
+        //check if users accepted the desclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            return "show_Disclaimer_Page";
+        }
         String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
         try {
             // remove the session variables stored during a previous view if any

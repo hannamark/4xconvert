@@ -599,4 +599,8 @@ UL#maintabs LI.active
 { color:#333; background-color:#5d7ba2; }
 UL#maintabs LI A:focus
 { -moz-outline-style:none; }
+A.btn SPAN.accept
+{ background:url("../images/ico_check.gif") no-repeat; }
+A.btn SPAN.decline
+{ background:url("../images/ico_cancel.gif") no-repeat; }
 

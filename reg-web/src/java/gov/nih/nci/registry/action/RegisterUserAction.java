@@ -122,6 +122,11 @@ public class RegisterUserAction extends ActionSupport {
      * @return String
      */
     public String showMyAccount() {
+        //check if users accepted the desclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            return "show_Disclaimer_Page";
+        }
         String loginName = null;
         try {
             loginName =  ServletActionContext.
