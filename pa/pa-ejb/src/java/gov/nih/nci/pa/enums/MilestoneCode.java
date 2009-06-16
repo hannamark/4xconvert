@@ -105,14 +105,14 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** 4. */
     SUBMISSION_REJECTED("Submission Rejection Date", true, false, null, true), 
     /** 5. */
-    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative processing start date", false, true, null, false),
+    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative processing start date", false, false, null, false),
     /** 6. */
-    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative processing completed date", false, true,
+    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative processing completed date", false, false,
             MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, false),
     /** 7. */
-    SCIENTIFIC_PROCESSING_START_DATE("Scientific processing start date", false, true, null, false),
+    SCIENTIFIC_PROCESSING_START_DATE("Scientific processing start date", false, false, null, false),
     /** 8. */
-    SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific processing completed date", false, true,
+    SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific processing completed date", false, false,
             MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, false),
     /** 9. */ 
     READY_FOR_QC("Ready for QC Date", false, true, null, true), 

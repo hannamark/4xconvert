@@ -474,7 +474,9 @@ public class StudyMilestoneServiceBean
         }
         if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)) {
             DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)) {
+            if ((dwStatus != null) 
+                    && (DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)
+                            || DocumentWorkflowStatusCode.VERIFICATION_PENDING.equals(dwStatus))) {
                 if (milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
                     createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE , dto);
                 } else {
