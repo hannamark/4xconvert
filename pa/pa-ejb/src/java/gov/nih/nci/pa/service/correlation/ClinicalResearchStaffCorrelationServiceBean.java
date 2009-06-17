@@ -126,10 +126,10 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         LOG.debug("Entering createClinicalResearchStaffCorrelation");
         
         CorrelationUtils corrUtils = new CorrelationUtils();
-        if (orgPoIdentifier == null) {
+        if (orgPoIdentifier == null && !("").equals(orgPoIdentifier)) {
             throw new PAException(" Organization PO Identifier is null");
         }
-        if (personPoIdentifer == null) {
+        if (personPoIdentifer == null && !("").equals(personPoIdentifer)) {
             throw new PAException(" Person PO Identifier is null");
         }
 

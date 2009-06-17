@@ -192,7 +192,10 @@
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
-    <s:actionerror />
+<pa:sucessMessage/>
+<pa:failureMessage/>
+ <div class="error_msg"><s:actionerror/></div>
+  
 <h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>

@@ -520,9 +520,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     /**
      * @return the result
      * @throws PAException on error.
-     *  @throws NullifiedEntityException on deletes
      */
-    public String saveStudyParticipationContact() throws PAException, NullifiedEntityException {
+    public String saveStudyParticipationContact() throws PAException {
         clearErrorsAndMessages();
         boolean isPrimaryContact = false;
         boolean hasErrors = false;
@@ -533,12 +532,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             persId = ServletActionContext.getRequest().getParameter("contactpersid");
             String email = ServletActionContext.getRequest().getParameter("email");
             String telephone = ServletActionContext.getRequest().getParameter("tel");
-            if ("".equals(persId)) {
+            if (persId == null || "".equals(persId)) {
                 addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
                 hasErrors = true;
             } else {
+                try {
                 selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                         EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+                } catch (NullifiedEntityException ne) {
+                    throw new PAException("This person is longer available:" + ne);
+                }
             }
             if (PAUtil.isEmpty(email)) {
                 addFieldError("personContactWebDTO.email", getText("error.enterEmailAddress"));
@@ -569,8 +572,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             }
         }
         if (selectedPersTO == null) {
-            selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
+            try {
+              selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+            } catch (NullifiedEntityException ne) {
+                throw new PAException("This person is longer available:" + ne);
+            }
         }
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
