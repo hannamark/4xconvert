@@ -169,6 +169,7 @@
             </src>
             <classpath>
                 <pathelement location="${viewer.build.outputDir}"/> 
+                <path refid="ejb.package.classpath"/>
                 <path refid="test.classpath"/>
             </classpath>
         </javac>

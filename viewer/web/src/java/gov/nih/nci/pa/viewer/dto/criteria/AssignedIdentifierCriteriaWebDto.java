@@ -78,7 +78,7 @@ package gov.nih.nci.pa.viewer.dto.criteria;
 
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
-import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.viewer.util.ViewerUtil;
 
 /**
  * @author Hugh Reinhart
@@ -107,6 +107,6 @@ public class AssignedIdentifierCriteriaWebDto implements CriteriaWebDto<Assigned
      * @param assignedIdentifier the assignedIdentifier to set
      */
     public void setAssignedIdentifier(String assignedIdentifier) {
-        this.assignedIdentifier = ReportUtil.assignedIdentifierSetter(assignedIdentifier);
+        this.assignedIdentifier = ViewerUtil.assignedIdentifierSetter(assignedIdentifier);
     }
 }

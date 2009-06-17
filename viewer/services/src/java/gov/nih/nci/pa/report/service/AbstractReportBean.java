@@ -79,8 +79,8 @@ public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, R
             StringBuffer sql = new StringBuffer(
                       "select org.name, spart.local_sp_indentifier "
                     + "from study_participation AS spart "
-                    + "  join healthcare_facility AS hf ON (spart.healthcare_facility_identifier = hf.identifier) "
-                    + "  join organization AS org ON (hf.organization_identifier = org.identifier) "
+                    + "  join research_organization AS ro ON (spart.research_organization_identifier = ro.identifier) "
+                    + "  join organization AS org ON (ro.organization_identifier = org.identifier) "
                     + "where study_protocol_identifier = :SP_ID "
                     + "  and spart.functional_code = :LEAD_ORGANIZATION ");
             query = session.createSQLQuery(sql.toString());

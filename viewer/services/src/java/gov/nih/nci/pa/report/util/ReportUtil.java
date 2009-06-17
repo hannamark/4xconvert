@@ -77,16 +77,11 @@
 package gov.nih.nci.pa.report.util;
 
 import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -95,33 +90,6 @@ import java.util.Set;
  * @since 5/20/2009
  */
 public final class ReportUtil {
-    /**
-     * Convert BigInteger to iso Int.
-     * @param bigInt the BigInteger returned use hibernate sql
-     * @return iso Int
-     * @throws PAException conversion exception
-     */
-    public static Int convertToInt(BigInteger bigInt) throws PAException {
-        int intValue = bigInt.intValue();
-        if (!bigInt.equals(BigInteger.valueOf(intValue))) {
-            throw new PAException("Error converting BigInteger to Int.  Value is out of range.");
-        }
-        return IntConverter.convertToInt(intValue);
-    }
-
-    /**
-     * Convert Double to iso Int.
-     * @param doub the Double returned use hibernate sql
-     * @return iso Int
-     * @throws PAException conversion exception
-     */
-    public static Int convertToInt(Double doub) throws PAException {
-        int intValue = doub.intValue();
-        if (!doub.equals(Double.valueOf(intValue))) {
-            throw new PAException("Error converting Double to Int.  Value is out of range.");
-        }
-        return IntConverter.convertToInt(intValue);
-    }
 
     /**
      * Convert string list to DSet.
@@ -206,32 +174,6 @@ public final class ReportUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTime(timestamp);
         return cal.get(Calendar.DAY_OF_MONTH);
-    }
-
-    private static final int ASSIGNED_IDENTIFIER_SN_LENGTH = 5;
-    /**
-     * @param value user input
-     * @return a value conforming to NCI identifier format
-     */
-    public static String assignedIdentifierSetter(String value) {
-        if (value == null) {
-            return null;
-        }
-        StringBuffer result = new StringBuffer(value.trim().toUpperCase());
-        if (result.length() <= ASSIGNED_IDENTIFIER_SN_LENGTH) {
-            try {
-                result = new StringBuffer(String.format("%05d", Integer.parseInt(result.toString())));
-            } catch (NumberFormatException e) {
-                return value;
-            }
-        }
-        if (result.length() == ASSIGNED_IDENTIFIER_SN_LENGTH) {
-            StringBuffer sb = new StringBuffer("NCI-");
-            sb.append(String.format("%04d", getYear(new Timestamp(new Date().getTime()))));
-            sb.append('-');
-            result = new StringBuffer(sb.append(result).toString());
-        }
-        return result.toString();
     }
 
     /**

@@ -130,6 +130,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
      * {@inheritDoc}
      */
     public List<TrialListResultDto> get(AbstractStandardCriteriaDto criteria) throws PAException {
+        AbstractStandardCriteriaDto.validate(criteria);
         try {
             Method validate = criteria.getClass().getMethod("validate", Object.class);
             validate.invoke(criteria.getClass(), criteria);
