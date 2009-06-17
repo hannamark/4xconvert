@@ -28,66 +28,68 @@ function handleAction(){
         <s:hidden name="registryUserWebDTO.csmUserId" />
         <input type="hidden" name="page" />
         <c:choose>
-	        <c:when test="${requestScope.isNewUser  == true}">
-	            <p>To register for NCI Clinical Trials Reporting Program, 
-	            please begin by creating your login information. <br>
-	            Please note: asterisks (<span class="required">*</span>) indicate required fields.</p>             
-	        </c:when>
-	        <c:otherwise >
+            <c:when test="${requestScope.isNewUser  == true}">
+                <p>To register for NCI Clinical Trials Reporting Program, 
+                please begin by creating your login information. <br>
+                Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
+               <b><i> Please provide professional contact information only.</i></b> </p>             
+            </c:when>
+            <c:otherwise >
                 <p>You may update your account information. 
-                Please note: asterisks (<span class="required">*</span>) indicate required fields.  </p>
+                Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
+                 <b><i> Please provide professional contact information only. </i></b> </p>
             </c:otherwise>
         </c:choose>
         <table class="form">
-	        <tbody>
-		          <tr>
-		              <th colspan="3">
-		                  Login Information
-		              </th>
-		          </tr> 
-		          <tr>
-		                <td colspan="2" class="space">&nbsp;</td>
-		          </tr>
-		  
-		          <tr>
-		                <td scope="row" class="label">
-		                    <label for="registerUsershowMyAccount_registryUserWebDTO_loginName"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
-		                </td>
-		                <td>
-		                    <s:textfield name="registryUserWebDTO.loginName"  maxlength="100" size="35" readonly="true"  cssStyle="width:200px" />
-		                    <span class="formErrorMsg"> 
-		                        <s:fielderror>
-		                        <s:param>registryUserWebDTO.loginName</s:param>
-		                       </s:fielderror>                            
-		                     </span>
-		                </td>                
-		          </tr>
-		          <tr>
-		                <td scope="row" class="label">
-		                    <label for="registerUsershowMyAccount_registryUserWebDTO_password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
-		                </td>
-		                <td>
-		                    <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
-		                    <span class="formErrorMsg"> 
-		                        <s:fielderror>
-		                        <s:param>registryUserWebDTO.password</s:param>
-		                       </s:fielderror>                            
-		                     </span>
-		                </td>                
-		          </tr>
-		          <tr>
-		                <td scope="row" class="label">
-		                    <label for="registerUsershowMyAccount_registryUserWebDTO_retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
-		                </td>
-		                <td>
-		                    <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
-		                    <span class="formErrorMsg"> 
-		                        <s:fielderror>
-		                        <s:param>registryUserWebDTO.retypePassword</s:param>
-		                       </s:fielderror>                            
-		                     </span>
-		                </td>                
-		          </tr>
+            <tbody>
+                  <tr>
+                      <th colspan="3">
+                          Login Information
+                      </th>
+                  </tr> 
+                  <tr>
+                        <td colspan="2" class="space">&nbsp;</td>
+                  </tr>
+          
+                  <tr>
+                        <td scope="row" class="label">
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_loginName"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
+                        </td>
+                        <td>
+                            <s:textfield name="registryUserWebDTO.loginName"  maxlength="100" size="35" readonly="true"  cssStyle="width:200px" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.loginName</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr>
+                  <tr>
+                        <td scope="row" class="label">
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
+                        </td>
+                        <td>
+                            <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.password</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr>
+                  <tr>
+                        <td scope="row" class="label">
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
+                        </td>
+                        <td>
+                            <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.retypePassword</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr>
                   <tr>
                       <td class="space" colspan="2">
                           &nbsp;
@@ -250,10 +252,15 @@ function handleAction(){
                                </s:fielderror>                            
                              </span>
                         </td>                
-                  </tr>  
-	          </tbody>
+                  </tr> 
+                  <tr>
+                  <td colspan="2" align="left">
+                   <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
+                  </td>
+                  <tr>
+              </tbody>
          </table>
-        <div class="actionsrow">
+          <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li>       

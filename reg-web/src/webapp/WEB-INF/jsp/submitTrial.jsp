@@ -419,7 +419,11 @@ function toggledisplay2 (it) {
          </c:otherwise>
         </c:choose>                                          
                 
-
+         <tr>
+         <td colspan="2">
+          <p><b><I>Please provide professional contact information only.</I></b></p>
+         </td>
+         </tr>
           <tr>
                 <td scope="row" class="label">
                    <label for="submitTrial_contactEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label> 
@@ -445,7 +449,13 @@ function toggledisplay2 (it) {
                        </s:fielderror>                            
                      </span>
                 </td>           
-          </tr>             
+          </tr>  
+          <tr>
+         <td colspan="2">
+          <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
+         </td>
+         </tr>
+          <tr>           
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>

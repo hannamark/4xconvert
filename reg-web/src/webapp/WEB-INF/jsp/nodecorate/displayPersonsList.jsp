@@ -8,7 +8,6 @@
 	<display:column title="Middle Name" property="middleName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Last Name" property="lastName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Address" property="address"  sortable="true"  headerClass="sortable"  headerScope="col"/>
-	<display:column title="Email" property="email"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Action" class="action" sortable="false"  headerScope="col">	
 	<a href="#" class="btn" onclick="submitform('${row.id}','${fn:replace(row.lastName,'\'','')}'+','+'${fn:replace(row.firstName,'\'','')}')">
 							<span class="btn_img"><span class="confirm">Select</span></span></a>	
