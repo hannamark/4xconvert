@@ -74,25 +74,22 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.viewer.action;
+package gov.nih.nci.pa.viewer.util;
 
-import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.service.TrialListLocal;
+import gov.nih.nci.pa.service.PAException;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.opensymphony.xwork2.Action;
+public class MockTrialListService implements TrialListLocal {
 
-public class AverageMilestoneTest extends BaseViewerTest<AverageMilestoneAction> {
-
-    @Before
-    public void initAction() {
-        action = new AverageMilestoneAction();
+    public List<TrialListResultDto> get(AbstractStandardCriteriaDto criteria)
+            throws PAException {
+        List<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
+        return rList;
     }
 
-    @Test
-    public void executeTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-    }
 }

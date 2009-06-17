@@ -74,20 +74,23 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.viewer.dto.criteria.SubmissionTypeCriteriaWebDto;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
 
-public class AverageMilestoneTest extends BaseViewerTest<AverageMilestoneAction> {
+public class SubmissionByDateTest extends BaseViewerTest<SubmissionByDateAction> {
 
     @Before
     public void initAction() {
-        action = new AverageMilestoneAction();
+        action = new SubmissionByDateAction();
+        action.setCriteria(new SubmissionTypeCriteriaWebDto());
     }
 
     @Test

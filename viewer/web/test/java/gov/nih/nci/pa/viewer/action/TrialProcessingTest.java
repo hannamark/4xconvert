@@ -77,17 +77,19 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.viewer.dto.criteria.AssignedIdentifierCriteriaWebDto;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
 
-public class AverageMilestoneTest extends BaseViewerTest<AverageMilestoneAction> {
+public class TrialProcessingTest extends BaseViewerTest<TrialProcessingAction> {
 
     @Before
     public void initAction() {
-        action = new AverageMilestoneAction();
+        action = new TrialProcessingAction();
+        action.setCriteria(new AssignedIdentifierCriteriaWebDto());
     }
 
     @Test

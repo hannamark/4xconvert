@@ -308,12 +308,13 @@
             <classpath location="${viewer.build.coberturaOutputDir}"/>
             <classpath location="${viewer.build.outputDir}"/>
             <classpath location="${viewer.build.testOutputDir}"/>
+            <classpath refid="ejb.package.classpath"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <batchtest todir="${viewer.test.reports}">
                 <fileset dir="${viewer.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>                    
+                    <exclude name="**/*Abstract*Test.java"/>
                     <exclude name="**/*SeleniumTest.java"/>
                 </fileset>
             </batchtest>
