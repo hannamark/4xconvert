@@ -141,7 +141,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         selenium.click("//a[@id='submitDuplicatePersonForm']/span/span");
         /* wait for results to load */
         waitForElementById("mark_as_dup_" + dupId.getExtension(), 30);
-        /* select record to use at duplicate */
+        /* select record to use as duplicate */
         clickAndWaitButton("mark_as_dup_" + dupId.getExtension());
 
         selenium.selectFrame("relative=parent");
@@ -156,6 +156,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
             Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
             assertEquals(1, nullifiedEntities.keySet().size());
             assertEquals(id.getExtension(), nullifiedEntities.keySet().iterator().next().getExtension());
+            assertEquals(dupId.getExtension(), nullifiedEntities.values().iterator().next().getExtension());
         }
     }
 

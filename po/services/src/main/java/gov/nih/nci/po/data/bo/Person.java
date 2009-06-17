@@ -251,7 +251,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     }
 
     /**
-     * @return person
+     * {@inheritDoc}
      */
     @ManyToOne(optional = true)
     @JoinColumn(name = "duplicate_of", nullable = true)

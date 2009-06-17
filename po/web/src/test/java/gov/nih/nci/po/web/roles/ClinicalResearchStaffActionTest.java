@@ -131,6 +131,19 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
     }
 
     @Test
+    public void testEditWithDuplicate() throws JMSException {
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        action.setDuplicateOf(crs);
+        assertEquals(Action.SUCCESS, action.edit());
+        assertNull(action.getRole().getDuplicateOf());
+
+        crs.setId(1L);
+        action.setDuplicateOf(crs);
+        assertEquals(Action.SUCCESS, action.edit());
+        assertEquals(1, action.getRole().getDuplicateOf().getId().longValue());
+    }
+
+    @Test
     public void testGetAvailableStatusForAddForm() {
         List<RoleStatus> expected = new ArrayList<RoleStatus>();
         expected.add(RoleStatus.PENDING);

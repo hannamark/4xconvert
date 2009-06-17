@@ -7,14 +7,14 @@
         <title>Create <s:text name="organization"/></title>
     </s:if>
     <s:else>
-	    <c:if test="${fn:length(organization.changeRequests) > 0}">
-	       <title><s:text name="organization.details.title"/> - Comparison</title>
-	    </c:if>
-	    <c:if test="${fn:length(organization.changeRequests) == 0}">
-	       <title><s:text name="organization.details.title"/></title>
-	    </c:if>
+        <c:if test="${fn:length(organization.changeRequests) > 0}">
+           <title><s:text name="organization.details.title"/> - Comparison</title>
+        </c:if>
+        <c:if test="${fn:length(organization.changeRequests) == 0}">
+           <title><s:text name="organization.details.title"/></title>
+        </c:if>
     </s:else>
-    <%@include file="../confirmThenSubmit.jsp" %>       
+    <%@include file="../confirmThenSubmit.jsp" %>
 </head>
 <body>
 
@@ -28,130 +28,130 @@
     </s:text>
     </p>
     </div>
-    </c:if> 
+    </c:if>
 </s:if>
 
 <po:successMessages/>
 <s:actionerror/>
 
 <div id="page" style="margin-top:10px;">
-	<div class="boxouter_nobottom">
-	<h2><s:text name="organization"/> Information</h2>
-	
-	<s:if test="%{isCreate}">
-	   <s:set name="formAction" value="'create/organization/create.action'"/>
-	</s:if>
-	<s:else>
-	   <s:set name="formAction" value="'organization/curate/curate.action'"/>
-	</s:else>
-	<s:form action="%{formAction}" id="curateEntityForm" onsubmit="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.organization.statusCode',document.forms.curateEntityForm);">
-	    <input id="enableEnterSubmit" type="submit"/>
-		<s:hidden key="rootKey"/>
-	    <s:hidden key="cr.id"/>
-	    <s:hidden key="organization.id"/>
-		<div class="boxouter">
-		<h2>Basic Identifying Information</h2>
-		    <div class="box_white">
-	        <s:if test="isCreate">
-	            <s:select
-	               label="%{getText('organization.statusCode')}"
-	               name="organization.statusCode"
-	               list="availableStatus"
-	               listKey="name()"
-	               listValue="name()"
-	               value="organization.statusCode" 
-	               headerKey="" headerValue="--Select a Status--" 
-	               required="true" cssClass="required" 
-	               id="curateEntityForm.organization.statusCode"/>		        
-	        </s:if>
-	        <s:else>
-		        <po:inputRow>
-		        <po:inputRowElement><po:field labelKey="organization.id">${organization.id}</po:field></po:inputRowElement>
-		        <po:inputRowElement>&nbsp;</po:inputRowElement>
-		        <po:inputRowElement><po:field labelKey="organization.statusCode">${organization.statusCode}</po:field></po:inputRowElement>
-		        <po:inputRowElement>&nbsp;</po:inputRowElement>
-		        <po:inputRowElement><po:field labelKey="organization.statusDate"><s:date name="organization.statusDate" format="yyyy-MM-dd" /></po:field></po:inputRowElement>
-		        </po:inputRow>
-			    <s:select
-			       label="New %{getText('organization.statusCode')}"
-			       name="organization.statusCode"
-			       list="organization.priorEntityStatus.allowedTransitions"
-			       value="organization.statusCode" 
-			       headerKey="" headerValue="--Select a Status--" 
-			       onchange="handleDuplicateOf();"
-			       required="true" cssClass="required" 
-			       id="curateEntityForm.organization.statusCode"/>         
-        	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
-				    <script type="text/javascript">
-				        function handleDuplicateOf() {
-				            $('duplicateOfDiv')[$('curateEntityForm.organization.statusCode').value == 'NULLIFIED' ? 'show' : 'hide'](); 
-				                    
-				            if ($('curateEntityForm.organization.statusCode').value != 'NULLIFIED') {
-				                $('curateEntityForm.organization.duplicateOf.id').value = '';
-				                $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '';
-				            }
-				            return true;
-				        }
-				    </script>
-				    <script type="text/javascript">
-				        function showPopWinCallback(returnVal) {
-				            $('curateEntityForm.organization.duplicateOf.id').value = returnVal.id;
-				            $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
-				        }
-				    </script>     
-				    <po:inputRow>
-				    <po:inputRowElement>
-		                <div class="wwgrp" id="wwgrp_curateEntityForm_organization_duplicateOf_id">
-		                    <div class="wwlbl" id="wwlbl_curateEntityForm_organization_duplicateOf_id">
-			                    <label class="label" for="curateEntityForm_organization_duplicateOf_id">        
-			                    <s:text name="organization.duplicateOf.id"/>:
-			                    </label>
-		                    </div>
-		                    <br/>
-		                    <div class="wwctrl" id="wwctrl_curateEntityForm_organization_duplicateOf_id">
-		                       ${organization.duplicateOf.id} 
-		                    </div>
-		                </div>
-					    <s:hidden key="organization.duplicateOf" id="curateEntityForm.organization.duplicateOf.id"/>
-				    </po:inputRowElement>
-				    <po:inputRowElement>
-                        <c:url value="/protected/selector/organization/start.action" var="duplicatesUrl">
-                            <c:param name="source.id" value="${organization.id}"/>
-                        </c:url>
-                        <po:buttonRow>
-                        <po:button id="select_duplicate" href="javascript://noop/" onclick="showPopup('${duplicatesUrl}', showPopWinCallback);" style="search" text="Select Duplicate"/>
-                        </po:buttonRow>				    
-				    </po:inputRowElement>
-				    </po:inputRow>   	    
-			    </div>
-	        </s:else>
-				<s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
-		        <div class="clear"></div>
-		    </div>
-		</div>
-		
-		<div class="boxouter">
-		<h2>Address Information</h2>
-		    <div class="box_white">
-		        <po:addressForm formNameBase="curateEntityForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true"/>
-		        <div class="clear"></div>
-		    </div>
-		</div>
-		
-		<s:hidden key="organization.comments" id="curateEntityForm.organization.comments"/>
-	</s:form>
-		
-		<div class="boxouter_nobottom">
-		<h2>Contact Information</h2>
-		    <div class="box_white">
-		        <div class="clear"></div>
-		        <po:contacts contactableKeyBase="organization"/>
-		    </div>
-		</div>
+    <div class="boxouter_nobottom">
+    <h2><s:text name="organization"/> Information</h2>
+
+    <s:if test="%{isCreate}">
+       <s:set name="formAction" value="'create/organization/create.action'"/>
+    </s:if>
+    <s:else>
+       <s:set name="formAction" value="'organization/curate/curate.action'"/>
+    </s:else>
+    <s:form action="%{formAction}" id="curateEntityForm" onsubmit="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.organization.statusCode',document.forms.curateEntityForm);">
+        <input id="enableEnterSubmit" type="submit"/>
+        <s:hidden key="rootKey"/>
+        <s:hidden key="cr.id"/>
+        <s:hidden key="organization.id"/>
+        <div class="boxouter">
+        <h2>Basic Identifying Information</h2>
+            <div class="box_white">
+            <s:if test="isCreate">
+                <s:select
+                   label="%{getText('organization.statusCode')}"
+                   name="organization.statusCode"
+                   list="availableStatus"
+                   listKey="name()"
+                   listValue="name()"
+                   value="organization.statusCode"
+                   headerKey="" headerValue="--Select a Status--"
+                   required="true" cssClass="required"
+                   id="curateEntityForm.organization.statusCode"/>
+            </s:if>
+            <s:else>
+                <po:inputRow>
+                <po:inputRowElement><po:field labelKey="organization.id">${organization.id}</po:field></po:inputRowElement>
+                <po:inputRowElement>&nbsp;</po:inputRowElement>
+                <po:inputRowElement><po:field labelKey="organization.statusCode">${organization.statusCode}</po:field></po:inputRowElement>
+                <po:inputRowElement>&nbsp;</po:inputRowElement>
+                <po:inputRowElement><po:field labelKey="organization.statusDate"><s:date name="organization.statusDate" format="yyyy-MM-dd" /></po:field></po:inputRowElement>
+                </po:inputRow>
+                <s:select
+                   label="New %{getText('organization.statusCode')}"
+                   name="organization.statusCode"
+                   list="organization.priorEntityStatus.allowedTransitions"
+                   value="organization.statusCode"
+                   headerKey="" headerValue="--Select a Status--"
+                   onchange="handleDuplicateOf();"
+                   required="true" cssClass="required"
+                   id="curateEntityForm.organization.statusCode"/>
+                <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
+                    <script type="text/javascript">
+                        function handleDuplicateOf() {
+                            $('duplicateOfDiv')[$('curateEntityForm.organization.statusCode').value == 'NULLIFIED' ? 'show' : 'hide']();
+
+                            if ($('curateEntityForm.organization.statusCode').value != 'NULLIFIED') {
+                                $('curateEntityForm.duplicateOf.id').value = '';
+                                $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '';
+                            }
+                            return true;
+                        }
+                    </script>
+                    <script type="text/javascript">
+                        function showPopWinCallback(returnVal) {
+                            $('curateEntityForm.duplicateOf.id').value = returnVal.id;
+                            $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
+                        }
+                    </script>
+                    <po:inputRow>
+                        <po:inputRowElement>
+                            <div class="wwgrp" id="wwgrp_curateEntityForm_organization_duplicateOf_id">
+                                <div class="wwlbl" id="wwlbl_curateEntityForm_organization_duplicateOf_id">
+                                    <label class="label" for="curateEntityForm_organization_duplicateOf_id">
+                                        <s:text name="organization.duplicateOf.id"/>:
+                                    </label>
+                                </div>
+                                <br/>
+                                <div class="wwctrl" id="wwctrl_curateEntityForm_organization_duplicateOf_id">
+                                   ${organization.duplicateOf.id}
+                                </div>
+                            </div>
+                           <s:hidden key="duplicateOf" id="curateEntityForm.duplicateOf.id"/>
+                        </po:inputRowElement>
+                        <po:inputRowElement>
+                            <c:url value="/protected/selector/organization/start.action" var="duplicatesUrl">
+                                <c:param name="source.id" value="${organization.id}"/>
+                            </c:url>
+                            <po:buttonRow>
+                                <po:button id="select_duplicate" href="javascript://noop/" onclick="showPopup('${duplicatesUrl}', showPopWinCallback);" style="search" text="Select Duplicate"/>
+                            </po:buttonRow>
+                        </po:inputRowElement>
+                    </po:inputRow>
+                </div>
+            </s:else>
+                <s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+        <div class="boxouter">
+        <h2>Address Information</h2>
+            <div class="box_white">
+                <po:addressForm formNameBase="curateEntityForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true"/>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+        <s:hidden key="organization.comments" id="curateEntityForm.organization.comments"/>
+    </s:form>
+
+        <div class="boxouter_nobottom">
+        <h2>Contact Information</h2>
+            <div class="box_white">
+                <div class="clear"></div>
+                <po:contacts contactableKeyBase="organization"/>
+            </div>
+        </div>
 <s:if test="%{isNotCreate}">
         <div class="boxouter">
         <h2>Assign Organizational Roles</h2>
-            <div class="box_white"> 
+            <div class="box_white">
                 <c:url var="manageResearchOrgs" value="/protected/roles/organizational/ResearchOrganization/start.action">
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
@@ -164,21 +164,21 @@
                 <c:url var="manageHcf" value="/protected/roles/organizational/HealthCareFacility/load.action">
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
-	            <ul>
-	                <li><a href="${manageResearchOrgs}"><s:text name="researchOrganization.manage.title"/></a> (${fn:length(organization.researchOrganizations)}) <c:if test="${hotResearchOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
-	                <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a> (${fn:length(organization.identifiedOrganizations)}) <c:if test="${hotIdentifiedOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
-	                <li><a href="${manageOversightComms}"><s:text name="oversightCommittee.manage.title"/></a> (${fn:length(organization.oversightCommittees)}) <c:if test="${hotOversightCommitteeCount > 0}"><span class='required'>*</span></c:if></li>
+                <ul>
+                    <li><a href="${manageResearchOrgs}"><s:text name="researchOrganization.manage.title"/></a> (${fn:length(organization.researchOrganizations)}) <c:if test="${hotResearchOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
+                    <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a> (${fn:length(organization.identifiedOrganizations)}) <c:if test="${hotIdentifiedOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
+                    <li><a href="${manageOversightComms}"><s:text name="oversightCommittee.manage.title"/></a> (${fn:length(organization.oversightCommittees)}) <c:if test="${hotOversightCommitteeCount > 0}"><span class='required'>*</span></c:if></li>
                     <li><a href="${manageHcf}">Manage Health Care Facility</a> (${fn:length(organization.healthCareFacilities)}) <c:if test="${hotHealthCareFacilityCount > 0}"><span class='required'>*</span></c:if></li>
-	            </ul>
+                </ul>
                 <div class="clear"></div>
             </div>
         </div>
-</s:if>		
+</s:if>
         <div class="boxouter">
         <h2>Curator Comment(s)</h2>
-	        <div class="box_white">
-	            <s:textarea id="curateEntityForm.organization.commentsText" label="%{getText('organization.comments')}" cols="50" rows="8" cssStyle="resize: none;" value="%{organization.comments}" />
-	        </div>
+            <div class="box_white">
+                <s:textarea id="curateEntityForm.organization.commentsText" label="%{getText('organization.comments')}" cols="50" rows="8" cssStyle="resize: none;" value="%{organization.comments}" />
+            </div>
         </div>
     </div>
 </div>
@@ -188,16 +188,16 @@
     <c:if test="${fn:length(organization.changeRequests) > 1}">
     <div class="crselect">
     <s:form action="ajax/organization/curate/changeCurrentChangeRequest.action" id="changeCrForm" theme="simple">
-	    <s:hidden key="rootKey"/>
-	    <s:select
-	       name="cr"
-	       list="selectChangeRequests"
-	       value="cr.id"
-	       onchange="document.getElementById('curateEntityForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
-	       />
-	</s:form>
-	</div>
-	</c:if>
+        <s:hidden key="rootKey"/>
+        <s:select
+           name="cr"
+           list="selectChangeRequests"
+           value="cr.id"
+           onchange="document.getElementById('curateEntityForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
+           />
+    </s:form>
+    </div>
+    </c:if>
 <div id="crinfo">
 <%@ include file="crInfo.jsp" %>
 </div>

@@ -150,6 +150,19 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
+    public void testCurateWithDuplicate() throws JMSException {
+        Organization o = new Organization();
+        action.setDuplicateOf(o);
+        assertEquals(Action.SUCCESS, action.curate());
+        assertNull(action.getOrganization().getDuplicateOf());
+
+        o.setId(1L);
+        action.setDuplicateOf(o);
+        assertEquals(Action.SUCCESS, action.curate());
+        assertEquals(1, action.getOrganization().getDuplicateOf().getId().longValue());
+    }
+
+    @Test
     public void changeCurrentChangeRequest() {
         assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
 

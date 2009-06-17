@@ -136,6 +136,19 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
+    public void testEditWithDuplicate() throws JMSException {
+        IdentifiedOrganization o = new IdentifiedOrganization();
+        action.setDuplicateOf(o);
+        assertEquals(Action.SUCCESS, action.edit());
+        assertNull(action.getRole().getDuplicateOf());
+
+        o.setId(1L);
+        action.setDuplicateOf(o);
+        assertEquals(Action.SUCCESS, action.edit());
+        assertEquals(1, action.getRole().getDuplicateOf().getId().longValue());
+    }
+
+    @Test
     public void testGetAvailableStatusForAddForm() {
         List<RoleStatus> expected = new ArrayList<RoleStatus>();
         expected.add(RoleStatus.PENDING);

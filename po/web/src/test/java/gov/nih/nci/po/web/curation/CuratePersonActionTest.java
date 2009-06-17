@@ -150,6 +150,19 @@ public class CuratePersonActionTest extends AbstractPoTest {
     }
 
     @Test
+    public void testCurateWithDuplicate() throws JMSException {
+        Person p = new Person();
+        action.setDuplicateOf(p);
+        assertEquals(Action.SUCCESS, action.curate());
+        assertNull(action.getPerson().getDuplicateOf());
+
+        p.setId(1L);
+        action.setDuplicateOf(p);
+        assertEquals(Action.SUCCESS, action.curate());
+        assertEquals(1, action.getPerson().getDuplicateOf().getId().longValue());
+    }
+
+    @Test
     public void changeCurrentChangeRequest() {
         assertEquals(CuratePersonAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
 

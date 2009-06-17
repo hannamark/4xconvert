@@ -149,8 +149,11 @@ public class OversightCommittee extends AbstractOversightCommittee implements Co
         return duplicateOf;
     }
 
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(OversightCommittee duplicateOf) {
+    /**
+     * Set the object of which this is as a duplicate.
+     * @param duplicateOf object of which this is a duplicate
+     */
+    public void setDuplicateOf(OversightCommittee duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
 

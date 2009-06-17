@@ -155,8 +155,11 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
         return duplicateOf;
     }
 
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(OrganizationalContact duplicateOf) {
+    /**
+     * Set the object of which this is as a duplicate.
+     * @param duplicateOf object of which this is a duplicate
+     */
+    public void setDuplicateOf(OrganizationalContact duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
 

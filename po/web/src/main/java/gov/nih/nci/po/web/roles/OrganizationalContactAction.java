@@ -115,6 +115,7 @@ public class OrganizationalContactAction extends
 
     private static final long serialVersionUID = 1L;
     private OrganizationalContact role = new OrganizationalContact();
+    private OrganizationalContact duplicateOf = new OrganizationalContact();
     private OrganizationalContactCR cr = new OrganizationalContactCR();
     private String rootKey;
 
@@ -323,8 +324,26 @@ public class OrganizationalContactAction extends
         }
     )
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String edit() throws JMSException {
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set person.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            role.setDuplicateOf(duplicateOf);
+        }
         return super.edit();
+    }
+
+    /**
+     * @return the duplicateOf
+     */
+    public OrganizationalContact getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(OrganizationalContact duplicateOf) {
+        this.duplicateOf = duplicateOf;
     }
 }

@@ -91,16 +91,14 @@ import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 
 /**
  * @author smatyas
- * 
+ *
  * @param <ROLE>
  * @param <ROLECR>
  * @param <ROLESERVICE>
  */
-public abstract class 
-    AbstractPersonRoleAction<ROLE extends Correlation, 
-        ROLECR extends CorrelationChangeRequest<ROLE>, 
-        ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
-    extends AbstractRoleAction<ROLE, ROLECR, ROLESERVICE> {
+public abstract class AbstractPersonRoleAction<ROLE extends Correlation, ROLECR extends CorrelationChangeRequest<ROLE>,
+                                               ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
+        extends AbstractRoleAction<ROLE, ROLECR, ROLESERVICE> {
 
     private static final long serialVersionUID = 1L;
 
@@ -126,7 +124,7 @@ public abstract class
     public void setPerson(Person person) {
         this.person = person;
     }
-    
+
     /**
      * @param mailable initialize Mailable
      */

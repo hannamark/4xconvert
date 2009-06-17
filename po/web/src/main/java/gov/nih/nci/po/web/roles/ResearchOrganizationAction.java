@@ -116,6 +116,7 @@ public class ResearchOrganizationAction
 
     private static final long serialVersionUID = 1L;
     private ResearchOrganization role = new ResearchOrganization();
+    private ResearchOrganization duplicateOf = new ResearchOrganization();
     private ResearchOrganizationCR cr = new ResearchOrganizationCR();
     @SuppressWarnings("deprecation")
     private ResearchOrganizationType researchOrganizationType = new ResearchOrganizationType();
@@ -229,8 +230,12 @@ public class ResearchOrganizationAction
         }
     )
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String edit() throws JMSException {
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set person.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            role.setDuplicateOf(duplicateOf);
+        }
         return super.edit();
     }
 
@@ -322,5 +327,19 @@ public class ResearchOrganizationAction
      */
     public String changeResearchOrganizationType() {
         return "changeResearchOrganizationType";
+    }
+
+    /**
+     * @return the duplicateOf
+     */
+    public ResearchOrganization getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(ResearchOrganization duplicateOf) {
+        this.duplicateOf = duplicateOf;
     }
 }

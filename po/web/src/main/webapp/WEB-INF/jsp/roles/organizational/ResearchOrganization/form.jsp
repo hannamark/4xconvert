@@ -49,62 +49,61 @@
       </s:else>
       <h2><s:text name="researchOrganization"/> Role Information</h2>
         <div class="box_white">
-        <s:actionerror/>
-        <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
-        <s:hidden key="cr"/>
-        <s:hidden key="organization"/>
-        <s:if test="%{isNotCreate}"><s:hidden key="role.id"/></s:if>
-        <script type="text/javascript"><!--
-        /*
-         Toggles the display of a stateOrProvince textfield or a select-box.
-        */
-        function curateRoleForm_displayFundingMechanism(ResearchOrganizationType_id) {
-          var url =  '' + contextPath + '/protected/ajax/roles/organizational/ResearchOrganization/funding/changeResearchOrganizationType.action?researchOrganizationType.id=' + ResearchOrganizationType_id;
-            loadDiv(url, 'curateRoleForm_displayFundingMechanism', true);
-        }
-        --></script>
-        <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
-        <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
-        <s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
-        <s:select
-           label="%{getText('researchOrganization.typeCode')}"
-           name="role.typeCode"
-           list="#researchOrgTypes"
-           listKey="id"
-           listValue="description"
-           value="role.typeCode.id"
-           headerKey="" headerValue="--Select a Type--"
-           required="true" cssClass="required"
-           onchange="return curateRoleForm_displayFundingMechanism(this.value);"/>
-          <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
-        <div id="curateRoleForm_displayFundingMechanism" class="inline">
-            <%@ include file="selectFundingMechanism.jsp" %>
-        </div>
-        <s:select id="curateRoleForm.role.status"
-           label="%{getText('researchOrganization.status')}"
-           name="role.status"
-           list="availableStatus"
-           listKey="name()"
-           listValue="name()"
-           value="role.status"
-           headerKey="" headerValue="--Select a Role Status--"
-           required="true" cssClass="required"
-           onchange="handleDuplicateOf();"
-           />
+            <s:actionerror/>
+            <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+                <s:hidden key="cr"/>
+                <s:hidden key="organization"/>
+                <s:if test="%{isNotCreate}"><s:hidden key="role.id"/></s:if>
+                <script type="text/javascript"><!--
+                /*
+                 Toggles the display of a stateOrProvince textfield or a select-box.
+                */
+                function curateRoleForm_displayFundingMechanism(ResearchOrganizationType_id) {
+                  var url =  '' + contextPath + '/protected/ajax/roles/organizational/ResearchOrganization/funding/changeResearchOrganizationType.action?researchOrganizationType.id=' + ResearchOrganizationType_id;
+                    loadDiv(url, 'curateRoleForm_displayFundingMechanism', true);
+                }
+                --></script>
+                <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
+                <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
+                <s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
+                <s:select
+                   label="%{getText('researchOrganization.typeCode')}"
+                   name="role.typeCode"
+                   list="#researchOrgTypes"
+                   listKey="id"
+                   listValue="description"
+                   value="role.typeCode.id"
+                   headerKey="" headerValue="--Select a Type--"
+                   required="true" cssClass="required"
+                   onchange="return curateRoleForm_displayFundingMechanism(this.value);"/>
+                  <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
+                <div id="curateRoleForm_displayFundingMechanism" class="inline">
+                    <%@ include file="selectFundingMechanism.jsp" %>
+                </div>
+                <s:select id="curateRoleForm.role.status"
+                   label="%{getText('researchOrganization.status')}"
+                   name="role.status"
+                   list="availableStatus"
+                   listKey="name()"
+                   listValue="name()"
+                   value="role.status"
+                   headerKey="" headerValue="--Select a Role Status--"
+                   required="true" cssClass="required"
+                   onchange="handleDuplicateOf();" />
                 <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
-                <c:if test="${fn:length(availableDuplicateOfs) > 0}">
-           <po:field labelKey="researchOrganization.duplicateOf">
-              <select id="curateRoleForm.role.duplicateOf" name="researchOrganization.duplicateOf">
-              <option value="">--Select a Duplicate Of Entry (ID - TYPE - FUNDING - STATUS - DATE)--</option>
-              <c:forEach var="dupEntry" items="${availableDuplicateOfs}">
-                 <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} - ${dupEntry.fundingMechanism} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
-              </c:forEach>
-              </select>
-           </po:field>
-              </c:if>
+                    <c:if test="${fn:length(availableDuplicateOfs) > 0}">
+                        <po:field labelKey="researchOrganization.duplicateOf">
+                            <select id="curateRoleForm.duplicateOf" name="duplicateOf">
+                                <option value="">--Select a Duplicate Of Entry (ID - TYPE - FUNDING - STATUS - DATE)--</option>
+                                <c:forEach var="dupEntry" items="${availableDuplicateOfs}">
+                                    <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} - ${dupEntry.fundingMechanism.code} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
+                                </c:forEach>
+                            </select>
+                        </po:field>
+                    </c:if>
                 </div>
                 <input id="enableEnterSubmit" type="submit"/>
-          </s:form>
+            </s:form>
         </div>
         </div>
     </div>

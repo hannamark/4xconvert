@@ -117,6 +117,7 @@ public class IdentifiedPersonAction
 
     private static final long serialVersionUID = 1L;
     private IdentifiedPerson role = new IdentifiedPerson();
+    private IdentifiedPerson duplicateOf = new IdentifiedPerson();
     private IdentifiedPersonCR cr = new IdentifiedPersonCR();
 
     /**
@@ -225,8 +226,12 @@ public class IdentifiedPersonAction
         }
     )
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String edit() throws JMSException {
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set person.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            role.setDuplicateOf(duplicateOf);
+        }
         return super.edit();
     }
 
@@ -296,5 +301,19 @@ public class IdentifiedPersonAction
     @Override
     protected String getEditSuccessMessageKey() {
         return "identifiedperson.update.success";
+    }
+
+    /**
+     * @return the duplicateOf
+     */
+    public IdentifiedPerson getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(IdentifiedPerson duplicateOf) {
+        this.duplicateOf = duplicateOf;
     }
 }

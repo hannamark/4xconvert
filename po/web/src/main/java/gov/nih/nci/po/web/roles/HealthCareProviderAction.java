@@ -116,6 +116,7 @@ public class HealthCareProviderAction extends
 
     private static final long serialVersionUID = 1L;
     private HealthCareProvider role = new HealthCareProvider();
+    private HealthCareProvider duplicateOf = new HealthCareProvider();
     private HealthCareProviderCR cr = new HealthCareProviderCR();
     private String rootKey;
 
@@ -324,8 +325,26 @@ public class HealthCareProviderAction extends
         }
     )
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String edit() throws JMSException {
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set person.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            role.setDuplicateOf(duplicateOf);
+        }
         return super.edit();
+    }
+
+    /**
+     * @return the duplicateOf
+     */
+    public HealthCareProvider getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(HealthCareProvider duplicateOf) {
+        this.duplicateOf = duplicateOf;
     }
 }

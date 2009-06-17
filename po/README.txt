@@ -85,6 +85,7 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     or on unix,
     pushd services/; mvn -Pinit-db sql:execute && mvn liquibase:update; popd
 
+    cd client
     mvn -Pci-nostart-nodeploy integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
 
 1.6 Peer Review

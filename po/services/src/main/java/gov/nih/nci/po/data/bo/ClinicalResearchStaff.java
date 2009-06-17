@@ -153,8 +153,11 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
         return duplicateOf;
     }
 
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(ClinicalResearchStaff duplicateOf) {
+    /**
+     * Set the object of which this is as a duplicate.
+     * @param duplicateOf object of which this is a duplicate
+     */
+    public void setDuplicateOf(ClinicalResearchStaff duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
 

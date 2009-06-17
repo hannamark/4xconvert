@@ -114,6 +114,7 @@ public class OversightCommitteeAction extends
 
     private static final long serialVersionUID = 1L;
     private OversightCommittee role = new OversightCommittee();
+    private OversightCommittee duplicateOf = new OversightCommittee();
     private OversightCommitteeCR cr = new OversightCommitteeCR();
 
     /**
@@ -221,8 +222,12 @@ public class OversightCommitteeAction extends
         }
     )
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String edit() throws JMSException {
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set person.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            role.setDuplicateOf(duplicateOf);
+        }
         return super.edit();
     }
 
@@ -292,5 +297,19 @@ public class OversightCommitteeAction extends
     @Override
     protected String getEditSuccessMessageKey() {
         return "oversightcommittee.update.success";
+    }
+
+    /**
+     * @return the duplicateOf
+     */
+    public OversightCommittee getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(OversightCommittee duplicateOf) {
+        this.duplicateOf = duplicateOf;
     }
 }

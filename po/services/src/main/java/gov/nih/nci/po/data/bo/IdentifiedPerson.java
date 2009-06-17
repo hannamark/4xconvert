@@ -150,8 +150,11 @@ public class IdentifiedPerson extends AbstractIdentifiedPerson implements Correl
         return duplicateOf;
     }
 
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(IdentifiedPerson duplicateOf) {
+    /**
+     * Set the object of which this is as a duplicate.
+     * @param duplicateOf object of which this is a duplicate
+     */
+    public void setDuplicateOf(IdentifiedPerson duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
 

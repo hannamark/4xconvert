@@ -116,10 +116,10 @@ import com.opensymphony.xwork2.Preparable;
  * @param <ROLESERVICE>
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public abstract class AbstractRoleAction<ROLE extends Correlation,
-    ROLECR extends CorrelationChangeRequest<ROLE>,
-    ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
+public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extends CorrelationChangeRequest<ROLE>,
+                                         ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
         extends ActionSupport implements Preparable {
+
     private static final long serialVersionUID = 1L;
     private static final String UNCHECKED = "unchecked";
     /**

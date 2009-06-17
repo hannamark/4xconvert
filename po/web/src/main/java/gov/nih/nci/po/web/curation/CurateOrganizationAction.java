@@ -3,6 +3,7 @@ package gov.nih.nci.po.web.curation;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
@@ -23,7 +24,6 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 
 /**
  * Action class to handle curation of Organization entities.
@@ -47,6 +47,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     private Organization organization = new Organization();
     private String rootKey;
     private OrganizationCR cr = new OrganizationCR();
+    private Organization duplicateOf = new Organization();
 
     /**
      * {@inheritDoc}
@@ -96,11 +97,16 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
                 )
             })
     public String curate() throws JMSException {
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set organization.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            getOrganization().setDuplicateOf(duplicateOf);
+        }
         PoRegistry.getOrganizationService().curate(getOrganization());
         ActionHelper.saveMessage(getText("organization.curate.success"));
         return SUCCESS;
     }
-    
+
     /**
      * @return org to curate
      */
@@ -197,7 +203,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
                 .getServiceLocator().getIdentifiedOrganizationService();
         return service.getHotRoleCount(organization);
     }
-    
+
     /**
      * @return number of role that need the curator's attention.
      */
@@ -206,4 +212,19 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
                 .getServiceLocator().getOversightCommitteeService();
         return service.getHotRoleCount(organization);
     }
+
+    /**
+     * @return the duplicateOf
+     */
+    public Organization getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(Organization duplicateOf) {
+        this.duplicateOf = duplicateOf;
+    }
+
 }

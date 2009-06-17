@@ -47,6 +47,7 @@ public class CuratePersonAction extends ActionSupport implements Preparable {
     private Person person = new Person();
     private String rootKey;
     private PersonCR cr = new PersonCR();
+    private Person duplicateOf = new Person();
 
     /**
      * {@inheritDoc}
@@ -96,11 +97,16 @@ public class CuratePersonAction extends ActionSupport implements Preparable {
                 )
             })
     public String curate() throws JMSException {
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set person.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            getPerson().setDuplicateOf(duplicateOf);
+        }
         PoRegistry.getPersonService().curate(getPerson());
         ActionHelper.saveMessage(getText("person.curate.success"));
         return SUCCESS;
     }
-    
+
     /**
      * @return org to curate
      */
@@ -205,5 +211,19 @@ public class CuratePersonAction extends ActionSupport implements Preparable {
         IdentifiedPersonServiceLocal service  = PoRegistry.getInstance()
                 .getServiceLocator().getIdentifiedPersonService();
         return service.getHotRoleCount(person);
+    }
+
+    /**
+     * @return the duplicateOf
+     */
+    public Person getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(Person duplicateOf) {
+        this.duplicateOf = duplicateOf;
     }
 }

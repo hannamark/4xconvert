@@ -155,6 +155,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
             Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
             assertEquals(1, nullifiedEntities.keySet().size());
             assertEquals(id.getExtension(), nullifiedEntities.keySet().iterator().next().getExtension());
+            assertEquals(dupId.getExtension(), nullifiedEntities.values().iterator().next().getExtension());
         }
     }
 
