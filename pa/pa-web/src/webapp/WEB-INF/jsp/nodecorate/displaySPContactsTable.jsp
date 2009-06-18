@@ -1,6 +1,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <pa:failureMessage/>
-<pa:sucessMessage /> 
+<pa:sucessMessage />
+<s:if test="hasActionErrors()">
+            <div class="error_msg"><s:actionerror/></div>
+ </s:if>
+         
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row"  name="personWebDTOList" export="false" >
 	<display:column title="Last Name" property="lastName"  headerClass="sortable"/> 
 	<display:column title="First Name" property="firstName"  headerClass="sortable"/>

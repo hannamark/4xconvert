@@ -519,9 +519,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     /**
      * @return the result
-     * @throws PAException on error.
      */
-    public String saveStudyParticipationContact() throws PAException {
+    public String saveStudyParticipationContact() {
         clearErrorsAndMessages();
         boolean isPrimaryContact = false;
         boolean hasErrors = false;
@@ -540,7 +539,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                         EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
                 } catch (NullifiedEntityException ne) {
-                    throw new PAException("This person is longer available:" + ne);
+                    addActionError(Constants.FAILURE_MESSAGE + "This person is longer available");
+                    hasErrors = true;
+                } catch (NumberFormatException e) {
+                    addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
+                    hasErrors = true;
+                } catch (PAException e) {
+                    addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
+                    hasErrors = true;
                 }
             }
             if (PAUtil.isEmpty(email)) {
@@ -576,18 +582,34 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
               selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             } catch (NullifiedEntityException ne) {
-                throw new PAException("This person is longer available:" + ne);
+                addActionError(Constants.FAILURE_MESSAGE + "This person is longer available");
+                return ERROR_PRIMARY_CONTACTS;
+            } catch (NumberFormatException e) {
+                addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
+                return ERROR_PRIMARY_CONTACTS;
+            } catch (PAException e) {
+                addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
+                return ERROR_PRIMARY_CONTACTS;
             }
         }
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        createStudyParticationContactRecord(tab, isPrimaryContact, roleCode);
+        try {
+            createStudyParticationContactRecord(tab, isPrimaryContact, roleCode);
+        } catch (PAException e) {
+            addActionError("Exception:" + e.getLocalizedMessage());
+            return DISPLAY_SPART_CONTACTS;
+        }
         // This makes a fresh db call to show the result on the JSP
         if (!isPrimaryContact) {
             return returnDisplaySPContacts(tab);
-        } else {
-            personContactWebDTO = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
-                    tab.getStudyParticipationId(), StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName()).get(0);
+          } else {
+            try {
+                personContactWebDTO = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
+                 tab.getStudyParticipationId(), StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName()).get(0);
+            } catch (PAException e) {
+                addActionError("Exception:" + e.getMessage());
+            }
             return DISPLAY_PRIM_CONTACTS;
         }
     }
@@ -620,22 +642,28 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     /**
      * @return the result
-     * @throws PAException on error.
      */
-    public String getStudyParticipationPrimContact() throws PAException {
+    public String getStudyParticipationPrimContact() {
         clearErrorsAndMessages();
         ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        List<PaPersonDTO> resultsList = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
+        List<PaPersonDTO> resultsList;
+        try {
+            resultsList = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());
-        if (resultsList != null && resultsList.isEmpty()) {
-            personContactWebDTO = resultsList.get(0);
+            if (resultsList != null && resultsList.isEmpty()) {
+                personContactWebDTO = resultsList.get(0);
+            }
+
+        } catch (PAException e) {
+            addActionError("Exception:" + e.getMessage());
         }
         return DISPLAY_SP_CONTACTS;
     }
 
-    private String returnDisplaySPContacts(ParticipatingOrganizationsTabWebDTO orgsTabWebDTO) throws PAException {
+    private String returnDisplaySPContacts(ParticipatingOrganizationsTabWebDTO orgsTabWebDTO) {
         personWebDTOList = new ArrayList<PaPersonDTO>();
+        try {
         List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
                 .getPersonsByStudyParticpationId(orgsTabWebDTO.getStudyParticipationId(),
                         StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
@@ -646,6 +674,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         for (int i = 0; i < subInvresults.size(); i++) {
             personWebDTOList.add(subInvresults.get(i));
+        }
+        } catch (PAException e) {
+            addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
         }
         return DISPLAY_SPART_CONTACTS;
     }
@@ -696,23 +727,28 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     /**
      * @return the result
-     * @throws PAException on error.
      */
-    public String setAsPrimaryContact() throws PAException {
+    public String setAsPrimaryContact() {
         clearErrorsAndMessages();
         String editmode = ServletActionContext.getRequest().getParameter("editmode");
         ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         // check if primary contact already exists; if it exists delete it
-        List<PaPersonDTO> returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
+        List<PaPersonDTO> returnlist;
+        try {
+            returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 orgsTabWebDTO.getStudyParticipationId(), StudyParticipationContactRoleCode.PRIMARY_CONTACT.getName());
-        if (!returnlist.isEmpty()) {
-            sPartContactService.delete(IiConverter.convertToIi(returnlist.get(0).getId()));
-        }
-        boolean validationError = createStudyParticationContactRecord(orgsTabWebDTO, true,
-                StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode());
-        if (validationError) {
-            return ERROR_PRIMARY_CONTACTS;
+            if (!returnlist.isEmpty()) {
+                sPartContactService.delete(IiConverter.convertToIi(returnlist.get(0).getId()));
+            }
+            boolean validationError = createStudyParticationContactRecord(orgsTabWebDTO, true,
+                    StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode());
+            if (validationError) {
+                return ERROR_PRIMARY_CONTACTS;
+            }
+
+        } catch (PAException e) {
+            addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
         }
         if ("yes".equals(editmode)) {
             return getStudyParticipationPrimContact();
