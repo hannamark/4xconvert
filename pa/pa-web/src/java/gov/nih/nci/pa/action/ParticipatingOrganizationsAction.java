@@ -414,7 +414,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             } else {
                 orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
             }
-            setStatusCode(sp.getStatusCode().getCode());
+          // setStatusCode(sp.getStatusCode().getCode());
             orgWebDTO.setStatus(sp.getStatusCode().getCode());
             List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
                 .getPersonsByStudyParticpationId(Long.valueOf(sp.getIdentifier().getExtension().toString()),

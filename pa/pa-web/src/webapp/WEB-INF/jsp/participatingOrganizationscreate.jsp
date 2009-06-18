@@ -194,7 +194,9 @@
 <div class="box">
 <pa:sucessMessage/>
 <pa:failureMessage/>
- <div class="error_msg"><s:actionerror/></div>
+ <s:if test="hasActionErrors()">
+    <div class="error_msg"><s:actionerror/></div>
+    </s:if>
   
 <h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
     <table class="form">
