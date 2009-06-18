@@ -118,6 +118,10 @@ function handleReset(){
             <tr><td colspan="2">
                 <h2><fmt:message key="submissionByInstitution.header"/></h2>
             </td></tr>
+            <tr><td colspan="2">
+                <fmt:message key="submissionByInstitution.header.institutions"/>
+                <s:label name="selectedInstitutions"/>
+            </td></tr>
             <tr>
                 <td>
                     <fmt:message key="report.header.date1"/>

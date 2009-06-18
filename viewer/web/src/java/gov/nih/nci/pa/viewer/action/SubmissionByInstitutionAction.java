@@ -88,6 +88,7 @@ import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -158,5 +159,28 @@ public class SubmissionByInstitutionAction
             submitterOrganizations.add(StConverter.convertToString(iso));
         }
         return submitterOrganizations;
+    }
+
+    /**
+     * @return list of institutions for display
+     */
+    public String getSelectedInstitutions() {
+        StringBuffer result = new StringBuffer();
+        if (criteria.getInstitutions().contains("1")) {
+            result.append("All");
+        } else {
+            ArrayList<String> iList = new ArrayList<String>();
+            iList.addAll(criteria.getInstitutions());
+            Collections.sort(iList);
+            boolean first = true;
+            for (String i : iList) {
+                if (!first) {
+                    result.append(", ");
+                }
+                result.append(i);
+                first = false;
+            }
+        }
+        return result.toString();
     }
 }

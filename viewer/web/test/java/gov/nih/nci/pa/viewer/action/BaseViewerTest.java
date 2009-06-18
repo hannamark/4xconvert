@@ -101,6 +101,10 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
 @SuppressWarnings("unchecked")
 public class BaseViewerTest<ACTION extends AbstractReportAction> {
 
+    protected static final String user = "joe@barngrill.com";
+    protected static final String date1 = "1/13/2009";
+    protected static final String date2 = "3/31/2009";
+
     ACTION action = null;
 
     @Before
@@ -126,8 +130,10 @@ public class BaseViewerTest<ACTION extends AbstractReportAction> {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
+        request.setRemoteUser(user);
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
+
         setRole(ViewerConstants.ROLE_CTRO);
     }
 
@@ -156,6 +162,10 @@ public class BaseViewerTest<ACTION extends AbstractReportAction> {
     }
 
     public void setRole(String role) {
-        ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.SESSION_ATTR_ROLE, role);
+        if (role != null) {
+            ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.SESSION_ATTR_ROLE, role);
+        } else {
+            ServletActionContext.getRequest().getSession().removeAttribute(ViewerConstants.SESSION_ATTR_ROLE);
+        }
     }
 }

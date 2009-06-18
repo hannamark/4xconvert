@@ -88,6 +88,8 @@ public class MockAverageMilestoneService implements AverageMilestoneLocal {
 
     public List<AverageMilestoneResultDto> get(SubmissionTypeCriteriaDto criteria) throws PAException {
         List<AverageMilestoneResultDto> rList = new ArrayList<AverageMilestoneResultDto>();
+        AverageMilestoneResultDto dto = new AverageMilestoneResultDto();
+        rList.add(dto);
         return rList;
     }
 
