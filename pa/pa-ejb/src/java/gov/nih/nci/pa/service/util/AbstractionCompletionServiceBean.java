@@ -113,6 +113,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -619,7 +620,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
     
   }
-  
+  @SuppressWarnings({"PMD" })
   private void enforceRecruitmentStatus(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
   throws PAException {
       
@@ -635,20 +636,33 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
           boolean recruiting = false;
           List<StudySiteAccrualStatusDTO> studySiteList =  new ArrayList<StudySiteAccrualStatusDTO>();
+         
           for (StudyParticipationDTO spartDto : spList) {
               
           studySiteList.
               addAll(studySiteAccrualStatusServicLocal.
                       getStudySiteAccrualStatusByStudyParticipation(spartDto.getIdentifier()));
-          }   
+          
+          Long tmp = 1L;
+          StudySiteAccrualStatusDTO latestDTO = null;
           for (StudySiteAccrualStatusDTO studySiteAccuralStatus : studySiteList) {
-              if (RecruitmentStatusCode.RECRUITING.getCode().
-                  equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
+              Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
+              if (latestId > tmp) {
+                  tmp = latestId;
+                  latestDTO = studySiteAccuralStatus;
+              }
+              
+           }
+          
+          if (latestDTO != null) {
+             if (RecruitmentStatusCode.RECRUITING.getCode().
+                  equalsIgnoreCase(latestDTO.getStatusCode().getCode())) {
                   recruiting = true;
                   break;
-              }
+               }
            }
-      
+         }
+          
           if (!recruiting) {
               abstractionList.add(createError("Error", "Select Participating Sites from "
                       + "Administrative Data menu.", "Data inconsistency: Atleast one location needs to be recruiting"
