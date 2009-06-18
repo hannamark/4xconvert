@@ -101,6 +101,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -415,7 +416,14 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    IiConverter.converToPoOrganizationIi(poOrgIdentifier));
        } catch (NullifiedEntityException e) {
             // org is nullified, find out if it has any duplicates
-            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoOrganizationIi(poOrgIdentifier));
+           Ii nullfiedIi = null;
+           Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+           for (Ii tmp : nullifiedEntities.keySet()) {
+               if (tmp.getExtension().equals(poOrgIdentifier)) {
+                   nullfiedIi = tmp;
+               }
+           }
+           organizationIi = nullifiedEntities.get(nullfiedIi);
             //organizationIi = IiConverter.converToPoPersonIi("584");
            if (organizationIi != null) {
                try {
