@@ -423,7 +423,9 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    nullfiedIi = tmp;
                }
            }
-           organizationIi = nullifiedEntities.get(nullfiedIi);
+           if (nullfiedIi != null) {
+              organizationIi = nullifiedEntities.get(nullfiedIi);
+           }
             //organizationIi = IiConverter.converToPoPersonIi("584");
            if (organizationIi != null) {
                try {

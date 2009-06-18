@@ -103,6 +103,7 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -124,7 +125,8 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.PreserveStackTrace" , "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.PreserveStackTrace" , "PMD.ExcessiveMethodLength",
+   "PMD.CyclomaticComplexity",  "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
@@ -448,7 +450,18 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                      IiConverter.converToPoPersonIi(poPersonId));
         } catch (NullifiedEntityException e) {
                // Person is nullified, find out if it has any duplicates
-            personIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poPersonId));
+
+            Ii nullfiedIi = null;
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            for (Ii tmp : nullifiedEntities.keySet()) {
+                if (tmp.getExtension().equals(poPersonId)) {
+                    nullfiedIi = tmp;
+                }
+            }
+            if (nullfiedIi != null) {
+              personIi = nullifiedEntities.get(nullfiedIi);
+            }
+
             if (personIi != null) {
                    try {
                        personDto = PoRegistry.getPersonEntityService().getPerson(personIi);
@@ -466,11 +479,20 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         OrganizationDTO organizationDto = null;
         Ii organizationIi = null;
         try {
-            organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(
-                     IiConverter.converToPoOrganizationIi(poOrganizationId));
+            Ii lookupPoIi = IiConverter.converToPoOrganizationIi(poOrganizationId);
+            organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(lookupPoIi);
         } catch (NullifiedEntityException e) {
                // org is nullified, find out if it has any duplicates
-            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoOrganizationIi(poOrganizationId));
+            Ii nullfiedIi = null;
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            for (Ii tmp : nullifiedEntities.keySet()) {
+                if (tmp.getExtension().equals(poOrganizationId)) {
+                    nullfiedIi = tmp;
+                }
+            }
+            if (nullfiedIi != null) {
+               organizationIi = nullifiedEntities.get(nullfiedIi);
+            }
             if (organizationIi != null) {
                    try {
                        organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(organizationIi);
