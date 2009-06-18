@@ -470,7 +470,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                      IiConverter.converToPoOrganizationIi(poOrganizationId));
         } catch (NullifiedEntityException e) {
                // org is nullified, find out if it has any duplicates
-            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poOrganizationId));
+            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoOrganizationIi(poOrganizationId));
             if (organizationIi != null) {
                    try {
                        organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(organizationIi);

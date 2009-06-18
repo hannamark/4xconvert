@@ -415,7 +415,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    IiConverter.converToPoOrganizationIi(poOrgIdentifier));
        } catch (NullifiedEntityException e) {
             // org is nullified, find out if it has any duplicates
-            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoPersonIi(poOrgIdentifier));
+            organizationIi = e.getNullifiedEntities().get(IiConverter.converToPoOrganizationIi(poOrgIdentifier));
             //organizationIi = IiConverter.converToPoPersonIi("584");
            if (organizationIi != null) {
                try {
