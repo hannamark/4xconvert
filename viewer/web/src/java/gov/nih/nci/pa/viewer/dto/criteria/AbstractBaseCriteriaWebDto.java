@@ -78,6 +78,7 @@ package gov.nih.nci.pa.viewer.dto.criteria;
 
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 /**
@@ -94,16 +95,15 @@ public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractStandard
 
     /**
      * @param isodto the iso dto
+     * @throws PAException exception
      */
-    public void setInterval(ISODTO isodto) {
-        String low = getIntervalStartDate();
-        if ((low != null) && low.trim().equals("")) {
-            low = null;
-        }
-        String high = getIntervalEndDate();
-        if ((high != null) && high.trim().equals("")) {
-            high = null;
-        }
+    public void setInterval(ISODTO isodto) throws PAException {
+        validateDate(getIntervalStartDate());
+        validateDate(getIntervalEndDate());
+        String low = PAUtil.normalizeDateString(getIntervalStartDate());
+        String high = PAUtil.normalizeDateString(getIntervalEndDate());
+        setIntervalStartDate(low);
+        setIntervalEndDate(high);
         isodto.setTimeInterval(IvlConverter.convertTs().convertToIvl(low, high));
     }
     /**
@@ -116,7 +116,7 @@ public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractStandard
      * @param intervalStartDate the intervalStartDate to set
      */
     public void setIntervalStartDate(String intervalStartDate) {
-        this.intervalStartDate = PAUtil.normalizeDateString(intervalStartDate);
+        this.intervalStartDate = intervalStartDate;
     }
     /**
      * @return the intervalEndDate
@@ -128,7 +128,7 @@ public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractStandard
      * @param intervalEndDate the intervalEndDate to set
      */
     public void setIntervalEndDate(String intervalEndDate) {
-        this.intervalEndDate = PAUtil.normalizeDateString(intervalEndDate);
+        this.intervalEndDate = intervalEndDate;
     }
     /**
      * @return the ctep
@@ -141,5 +141,11 @@ public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractStandard
      */
     public void setCtep(Boolean ctep) {
         this.ctep = ctep;
+    }
+
+    private static void validateDate(String date) throws PAException {
+        if (!PAUtil.isEmpty(date)  && PAUtil.isEmpty(PAUtil.normalizeDateString(date))) {
+            throw new PAException("Invalid date.");
+        }
     }
 }

@@ -76,6 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.dto.criteria;
 
+import gov.nih.nci.pa.service.PAException;
+
 /**
  * @author Hugh Reinhart
  * @since 06/04/2009
@@ -85,6 +87,7 @@ public interface CriteriaWebDto<ISODTO> {
 
     /**
      * @return an iso dto instance
+     * @throws PAException exception
      */
-    ISODTO getIsoDto();
+    ISODTO getIsoDto() throws PAException;
 }

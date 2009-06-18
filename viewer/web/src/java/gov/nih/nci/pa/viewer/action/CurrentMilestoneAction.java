@@ -113,12 +113,13 @@ public class CurrentMilestoneAction extends AbstractReportAction
         TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
         List<TrialListResultDto> isoList;
         try {
+            criteria.setActiveOnly(true);
             isoList = local.get(criteria.getIsoDto());
         } catch (PAException e) {
             addActionError(e.getMessage());
             return super.execute();
         }
-        setResultList(TrialListResultWebDto.getWebList(isoList, null));
+        setResultList(TrialListResultWebDto.getWebList(isoList, null, true));
         return super.getReport();
     }
 

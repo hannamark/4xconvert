@@ -76,12 +76,15 @@
 */
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
@@ -163,6 +166,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
             sql.append(ctepSql(criteria));
             sql.append(submissionTypeSql(criteria));
             sql.append(submitterOrgSql(criteria));
+            sql.append(statusSql(criteria));
             sql.append("ORDER BY cm.organization, sp.date_last_created, sp.identifier ");
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
@@ -212,6 +216,15 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
         if (filterBySubmitterOrg(criteria)) {
             Set<String> orgs = ReportUtil.convertToString(((InstitutionCriteriaDto) criteria).getInstitutions());
             query.setParameterList("ORGS", orgs);
+        }
+    }
+
+    private static String statusSql(AbstractStandardCriteriaDto criteria) {
+        if (criteria instanceof StandardCriteriaDto
+                && BlConverter.covertToBool(((StandardCriteriaDto) criteria).getActiveOnly())) {
+            return "AND sp.status_code = '" + ActStatusCode.ACTIVE.getName() + "' ";
+        } else {
+            return "";
         }
     }
 

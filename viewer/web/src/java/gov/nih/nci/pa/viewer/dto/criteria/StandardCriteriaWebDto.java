@@ -78,6 +78,7 @@ package gov.nih.nci.pa.viewer.dto.criteria;
 
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author Hugh Reinhart
@@ -85,13 +86,29 @@ import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
  */
 public class StandardCriteriaWebDto extends AbstractBaseCriteriaWebDto<StandardCriteriaDto> {
 
+    private Boolean activeOnly = false;
+
     /**
      * {@inheritDoc}
      */
-    public StandardCriteriaDto getIsoDto() {
+    public StandardCriteriaDto getIsoDto() throws PAException {
         StandardCriteriaDto result = new StandardCriteriaDto();
         super.setInterval(result);
         result.setCtep(BlConverter.convertToBl(getCtep()));
+        result.setActiveOnly(BlConverter.convertToBl(getActiveOnly()));
         return result;
+    }
+
+    /**
+     * @return the activeOnly
+     */
+    public Boolean getActiveOnly() {
+        return activeOnly;
+    }
+    /**
+     * @param activeOnly the activeOnly to set
+     */
+    public void setActiveOnly(Boolean activeOnly) {
+        this.activeOnly = activeOnly;
     }
 }

@@ -80,6 +80,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author Hugh Reinhart
@@ -92,7 +93,7 @@ public class SubmissionTypeCriteriaWebDto extends AbstractBaseCriteriaWebDto<Sub
     /**
      * {@inheritDoc}
      */
-    public SubmissionTypeCriteriaDto getIsoDto() {
+    public SubmissionTypeCriteriaDto getIsoDto()  throws PAException {
         SubmissionTypeCriteriaDto result = new SubmissionTypeCriteriaDto();
         super.setInterval(result);
         result.setSubmissionType(CdConverter.convertStringToCd(getSubmissionType()));

@@ -92,11 +92,13 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since 05/06/2009
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class TrialListResultWebDto {
 
     private static final String TOTAL_ORIG = "Total of original submissions";
     private static final String TOTAL_AMEND = "Total of amendments";
     private static final String TOTAL_BOTH = "Total all submission";
+    private static final String TOTAL = "Total";
 
     private static final String SUB_TYPE_ORIG = "Original";
     private static final String SUB_TYPE_AMEND = "Amendment";
@@ -117,10 +119,11 @@ public final class TrialListResultWebDto {
      * Static method for generating a list of web dto's from a list of service dto's.
      * @param serviceDtoList service dto list
      * @param subTypeCriteria submission type(s) being reported upon
+     * @param isCurrentMilestoneReport Is this a current milestone report.
      * @return web dto list
      */
     public static List<TrialListResultWebDto> getWebList(List<TrialListResultDto> serviceDtoList,
-            SubmissionTypeCode subTypeCriteria) {
+            SubmissionTypeCode subTypeCriteria, boolean isCurrentMilestoneReport) {
         List<TrialListResultWebDto> resultList = new ArrayList<TrialListResultWebDto>();
         int original = 0;
         int amendment = 0;
@@ -152,6 +155,12 @@ public final class TrialListResultWebDto {
             webDto.setAssignedIdentifier(TOTAL_BOTH);
             webDto.setSubmissionType(SUB_TYPE_BOTH);
             webDto.setSubmitterOrg(Integer.toString(serviceDtoList.size()));
+            resultList.add(webDto);
+        }
+        if (isCurrentMilestoneReport) {
+            TrialListResultWebDto webDto = new TrialListResultWebDto();
+            webDto.setAssignedIdentifier(TOTAL);
+            webDto.setSubmissionType(Integer.toString(serviceDtoList.size()));
             resultList.add(webDto);
         }
         return resultList;

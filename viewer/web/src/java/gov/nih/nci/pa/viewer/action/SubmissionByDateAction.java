@@ -120,7 +120,7 @@ public class SubmissionByDateAction extends AbstractReportAction
             return super.execute();
         }
         setResultList(TrialListResultWebDto.getWebList(isoList,
-                SubmissionTypeCode.valueOf(getCriteria().getSubmissionType())));
+                SubmissionTypeCode.valueOf(getCriteria().getSubmissionType()), false));
         return super.getReport();
     }
 

@@ -76,10 +76,27 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.pa.iso.util.BlConverter;
+
 
 /**
  * @author Hugh Reinhart
  * @since 04/29/2009
  */
 public class StandardCriteriaDto extends AbstractStandardCriteriaDto {
+    private Bl activeOnly = BlConverter.convertToBl(null);
+
+    /**
+     * @return the activeOnly
+     */
+    public Bl getActiveOnly() {
+        return activeOnly;
+    }
+    /**
+     * @param activeOnly the activeOnly to set
+     */
+    public void setActiveOnly(Bl activeOnly) {
+        this.activeOnly = activeOnly;
+    }
 }

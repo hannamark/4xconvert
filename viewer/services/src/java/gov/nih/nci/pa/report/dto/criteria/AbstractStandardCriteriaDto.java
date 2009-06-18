@@ -98,7 +98,7 @@ public abstract class AbstractStandardCriteriaDto extends AbstractCriteriaDto {
 
     /**
      * Validate that the criteria is good.
-     * @param criteria criterie iso dto
+     * @param criteria criteria iso dto
      * @throws PAException exception
      */
     public static void validate(Object criteria) throws PAException {
@@ -119,7 +119,7 @@ public abstract class AbstractStandardCriteriaDto extends AbstractCriteriaDto {
 
     /**
      * Validate that the criteria is good.
-     * @param criteria criterie iso dto
+     * @param criteria criteria iso dto
      * @throws PAException exception
      */
     public static void validateDatesRequired(Object criteria) throws PAException {

@@ -53,10 +53,6 @@ function handleReset(){
                 </td>
             </tr>
             <tr><td class="space"><br/></td></tr>
-            <tr><td colspan="2">
-                <p style="margin:0; padding:20"><fmt:message key="report.submissionType"/></p>
-            </td></tr>
-            <tr><td class="space"><br/></td></tr>
             <tr> 
                 <td class="label">
                     <label><fmt:message key="report.criteria.ctep"/></label>
