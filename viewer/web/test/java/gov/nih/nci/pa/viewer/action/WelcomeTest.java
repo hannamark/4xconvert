@@ -77,95 +77,50 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.viewer.util.MockServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import org.apache.struts2.ServletActionContext;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.mockrunner.mock.web.MockServletContext;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.config.Configuration;
-import com.opensymphony.xwork2.config.ConfigurationManager;
-import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.util.ValueStack;
-import com.opensymphony.xwork2.util.ValueStackFactory;
 
-@SuppressWarnings("unchecked")
-public class BaseViewerTest<ACTION extends AbstractReportAction> {
+public class WelcomeTest extends AbstractViewerActionTest {
 
-    protected static final String user = "joe@barngrill.com";
-    protected static final String date1 = "1/13/2009";
-    protected static final String date2 = "3/31/2009";
+    private static String AR_CTRO = "ctroWelcome";
+    private static String AR_SUBMITTING_SITES = "publicWelcome";
 
-    ACTION action = null;
+    WelcomeAction action;
 
     @Before
-    public void initMockServiceLocator() {
-        ViewerServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
-    }
-
-    /**
-     * Initialize the mock request.
-     */
-    @Before
-    public void initMockRequest() {
-        ConfigurationManager configurationManager = new ConfigurationManager();
-        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
-        Configuration config = configurationManager.getConfiguration();
-        Container container = config.getContainer();
-
-        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
-        stack.getContext().put(ActionContext.CONTAINER, container);
-        ActionContext.setContext(new ActionContext(stack.getContext()));
-
-        assertNotNull(ActionContext.getContext());
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser(user);
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-
-        setRole(ViewerConstants.ROLE_CTRO);
-    }
-
-    /**
-     * Clean out the action context to ensure one test does not impact another.
-     */
-    @After
-    public void cleanUpActionContext() {
-        ActionContext.setContext(null);
+    public void initAction() {
+        action = new WelcomeAction();
     }
 
     @Test
-    public void sessionTimeoutExecuteTest() {
-        if (action != null) {
-            setRole(null);
-            assertEquals(ViewerConstants.AR_LOGOUT, action.execute());
-        }
+    public void reportViewerRoleTest() {
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(ViewerConstants.ROLE_REPORTING, true);
+        assertEquals(AR_CTRO, action.execute());
+        assertEquals(ViewerConstants.ROLE_CTRO, ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.SESSION_ATTR_ROLE));
     }
 
     @Test
-    public void sessionTimeoutGetReportTest() {
-        if (action != null) {
-            setRole(null);
-            assertEquals(ViewerConstants.AR_LOGOUT, action.getReport());
-        }
+    public void abstractorRoleTest() {
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(ViewerConstants.ROLE_CTRO, true);
+        assertEquals(AR_CTRO, action.execute());
+        assertEquals(ViewerConstants.ROLE_CTRO, ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.SESSION_ATTR_ROLE));
     }
 
-    public void setRole(String role) {
-        if (role != null) {
-            ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.SESSION_ATTR_ROLE, role);
-        } else {
-            ServletActionContext.getRequest().getSession().removeAttribute(ViewerConstants.SESSION_ATTR_ROLE);
-        }
+    @Test
+    public void submitterRoleTest() {
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(ViewerConstants.ROLE_PUBLIC, true);
+        assertEquals(AR_SUBMITTING_SITES, action.execute());
+        assertEquals(ViewerConstants.ROLE_PUBLIC, ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.SESSION_ATTR_ROLE));
     }
+
+    @Test
+    public void nullRoleTest() {
+        assertEquals(null, action.execute());
+    }
+
 }

@@ -76,6 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
@@ -84,11 +86,19 @@ import gov.nih.nci.pa.service.PAException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockTrialCountsService implements TrialCountsLocal {
+public class MockTrialCountsService extends MockService implements TrialCountsLocal {
 
     public List<TrialCountsResultDto> get(StandardCriteriaDto criteria)
             throws PAException {
         List<TrialCountsResultDto> rList = new ArrayList<TrialCountsResultDto>();
+        TrialCountsResultDto dto = new TrialCountsResultDto();
+        dto.setAmendment(IntConverter.convertToInt(TEST_INT));
+        dto.setDay(IntConverter.convertToInt(TEST_INT));
+        dto.setInitial(IntConverter.convertToInt(TEST_INT));
+        dto.setMonth(IntConverter.convertToInt(TEST_INT));
+        dto.setOrganization(StConverter.convertToSt(TEST_STR));
+        dto.setYear(IntConverter.convertToInt(TEST_INT));
+        rList.add(dto);
         return rList;
     }
 }

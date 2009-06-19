@@ -76,15 +76,24 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
+import static gov.nih.nci.pa.viewer.util.MockService.TEST_STR;
+import static gov.nih.nci.pa.viewer.util.MockService.TEST_TS_STR;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.viewer.dto.criteria.StandardCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
 
-public class CurrentMilestoneTest extends BaseViewerTest<CurrentMilestoneAction> {
+public class CurrentMilestoneTest extends AbstractReportActionTest<CurrentMilestoneAction> {
 
     @Before
     public void initAction() {
@@ -96,5 +105,41 @@ public class CurrentMilestoneTest extends BaseViewerTest<CurrentMilestoneAction>
     public void executeTest() {
         // user selects type of report
         assertEquals(Action.SUCCESS, action.execute());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getReportTest() {
+        // user selects type of report
+        assertEquals(Action.SUCCESS, action.execute());
+
+        // user enters criteria
+        action.getCriteria().setCtep(false);
+        action.getCriteria().setIntervalStartDate(date1);
+        action.getCriteria().setIntervalEndDate(date2);
+
+        // user clicks "Run report"
+        assertEquals(Action.SUCCESS, action.getReport());
+
+        // result header displays
+        assertEquals(PAUtil.normalizeDateString(date1), action.getCriteria().getIntervalStartDate());
+        assertEquals(PAUtil.normalizeDateString(date2), action.getCriteria().getIntervalEndDate());
+        assertEquals(user, ServletActionContext.getRequest().getRemoteUser());
+
+        // result spreadsheet displays
+        List<TrialListResultWebDto> resultList = (List<TrialListResultWebDto>)
+                ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.RESULT_LIST);
+        assertTrue(resultList.size() > 0);
+        TrialListResultWebDto r = resultList.get(0);
+        assertEquals(TEST_STR, r.getAssignedIdentifier());
+        assertEquals(TEST_TS_STR, r.getDateLastCreated());
+//        assertEquals(TEST_DWS, r.getDws());
+        assertEquals(TEST_TS_STR, r.getDwsDate());
+        assertEquals(TEST_STR, r.getLeadOrg());
+        assertEquals(TEST_STR, r.getLeadOrgTrialIdentifier());
+//        assertEquals(TEST_MILESTONE, r.getMilestone());
+        assertEquals(TEST_TS_STR, r.getMilestoneDate());
+//        assertEquals(TEST_SUBTYPE, r.getSubmissionType());
+        assertEquals(TEST_STR, r.getSubmitterOrg());
     }
 }

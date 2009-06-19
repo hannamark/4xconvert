@@ -76,6 +76,9 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingResultDto;
@@ -85,7 +88,7 @@ import gov.nih.nci.pa.service.PAException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockTrialProcessingService implements TrialProcessingLocal {
+public class MockTrialProcessingService extends MockService implements TrialProcessingLocal {
 
     public TrialProcessingHeaderResultDto getHeader(AssignedIdentifierCriteriaDto criteria) throws PAException {
         TrialProcessingHeaderResultDto result = new TrialProcessingHeaderResultDto();
@@ -94,6 +97,12 @@ public class MockTrialProcessingService implements TrialProcessingLocal {
 
     public List<TrialProcessingResultDto> get(AssignedIdentifierCriteriaDto criteria) throws PAException {
         List<TrialProcessingResultDto> rList = new ArrayList<TrialProcessingResultDto>();
+        TrialProcessingResultDto dto = new TrialProcessingResultDto();
+        dto.setCumulativeDays(StConverter.convertToSt(TEST_STR));
+        dto.setMilestoneCode(CdConverter.convertStringToCd(TEST_MILESTONE));
+        dto.setMilestoneDays(StConverter.convertToSt(TEST_STR));
+        dto.setSubmissionNumber(IntConverter.convertToInt(TEST_INT));
+        rList.add(dto);
         return rList;
     }
 

@@ -77,17 +77,18 @@
 package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockSubmitterOrganizationService implements
-        SubmitterOrganizationLocal {
+public class MockSubmitterOrganizationService  extends MockService implements SubmitterOrganizationLocal {
 
     public List<St> get() throws PAException {
         List<St> rList = new ArrayList<St>();
+        rList.add(StConverter.convertToSt(TEST_STR));
         return rList;
     }
 

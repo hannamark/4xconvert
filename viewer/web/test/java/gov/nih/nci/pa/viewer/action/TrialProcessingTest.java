@@ -77,14 +77,21 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.viewer.dto.criteria.AssignedIdentifierCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.AverageMilestoneResultWebDto;
+import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
 
-public class TrialProcessingTest extends BaseViewerTest<TrialProcessingAction> {
+public class TrialProcessingTest extends AbstractReportActionTest<TrialProcessingAction> {
 
     @Before
     public void initAction() {
@@ -96,5 +103,29 @@ public class TrialProcessingTest extends BaseViewerTest<TrialProcessingAction> {
     public void executeTest() {
         // user selects type of report
         assertEquals(Action.SUCCESS, action.execute());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getReportTest() {
+        // user selects type of report
+        assertEquals(Action.SUCCESS, action.execute());
+
+        // user enters criteria
+        action.getCriteria().setAssignedIdentifier(null);
+        action.getCriteria().setAssignedIdentifier("2");
+        action.getCriteria().setAssignedIdentifier("NCI-2009-00002");
+
+        // user clicks "Run report"
+        assertEquals(Action.SUCCESS, action.getReport());
+
+        // result header displays
+        assertEquals(user, ServletActionContext.getRequest().getRemoteUser());
+        assertNotNull(action.getHeader());
+
+        // result spreadsheet displays
+        List<AverageMilestoneResultWebDto> resultList = (List<AverageMilestoneResultWebDto>)
+                ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.RESULT_LIST);
+        assertTrue(resultList.size() > 0);
     }
 }

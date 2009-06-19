@@ -76,6 +76,9 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
+import static gov.nih.nci.pa.viewer.util.MockService.TEST_INT;
+import static gov.nih.nci.pa.viewer.util.MockService.TEST_MILESTONE;
+import static gov.nih.nci.pa.viewer.util.MockService.TEST_STR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
@@ -90,9 +93,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionSupport;
-
-public class AverageMilestoneTest extends BaseViewerTest<AverageMilestoneAction> {
+public class AverageMilestoneTest extends AbstractReportActionTest<AverageMilestoneAction> {
 
     @Before
     public void initAction() {
@@ -118,7 +119,7 @@ public class AverageMilestoneTest extends BaseViewerTest<AverageMilestoneAction>
         action.getCriteria().setSubmissionType(SubmissionTypeCode.BOTH.name());
 
         // user clicks "Run report"
-        assertEquals(ActionSupport.SUCCESS, action.getReport());
+        assertEquals(Action.SUCCESS, action.getReport());
 
         // result header displays
         assertEquals(PAUtil.normalizeDateString(date1), action.getCriteria().getIntervalStartDate());
@@ -129,5 +130,22 @@ public class AverageMilestoneTest extends BaseViewerTest<AverageMilestoneAction>
         List<AverageMilestoneResultWebDto> resultList = (List<AverageMilestoneResultWebDto>)
                 ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.RESULT_LIST);
         assertTrue(resultList.size() > 0);
+        AverageMilestoneResultWebDto r = resultList.get(0);
+        assertEquals(TEST_STR, r.getAverage());
+        assertEquals(TEST_INT, r.getDay01());
+        assertEquals(TEST_INT, r.getDay02());
+        assertEquals(TEST_INT, r.getDay03());
+        assertEquals(TEST_INT, r.getDay04());
+        assertEquals(TEST_INT, r.getDay05());
+        assertEquals(TEST_INT, r.getDay06());
+        assertEquals(TEST_INT, r.getDay07());
+        assertEquals(TEST_INT, r.getDay08());
+        assertEquals(TEST_INT, r.getDay09());
+        assertEquals(TEST_INT, r.getDay10());
+        assertEquals(TEST_INT, r.getGtTenDays());
+        assertEquals(TEST_STR, r.getHigh());
+        assertEquals(TEST_STR, r.getLow());
+        assertEquals(TEST_MILESTONE, r.getMilestoneCode());
+        assertEquals(TEST_INT, r.getOrder());
     }
 }

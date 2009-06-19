@@ -76,44 +76,19 @@
  */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
-import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.util.PAUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
 
-public class MockAverageMilestoneService extends MockService implements AverageMilestoneLocal {
-
-
-    public List<AverageMilestoneResultDto> get(
-            SubmissionTypeCriteriaDto criteria) throws PAException {
-        List<AverageMilestoneResultDto> rList = new ArrayList<AverageMilestoneResultDto>();
-        AverageMilestoneResultDto dto = new AverageMilestoneResultDto();
-        dto.setAverage(StConverter.convertToSt(TEST_STR));
-        dto.setDay01(IntConverter.convertToInt(TEST_INT));
-        dto.setDay02(IntConverter.convertToInt(TEST_INT));
-        dto.setDay03(IntConverter.convertToInt(TEST_INT));
-        dto.setDay04(IntConverter.convertToInt(TEST_INT));
-        dto.setDay05(IntConverter.convertToInt(TEST_INT));
-        dto.setDay06(IntConverter.convertToInt(TEST_INT));
-        dto.setDay07(IntConverter.convertToInt(TEST_INT));
-        dto.setDay08(IntConverter.convertToInt(TEST_INT));
-        dto.setDay09(IntConverter.convertToInt(TEST_INT));
-        dto.setDay10(IntConverter.convertToInt(TEST_INT));
-        dto.setGtTenDays(IntConverter.convertToInt(TEST_INT));
-        dto.setHigh(StConverter.convertToSt(TEST_STR));
-        dto.setLow(StConverter.convertToSt(TEST_STR));
-        dto.setMilestoneCode(CdConverter
-                .convertStringToCd(MilestoneCode.QC_START.getName()));
-        dto.setOrder(IntConverter.convertToInt(TEST_INT));
-        rList.add(dto);
-        return rList;
-    }
-
+public class MockService {
+    public static String TEST_STR = "test";
+    public static Integer TEST_INT = 23;
+    public static String TEST_MILESTONE = MilestoneCode.QC_START.getName();
+    public static String TEST_DWS = DocumentWorkflowStatusCode.ACCEPTED.getName();
+    public static Timestamp TEST_TS = PAUtil.dateStringToTimestamp("2/1/2009");
+    public static String TEST_TS_STR = "02/01/2009";
+    public static String TEST_SUBTYPE = SubmissionTypeCode.BOTH.name();
 }

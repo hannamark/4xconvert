@@ -76,6 +76,10 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.service.TrialListLocal;
@@ -84,11 +88,23 @@ import gov.nih.nci.pa.service.PAException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockTrialListService implements TrialListLocal {
+public class MockTrialListService extends MockService implements TrialListLocal {
 
     public List<TrialListResultDto> get(AbstractStandardCriteriaDto criteria)
             throws PAException {
         List<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
+        TrialListResultDto dto = new TrialListResultDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt(TEST_STR));
+        dto.setDateLastCreated(TsConverter.convertToTs(TEST_TS));
+        dto.setDws(CdConverter.convertStringToCd(TEST_DWS));
+        dto.setDwsDate(TsConverter.convertToTs(TEST_TS));
+        dto.setLeadOrg(StConverter.convertToSt(TEST_STR));
+        dto.setLeadOrgTrialIdentifier(StConverter.convertToSt(TEST_STR));
+        dto.setMilestone(CdConverter.convertStringToCd(TEST_MILESTONE));
+        dto.setMilestoneDate(TsConverter.convertToTs(TEST_TS));
+        dto.setSubmissionNumber(IntConverter.convertToInt(TEST_INT));
+        dto.setSubmitterOrg(StConverter.convertToSt(TEST_STR));
+        rList.add(dto);
         return rList;
     }
 
