@@ -22,8 +22,8 @@ rr.status_code, rr.status_date_range_low, rr.status_date_range_high,
 rr.date_last_created, rr.user_last_created, rr.date_last_updated,
 rr.user_last_updated, orgName; 
 
-update study_participation set oversight_committee_identifier = NULL, review_board_approval_number= NULL, review_board_approval_status_code = NULL,
-status_code = NULL where functional_code != 'STUDY_OVERSIGHT_COMMITTEE' and study_participation.identifier = rr.identifier;
+update study_participation set oversight_committee_identifier = NULL, review_board_approval_number= NULL, review_board_approval_status_code = NULL
+where functional_code != 'STUDY_OVERSIGHT_COMMITTEE' and study_participation.identifier = rr.identifier;
 
 
 END LOOP;
