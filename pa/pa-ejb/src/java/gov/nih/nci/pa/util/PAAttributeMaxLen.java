@@ -115,6 +115,8 @@ public class PAAttributeMaxLen {
     public static final int LEN_30 = 30;
     /*** cut of length. **/
     public static final int LEN_160 = 160;
+    /** 200 length. **/
+    public static final int LEN_200 = 200;
     /*** cut of Email length. **/
     public static final int LEN_254 = 254;
     /** public title max. **/

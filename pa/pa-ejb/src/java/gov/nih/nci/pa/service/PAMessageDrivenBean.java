@@ -114,7 +114,7 @@ import org.hibernate.Session;
 @ActivationConfigProperty(propertyName = "destination", propertyValue = "topic/POTopic"),
 @ActivationConfigProperty(propertyName = "useDLQ", propertyValue = "false"),
 @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = "Durable"),
-@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "AUTO_ACKNOWLEDGE"),
+//@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "AUTO_ACKNOWLEDGE"),
 @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "PAApp") })
 
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
@@ -167,22 +167,35 @@ public class PAMessageDrivenBean implements MessageListener {
                     if (identifierName.equals(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME)) {
                         perRemote.synchronizeOrganizationalContact(updateMessage.getId());
                     }
-                    updateExceptionAuditMessageLog(msgId, "Processed", null, true);
+                     updateExceptionAuditMessageLog(msgId, "Processed", null, true);
+                     createMessageAck(msg);
                 } catch (PAException paex) {
+                    createMessageAck(msg);
                     updateExceptionAuditMessageLog(msgId, "Failed", " PAException -" + paex.getMessage(), false);
                     LOG.error("PAMessageDrivenBean onMessage() method threw an PAException ", paex);
                 } catch (Exception e) {
+                    createMessageAck(msg);
                     updateExceptionAuditMessageLog(msgId, "Failed", " Generic exception -" + e.getMessage(), false);
                     LOG.error("PAMessageDrivenBean onMessage() method threw an Exception ", e);
                 }
             }
             LOG.info("Leaving PAMessageDrivenBean onMessage()");
-        } catch (JMSException e) {            
+        } catch (JMSException e) {   
+            createMessageAck(msg);
             updateExceptionAuditMessageLog(msgId, "Failed", " JMSException-" + e.getMessage(), false);
             LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException ", e);
         } finally {
+            createMessageAck(msg);
             HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
+    }
+    
+    private void createMessageAck(final Message msg) {
+        try {
+            msg.acknowledge();
+        } catch (JMSException e) {
+            LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException ", e);
+        }  
     }
     
     private Long createAuditMessageLog(Ii identifier) throws PAException {

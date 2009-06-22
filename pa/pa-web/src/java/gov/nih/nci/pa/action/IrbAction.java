@@ -106,6 +106,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -330,6 +331,10 @@ public class IrbAction extends ActionSupport implements Preparable {
             
             if (getContactAffiliation() == null) {
                 addActionError("Must Enter a Board Affliation.  ");
+            }
+            if (getContactAffiliation() != null && PAUtil.isGreatenThan(StConverter.convertToSt(getContactAffiliation())
+                    , PAAttributeMaxLen.LEN_200)) {
+                addActionError("Board Affiliation must not be more than 200 characters. ");
             }
             if (PAUtil.isEmpty(ct.getName())) {
                 addActionError("The organziation name must be selected.  ");

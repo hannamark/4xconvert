@@ -577,8 +577,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 && YES.equalsIgnoreCase(convertBLToString(spDTO.getDelayedpostingIndicator()))
                 && !isDeviceFound(studyProtocolIi)) {
             abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
-                    + " from Administrative Data menu.", "Delay posting indicator can only be set to ’yes’ " 
-                    + " if study includes at least one intervention with type ‘device’."));
+                    + " from Administrative Data menu.", "Delay posting indicator can only be set to \'yes\' " 
+                    + " if study includes at least one intervention with type \'device\'."));
         }
        
   }
@@ -635,30 +635,28 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
               equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
           boolean recruiting = false;
-          List<StudySiteAccrualStatusDTO> studySiteList =  new ArrayList<StudySiteAccrualStatusDTO>();
-         
           for (StudyParticipationDTO spartDto : spList) {
-              
-          studySiteList.
-              addAll(studySiteAccrualStatusServicLocal.
+              List<StudySiteAccrualStatusDTO> studySiteList =  new ArrayList<StudySiteAccrualStatusDTO>();   
+              studySiteList.
+                  addAll(studySiteAccrualStatusServicLocal.
                       getStudySiteAccrualStatusByStudyParticipation(spartDto.getIdentifier()));
           
-          Long tmp = 1L;
-          StudySiteAccrualStatusDTO latestDTO = null;
-          for (StudySiteAccrualStatusDTO studySiteAccuralStatus : studySiteList) {
-              Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
-              if (latestId > tmp) {
-                  tmp = latestId;
-                  latestDTO = studySiteAccuralStatus;
-              }
+              Long tmp = 1L;
+              StudySiteAccrualStatusDTO latestDTO = null;
+              for (StudySiteAccrualStatusDTO studySiteAccuralStatus : studySiteList) {
+                  Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
+                  if (latestId > tmp) {
+                      tmp = latestId;
+                      latestDTO = studySiteAccuralStatus;
+                  }
               
-           }
+              }
           
-          if (latestDTO != null) {
-             if (RecruitmentStatusCode.RECRUITING.getCode().
-                  equalsIgnoreCase(latestDTO.getStatusCode().getCode())) {
-                  recruiting = true;
-                  break;
+              if (latestDTO != null) {
+                  if (RecruitmentStatusCode.RECRUITING.getCode().
+                          equalsIgnoreCase(latestDTO.getStatusCode().getCode())) {
+                      recruiting = true;
+                      break;
                }
            }
          }
