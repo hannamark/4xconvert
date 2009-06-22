@@ -203,23 +203,24 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
-            
-            Ii studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
-            createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+            Ii studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().           
+                createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgParticipationIdDTO,
                     nctIdentifierParticipationIdDTO, studyContactDTO, studyParticipationContactDTO,
                     summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactDTO);
-           //send a notification mail
-            RegistryServiceLocator.getMailManagerService().sendNotificationMail(studyProtocolIi);
-            TrialValidator.removeSessionAttributes();
-            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
-            ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
-
+             //send a notification mail
+             RegistryServiceLocator.getMailManagerService().sendNotificationMail(studyProtocolIi);
+             TrialValidator.removeSessionAttributes();
+             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
+             ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
+            
         } catch (Exception e) {
             TrialValidator.addSessionAttributes(trialDTO);
             if (e != null && e.getMessage() != null) {
-                ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+                String exceptionStr = e.getLocalizedMessage().
+                        substring(e.getLocalizedMessage().indexOf(":") + 1);
+                ServletActionContext.getRequest().setAttribute("failureMessage", exceptionStr);
             } else {
                 addActionError("Error occured, please try again");
             }
