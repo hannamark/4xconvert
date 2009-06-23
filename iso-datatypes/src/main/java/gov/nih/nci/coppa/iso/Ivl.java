@@ -238,4 +238,31 @@ public final class Ivl<T extends Qty> extends QSet<T> implements Cloneable {
     public Ivl<T> clone() {
         return (Ivl<T>) super.clone();
     }
+
+    /**
+     * Returns true if high is not null and low is null.
+     * @return boolean
+     */
+    public boolean isLowMissing() {
+        return this.getHigh() != null && this.getLow() == null;
+    }
+
+    /**
+     * Returns true if high is null and low is not null.
+     * @return boolean
+     */
+    public boolean isHighMissing() {
+        return this.getHigh() == null && this.getLow() != null;
+    }
+
+    /**
+     * Return true if both high and low are not null and equal to each other.
+     * @return boolean
+     */
+    public boolean isHighEqualLow() {
+        return this.getHigh() != null && this.getLow() != null
+        && this.getHigh().equals(this.getLow());
+    }
+
+
 }
