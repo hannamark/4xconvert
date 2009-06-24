@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <p align="center" class="info">
-	Type a single initial character or string of initial characters in any of the text fields 
-	in the upper frame or in CTEP Identifier field in the lower frame.
-	<br>
-	(Example: to search for city Rockville, type R, Rock, etc).
-     Please do not use wildcard characters.  
+	Type a string of characters in any of the text fields in the upper frame 
+    or in CTEP Identifier field  in the lower frame.
+    <br>
+    Please do not use wildcard characters.<br>
+	(Example: to search for city Rockville, Rock, etc).
 </p>
 <table  class="form">
    	<tr> 	
