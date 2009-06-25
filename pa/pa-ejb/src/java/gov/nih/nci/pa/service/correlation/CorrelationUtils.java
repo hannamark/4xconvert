@@ -888,7 +888,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.save(organization);
+            Query query = session.createQuery("select org from Organization org  where org.identifier = :poOrg");
+            query.setParameter("poOrg", organization.getIdentifier());
+            if (query.uniqueResult() == null) {
+                session.saveOrUpdate(organization);    
+            } 
         } catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while createOrganization ", hbe);
             throw new PAException(" Hibernate exception while createOrganization ", hbe);
@@ -915,7 +919,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.save(person);
+            Query query = session.createQuery("select per from Person per where per.identifier = :poId ");
+            query.setParameter("poId", person.getIdentifier());
+            if (query.uniqueResult() == null) {
+                session.saveOrUpdate(person);
+            }
         } catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while createPerson ", hbe);
             throw new PAException(" Hibernate exception while create Person ", hbe);
