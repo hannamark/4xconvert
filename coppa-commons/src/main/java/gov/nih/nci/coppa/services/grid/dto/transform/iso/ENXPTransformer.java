@@ -31,7 +31,7 @@ public final class ENXPTransformer extends AbstractTransformer<ENXP, Enxp>
             return null;
         }
         ENXP d = new ENXP();
-        if (input != null && input.getType() != null) {
+        if (input.getType() != null) {
             d.setType(org.iso._21090.EntityNamePartType.valueOf(input.getType().name()));
         }
         d.setValue(input.getValue());
@@ -55,10 +55,11 @@ public final class ENXPTransformer extends AbstractTransformer<ENXP, Enxp>
         if (input == null) {
             return null;
         }
-        if (input != null && input.getType() == null) {
-            throw new DtoTransformException("ENXP.type is required");
+        Enxp d = new Enxp();
+        if (input.getType() != null) {
+            d.setType(EntityNamePartType.valueOf(input.getType().name()));
         }
-        Enxp d = new Enxp(EntityNamePartType.valueOf(input.getType().name()));
+
         d.setValue(input.getValue());
 
         // all of these are currently ignored by PO.

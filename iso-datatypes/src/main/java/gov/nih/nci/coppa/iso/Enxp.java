@@ -101,16 +101,24 @@ public final class Enxp implements Serializable, Cloneable {
     private String codeSystem;
     private String codeSystemVersion;
     private Set<EntityNamePartQualifier> qualifier;
-    private final EntityNamePartType type;
+    private EntityNamePartType type;
     private String value;
     private static final int HASH_CODE_SEED_1 = 17;
     private static final int HASH_CODE_SEED_2 = 71;
 
     /**
-     * @param type the type to set
+     * Const. that takes a type.
+     * @param type to set
      */
     public Enxp(EntityNamePartType type) {
         this.type = type;
+    }
+
+    /**
+     * Default const.
+     */
+    public Enxp() {
+        // empty on purpose.
     }
 
     /**
@@ -170,10 +178,17 @@ public final class Enxp implements Serializable, Cloneable {
     }
 
     /**
-     * @return the type
+     * @return type of entity.
      */
     public EntityNamePartType getType() {
         return type;
+    }
+
+    /**
+     * @param type to set
+     */
+    public void setType(EntityNamePartType type) {
+        this.type = type;
     }
 
     /**
@@ -242,7 +257,7 @@ public final class Enxp implements Serializable, Cloneable {
     @SuppressWarnings("PMD.ProperCloneImplementation")
     public Enxp clone() {
 
-        Enxp snapshot = new Enxp(type);
+        Enxp snapshot = new Enxp();
         try {
             BeanUtils.copyProperties(snapshot, this);
         } catch (Exception e) {

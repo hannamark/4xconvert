@@ -35,7 +35,11 @@ public abstract class AbstractTransformer<XML, DTO> implements Transformer<XML, 
      * {@inheritDoc}
      */
   public List<DTO> convert(XML[] arrayList) throws DtoTransformException {
-        List<DTO> result = null;
+          if (arrayList == null) {
+              return null;
+          }
+
+          List<DTO> result = null;
         result = new ArrayList<DTO>();
         for (XML xml : arrayList) {
             result.add(toDto(xml));

@@ -156,12 +156,15 @@ public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO
     }
 
     @Test
-    public void testAll() {
+    public void testAll() throws DtoTransformException {
         setUpTests();
 
         for (int i = 0; i < makers.length; i++) {
             testOne(makers[i], verifiers[i]);
         }
+
+        testDtoConvert();
+        testXmlConvert();
     }
 
     private void testOne(Method make, Method verify) {
