@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd>
+    <workingSet>viewer_src</workingSet>
+    <useProjectRuleSet>true</useProjectRuleSet>
+    <ruleSetFile>resources\viewerPmd.xml</ruleSetFile>
+    <includeDerivedFiles>false</includeDerivedFiles>
+    <violationsAsErrors>true</violationsAsErrors>
+</pmd>
