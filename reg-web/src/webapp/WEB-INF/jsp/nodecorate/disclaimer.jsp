@@ -27,19 +27,26 @@ function submitForm(btnSelected){
 <body onload="bodyOnLoad()">
 <s:form name="disclaimer" method="POST">
 <!-- main content begins-->
-
-<br>
-<br>
 <br>
 <br>
 <div>
 <table width="65%" align="center">
 <tr>
 <td align="left">
-The NCI's Clinical Trials Reporting Program (CTRP) requests NCI supported sites and awardees to submit <br>
-clinical investigator professional contact information.  Professional contact information of clinical investigators <br>
-will be made available to designated, appropriate NCI employee and contractor staff for purposes of portfolio<br>
-management and compliance with regulatory and administrative reporting obligations.  
+<br>NCI CTRP Disclaimer Page - Burden Statement<br> <br>
+<center><b>NCI CLINICAL TRIALS REPORTING PROGRAM (CTRP) SYSTEM </b></center><br> 
+<hr>
+<p align="right">OMB#: 0925-0600 EXP. DATE: 01/31/2010 </p>
+<center><b>NOTIFICATION TO RESPONDENT OF ESTIMATED BURDEN </b></center><br><br>
+Public reporting burden for this collection of information is estimated to average on (1) to two (2) hours for this questionnaire, <br>
+including the time to review instructions, search existing data sources, gather and maintain the data needed, and complete and review 
+the collection of information.  An agency may not conduct or sponsor, and a person is not required to respond to, a collection of 
+information unless it displays a current, valid OMB control number.  Send comments regarding this burden estimate or any other aspect 
+of this collection of information, including suggestions for reducing the burden to <br>
+NIH, Project Clearance Branch, 6705 Rockledge Drive, MSC 7974, Bethesda, MD 20892-7974, ATTN: PRA (0925-0600).  <br>
+Do not return the completed form to this address.<br>
+<hr>
+  
 </td>
 </tr>
 </table>
