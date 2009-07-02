@@ -33,7 +33,7 @@ function submitForm(btnSelected){
 <table width="65%" align="center">
 <tr>
 <td align="left">
-<br>NCI CTRP Disclaimer Page - Burden Statement<br> <br>
+<br>
 <center><b>NCI CLINICAL TRIALS REPORTING PROGRAM (CTRP) SYSTEM </b></center><br> 
 <hr>
 <p align="right">OMB#: 0925-0600 EXP. DATE: 01/31/2010 </p>
