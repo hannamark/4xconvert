@@ -77,14 +77,19 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingResultDto;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -130,5 +135,22 @@ public class TrialProcessingTest
         String username = TestSchema.user.get(0).getFirstName() + " " + TestSchema.user.get(0).getLastName();
         assertEquals(username, StConverter.convertToString(result.getUserLastCreated()));
         assertEquals(TestSchema.organization.get(0).getName(), StConverter.convertToString(result.getLeadOrganization()));
+    }
+
+    @Test (expected = PAException.class)
+    public void getHeaderNoResultsTest() throws Exception {
+        AssignedIdentifierCriteriaDto criteria = new AssignedIdentifierCriteriaDto();
+        criteria.setAssignedIdentifier(StConverter.convertToSt("-1"));
+        bean.getHeader(criteria);
+    }
+
+    @Test
+    public void intervalToStTest() throws Exception {
+        St result = TrialProcessingReportBean.intervalToSt(null, null);
+        assertNull(StConverter.convertToString(result));
+        result = TrialProcessingReportBean.intervalToSt(PAUtil.dateStringToTimestamp("1/1/2009"), PAUtil.dateStringToTimestamp("1/4/2009"));
+        assertEquals("3", StConverter.convertToString(result));
+        result = TrialProcessingReportBean.intervalToSt(new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime() + 1L));
+        assertEquals("<1", StConverter.convertToString(result));
     }
 }
