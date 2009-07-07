@@ -391,13 +391,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                              "Select Human Subject Safety under Regulatory Information from Administrative Data menu.",
                              "Board status has been set to nullified, " 
                              + "Please select another Board")); 
-                      }  
-          }
+                      } 
+              }
         }   
       }
   }
   
-  private void enforceStudyParticipationContactNullification(
+   private void enforceStudyParticipationContactNullification(
           Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)  throws PAException {
       
         List<StudyParticipationContactDTO> scDtos = 
@@ -441,7 +441,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       }   
       
   }
-  
+
   private void enforceDisease(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) throws PAException {
       boolean leadExist = false;
       List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
@@ -613,7 +613,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 && !studyParticipation.getReviewBoardApprovalStatusCode().getCode()
                 .equals(ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode())) {
             abstractionWarnList.add(createError("Warning", "Select Human Subject Safety under Regulatory Information",
-                    "Data inconsistency: \'Submitted, denied\' value (Review Board Approval Status) is"
+                    "Data inconsistency: \'Submitted, denied\' value (Review Board Approval Status) is "
                     + "only valid for the current trial status \'Disapproved\'."));
             
         }

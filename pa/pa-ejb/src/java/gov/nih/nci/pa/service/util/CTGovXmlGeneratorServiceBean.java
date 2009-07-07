@@ -263,6 +263,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final int HOURS = 24;
     private static final int MINUTES = 60;
     private static final int MAX_AGE = 999;
+    private static final int MAX_CONDITION = 9;
     private static final int ERROR_COUNT = 5;
     private static final String FIRST_NAME = "first_name";
     private static final String LAST_NAME = "last_name";
@@ -421,12 +422,25 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
     private void createCondition(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
+        if (sdDtos != null) {
+            Element condition = doc.createElement("condition");
+            int count = 0;
         for (StudyDiseaseDTO sdDto : sdDtos) {
-            if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
+             if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
                 DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-                appendElement(root, createElement("condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
+                appendElement(condition, 
+                        createElement("lead", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
+            } else if (count < MAX_CONDITION) {
+                
+                DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
+                appendElement(condition, 
+                        createElement("non_lead", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
+                count++;
             }
-
+             if (condition.hasChildNodes()) {
+                 root.appendChild(condition);
+             }
+         }    
         }
     }
 

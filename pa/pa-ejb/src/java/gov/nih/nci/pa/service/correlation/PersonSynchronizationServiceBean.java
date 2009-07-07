@@ -467,7 +467,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                        personDto = PoRegistry.getPersonEntityService().getPerson(personIi);
                    } catch (NullifiedEntityException e1) {
                        // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
-                       throw new PAException("This scenario is currrently not hanndled .... " 
+                       throw new PAException("This scenario is currrently not handled .... " 
                                + "Duplicate Ii of nullified is also nullified" , e1);
                    }
                }
@@ -498,7 +498,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                        organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(organizationIi);
                    } catch (NullifiedEntityException e1) {
                        // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
-                       throw new PAException("This scenario is currrently not hanndled .... " 
+                       throw new PAException("This scenario is currrently not handled .... " 
                                + "Duplicate Ii of nullified is also nullified" , e1);
                    }
                }

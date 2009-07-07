@@ -162,8 +162,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             query = session.createQuery(hql.toString());
             queryList = query.list();
             if (queryList.size() > 1) {
-                LOG.error(" Person  should not be more than 1 record for a Po Indetifer = " + poIdentifer);
-                throw new PAException(" Person  should not be more than 1 " + "record for a Po Indetifer = "
+                LOG.error(" Person  should not be more than 1 record for a Po Identifier = " + poIdentifer);
+                throw new PAException(" Person  should not be more than 1 " + "record for a Po Identifier = "
                         + poIdentifer);
             }
         } catch (HibernateException hbe) {
@@ -272,8 +272,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             query = session.createQuery(hql.toString());
             queryList = query.list();
             if (queryList.size() > 1) {
-                LOG.error(" Organization  should not be more than 1 record for a Po Indetifer = " + poIdentifer);
-                throw new PAException(" Organization  should not be more than 1 " + "record for a Po Indetifer = "
+                LOG.error(" Organization  should not be more than 1 record for a Po Identifier = " + poIdentifer);
+                throw new PAException(" Organization  should not be more than 1 " + "record for a Po Identifier = "
                         + poIdentifer);
             }
         } catch (HibernateException hbe) {

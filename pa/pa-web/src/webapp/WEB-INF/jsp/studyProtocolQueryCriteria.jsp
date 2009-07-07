@@ -148,6 +148,14 @@ function generateReport(pid) {
                     <s:checkbox name="criteria.searchOnHold" />
                 </td>                
             </tr>
+             <tr> 
+                <td scope="row" class="label">
+                    <label for="searchAmend"> <fmt:message key="studyProtocol.searchAmend"/></label>                        
+                </td>
+                <td>
+                    <s:checkbox name="criteria.searchAmend" />
+                </td>                
+            </tr>
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">

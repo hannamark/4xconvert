@@ -124,7 +124,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String searchOnHold;
     private String studyMilestone;
 
-
+    private String searchAmend;
     /**
      *
      * @return studyProtocolId
@@ -377,6 +377,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public String getNctNumber() {
         return nctNumber;
+    }
+    /**
+     * @return the searchAmend
+     */
+    public String getSearchAmend() {
+        return searchAmend;
+    }
+    /**
+     * @param searchAmend the searchAmend to set
+     */
+    public void setSearchAmend(String searchAmend) {
+        this.searchAmend = searchAmend;
     }
 
 

@@ -49,7 +49,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
     				<td class="value">    					
-                    		<s:textfield name="subGroupsWebDTO.groupNumberText" maxlength="20"  cssStyle="width:80px"/>                    
+                    		<s:textfield name="subGroupsWebDTO.groupNumberText" maxlength="200"  cssStyle="width:80px"/>                    
                            	<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>subGroupsWebDTO.code</s:param>

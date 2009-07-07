@@ -677,5 +677,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                       + " where spoh.onholdDate is not null and "
                       + " spoh.offholdDate is null)");
            }
+        // sub-query for searching only Amend trials
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSearchAmend())
+                   && studyProtocolQueryCriteria.getSearchAmend().equals("true")) {
+                where.append(" and sp.amendmentNumber is not null and "
+                      + " sp.amendmentDate is not null)");
+           }
     }
 }

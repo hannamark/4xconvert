@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -125,9 +126,21 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date studyMilestoneDate;
     private String amendmentNumber;
     private Date amendmentDate;
+    private AmendmentReasonCode amendmentReasonCode;
 
 
-
+    /**
+     * @return the amendmentReasonCode
+     */
+    public AmendmentReasonCode getAmendmentReasonCode() {
+        return amendmentReasonCode;
+    }
+    /**
+     * @param amendmentReasonCode the amendmentReasonCode to set
+     */
+    public void setAmendmentReasonCode(AmendmentReasonCode amendmentReasonCode) {
+        this.amendmentReasonCode = amendmentReasonCode;
+    }
     /**
      *
      * @return studyProtocolId
