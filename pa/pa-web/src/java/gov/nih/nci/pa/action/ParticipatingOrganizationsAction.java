@@ -597,7 +597,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         try {
             createStudyParticationContactRecord(tab, isPrimaryContact, roleCode);
         } catch (PAException e) {
-            addActionError("Exception:" + e.getLocalizedMessage());
+            addActionError("Exception:Investigator can not be added to the Nullified Org" + e.getLocalizedMessage());
             return DISPLAY_SPART_CONTACTS;
         }
         // This makes a fresh db call to show the result on the JSP
@@ -897,6 +897,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         if (PAUtil.isEmpty(orgFromPO.getName())) {
             addFieldError("editOrg.name", "Please choose an organization");
+        }
+        if (!PAUtil.isEmpty(getRecStatusDate())) {
+            Timestamp newDate = PAUtil.dateStringToTimestamp(getRecStatusDate());
+            if (newDate.after(new Timestamp(new Date().getTime()))) {
+                addFieldError("recStatusDate", getText("error.participatingStatusDateCheck"));
+            } 
         }
     }
 

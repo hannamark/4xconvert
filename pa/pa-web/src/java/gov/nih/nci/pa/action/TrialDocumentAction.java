@@ -147,7 +147,7 @@ ServletResponseAware {
             getAttribute(Constants.STUDY_PROTOCOL_II);
             List<DocumentDTO> isoList = PaRegistry.getDocumentService().
             getDocumentsByStudyProtocol(studyProtocolIi);
-            if (!(isoList.isEmpty())) {
+            if (isoList != null && !(isoList.isEmpty())) {
                 trialDocumentList = new ArrayList<TrialDocumentWebDTO>();
                 for (DocumentDTO dto : isoList) {
                     trialDocumentList.add(new TrialDocumentWebDTO(dto));

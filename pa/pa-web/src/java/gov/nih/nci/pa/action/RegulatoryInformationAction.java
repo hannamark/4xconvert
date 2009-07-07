@@ -262,7 +262,7 @@ public class RegulatoryInformationAction extends ActionSupport {
     public String getRegAuthoritiesList() {
         try {
             String countryId = ServletActionContext.getRequest().getParameter("countryid");
-            if (!("".equals(countryId))) {
+            if (countryId != null && !("".equals(countryId))) {
                 regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
                     Long.valueOf(countryId));
             } else {

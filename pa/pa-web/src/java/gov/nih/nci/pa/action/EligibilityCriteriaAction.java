@@ -149,7 +149,7 @@ private static final String ELIGIBILITY = "eligibility";
       .getAttribute(Constants.STUDY_PROTOCOL_II);
       List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
       .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-      if (!(pecList.isEmpty())) {
+      if (pecList != null && !pecList.isEmpty()) {
         list = new ArrayList<ISDesignDetailsWebDTO>();
         for (PlannedEligibilityCriterionDTO dto : pecList) {
           list.add(setEligibilityDetailsDTO(dto));
@@ -176,6 +176,7 @@ private static final String ELIGIBILITY = "eligibility";
       if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
         ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
         ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
+        if (ospDTO != null) {
         if (ospDTO.getSamplingMethodCode().getCode() != null) {
           samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
         }
@@ -183,6 +184,7 @@ private static final String ELIGIBILITY = "eligibility";
           studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
         }
       }
+      }   
 
     } catch (PAException e) {
       ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());

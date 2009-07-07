@@ -81,7 +81,9 @@ package gov.nih.nci.pa.test.util;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceBean;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceBean;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -89,8 +91,10 @@ import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
+import gov.nih.nci.pa.service.StudyMilestoneServiceBean;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
@@ -99,6 +103,7 @@ import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingServiceBean;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
@@ -111,6 +116,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -149,6 +155,12 @@ public class MockServiceLocator implements ServiceLocator {
     private final StudyOnholdServiceRemote studyOnholdService = new MockStudyOnholdService();
     private final PAHealthCareProviderRemote healthCareProviderRemote = new MockPAHealthCareProviderService();
     private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
+    private final StudyDiseaseServiceRemote studyDiseaseService = new StudyDiseaseServiceBean();
+    private final DiseaseServiceRemote diseaseService = new DiseaseServiceBean();
+    private final DocumentServiceRemote documentService = new DocumentServiceBean();
+    private final StudyMilestoneServiceRemote studyMilestoneService = new StudyMilestoneServiceBean();
+    private final StudyResourcingServiceRemote studyResourcingService = new StudyResourcingServiceBean();
+    private final RegulatoryInformationServiceRemote regulatoryInformationService = new RegulatoryInformationBean();
     /**
      * @return mock service
      */
@@ -225,15 +237,14 @@ public class MockServiceLocator implements ServiceLocator {
     * @return RegulatoryInformationServiceRemote
     */
    public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-		// TODO Auto-generated method stub
-		return null;
+		return regulatoryInformationService;
 	}
    
     /** 
      * return StudyResourcingServiceRemote
      */
     public StudyResourcingServiceRemote getStudyResoucringService() {
-        return null;
+        return studyResourcingService;
     }
 
     /**
@@ -271,7 +282,7 @@ public class MockServiceLocator implements ServiceLocator {
      * return DocumentServiceRemote
      */
     public DocumentServiceRemote getDocumentService() {
-        return null;
+        return documentService;
     }
 
     /* (non-Javadoc)
@@ -369,16 +380,14 @@ public class MockServiceLocator implements ServiceLocator {
      * @return
      */
     public DiseaseServiceRemote getDiseaseService() {
-        // TODO Auto-generated method stub
-        return null;
+         return diseaseService;
     }
 
     /**
      * @return
      */
     public StudyDiseaseServiceRemote getStudyDiseaseService() {
-        // TODO Auto-generated method stub
-        return null;
+         return studyDiseaseService;
     }
 
     /**
@@ -398,8 +407,8 @@ public class MockServiceLocator implements ServiceLocator {
      * @return
      */
     public StudyMilestoneServiceRemote getStudyMilestoneService() {
-        // TODO Auto-generated method stub
-        return null;
+       
+        return studyMilestoneService;
     }
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
         throws PAException {
@@ -416,4 +425,15 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
+
+    /**
+     * @return the healthCareProviderRemote
+     */
+    public PAHealthCareProviderRemote getHealthCareProviderRemote() {
+        return healthCareProviderRemote;
+    }
+
+   
+
+   
 }
