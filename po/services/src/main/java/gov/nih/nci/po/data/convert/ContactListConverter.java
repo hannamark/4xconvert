@@ -96,10 +96,9 @@ import gov.nih.nci.po.data.bo.URL;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.collections.set.ListOrderedSet;
 
 /**
  *
@@ -127,7 +126,7 @@ public class ContactListConverter {
             List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
         DSet<Tel> dset = new DSet<Tel>();
         @SuppressWarnings("unchecked")
-        Set<Tel> set = new ListOrderedSet();
+        Set<Tel> set = new LinkedHashSet();
         dset.setItem(set);
         for (Email c : email) {
             TelEmail t = new TelEmail();

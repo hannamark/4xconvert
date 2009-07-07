@@ -1,6 +1,14 @@
 package gov.nih.nci.coppa.iso;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -35,5 +43,47 @@ public class EnPnTest {
         enpn.getPart().add(e);
         assertEquals(6, enpn.getPart().size());
 
+    }
+    
+    @Test
+    public void testCloneable() {
+        EnPn first = new EnPn();
+        first.setNullFlavor(NullFlavor.ASKU);
+
+        first.getPart().add(new Enxp(EntityNamePartType.DEL));
+        first.getPart().add(new Enxp(EntityNamePartType.FAM));
+        first.getPart().add(new Enxp(EntityNamePartType.GIV));
+        first.getPart().add(new Enxp(null));
+        
+        EnPn second = first.clone();
+
+        assertTrue(first != second);
+        assertTrue(first.equals(second));
+        assertEquals(first.hashCode(), second.hashCode());
+    }
+    
+    @Test
+    public void testSerialization() throws IOException, ClassNotFoundException {
+        EnPn test = new EnPn();
+        List<Enxp> part2 = test.getPart();
+        Enxp enxp1 = new Enxp(EntityNamePartType.FAM);
+        enxp1.setValue("test");
+        part2.add(enxp1);
+
+        Enxp enxp2 = new Enxp(EntityNamePartType.GIV);
+        enxp2.setValue("test2");
+        part2.add(enxp2);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(test);
+        oos.flush();
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        EnPn test2 = (EnPn) ois.readObject();
+
+        assertEquals(test, test2);
     }
 }

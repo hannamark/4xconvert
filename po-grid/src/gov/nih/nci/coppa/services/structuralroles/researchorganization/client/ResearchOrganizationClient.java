@@ -86,7 +86,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
         Id id = new Id();
         id.setRoot(RESEARCH_ORG_ROOT);
         id.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
-        id.setExtension("592");
+        id.setExtension("534");
         ResearchOrganization result = client.getById(id);
         ClientUtils.handleResult(result);
     }
@@ -103,7 +103,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     private static ResearchOrganization createCriteria() {
         ResearchOrganization criteria = new ResearchOrganization();
         CD statusCode = new CD();
-        statusCode.setCode("pending");
+        statusCode.setCode("active");
         criteria.setStatus(statusCode);
         return criteria;
     }

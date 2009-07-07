@@ -86,7 +86,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         Id id = new Id();
         id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
         id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
-        id.setExtension("648");
+        id.setExtension("610");
         OrganizationalContact result = client.getById(id);
         ClientUtils.handleResult(result);
     }

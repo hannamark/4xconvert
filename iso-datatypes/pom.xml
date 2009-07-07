@@ -4,7 +4,7 @@
     <groupId>gov.nih.nci.coppa</groupId>
     <artifactId>iso-datatypes</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>1.2.3-SNAPSHOT</version>
     <name>iso</name>
 
     <properties>
@@ -13,9 +13,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso-datatypes</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso-datatypes</developerConnection>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso-datatypes</url>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/iso-datatypes-1.2.2</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/iso-datatypes-1.2.2</developerConnection>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/tags/iso-datatypes-1.2.2</url>
     </scm>
 
     <ciManagement>

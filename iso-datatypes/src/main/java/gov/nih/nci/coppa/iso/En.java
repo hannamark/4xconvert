@@ -96,13 +96,14 @@ public class En extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<Enxp> part;
-
+    private transient List<Enxp> part;
+    private final List<Enxp> partsInternal;
+    private Predicate partRestriction;
     /**
      * Default ctor.
      */
     public En() {
-        part = new ArrayList<Enxp>();
+        partsInternal = new ArrayList<Enxp>();
     }
 
     /**
@@ -110,13 +111,22 @@ public class En extends Any implements Cloneable {
      */
     @SuppressWarnings("unchecked")
     protected En(Predicate partRestriction) {
-        part = PredicatedList.decorate(new ArrayList<Enxp>(), partRestriction);
+        this();
+        this.partRestriction = partRestriction;
     }
-
+    
     /**
      * @return the part
      */
+    @SuppressWarnings("unchecked")    
     public List<Enxp> getPart() {
+        if (part == null) {
+            if (partRestriction != null) {
+                part = PredicatedList.decorate(partsInternal, partRestriction);
+            } else {
+                part = partsInternal;
+            }
+        }
         return part;
     }
 

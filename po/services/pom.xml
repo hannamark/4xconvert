@@ -95,13 +95,13 @@
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>iso-datatypes</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>coppa-commons</artifactId>
-            <version>1.1</version>
+            <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

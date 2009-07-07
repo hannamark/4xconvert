@@ -85,7 +85,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         Id id = new Id();
         id.setRoot(HEALTH_CARE_FACILITY_ROOT);
         id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
-        id.setExtension("640");
+        id.setExtension("592");
         HealthCareFacility result = client.getById(id);
         ClientUtils.handleResult(result);
     }

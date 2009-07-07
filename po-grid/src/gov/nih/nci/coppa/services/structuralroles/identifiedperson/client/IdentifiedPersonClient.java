@@ -86,7 +86,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         Id id = new Id();
         id.setRoot(IDENTIFIED_PERSON_ROOT);
         id.setIdentifierName(IDENTIFIED_PERSON_IDENTIFIER_NAME);
-        id.setExtension("100");
+        id.setExtension("622");
         IdentifiedPerson result = client.getById(id);
         ClientUtils.handleResult(result);
     }

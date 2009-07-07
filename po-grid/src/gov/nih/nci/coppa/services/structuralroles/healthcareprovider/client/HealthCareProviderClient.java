@@ -86,7 +86,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         Id id = new Id();
         id.setRoot(HEALTH_CARE_PROVIDER_ROOT);
         id.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
-        id.setExtension("640");
+        id.setExtension("571");
         HealthCareProvider result = client.getById(id);
         ClientUtils.handleResult(result);
     }

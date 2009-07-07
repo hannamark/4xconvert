@@ -86,7 +86,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
         Id id = new Id();
         id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
         id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        id.setExtension("642");
+        id.setExtension("604");
         OversightCommittee result = client.getById(id);
         ClientUtils.handleResult(result);
     }

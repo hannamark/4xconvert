@@ -103,7 +103,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         Id id = new Id();
         id.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
         id.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
-        id.setExtension("4172");
+        id.setExtension("616");
         return id;
     }
     

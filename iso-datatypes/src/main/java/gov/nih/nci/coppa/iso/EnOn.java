@@ -96,12 +96,14 @@ public final class EnOn extends En implements Cloneable {
 
     /**
      * serializable predicate that dissallows FAM and GIV parts.
-     */
+     */ 
     private static class EnOnPredicate implements Predicate, Serializable {
 
         private static final long serialVersionUID = 1L;
-
-        /** {@inheritDoc} */
+     
+        /**
+         *  {@inheritDoc} 
+         */
         @SuppressWarnings("PMD.MissingBreakInSwitch")
         public boolean evaluate(Object object) {
             if (object == null) {
@@ -123,8 +125,8 @@ public final class EnOn extends En implements Cloneable {
         }
     }
 
-    private static final Predicate ON_PREDICATE = new EnOnPredicate();
-
+    private static final EnOnPredicate ON_PREDICATE = new EnOnPredicate();
+    
     /**
      * Default ctor.
      */

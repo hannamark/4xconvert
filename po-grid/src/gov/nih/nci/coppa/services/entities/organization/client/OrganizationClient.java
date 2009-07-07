@@ -85,7 +85,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         Id id = new Id();
         id.setRoot(ORG_ROOT);
         id.setIdentifierName(ORG_IDENTIFIER_NAME);
-        id.setExtension("537");
+        id.setExtension("516");
         Organization result = client.getById(id);
         ClientUtils.handleResult(result);
     }

@@ -85,7 +85,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 	Id id = new Id();
 	id.setRoot(IDENTIFIED_ORG_ROOT);
 	id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
-	id.setExtension("592");
+	id.setExtension("597");
 	IdentifiedOrganization result = client.getById(id);
 	ClientUtils.handleResult(result);
   }

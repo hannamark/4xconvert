@@ -96,5 +96,7 @@
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.jar"/>
 	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2-tests.jar"/>
+	<classpathentry kind="var" path="PO_GLOBUS"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

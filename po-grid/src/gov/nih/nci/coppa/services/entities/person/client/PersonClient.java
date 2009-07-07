@@ -142,7 +142,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         Id id = new Id();
         id.setRoot(PERSON_ROOT);
         id.setIdentifierName(PERSON_IDENTIFIER_NAME);
-        id.setExtension("499");
+        id.setExtension("541");
         return id;
     }
 
