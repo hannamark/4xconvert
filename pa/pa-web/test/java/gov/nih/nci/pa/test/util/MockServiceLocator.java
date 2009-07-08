@@ -94,7 +94,6 @@ import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
-import gov.nih.nci.pa.service.StudyMilestoneServiceBean;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
@@ -116,7 +115,6 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
-import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -125,7 +123,11 @@ import gov.nih.nci.service.MockInterventionService;
 import gov.nih.nci.service.MockPAHealthCareProviderService;
 import gov.nih.nci.service.MockPlannedActivityService;
 import gov.nih.nci.service.MockProtocolQueryService;
+import gov.nih.nci.service.MockRegistryUserService;
+import gov.nih.nci.service.MockRegulatoryInformationService;
+import gov.nih.nci.service.MockStudyMilestoneService;
 import gov.nih.nci.service.MockStudyOnholdService;
+import gov.nih.nci.service.MockStudyOutcomeMeasureService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyParticipationService;
 import gov.nih.nci.service.MockStudyProtocolService;
@@ -158,9 +160,12 @@ public class MockServiceLocator implements ServiceLocator {
     private final StudyDiseaseServiceRemote studyDiseaseService = new StudyDiseaseServiceBean();
     private final DiseaseServiceRemote diseaseService = new DiseaseServiceBean();
     private final DocumentServiceRemote documentService = new DocumentServiceBean();
-    private final StudyMilestoneServiceRemote studyMilestoneService = new StudyMilestoneServiceBean();
+    private final StudyMilestoneServiceRemote studyMilestoneService = new MockStudyMilestoneService();
     private final StudyResourcingServiceRemote studyResourcingService = new StudyResourcingServiceBean();
-    private final RegulatoryInformationServiceRemote regulatoryInformationService = new RegulatoryInformationBean();
+    private final RegulatoryInformationServiceRemote regulatoryInformationService = new MockRegulatoryInformationService();
+    private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
+    private final StudyOutcomeMeasureServiceRemote studyOutcomeMService = new MockStudyOutcomeMeasureService();
+    
     /**
      * @return mock service
      */
@@ -322,7 +327,7 @@ public class MockServiceLocator implements ServiceLocator {
 
 
     public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
-        return null;
+        return studyOutcomeMService;
     }
     public ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() {
         return null;
@@ -417,8 +422,7 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public RegistryUserServiceRemote getRegisterUserService() {
-        // TODO Auto-generated method stub
-        return null;
+        return registryUserService;
     }
     
     public MailManagerServiceRemote getMailManagerService() {

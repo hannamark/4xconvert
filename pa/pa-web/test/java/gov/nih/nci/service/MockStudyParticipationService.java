@@ -80,10 +80,12 @@ package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 
@@ -107,6 +109,16 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
         sp.setStudyProtocol(MockStudyProtocolService.list.get(0));
         sp.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
         sp.setLocalStudyProtocolIdentifier("LSPID 001");
+        list.add(sp);
+        sp = new StudyParticipation();
+        sp.setId(seq++);
+        sp.setStudyProtocol(MockStudyProtocolService.list.get(0));
+        sp.setFunctionalCode(StudyParticipationFunctionalCode.FUNDING_SOURCE);
+        sp.setLocalStudyProtocolIdentifier("LSPID 002");
+        ResearchOrganization researchOrg = new ResearchOrganization();
+        researchOrg.setId(1L);
+        sp.setResearchOrganization(researchOrg);
+        list.add(sp);
     }
 
     /**
@@ -195,8 +207,11 @@ public class MockStudyParticipationService implements gov.nih.nci.pa.service.Stu
      * @throws PAException
      */
     public StudyParticipationDTO get(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        StudyParticipationDTO dto = new StudyParticipationDTO();
+        dto.setResearchOrganizationIi(IiConverter.convertToIi("1"));
+        dto.setFunctionalCode(CdConverter.convertStringToCd("functionalCode"));
+        dto.setStatusCode(CdConverter.convertStringToCd("statusCode"));
+        return dto;
     }
 
     /**

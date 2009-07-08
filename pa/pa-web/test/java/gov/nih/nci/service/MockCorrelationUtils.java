@@ -136,8 +136,12 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
      */
     public Organization getPAOrganizationByPAResearchOrganizationId(
             Long paResearchOrganizationId) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        Organization orgDto = new Organization();
+        orgDto.setCity("city");
+        orgDto.setCountryName("countryName");
+        orgDto.setName("name");
+        orgDto.setPostalCode("postalCode");
+        return orgDto;
     }
 
     /**
@@ -159,8 +163,9 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
      */
     public Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer)
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        Person dto = new Person();
+        dto.setIdentifier("2");
+        return dto;
     }
 
     /**

@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -95,15 +96,24 @@ import gov.nih.nci.services.person.PersonDTO;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * 
  * @author Harsha
  * @since 01/23/2009 
  */
-public class DisplayInfoAction extends ActionSupport {
+public class DisplayInfoAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1263639653650385803L;
     PaPersonDTO persWebDTO = new PaPersonDTO();
+    CorrelationUtilsRemote cUtils;
+    /**
+     * 
+     */
+    public void prepare() {
+        cUtils = new CorrelationUtils();
+
+    }
 
     /**
      * 
@@ -138,7 +148,7 @@ public class DisplayInfoAction extends ActionSupport {
         try {
             StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.TRIAL_SUMMARY);
-            CorrelationUtils cUtils = new CorrelationUtils();
+            //cUtils = new CorrelationUtils();
             Person userInfo = cUtils.getPAPersonByIndetifers(studyProtocolQueryDTO.getPiId(), null);
             PersonDTO poPerson = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.converToPoPersonIi(userInfo.getIdentifier()));

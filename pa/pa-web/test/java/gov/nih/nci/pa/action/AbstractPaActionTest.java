@@ -79,9 +79,11 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.test.util.MockPoServiceLocator;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 
 import javax.servlet.http.HttpSession;
 
@@ -106,6 +108,7 @@ public abstract class AbstractPaActionTest {
     @Before
     public void setUpServices() {
         PaRegistry.getInstance().setServiceLocator(new MockServiceLocator());
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
 
 

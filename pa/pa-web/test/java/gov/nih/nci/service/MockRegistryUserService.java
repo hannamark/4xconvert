@@ -1,0 +1,48 @@
+/**
+ * 
+ */
+package gov.nih.nci.service;
+
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+
+/**
+ * @author Vrushali
+ *
+ */
+public class MockRegistryUserService implements RegistryUserServiceRemote {
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#createUser(gov.nih.nci.pa.domain.RegistryUser)
+     */
+    public RegistryUser createUser(RegistryUser user) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#getUser(java.lang.String)
+     */
+    public RegistryUser getUser(String loginName) throws PAException {
+        if(loginName != null && loginName.equals("exceptionName")){
+            throw new PAException("test");
+        }
+        RegistryUser regUser = new RegistryUser();
+        regUser.setCity("city");
+        regUser.setCountry("country");
+        regUser.setCsmUserId(1L);
+        regUser.setUserLastCreated("userLastCreated");
+        regUser.setUserLastUpdated("userLastUpdated");
+        return regUser;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#updateUser(gov.nih.nci.pa.domain.RegistryUser)
+     */
+    public RegistryUser updateUser(RegistryUser user) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+}

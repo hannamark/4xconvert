@@ -81,10 +81,12 @@ package gov.nih.nci.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
@@ -108,6 +110,7 @@ import javax.ejb.TransactionAttributeType;
 public class MockStudyProtocolService implements StudyProtocolServiceRemote {
 
     static List<StudyProtocol> list;
+    static List<InterventionalStudyProtocol> isplist;
 
     static {
         list = new ArrayList<StudyProtocol>();
@@ -118,6 +121,15 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
         list.add(sp);
+        isplist = new ArrayList<InterventionalStudyProtocol>();
+        InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
+        isp.setId(1L);
+        isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        isp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        isp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
+        isp.setOfficialTitle("officialTitle");
+        isplist.add(isp);
     }
     public List<StudyProtocolDTO> search(StudyProtocolDTO spDTO) throws PAException{
     	return null;
@@ -151,6 +163,15 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
      */
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii)
             throws PAException {
+        for (InterventionalStudyProtocol isp: isplist) {
+            if(isp.getId().equals(IiConverter.convertToLong(ii))) {
+                return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+            }
+        }
+        if(ii.getExtension().equals("9")) {
+            throw new PAException("test");
+        }
+
         return null;
     }
 
@@ -177,7 +198,9 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
      */
     public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
             InterventionalStudyProtocolDTO ispDTO) throws PAException {
-        // TODO Auto-generated method stub
+        if (ispDTO.getPhaseOtherText() != null && ispDTO.getPhaseOtherText().getValue().equals("ex")) {
+            throw new PAException("test");
+        }
         return null;
     }
     

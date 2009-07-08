@@ -80,6 +80,8 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
@@ -130,13 +132,17 @@ import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -154,7 +160,7 @@ import javax.interceptor.Interceptors;
 * copyright holder, NCI.
 */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods",
-  "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
+  "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" , "PMD.TooManyFields" })
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -191,7 +197,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
     @EJB
     DocumentServiceLocal documentServiceLocal = null;
-     
+    @EJB
+    RegulatoryInformationServiceRemote regulatoryInfoBean = null;
     private static final String YES = "Yes";
     private static final String NO = "No";
 
@@ -272,6 +279,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceDisease(studyProtocolIi, abstractionList);
     enforceArmInterventional(studyProtocolIi, abstractionList);
     enforceEligibility(studyProtocolIi, abstractionList);
+    enforceCollaborator(studyProtocolIi, abstractionList);
     abstractionList.addAll(abstractionWarnList);
     return abstractionList;
   }
@@ -554,6 +562,21 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           abstractionList.add(createError("Error", "Select Regulatory Information from Administrative Data menu.",
                   "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records."));
       }
+      //if IND is is there for Trial Oversight Authority Country  =USA
+      //then Trial Oversight Authority Organization Name  shld be FDA if not throw err
+      //get the country and check if its usa if so then check if Org name is FDA if not throw err
+      StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = 
+          studyRegulatoryAuthorityService.getCurrentByStudyProtocol(studyProtocolDto.getIdentifier());
+      if (sraFromDatabaseDTO != null) {
+      Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
+      RegulatoryAuthority regAuth = regulatoryInfoBean.get(sraId);
+      if (regAuth.getCountry().getAlpha3().equals("USA") 
+              && !regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration")) {
+          abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
+                  + " from Administrative Data menu.", "For IND protocols, Oversight Authorities " 
+                  + " must include United States: Food and Drug Administration."));
+      }
+    }
     } // if
   } // method
 
@@ -580,7 +603,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     + " from Administrative Data menu.", "Delay posting indicator can only be set to \'yes\' " 
                     + " if study includes at least one intervention with type \'device\'."));
         }
-       
+      
   }
   
   private void enforceIRBInfo(StudyProtocolDTO spDto, List<AbstractionCompletionDTO> abstractionList, 
@@ -679,9 +702,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           + " Administrative Data menu.",  "No Participating Sites exists for the trial."));
       return;
     }
-    
     for (StudyParticipationDTO spartDto : spList) {
-        
       List<StudyParticipationContactDTO> spContactDtos =
                 studyParticipationContactService.getByStudyParticipation(spartDto.getIdentifier());
         boolean piFound = false;
@@ -698,23 +719,103 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
           
         }
+        //Fix for #21889 Error Message ID Does Not Match Participating Site PO ID#
+        Organization orgBo = getPoOrg(spartDto);
         if (!piFound) {
+            //Fix for #21889 Error Message ID Does Not Match Participating Site PO ID#
             abstractionList.add(createError("Error",
                     "Select Participating Sites from Administrative Data menu.",
-                    "Participating site # " + spartDto.getIdentifier().getExtension()
+                    "Participating site # " + orgBo.getIdentifier()
                     + " Must have an Investigator"));
 
         }
+      //Use_case AC_12. No investigator duplicates must exist on the same treating site for the same trial.
+        if (piFound && hasDuplicate(getPIForTreatingSite(spContactDtos))) {
+                    abstractionList.add(createError("Error", "Select Participating Sites from "
+                    + " Administrative Data menu.",  "Treating site can not have duplicate investigator."));
+                    break;
+        } 
+            
         if (!contactFound) {
             abstractionList.add(createError("Error",
                     "Select Participating Sites from Administrative Data menu.",
-                    "Participating site # " + spartDto.getIdentifier().getExtension() + " Must have a Contact"));
+                    "Participating site # " + orgBo.getIdentifier() + " Must have a Contact"));
 
         }
 
     }
-  }
+    //Fix UC_AC#11. No participating site duplicates playing same role must exist on the same trial
+    if (hasDuplicate(getTreatingSiteOrg(spList))) {
+           abstractionList.add(createError("Error", "Select Participating Sites from "
+               + " Administrative Data menu.",  "Trial can not have dupicate Treating Site."));
+    }    
 
+  }
+  private void enforceCollaborator(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
+  throws PAException {
+      ArrayList<StudyParticipationDTO> criteriaList = new ArrayList<StudyParticipationDTO>();
+      for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
+          if (cd.isCollaboratorCode()) {
+              StudyParticipationDTO searchCode = new StudyParticipationDTO();
+              searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
+              criteriaList.add(searchCode);
+          }
+      }
+      List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(studyProtocolIi, criteriaList);
+      List<String> newspList = new ArrayList<String>(); 
+      for (StudyParticipationDTO spdto : spList) {
+          newspList.add(spdto.getFunctionalCode().getCode() + spdto.getResearchOrganizationIi().getExtension());
+        }
+      if (hasDuplicate(newspList)) {
+          abstractionList.add(createError("Error", "Select Collaborators from "
+              + " Administrative Data menu.",  "Trial can not have a duplicate collaborator playing the same role."));
+   }    
+  }
+/**
+ * @param spartDto
+ * @return
+ * @throws PAException
+ */
+private Organization getPoOrg(StudyParticipationDTO spartDto)
+        throws PAException {
+    CorrelationUtils cUtils = new CorrelationUtils();
+    Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(spartDto
+            .getHealthcareFacilityIi()));
+    return orgBo;
+}
+  private List<String> getPIForTreatingSite(List<StudyParticipationContactDTO> spContactDtos) {
+      List<String> piList = new ArrayList<String>();
+      for (StudyParticipationContactDTO dto : spContactDtos) {
+          if (StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
+                  .equalsIgnoreCase(dto.getRoleCode().getCode())
+          || StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getCode()
+                  .equalsIgnoreCase(dto.getRoleCode().getCode())) {
+              piList.add(dto.getHealthCareProviderIi().getExtension() 
+                      + dto.getClinicalResearchStaffIi().getExtension());
+          }
+      }
+      return piList;
+  }
+  private List<String> getTreatingSiteOrg(List<StudyParticipationDTO> spartList) {
+      List<String> treatingSiteList = new ArrayList<String>();
+      for (StudyParticipationDTO spdto : spartList) {
+        treatingSiteList.add(spdto.getHealthcareFacilityIi().getExtension());
+      }
+    return treatingSiteList;
+  }
+  
+  private <T> boolean hasDuplicate(Collection<T> list) {
+      Set<T> set = new HashSet<T>();    
+      // Set#add returns false if the set does not change, which    
+      // indicates that a duplicate element has been added.
+      boolean dup = false;
+      for (T each : list) {
+          if (!set.add(each)) {
+              dup = true;
+          }
+      }
+      return dup;
+  }
 
   private void enforceInterventions(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {

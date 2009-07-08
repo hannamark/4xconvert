@@ -180,4 +180,5 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         }
         assertTrue("Added treating site not found.", found);
      }
+    
 }

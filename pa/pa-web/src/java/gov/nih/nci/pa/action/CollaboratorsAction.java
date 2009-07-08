@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
@@ -132,7 +133,7 @@ public class CollaboratorsAction extends ActionSupport
 
     private StudyParticipationServiceRemote sPartService;
     private OrganizationCorrelationServiceBean ocService;
-    private CorrelationUtils cUtils;
+    CorrelationUtilsRemote cUtils;
     private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
     private List<PaOrganizationDTO> organizationList = null;
