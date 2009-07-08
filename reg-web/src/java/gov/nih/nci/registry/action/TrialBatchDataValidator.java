@@ -339,10 +339,10 @@ public class TrialBatchDataValidator {
           if (TrialStatusCode.APPROVED.getCode().equals(dto.getCurrentTrialStatus())
                   || TrialStatusCode.IN_REVIEW.getCode().equals(dto.getCurrentTrialStatus())) {
               if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                  errors.append("If Current Trial Status is Approved, Trial Start Date must be Anticipated.\n");
+                errors.append("If Current Trial Status is Approved/In Review, Trial Start Date must be Anticipated.\n");
               } 
           } else if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved.\n");
+            errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
           }
           // Constraint/Rule: 27 If Current Trial Status is ‘Completed’, Primary Completion Date must be the 
           // same as Current Trial Status Date and have ‘actual’ type.
