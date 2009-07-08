@@ -13,9 +13,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/iso-datatypes-1.2.2</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/iso-datatypes-1.2.2</developerConnection>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/tags/iso-datatypes-1.2.2</url>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso-datatypes</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso-datatypes</developerConnection>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso-datatypes</url>
     </scm>
 
     <ciManagement>
