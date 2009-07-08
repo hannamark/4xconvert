@@ -82,12 +82,12 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="build/test/lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="build/lib/activation-1.1.jar"/>
-	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/jaxb-api-2.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/jaxb-impl-2.1.4.jar"/>
 	<classpathentry kind="lib" path="build/lib/stax-api-1.0-2.jar"/>
-	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.jar"/>
-	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2-tests.jar"/>
 	<classpathentry kind="lib" path="build/lib/pa-ejb-client-2.1-milestone3.jar"/>
+	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.1.jar"/>
+	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.2.jar"/>
+	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.1-tests.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

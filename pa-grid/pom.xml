@@ -15,7 +15,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>coppa-commons</artifactId>
-            <version>1.2</version>
+            <version>1.2.1</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
