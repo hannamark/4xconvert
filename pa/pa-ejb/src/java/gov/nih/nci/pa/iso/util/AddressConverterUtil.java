@@ -81,10 +81,34 @@ package gov.nih.nci.pa.iso.util;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAdl;
 import gov.nih.nci.coppa.iso.AdxpAl;
+import gov.nih.nci.coppa.iso.AdxpBnn;
+import gov.nih.nci.coppa.iso.AdxpBnr;
+import gov.nih.nci.coppa.iso.AdxpBns;
+import gov.nih.nci.coppa.iso.AdxpCar;
+import gov.nih.nci.coppa.iso.AdxpCen;
 import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCpa;
 import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpDal;
+import gov.nih.nci.coppa.iso.AdxpDel;
+import gov.nih.nci.coppa.iso.AdxpDinst;
+import gov.nih.nci.coppa.iso.AdxpDinsta;
+import gov.nih.nci.coppa.iso.AdxpDinstq;
+import gov.nih.nci.coppa.iso.AdxpDir;
+import gov.nih.nci.coppa.iso.AdxpDmod;
+import gov.nih.nci.coppa.iso.AdxpDmodid;
+import gov.nih.nci.coppa.iso.AdxpInt;
+import gov.nih.nci.coppa.iso.AdxpPob;
+import gov.nih.nci.coppa.iso.AdxpPre;
+import gov.nih.nci.coppa.iso.AdxpSal;
 import gov.nih.nci.coppa.iso.AdxpSta;
+import gov.nih.nci.coppa.iso.AdxpStb;
+import gov.nih.nci.coppa.iso.AdxpStr;
+import gov.nih.nci.coppa.iso.AdxpSttyp;
+import gov.nih.nci.coppa.iso.AdxpUnid;
+import gov.nih.nci.coppa.iso.AdxpUnit;
 import gov.nih.nci.coppa.iso.AdxpZip;
 
 import java.util.ArrayList;
@@ -103,7 +127,7 @@ public class AddressConverterUtil {
     private static void setValue(List<Adxp> l, String s, AddressPartType addressPartType) {
         Adxp x;
         if (StringUtils.isNotBlank(s)) {
-            x = Adxp.createAddressPart(addressPartType);
+            x = createAddressPart(addressPartType);
             x.setValue(s);
             l.add(x);
         }
@@ -134,7 +158,7 @@ public class AddressConverterUtil {
 
         if (countryAlpha3 != null) {
             Adxp x;
-            x = Adxp.createAddressPart(AddressPartType.CNT);
+            x = createAddressPart(AddressPartType.CNT);
             x.setCode(countryAlpha3);
             x.setValue("adxp.value is required");
             l.add(x);
@@ -177,6 +201,49 @@ public class AddressConverterUtil {
         }
         return sb.toString();
         
+    }
+
+    private static Adxp createAddressPart(AddressPartType type) {
+        if (type == null) { 
+            return new Adxp(); 
+        }
+
+
+        switch (type) {
+            case ADL: return new AdxpAdl();
+            case AL : return new AdxpAl();
+            case BNN: return new AdxpBnn();
+            case BNR: return new AdxpBnr();
+            case BNS: return new AdxpBns();
+            case CAR: return new AdxpCar();
+            case CEN: return new AdxpCen();
+            case CNT: return new AdxpCnt();
+            case CPA: return new AdxpCpa();
+            case CTY: return new AdxpCty();
+            case DAL: return new AdxpDal();
+            case DEL: return new AdxpDel();
+            case DINST: return new AdxpDinst();
+            case DINSTA: return new AdxpDinsta();
+            case DINSTQ: return new AdxpDinstq();
+            case DIR: return new AdxpDir();
+            case DMOD: return new AdxpDmod();
+            case DMODID: return new AdxpDmodid();
+            case INT: return new AdxpInt();
+            case POB: return new AdxpPob();
+            case PRE: return new AdxpPre();
+            case SAL: return new AdxpSal();
+            case STA: return new AdxpSta();
+            case STB: return new AdxpStb();
+            case STR: return new AdxpStr();
+            case STTYP: return new AdxpSttyp();
+            case UNID: return new AdxpUnid();
+            case UNIT: return new AdxpUnit();
+            case ZIP: return new AdxpZip();
+
+
+            // there must be a new type added
+            default: throw new UnsupportedOperationException(type.name());
+        }
     }
     
 }
