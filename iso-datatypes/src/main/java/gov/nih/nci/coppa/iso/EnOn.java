@@ -92,7 +92,7 @@ import org.apache.commons.collections.Predicate;
  */
 public final class EnOn extends En implements Cloneable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * serializable predicate that dissallows FAM and GIV parts.

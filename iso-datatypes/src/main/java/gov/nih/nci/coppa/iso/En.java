@@ -94,7 +94,7 @@ import org.apache.commons.collections.list.PredicatedList;
  */
 public class En extends Any implements Cloneable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private transient List<Enxp> part;
     private final List<Enxp> partsInternal;

@@ -93,7 +93,7 @@ import org.apache.commons.collections.Predicate;
  */
 public final class EnPn extends En implements Cloneable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     
     /**
      * serializable predicate for notnull.
