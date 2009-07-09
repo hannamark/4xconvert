@@ -83,7 +83,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.DocumentWorkflowStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -139,7 +139,7 @@ public class DocumentWorkflowStatusServiceBean extends
             query.setParameter("spId", IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
             query.setParameter("statusCode", DocumentWorkflowStatusCode.getByCode(dto.getStatusCode().getCode()));
             queryList = query.list();
-            dto.setStatusDateRange(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
+            dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp((new Date()).getTime()), null));
             if (queryList == null || queryList.isEmpty()) {
                 super.create(dto);
             } else if (queryList.size() == 1) {
