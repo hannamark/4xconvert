@@ -104,4 +104,8 @@
             <comment>execute diseaseInterventionUpdates.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/diseaseInterventionUpdates.sql"/>
     </changeSet>
+       <changeSet id="24" author="Anupama">
+            <comment>execute documentWorkflowStatusColumnAdd.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/documentWorkflowStatusColumnAdd.sql"/>
+    </changeSet>
 </databaseChangeLog>
