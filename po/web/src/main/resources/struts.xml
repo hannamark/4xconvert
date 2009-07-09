@@ -4,13 +4,11 @@
 "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
+    <constant name="struts.action.extension" value="action" />
     <constant name="struts.devMode" value="${struts.devMode}" />
     <constant name="struts.ui.theme" value="css_xhtml" />
     <package name="default" extends="struts-default">
         <interceptors>
-
-            <interceptor name="nci-commonsParams"
-                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
 
             <interceptor name="nullCollectionElements"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.NullCollectionElementInterceptor" />
@@ -22,7 +20,14 @@
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
-                <interceptor-ref name="nci-commonsParams" />
+                <interceptor-ref name="params">
+                    <!--
+                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                    -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
                 <interceptor-ref name="prepare" />
                 <interceptor-ref name="i18n" />
@@ -30,7 +35,14 @@
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
-                <interceptor-ref name="nci-commonsParams" />
+                <interceptor-ref name="params">
+                    <!--
+                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                    -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="conversionError" />
                 <interceptor-ref name="nullCollectionElements" />
                 <interceptor-ref name="parameterTrim">
@@ -58,7 +70,14 @@
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
-                <interceptor-ref name="nci-commonsParams" />
+                <interceptor-ref name="params">
+                    <!--
+                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                    -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="conversionError" />
                 <interceptor-ref name="nullCollectionElements" />
                 <interceptor-ref name="parameterTrim">
@@ -77,7 +96,14 @@
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
-                <interceptor-ref name="nci-commonsParams" />
+                <interceptor-ref name="params">
+                    <!--
+                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                    -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
                 <interceptor-ref name="prepare" />
                 <interceptor-ref name="i18n" />
@@ -85,7 +111,14 @@
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
-                <interceptor-ref name="nci-commonsParams" />
+                <interceptor-ref name="params">
+                    <!--
+                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                    -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="conversionError" />
                 <interceptor-ref name="nullCollectionElements" />
                 <interceptor-ref name="parameterTrim">
@@ -101,87 +134,122 @@
                 </interceptor-ref>
            </interceptor-stack>
 
-			<!-- BEGIN : Special interceptors designed to NOT trim leading whitespace -->
-			<interceptor-stack name="poSearchParamsPrepareParamsStack">
-			     <interceptor-ref name="logger"/>
-			     <interceptor-ref name="exception" />
-			     <interceptor-ref name="alias" />
-			     <interceptor-ref name="nci-commonsParams" />
-			     <interceptor-ref name="servletConfig" />
-			     <interceptor-ref name="prepare" />
-			     <interceptor-ref name="i18n" />
-			     <interceptor-ref name="chain" />
-			     <interceptor-ref name="fileUpload" />
-			     <interceptor-ref name="checkbox" />
-			     <interceptor-ref name="staticParams" />
-			     <interceptor-ref name="nci-commonsParams" />
-			     <interceptor-ref name="conversionError" />
-			     <interceptor-ref name="nullCollectionElements" />
-			     <interceptor-ref name="parameterTrim">
-			         <param name="trimToNull">true</param>
-			     </interceptor-ref>
-			     <interceptor-ref name="validation">
-			         <param name="excludeMethods">input,back,cancel</param>
-			     </interceptor-ref>
-			     <interceptor-ref name="workflow">
-			         <param name="excludeMethods">input,back,cancel</param>
-			     </interceptor-ref>
-			</interceptor-stack>
-			
-			<interceptor-stack name="poSearchDefaultStack">
-			     <interceptor-ref name="logger"/>
-			     <interceptor-ref name="exception" />
-			     <interceptor-ref name="alias" />
-			     <interceptor-ref name="servletConfig" />
-			     <interceptor-ref name="prepare" />
-			     <interceptor-ref name="i18n" />
-			     <interceptor-ref name="chain" />
-			     <interceptor-ref name="debugging" />
-			     <interceptor-ref name="profiling" />
-			     <interceptor-ref name="fileUpload" />
-			     <interceptor-ref name="checkbox" />
-			     <interceptor-ref name="staticParams" />
-			     <interceptor-ref name="nci-commonsParams" />
-			     <interceptor-ref name="conversionError" />
-			     <interceptor-ref name="nullCollectionElements" />
-			     <interceptor-ref name="parameterTrim">
-			         <param name="trimToNull">true</param>
-			     </interceptor-ref>
-			     <interceptor-ref name="validation">
-			         <param name="excludeMethods">input,back,cancel</param>
-			     </interceptor-ref>
-			     <interceptor-ref name="workflow">
-			         <param name="excludeMethods">input,back,cancel</param>
-			     </interceptor-ref>
-			</interceptor-stack>
-			
-			<interceptor-stack name="poSearchPerMethodValidationStack">
-			     <interceptor-ref name="logger"/>
-			     <interceptor-ref name="exception" />
-			     <interceptor-ref name="alias" />
-			     <interceptor-ref name="nci-commonsParams" />
-			     <interceptor-ref name="servletConfig" />
-			     <interceptor-ref name="prepare" />
-			     <interceptor-ref name="i18n" />
-			     <interceptor-ref name="chain" />
-			     <interceptor-ref name="fileUpload" />
-			     <interceptor-ref name="checkbox" />
-			     <interceptor-ref name="staticParams" />
-			     <interceptor-ref name="nci-commonsParams" />
-			     <interceptor-ref name="conversionError" />
-			     <interceptor-ref name="nullCollectionElements" />
-			     <interceptor-ref name="parameterTrim">
-			         <param name="trimToNull">true</param>
-			     </interceptor-ref>
-			     <interceptor-ref name="validation">
-			         <param name="excludeMethods">input,back,cancel</param>
-			         <param name="validateAnnotatedMethodOnly">true</param>
-			     </interceptor-ref>
-			     <interceptor-ref name="workflow">
-			         <param name="excludeMethods">input,back,cancel</param>
-			     </interceptor-ref>
-			</interceptor-stack>
-			<!-- END : Special interceptors designed to NOT trim leading whitespace -->
+            <!-- BEGIN : Special interceptors designed to NOT trim leading whitespace -->
+            <interceptor-stack name="poSearchParamsPrepareParamsStack">
+                <interceptor-ref name="logger"/>
+                <interceptor-ref name="exception" />
+                <interceptor-ref name="alias" />
+                <interceptor-ref name="params">
+                    <!--
+                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
+                <interceptor-ref name="servletConfig" />
+                <interceptor-ref name="prepare" />
+                <interceptor-ref name="i18n" />
+                <interceptor-ref name="chain" />
+                <interceptor-ref name="fileUpload" />
+                <interceptor-ref name="checkbox" />
+                <interceptor-ref name="staticParams" />
+                <interceptor-ref name="params">
+                    <!--
+                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError" />
+                <interceptor-ref name="nullCollectionElements" />
+                <interceptor-ref name="parameterTrim">
+                 <param name="trimToNull">true</param>
+                </interceptor-ref>
+                <interceptor-ref name="validation">
+                 <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                 <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+            </interceptor-stack>
+            
+            <interceptor-stack name="poSearchDefaultStack">
+                <interceptor-ref name="logger"/>
+                <interceptor-ref name="exception" />
+                <interceptor-ref name="alias" />
+                <interceptor-ref name="servletConfig" />
+                <interceptor-ref name="prepare" />
+                <interceptor-ref name="i18n" />
+                <interceptor-ref name="chain" />
+                <interceptor-ref name="debugging" />
+                <interceptor-ref name="profiling" />
+                <interceptor-ref name="fileUpload" />
+                <interceptor-ref name="checkbox" />
+                <interceptor-ref name="staticParams" />
+                <interceptor-ref name="params">
+                    <!--
+                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError" />
+                <interceptor-ref name="nullCollectionElements" />
+                <interceptor-ref name="parameterTrim">
+                 <param name="trimToNull">true</param>
+                </interceptor-ref>
+                <interceptor-ref name="validation">
+                 <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                 <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+            </interceptor-stack>
+            
+            <interceptor-stack name="poSearchPerMethodValidationStack">
+                <interceptor-ref name="logger"/>
+                <interceptor-ref name="exception" />
+                <interceptor-ref name="alias" />
+                <interceptor-ref name="params">
+                    <!--
+                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
+                <interceptor-ref name="servletConfig" />
+                <interceptor-ref name="prepare" />
+                <interceptor-ref name="i18n" />
+                <interceptor-ref name="chain" />
+                <interceptor-ref name="fileUpload" />
+                <interceptor-ref name="checkbox" />
+                <interceptor-ref name="staticParams" />
+                <interceptor-ref name="params">
+                    <!--
+                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError" />
+                <interceptor-ref name="nullCollectionElements" />
+                <interceptor-ref name="parameterTrim">
+                 <param name="trimToNull">true</param>
+                </interceptor-ref>
+                <interceptor-ref name="validation">
+                 <param name="excludeMethods">input,back,cancel</param>
+                 <param name="validateAnnotatedMethodOnly">true</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                 <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+            </interceptor-stack>
+            <!-- END : Special interceptors designed to NOT trim leading whitespace -->
         </interceptors>
 
         <default-interceptor-ref name="poParamsPrepareParamsStack" />
@@ -204,7 +272,7 @@
         </action>
 
         <action name="login/logout" class="com.fiveamsolutions.nci.commons.web.struts2.action.LogoutAction" method="logout">
-            <result name="success" type="redirect-action">
+            <result name="success" type="redirectAction">
                 <param name="namespace">/</param>
                 <param name="actionName">home</param>
             </result>
@@ -254,11 +322,11 @@
         <!-- Organization -> Inbox && Person -> Inbox -->
         <action name="curate/search/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{1}">
             <result name="success">/WEB-INF/jsp/curate/{1}.jsp</result>
-            <result name="list" type="redirect-action">listAll</result>
+            <result name="list" type="redirectAction">listAll</result>
         </action>
         <action name="ajax/curate/search/*/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{2}">
             <result name="success">/WEB-INF/jsp/curate/{1}/list.jsp</result>
-            <result name="list" type="redirect-action">listAll</result>
+            <result name="list" type="redirectAction">listAll</result>
         </action>
 
         <!-- Organization -> Edit/Curate -->
@@ -266,7 +334,7 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/organization/{1}.jsp</result>
-            <result name="success" type="redirect-action">
+            <result name="success" type="redirectAction">
                 <param name="namespace">/protected</param>
                 <param name="actionName">curate/search/listOrgs</param>
             </result>
@@ -281,7 +349,7 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="curate">/WEB-INF/jsp/curate/person/curate.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/person/{1}.jsp</result>
-            <result name="success" type="redirect-action">
+            <result name="success" type="redirectAction">
                 <param name="namespace">/protected</param>
                 <param name="actionName">curate/search/listPersons</param>
             </result>
@@ -357,14 +425,14 @@
         <action name="create/organization/*" class="gov.nih.nci.po.web.create.CreateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="input">/WEB-INF/jsp/curate/organization/curate.jsp</result>
-            <result name="success" type="redirect-action">organization/curate/start?organization.id=${organizationId}</result>
+            <result name="success" type="redirectAction">organization/curate/start?organization.id=${organizationId}</result>
         </action>      
         
         <!-- Person -> Create -->
         <action name="create/person/*" class="gov.nih.nci.po.web.create.CreatePersonAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="input">/WEB-INF/jsp/curate/person/curate.jsp</result>
-            <result name="success" type="redirect-action">person/curate/start?person.id=${personId}</result>
+            <result name="success" type="redirectAction">person/curate/start?person.id=${personId}</result>
         </action>        
         
         <!-- Organization -> Edit/Curate -> Assign Organizational Roles -->

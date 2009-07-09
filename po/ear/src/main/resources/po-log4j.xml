@@ -63,21 +63,26 @@
         </filter>
     </appender>
 
-   <!-- ================ -->
-   <!-- Limit categories -->
-   <!-- ================ -->
-
-   <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
-   <category name="gov.nih.nci.po">
+    <!-- ================ -->
+    <!-- Limit categories -->
+    <!-- ================ -->
+    
+    <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
+    <category name="gov.nih.nci.po">
       <priority value="${log.level.po}"/>
-   </category>
-   <category name="com.fiveamsolutions.nci.commons">
+    </category>
+    <category name="com.fiveamsolutions.nci.commons">
       <priority value="${log.level.nci-commons}"/>
-   </category>
-   <category name="EMAIL_ERROR_LOGGER">
+    </category>
+    <category name="EMAIL_ERROR_LOGGER">
       <priority value="ERROR"/>
       <appender-ref ref="EMAIL" />
-   </category>
+    </category>
+    <!-- A (incorrect) change in struts 2.1.6 has ObjectFactory reporting ERROR's when you attempt to set parameters on a Redirect result. 
+    see http://cwiki.apache.org/S2WIKI/troubleshooting-guide-migrating-from-struts-20x-to-21x.html#TroubleshootingguidemigratingfromStruts2.0.xto2.1.x-RedirectandRedirectActionparameters-->
+    <category name="com.opensymphony.xwork2.ObjectFactory">
+       <priority value="fatal"/>
+    </category>
 
 
    <!-- ======================= -->

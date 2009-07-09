@@ -34,6 +34,7 @@ public class SearchCriteriaValidatorTest extends AbstractPoTest {
     public void validate() throws ValidationException {
         ValueStack valueStack = ActionContext.getContext().getValueStack();
         valueStack.set(fieldName, new StrutsOrganizationSearchCriteria());
+        validator.setValueStack(valueStack);
         validator.setFieldName(fieldName);
         validator.validate(null);
         assertTrue(validatorContext.hasActionErrors());
@@ -44,6 +45,7 @@ public class SearchCriteriaValidatorTest extends AbstractPoTest {
     public void validateNonSearchCriteriaObject() throws ValidationException {
         ValueStack valueStack = ActionContext.getContext().getValueStack();
         valueStack.set(fieldName, new String());
+        validator.setValueStack(valueStack);
         validator.setFieldName(fieldName);
         validator.validate(null);
         assertFalse(validatorContext.hasActionErrors());
