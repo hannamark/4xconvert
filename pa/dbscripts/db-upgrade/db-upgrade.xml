@@ -100,4 +100,8 @@
             <comment>execute documentWorkflowStatusUpdate.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/documentWorkflowStatusUpdate.sql"/>
     </changeSet>
+    <changeSet id="23" author="Hugh">
+            <comment>execute diseaseInterventionUpdates.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/diseaseInterventionUpdates.sql"/>
+    </changeSet>
 </databaseChangeLog>
