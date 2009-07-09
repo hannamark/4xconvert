@@ -83,6 +83,12 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * The state of a document in relation to a business process workflow.
  *
@@ -161,6 +167,55 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
         }
         return a;
     }
+    
+    private static final Map<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>> TRANSITIONS;
+
+    static {
+        Map<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>> tmp = 
+                            new HashMap<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>>();
+        
+        Set<DocumentWorkflowStatusCode> tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(ACCEPTED);
+        tmpSet.add(REJECTED);
+        tmp.put(SUBMITTED, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(ABSTRACTED);
+        tmp.put(ACCEPTED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(VERIFICATION_PENDING);
+        tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
+        tmp.put(ABSTRACTED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
+        tmp.put(VERIFICATION_PENDING, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
+        tmp.put(ABSTRACTION_VERIFIED_RESPONSE, Collections.unmodifiableSet(tmpSet));
+       
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
+        tmp.put(ABSTRACTION_VERIFIED_NORESPONSE, Collections.unmodifiableSet(tmpSet));
+       
+        TRANSITIONS = Collections.unmodifiableMap(tmp);
+    }
+
+    /**
+     * Helper method that indicates whether a transition to the new entity status
+     * is allowed.
+     *
+     * @param newStatus transition to status
+     * @return whether the transition is allowed
+     */
+    public boolean canTransitionTo(DocumentWorkflowStatusCode newStatus) {
+        return TRANSITIONS.get(this).contains(newStatus);
+    }
+
 
 
 }

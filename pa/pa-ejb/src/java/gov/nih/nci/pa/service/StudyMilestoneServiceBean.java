@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -456,55 +457,72 @@ public class StudyMilestoneServiceBean
     @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
+        DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
         
         if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED)) {
-            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
+                  
+                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
         }
-        if (newCode.equals(MilestoneCode.SUBMISSION_ACCEPTED)) {
-            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
+        if (newCode.equals(MilestoneCode.SUBMISSION_ACCEPTED) 
+                && canTransition(dwStatus, DocumentWorkflowStatusCode.ACCEPTED)) {
+                    
+                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
         }
-        if (newCode.equals(MilestoneCode.SUBMISSION_REJECTED)) {
-            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
+        if (newCode.equals(MilestoneCode.SUBMISSION_REJECTED)
+                && canTransition(dwStatus, DocumentWorkflowStatusCode.REJECTED)) {
+                    
+                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
         }
-        if (newCode.equals(MilestoneCode.QC_COMPLETE)) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
-                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED , dto);
+        if (newCode.equals(MilestoneCode.QC_COMPLETE)
+                     && (dwStatus != null) 
+                     && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)
+                     && canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTED)) {
+                
+                      createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED , dto);
             }
-        }
-        if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) 
-                    && (DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)
+        
+        if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY) 
+                        && (dwStatus != null) 
+                        && (DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)
                             || DocumentWorkflowStatusCode.VERIFICATION_PENDING.equals(dwStatus))) {
+            
                 if (milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
-                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE , dto);
+                    if (canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)) {
+                        createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE , dto);
+                    }
                 } else {
-                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE , dto);
+                    if (canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)) {
+                        createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE , dto);
+                    }   
                 }
             }
-        }
-        if (newCode.equals(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION)) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(dwStatus)
-                    && milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
-                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, dto);
-            }
-        }
         
-        if (newCode.equals(MilestoneCode.TRIAL_SUMMARY_SENT)) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)) {
-                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.VERIFICATION_PENDING, dto);
+        if (newCode.equals(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION)
+                    && (dwStatus != null) 
+                    && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(dwStatus)
+                    && canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)
+                    && milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
+                
+                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, dto);
             }
-        }
+        
+        
+        if (newCode.equals(MilestoneCode.TRIAL_SUMMARY_SENT) 
+                    && (dwStatus != null) 
+                    && DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)
+                    && canTransition(dwStatus, DocumentWorkflowStatusCode.VERIFICATION_PENDING)) {
+                
+                 createDocumentWorkflowStatus(DocumentWorkflowStatusCode.VERIFICATION_PENDING, dto);
+            }
+        
     }
 
     private void createDocumentWorkflowStatus(
             DocumentWorkflowStatusCode dwf, StudyMilestoneDTO dto) throws PAException {
         DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(dwf));
-        dwfDto.setStatusDateRange(dto.getMilestoneDate());
+        dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
+                           TsConverter.convertToTimestamp(dto.getMilestoneDate()), null));
         dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
         if (dto.getCommentText() != null) {
             dwfDto.setCommentText(dto.getCommentText()); 
@@ -554,5 +572,17 @@ public class StudyMilestoneServiceBean
                         + "be recorded as sending the TSR report to the submitter  failed.", e);
             }
         }
+    }
+    
+    private boolean canTransition(DocumentWorkflowStatusCode dwStatus, DocumentWorkflowStatusCode newCode)
+     throws PAException {
+        boolean canTransition = false;
+        if (dwStatus.canTransitionTo(newCode)) {
+            canTransition = true;
+        } else {
+            throw new PAException("Illegal DocumentWorkflow status transition from '" + dwStatus.getCode()
+                    + "' to '" + newCode.getCode() + "'.  ");
+        }
+        return canTransition;
     }
 }

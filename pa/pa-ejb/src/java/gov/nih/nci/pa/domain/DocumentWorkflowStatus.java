@@ -105,7 +105,12 @@ public class DocumentWorkflowStatus extends AbstractEntity {
     private static final long serialVersionUID = 1234567890L;
     private String commentText;
     private DocumentWorkflowStatusCode statusCode;
+    /** The status date range low. */
     private Timestamp statusDateRangeLow;
+    
+    /** The status date range high. */
+    private Timestamp statusDateRangeHigh;
+    
     private StudyProtocol studyProtocol;
 
     /**
@@ -139,19 +144,37 @@ public class DocumentWorkflowStatus extends AbstractEntity {
         this.statusCode = statusCode;
     }
     /**
-     *
+     * Gets the status date range low.
+     * 
      * @return statusDateRangeLow
      */
     @Column(name = "STATUS_DATE_RANGE_LOW")
     public Timestamp getStatusDateRangeLow() {
         return statusDateRangeLow;
     }
+    
     /**
-     *
-     * @param statusDateRangeLow statusDateRangeLow
+     * Sets the status date range low.
+     * 
+     * @param statusDateRangeLow  statusDateRangeLow
      */
     public void setStatusDateRangeLow(Timestamp statusDateRangeLow) {
         this.statusDateRangeLow = statusDateRangeLow;
+    }
+    
+    /**
+     * @return the statusDateRangeHigh
+     */
+    @Column(name = "STATUS_DATE_RANGE_HIGH")
+    public Timestamp getStatusDateRangeHigh() {
+        return statusDateRangeHigh;
+    }
+
+    /**
+     * @param statusDateRangeHigh the statusDateRangeHigh to set
+     */
+    public void setStatusDateRangeHigh(Timestamp statusDateRangeHigh) {
+        this.statusDateRangeHigh = statusDateRangeHigh;
     }
     /**
      *

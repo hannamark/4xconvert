@@ -79,12 +79,17 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -133,6 +138,7 @@ public class DocumentWorkflowStatusConverterTest {
     dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
     dto.setCommentText(StConverter.convertToSt("Common text"));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
+    dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
     assertEquals(dto.getIdentifier().getRoot(),"2.16.840.1.113883.3.26.4.3.9");
     
     DocumentWorkflowStatusConverter sg = new DocumentWorkflowStatusConverter();

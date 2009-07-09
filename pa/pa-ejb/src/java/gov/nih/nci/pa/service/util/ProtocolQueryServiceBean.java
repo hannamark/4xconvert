@@ -289,6 +289,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
                         studyProtocolDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
                         studyProtocolDto.setAmendmentDate(studyProtocol.getAmendmentDate());
+                        studyProtocolDto.setAmendmentReasonCode(studyProtocol.getAmendmentReasonCode());
                     }
                 }
                 if (studyMilestone != null) {
@@ -680,7 +681,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         // sub-query for searching only Amend trials
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSearchAmend())
                    && studyProtocolQueryCriteria.getSearchAmend().equals("true")) {
-                where.append(" and sp.amendmentNumber is not null and "
+                where.append(" and sp.submissionNumber > 1 and sp.amendmentNumber is not null and "
                       + " sp.amendmentDate is not null)");
            }
     }

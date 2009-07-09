@@ -268,7 +268,7 @@ public class StudyMilestoneServiceTest {
         // create
         DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE));
-        dwfDto.setStatusDateRange(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
         dwfDto.setStudyProtocolIdentifier(spIi);
         dws.create(dwfDto);
         dto = remote.create(dto);

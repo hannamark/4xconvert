@@ -135,6 +135,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
@@ -345,7 +346,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(root ,  createElement("keyword", spDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD , doc));
             DocumentWorkflowStatusDTO dto = documentWorkflowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
             appendElement(root ,  createElement("verification_date", PAUtil.convertTsToFormarttedDate(
-                    dto.getStatusDateRange() , "yyyy-MM"), doc));
+                    TsConverter.convertToTs(IvlConverter.convertTs().convertLow(dto.getStatusDateRange())),
+                        "yyyy-MM"), doc));
 
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();

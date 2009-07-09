@@ -55,6 +55,7 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
@@ -69,8 +70,7 @@ public class DocumentWorkflowStatusDTO extends StudyDTO {
     private static final long serialVersionUID = -25642382339770501L;
     private St commentText;
     private Cd statusCode;
-    private Ts statusDateRange;
-    
+    private Ivl<Ts> statusDateRange;
     
     /**
      * @return commentText
@@ -99,13 +99,14 @@ public class DocumentWorkflowStatusDTO extends StudyDTO {
     /**
      * @return the statusDateRange
      */
-    public Ts getStatusDateRange() {
+    public Ivl<Ts> getStatusDateRange() {
         return statusDateRange;
     }
     /**
      * @param statusDateRange the statusDateRange to set
      */
-    public void setStatusDateRange(Ts statusDateRange) {
+    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
         this.statusDateRange = statusDateRange;
     }
+   
 }
