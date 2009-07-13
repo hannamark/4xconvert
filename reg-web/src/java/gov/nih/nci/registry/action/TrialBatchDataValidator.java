@@ -306,8 +306,8 @@ public class TrialBatchDataValidator {
         if (currentTimeStamp.before(statusDate)) {
                 errors.append("Current Trial Status Date cannot be in the future.\n");                
         }
-        // Constraint/Rule: 23 Trial Start Date must be current/past if ‘actual’ trial start date type 
-        // is selected and must be future if ‘anticipated’ trial start date type is selected.
+        // Constraint/Rule: 23 Trial Start Date must be current/past if 'actual' trial start date type 
+        // is selected and must be future if 'anticipated' trial start date type is selected. 
         if (dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())
                     && currentTimeStamp.before(trialStartDate)) {
             errors.append("Actual Trial Start Date must be current or in past. \n");                
@@ -315,8 +315,8 @@ public class TrialBatchDataValidator {
                 && currentTimeStamp.after(trialStartDate)) {
             errors.append("Anticipated Start Date must be in future. \n");                
         }          
-        // Constraint/Rule:24 Primary Completion Date must be current/past if ‘actual’ primary completion date type is  
-        // selected and must be future if ‘anticipated’trial primary completion date type is selected.
+        //Constraint/Rule:24 Primary Completion Date must be current/past if 'actual' primary completion date type  
+        //is selected and must be future if 'anticipated'trial primary completion date type is selected. 
         if (dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())
                 && currentTimeStamp.before(trialCompletionDate)) {
             errors.append("Actual Primary Completion Date must be current or in past.\n");                
@@ -324,8 +324,8 @@ public class TrialBatchDataValidator {
                 && currentTimeStamp.after(trialCompletionDate)) {
             errors.append("Anticipated Primary Completion Date must be in future. \n");                
         }          
-        // Constraint/Rule: 25 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
-        // Current Trial Status Date and have ‘actual’ type. New Rule added-01/15/09 if start date is smaller 
+        // Constraint/Rule: 25 If Current Trial Status is 'Active', Trial Start Date must be the same as 
+        //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller 
         //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.            
         //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
         if (TrialStatusCode.ACTIVE.getCode().equals(dto.getCurrentTrialStatus())
@@ -334,8 +334,8 @@ public class TrialBatchDataValidator {
                 errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
                               + " and same as Current Trial Status Date.\n");
         }
-        // Constraint/Rule: 26 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
-        //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
+        // Constraint/Rule: 26 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
+        //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 
           if (TrialStatusCode.APPROVED.getCode().equals(dto.getCurrentTrialStatus())
                   || TrialStatusCode.IN_REVIEW.getCode().equals(dto.getCurrentTrialStatus())) {
               if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
@@ -344,17 +344,17 @@ public class TrialBatchDataValidator {
           } else if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
             errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
           }
-          // Constraint/Rule: 27 If Current Trial Status is ‘Completed’, Primary Completion Date must be the 
-          // same as Current Trial Status Date and have ‘actual’ type.
+          // Constraint/Rule: 27 If Current Trial Status is 'Completed', Primary Completion Date must be the 
+          // same as Current Trial Status Date and have 'actual' type.
           if (TrialStatusCode.COMPLETE.getCode().equals(dto.getCurrentTrialStatus())
                   && (!statusDate.equals(trialCompletionDate) 
                   || !dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
                     errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual "
                                 + " and same as Current Trial Status Date\n");
           }            
-          // Constraint/Rule: 28 If Current Trial Status is ‘Completed’ or ‘Administratively Completed’, 
-          // Primary Completion Date must have ‘actual’ type. Primary Completion Date must have ‘anticipated’ type 
-          // for any other Current Trial Status value besides ‘Completed’ or ‘Administratively Completed’. 
+          // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed', 
+          // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type 
+          // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'.
           if (TrialStatusCode.COMPLETE.getCode().equals(dto.getCurrentTrialStatus()) 
               || TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(dto.getCurrentTrialStatus())) { 
               if (!dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {

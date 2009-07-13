@@ -311,7 +311,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         //validate the docs
         validateAmendmentDocuments();
         //Only allow completing amendment submission of the pre-IRB approved study is the 
-        //current trial status ‘In-Review’ is replaced with ‘Approved’.
+        //current trial status 'In-Review' is replaced with 'Approved'.
         if (trialDTO.getStatusCode().equalsIgnoreCase("In Review")) {
             addActionError("To Amend Submission of pre-IRB approved study replace " 
               + " current trial status 'In-Review' with 'Approved'");

@@ -45,7 +45,13 @@
 		if( number == "") {
 			alert("Please enter an IND/IDE number")
 			return false;
-		}
+		} else {
+	        var numericExpression = /^[A-Za-z0-9]+$/;
+	         if(!numericExpression.test(number)){
+	         alert("IND/IDE  Number must be alphanumeric");
+	         return false;
+	        } 
+	    }
 		var grantor = document.getElementById('SubCat').value;
 		if( grantor == "") {
 			alert("Please select a Grantor")
