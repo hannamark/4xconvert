@@ -516,8 +516,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
             if (currentTimeStamp.before(userStatusDate)) {
                 addActionError("Current Trial Status Date cannot be in the future.");                
             }        
-        // Constraint/Rule: 19 Trial Start Date must be current/past if ‘actual’ trial start date type 
-        // is selected and must be future if ‘anticipated’ trial start date type is selected.
+        // Constraint/Rule: 19 Trial Start Date must be current/past if 'actual' trial start date type 
+        // is selected and must be future if 'anticipated' trial start date type is selected.
             if (startDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                 Timestamp trialStartDate = PAUtil.dateStringToTimestamp(startDate);
                 currentTimeStamp = new Timestamp((new Date()).getTime());
@@ -531,8 +531,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
                   addActionError("Anticipated Start Date must be in future.");                
               }
             }          
-        // Constraint/Rule: 20 Primary Completion Date must be current/past if ‘actual’ 
-        // primary completion date type is selected and must be future if ‘anticipated’ 
+        // Constraint/Rule: 20 Primary Completion Date must be current/past if 'actual' 
+        // primary completion date type is selected and must be future if 'anticipated' 
         // trial primary completion date type is selected.
         if (PAUtil.isNotEmpty(completionDate) && PAUtil.isNotEmpty(completionDateType)) {
             if (completionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
@@ -549,8 +549,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
                         }
             }          
         }        
-        // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
-        // Current Trial Status Date and have ‘actual’ type.
+        // Constraint/Rule:  21 If Current Trial Status is 'Active', Trial Start Date must be the same as 
+        // Current Trial Status Date and have 'actual' type.
         //pa2.0 release adding Trial Start date is smaller or same Current Trial Status Date
         if (PAUtil.isNotEmpty(currentTrialStatus)
             && PAUtil.isNotEmpty(statusDate)
@@ -566,8 +566,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
                           + " and same as or smaller than Current Trial Status Date");
               }                
           }            
-        // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
-        //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
+        // Constraint/Rule: 22 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
+        //  Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 
         if (PAUtil.isNotEmpty(currentTrialStatus)
                          && PAUtil.isNotEmpty(startDateType)) {
           if (StudyStatusCode.APPROVED.getCode().equals(currentTrialStatus)
@@ -581,8 +581,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
               }              
           }
         }        
-        // Constraint/Rule: 23 If Current Trial Status is ‘Completed’, Primary Completion Date must be the 
-        // same as Current Trial Status Date and have ‘actual’ type.
+        // Constraint/Rule: 23 If Current Trial Status is 'Completed', Primary Completion Date must be the 
+        // same as Current Trial Status Date and have 'actual' type.
         if (PAUtil.isNotEmpty(currentTrialStatus) && PAUtil.isNotEmpty(statusDate)
             && PAUtil.isNotEmpty(completionDate) && PAUtil.isNotEmpty(completionDateType)
             && StudyStatusCode.COMPLETE.getCode().equals(currentTrialStatus)) {
@@ -594,9 +594,9 @@ public class StudyOverallStatusAction extends ActionSupport implements
                               + " same as Current Trial Status Date");
               }                
           }            
-        // Constraint/Rule: 24 If Current Trial Status is ‘Completed’ or ‘Administratively Completed’, 
-        // Primary Completion Date must have ‘actual’ type. Primary Completion Date must have ‘anticipated’ type 
-        // for any other Current Trial Status value besides ‘Completed’ or ‘Administratively Completed’. 
+        // Constraint/Rule: 24 If Current Trial Status is 'Completed' or 'Administratively Completed', 
+        // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type 
+        // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'. 
         if (PAUtil.isNotEmpty(currentTrialStatus) && PAUtil.isNotEmpty(completionDateType)) {
           if (StudyStatusCode.COMPLETE.getCode().equals(currentTrialStatus) 
               || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(currentTrialStatus)) {

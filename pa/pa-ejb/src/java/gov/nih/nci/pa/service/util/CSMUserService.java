@@ -165,6 +165,11 @@ public class CSMUserService {
         try {            
             // create the csm user
             User csmUser = new User();
+            UserProvisioningManager upManager = SecurityServiceProvider.
+            getUserProvisioningManager("pa");
+            csmUser  = upManager.getUser(loginName);
+            
+            //upManager.getGroups(csmUser.getUserId().toString());
             // get values from Registry User object and set in CSM User object
             csmUser.setUserId(user.getCsmUserId());
             csmUser.setLoginName(loginName);
@@ -174,13 +179,11 @@ public class CSMUserService {
             csmUser.setOrganization(user.getAffiliateOrg());
             csmUser.setPhoneNumber(user.getPhone());
             ///update the user info in CSM table           
-            UserProvisioningManager upManager = SecurityServiceProvider.
-                                            getUserProvisioningManager("pa");
             upManager.modifyUser(csmUser);
             // assign the updated user to the appropriate group
             // read the CSM group name from the properties
-            String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            upManager.assignUserToGroup(loginName, submitterGroup);
+            /*String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
+            upManager.assignUserToGroup(loginName, submitterGroup);*/           
             createdCSMUser = upManager.getUser(loginName);
 
         } catch (HibernateException hbe) {

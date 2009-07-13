@@ -100,7 +100,7 @@ public enum InterventionTypeCode implements CodedEnum<String> {
     /** Biological/Vaccine. */
     BIOLOGICAL_VACCINE("Biological/Vaccine"),
     /** Procedure/Surgery. */
-    PROCEDURE_SURGERY("Procedure/Surgery "),
+    PROCEDURE_SURGERY("Procedure/Surgery"),
     /** Radiation. */
     RADIATION("Radiation"),
     /** Behavioral. */

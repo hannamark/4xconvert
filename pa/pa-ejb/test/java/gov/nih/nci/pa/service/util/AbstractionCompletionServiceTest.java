@@ -78,9 +78,50 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
+import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.CountryTest;
+import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.HealthCareFacilityTest;
+import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.HealthCareProviderTest;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationTest;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PersonTest;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyContactTest;
+import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.domain.StudyParticipationTest;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolTest;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatusTest;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.ArmServiceBean;
+import gov.nih.nci.pa.service.DocumentServiceBean;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceBean;
+import gov.nih.nci.pa.service.StudyContactServiceBean;
+import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
+import gov.nih.nci.pa.service.StudyIndldeServiceBean;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceBean;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceBean;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceBean;
+import gov.nih.nci.pa.service.StudyParticipationServiceBean;
+import gov.nih.nci.pa.service.StudyProtocolServiceBean;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceBean;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
+import gov.nih.nci.pa.service.StudyResourcingServiceBean;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,19 +136,86 @@ public class AbstractionCompletionServiceTest {
     private AbstractionCompletionServiceBean bean = new AbstractionCompletionServiceBean();
     private AbstractionCompletionServiceRemote remoteEjb = bean;
     
+    private StudyProtocolServiceBean studyProtocolSrvBean = new StudyProtocolServiceBean();
+    private StudyParticipationServiceBean studyPartSrvBean = new StudyParticipationServiceBean();
+    private StudyRegulatoryAuthorityServiceBean  studyRegAuthSrvBean  = new StudyRegulatoryAuthorityServiceBean();
+    private PlannedActivityServiceBean plannedActSrvBean = new PlannedActivityServiceBean();
+    private StudyOverallStatusServiceBean studyOverallStatusSrvBean = new StudyOverallStatusServiceBean();
+    private StudyIndldeServiceBean studyIndIdeSrvBean = new StudyIndldeServiceBean();
+    private StudyRecruitmentStatusServiceBean studyRecStatusSrvBean = new StudyRecruitmentStatusServiceBean();
+    private DocumentServiceBean docSrvBean = new DocumentServiceBean();
+    private StudyOutcomeMeasureServiceBean studyOutMeasSrvBean = new StudyOutcomeMeasureServiceBean();
+    private StudyContactServiceBean studyContactSrvBean = new StudyContactServiceBean();
+    private StudyParticipationContactServiceBean studyPartContactSrvBean = new StudyParticipationContactServiceBean();
+    private StudyResourcingServiceBean studyResourcingSrvBean = new StudyResourcingServiceBean();
+    private ArmServiceBean armSrvBean = new ArmServiceBean();
+    private StudyDiseaseServiceBean studyDiseaseSrvBean = new StudyDiseaseServiceBean();
+    
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
+        bean.studyProtocolService = studyProtocolSrvBean;
+        bean.studyParticipationService = studyPartSrvBean;
+        bean.studyRegulatoryAuthorityService = studyRegAuthSrvBean;
+        bean.plannedActivityService = plannedActSrvBean;
+        bean.studyOverallStatusService = studyOverallStatusSrvBean;
+        bean.studyIndldeService = studyIndIdeSrvBean;
+        bean.studyRecruitmentStatusServiceRemote = studyRecStatusSrvBean;
+        bean.documentServiceLocal = docSrvBean;
+        bean.studyOutcomeMeasureService = studyOutMeasSrvBean;
+        bean.studyContactService = studyContactSrvBean;
+        bean.studyParticipationContactService = studyPartContactSrvBean;
+        bean.armService = armSrvBean; 
+        bean.studyResourcingService = studyResourcingSrvBean;
+        bean.studyDiseaseService = studyDiseaseSrvBean;
+        
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        Organization o = OrganizationTest.createOrganizationObj();
+        TestSchema.addUpdObject(o);
+        Person p = PersonTest.createPersonObj();
+        p.setIdentifier("11");
+        TestSchema.addUpdObject(p);
+        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
+        TestSchema.addUpdObject(hcf);
+        
+        HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(p, o);
+        TestSchema.addUpdObject(hcp);
+        
+        Country c = CountryTest.createCountryObj();
+        TestSchema.addUpdObject(c);
+        
+        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
+        TestSchema.addUpdObject(crs);
+
+        StudyContact sc = StudyContactTest.createStudyContactObj(sp, c, hcp, crs);
+        TestSchema.addUpdObject(sc);
+        
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setOrganization(o);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        TestSchema.addUpdObject(ro);
+        StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
+        spc.setResearchOrganization(ro);
+        TestSchema.addUpdObject(spc);
+        StudyRecruitmentStatus studyRecStatus = StudyRecruitmentStatusTest.createStudyRecruitmentStatusobj(sp);
+        TestSchema.addUpdObject(studyRecStatus);
     }
     
-    @Test(expected=PAException.class)
-    public void nullParameter() throws Exception {
-        remoteEjb.validateAbstractionCompletion(null);
+    @Test
+    public void nullParameter() {
+        try {
+            remoteEjb.validateAbstractionCompletion(null);
+        } catch (PAException e) {
+        }
+        
     }
 
-    //@Test
+    @Test
     public void validateAbstractionCompletionTest() throws Exception {
-        remoteEjb.validateAbstractionCompletion(IiConverter.converToStudyProtocolIi(Long.valueOf(1)));
+        Ii studyProtocolIi = IiConverter.converToStudyProtocolIi(Long.valueOf(1L));
+        List<AbstractionCompletionDTO> errList = remoteEjb.validateAbstractionCompletion(studyProtocolIi);
+        assertNotNull(errList);
     }
 
 }

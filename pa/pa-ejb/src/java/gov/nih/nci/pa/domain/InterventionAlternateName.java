@@ -87,6 +87,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -96,11 +97,13 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name = "INTERVENTION_ALTERNATE_NAME")
+@Where(clause = "lower(NAME_TYPE_CODE) in ('synonym','abbreviation','us brand name','foreign brand name','code name')")
 public class InterventionAlternateName extends AbstractEntityWithStatusCode<ActiveInactiveCode> {
     private static final long serialVersionUID = 1095667890L;
 
     private String name;
     private Intervention intervention;
+    private String nameTypeCode;
     /**
      * @return the name
      */
@@ -131,4 +134,19 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
     public void setIntervention(Intervention intervention) {
         this.intervention = intervention;
     }
+    /**
+     * @return the nameTypeCode
+     */
+    @Column(name = "NAME_TYPE_CODE")
+    @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
+    public String getNameTypeCode() {
+        return nameTypeCode;
+    }
+    /**
+     * @param nameTypeCode the nameTypeCode to set
+     */
+    public void setNameTypeCode(String nameTypeCode) {
+        this.nameTypeCode = nameTypeCode;
+    }
+    
 }

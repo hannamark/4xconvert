@@ -87,33 +87,6 @@
     <tr>
         <td colspan="2">
         <s:form name="interventionForm">
-
-            <table class="form">
-                <tr>
-                <td class="label">
-                    <s:label>Intervention Type:
-                    </s:label><span class="required">*</span>
-                </td>
-                <s:set name="interventionTypeValues"
-                    value="@gov.nih.nci.pa.enums.ActivitySubcategoryCode@getDisplayNames()" />
-                <td class="value" colspan="2">
-                    <s:select onchange="statusChange()" headerKey="" headerValue="--Select--" 
-                    name="interventionType" value="interventionType" list="#interventionTypeValues" />
-                </td>
-                </tr>
-                <tr><td/>
-                    <td class="value">
-                        <s:if test="%{interventionType == 'Drug'}">
-                            <s:checkbox name="interventionLeadIndicator"/>
-                            <s:label name="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
-                        </s:if><s:else>
-                            <s:checkbox disabled="true" name="interventionLeadIndicator"/>
-                            <s:label disabled="true" name="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
-                        </s:else>
-                    </td>
-                </tr>
-            </table>
-
             <div id="loadDetails">
                 <%@ include file="/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp"%>
             </div>

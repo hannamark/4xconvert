@@ -5,6 +5,29 @@
     <s:hidden name="selectedRowIdentifier"/>
     <s:hidden name="interventionIdentifier"/>
     <tr>
+        <td class="label">
+            <s:label>Intervention Type:
+            </s:label><span class="required">*</span>
+        </td>
+        <s:set name="interventionTypeValues"
+                    value="@gov.nih.nci.pa.enums.ActivitySubcategoryCode@getDisplayNames()" />
+        <td class="value" colspan="2">
+            <s:select onchange="statusChange()" headerKey="" headerValue="--Select--" 
+            name="interventionType" value="interventionType" list="#interventionTypeValues" />
+        </td>
+    </tr>
+    <tr><td/>
+        <td class="value">
+        <s:if test="%{interventionType == 'Drug'}">
+            <s:checkbox name="interventionLeadIndicator"/>
+            <s:label name="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
+        </s:if><s:else>
+            <s:checkbox disabled="true" name="interventionLeadIndicator"/>
+            <s:label disabled="true" name="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
+        </s:else>
+    </td>
+    </tr>
+    <tr>
         <td scope="row" class="label"><s:label>Intervention Name:</s:label><span
             class="required">*</span></td>
         <td class="value" style="width: 250px">

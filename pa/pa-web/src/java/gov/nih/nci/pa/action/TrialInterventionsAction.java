@@ -170,6 +170,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             InterventionDTO iDto = interventionSvc.get(IiConverter.convertToIi(interventionIdentifier));
             setInterventionName(StConverter.convertToString(iDto.getName()));
             setInterventionOtherNames(otherNamesCSV(iDto.getIdentifier()));
+            setInterventionType(CdConverter.convertCdToString(iDto.getTypeCode()));
         }
         return AR_EDIT;
     }

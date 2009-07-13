@@ -128,6 +128,7 @@ import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatusTest;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -513,6 +514,7 @@ public class TestSchema {
             invo.setStatusCode(ActiveInactiveCode.ACTIVE);
             invo.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
             invo.setUserLastUpdated("Joe");
+            invo.setNameTypeCode("synonym");
             addUpdObject(invo);
             invo = new InterventionAlternateName();
             invo.setDateLastUpdated(new Date());
@@ -520,7 +522,8 @@ public class TestSchema {
             invo.setName("Nestle");
             invo.setStatusCode(ActiveInactiveCode.ACTIVE);
             invo.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
-            invo.setUserLastUpdated("Joe");            
+            invo.setUserLastUpdated("Joe"); 
+            invo.setNameTypeCode("synonym");
             addUpdObject(invo);
             
             PlannedActivity pa = new PlannedActivity();
@@ -631,7 +634,7 @@ public class TestSchema {
             
             StudyMilestone studyMilestone = StudyMilestoneTest.createStudyMilestoneObj("comment 01", sp);
             addUpdObject(studyMilestone);
-            
+           
             HibernateUtil.getCurrentSession().clear();
         }
 }

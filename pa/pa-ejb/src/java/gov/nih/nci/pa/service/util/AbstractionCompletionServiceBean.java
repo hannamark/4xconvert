@@ -97,6 +97,7 @@ import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -118,6 +119,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -199,6 +201,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     DocumentServiceLocal documentServiceLocal = null;
     @EJB
     RegulatoryInformationServiceRemote regulatoryInfoBean = null;
+    @EJB
+    InterventionServiceRemote interventionSvc = null;
     private static final String YES = "Yes";
     private static final String NO = "No";
 
@@ -825,7 +829,15 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
       if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
               .convertCdToString(pa.getCategoryCode())))) {
         interventionsList = true;
-    }
+        //validation rules for inactive interventions
+        InterventionDTO iDto = interventionSvc.get(pa.getInterventionIdentifier());
+        if (iDto.getStatusCode().getCode().equalsIgnoreCase("INACTIVE")) {
+            abstractionList.add(createError("Warning", "Select Interventions from Scientific Data menu.",
+            "Intervention '" + iDto.getName().getValue() + "' status has been set to inactive"
+            + ", Please select another Intervention."));
+        }
+        
+      }
     }
     if (!interventionsList) {
       abstractionList.add(createError("Error", "Select Interventions from Scientific Data menu.",
