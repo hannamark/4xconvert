@@ -265,6 +265,8 @@ public class StudyProtocolTest  {
         sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
         sp.setStatusDate(now);
         sp.setAmendmentDate(now);
+        sp.setAmendmentNumber("amendmentNumber");
+        sp.setSubmissionNumber(2);
         return sp;
     }
     

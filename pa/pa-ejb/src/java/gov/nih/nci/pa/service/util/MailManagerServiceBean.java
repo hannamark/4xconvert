@@ -84,8 +84,8 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
@@ -166,7 +166,8 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
     TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     @EJB
     LookUpTableServiceRemote lookUpTableService;
-
+    @EJB
+    DocumentWorkflowStatusServiceRemote docWrkflStatusSrv;
     /**
      * @param studyProtocolIi studyProtocolIi
      * @throws PAException PAException
@@ -185,7 +186,6 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
               body = lookUpTableService.getPropertyValue("tsr.body");
           }
           body = body.replace(currentDate, getFormatedCurrentDate());
-          body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
           body = body.replace("${leadOrgTrialId}", spDTO.getLocalStudyProtocolIdentifier().toString());
           body = body.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
           body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
@@ -193,7 +193,8 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
           body = body.replace("${fileName}", TSR
                                              + spDTO.getNciIdentifier().toString() + HTML);
           body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
-
+          body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
+          
           protocolQueryService.getTrialSummaryByStudyProtocolId(
               IiConverter.convertToLong(studyProtocolIi));
           //Format the xml
@@ -328,12 +329,11 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
 
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.body");
 
-        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
         mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
-
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
 
         sendMail(spDTO.getUserLastCreated(),
                 lookUpTableService.getPropertyValue("trial.amend.subject"),
@@ -355,13 +355,13 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
         }
-        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
         mailBody = mailBody.replace("${amendmentNumber}", amendNumber);
         mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
-
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
+        
         sendMail(spDTO.getUserLastCreated(),
                   lookUpTableService.getPropertyValue("trial.amend.accept.subject"),
                   mailBody);
@@ -377,11 +377,10 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
             .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
         String submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
-        submissionMailBody = submissionMailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ",
                 spDTO.getLocalStudyProtocolIdentifier());
         submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
-
+        submissionMailBody = submissionMailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         sendMail(spDTO.getUserLastCreated(),
                     lookUpTableService.getPropertyValue("trial.register.subject"),
                     submissionMailBody);
@@ -401,13 +400,13 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
         }
-        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
         mailBody = mailBody.replace("${amendmentNumber}", amendNumber);
         mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
         mailBody = mailBody.replace("${reasonForRejection}", rejectReason);
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         sendMail(spDTO.getUserLastCreated(),
                   lookUpTableService.getPropertyValue("trial.amend.reject.subject"),
                   mailBody);
@@ -423,8 +422,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         String commentText = "";
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
                                          IiConverter.convertToLong(studyProtocolIi));
-        List<DocumentWorkflowStatusDTO> dtoList = 
-            PoPaServiceBeanLookup.getDocumentWorkflowStatusService().getByStudyProtocol(
+        List<DocumentWorkflowStatusDTO> dtoList = docWrkflStatusSrv.getByStudyProtocol(
                                                     studyProtocolIi);
         for (DocumentWorkflowStatusDTO dto : dtoList) {
             if (dto.getStatusCode().getCode().equalsIgnoreCase(DocumentWorkflowStatusCode.REJECTED.getCode())
@@ -433,9 +431,9 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
             }
         }
         String body = lookUpTableService.getPropertyValue("rejection.body");
-        body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         body = body.replace("${leadOrgTrialId}", spDTO.getLocalStudyProtocolIdentifier());
         body = body.replace("${reasoncode}", commentText);
+        body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         // Send Message
         sendMail(spDTO.getUserLastCreated(), 
                 lookUpTableService.getPropertyValue("rejection.subject"), 
@@ -467,10 +465,10 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         StudyProtocolQueryDTO spDTO = protocolQueryService
                       .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
         String mailBody = lookUpTableService.getPropertyValue("trial.accept.body");
-        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
         mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
         sendMail(spDTO.getUserLastCreated(),
                   lookUpTableService.getPropertyValue("trial.accept.subject"),
                   mailBody);
