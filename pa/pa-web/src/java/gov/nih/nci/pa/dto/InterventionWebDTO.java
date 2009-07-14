@@ -92,6 +92,7 @@ public class InterventionWebDTO {
     private String leadIndicator;
     private String type;
     private Boolean armAssignment;
+    private String ctGovType;
     /**
      * @return the identifier
      */
@@ -187,5 +188,17 @@ public class InterventionWebDTO {
      */
     public void setArmAssignment(Boolean armAssignment) {
         this.armAssignment = armAssignment;
+    }
+    /**
+     * @return the ctGovType
+     */
+    public String getCtGovType() {
+        return ctGovType;
+    }
+    /**
+     * @param ctGovType the ctGovType to set
+     */
+    public void setCtGovType(String ctGovType) {
+        this.ctGovType = ctGovType;
     }
 }

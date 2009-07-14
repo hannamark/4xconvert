@@ -18,7 +18,18 @@
     }
     function loadDiv() {        
         var jsName = document.getElementById("searchName").value;
-        var url = '/pa/protected/popupDisdisplayList.action?searchName='+jsName;
+        var includeSyn = false;  
+        if (document.getElementById("includeSynonym").checked==true)
+        {
+            includeSyn = true;
+        } 
+        var exactMat = false;
+        if (document.getElementById("exactMatch").checked == true)
+        {
+           exactMat = true; 
+        }
+        
+        var url = '/pa/protected/popupDisdisplayList.action?searchName='+jsName+'&includeSynonym='+includeSyn+'&exactMatch='+exactMat;
         var div = document.getElementById('getDiseases');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
@@ -42,8 +53,23 @@
         <td>
             <s:textfield id="searchName" name="searchName"  maxlength="60" size="60"  cssStyle="width:200px" />
         </td>
-    <tr><td/><td class="info">Use * as wildcard when entering search string</td></tr>
-    </tr>
+       </tr>
+       <tr> 
+                <td scope="row" class="label">
+                   <label  for="includeSynonym"> <fmt:message key="disease.includeSynonym"/></label>                        
+                </td>
+                <td>
+                    <s:checkbox name="includeSynonym" />
+                </td>                
+            </tr>
+             <tr> 
+                <td scope="row" class="label">
+                     <label  for="exactMatch"> <fmt:message key="disease.exactMatch"/></label>                        
+                </td>
+                <td>
+                    <s:checkbox name="exactMatch" />
+                </td>                
+            </tr>
 </table>
     <div class="actionsrow">
          <del class="btnwrapper">

@@ -117,6 +117,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
     private List<InterventionAlternateName> interventionAlternateNames = new ArrayList<InterventionAlternateName>();
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
 
+    private InterventionTypeCode ctGovTypeCode;
     /**
      * @return the name
      */
@@ -215,5 +216,19 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      */
     public void setPlannedActivities(List<PlannedActivity> plannedActivities) {
         this.plannedActivities = plannedActivities;
+    }
+    /**
+     * @return the ctGovTypeCode
+     */
+    @Column(name = "CTGOV_TYPE_CODE")
+    @Enumerated(EnumType.STRING)
+    public InterventionTypeCode getCtGovTypeCode() {
+        return ctGovTypeCode;
+    }
+    /**
+     * @param ctGovTypeCode the ctGovTypeCode to set
+     */
+    public void setCtGovTypeCode(InterventionTypeCode ctGovTypeCode) {
+        this.ctGovTypeCode = ctGovTypeCode;
     }
 }

@@ -18,7 +18,17 @@
     }
     function loadDiv() {        
         var jsName = document.getElementById("searchName").value;
-        var url = '/pa/protected/popupIntdisplayList.action?searchName='+jsName;
+        var includeSyn = false;  
+        if (document.getElementById("includeSynonym").checked==true)
+        {
+            includeSyn = true;
+        } 
+        var exactMat = false;
+        if (document.getElementById("exactMatch").checked == true)
+        {
+           exactMat = true; 
+        }
+        var url = '/pa/protected/popupIntdisplayList.action?searchName='+jsName+'&includeSynonym='+includeSyn+'&exactMatch='+exactMat;
         var div = document.getElementById('getInterventions');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
@@ -36,6 +46,10 @@
 </head> 
 <body>
 <div class="box">
+<pa:sucessMessage />
+<s:if test="hasActionErrors()">
+    <div class="error_msg"><s:actionerror /></div>
+</s:if>
 <s:form id="interventions" name="interventions" >
 <h2>Search Interventions</h2>
 <s:label name="interventionErrorMessage"/>
@@ -48,7 +62,22 @@
         <td>
             <s:textfield id="searchName" name="searchName"  maxlength="60" size="60"  cssStyle="width:200px" />
         </td> </tr>
-    <tr><td/><td class="info">Use * as wildcard when entering search string</td></tr>
+    <tr> 
+                <td scope="row" class="label">
+                   <label  for="includeSynonym"> <fmt:message key="interventions.includeSynonym"/></label>                        
+                </td>
+                <td>
+                    <s:checkbox name="includeSynonym" />
+                </td>                
+            </tr>
+             <tr> 
+                <td scope="row" class="label">
+                     <label  for="exactMatch"> <fmt:message key="interventions.exactMatch"/></label>                        
+                </td>
+                <td>
+                    <s:checkbox name="exactMatch" />
+                </td>                
+            </tr>
    
 </table>
     <div class="actionsrow">

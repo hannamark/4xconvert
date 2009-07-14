@@ -72,6 +72,11 @@ public class InterventionDTO extends BaseDTOWithStatusCode {
     private St descriptionText;
     private St pdqTermIdentifier;
     private St ntTermIdentifier;
+    
+    private St includeSynonym;
+    private St exactMatch;
+    private Cd ctGovTypeCode;
+    
     /**
      * @return the typeCode
      */
@@ -131,5 +136,41 @@ public class InterventionDTO extends BaseDTOWithStatusCode {
      */
     public void setNtTermIdentifier(St ntTermIdentifier) {
         this.ntTermIdentifier = ntTermIdentifier;
+    }
+    /**
+     * @return the includeSynonym
+     */
+    public St getIncludeSynonym() {
+        return includeSynonym;
+    }
+    /**
+     * @param includeSynonym the includeSynonym to set
+     */
+    public void setIncludeSynonym(St includeSynonym) {
+        this.includeSynonym = includeSynonym;
+    }
+    /**
+     * @return the exactMatch
+     */
+    public St getExactMatch() {
+        return exactMatch;
+    }
+    /**
+     * @param exactMatch the exactMatch to set
+     */
+    public void setExactMatch(St exactMatch) {
+        this.exactMatch = exactMatch;
+    }
+    /**
+     * @return the ctGovTypeCode
+     */
+    public Cd getCtGovTypeCode() {
+        return ctGovTypeCode;
+    }
+    /**
+     * @param ctGovTypeCode the ctGovTypeCode to set
+     */
+    public void setCtGovTypeCode(Cd ctGovTypeCode) {
+        this.ctGovTypeCode = ctGovTypeCode;
     }
 }

@@ -152,19 +152,27 @@ public class InterventionServiceTest {
     public void searchTest() throws Exception {
         InterventionDTO searchCriteria = new InterventionDTO();
         searchCriteria.setName(StConverter.convertToSt("CHOCOLATE*"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
         List<InterventionDTO> r = remoteEjb.search(searchCriteria);
         assertEquals(1, r.size());
 
         searchCriteria.setName(StConverter.convertToSt("xCHOCOLATE*"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
         r = remoteEjb.search(searchCriteria);
         assertEquals(0, r.size());
 
         searchCriteria.setName(StConverter.convertToSt("HERSHEY"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
         r = remoteEjb.search(searchCriteria);
         assertEquals(1, r.size());
 
         searchCriteria.setName(null);
         searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.GENETIC));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
         try {
             r = remoteEjb.search(searchCriteria);
             fail("Service should throw PAException when searching w/o name.  ");
@@ -176,6 +184,8 @@ public class InterventionServiceTest {
     public void noInactiveInterventionAlternateNameRecordsReturnedBySearchTest() throws Exception {
         InterventionDTO searchCriteria = new InterventionDTO();
         searchCriteria.setName(StConverter.convertToSt("HERSHEY"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
         List<InterventionDTO> r = remoteEjb.search(searchCriteria);
         int size = r.size();
         assertTrue(size > 0);
@@ -193,6 +203,8 @@ public class InterventionServiceTest {
     public void noInactiveInterventionRecordsReturnedBySearchTest() throws Exception {
         InterventionDTO searchCriteria = new InterventionDTO();
         searchCriteria.setName(StConverter.convertToSt("CHOCOLATE*"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
         List<InterventionDTO> r = remoteEjb.search(searchCriteria);
         int size = r.size();
         assertTrue(size > 0);

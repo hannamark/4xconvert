@@ -113,6 +113,7 @@ public class InterventionConverter extends AbstractConverter<InterventionDTO, In
         dto.setTypeCode(CdConverter.convertToCd(bo.getTypeCode()));
         dto.setNtTermIdentifier(StConverter.convertToSt(bo.getNtTermIdentifier()));
         dto.setPdqTermIdentifier(StConverter.convertToSt(bo.getPdqTermIdentifier()));
+        dto.setCtGovTypeCode(CdConverter.convertToCd(bo.getCtGovTypeCode()));
         return dto;
     }
 
@@ -133,6 +134,7 @@ public class InterventionConverter extends AbstractConverter<InterventionDTO, In
         bo.setTypeCode(InterventionTypeCode.getByCode(CdConverter.convertCdToString(dto.getTypeCode())));
         bo.setNtTermIdentifier(StConverter.convertToString(dto.getNtTermIdentifier()));
         bo.setPdqTermIdentifier(StConverter.convertToString(dto.getPdqTermIdentifier()));
+        bo.setCtGovTypeCode(InterventionTypeCode.getByCode(CdConverter.convertCdToString(dto.getCtGovTypeCode())));
         return bo;
     }
 }

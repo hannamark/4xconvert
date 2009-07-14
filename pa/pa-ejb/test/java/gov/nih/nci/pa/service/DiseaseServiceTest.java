@@ -170,14 +170,20 @@ public class DiseaseServiceTest {
     public void searchTest() throws Exception {
         DiseaseDTO searchCriteria = new DiseaseDTO();
         searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         List<DiseaseDTO> r = bean.search(searchCriteria);
         assertTrue(0 < r.size());
 
         searchCriteria.setPreferredName(StConverter.convertToSt("xToe*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         r = bean.search(searchCriteria);
         assertEquals(0, r.size());
 
         searchCriteria.setPreferredName(StConverter.convertToSt("*Piggy*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         r = bean.search(searchCriteria);
         assertTrue(0 < r.size());
 
@@ -193,6 +199,8 @@ public class DiseaseServiceTest {
     public void searchDoesNotReturnInactiveTest() throws Exception {
         DiseaseDTO searchCriteria = new DiseaseDTO();
         searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         List<DiseaseDTO> r = bean.search(searchCriteria);
         assertEquals(1, r.size());
         

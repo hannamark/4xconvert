@@ -71,6 +71,33 @@ public class DiseaseDTO extends BaseDTOWithStatusCode {
     St preferredName;
     St menuDisplayName;
     
+    private St includeSynonym;
+    private St exactMatch;
+    
+    /**
+     * @return the includeSynonym
+     */
+    public St getIncludeSynonym() {
+        return includeSynonym;
+    }
+    /**
+     * @param includeSynonym the includeSynonym to set
+     */
+    public void setIncludeSynonym(St includeSynonym) {
+        this.includeSynonym = includeSynonym;
+    }
+    /**
+     * @return the exactMatch
+     */
+    public St getExactMatch() {
+        return exactMatch;
+    }
+    /**
+     * @param exactMatch the exactMatch to set
+     */
+    public void setExactMatch(St exactMatch) {
+        this.exactMatch = exactMatch;
+    }
     /**
      * @return the diseaseCode
      */

@@ -113,11 +113,16 @@ public class PopUpIntAction extends ActionSupport {
     private static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
+    private String includeSynonym;
+    private String exactMatch;
+    
     private List<InterventionWebDTO> interWebList = new ArrayList<InterventionWebDTO>();
 
     private void loadResultList() {
         interWebList.clear();
         String tName = ServletActionContext.getRequest().getParameter("searchName");
+        String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
+        String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
 
         if (PAUtil.isEmpty(tName)) {
             error("Please enter at least one search criteria.");
@@ -126,6 +131,8 @@ public class PopUpIntAction extends ActionSupport {
 
         InterventionDTO criteria = new InterventionDTO();
         criteria.setName(StConverter.convertToSt(tName));
+        criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
+        criteria.setExactMatch(StConverter.convertToSt(exactMat));
         List<InterventionDTO> interList = null;
         try {
             interList = PaRegistry.getInterventionService().search(criteria);
@@ -143,6 +150,7 @@ public class PopUpIntAction extends ActionSupport {
             newRec.setIdentifier(IiConverter.convertToString(inter.getIdentifier()));
             newRec.setDescription(StConverter.convertToString(inter.getDescriptionText()));
             newRec.setName(StConverter.convertToString(inter.getName()));
+            newRec.setCtGovType(CdConverter.convertCdToString(inter.getCtGovTypeCode()));
             interWebList.add(newRec);
         }
         loadAlternateNames();
@@ -218,5 +226,33 @@ public class PopUpIntAction extends ActionSupport {
      */
     public void setInterWebList(List<InterventionWebDTO> interWebList) {
         this.interWebList = interWebList;
+    }
+
+    /**
+     * @return the includeSynonym
+     */
+    public String getIncludeSynonym() {
+        return includeSynonym;
+    }
+
+    /**
+     * @param includeSynonym the includeSynonym to set
+     */
+    public void setIncludeSynonym(String includeSynonym) {
+        this.includeSynonym = includeSynonym;
+    }
+
+    /**
+     * @return the exactMatch
+     */
+    public String getExactMatch() {
+        return exactMatch;
+    }
+
+    /**
+     * @param exactMatch the exactMatch to set
+     */
+    public void setExactMatch(String exactMatch) {
+        this.exactMatch = exactMatch;
     }
 }

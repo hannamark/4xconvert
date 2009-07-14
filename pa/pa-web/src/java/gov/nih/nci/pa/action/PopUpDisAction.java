@@ -113,13 +113,17 @@ public class PopUpDisAction extends ActionSupport {
     private static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
+    private String includeSynonym;
+    private String exactMatch;
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
 
 
     private void loadResultList() {
         disWebList.clear();
         String tName = ServletActionContext.getRequest().getParameter("searchName");
-
+        String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
+        String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
+        
         if (PAUtil.isEmpty(tName)) {
             String message = "Please enter at least one search criteria";
             addActionError(message);
@@ -129,6 +133,9 @@ public class PopUpDisAction extends ActionSupport {
 
         DiseaseDTO criteria = new DiseaseDTO();
         criteria.setPreferredName(StConverter.convertToSt(tName));
+        criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
+        criteria.setExactMatch(StConverter.convertToSt(exactMat));
+        
         List<DiseaseDTO> diseaseList = null;
         try {
             diseaseList = PaRegistry.getDiseaseService().search(criteria);
@@ -227,5 +234,33 @@ public class PopUpDisAction extends ActionSupport {
      */
     public void setDisWebList(List<DiseaseWebDTO> disWebList) {
         this.disWebList = disWebList;
+    }
+
+    /**
+     * @return the includeSynonym
+     */
+    public String getIncludeSynonym() {
+        return includeSynonym;
+    }
+
+    /**
+     * @param includeSynonym the includeSynonym to set
+     */
+    public void setIncludeSynonym(String includeSynonym) {
+        this.includeSynonym = includeSynonym;
+    }
+
+    /**
+     * @return the exactMatch
+     */
+    public String getExactMatch() {
+        return exactMatch;
+    }
+
+    /**
+     * @param exactMatch the exactMatch to set
+     */
+    public void setExactMatch(String exactMatch) {
+        this.exactMatch = exactMatch;
     }
 }
