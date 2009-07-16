@@ -24,7 +24,20 @@ function handleAction(){
 function generateReport(pid) {
     showPopWin('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+pid, 900, 400, '', 'View Trial Summary Report');
 }
-
+function resetValues(){
+	document.getElementById("nciIdentifier").value="";
+    document.getElementById("officialTitle").value="";
+    document.getElementById("leadOrganizationTrialIdentifier").value="";
+    document.getElementById("leadOrganizationId").value="";
+    document.getElementById("principalInvestigatorId").value="";
+    document.getElementById("phaseCode").value="";
+    document.getElementById("primaryPurpose").value="";
+    document.getElementById("studyStatusCode").value="";
+    document.getElementById("documentWorkflowStatusCode").value="";
+    document.getElementById("studyMilestone").value="";
+    document.getElementById("searchOnHold").checked=false;
+    document.getElementById("searchAmend").checked=false;
+}
 </SCRIPT>
 <body>
 <!-- main content begins-->
@@ -39,13 +52,13 @@ function generateReport(pid) {
                      <label for="nciIdentifier"> <fmt:message key="studyProtocol.nciIdentifier"/></label>
                 </td>
                 <td>
-                    <s:textfield name="criteria.nciIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield id="nciIdentifier" name="criteria.nciIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>
                 <td  scope="row" class="label">
                     <label for="officialTitle"> <fmt:message key="studyProtocol.officialTitle"/></label> 
                 </td>
                 <td>                                             
-                    <s:textfield name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
+                    <s:textfield id="officialTitle" name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
                 </td>
              </tr>                                               
             <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
@@ -56,7 +69,7 @@ function generateReport(pid) {
                 </td>
 
                 <td>
-                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield id="leadOrganizationTrialIdentifier" name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                                                                                          
                 </td>                    
                 <td  scope="row" class="label">
@@ -66,6 +79,7 @@ function generateReport(pid) {
                 <td>
                      <s:select  
                         name="criteria.leadOrganizationId" 
+                        id="leadOrganizationId"
                         list="#protocolOrgs"  
                         listKey="id" 
                         listValue="name" 
@@ -86,6 +100,7 @@ function generateReport(pid) {
                 <td align=left>
                     <s:select  
                         name="criteria.principalInvestigatorId" 
+                        id="principalInvestigatorId"
                         list="#principalInvs"  
                         listKey="id" 
                         listValue="fullName" 
@@ -100,7 +115,7 @@ function generateReport(pid) {
                 </td>
                 <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" headerValue="All" name="criteria.primaryPurposeCode" list="#primaryPurposeCodeValues"  
+                    <s:select headerKey="" id="primaryPurpose" headerValue="All" name="criteria.primaryPurposeCode" list="#primaryPurposeCodeValues"  
                     value="criteria.primaryPurposeCode" cssStyle="width:206px" />
                 </td>
 
@@ -112,7 +127,7 @@ function generateReport(pid) {
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
+                    <s:select headerKey="" id="phaseCode" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
                 </td>      
                 
                 <td scope="row" class="label">
@@ -121,7 +136,7 @@ function generateReport(pid) {
                <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                
                 <td>
-                   <s:select headerKey="" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" cssStyle="width:206px" />
+                   <s:select headerKey="" id="studyStatusCode" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" cssStyle="width:206px" />
                 </td>                  
             </tr>           
             <tr>
@@ -130,14 +145,14 @@ function generateReport(pid) {
                 </td>
                 <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
                 <td>
-                   <s:select headerKey="" headerValue="All" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
+                   <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
                 </td>                  
                 <td scope="row" class="label">
                     <label for="milestoneCode"> <fmt:message key="studyProtocol.milestone"/></label>    
                 </td>
                 <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
                 <td>
-                   <s:select headerKey="" headerValue="All" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
+                   <s:select headerKey="" headerValue="All" id="studyMilestone" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
                 </td>             
             </tr>
             <tr> 
@@ -145,7 +160,9 @@ function generateReport(pid) {
                     <label for="searchOnHold"> <fmt:message key="studyProtocol.searchOnHold"/></label>                        
                 </td>
                 <td>
-                    <s:checkbox name="criteria.searchOnHold" />
+                    <s:checkbox id="searchOnHold" name="criteria.searchOnHold" />
+                    <input type="hidden" id="searchOnHold" value="false">
+                    
                 </td>                
             </tr>
              <tr> 
@@ -153,7 +170,9 @@ function generateReport(pid) {
                     <label for="searchAmend"> <fmt:message key="studyProtocol.searchAmend"/></label>                        
                 </td>
                 <td>
-                    <s:checkbox name="criteria.searchAmend" />
+                    <s:checkbox id= "searchAmend" name="criteria.searchAmend" />
+                    <input type="hidden" id="searchAmend" value="false">
+                    
                 </td>                
             </tr>
         </table>
@@ -161,7 +180,8 @@ function generateReport(pid) {
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li><li>            
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                            <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>  
                         </li>
                 </ul>   
             </del>
