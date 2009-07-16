@@ -252,12 +252,25 @@ function handleAction(){
                                </s:fielderror>                            
                              </span>
                         </td>                
-                  </tr> 
+                  </tr>
+                  <tr>
+                        <td scope="row" class="label">
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_prsOrgName"> <fmt:message key="register.user.prsOrgName"/></label>
+                        </td>
+                        <td>
+                            <s:textfield name="registryUserWebDTO.prsOrgName"  maxlength="200" size="100"  cssStyle="width:200px" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.prsOrgName</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr>  
                   <tr>
                   <td colspan="2" align="left">
                    <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
                   </td>
-                  <tr>
+                  </tr>
               </tbody>
          </table>
           <div class="actionsrow">

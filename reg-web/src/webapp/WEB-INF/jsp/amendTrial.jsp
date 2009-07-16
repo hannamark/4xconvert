@@ -149,6 +149,13 @@ function addGrant(){
         isValidGrant = false;
         alertMessage=alertMessage+ "\n Serial Number must be numeric";
     }
+    if (isSerialEmpty == false && serialNumber != null){
+        var numericExpression = /^[0-9]+$/;
+         if(!numericExpression.test(serialNumber)){
+         isValidGrant = false;
+         alertMessage=alertMessage+ "\n Serial Number must be numeric";
+        } 
+    }
     if (isSerialEmpty == false && (serialNumber.length < 5 || serialNumber.length > 6)){
         isValidGrant = false;
         alertMessage=alertMessage+ "\n Serial Number must be 5 or 6 digits";
@@ -208,7 +215,7 @@ function toggledisplay2 (it) {
 
 <!-- main content begins-->
     <h1><fmt:message key="amend.trial.page.header"/></h1>
-    <c:set var="topic" scope="request" value="submit_trial"/> 
+    <c:set var="topic" scope="request" value="amend_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="amendTrial" method="POST" validate="true" enctype="multipart/form-data">

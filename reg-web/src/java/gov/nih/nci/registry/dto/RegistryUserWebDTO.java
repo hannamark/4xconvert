@@ -9,6 +9,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
  * @author Bala Nair
  *
  */
+@SuppressWarnings({"PMD.TooManyFields" })
 public class RegistryUserWebDTO {    
 
     private String id;
@@ -26,6 +27,7 @@ public class RegistryUserWebDTO {
     private String loginName;
     private String password;
     private String retypePassword;
+    private String prsOrgName;
     
     /**
      * 
@@ -54,6 +56,7 @@ public class RegistryUserWebDTO {
         this.loginName = loginName;
         this.password = password;
         this.retypePassword = password;
+        this.prsOrgName = registryUser.getPrsOrgName();
     }
 
     /** .
@@ -252,6 +255,20 @@ public class RegistryUserWebDTO {
      */
     public void setRetypePassword(String retypePassword) {
         this.retypePassword = retypePassword;
+    }
+
+    /**
+     * @return the prsOrgName
+     */
+    public String getPrsOrgName() {
+        return prsOrgName;
+    }
+
+    /**
+     * @param prsOrgName the prsOrgName to set
+     */
+    public void setPrsOrgName(String prsOrgName) {
+        this.prsOrgName = prsOrgName;
     }
 
 
