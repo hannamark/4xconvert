@@ -102,6 +102,7 @@ public class RegistryUser extends  AbstractEntity {
     private String phone;
     private String affiliateOrg;
     private Long csmUserId;
+    private String prsOrgName;
 
     /**
      * @return the csmUserId
@@ -246,6 +247,19 @@ public class RegistryUser extends  AbstractEntity {
      */
     public void setAffiliateOrg(String affiliateOrg) {
         this.affiliateOrg = affiliateOrg;
+    }
+    /**
+     * @return the prsOrgName
+     */
+    @Column(name = "PRS_ORG_NAME")
+    public String getPrsOrgName() {
+        return prsOrgName;
+    }
+    /**
+     * @param prsOrgName the prsOrgName to set
+     */
+    public void setPrsOrgName(String prsOrgName) {
+        this.prsOrgName = prsOrgName;
     }
 
 

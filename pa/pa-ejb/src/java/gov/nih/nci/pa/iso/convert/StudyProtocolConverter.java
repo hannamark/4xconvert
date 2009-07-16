@@ -188,7 +188,7 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAmendmentReasonCode(CdConverter.convertToCd(studyProtocol.getAmendmentReasonCode()));
         studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(studyProtocol.getAmendmentDate()));
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(studyProtocol.getSubmissionNumber()));
-        
+        studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(studyProtocol.getUserLastCreated()));
         return studyProtocolDTO;
     }
 

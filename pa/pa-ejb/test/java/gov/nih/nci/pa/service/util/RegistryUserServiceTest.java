@@ -131,6 +131,7 @@ public class RegistryUserServiceTest {
         create.setPhone("1111");
         create.setPostalCode("00000");
         create.setState("va");
+        create.setPrsOrgName("prsOrgName");
         return create;
     }
 

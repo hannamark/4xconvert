@@ -99,6 +99,7 @@ import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.AllocationCode;
@@ -253,7 +254,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     InterventionServiceRemote interventionService = null;
     @EJB
     InterventionAlternateNameServiceRemote interventionAlternateNameService = null;
-    
+    @EJB
+    RegistryUserServiceRemote registryUserService = null;
     
     private static final Logger LOG  = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
     private static final String TEXT_BLOCK = "textblock";
@@ -630,10 +632,16 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(idInfo , createElement("secondary_id" , spart.getLocalStudyProtocolIdentifier() , doc));
             break;
         }
-        appendElement(idInfo , createElement("org_name" , "replace with PRS Organization Name you log in with" , doc));
-        if (idInfo.hasChildNodes()) {
+       RegistryUser registryUser = registryUserService.getUser(StConverter.convertToString(spDTO.getUserLastCreated()));
+       String prsOrgName = "replace with PRS Organization Name you log in with";
+       if (PAUtil.isNotEmpty(registryUser.getPrsOrgName())) {
+           prsOrgName = registryUser.getPrsOrgName();
+       } 
+       appendElement(idInfo , createElement("org_name" , prsOrgName , doc));
+       
+       if (idInfo.hasChildNodes()) {
             appendElement(root, idInfo);
-        }
+       }
 
     }
 
