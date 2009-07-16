@@ -11,15 +11,17 @@
 <SCRIPT LANGUAGE="JavaScript">
 window.onload=displayOrg;
 function resetValues(){
-	document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_phaseCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_primaryPurposeCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_identifierType.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationTrialIdentifier.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_organizationType.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationId.value="";
+	document.searchTrial.reset();
+	document.getElementById("officialTitle").value="";
+    document.getElementById("phaseCode").value="";
+    document.getElementById("typeCodeValues").value="";
+    document.getElementById("identifierType").value="";
+    document.getElementById("identifier").value="";
+    document.getElementById("organizationType").value="";
+    document.getElementById("typeCodeValues").value="";
+    document.getElementById("organizationId").value="";
+    document.getElementById("participatingSiteId").value="";
 }
-
 function handleAction(){
      document.forms[0].action="searchTrialquery.action";
      document.forms[0].submit();  
@@ -56,7 +58,7 @@ function handleMyAction(){
     </c:if>
     <div class="box" id="filters">
     <reg-web:failureMessage/>
-    <s:form>
+    <s:form name="searchTrial">
     <input type="hidden" name="criteria.myTrialsOnly" id="myTrialsOnly" value="false"/>
         <table class="form">
         
@@ -65,7 +67,7 @@ function handleMyAction(){
         		<label for="searchTrial_criteria_officialTitle"> <fmt:message key="search.trial.title"/></label>
         		</td>
         		<td colspan="4">
-        		<s:textfield name="criteria.officialTitle" maxlength="400" size="300"  cssStyle="width:98%;max-width:680px" />
+        		<s:textfield id ="officialTitle" name="criteria.officialTitle" maxlength="400" size="300"  cssStyle="width:98%;max-width:680px" />
         		</td>
         	</tr>
         	<tr>
@@ -74,14 +76,14 @@ function handleMyAction(){
 				</td>
 					<s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
 				<td>
-					<s:select headerKey="" headerValue="--Select--" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
+					<s:select id="phaseCode" headerKey="" headerValue="--Select--" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
 				</td>
 				<td scope="row" class="label">
 					<label for="searchTrial_criteria_primaryPurposeCode"> <fmt:message key="search.trial.purpose"/></label>
 				</td>
 					<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
 				<td>
-					<s:select headerKey="" headerValue="--Select--" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
+					<s:select id="typeCodeValues" headerKey="" headerValue="--Select--" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
 				</td>
 			</tr>
 			<tr>
@@ -90,6 +92,7 @@ function handleMyAction(){
 				</td>
 				<td>
 					<s:select 
+					    id = "identifierType"
 						headerKey="" 
 						headerValue="--Select--" 
 						name="criteria.identifierType"  
@@ -108,7 +111,7 @@ function handleMyAction(){
 					<br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
 				</td>
 				<td>
-					<s:textfield name="criteria.identifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+					<s:textfield id="identifier" name="criteria.identifier"  maxlength="200" size="100"  cssStyle="width:200px" />
 					<span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>criteria.identifier</s:param>
@@ -123,14 +126,14 @@ function handleMyAction(){
 					<label for="searchTrial_criteria_organizationType"> <fmt:message key="search.trial.organizationType"/></label>
 				</td>			
 				<td>
-					<s:select headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/> 
+					<s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/> 
 				</td>
 				<td scope="row" class="label">
 					<label for="searchTrial_criteria_organizationId"> <fmt:message key="search.trial.organization"/></label>
 				</td>		        
 				<td id="Lead">
 				    <s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
-					<s:select name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssStyle="width:206px"/>
+					<s:select id="organizationId" name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssStyle="width:206px"/>
 	                <span class="formErrorMsg"> 
 	                    <s:fielderror>
 	                    <s:param>criteria.organizationId</s:param>
@@ -139,7 +142,7 @@ function handleMyAction(){
 				</td>
 				<td id="Site" style="display:none">
 				    <s:set name="participatingSites" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
-                    <s:select name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssStyle="width:206px"/>
+                    <s:select id="participatingSiteId" name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssStyle="width:206px"/>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>criteria.organizationId</s:param>
@@ -154,6 +157,7 @@ function handleMyAction(){
                 <li>           
                 <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>       
                 <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
                 </li>                
                </ul>
             </del>
