@@ -186,7 +186,12 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
 
     protected void setUpCorrelation2Tels(AbstractPersonRoleDTO correlation2) throws Exception {
         for (Tel t : correlation2.getTelecomAddress().getItem()) {
-            t.setValue(new URI(t.getValue().toString() + "2"));
+            if (t instanceof TelEmail || t instanceof TelUrl) {
+                t.setValue(
+                        new URI(t.getValue().toString() + "n"));
+            } else {
+                t.setValue(new URI(t.getValue().toString() + "2"));
+            }
         }
     }
 
@@ -356,7 +361,12 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
         }
         searchCriteria.getTelecomAddress().getItem().clear();
         for (Tel t : getSampleDto().getTelecomAddress().getItem()) {
-            t.setValue(new URI(t.getValue().toString() + "2"));
+            if (t instanceof TelEmail || t instanceof TelUrl) {
+                t.setValue(
+                        new URI(t.getValue().toString() + "n"));
+            } else {
+                t.setValue(new URI(t.getValue().toString() + "2"));
+            }
             searchCriteria.getTelecomAddress().getItem().add(t);
             results = getCorrelationService().search(searchCriteria);
             assertEquals(1, results.size());

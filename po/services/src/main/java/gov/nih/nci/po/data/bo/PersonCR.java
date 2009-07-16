@@ -176,6 +176,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @IndexColumn(name = "idx")
     @Column(name = "fax")
     @ForeignKey(name = "PERCR_FAX_FK", inverseName = "FAX_PERCR_FK")
+    @Valid
     @Override
     public List<PhoneNumber> getFax() {
         return super.getFax();
@@ -196,6 +197,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @IndexColumn(name = "idx")
     @Column(name = "phone")
     @ForeignKey(name = "PERCR_PHONE_FK", inverseName = "PHONE_PERCR_FK")
+    @Valid
     @Override
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
@@ -216,6 +218,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @IndexColumn(name = "idx")
     @Column(name = "url")
     @ForeignKey(name = "PERCR_URL_FK", inverseName = "URL_PERCR_FK")
+    @Valid
     @Override
     public List<URL> getUrl() {
         return super.getUrl();
@@ -236,6 +239,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @IndexColumn(name = "idx")
     @Column(name = "tty")
     @ForeignKey(name = "PERCR_TTY_FK", inverseName = "TTY_PERCR_FK")
+    @Valid
     @Override
     public List<PhoneNumber> getTty() {
         return super.getTty();

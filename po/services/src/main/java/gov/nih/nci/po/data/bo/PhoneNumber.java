@@ -95,6 +95,7 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.Pattern;
 
 /**
  * Stores phone number information.
@@ -139,6 +140,7 @@ public class PhoneNumber implements Auditable, Contact, Serializable {
      * @return the value
      */
     @NotEmpty
+    @Pattern(regex = "[\\w\\s-.+();=]+", message = "{validator.phone}")
     @Length(max = PHONE_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "value")
     public String getValue() {

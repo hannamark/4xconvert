@@ -179,6 +179,7 @@ public class Organization extends AbstractOrganization
     @IndexColumn(name = "idx")
     @Column(name = "fax")
     @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
+    @Valid
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getFax() {
@@ -201,6 +202,7 @@ public class Organization extends AbstractOrganization
     @Column(name = "phone")
     @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
     @Override
+    @Valid
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
@@ -222,6 +224,7 @@ public class Organization extends AbstractOrganization
     @Column(name = "url")
     @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
     @Override
+    @Valid
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
@@ -242,6 +245,7 @@ public class Organization extends AbstractOrganization
     @IndexColumn(name = "idx")
     @Column(name = "tty")
     @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
+    @Valid
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {

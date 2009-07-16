@@ -145,7 +145,7 @@ public class URL implements Auditable, Contact {
      */
     @NotEmpty
     @Pattern(regex = URL_REGEX,
-             message = "URL is not well formed")
+             message = "{validator.url}")
     @Length(max = MAX_VALUE_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "value")
     public String getValue() {

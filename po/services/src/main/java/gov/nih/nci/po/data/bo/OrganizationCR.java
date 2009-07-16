@@ -176,6 +176,7 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     @IndexColumn(name = "idx")
     @Column(name = "fax")
     @ForeignKey(name = "ORGCR_FAX_FK", inverseName = "FAX_ORGCR_FK")
+    @Valid
     @Override
     public List<PhoneNumber> getFax() {
         return super.getFax();
@@ -196,6 +197,7 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     @IndexColumn(name = "idx")
     @Column(name = "phone")
     @ForeignKey(name = "ORGCR_PHONE_FK", inverseName = "PHONE_ORGCR_FK")
+    @Valid
     @Override
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
@@ -216,6 +218,7 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     @IndexColumn(name = "idx")
     @Column(name = "url")
     @ForeignKey(name = "ORGCR_URL_FK", inverseName = "URL_ORGCR_FK")
+    @Valid
     @Override
     public List<URL> getUrl() {
         return super.getUrl();
@@ -236,6 +239,7 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     @IndexColumn(name = "idx")
     @Column(name = "tty")
     @ForeignKey(name = "ORGCR_TTY_FK", inverseName = "TTY_ORGCR_FK")
+    @Valid
     @Override
     public List<PhoneNumber> getTty() {
         return super.getTty();

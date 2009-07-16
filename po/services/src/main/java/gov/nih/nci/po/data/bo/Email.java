@@ -95,6 +95,7 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.Pattern;
 
 /**
  * Represents an email address.
@@ -142,7 +143,9 @@ public class Email implements Auditable, Contact, Serializable {
      * @return the value
      */
     @NotEmpty
-    @org.hibernate.validator.Email
+    //http://www.zparacha.com/ultimate-java-regular-expression-to-validate-email-address
+    @Pattern(regex = "^(mailto:)?[\\w\\-]+(\\.[\\w\\-]+)*@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$", 
+            message = "{validator.email}")
     @Length(max = MAX_NAME_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "value")
     public String getValue() {

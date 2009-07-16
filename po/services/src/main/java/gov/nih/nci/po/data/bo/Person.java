@@ -174,6 +174,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @IndexColumn(name = "idx")
     @Column(name = "fax")
     @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
+    @Valid
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getFax() {
@@ -195,6 +196,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @IndexColumn(name = "idx")
     @Column(name = "phone")
     @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
+    @Valid
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getPhone() {
@@ -216,6 +218,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @IndexColumn(name = "idx")
     @Column(name = "url")
     @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
+    @Valid
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
@@ -237,6 +240,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @IndexColumn(name = "idx")
     @Column(name = "tty")
     @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
+    @Valid
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {
