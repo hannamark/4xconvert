@@ -100,15 +100,11 @@
             <comment>execute documentWorkflowStatusUpdate.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/documentWorkflowStatusUpdate.sql"/>
     </changeSet>
-    <changeSet id="23" author="Hugh">
-            <comment>execute diseaseInterventionUpdates.sql</comment>
-            <sqlFile path="@db-upgrade.run.dir@/diseaseInterventionUpdates.sql"/>
-    </changeSet>
-       <changeSet id="24" author="Anupama">
+    <changeSet id="24" author="Anupama">
             <comment>execute documentWorkflowStatusColumnAdd.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/documentWorkflowStatusColumnAdd.sql"/>
     </changeSet>
-	<changeSet id="25" author="Vrushali">
+    <changeSet id="25" author="Vrushali">
             <comment>execute registry_userColumnAdd.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/registry_userColumnAdd.sql"/>
     </changeSet>
