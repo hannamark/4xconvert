@@ -3,6 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="CODE_PA/pa-ejb/target/pa-ejb.jar" sourcepath="/CODE_PA/pa-ejb/src/java"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="lib"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/postgresql-jdbc3-8.3-603.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/hibernate-annotations-3.2.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/persistence-api-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

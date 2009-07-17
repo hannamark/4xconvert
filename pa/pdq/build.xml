@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant script for generating disease and intervention load scripts        -->
+<!-- ====================================================================== -->
+
+<project name="pdq" default="run" basedir=".">
+    <property name="lib.dir" value="${basedir}/../../target/pa/lib"/>
+    <property file="${basedir}/build.properties"/>
+
+    <path id="classpath">
+        <fileset dir="${basedir}/../pa-ejb/target" includes="pa-ejb.jar"/>
+        <fileset dir="${basedir}/lib"/>
+        <fileset dir="${lib.dir}/pa-ejb/compile" includes="hibernate-annotations*.jar"/>
+        <fileset dir="${lib.dir}/pa-ejb/compile" includes="persistence-api*.jar"/>
+        <fileset dir="${lib.dir}/pa-ejb/compile" includes="postgresql-jdbc*.jar"/>
+        <fileset dir="${basedir}" includes="build.properties"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${basedir}/target"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${basedir}/target/classes"/>
+        <javac srcdir="${basedir}/src" destdir="${basedir}/target/classes" classpathref="classpath"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${basedir}/target"/>
+        <jar destfile="${basedir}/target/pdq.jar" basedir="${basedir}/target/classes"/>
+    </target>
+
+    <target name="run" depends="jar">
+        <java fork="true" classname="gov.nih.nci.pa.pdq.Loader" dir="${basedir}">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${basedir}/target/pdq.jar"/>
+            </classpath>
+        </java>
+    </target>
+</project>
