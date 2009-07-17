@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.iso.util;
 
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
@@ -91,9 +92,11 @@ import java.sql.Timestamp;
  * @param <Iso> iso type which is aggregated in Ivl
  * @param <T> standard java class corresponding to aggregated iso type
  */
-@SuppressWarnings("unchecked")
+
+@SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity" })
 public class IvlConverter<Iso extends Qty, T> {
     private static IvlConverter<Ts, Timestamp> tsInstance = new IvlConverter<Ts, Timestamp>(Ts.class);
+    private static IvlConverter<Int, Integer> intInstance = new IvlConverter<Int, Integer>(Int.class);
 
     private final Class<Iso> aggregatedType;
 
@@ -110,6 +113,13 @@ public class IvlConverter<Iso extends Qty, T> {
     public static IvlConverter<Ts, Timestamp> convertTs() {
         return tsInstance;
     }
+    /**
+     * @return the converter for Ts type Ivl's
+     */
+    public static IvlConverter<Int, Integer> convertInt() {
+        return intInstance;
+    }
+    
     
     /**
      * @param low the low value
@@ -127,7 +137,16 @@ public class IvlConverter<Iso extends Qty, T> {
                     ? TsConverter.convertToTs(PAUtil.dateStringToTimestamp((String) high)) 
                     : TsConverter.convertToTs((Timestamp) high));
             result = (Ivl<Iso>) wrk;
-        }
+        } else if (aggregatedType.equals(Int.class)) {
+            Ivl<Int> wrk = new Ivl<Int>();
+            wrk.setLow(low instanceof String 
+                    ? IntConverter.convertToInt((String) low) 
+                    : IntConverter.convertToInt((Integer) low));
+            wrk.setHigh(high instanceof Integer 
+                    ? IntConverter.convertToInt((Integer) high) 
+                     : IntConverter.convertToInt((Integer) high));
+            result = (Ivl<Iso>) wrk;
+        }        
         return result;
     }
     
@@ -139,6 +158,8 @@ public class IvlConverter<Iso extends Qty, T> {
         T result = null;
         if (aggregatedType.equals(Ts.class)) {
             result = (T) TsConverter.convertToTimestamp((Ts) ivl.getLow());
+        } else if (aggregatedType.equals(Int.class)) {
+            result = (T) IntConverter.convertToInteger((Int) ivl.getLow()); 
         }
         return result;
     }
@@ -151,6 +172,8 @@ public class IvlConverter<Iso extends Qty, T> {
         T result = null;
         if (aggregatedType.equals(Ts.class)) {
             result = (T) TsConverter.convertToTimestamp((Ts) ivl.getHigh());
+        } else if (aggregatedType.equals(Int.class)) {
+            result = (T) IntConverter.convertToInteger((Int) ivl.getHigh()); 
         }
         return result;
     }
@@ -163,6 +186,8 @@ public class IvlConverter<Iso extends Qty, T> {
         String result = null;
         if (aggregatedType.equals(Ts.class)) {
             result = TsConverter.convertToString((Ts) ivl.getLow());
+        } else if (aggregatedType.equals(Int.class)) {
+            result = IntConverter.convertToString((Int) ivl.getLow());
         }
         return result;
     }
@@ -175,6 +200,8 @@ public class IvlConverter<Iso extends Qty, T> {
         String result = null;
         if (aggregatedType.equals(Ts.class)) {
             result = TsConverter.convertToString((Ts) ivl.getHigh());
+        } else if (aggregatedType.equals(Int.class)) {
+            result = IntConverter.convertToString((Int) ivl.getHigh());
         }
         return result;
     }

@@ -76,77 +76,87 @@
 * 
 * 
 */
+
 package gov.nih.nci.pa.iso.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.NullFlavor;
 
+import org.junit.Test;
 
 /**
  * 
- * @author Naveen Amiruddin
+ * @author NAmiruddin
  *
  */
-public class IntConverter {
+public class IntConverterTest {
     
-    
-    /**
-     * convert string to Int.
-     * @param str String
-     * @return st
-     */
-    public static Int convertToInt(String str) {
-        Int in = new Int();
-        if (str == null) {
-            in.setNullFlavor(NullFlavor.NI);
-            return in;
-        }
-        in.setValue(Integer.valueOf(str));
-        return in;
-    }    
-    
-    /**
-     * convert Integer to Int.
-     * @param data Integer
-     * @return int
-     */
-    public static Int convertToInt(Integer data) {
-        Int in = new Int();
-        if (data == null) {
-            in.setNullFlavor(NullFlavor.NI);
-            return in;
-        }
-        in.setValue(data);
-        return in;
-    }    
-    
-    /**
-     * convert Int to Integerr.
-     * @param data Integer
-     * @return integer
-     */
-    public static Integer convertToInteger(Int data) {
-        if (data == null) {
-            return null;
-        }
-        if (data.getNullFlavor() != null) {
-            return null;
-        }
-        return data.getValue();
-    }    
-    /**
-     * convert Int to String.
-     * @param data Integer
-     * @return integer
-     */
-    public static String convertToString(Int data) {
-        if (data == null) {
-            return null;
-        }
-        if (data.getNullFlavor() != null) {
-            return null;
-        }
-        return data.getValue().toString();
-    }      
+    @Test
+    public  void convertToInt1Test() {
+        String s = "5" ;
+        Int i = IntConverter.convertToInt(s);
+        assertEquals(s , i.getValue().toString());
+    }
+    @Test
+    public  void convertToInt1NLTest() {
+        String s = null ;
+        Int i = IntConverter.convertToInt(s);
+        assertEquals(NullFlavor.NI , i.getNullFlavor());
+    }
 
+    @Test
+    public  void convertToInt2Test() {
+        Integer in = Integer.valueOf(5) ;
+        Int i = IntConverter.convertToInt(in);
+        assertEquals(in.toString() , i.getValue().toString());
+    }
+    @Test
+    public  void convertToInt2NLTest() {
+        Integer in = null ;
+        Int i = IntConverter.convertToInt(in);
+        assertEquals(NullFlavor.NI , i.getNullFlavor());
+    }
+    
+    @Test
+    public  void convertToInteger1() {
+        Int i = null;
+        Integer in = IntConverter.convertToInteger(i);
+        assertNull(in);
+    }
+    @Test
+    public  void convertToInteger2() {
+        Int i = new Int();
+        i.setNullFlavor(NullFlavor.NI);
+        Integer in = IntConverter.convertToInteger(i);
+        assertNull(in);
+    }
+    @Test
+    public  void convertToInteger3() {
+        Int i = new Int();
+        i.setValue(Integer.valueOf("5"));
+        Integer in = IntConverter.convertToInteger(i);
+        assertEquals(in.toString() , i.getValue().toString());
+    }
+    @Test
+    public  void convertToString1() {
+        Int i = null;
+        String s = IntConverter.convertToString(i);
+        assertNull(s);
+    }
+    @Test
+    public  void convertToString2() {
+        Int i = new Int();
+        i.setNullFlavor(NullFlavor.NI);
+        String s = IntConverter.convertToString(i);
+        assertNull(s);
+    }
+    @Test
+    public  void convertToString3() {
+        Int i = new Int();
+        i.setValue(Integer.valueOf("5"));
+        String s = IntConverter.convertToString(i);
+        assertEquals(s , i.getValue().toString());
+    }
 }

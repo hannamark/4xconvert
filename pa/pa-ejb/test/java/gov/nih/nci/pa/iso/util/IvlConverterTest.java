@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
@@ -105,9 +106,20 @@ public class IvlConverterTest {
     @Test
     public void convertToStringTest() {
         String date1 = PAUtil.normalizeDateString("1/1/2000");
-        String date2 = null;
+        String date2 = PAUtil.normalizeDateString("1/1/9999");;
         Ivl<Ts> x = IvlConverter.convertTs().convertToIvl(date1, date2);
         assertEquals(date1, IvlConverter.convertTs().convertLowToString(x));
         assertEquals(date2, IvlConverter.convertTs().convertHighToString(x));
+   }
+    
+    @Test
+    public void convertToIvlTest1() {
+        Integer l = Integer.valueOf("1");
+        Integer h = Integer.valueOf("10");
+        Ivl<Int> ivl = IvlConverter.convertInt().convertToIvl(l, h);
+        assertEquals(l , IvlConverter.convertInt().convertLow(ivl));
+        assertEquals(h , IvlConverter.convertInt().convertHigh(ivl));
     }
+    
+
 }
