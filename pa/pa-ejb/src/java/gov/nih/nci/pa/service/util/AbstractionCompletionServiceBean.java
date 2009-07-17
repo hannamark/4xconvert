@@ -981,7 +981,7 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
       abstractionList.add(createError("Error", "Select Design Details from "
           + "Interventional Trial Design under Scientific Data menu.", "Provide comment if Other"));
     }
-    if (ispDTO.getPrimaryPurposeCode().getCode() != null) {
+/*    if (ispDTO.getPrimaryPurposeCode().getCode() != null) {
       if (ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Early Detection")
           || ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Epidemiologic")
           || ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Observational")
@@ -994,7 +994,7 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
             + ", Please Modify the Primary Purpose"));
       }
     }
-    if (ispDTO.getPhaseCode().getCode() == null) {
+*/    if (ispDTO.getPhaseCode().getCode() == null) {
       abstractionList.add(createError("Error", "Select Design Details from "
           + "Interventional Trial Design under Scientific Data menu.", "Trial Phase must be Entered"));
     }

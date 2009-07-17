@@ -107,6 +107,7 @@ import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -1355,6 +1356,13 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         nv.put(AllocationCode.NA.getCode(), NA);
         nv.put(PhaseCode.OTHER.getCode() , NA);
         nv.put(PhaseCode.PILOT.getCode() , NA);
+        String other = "Other";
+        nv.put(PrimaryPurposeCode.EARLY_DETECTION.getCode(), other);
+        nv.put(PrimaryPurposeCode.EPIDEMIOLOGIC.getCode(), other);
+        nv.put(PrimaryPurposeCode.OBSERVATIONAL.getCode(), other);
+        nv.put(PrimaryPurposeCode.OUTCOME.getCode(), other);
+        nv.put(PrimaryPurposeCode.ANCILLARY.getCode(), other);
+        nv.put(PrimaryPurposeCode.CORRELATIVE.getCode(), other);
     }
 
     private static String convertToCtValues(Cd cd) {
