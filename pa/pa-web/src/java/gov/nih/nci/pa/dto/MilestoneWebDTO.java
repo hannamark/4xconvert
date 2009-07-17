@@ -104,7 +104,7 @@ public class MilestoneWebDTO {
      */
     public MilestoneWebDTO(StudyMilestoneDTO isoDto) {
         milestone = CdConverter.convertCdToString(isoDto.getMilestoneCode());
-        date = PAUtil.normalizeDateString(TsConverter.convertToTimestamp(isoDto.getMilestoneDate()).toString());
+        date = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getMilestoneDate()).toString());
         comment = StConverter.convertToString(isoDto.getCommentText());
     }
     /**
@@ -129,7 +129,7 @@ public class MilestoneWebDTO {
      * @param date the date to set
      */
     public void setDate(String date) {
-        this.date = PAUtil.normalizeDateString(date);
+        this.date = PAUtil.normalizeDateStringWithTime(date);
     }
     /**
      * @return the comment

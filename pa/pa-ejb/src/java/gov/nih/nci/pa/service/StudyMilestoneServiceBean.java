@@ -222,7 +222,7 @@ public class StudyMilestoneServiceBean
         }
         if ((lastDate != null) && lastDate.after(newDate)) {
             throw new PAException("Milestone's must not predate existing milestones.  The prior milestone date is "
-                    + PAUtil.normalizeDateString(lastDate.toString()) + ".");
+                    + PAUtil.normalizeDateStringWithTime(lastDate.toString()) + ".");
         }
 
         // transition rules

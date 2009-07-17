@@ -215,8 +215,10 @@ public class PAUtil {
     static {
         dateFormats = new ValidDateFormat[] {
                 new ValidDateFormat("MM/dd/yyyy"),
+                new ValidDateFormat("yyyy-MM-dd HH:mm:ss"),
                 new ValidDateFormat("yyyy-MM-dd"),
-                new ValidDateFormat("yyyy/MM/dd")
+                new ValidDateFormat("yyyy/MM/dd"),
+                new ValidDateFormat("MM-dd-yyyy HH:mm:ss")
         };
     }
 
@@ -245,6 +247,32 @@ public class PAUtil {
             } catch (ParseException e) {
                 // BUGBUG: outDate can only be null here - this method does nothing!
                 outDate = null;
+            }
+        }
+        return outDate;
+    }
+    /**
+     * Convert an input string to a Date.
+     *
+     * @param inDate string to be normalized
+     * @return Date
+     */
+    private static Date dateStringToDateTime(String inDate) {
+        if (inDate == null) {
+            return null;
+        }
+        Date outDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        for (ValidDateFormat fm : dateFormats) {
+            sdf.applyPattern(fm.pattern);
+            sdf.setLenient(false);
+            try {
+                int endIndex = (inDate.trim().length() < fm.endIndex) ? inDate.trim().length() : fm.endIndex;
+                String dateToParse = inDate.trim().substring(0, endIndex);
+                outDate = sdf.parse(dateToParse);
+                break;
+            } catch (ParseException e) {
+               continue; //best effort to try the other date format(s).
             }
         }
         return outDate;
@@ -280,6 +308,23 @@ public class PAUtil {
         }
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern(dateFormats[0].pattern);
+        return sdf.format(outDate);
+    }
+    /**
+     * Convert an input string to a normalized date string.
+     * The output format is determined by the first element in
+     * the static dateFormats array.
+     *
+     * @param inDate string to be normalized
+     * @return normalized string
+     */
+    public static String normalizeDateStringWithTime(String inDate) {
+        Date outDate = dateStringToDateTime(inDate);
+        if (outDate == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(dateFormats[1].pattern);
         return sdf.format(outDate);
     }
 

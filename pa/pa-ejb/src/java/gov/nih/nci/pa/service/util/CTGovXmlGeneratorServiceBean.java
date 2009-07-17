@@ -622,16 +622,17 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         //create info element
 
         Element idInfo = doc.createElement("id_info");
-        appendElement(idInfo , createElement("org_study_id" , spDTO.getAssignedIdentifier().getExtension(), doc));
-
+       
         StudyParticipationDTO spartDTO = new StudyParticipationDTO();
         spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
         List<StudyParticipationDTO> sParts = 
                                          studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), spartDTO);
         for (StudyParticipationDTO spart : sParts) {
-            appendElement(idInfo , createElement("secondary_id" , spart.getLocalStudyProtocolIdentifier() , doc));
+            appendElement(idInfo , createElement("org_study_id" , spart.getLocalStudyProtocolIdentifier() , doc));
             break;
         }
+       appendElement(idInfo , createElement("secondary_id" , spDTO.getAssignedIdentifier().getExtension(), doc));
+       
        RegistryUser registryUser = registryUserService.getUser(StConverter.convertToString(spDTO.getUserLastCreated()));
        String prsOrgName = "replace with PRS Organization Name you log in with";
        if (PAUtil.isNotEmpty(registryUser.getPrsOrgName())) {

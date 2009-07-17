@@ -9,7 +9,7 @@
 <s:head />
 <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
-
+<script type="text/javascript" src="<c:url value="/scripts/js/datetimepicker.js"/>"></script>
 <script type="text/javascript">
     addCalendar("Cal1", "Select Date", "milestone.date", "milestoneForm");
     setWidth(90, 1, 15, 1);
@@ -18,7 +18,9 @@
     function milestoneAdd(){
         input_box=confirm("Click OK to add milestone.  Cancel to Abort.");
         if (input_box==true){
-            document.milestoneForm.action="milestoneadd.action";
+            var date = document.getElementById("date").value;
+            document.forms["milestoneForm"].elements["milestone.date"].value=date;
+            document.milestoneForm.action="milestoneadd.action?date="+date;
             document.milestoneForm.submit();
         }
     }
@@ -58,10 +60,9 @@
                   <tr>
                       <td class="label"><s:label><fmt:message key="milestone.date"/></s:label><span class="required">*</span></td>
                       <td class="value">
-                        <s:textfield name="milestone.date" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                        <a href="javascript:showCal('Cal1')">
-                            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                        </a>
+                        <s:textfield name="milestone.date" id="date" maxlength="30" size="30" cssStyle="width:170px;float:left"/>
+                        <a href="javascript:NewCal('date','mmddyyyy',true,24)">
+                       <img src="<%=request.getContextPath()%>/images/cal.gif" alt="select date" class="calendaricon" /></a>
                       </td> 
                   </tr>
                   <tr>

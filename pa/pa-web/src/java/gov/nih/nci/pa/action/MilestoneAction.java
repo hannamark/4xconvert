@@ -133,12 +133,13 @@ public final class MilestoneAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        String date = ServletActionContext.getRequest().getParameter("date");
         dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
         dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
-        if (PAUtil.today().equals(milestone.getDate())) {
+        if (PAUtil.today().equals(date)) {
             dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         } else {
-            dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(milestone.getDate())));
+            dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(date)));
         }
         dto.setStudyProtocolIdentifier(spIi);
         try {
