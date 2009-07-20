@@ -19,12 +19,12 @@
 		window.top.hidePopWin(true); 
 	}
 	function loadDiv() {
-		var firstName = document.getElementById("poOrganizations_perSearchCriteria_firstName").value;
-		var lastName = document.getElementById("poOrganizations_perSearchCriteria_lastName").value;
-		var persCountry = document.getElementById("poOrganizations_perSearchCriteria_country").value;
-		var persCity = document.getElementById("poOrganizations_perSearchCriteria_city").value;
-		var persZip = document.getElementById("poOrganizations_perSearchCriteria_zip").value;
-		var persState = document.getElementById("poOrganizations_perSearchCriteria_state").value;		
+		var firstName = document.getElementById("personFirstName").value;
+		var lastName = document.getElementById("personLastName").value;
+		var persCountry = document.getElementById("personCountry").value;
+		var persCity = document.getElementById("personCity").value;
+		var persZip = document.getElementById("personZip").value;
+		var persState = document.getElementById("personState").value;		
 		//
 		var url = '/pa/protected/popupdisplayPersonsList.action?firstName='+firstName+'&lastName='+lastName+'&countryName='+persCountry+'&cityName='+persCity+'&zipCode='+persZip+'&stateName='+persState;
 	    var div = document.getElementById('getPersons');   	   
@@ -37,6 +37,15 @@
 	    return false;
 	}
 
+    function formReset(){
+    document.forms[0].reset();
+    document.getElementById("personFirstName").value = '';
+    document.getElementById("personLastName").value = '';
+    document.getElementById("personCity").value = '';
+    document.getElementById("personCountry").value = 'USA';
+    document.getElementById("personState").value = '';
+    document.getElementById("personZip").value = '';
+ }
 </SCRIPT>
 
 </head> 
@@ -47,26 +56,27 @@
 <table  class="form">  
    	<tr>
    		<td scope="row" class="label"><label for="firstname">First Name:</label></td>
- 		<td><s:textfield name="perSearchCriteria.firstName"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td><s:textfield id="personFirstName" name="perSearchCriteria.firstName"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
 		<td scope="row" class="label"><label for="lastname"> Last Name:</label></td>
- 		<td><s:textfield name="perSearchCriteria.lastName"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td><s:textfield id="personLastName" name="perSearchCriteria.lastName"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
 	</tr>
    	<tr>
    		<td scope="row" class="label"><label for="city">City:</label></td>
- 		<td><s:textfield name="perSearchCriteria.city"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td><s:textfield id="personCity" name="perSearchCriteria.city"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
 		<td scope="row" class="label"><label for="state">State:</label></td>
- 		<td><s:textfield name="perSearchCriteria.state"  maxlength="200" size="100"  cssStyle="width:200px" /><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font></td>
+ 		<td><s:textfield id="personState" name="perSearchCriteria.state"  maxlength="200" size="100"  cssStyle="width:200px" /><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font></td>
 	</tr>		
    	<tr>
    		<td scope="row" class="label"><label for="country">Country:</label></td>
         <td>
-              	<s:select  
+              	<s:select 
+              	id="personCountry" 
                 name="perSearchCriteria.country" 
                 list="countryList"  
                 listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
         </td>	
 		<td scope="row" class="label"><label for="zip">Zip:</label></td>
- 		<td><s:textfield name="perSearchCriteria.zip"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td><s:textfield id="personZip" name="perSearchCriteria.zip"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
 	</tr>	
 	
 </table>
@@ -74,7 +84,8 @@
          <del class="btnwrapper">
             <ul class="btnrow">
                <li><li>            
-                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                     <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>  
                    </li>
                </ul>   
           </del>

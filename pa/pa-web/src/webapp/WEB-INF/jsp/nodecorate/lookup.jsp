@@ -34,6 +34,15 @@
 	    });
 	    return false;
 	}
+	
+  function formReset(){
+    document.forms[0].reset();
+    document.forms[0].orgName.value = '';
+    document.forms[0].nciOrgName.value = '';
+    document.forms[0].cityName.value='';
+    document.forms[0].countryName.value = 'USA';
+    document.forms[0].zipCode.value = '';
+    }
 </SCRIPT> 
 </head> 
 <body>
@@ -85,7 +94,8 @@
          <del class="btnwrapper">
             <ul class="btnrow">
                <li><li>            
-                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                   <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>  
                    </li>
                </ul>   
           </del>

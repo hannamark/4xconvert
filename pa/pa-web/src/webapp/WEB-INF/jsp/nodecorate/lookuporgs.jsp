@@ -21,13 +21,13 @@
 	
 	
 	function loadDiv() {
-		var orgName = document.getElementById("poOrganizations_orgSearchCriteria_name").value;
+		var orgName = document.getElementById("orgNameSearch").value;
 		//var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;	
 		var orgNumber;
-		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
-		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_city").value;
-		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_zip").value;
-		var orgState = document.getElementById("poOrganizations_orgSearchCriteria_state").value;
+		var orgCountry = document.getElementById("orgCountrySearch").value;
+		var orgCity = document.getElementById("orgCitySearch").value;
+		var orgZip = document.getElementById("orgZipSearch").value;
+		var orgState = document.getElementById("orgStateSearch").value;
 		var url = '/pa/protected/popupdisplayOrgList.action?orgName='+orgName+'&nciNumber='+orgNumber+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&stateName='+orgState;
 		
 	    var div = document.getElementById('getOrgs');   	   
@@ -39,6 +39,16 @@
 	    });
 	    return false;
 	}
+	
+	function formReset(){
+	document.forms[0].reset();
+    document.getElementById("orgNameSearch").value = '';
+    document.getElementById("orgCitySearch").value = '';
+    document.getElementById("orgStateSearch").value = '';
+    document.getElementById("orgCountrySearch").value = 'USA';
+    document.getElementById("orgZipSearch").value = '';
+ }
+    
 </SCRIPT>
 
 </head> 
@@ -54,7 +64,7 @@
             <label for="name"> <fmt:message key="popUpOrg.name"/></label>
         </td>
  		<td>
- 			<s:textfield name="orgSearchCriteria.name"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield id="orgNameSearch" name="orgSearchCriteria.name"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
 <!-- 		<td scope="row" class="label">
             <label for="nciorgname"> <fmt:message key="popUpOrg.nciorgnumber"/></label>
@@ -68,6 +78,7 @@
         </td>
         <td>
               	<s:select  
+              	id = "orgCountrySearch"
                 name="orgSearchCriteria.orgCountry" 
                 list="countryList"  
                 listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
@@ -78,13 +89,13 @@
             <label for="city"> <fmt:message key="popUpOrg.city"/></label>
         </td>
  		<td> 			
- 			<s:textfield name="orgSearchCriteria.city"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield id="orgCitySearch" name="orgSearchCriteria.city"  maxlength="200" size="100"  cssStyle="width:200px" />
 		</td>
  		<td scope="row" class="label">
             <label for="state"> State</label>
         </td>
  		<td>
- 			<s:textfield name="orgSearchCriteria.state" maxlength="75" size="20"/><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font>
+ 			<s:textfield id="orgStateSearch" name="orgSearchCriteria.state" maxlength="75" size="20"/><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font>
 		</td>
 		
 	</tr>
@@ -93,7 +104,7 @@
             <label for="zip"> <fmt:message key="popUpOrg.zip"/></label>
         </td>
  		<td>
- 			<s:textfield name="orgSearchCriteria.zip" maxlength="75" size="20"/>
+ 			<s:textfield id="orgZipSearch" name="orgSearchCriteria.zip" maxlength="75" size="20"/>
 		</td>	
 	</tr>
 	</table>
@@ -101,7 +112,8 @@
          <del class="btnwrapper">
             <ul class="btnrow">
                <li><li>            
-                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                    <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>  
                    </li>
                </ul>   
           </del>
