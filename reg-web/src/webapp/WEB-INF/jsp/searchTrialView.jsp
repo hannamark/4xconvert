@@ -285,10 +285,23 @@
 					<c:out value="${requestScope.summaryFourSponsorName }"/>
 				</td>
 		   </tr> 
-	      <tr>
-	          <td colspan="2" class="space">&nbsp;</td>
-	      </tr>
-      </c:if>          
+      </c:if>  
+      <c:if test="${requestScope.trialSummary.programCodeText.value != null}">  
+       <c:if test="${requestScope.summaryFourSponsorName == null}">             
+           <tr>
+                <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
+           </tr>
+        </c:if>
+       <tr>
+             <td scope="row" class="label"><label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label></td>
+             <td class="value">
+                <c:out value="${requestScope.trialSummary.programCodeText.value}"/>
+               </td>
+        </tr>
+        <tr>
+              <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+        </c:if>        
       <tr>
           <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>
       </tr>

@@ -100,6 +100,7 @@ public class StudyProtocolBatchDTO {
     private String summ4TTY;
     private String summ4Fax;
     private String summ4Url;
+    private String programCodeText;
     
     private String nihGrantFundingMechanism;
     private String nihGrantInstituteCode;
@@ -132,6 +133,7 @@ public class StudyProtocolBatchDTO {
     private static final int SERIAL_NUM_MIN = 5;
     private static final int SERIAL_NUM_MAX  = 6;
     private static final int ORG_NAME_MAX_LENGTH = 160;
+    private static final int PCTL = 200;
        
     /**
      * . Default Constructor
@@ -1591,6 +1593,21 @@ public class StudyProtocolBatchDTO {
      */
     public void setReasonForStudyStopped(String reasonForStudyStopped) {
         this.reasonForStudyStopped = reasonForStudyStopped;
+    }
+
+    /**
+     * @return the programCodeText
+     */
+    @org.hibernate.validator.Length(message = "Program Code Text must be 200 characters max", max = PCTL)
+    public String getProgramCodeText() {
+        return programCodeText;
+    }
+
+    /**
+     * @param programCodeText the programCodeText to set
+     */
+    public void setProgramCodeText(String programCodeText) {
+        this.programCodeText = programCodeText;
     }
 
 }

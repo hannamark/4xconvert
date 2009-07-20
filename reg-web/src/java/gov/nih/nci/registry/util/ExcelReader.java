@@ -229,6 +229,7 @@ public class ExcelReader {
         case BatchConstants.S4_FUND_TTY: batchDto.setSumm4TTY(cellValue); break;
         case BatchConstants.S4_FUND_FAX: batchDto.setSumm4Fax(cellValue); break;
         case BatchConstants.S4_FUND_URL: batchDto.setSumm4Url(cellValue); break;
+        case BatchConstants.S4_PRG_CODE_TEXT: batchDto.setProgramCodeText(cellValue); break;
         case BatchConstants.NIH_GRANT_FUND_MC: batchDto.setNihGrantFundingMechanism(cellValue); break;
         case BatchConstants.NIH_GRANT_INSTITUTE_CODE: batchDto.setNihGrantInstituteCode(cellValue); break;
         case BatchConstants.NIH_GRANT_SR_NO: batchDto.setNihGrantSrNumber(cellValue); break;

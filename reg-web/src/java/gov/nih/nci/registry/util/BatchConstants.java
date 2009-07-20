@@ -163,54 +163,56 @@ public class BatchConstants {
     /** */
     public static final int S4_FUND_URL = 75;
     /** */
+    public static final int S4_PRG_CODE_TEXT = 76;
+    /** */
     
-    public static final int NIH_GRANT_FUND_MC = 76;
+    public static final int NIH_GRANT_FUND_MC = 77;
     /** */
-    public static final int NIH_GRANT_INSTITUTE_CODE = 77;
+    public static final int NIH_GRANT_INSTITUTE_CODE = 78;
     /** */
-    public static final int NIH_GRANT_SR_NO = 78;
+    public static final int NIH_GRANT_SR_NO = 79;
     /** */
-    public static final int NIH_GRANT_NCI_DIV_CODE = 79;
+    public static final int NIH_GRANT_NCI_DIV_CODE = 80;
     /** */
-    public static final int CURRENT_TRIAL_STATUS = 80;
+    public static final int CURRENT_TRIAL_STATUS = 81;
     /** */
-    public static final int REASON_FOR_STUDY_STOPPED = 81;
+    public static final int REASON_FOR_STUDY_STOPPED = 82;
     /** */
-    public static final int CURRENT_TRIAL_STATUS_DATE = 82;
+    public static final int CURRENT_TRIAL_STATUS_DATE = 83;
     /** */
-    public static final int STUDY_START_DATE = 83;
+    public static final int STUDY_START_DATE = 84;
     /** */
-    public static final int STUDY_START_DATE_TYPE = 84;
+    public static final int STUDY_START_DATE_TYPE = 85;
     /** */
-    public static final int PRIMARY_COMP_DATE = 85;
+    public static final int PRIMARY_COMP_DATE = 86;
     /** */
-    public static final int PRIMARY_COMP_DATE_TYPE = 86;
+    public static final int PRIMARY_COMP_DATE_TYPE = 87;
     /** */
-    public static final int IND_TYPE = 87;
+    public static final int IND_TYPE = 88;
     /** */
-    public static final int IND_NUMBER = 88;
+    public static final int IND_NUMBER = 89;
     /** */
-    public static final int IND_GRANTOR = 89;
+    public static final int IND_GRANTOR = 90;
     /** */
-    public static final int IND_HOLDER_TYPE = 90;
+    public static final int IND_HOLDER_TYPE = 91;
     /** */
-    public static final int IND_NIH_INSTITUTION = 91;
+    public static final int IND_NIH_INSTITUTION = 92;
     /** */
-    public static final int IND_NCI_DIV_CODE = 92;
+    public static final int IND_NCI_DIV_CODE = 93;
     /** */
-    public static final int IND_HAS_EXPANDED_ACCESS = 93;
+    public static final int IND_HAS_EXPANDED_ACCESS = 94;
     /** */
-    public static final int IND_EXPANED_ACCESS_STATUS = 94;
+    public static final int IND_EXPANED_ACCESS_STATUS = 95;
     /** */
-    public static final int PROTOCOL_DOC_FILE_NAME = 95;
+    public static final int PROTOCOL_DOC_FILE_NAME = 96;
     /** */
-    public static final int IRB_APPROVAL_DOC_FILE_NAME = 96;
+    public static final int IRB_APPROVAL_DOC_FILE_NAME = 97;
     /** */
-    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 97;
+    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 98;
     /** */
-    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 98;
+    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 99;
     /** */
-    public static final int OTHER_TRIAL_DOC_FILE_NAME = 99;
+    public static final int OTHER_TRIAL_DOC_FILE_NAME = 100;
     /** */
     public static final int COUNTRY_SIZE = 3;
     /** */

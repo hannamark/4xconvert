@@ -51,6 +51,8 @@ public class TrialDTO {
     private String localAmendmentNumber;
     private String amendmentDate;
     private String identifier;
+    private String programCodeText;
+   
     private List<TrialFundingWebDTO> fundingDtos;
     private List<TrialDocumentWebDTO> docDtos;
     private List <TrialIndIdeDTO> indIdeDtos;
@@ -530,5 +532,16 @@ public class TrialDTO {
     public void setIndIdeDtos(List<TrialIndIdeDTO> indIdeDtos) {
         this.indIdeDtos = indIdeDtos;
     }
-    
+    /**
+     * @return the programCodeText
+     */
+    public String getProgramCodeText() {
+        return programCodeText;
+    }
+    /**
+     * @param programCodeText the programCodeText to set
+     */
+    public void setProgramCodeText(String programCodeText) {
+        this.programCodeText = programCodeText;
+    } 
 }

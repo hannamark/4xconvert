@@ -336,6 +336,7 @@ public class BatchCreateProtocols {
                 trialDTO.setPhaseOtherText(batchDTO.getPhaseOtherValueSp());
             }
         } 
+        trialDTO.setProgramCodeText(batchDTO.getProgramCodeText());
         return trialDTO;
     }
 

@@ -285,7 +285,7 @@ var winprint=window.open("","",sOption);
                 <td colspan="2" class="space">&nbsp;</td>
            </tr>
        </c:if>
-       <c:if test="${trialDTO.summaryFourOrgName != ''}">             
+       <c:if test="${fn:trim(trialDTO.summaryFourOrgName) != ''}">             
            <tr>
                 <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
            </tr>
@@ -309,10 +309,23 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.summaryFourOrgName }"/>
                 </td>
            </tr> 
-          <tr>
+      </c:if>
+        <c:if test="${trialDTO.programCodeText != ''}">   
+             <c:if test="${fn:trim(trialDTO.summaryFourOrgName) == ''}">             
+                <tr>
+                    <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
+                </tr>
+            </c:if>
+           <tr>
+             <td scope="row" class="label"><label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label></td>
+             <td class="value">
+                <c:out value="${trialDTO.programCodeText}"/>
+               </td>
+            </tr>
+             <tr>
               <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-      </c:if>          
+            </tr>
+            </c:if>          
       <tr>
           <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>
       </tr>

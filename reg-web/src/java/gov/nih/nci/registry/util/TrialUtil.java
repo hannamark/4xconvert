@@ -87,6 +87,7 @@ public class TrialUtil {
         trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
         trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
+        trialDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
     }
 
     /**
@@ -343,6 +344,7 @@ public class TrialUtil {
         isoDto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode
                 .getByCode(trialDTO.getCompletionDateType())));
         isoDto.setStudyProtocolType(StConverter.convertToSt(trialDTO.getTrialType()));
+        isoDto.setProgramCodeText(StConverter.convertToSt(trialDTO.getProgramCodeText()));
         return isoDto;
     }
     /**

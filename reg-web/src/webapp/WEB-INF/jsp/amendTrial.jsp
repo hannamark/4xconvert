@@ -543,8 +543,17 @@ function toggledisplay2 (it) {
 						</div>		
 				</td>
 			</tr>  
-                         			                    
-          
+          <tr>
+             <td scope="row" class="label"><label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label></td>
+             <td class="value">
+                <s:textfield name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
+                <span class="formErrorMsg">
+                    <s:fielderror>
+                            <s:param>trialDTO.programCodeText</s:param>
+                    </s:fielderror>                            
+                 </span>
+               </td>
+            </tr>
           <tr>  <td colspan="2" class="space">&nbsp;</td></tr>
           <table class="data2">
           <tr>
