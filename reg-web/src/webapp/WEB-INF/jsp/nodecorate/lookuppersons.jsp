@@ -17,13 +17,13 @@
 		window.top.hidePopWin(true); 
 	}
 	function loadDiv() {
-		var firstName = document.getElementById("poOrganizations_personDTO_firstName").value;
-		var lastName = document.getElementById("poOrganizations_personDTO_lastName").value;
-		var email = document.getElementById("poOrganizations_personDTO_email").value;		
-		var city = document.getElementById("poOrganizations_personDTO_city").value;
-		var state = document.getElementById("poOrganizations_personDTO_state").value;
-		var country = document.getElementById("poOrganizations_personDTO_country").value;
-		var zip = document.getElementById("poOrganizations_personDTO_zip").value;		
+		var firstName = document.getElementById("firstName").value;
+		var lastName = document.getElementById("lastName").value;
+		var email = document.getElementById("email").value;		
+		var city = document.getElementById("city").value;
+		var state = document.getElementById("state").value;
+		var country = document.getElementById("country").value;
+		var zip = document.getElementById("zip").value;		
 		var ctepid = document.forms[0].ctepId.value;   
 		var url = '/registry/protected/popupdisplayPersonsList.action?firstName='+firstName+'&lastName='+lastName+'&email='+email+'&ctepId='+ctepid+'&state='+state+'&country='+country+'&zip='+zip+'&city='+city;
 	    var div = document.getElementById('getPersons');   	   

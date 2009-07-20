@@ -10,29 +10,29 @@
 		window.top.hidePopWin(true); 
 	}	
 	function createOrg(){
-		var orgName = document.getElementById("poOrganizations_createOrg_orgName;").value;
-		var stAddress = document.getElementById("poOrganizations_createOrg_orgStreetAddress").value;
-		var city = document.getElementById("poOrganizations_createOrg_orgCity;").value;
-		var state = document.getElementById("poOrganizations_createOrg_orgState").value;
-		var zip = document.getElementById("poOrganizations_createOrg_orgZip;").value;
-		var country = document.getElementById("poOrganizations_createOrg_orgCountry;").value;
-		var phone = document.getElementById("poOrganizations_createOrg_orgPhone").value;
-		var email = document.getElementById("poOrganizations_createOrg_orgEmail;").value;
-		var orgUrl = document.getElementById("poOrganizations_createOrg_orgURL;").value;
-		var tty = document.getElementById("poOrganizations_createOrg_orgTTY;").value;
-		var fax = document.getElementById("poOrganizations_createOrg_orgFax;").value;
+		var orgName = document.getElementById("orgName").value;
+		var stAddress = document.getElementById("orgAddress").value;
+		var city = document.getElementById("orgCity").value;
+		var state = document.getElementById("orgState").value;
+		var zip = document.getElementById("orgZip").value;
+		var country = document.getElementById("orgCountry").value;
+		var phone = document.getElementById("orgPhone").value;
+		var email = document.getElementById("orgEmail").value;
+		var orgUrl = document.getElementById("orgUrl").value;
+		var tty = document.getElementById("orgTty").value;
+		var fax = document.getElementById("orgFax").value;
 		var url = '/registry/protected/popupcreateOrganization.action?orgName='+orgName+'&orgStAddress='+stAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone+'&email='+email+'&tty='+tty+'&url='+orgUrl+'&fax='+fax;
 		var div = document.getElementById('getOrgs'); 
 		div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
 		ajaxCall(div, url);
 	}
 	function loadDiv() {
-		var orgName = document.getElementById("poOrganizations_orgSearchCriteria_orgName").value;		
-		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
-		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_orgCity").value;
-		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;	
-		var ctepid = document.getElementById("poOrganizations_orgSearchCriteria_ctepId").value;		
-		var orgState = document.getElementById("poOrganizations_orgSearchCriteria_orgState").value;
+		var orgName = document.getElementById("orgNameSearch").value;		
+		var orgCountry = document.getElementById("orgCountrySearch").value;
+		var orgCity = document.getElementById("orgCitySearch").value;
+		var orgZip = document.getElementById("orgZipSearch").value;	
+		var ctepid = document.getElementById("orgCtepIdSearch").value;		
+		var orgState = document.getElementById("orgStateSearch").value;
 		var url = '/registry/protected/popupdisplayOrgList.action?orgName='+orgName+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&ctepid='+ctepid+'&stateName='+orgState;
 	    var div = document.getElementById('getOrgs');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
