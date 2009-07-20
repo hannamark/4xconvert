@@ -348,10 +348,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createOverallContact(spDTO.getIdentifier(), doc , root);
             createLocation(spDTO , doc , root);
             appendElement(root ,  createElement("keyword", spDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD , doc));
+            Ts tsVerificationDate = spDTO.getRecordVerificationDate();
+            if (tsVerificationDate == null || tsVerificationDate.getValue() == null) {
             DocumentWorkflowStatusDTO dto = documentWorkflowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
+              tsVerificationDate = TsConverter.convertToTs(IvlConverter.convertTs().
+                      convertLow(dto.getStatusDateRange()));
+            }
             appendElement(root ,  createElement("verification_date", PAUtil.convertTsToFormarttedDate(
-                    TsConverter.convertToTs(IvlConverter.convertTs().convertLow(dto.getStatusDateRange())),
-                        "yyyy-MM"), doc));
+                    tsVerificationDate, "yyyy-MM"), doc));
 
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();
