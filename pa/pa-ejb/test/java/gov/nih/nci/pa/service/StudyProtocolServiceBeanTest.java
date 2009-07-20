@@ -102,6 +102,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -138,7 +139,8 @@ public class StudyProtocolServiceBeanTest {
 
     @Test(expected=PAException.class)
     public void nullParameter3() throws Exception {
-        remoteEjb.search(null);
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        remoteEjb.search(null,limit);
     }
 
     @Test(expected=PAException.class)

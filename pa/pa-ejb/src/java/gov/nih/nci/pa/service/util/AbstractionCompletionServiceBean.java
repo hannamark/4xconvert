@@ -273,7 +273,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
     enforceTrialDescriptionDetails(studyProtocolDTO, abstractionList);
     enforceOutcomeMeasure(studyProtocolIi, abstractionList);
-    enforceInterventions(studyProtocolIi, abstractionList);
+    enforceInterventions(studyProtocolIi, abstractionList, abstractionWarnList);
     enforceTreatingSite(studyProtocolIi, abstractionList);
     enforceStudyContactNullification(studyProtocolIi, abstractionWarnList);
     enforceStudyParticipationNullification(studyProtocolIi, abstractionWarnList);
@@ -821,7 +821,8 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
       return dup;
   }
 
-  private void enforceInterventions(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
+  private void enforceInterventions(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList,
+          List<AbstractionCompletionDTO> abstractionWarnList)
   throws PAException {
     List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolIi);
     boolean interventionsList = false;
@@ -832,7 +833,7 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
         //validation rules for inactive interventions
         InterventionDTO iDto = interventionSvc.get(pa.getInterventionIdentifier());
         if (iDto.getStatusCode().getCode().equalsIgnoreCase("INACTIVE")) {
-            abstractionList.add(createError("Warning", "Select Interventions from Scientific Data menu.",
+            abstractionWarnList.add(createError("Warning", "Select Interventions from Scientific Data menu.",
             "Intervention '" + iDto.getName().getValue() + "' status has been set to inactive"
             + ", Please select another Intervention."));
         }

@@ -575,7 +575,8 @@ import org.hibernate.criterion.Example;
                 session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
             StudyRelationshipDTO srDto = new StudyRelationshipDTO();
             srDto.setSourceStudyProtocolIdentifier(IiConverter.convertToIi(studyProtocol.getId()));
-            List<StudyRelationshipDTO> dtos = studyRelationshipService.search(srDto);
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+            List<StudyRelationshipDTO> dtos = studyRelationshipService.search(srDto, limit);
 
             for (StudyRelationshipDTO dto : dtos) {
                 targetSpIi = dto.getTargetStudyProtocolIdentifier();

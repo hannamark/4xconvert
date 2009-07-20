@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -88,6 +90,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -222,12 +225,19 @@ ServletResponseAware {
      * @throws PAException exception
      */
     @Override
+    @SuppressWarnings({"PMD" })
     protected void loadListForm() throws PAException {
         Ii studyProtocolIi =
                 (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
 
         StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
-        List<StudyProtocolDTO> spList = studyProtocolSvc.search(spDTO);
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        List<StudyProtocolDTO> spList;
+        try {
+            spList = studyProtocolSvc.search(spDTO, limit);
+        } catch (TooManyResultsException e) {
+             throw new PAException(e.getMessage());
+        }
         List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
         if (spList != null) {
             for (StudyProtocolDTO sp : spList) {
