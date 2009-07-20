@@ -99,6 +99,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -372,7 +373,7 @@ public class StudyProtocolServiceBeanTest {
         assertNotNull(ii.getExtension());
         ObservationalStudyProtocolDTO saved =  remoteEjb.getObservationalStudyProtocol(ii);
         
-        saved.setMaximumTargetAccrualNumber(IntConverter.convertToInt(1234));
+        saved.setTargetAccuralNumber(IvlConverter.convertInt().convertToIvl(1234, null));
         
         ObservationalStudyProtocolDTO update =  remoteEjb.updateObservationalStudyProtocol(saved);
 
@@ -382,7 +383,7 @@ public class StudyProtocolServiceBeanTest {
         assertEquals(update.getBiospecimenDescription().getValue(),saved.getBiospecimenDescription().getValue());
         assertEquals(update.getBiospecimenRetentionCode().getCode(),saved.getBiospecimenRetentionCode().getCode());
         assertEquals(update.getNumberOfGroups().getValue() ,saved.getNumberOfGroups().getValue());
-        assertEquals(update.getMaximumTargetAccrualNumber().getValue() ,saved.getMaximumTargetAccrualNumber().getValue());
+        assertEquals(IvlConverter.convertInt().convertLow(update.getTargetAccuralNumber()).intValue() ,IvlConverter.convertInt().convertLow(saved.getTargetAccuralNumber()).intValue());
         assertNotNull(update.getIdentifier().getExtension());
     }
     @Test

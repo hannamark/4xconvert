@@ -94,7 +94,7 @@ public class OSDesignDetailsWebDTO {
     private String studyModelOtherText;
     private String timePerspectiveCode;
     private String timePerspectiveOtherText;
-    private String maximumTargetAccrualNumber;
+    private String minimumTargetAccrualNumber;
     
     /**
      * @return biospecimenDescription
@@ -182,15 +182,16 @@ public class OSDesignDetailsWebDTO {
         this.timePerspectiveOtherText = timePerspectiveOtherText;
     }
     /**
-     * @return maximumTargetAccrualNumber
+     * @return the minimumTargetAccrualNumber
      */
-    public String getMaximumTargetAccrualNumber() {
-        return maximumTargetAccrualNumber;
+    public String getMinimumTargetAccrualNumber() {
+        return minimumTargetAccrualNumber;
     }
     /**
-     * @param maximumTargetAccrualNumber maximumTargetAccrualNumber
+     * @param minimumTargetAccrualNumber the minimumTargetAccrualNumber to set
      */
-    public void setMaximumTargetAccrualNumber(String maximumTargetAccrualNumber) {
-        this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
+    public void setMinimumTargetAccrualNumber(String minimumTargetAccrualNumber) {
+        this.minimumTargetAccrualNumber = minimumTargetAccrualNumber;
     }
+    
 }

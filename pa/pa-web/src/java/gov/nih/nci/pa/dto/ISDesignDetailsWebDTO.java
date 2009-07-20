@@ -96,7 +96,7 @@ public class ISDesignDetailsWebDTO {
     private String primaryPurposeOtherText;
     private String phaseOtherText;
     private String blindingRoleCode;
-    private String maximumTargetAccrualNumber;
+    private String minimumTargetAccrualNumber;
     private String studyClassificationCode;
     
     private String name;
@@ -220,18 +220,18 @@ public class ISDesignDetailsWebDTO {
     public void setBlindingRoleCode(String blindingRoleCode) {
         this.blindingRoleCode = blindingRoleCode;
     }
+    
     /**
-     * @return maximumTargetAccrualNumber
+     * @return the minimumTargetAccrualNumber
      */
-    public String getMaximumTargetAccrualNumber() {
-        return maximumTargetAccrualNumber;
+    public String getMinimumTargetAccrualNumber() {
+        return minimumTargetAccrualNumber;
     }
     /**
-     * @param maximumTargetAccrualNumber mTargetAccrualNo
+     * @param minimumTargetAccrualNumber the minimumTargetAccrualNumber to set
      */
-    public void setMaximumTargetAccrualNumber(
-            String maximumTargetAccrualNumber) {
-        this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
+    public void setMinimumTargetAccrualNumber(String minimumTargetAccrualNumber) {
+        this.minimumTargetAccrualNumber = minimumTargetAccrualNumber;
     }
     /**
      * @return studyClassificationCode

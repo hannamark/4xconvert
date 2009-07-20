@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -177,8 +178,10 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
             ispDTO.setPhaseOtherText(
                     StConverter.convertToSt(webDTO.getPhaseOtherText()));
-            ispDTO.setMaximumTargetAccrualNumber(
-                    IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
+          //  ispDTO.setMaximumTargetAccrualNumber(
+            //        IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
+            ispDTO.setTargetAccuralNumber(
+                    IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
             ispDTO.setStudyClassificationCode(
                     CdConverter.convertToCd(StudyClassificationCode.getByCode(webDTO.getStudyClassificationCode())));
 
@@ -254,14 +257,14 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         if (PAUtil.isEmpty(webDTO.getAllocationCode())) {
             addFieldError("webDTO.allocationCode", getText("error.allocation"));
         }
-        if (PAUtil.isEmpty(webDTO.getMaximumTargetAccrualNumber())) {
-            addFieldError("webDTO.maximumTargetAccrualNumber", getText("error.target.enrollment"));
+        if (PAUtil.isEmpty(webDTO.getMinimumTargetAccrualNumber())) {
+            addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.target.enrollment"));
         }
-        if (PAUtil.isNotEmpty(webDTO.getMaximumTargetAccrualNumber())) {
+        if (PAUtil.isNotEmpty(webDTO.getMinimumTargetAccrualNumber())) {
             try {
-                Integer.valueOf(webDTO.getMaximumTargetAccrualNumber());
+                Integer.valueOf(webDTO.getMinimumTargetAccrualNumber());
             } catch (NumberFormatException e) {
-                addFieldError("webDTO.maximumTargetAccrualNumber", getText("error.numeric"));
+                addFieldError("webDTO.mimimumTargetAccrualNumber", getText("error.numeric"));
             }
         }
     }
@@ -322,9 +325,9 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     }
                 }
             }
-            if (ispDTO.getMaximumTargetAccrualNumber().getValue() != null) {
-                dto.setMaximumTargetAccrualNumber(
-                        ispDTO.getMaximumTargetAccrualNumber().getValue().toString());
+            if (ispDTO.getTargetAccuralNumber().getLow().getValue() != null) {
+                dto.setMinimumTargetAccrualNumber(
+                        ispDTO.getTargetAccuralNumber().getLow().getValue().toString());
             }
             if (ispDTO.getStudyClassificationCode() != null) {
                 dto.setStudyClassificationCode(ispDTO.getStudyClassificationCode().getCode());

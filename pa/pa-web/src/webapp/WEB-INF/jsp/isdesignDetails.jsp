@@ -32,7 +32,22 @@ function showAlert() {
 			alert("Please select a different Trial Phase");
 		}
 }
-
+function checkValue() {
+    var input="webDTO.minimumTargetAccrualNumber";
+    var conf = false;
+    var inputElement = document.forms[0].elements[input];
+    
+        if (inputElement.value == "0")
+        {
+            conf = confirm("Please confirm if Target Enrollment 0 is OK");
+            if(conf != true) {
+              inputElement.value='';
+              inputElement.focus();
+            }
+            
+        }
+       return conf; 
+}
 function ChecksCount(name) {
 
 var input2="webDTO.blindingSchemaCode";
@@ -69,8 +84,11 @@ var inputElement2 = document.forms[0].elements[input2];
 
 
 function handleAction(){
- document.forms[0].action="interventionalStudyDesignupdate.action";
- document.forms[0].submit(); 
+ var conf = checkValue();
+ if(conf == true) {
+  document.forms[0].action="interventionalStudyDesignupdate.action";
+  document.forms[0].submit();
+ } 
 } 
 function tooltip() {
 		BubbleTips.activateTipOn("acronym");
@@ -222,10 +240,10 @@ function tooltip() {
 		<td scope="row" class="label"><label>
 	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">*</span></label></td>
 		<td>
-         	<s:textfield name="webDTO.maximumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
+         	<s:textfield name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px" />
          	<span class="formErrorMsg"> 
              <s:fielderror>
-               <s:param>webDTO.maximumTargetAccrualNumber</s:param>
+               <s:param>webDTO.minimumTargetAccrualNumber</s:param>
              </s:fielderror>                            
           </span>
         </td>

@@ -338,7 +338,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createPrimaryOutcome(somDtos , doc , root);
             createSecondaryOutcome(somDtos , doc , root);
             createCondition(studyProtocolIi, doc, root);
-            appendElement(root ,  createElement("enrollment", spDTO.getMaximumTargetAccrualNumber(), doc));
+            appendElement(root ,  createElement("enrollment", 
+                    IvlConverter.convertInt().convertLowToString(spDTO.getTargetAccuralNumber()), doc));
             appendElement(root ,  createElement("enrollment_type", "anticipated", doc));
             createArmGroup(spDTO, doc, root);
             createIntervention(spDTO.getIdentifier(), doc, root);

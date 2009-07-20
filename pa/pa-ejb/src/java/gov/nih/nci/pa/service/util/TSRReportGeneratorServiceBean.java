@@ -741,7 +741,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     } // if
     html.append(appendData("Allocation", getData(ispDTO.getAllocationCode(), true), true , true));
     html.append(appendData("Study Classification", getData(ispDTO.getStudyClassificationCode(), true), true , true));
-    html.append(appendData("Target Enrollment", getData(ispDTO.getMaximumTargetAccrualNumber(), true), true , true));
+    html.append(appendData("Target Enrollment", getData(ispDTO.getTargetAccuralNumber().getLow(), true), true , true));
   }
 
   /**

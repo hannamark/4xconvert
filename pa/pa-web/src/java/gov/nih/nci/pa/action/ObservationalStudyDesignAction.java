@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -149,8 +150,10 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                     StConverter.convertToSt(webDTO.getTimePerspectiveOtherText()));  
             ospFromDatabaseDTO.setBiospecimenDescription(
                     StConverter.convertToSt(webDTO.getBiospecimenDescription()));  
-            ospFromDatabaseDTO.setMaximumTargetAccrualNumber(
-                    IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
+           /* ospFromDatabaseDTO.setMaximumTargetAccrualNumber(
+                    IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));*/
+            ospFromDatabaseDTO.setTargetAccuralNumber(
+                    IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
             PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospFromDatabaseDTO);
             detailsQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -209,15 +212,15 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                         getText("error.numeric"));
             }
         }
-        if (PAUtil.isEmpty(webDTO.getMaximumTargetAccrualNumber())) {
-            addFieldError("webDTO.maximumTargetAccrualNumber",
+        if (PAUtil.isEmpty(webDTO.getMinimumTargetAccrualNumber())) {
+            addFieldError("webDTO.minimumTargetAccrualNumber",
                     getText("error.target.enrollment"));
         }
-        if (PAUtil.isNotEmpty(webDTO.getMaximumTargetAccrualNumber())) {
+        if (PAUtil.isNotEmpty(webDTO.getMinimumTargetAccrualNumber())) {
             try {
-                Integer.valueOf(webDTO.getMaximumTargetAccrualNumber());
+                Integer.valueOf(webDTO.getMinimumTargetAccrualNumber());
             } catch (NumberFormatException e) {
-                addFieldError("webDTO.maximumTargetAccrualNumber",
+                addFieldError("webDTO.minimumTargetAccrualNumber",
                         getText("error.numeric"));
             }
         }
@@ -252,9 +255,9 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                 dto.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue().toString());
             }                
 
-            if (ospDTO.getMaximumTargetAccrualNumber().getValue() != null) {
-                dto.setMaximumTargetAccrualNumber(ospDTO.getMaximumTargetAccrualNumber().getValue().toString());
-            }               
+            if (ospDTO.getTargetAccuralNumber().getLow().getValue() != null) {
+                dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccuralNumber().getLow().getValue().toString());
+            }
 
             if (ospDTO.getStudyModelOtherText() != null) {
                 dto.setStudyModelOtherText(ospDTO.getStudyModelOtherText().getValue());

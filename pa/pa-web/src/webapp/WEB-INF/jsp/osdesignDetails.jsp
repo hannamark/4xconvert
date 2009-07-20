@@ -142,10 +142,10 @@ function tooltip() {
 		<td scope="row" class="label"><label>
 	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">*</span></label></td>
 		<td>
-         	<s:textfield name="webDTO.maximumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
+         	<s:textfield name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
          	<span class="formErrorMsg"> 
              <s:fielderror>
-               <s:param>webDTO.maximumTargetAccrualNumber</s:param>
+               <s:param>webDTO.minimumTargetAccrualNumber</s:param>
              </s:fielderror>                            
           </span>
         </td>

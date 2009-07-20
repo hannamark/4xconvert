@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -151,8 +152,10 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setReviewBoardApprovalRequiredIndicator(
                 BlConverter.convertToBl(studyProtocol.getReviewBoardApprovalRequiredIndicator()));
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(studyProtocol.getOfficialTitle()));
-        studyProtocolDTO.setMaximumTargetAccrualNumber(
-                IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));
+        /*studyProtocolDTO.setMaximumTargetAccrualNumber(
+                IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));*/
+        studyProtocolDTO.setTargetAccuralNumber(
+                IvlConverter.convertInt().convertToIvl(studyProtocol.getMinimumTargetAccrualNumber(), null));
         studyProtocolDTO.setIdentifier(IiConverter.converToStudyProtocolIi(studyProtocol.getId()));
         studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(studyProtocol.getPhaseCode()));
         studyProtocolDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocol.getPhaseOtherText()));
@@ -224,8 +227,11 @@ public class StudyProtocolConverter {
                BlConverter.covertToBoolean(studyProtocolDTO.getFdaRegulatedIndicator()));
        studyProtocol.setReviewBoardApprovalRequiredIndicator(
                BlConverter.covertToBoolean(studyProtocolDTO.getReviewBoardApprovalRequiredIndicator()));
-       studyProtocol.setMaximumTargetAccrualNumber(
-               IntConverter.convertToInteger(studyProtocolDTO.getMaximumTargetAccrualNumber()));
+       studyProtocol.setMaximumTargetAccrualNumber(null);
+       if (studyProtocolDTO.getTargetAccuralNumber() != null) {
+       studyProtocol.setMinimumTargetAccrualNumber(
+               IvlConverter.convertInt().convertLow(studyProtocolDTO.getTargetAccuralNumber()));
+       }
        studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));
        if (studyProtocolDTO.getPhaseCode() != null) {
            studyProtocol.setPhaseCode(PhaseCode.getByCode(studyProtocolDTO.getPhaseCode().getCode()));

@@ -136,7 +136,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setNumberOfInterventionGroups("1ds");
         webDTO.setBlindingSchemaCode("");
         webDTO.setAllocationCode("");
-        webDTO.setMaximumTargetAccrualNumber("maximumTargetAccrualNumber");
+        webDTO.setMinimumTargetAccrualNumber("minimumTargetAccrualNumber");
         webDTO.setName("Name");
         webDTO.setTimeFrame("designConfigurationCode");
         webDTO.setSafetyIndicator("1");
@@ -155,7 +155,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setNumberOfInterventionGroups("");
         webDTO.setBlindingSchemaCode("");
         webDTO.setAllocationCode("");
-        webDTO.setMaximumTargetAccrualNumber("");
+        webDTO.setMinimumTargetAccrualNumber("");
         webDTO.setName("Name");
         webDTO.setTimeFrame("designConfigurationCode");
         webDTO.setSafetyIndicator("1");
@@ -174,7 +174,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setNumberOfInterventionGroups("1");
         webDTO.setBlindingSchemaCode("blindingSchemaCode");
         webDTO.setAllocationCode("allocationCode");
-        webDTO.setMaximumTargetAccrualNumber("1");
+        webDTO.setMinimumTargetAccrualNumber("1");
         webDTO.setName("Name");
         webDTO.setTimeFrame("designConfigurationCode");
         webDTO.setSafetyIndicator("1");
@@ -197,7 +197,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setNumberOfInterventionGroups("1");
         webDTO.setBlindingSchemaCode("Open");
         webDTO.setAllocationCode("allocationCode");
-        webDTO.setMaximumTargetAccrualNumber("1");
+        webDTO.setMinimumTargetAccrualNumber("1");
         webDTO.setName("Name");
         webDTO.setTimeFrame("designConfigurationCode");
         webDTO.setSafetyIndicator("1");
@@ -235,7 +235,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setNumberOfInterventionGroups("1");
         webDTO.setBlindingSchemaCode("blindingSchemaCode");
         webDTO.setAllocationCode("allocationCode");
-        webDTO.setMaximumTargetAccrualNumber("1");
+        webDTO.setMinimumTargetAccrualNumber("1");
         webDTO.setName("Name");
         webDTO.setTimeFrame("designConfigurationCode");
         webDTO.setSafetyIndicator("1");

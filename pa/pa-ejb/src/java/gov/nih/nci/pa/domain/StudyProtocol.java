@@ -170,6 +170,8 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
 
 
+    private Integer minimumTargetAccrualNumber;
+    
     /** 
      * @return accrualReportingMethodCode
      */
@@ -829,5 +831,18 @@ public class StudyProtocol extends AbstractEntity {
         this.programCodeText = programCodeText;
     }
     
+    /**
+     * @return the minimumTargetAccrualNumber
+     */
+    @Column(name = "MIN_TARGET_ACCRUAL_NUM")
+    public Integer getMinimumTargetAccrualNumber() {
+        return minimumTargetAccrualNumber;
+    }
+    /**
+     * @param minimumTargetAccrualNumber the minimumTargetAccrualNumber to set
+     */
+    public void setMinimumTargetAccrualNumber(Integer minimumTargetAccrualNumber) {
+        this.minimumTargetAccrualNumber = minimumTargetAccrualNumber;
+    }
 }
 

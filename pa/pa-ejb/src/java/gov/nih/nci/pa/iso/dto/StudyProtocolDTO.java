@@ -58,6 +58,7 @@ import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
@@ -83,7 +84,6 @@ public class StudyProtocolDTO extends BaseDTO {
     private Bl fdaRegulatedIndicator;
     private Bl reviewBoardApprovalRequiredIndicator;
     private St officialTitle;
-    private Int maximumTargetAccrualNumber;
     private Cd phaseCode;
     private St phaseOtherText;
     private Ts primaryCompletionDate;
@@ -108,6 +108,8 @@ public class StudyProtocolDTO extends BaseDTO {
     private Cd amendmentReasonCode;
     private Int submissionNumber;
     private St programCodeText;
+   private Ivl<Int> targetAccuralNumber;
+    
     /**
      * 
      * @return acronym
@@ -237,22 +239,6 @@ public class StudyProtocolDTO extends BaseDTO {
     public void setReviewBoardApprovalRequiredIndicator(
             Bl reviewBoardApprovalRequiredIndicator) {
         this.reviewBoardApprovalRequiredIndicator = reviewBoardApprovalRequiredIndicator;
-    }
-
-    /**
-     * 
-     * @return maximumTargetAccrualNumber
-     */
-    public Int getMaximumTargetAccrualNumber() {
-        return maximumTargetAccrualNumber;
-    }
-
-    /**
-     * 
-     * @param maximumTargetAccrualNumber maximumTargetAccrualNumber
-     */
-    public void setMaximumTargetAccrualNumber(Int maximumTargetAccrualNumber) {
-        this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
     }
 
     /**
@@ -615,7 +601,6 @@ return submissionNumber;
 public void setSubmissionNumber(Int submissionNumber) {
 this.submissionNumber = submissionNumber;
 }
-
 /**
  * @return the programCodeText
  */
@@ -628,6 +613,20 @@ public St getProgramCodeText() {
  */
 public void setProgramCodeText(St programCodeText) {
     this.programCodeText = programCodeText;
+}
+
+/**
+ * @return the targetAccuralNumber
+ */
+public Ivl<Int> getTargetAccuralNumber() {
+    return targetAccuralNumber;
+}
+
+/**
+ * @param targetAccuralNumber the targetAccuralNumber to set
+ */
+public void setTargetAccuralNumber(Ivl<Int> targetAccuralNumber) {
+    this.targetAccuralNumber = targetAccuralNumber;
 }
     
     
