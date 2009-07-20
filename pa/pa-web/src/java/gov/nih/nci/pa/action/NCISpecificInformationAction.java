@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
@@ -189,6 +190,8 @@ public class NCISpecificInformationAction extends ActionSupport {
             // Step1 : update values to StudyProtocol
             spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
+            spDTO.setProgramCodeText(StConverter.convertToSt(nciSpecificInformationWebDTO.getProgramCodeText()));
+            
             // Step2 : update values to StudyResourcing
             srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
@@ -278,8 +281,13 @@ public class NCISpecificInformationAction extends ActionSupport {
     private NCISpecificInformationWebDTO setNCISpecificDTO(StudyProtocolDTO spDTO, StudyResourcingDTO srDTO) {
         NCISpecificInformationWebDTO nciSpDTO = new NCISpecificInformationWebDTO();
         // Step2 : Assign the values to the action form
-        if (spDTO != null && spDTO.getAccrualReportingMethodCode() != null) {
-            nciSpDTO.setAccrualReportingMethodCode(spDTO.getAccrualReportingMethodCode().getCode());
+        if (spDTO != null) {
+            if (spDTO.getAccrualReportingMethodCode() != null) {
+                nciSpDTO.setAccrualReportingMethodCode(spDTO.getAccrualReportingMethodCode().getCode());
+            }
+            if (spDTO.getProgramCodeText() != null) {
+                nciSpDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
+            }
         }
         if (srDTO != null) {
             if (srDTO.getTypeCode() != null) {

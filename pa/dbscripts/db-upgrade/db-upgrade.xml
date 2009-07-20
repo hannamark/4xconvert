@@ -108,4 +108,8 @@
             <comment>execute registry_userColumnAdd.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/registry_userColumnAdd.sql"/>
     </changeSet>
+	<changeSet id="26" author="Vrushali">
+            <comment>execute StudyProtocolAddPrgCodeTxtCol.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/StudyProtocolAddPrgCodeTxtCol.sql"/>
+    </changeSet>
 </databaseChangeLog>

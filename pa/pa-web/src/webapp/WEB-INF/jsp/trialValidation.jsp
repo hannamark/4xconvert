@@ -203,6 +203,19 @@
         </td>
         
     </tr>
+    <tr>
+        <td scope="row" class="label">
+        <label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
+        </td>
+        <td class="value">
+            <s:textfield name="gtdDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
+            <span class="formErrorMsg">
+                <s:fielderror>
+                    <s:param>gtdDTO.programCodeText</s:param>
+                </s:fielderror>                            
+             </span>
+        </td>
+    </tr>
     <c:if test="${gtdDTO.submissionNumber > 1}">
     <tr>
         <th colspan="2"> Amendment Information </th>

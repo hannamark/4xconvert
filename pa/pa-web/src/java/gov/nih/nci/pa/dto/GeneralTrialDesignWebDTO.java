@@ -130,6 +130,7 @@ public class GeneralTrialDesignWebDTO {
     private String amendmentReasonCode;
     private Integer submissionNumber;
     private String studyProtocolId;
+    private String programCodeText;
     /**
      * 
      * @return acronym acronym
@@ -659,6 +660,18 @@ public class GeneralTrialDesignWebDTO {
      */
     public void setStudyProtocolId(String studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
+    }
+    /**
+     * @return the programCodeText
+     */
+    public String getProgramCodeText() {
+        return programCodeText;
+    }
+    /**
+     * @param programCodeText the programCodeText to set
+     */
+    public void setProgramCodeText(String programCodeText) {
+        this.programCodeText = programCodeText;
     }
     
 }

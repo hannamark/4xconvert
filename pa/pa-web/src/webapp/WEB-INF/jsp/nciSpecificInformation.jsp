@@ -103,6 +103,17 @@ function setorgid(orgid){
 					</td>
 					
 				</tr>
+				<tr>
+                    <td scope="row" class="label"><label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label></td>
+                    <td class="value">
+                        <s:textfield name="nciSpecificInformationWebDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
+                        <span class="formErrorMsg">
+                        <s:fielderror>
+                            <s:param>nciSpecificInformationWebDTO.programCodeText</s:param>
+                        </s:fielderror>                            
+                        </span>
+                    </td>
+                </tr>
 				</table> 
 						
 		<div class="actionsrow">

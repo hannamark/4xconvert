@@ -155,7 +155,8 @@ public class StudyProtocol extends AbstractEntity {
     private Timestamp amendmentDate;
     private AmendmentReasonCode amendmentReasonCode;
     private Integer submissionNumber;
-    
+    //program_code_text
+    private String programCodeText;
     
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
@@ -814,5 +815,19 @@ public class StudyProtocol extends AbstractEntity {
     public void setSubmissionNumber(Integer submissionNumber) {
     this.submissionNumber = submissionNumber;
     }
+    /**
+     * @return the programCodeText
+     */
+    @Column(name = "PROGRAM_CODE_TEXT")
+    public String getProgramCodeText() {
+        return programCodeText;
+    }
+    /**
+     * @param programCodeText the programCodeText to set
+     */
+    public void setProgramCodeText(String programCodeText) {
+        this.programCodeText = programCodeText;
+    }
+    
 }
 

@@ -449,6 +449,7 @@ public class TrialValidationAction extends ActionSupport {
         gtdDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
         gtdDTO.setSubmissionNumber(IntConverter.convertToInteger(spDTO.getSubmissionNumber()));
         gtdDTO.setAmendmentReasonCode(CdConverter.convertCdToString(spDTO.getAmendmentReasonCode()));
+        gtdDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
     }
 
     private void copy(StudyProtocolQueryDTO spqDTO) {
@@ -553,6 +554,7 @@ public class TrialValidationAction extends ActionSupport {
         spDTO.setPhaseOtherText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPhaseOtherText(), OTHER_TEXT)));
         spDTO.setAmendmentReasonCode(CdConverter.convertToCd(AmendmentReasonCode.getByCode(
                 gtdDTO.getAmendmentReasonCode())));
+        spDTO.setProgramCodeText(StConverter.convertToSt(gtdDTO.getProgramCodeText()));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
 

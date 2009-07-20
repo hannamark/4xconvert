@@ -107,6 +107,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Ts amendmentDate;
     private Cd amendmentReasonCode;
     private Int submissionNumber;
+    private St programCodeText;
     /**
      * 
      * @return acronym
@@ -613,6 +614,20 @@ return submissionNumber;
  */
 public void setSubmissionNumber(Int submissionNumber) {
 this.submissionNumber = submissionNumber;
+}
+
+/**
+ * @return the programCodeText
+ */
+public St getProgramCodeText() {
+    return programCodeText;
+}
+
+/**
+ * @param programCodeText the programCodeText to set
+ */
+public void setProgramCodeText(St programCodeText) {
+    this.programCodeText = programCodeText;
 }
     
     

@@ -90,7 +90,7 @@ public class NCISpecificInformationWebDTO {
     private String summaryFourFundingCategoryCode;
     private String organizationName;
     private String organizationIi;
-    
+    private String programCodeText;
 
     /**
      * 
@@ -151,6 +151,20 @@ public class NCISpecificInformationWebDTO {
      */
     public void setOrganizationIi(String organizationIi) {
         this.organizationIi = organizationIi;
+    }
+
+    /**
+     * @return the programCodeText
+     */
+    public String getProgramCodeText() {
+        return programCodeText;
+    }
+
+    /**
+     * @param programCodeText the programCodeText to set
+     */
+    public void setProgramCodeText(String programCodeText) {
+        this.programCodeText = programCodeText;
     }
 
 }
