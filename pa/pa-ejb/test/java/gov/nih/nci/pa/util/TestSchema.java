@@ -121,6 +121,7 @@ import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyMilestoneTest;
+import gov.nih.nci.pa.domain.StudyObjective;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -128,7 +129,6 @@ import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.domain.StudyRecruitmentStatusTest;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -238,6 +238,7 @@ public class TestSchema {
             addAnnotatedClass(PAProperties.class).
             addAnnotatedClass(RegistryUser.class).
             addAnnotatedClass(StudyRelationship.class).
+            addAnnotatedClass(StudyObjective.class).
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
             setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
@@ -313,6 +314,7 @@ public class TestSchema {
                     statement.executeUpdate("delete from DISEASE_PARENT");
                     statement.executeUpdate("delete from DISEASE_ALTERNAME");
                     statement.executeUpdate("delete from DISEASE");
+                    statement.executeUpdate("delete from STUDY_OBJECTIVE");
                     connection.commit();
                     statement.close();
                 } catch (HibernateException e) {

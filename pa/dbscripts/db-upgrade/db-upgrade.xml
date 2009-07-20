@@ -112,4 +112,16 @@
             <comment>execute StudyProtocolAddPrgCodeTxtCol.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/StudyProtocolAddPrgCodeTxtCol.sql"/>
     </changeSet>
+     <changeSet id="27" author="Anu">
+            <comment>execute studyProtocolColumnAdd.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/studyProtocolColumnAdd.sql"/>
+    </changeSet>
+    <changeSet id="28" author="Anu">
+            <comment>execute studyProtocolDataCopy.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/studyProtocolDataCopy.sql"/>
+    </changeSet>
+    <changeSet id="29" author="Anu">
+            <comment>execute studyObjective.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/studyObjective.sql"/>
+    </changeSet>
 </databaseChangeLog>

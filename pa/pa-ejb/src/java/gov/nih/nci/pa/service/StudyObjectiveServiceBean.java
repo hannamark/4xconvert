@@ -76,123 +76,29 @@
 *
 *
 */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.domain.StudyObjective;
+import gov.nih.nci.pa.iso.convert.StudyObjectiveConverter;
+import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
- * @author Hugh Reinhart
- * @since 11/06/2008
- *
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Anupama Sharma
+ * @since 02/11/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
-"PMD.TooManyFields" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
-    private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
-    private static StudyOutcomeMeasureConverter studyOutcomeMeasureConverter = new StudyOutcomeMeasureConverter();
-    private static StudyIndldeConverter studyIndldeConverter = new StudyIndldeConverter();
-    private static StudyContactConverter studyContactConverter = new StudyContactConverter();
-    private static StudyOverallStatusConverter studyOverallStatusConverter = new StudyOverallStatusConverter();
-    private static StudyRecruitmentStatusConverter studyRecruitmentStatusConverter =
-        new StudyRecruitmentStatusConverter();
-    private static StudyParticipationContactConverter studyParticipationContactConverter =
-        new StudyParticipationContactConverter();
-    private static StudyRelationshipConverter studyRelationshipConverter = new StudyRelationshipConverter();
-    private static StudyRegulatoryAuthorityConverter studyRegulatoryAuthorityConverter =
-                    new StudyRegulatoryAuthorityConverter();
-
-    private static StudyObjectiveConverter studyObjectiveConverter = new StudyObjectiveConverter();
+@Stateless
+@Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class StudyObjectiveServiceBean
+extends AbstractStudyIsoService<StudyObjectiveDTO, StudyObjective, StudyObjectiveConverter>
+implements StudyObjectiveServiceRemote {
+  
     
-    /**
-     * @param clazz class
-     * @param <TYPE> the converter type to get
-     * @return converter
-     * @throws PAException exception
-     */
-    @SuppressWarnings("unchecked")
-    public static <TYPE extends AbstractConverter> TYPE get(Class<TYPE> clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return (TYPE) arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return (TYPE) plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return (TYPE) sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return (TYPE) dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return (TYPE) intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return (TYPE) intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return (TYPE) sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return (TYPE) diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return (TYPE) diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return (TYPE) diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return (TYPE) studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return (TYPE) studyMilestoneConverter;
-        }
-        if (clazz.equals(StudyOnholdConverter.class)) {
-          return (TYPE) studyOnholdConverter;
-      }
-        if (clazz.equals(StudyOutcomeMeasureConverter.class)) {
-            return (TYPE) studyOutcomeMeasureConverter;
-        }
-        if (clazz.equals(StudyIndldeConverter.class)) {
-            return (TYPE) studyIndldeConverter;
-        }
-        if (clazz.equals(StudyContactConverter.class)) {
-            return (TYPE) studyContactConverter;
-        }
-        if (clazz.equals(StudyOverallStatusConverter.class)) {
-            return (TYPE) studyOverallStatusConverter;
-        }
-        if (clazz.equals(StudyRecruitmentStatusConverter.class)) {
-            return (TYPE) studyRecruitmentStatusConverter;
-        }
-        if (clazz.equals(StudyParticipationContactConverter.class)) {
-            return (TYPE) studyParticipationContactConverter;
-        }
-        if (clazz.equals(StudyRelationshipConverter.class)) {
-            return (TYPE) studyRelationshipConverter;
-        }
-        if (clazz.equals(StudyRegulatoryAuthorityConverter.class)) {
-            return (TYPE) studyRegulatoryAuthorityConverter;
-        }
-        if (clazz.equals(StudyObjectiveConverter.class)) {
-            return (TYPE) studyObjectiveConverter;
-        }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
-    }
+
 }

@@ -304,7 +304,7 @@ public class SubGroupsAction extends ActionSupport {
             addFieldError("subGroupsWebDTO.code",
                     getText("error.subGroups.code"));
         }
-        if (subGroupsWebDTO.getDescription().length() > PAAttributeMaxLen.LONG_TEXT_LENGTH) {
+        if (subGroupsWebDTO.getDescription().length() > PAAttributeMaxLen.SPGP_LEN_200) {
             addFieldError("subGroupsWebDTO.description",
                     getText("Cannot enter more than 200 characters"));
 

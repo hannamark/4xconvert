@@ -317,6 +317,13 @@ public class IiConverter {
     public static final String STUDY_SITE_ACCURAL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.4";
     
     
+    /** The identifier name for. */
+    public static final String STUDY_OBJECTIVE_IDENTIFIER_NAME = "Study Objective identifier";
+
+    /** The ii root value. */
+    public static final String STUDY_OBJECTIVE_ROOT = "2.16.840.1.113883.3.26.4.3.15";
+ 
+    
     /**
      * Convert to ii.
      * 
@@ -818,6 +825,19 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(PLANNED_ACTIVITY_IDENTIFIER_NAME);
         ii.setRoot(PLANNED_ACTIVITY_ROOT);
+        return ii;
+    }
+    /**
+     * Conver to study Objective ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyObjectiveIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_OBJECTIVE_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_OBJECTIVE_ROOT);
         return ii;
     }
 }

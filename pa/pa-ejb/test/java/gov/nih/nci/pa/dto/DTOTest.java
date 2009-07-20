@@ -2,6 +2,7 @@ package gov.nih.nci.pa.dto;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
+import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -32,6 +33,7 @@ public class DTOTest {
 	  assertGetterSetterBehavior(new RegulatoryAuthOrgDTO());
 	  assertGetterSetterBehavior(new StudyProtocolQueryDTO());
 	  assertGetterSetterBehavior(new TrialDTO());
+	  assertGetterSetterBehavior(new StudyObjectiveDTO());
 	}
 
 	/**

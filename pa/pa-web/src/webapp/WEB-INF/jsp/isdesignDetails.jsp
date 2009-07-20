@@ -34,7 +34,7 @@ function showAlert() {
 }
 function checkValue() {
     var input="webDTO.minimumTargetAccrualNumber";
-    var conf = false;
+    var conf = true;
     var inputElement = document.forms[0].elements[input];
     
         if (inputElement.value == "0")
