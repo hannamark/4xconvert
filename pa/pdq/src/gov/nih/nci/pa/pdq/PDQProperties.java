@@ -87,11 +87,23 @@ public class PDQProperties {
     private static Properties properties = new Properties();
 
     static {
+        boolean loaded = false;
         try {
-            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("..\\build.properties");;
+            // load properties from IDE
+            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("..\\build.properties");
             properties.load(stream);
+            loaded = true;
         } catch (Exception e) {
-            throw new RuntimeException("Error reading build.properties file", e);
+            // expected behavior when running using ant script
+        }
+        if (!loaded) {
+            try {
+                // load properties from ant script
+                InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("build.properties");;
+                properties.load(stream);
+            } catch (Exception e) {
+                throw new RuntimeException("Error reading build.properties file", e);
+            }
         }
     }
 

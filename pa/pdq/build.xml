@@ -24,10 +24,21 @@
     <target name="compile" depends="clean">
         <mkdir dir="${basedir}/target/classes"/>
         <javac srcdir="${basedir}/src" destdir="${basedir}/target/classes" classpathref="classpath"/>
+        <copy file="${basedir}/lib/log4j.properties" 
+              tofile="${basedir}/target/classes/log4j.properties"
+              overwrite="true">
+        </copy>
+        <copy file="${basedir}/build.properties" 
+              tofile="${basedir}/target/classes/build.properties"
+              overwrite="true">
+        </copy>
+        <replaceregexp file="${basedir}/target/classes/build.properties"
+                       match="\\"
+                       replace="/"
+                       flags="g"/>
     </target>
 
     <target name="jar" depends="compile">
-        <mkdir dir="${basedir}/target"/>
         <jar destfile="${basedir}/target/pdq.jar" basedir="${basedir}/target/classes"/>
     </target>
 
