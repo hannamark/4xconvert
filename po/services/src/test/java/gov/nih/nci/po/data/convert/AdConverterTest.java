@@ -114,6 +114,41 @@ public class AdConverterTest extends AbstractHibernateTestCase {
             }
         }
     }
+    
+    /**
+     * 7.7.1.3.3 - The value cannot be empty
+     */
+    @Test
+    public void testAdxpCodeSystemIsRequired() {
+        for (AddressPartType type : AddressPartType.values()) {
+            if (type != AddressPartType.CNT) {
+                continue;
+            }
+            Ad iso = new Ad();
+            List<Adxp> part = new ArrayList<Adxp>();
+            iso.setPart(part);
+            Adxp adxp = createAddressPart(type);
+            adxp.setValue(null);
+            adxp.setCode("USA");
+            adxp.setCodeSystem(null);
+            part.add(adxp);
+            try {
+                AdConverter.SimpleConverter.convertToAddress(iso);
+                fail();
+            } catch (PoIsoConstraintException e) {
+                assertEquals("Adxp.codeSystem is required", e.getMessage());
+            }
+
+            adxp.setValue("");
+            try {
+                AdConverter.SimpleConverter.convertToAddress(iso);
+                fail();
+            } catch (PoIsoConstraintException e) {
+                assertEquals("Adxp.codeSystem is required", e.getMessage());
+            }
+        }
+    }
+
 
 
     /*7.7.3.5.5 Unknown Addresses
@@ -215,13 +250,14 @@ address lines, this is not implied by this example. See Section 7.7.3.6.
         a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
+        a.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(a);
 
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
         assertEquals("46240", result.getPostalCode());
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
-
+        
         assertEquals("1050 W Wishard Blvd RG 5th floor", result.getStreetAddressLine());
     }
 /*
@@ -263,6 +299,7 @@ This is the same address from a system that differentiates between different lin
         a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
+        a.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(a);
 
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
@@ -326,6 +363,7 @@ useful in Germany, where many systems keep house number as a distinct field
         a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
+        a.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(a);
 
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
@@ -362,6 +400,7 @@ useful in Germany, where many systems keep house number as a distinct field
         a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
+        a.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(a);
 
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
@@ -419,6 +458,7 @@ useful in Germany, where many systems keep house number as a distinct field
         a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
+        a.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(a);
 
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);
@@ -440,6 +480,7 @@ useful in Germany, where many systems keep house number as a distinct field
         a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("USA");
+        a.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(a);
 
         try {
@@ -463,6 +504,7 @@ useful in Germany, where many systems keep house number as a distinct field
         a = createAddressPart(AddressPartType.CNT);
         a.setValue("adxp.value required");
         a.setCode("AAA");
+        a.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(a);
 
         Address result = AdConverter.SimpleConverter.convertToAddress(iso);

@@ -174,8 +174,11 @@ public class AdConverter {
                             sdelimitor = "";
                             continue;
                         case CNT:
+                            verifyCnt(part);
                             String code = StringUtils.trimToNull(part.getCode());
-                            if (code.length() == 2) {
+                            if (code == null) {
+                                a.setCountry(PoRegistry.getCountryService().getCountryByName(part.getValue()));
+                            } else if (code.length() == 2) {
                                 a.setCountry(PoRegistry.getCountryService().getCountryByAlpha2(code));
                             } else {
                                 a.setCountry(PoRegistry.getCountryService().getCountryByAlpha3(code));
@@ -213,6 +216,15 @@ public class AdConverter {
         private static void verify(Adxp part) {
             if (StringUtils.isBlank(part.getValue())) {
                 throw new PoIsoConstraintException("Adxp.value is required");
+            }
+        }
+        
+        private static void verifyCnt(Adxp part) {
+            String code = StringUtils.trimToNull(part.getCode());
+            String codeSystem = StringUtils.trimToNull(part.getCodeSystem());
+            
+            if (code != null && codeSystem == null) {
+                throw new PoIsoConstraintException("Adxp.codeSystem is required");
             }
         }
 

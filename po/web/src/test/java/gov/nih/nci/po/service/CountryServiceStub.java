@@ -137,4 +137,11 @@ public class CountryServiceStub implements CountryServiceLocal {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Country getCountryByName(String name) {
+        return new Country(name, name, name, name);
+    }
+
 }

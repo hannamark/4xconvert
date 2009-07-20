@@ -128,6 +128,12 @@ public interface CountryServiceLocal {
     Country getCountryByAlpha3(String code);
     
     /**
+     * @param name country name
+     * @return a county
+     */
+    Country getCountryByName(String name);
+    
+    /**
      * Get a state by ISO 3166 code value.
      * @param country the country containing the state or province 
      * @param code the state or province ISO code

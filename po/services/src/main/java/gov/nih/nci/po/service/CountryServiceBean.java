@@ -185,4 +185,20 @@ public class CountryServiceBean implements CountryServiceLocal {
         q.setParameter("country", country);
         return (State) q.uniqueResult();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Country getCountryByName(String name) {
+        Criteria c = PoHibernateUtil.getCurrentSession().createCriteria(Country.class);
+        c.add(Restrictions.eq("name", name));
+        c.setCacheable(true);
+        c.setCacheRegion(COUNTRY_CACHE_REGION);
+        Country cnt = (Country) c.uniqueResult();
+        if (cnt == null) {
+            throw new IllegalArgumentException("no country for name " + name);
+        }
+        return cnt;
+    }
 }

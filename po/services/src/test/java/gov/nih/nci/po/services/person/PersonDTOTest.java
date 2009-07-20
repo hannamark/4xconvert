@@ -198,6 +198,7 @@ public class PersonDTOTest {
         AdxpCnt cnt = new AdxpCnt();
         cnt.setValue("United States");
         cnt.setCode("USA");
+        cnt.setCodeSystem("ISO 3166-1 alpha-3 code");
         part.add(cnt);
 
         dto.setPostalAddress(ad);

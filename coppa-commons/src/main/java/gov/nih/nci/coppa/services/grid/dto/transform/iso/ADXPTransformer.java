@@ -59,6 +59,7 @@ final class ADXPTransformer extends AbstractTransformer<org.iso._21090.ADXP, Adx
         // has the responsibility to detect null.
         ADXP x = new ADXP();
         x.setCode(input.getCode());
+        x.setCodeSystem(input.getCodeSystem());
         x.setValue(input.getValue());
         org.iso._21090.AddressPartType type = AddressPartTypeTransformer.INSTANCE.toXml(input.getType());
         x.setType(type);
@@ -75,6 +76,7 @@ final class ADXPTransformer extends AbstractTransformer<org.iso._21090.ADXP, Adx
         AddressPartType type = AddressPartTypeTransformer.INSTANCE.toDto(input.getType());
         Adxp d = createAddressPart(type);
         d.setCode(input.getCode());
+        d.setCodeSystem(input.getCodeSystem());
         d.setValue(input.getValue());
         return d;
     }

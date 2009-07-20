@@ -95,6 +95,7 @@ public class Adxp implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
     private String code;
+    private String codeSystem;
     private String value;
     private final AddressPartType type;
     private static final int HASH_CODE_SEED_1 = 13;
@@ -126,6 +127,21 @@ public class Adxp implements Serializable, Cloneable {
     public void setCode(String code) {
         this.code = code;
     }
+    
+    /**
+     * @return the code system
+     */
+    public String getCodeSystem() {
+        return codeSystem;
+    }
+
+    /**
+     * @param codeSystem the code system to set
+     */
+    public void setCodeSystem(String codeSystem) {
+        this.codeSystem = codeSystem;
+    }
+
 
     /**
      * @return the type

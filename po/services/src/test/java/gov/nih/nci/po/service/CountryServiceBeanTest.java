@@ -60,6 +60,12 @@ public class CountryServiceBeanTest extends AbstractHibernateTestCase {
         Country c2 = countryService.getCountryByAlpha3("ZZZ");
         assertEquals("ZZZ", c2.getAlpha3());
     }
+    
+    @Test
+    public void testGetCountryByName() {
+        Country c2 = countryService.getCountryByName("Super Country");
+        assertEquals("Super Country", c2.getName());
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCountryByAlpha3BadCode() {

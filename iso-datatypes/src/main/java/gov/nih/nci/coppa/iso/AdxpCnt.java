@@ -106,33 +106,10 @@ public final class AdxpCnt extends Adxp {
     @SuppressWarnings("PMD.UnnecessaryCaseChange")
     @Override
     public void setCode(String code) {
-        if (code.length() != CODE_LENGTH || !code.toUpperCase(Locale.ENGLISH).equals(code)) {
+        if (code != null && (code.length() != CODE_LENGTH || !code.toUpperCase(Locale.ENGLISH).equals(code))) {
             throw new IllegalArgumentException("must be ISO 3166-1 alpha-3 code");
         }
         super.setCode(code);
     }
 
-    /**
-     * @param  value value.
-     * @deprecated use {@link #setCode(String)} instead.
-     */
-    @SuppressWarnings("PMD.UselessOverridingMethod")
-    @Deprecated
-    @Override
-    public void setValue(String value) {
-        // not sure if this field is used at all.
-        super.setValue(value);
-    }
-
-    /**
-     * @return value.
-     * @deprecated use {@link #getCode()} instead.
-     */
-    @SuppressWarnings("PMD.UselessOverridingMethod")
-    @Deprecated
-    @Override
-    public String getValue() {
-        // not sure if this field is used at all.
-        return super.getValue();
-    }
 }

@@ -53,6 +53,7 @@ public class AddressConverterUtil {
         Adxp x = new AdxpCnt();
         x.setValue(countryName);
         x.setCode(countryAlpha3);
+        x.setCodeSystem("ISO 3166-1 alpha-3 code");
         l.add(x);
         return iso;
     }
