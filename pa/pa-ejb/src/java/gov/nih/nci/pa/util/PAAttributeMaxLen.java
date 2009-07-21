@@ -125,13 +125,16 @@ public class PAAttributeMaxLen {
     public static final int LEN_600 = 600;
     /** Len 5000. **/
     public static final int LEN_5000 = 5000;
+    /** Len 2000. **/
+    public static final int LEN_2000 = 2000;
     /*** length 1000. **/
     public static final int LEN_1000 = 1000;
     /*** length 15000. **/
     public static final int LEN_15000 = 15000;
     /** len 32000. **/
     public static final int LEN_32000 = 32000;
-
+    /** SubGp Length 200. **/
+    public static final int SPGP_LEN_200 = 200;
     /*** length -1. **/
     public static final int LEN_MIN_1 = -1;
 

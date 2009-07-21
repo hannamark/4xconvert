@@ -433,24 +433,22 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private void createCondition(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
         if (sdDtos != null) {
-            Element condition = doc.createElement("condition");
             int count = 0;
-        for (StudyDiseaseDTO sdDto : sdDtos) {
-             if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
-                DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-                appendElement(condition, 
-                        createElement("lead", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
-            } else if (count < MAX_CONDITION) {
-                
-                DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-                appendElement(condition, 
-                        createElement("non_lead", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
-                count++;
+            for (StudyDiseaseDTO sdDto : sdDtos) {
+                if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
+                    DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
+                    appendElement(root, createElement(
+                            "condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
+               } else if (count < MAX_CONDITION) {
+                    
+                    DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
+                    appendElement(root, createElement(
+                            "condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
+                    count++;
+                }
+
             }
-             if (condition.hasChildNodes()) {
-                 root.appendChild(condition);
-             }
-         }    
+
         }
     }
 
@@ -831,11 +829,17 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                           
                 int cnt = 1; 
                 for (InterventionAlternateNameDTO ian : ianList) {
+                   if (ian.getNameTypeCode().getValue().equalsIgnoreCase("synonym") 
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("abbreviation")
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("us brand name")
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("foreign brand name")
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("code name")) {
                     appendElement(intervention,
                             createElement("intervention_other_name" , ian.getName(), PAAttributeMaxLen.LEN_160 , doc));
                     if (cnt++ > PAAttributeMaxLen.LEN_5) {
                         break;
                     }
+                  } 
                 }
 
                 List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());

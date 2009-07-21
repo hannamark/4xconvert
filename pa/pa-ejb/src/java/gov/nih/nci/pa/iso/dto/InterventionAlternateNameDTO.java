@@ -73,6 +73,7 @@ public class InterventionAlternateNameDTO extends BaseDTO {
     private St name;
     private Cd statusCode;
     private Ts statusDateRangeLow;
+    private St nameTypeCode;    
 
     /**
      * @return the interventionIdentifier
@@ -121,5 +122,17 @@ public class InterventionAlternateNameDTO extends BaseDTO {
      */
     public void setStatusDateRangeLow(Ts statusDateRangeLow) {
         this.statusDateRangeLow = statusDateRangeLow;
+    }
+    /**
+     * @return the nameTypeCode
+     */
+    public St getNameTypeCode() {
+        return nameTypeCode;
+    }
+    /**
+     * @param nameTypeCode the nameTypeCode to set
+     */
+    public void setNameTypeCode(St nameTypeCode) {
+        this.nameTypeCode = nameTypeCode;
     }
 }
