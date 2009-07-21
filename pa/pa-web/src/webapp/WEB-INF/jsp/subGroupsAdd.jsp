@@ -16,7 +16,7 @@ var page;
 page=document.forms[0].page.value;
 input_box=confirm("Click OK to save changes or Cancel to Abort.");
 if (input_box==true){
-	if (page == "Edit"){
+    if (page == "Edit"){
  		document.forms[0].action="subGroupsupdate.action";
  		document.forms[0].submit();  	
 	} else {

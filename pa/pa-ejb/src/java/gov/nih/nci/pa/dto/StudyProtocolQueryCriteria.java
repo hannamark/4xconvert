@@ -124,7 +124,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String searchOnHold;
     private String studyMilestone;
 
-    private String searchAmend;
+    private String submissionType;
     /**
      *
      * @return studyProtocolId
@@ -379,17 +379,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
         return nctNumber;
     }
     /**
-     * @return the searchAmend
+     * @return the submissionType
      */
-    public String getSearchAmend() {
-        return searchAmend;
+    public String getSubmissionType() {
+        return submissionType;
     }
     /**
-     * @param searchAmend the searchAmend to set
+     * @param submissionType the submissionType to set
      */
-    public void setSearchAmend(String searchAmend) {
-        this.searchAmend = searchAmend;
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
     }
+    
 
 
 

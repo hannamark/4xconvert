@@ -118,7 +118,7 @@ function NewCal(pCtrl,pFormat,pShowTime,pTimeMode)
 			Cal.SetSecond(strSecond);
 		}	
 	}
-	winCal=window.open("","DateTimePicker","toolbar=0,status=0,menubar=0,fullscreen=no,width=195,height=245,resizable=0,top="+cnTop+",left="+cnLeft);
+	winCal=window.open("","DateTimePicker","toolbar=0,location=0,directories=0,status=0,links=0,scrollbar=0,menubar=0,fullscreen=0,width=195,height=245,resizable=0,top="+cnTop+",left="+cnLeft);
 	docCal=winCal.document;
 	RenderCal();
 }

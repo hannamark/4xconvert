@@ -25,7 +25,7 @@ function generateReport(pid) {
     showPopWin('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+pid, 900, 400, '', 'View Trial Summary Report');
 }
 function resetValues(){
-	document.getElementById("nciIdentifier").value="";
+    document.getElementById("nciIdentifier").value="";
     document.getElementById("officialTitle").value="";
     document.getElementById("leadOrganizationTrialIdentifier").value="";
     document.getElementById("leadOrganizationId").value="";
@@ -36,7 +36,7 @@ function resetValues(){
     document.getElementById("documentWorkflowStatusCode").value="";
     document.getElementById("studyMilestone").value="";
     document.getElementById("searchOnHold").checked=false;
-    document.getElementById("searchAmend").checked=false;
+    document.getElementById("submissionType").value="";
 }
 </SCRIPT>
 <body>
@@ -140,7 +140,7 @@ function resetValues(){
                 </td>                  
             </tr>           
             <tr>
-            	<td scope="row" class="label">
+                <td scope="row" class="label">
                     <label for="documentWorkflowStatus"> <fmt:message key="studyProtocol.documentWorkflowStatus"/></label>    
                 </td>
                 <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
@@ -163,17 +163,17 @@ function resetValues(){
                     <s:checkbox id="searchOnHold" name="criteria.searchOnHold" />
                     <input type="hidden" id="searchOnHold" value="false">
                     
-                </td>                
-            </tr>
-             <tr> 
+                </td> 
+                </tr>
+                <tr>
                 <td scope="row" class="label">
-                    <label for="searchAmend"> <fmt:message key="studyProtocol.searchAmend"/></label>                        
+                    <label for="submissionType"> <fmt:message key="studyProtocol.submissionTypeSearch"/></label>                        
                 </td>
+                <s:set name="submissionTypeValues" value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
                 <td>
-                    <s:checkbox id= "searchAmend" name="criteria.searchAmend" />
-                    <input type="hidden" id="searchAmend" value="false">
-                    
-                </td>                
+                   <s:select headerKey="" headerValue="Both" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
+                </td>                  
+                        
             </tr>
         </table>
         <div class="actionsrow">
@@ -194,11 +194,11 @@ function resetValues(){
  </div>
  <div class="line"></div>
  
- <c:if test="${records != null}">						
-		<h2>Search Results</h2>  
-   		<jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp">
-        	<jsp:param name="listName" value="records" />        
-   		</jsp:include>
+ <c:if test="${records != null}">                       
+        <h2>Search Results</h2>  
+        <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp">
+            <jsp:param name="listName" value="records" />        
+        </jsp:include>
    </c:if>
    
 </body>

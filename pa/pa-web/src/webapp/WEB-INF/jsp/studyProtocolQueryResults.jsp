@@ -13,8 +13,7 @@
     <display:column titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.studyOnholdReasons" property="onHoldReasons"  headerClass="sortable"/>
     <display:column titleKey="studyProtocol.studyOnholdDates" property="offHoldDates" headerClass="sortable"/>
-    <display:column titleKey="studyProtocol.studyAmendReasons" property="amendmentReasonCode.code"  headerClass="sortable"/>
-    <display:column titleKey="studyProtocol.studyAmendDates" property="amendmentDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+    <display:column titleKey="studyProtocol.submissionType" property="submissionTypeCode"  headerClass="sortable"/>
     <c:if test="${(sessionScope.role == 'Abstractor')}">
         <display:column class="title" 
             titleKey="studyProtocol.action" 

@@ -99,6 +99,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -289,7 +290,10 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
                         studyProtocolDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
                         studyProtocolDto.setAmendmentDate(studyProtocol.getAmendmentDate());
-                        studyProtocolDto.setAmendmentReasonCode(studyProtocol.getAmendmentReasonCode());
+                        //studyProtocolDto.setAmendmentReasonCode(studyProtocol.getAmendmentReasonCode());
+                        studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.A);
+                    } else {
+                        studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.O);
                     }
                 }
                 if (studyMilestone != null) {
@@ -679,10 +683,15 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                       + " spoh.offholdDate is null)");
            }
         // sub-query for searching only Amend trials
-           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSearchAmend())
-                   && studyProtocolQueryCriteria.getSearchAmend().equals("true")) {
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
+                   && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.A.getCode())) {
                 where.append(" and sp.submissionNumber > 1 and sp.amendmentNumber is not null and "
                       + " sp.amendmentDate is not null)");
+           }
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
+                   && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.O.getCode())) {
+                where.append(" and sp.submissionNumber = 1 and sp.amendmentNumber is null and "
+                      + " sp.amendmentDate is null)");
            }
     }
 }
