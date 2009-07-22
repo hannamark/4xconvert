@@ -332,9 +332,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <fail unless="jboss.server.hostname"/>
     <fail unless="jboss.server.port"/>
 
-    <echo message="Copying po-grid dependencies from po-services and iso-datatypes"/>
-    <copy todir="${po-grid.base.dir}/lib" file="${po-services.base.dir}/target/${po-services-client.jar.name}" overwrite="true"/>
-
     <ant inheritAll="false" inheritRefs="false" antfile="${po-grid.build.file}"
             target="${po-grid.build.target}"
             dir="${po-grid.base.dir}" >
