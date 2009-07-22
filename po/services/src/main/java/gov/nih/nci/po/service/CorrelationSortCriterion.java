@@ -82,11 +82,11 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Correlation;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import gov.nih.nci.po.data.bo.Correlation;
 
 /**
  * Enum of possible sort criterion for <? extends Correlation> types.

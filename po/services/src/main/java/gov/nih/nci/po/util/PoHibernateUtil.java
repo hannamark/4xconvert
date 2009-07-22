@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.audit.AuditLogInterceptor;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,6 +91,7 @@ import org.hibernate.Session;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 
+import com.fiveamsolutions.nci.commons.audit.AuditLogInterceptor;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
@@ -100,9 +99,14 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
  * PO implementation of hibernate util.
  */
 public class PoHibernateUtil {
-    private static final HibernateHelper HIBERNATE_HELPER =
-        new HibernateHelper(null, null, new CompositeInterceptor(new CurationStatusInterceptor(),
-                                                                 new AuditLogInterceptor()));
+    private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(null);
+    private static final HibernateHelper HIBERNATE_HELPER = new HibernateHelper(null, null, 
+            new CompositeInterceptor(new CurationStatusInterceptor(), AUDIT_LOG_INTERCEPTOR));
+    static {
+        AUDIT_LOG_INTERCEPTOR.setHibernateHelper(HIBERNATE_HELPER);
+    }
+
+
     private static final Map<Class<?>, ClassValidator<?>> CLASS_VALIDATOR_MAP =
         new HashMap<Class<?>, ClassValidator<?>>();
 

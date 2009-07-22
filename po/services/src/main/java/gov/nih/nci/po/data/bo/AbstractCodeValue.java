@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
 
@@ -95,6 +94,7 @@ import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**

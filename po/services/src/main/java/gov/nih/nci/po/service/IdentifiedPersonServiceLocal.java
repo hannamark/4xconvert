@@ -83,8 +83,8 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
-
 import gov.nih.nci.po.data.bo.Person;
+
 import javax.ejb.Local;
 
 /**

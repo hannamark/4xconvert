@@ -82,11 +82,8 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
-import java.util.Map;
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.audit.AuditLogRecord;
-import gov.nih.nci.po.audit.AuditType;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
@@ -95,10 +92,14 @@ import gov.nih.nci.po.service.correlation.HealthCareProviderDTOTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
+import com.fiveamsolutions.nci.commons.audit.AuditType;
 
 public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
 

@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.test.remoteapi;
 
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+
 import org.junit.Assert;
 
 

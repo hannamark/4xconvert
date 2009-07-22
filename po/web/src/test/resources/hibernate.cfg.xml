@@ -47,8 +47,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.State" />
         <mapping class="gov.nih.nci.po.data.bo.URL"/>
 
-        <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
-        <mapping class="gov.nih.nci.po.audit.AuditLogDetail" />
+        <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
+        <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
                 
         
         <event type="pre-update">

@@ -85,9 +85,10 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import java.sql.Connection;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.LogicalExpression;

@@ -88,6 +88,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+
 import java.io.Serializable;
 
 import org.hibernate.mapping.Property;

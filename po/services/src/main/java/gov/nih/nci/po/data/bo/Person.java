@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.HashSet;
@@ -104,6 +103,7 @@ import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**

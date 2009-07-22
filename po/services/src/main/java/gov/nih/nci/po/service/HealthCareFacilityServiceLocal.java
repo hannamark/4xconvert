@@ -83,8 +83,8 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
-
 import gov.nih.nci.po.data.bo.Organization;
+
 import javax.ejb.Local;
 
 /**

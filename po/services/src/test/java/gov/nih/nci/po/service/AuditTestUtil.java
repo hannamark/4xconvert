@@ -2,9 +2,6 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.po.audit.AuditLogDetail;
-import gov.nih.nci.po.audit.AuditLogRecord;
-import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
@@ -12,6 +9,10 @@ import java.util.List;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
+import com.fiveamsolutions.nci.commons.audit.AuditType;
 
 public class AuditTestUtil {
     private static final Logger LOG = Logger.getLogger(AuditTestUtil.class);

@@ -82,14 +82,14 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import java.net.URI;
-import java.util.HashSet;
-
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+
+import java.net.URI;
+import java.util.HashSet;
 
 import org.junit.Assert;
 

@@ -7,7 +7,6 @@ import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.selector.SelectPersonAction;
 
 import org.junit.Before;
 import org.junit.Test;

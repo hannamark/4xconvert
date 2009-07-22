@@ -83,8 +83,6 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.audit.AuditLogRecord;
-import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -98,6 +96,9 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
+import com.fiveamsolutions.nci.commons.audit.AuditType;
 
 public class PersonServiceBeanTest extends AbstractBeanTest {
 

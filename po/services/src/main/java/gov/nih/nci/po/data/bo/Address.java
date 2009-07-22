@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.ValidStateCountry;
@@ -99,6 +98,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**

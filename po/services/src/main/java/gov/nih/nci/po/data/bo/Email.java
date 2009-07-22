@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
 
@@ -96,6 +95,8 @@ import javax.persistence.Id;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.Pattern;
+
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
  * Represents an email address.

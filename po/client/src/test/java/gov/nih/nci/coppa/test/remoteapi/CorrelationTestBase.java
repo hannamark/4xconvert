@@ -82,6 +82,10 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
@@ -89,12 +93,9 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
 
-
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 
-import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Test;
 

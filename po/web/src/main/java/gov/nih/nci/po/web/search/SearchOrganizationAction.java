@@ -1,17 +1,17 @@
 package gov.nih.nci.po.web.search;
 
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.service.OrganizationSortCriterion;
+import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.GenericSearchServiceUtil;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
 
 import org.displaytag.properties.SortOrderEnum;
-
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
-import gov.nih.nci.po.service.OrganizationSortCriterion;
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.web.GenericSearchServiceUtil;
-import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.ActionSupport;

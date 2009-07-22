@@ -7,7 +7,6 @@ import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.selector.SelectOrganizationAction;
 
 import org.junit.Before;
 import org.junit.Test;
