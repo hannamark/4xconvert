@@ -8,7 +8,7 @@
     <name>iso</name>
 
     <properties>
-        <nci-commons.version>1.1.1</nci-commons.version>
+        <nci-commons.version>1.2.1</nci-commons.version>
         <compileSource>1.5</compileSource>
     </properties>
 
