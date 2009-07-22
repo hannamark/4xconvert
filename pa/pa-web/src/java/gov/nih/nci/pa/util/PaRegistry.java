@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
+import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -417,6 +418,13 @@ public final class PaRegistry {
      */
     public static MailManagerServiceRemote getMailManagerService() {
         return getInstance().getServiceLocator().getMailManagerService();
+    }
+    /**
+     * 
+     * @return StudyObjectiveService
+     */
+    public static StudyObjectiveServiceRemote getStudyObjectiveService() {
+        return getInstance().getServiceLocator().getStudyObjectiveService();
     }
 }
 

@@ -262,10 +262,13 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         }
         if (PAUtil.isNotEmpty(webDTO.getMinimumTargetAccrualNumber())) {
             try {
-                Integer.valueOf(webDTO.getMinimumTargetAccrualNumber());
+                if (Integer.valueOf(webDTO.getMinimumTargetAccrualNumber()) < 0) {
+                    addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.negative"));
+                }
             } catch (NumberFormatException e) {
-                addFieldError("webDTO.mimimumTargetAccrualNumber", getText("error.numeric"));
+                addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
             }
+            
         }
     }
 

@@ -96,6 +96,7 @@ import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -107,6 +108,7 @@ import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -120,6 +122,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
@@ -132,6 +135,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
@@ -151,6 +155,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -215,6 +220,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     StudyResourcingServiceRemote  studyResourcingService = null;
     @EJB
     PAOrganizationServiceRemote  paOrganizationService = null;
+    @EJB
+    StudyObjectiveServiceRemote studyObjectiveService = null;
   /** The Constant BR. */
   private static final String BR = "<BR>";
   
@@ -365,6 +372,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
          createPrimaryOutcome(htmldata, somDtos);
          createSecondaryOutcome(htmldata, somDtos);
          appendParticipatingSites(htmldata, spDTO);
+         
       } catch (Exception e) {
           htmldata = new StringBuffer();
           htmldata.append(FONT_TITLE).append(CENTER_B).append(appendBoldData("Trial Summary Report"))
@@ -390,7 +398,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       return htmldata.toString();
   }
 
-  /**
+/**
    * Append participating sites. 
    * @param html the html
    * @param spDTO the sp dto
@@ -1087,8 +1095,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * Append titles.
    * @param html the html
    * @param studyProtocolDto the study protocol dto
+ * @throws PAException 
    */
-  private void appendTitles(StringBuffer html , StudyProtocolDTO studyProtocolDto) {
+  private void appendTitles(StringBuffer html , StudyProtocolDTO studyProtocolDto) throws PAException {
     appendTitle(html, appendBoldData("General Trial Details"));
     html.append(BR)
         .append(appendData("Official Title", getInfo(studyProtocolDto.getOfficialTitle(), true), true, true));
@@ -1097,7 +1106,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     html.append(BR)
         .append(appendData("Brief Summary", getInfo(studyProtocolDto.getPublicDescription(), true), true, true));
     html.append(BR).append(appendData("Detailed Description", 
-                getInfo(studyProtocolDto.getScientificDescription(), true), true, true));
+                getInfo(getObjectiveData(studyProtocolDto).toString(), true), true, true));
     html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
     html.append(BR).append(appendData("Reporting Dataset Method", 
                 getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
@@ -1487,6 +1496,84 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       } else {
           return NO;
       }
+  }
+  private StringBuffer  getObjectiveData(StudyProtocolDTO studyProtocolDto) throws PAException {
+      StringBuffer htmldata = new StringBuffer();
+      List<StudyObjectiveDTO> studyObjList = studyObjectiveService.getByStudyProtocol(studyProtocolDto.getIdentifier());
+      StringBuffer objectiveData = new StringBuffer();
+      for (StudyObjectiveDTO dto : studyObjList) {
+          if (!StConverter.convertToString(dto.getDescription()).trim().equals("")) {
+              if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
+                  objectiveData.append(BR);
+                  objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.PRIMARY.getCode()));
+                  objectiveData.append(BR);
+                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                      ".");
+                  while (stoken.hasMoreElements()) {
+                      objectiveData.append(UL_B);
+                      objectiveData.append(LI_B);
+                      objectiveData.append(stoken.nextElement().toString());
+                      objectiveData.append(LI_E);
+                      objectiveData.append(UL_E);
+                  }
+              }
+              if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
+                  objectiveData.append(BR);
+                  objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.SECONDARY.getCode()));
+                  objectiveData.append(BR);
+                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                      ".");
+                  while (stoken.hasMoreElements()) {
+                      objectiveData.append(UL_B);
+                      objectiveData.append(LI_B);
+                      objectiveData.append(stoken.nextElement().toString());
+                      objectiveData.append(LI_E);
+                      objectiveData.append(UL_E);
+                  }
+              }
+              if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
+                  objectiveData.append(BR);
+                  objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.TERNARY.getCode()));
+                  objectiveData.append(BR);
+                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                      ".");
+                  while (stoken.hasMoreElements()) {
+                      objectiveData.append(UL_B);
+                      objectiveData.append(LI_B);
+                      objectiveData.append(stoken.nextElement().toString());
+                      objectiveData.append(LI_E);
+                      objectiveData.append(UL_E);
+                  }
+              }
+              
+          }   
+      }
+      if (studyProtocolDto.getScientificDescription() != null 
+              && studyProtocolDto.getScientificDescription().getValue() != null) {
+          objectiveData.append(BR);
+          objectiveData.append(NBSP).append(appendBoldData("OUTLINE:"));
+          objectiveData.append(UL_B);
+          objectiveData.append(LI_B);
+          objectiveData.append(studyProtocolDto.getScientificDescription().getValue());
+          objectiveData.append(UL_E);
+          objectiveData.append(LI_E);
+      }
+      Integer projectedAcc = IvlConverter.convertInt().convertLow(studyProtocolDto.getTargetAccuralNumber());
+      if (projectedAcc != null) {
+          objectiveData.append(BR);
+          objectiveData.append(NBSP).append(appendBoldData("PROJECTED ACCRUAL:"));
+          objectiveData.append(UL_B);
+          objectiveData.append(LI_B);
+          objectiveData.append(projectedAcc);
+          objectiveData.append(UL_E);
+          objectiveData.append(LI_E);
+      }
+      if (objectiveData.length() > 1) {
+          htmldata.append(BR).append(BR);
+          htmldata.append(NBSP).append(appendBoldData("OBJECTIVES:"));
+          htmldata.append(objectiveData);
+      }
+      return htmldata;
   }
   
 }

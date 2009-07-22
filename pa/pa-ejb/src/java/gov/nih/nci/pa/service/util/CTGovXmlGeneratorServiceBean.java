@@ -111,6 +111,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -126,6 +127,7 @@ import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -150,6 +152,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
@@ -181,6 +184,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -257,6 +261,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     InterventionAlternateNameServiceRemote interventionAlternateNameService = null;
     @EJB
     RegistryUserServiceRemote registryUserService = null;
+    @EJB
+    StudyObjectiveServiceRemote studyObjectiveService = null;
     
     private static final Logger LOG  = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
     private static final String TEXT_BLOCK = "textblock";
@@ -276,6 +282,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final String NA = "N/A";
     private static final String TAB = "     ";
     private static final String DASH = "- ";
+    private static final String NEW_LINE = "\n";
   
     private static Map<String , String> nv = new HashMap<String, String>();
     /**
@@ -316,8 +323,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createSponsors(spDTO.getIdentifier() , doc , root);
             createOversightInfo(spDTO , doc , root);
             createTextBlock("brief_summary", spDTO.getPublicDescription(), PAAttributeMaxLen.LEN_MIN_1 , doc, root);
-            createTextBlock("detailed_description", spDTO.getScientificDescription(),
-                    PAAttributeMaxLen.LEN_MIN_1, doc, root);
+            createObjective(spDTO, doc , root);
             createOverallStatus(spDTO, doc, root);
            //createElement("expanded_access_status", convertBLToString(spDTO.getExpandedAccessIndicator()), doc , root);
             if (spDTO.getExpandedAccessIndicator() != null && spDTO.getExpandedAccessIndicator().getValue() != null) {
@@ -347,6 +353,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createOverallOfficial(spDTO.getIdentifier(), doc , root);
             createOverallContact(spDTO.getIdentifier(), doc , root);
             createLocation(spDTO , doc , root);
+            
             appendElement(root ,  createElement("keyword", spDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD , doc));
             Ts tsVerificationDate = spDTO.getRecordVerificationDate();
             if (tsVerificationDate == null || tsVerificationDate.getValue() == null) {
@@ -829,11 +836,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                           
                 int cnt = 1; 
                 for (InterventionAlternateNameDTO ian : ianList) {
-                   if (ian.getNameTypeCode().getValue().equalsIgnoreCase("synonym") 
+                   if (ian.getNameTypeCode().getValue() != null 
+                           && (ian.getNameTypeCode().getValue().equalsIgnoreCase("synonym") 
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase("abbreviation")
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase("us brand name")
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase("foreign brand name")
-                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("code name")) {
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("code name"))) {
                     appendElement(intervention,
                             createElement("intervention_other_name" , ian.getName(), PAAttributeMaxLen.LEN_160 , doc));
                     if (cnt++ > PAAttributeMaxLen.LEN_5) {
@@ -1163,7 +1171,86 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
         }
     }
+    private void createObjective(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
+        List<StudyObjectiveDTO> studyObjList = studyObjectiveService.getByStudyProtocol(spDTO.getIdentifier());
+        StringBuffer objectiveData = new StringBuffer();
+        for (StudyObjectiveDTO dto : studyObjList) {
+            if (!StConverter.convertToString(dto.getDescription()).trim().equals("")) {
+                if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
+                    objectiveData.append('\n');
+                    objectiveData.append(StudyObjectiveTypeCode.PRIMARY.getCode());
+                    objectiveData.append('\n');
+                    StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                        ".");
+                    while (stoken.hasMoreElements()) { 
+                        objectiveData.append(TAB);
+                        objectiveData.append(DASH);
+                        objectiveData.append(stoken.nextElement().toString());
+                        objectiveData.append('\n');
+                    } 
+                }
+                if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
+                    objectiveData.append('\n');
+                    objectiveData.append(StudyObjectiveTypeCode.SECONDARY.getCode());
+                    objectiveData.append('\n');
+                    StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                        ".");
+                    while (stoken.hasMoreElements()) { 
+                        objectiveData.append(TAB);
+                        objectiveData.append(DASH);
+                        objectiveData.append(stoken.nextElement().toString());
+                        objectiveData.append('\n');
+                    } 
+                }
+                if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
+                    objectiveData.append('\n');
+                    objectiveData.append(StudyObjectiveTypeCode.TERNARY.getCode());
+                    objectiveData.append('\n');
+                    StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                            ".");
+                    while (stoken.hasMoreElements()) { 
+                        objectiveData.append(TAB);
+                        objectiveData.append(DASH);
+                        objectiveData.append(stoken.nextElement().toString());
+                        objectiveData.append('\n');
+                    } 
+                }    
+            }
+        }
+        if (spDTO.getScientificDescription() != null && spDTO.getScientificDescription().getValue() != null) {
+            objectiveData.append(NEW_LINE);
+            objectiveData.append("OUTLINE:");
+            objectiveData.append(TAB);
+            objectiveData.append(DASH);
+            objectiveData.append(StConverter.convertToString(spDTO.getScientificDescription()));
+            objectiveData.append(NEW_LINE);
+        }
+        Integer projectedAccrual = IvlConverter.convertInt().convertLow(spDTO.getTargetAccuralNumber());
+        if (projectedAccrual != null) {
+            objectiveData.append(NEW_LINE);
+            objectiveData.append("PROJECTED ACCRUAL:");
+            objectiveData.append(TAB);
+            objectiveData.append(DASH);
+            if (projectedAccrual > 0) { 
+                objectiveData.append("A total of  ").append(projectedAccrual)
+                .append(" patients will be accrued for this study");
+            } else {
+                objectiveData.append(projectedAccrual).append(" patient.");
+            }
+            objectiveData.append(NEW_LINE);
+        }
+        if (objectiveData.length() > 1) {
+            StringBuffer objectiveTitle = new StringBuffer();
+            objectiveTitle.append(NEW_LINE);
+            objectiveTitle.append("OBJECTIVES:");
+            objectiveTitle.append(DASH);
+            objectiveTitle.append(NEW_LINE);
+            objectiveTitle.append(objectiveData);
+            createCdataBlock("detailed_description", StConverter.convertToSt(objectiveTitle.toString()),
+                        PAAttributeMaxLen.LEN_15000 , doc, root);
+         }     
 
+    }
 
     private static void createCdataBlock(final String elementName ,  final St data , int maxLen ,
             Document doc , Element root)

@@ -24,6 +24,12 @@
                     <param name="trimToNull">true</param>
                     <param name="trimFromFront">true</param>
                 </interceptor-ref>
+                 <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                    <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
 		    </interceptor-stack>
 		</interceptors>	
 		<default-interceptor-ref name="paDefaultInterceptor" />
@@ -184,6 +190,9 @@
             <result name="edit">/WEB-INF/jsp/generalTrialDesignEdit.jsp</result>
         </action>
            <action name="trialDescription*" class="gov.nih.nci.pa.action.TrialDescriptionAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />
+            <result name="input">/WEB-INF/jsp/trialDescription.jsp</result>
+            <result name="error">/WEB-INF/jsp/trialDescription.jsp</result>
             <result name="edit">/WEB-INF/jsp/trialDescription.jsp</result>
         </action>
         <action name="trialInterventions*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">

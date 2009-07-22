@@ -95,6 +95,7 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
+import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -126,6 +127,7 @@ import gov.nih.nci.service.MockProtocolQueryService;
 import gov.nih.nci.service.MockRegistryUserService;
 import gov.nih.nci.service.MockRegulatoryInformationService;
 import gov.nih.nci.service.MockStudyMilestoneService;
+import gov.nih.nci.service.MockStudyObjectiveService;
 import gov.nih.nci.service.MockStudyOnholdService;
 import gov.nih.nci.service.MockStudyOutcomeMeasureService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
@@ -165,6 +167,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final RegulatoryInformationServiceRemote regulatoryInformationService = new MockRegulatoryInformationService();
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
     private final StudyOutcomeMeasureServiceRemote studyOutcomeMService = new MockStudyOutcomeMeasureService();
+    private final StudyObjectiveServiceRemote studyObjectiveService = new MockStudyObjectiveService();
     
     /**
      * @return mock service
@@ -435,6 +438,10 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public PAHealthCareProviderRemote getHealthCareProviderRemote() {
         return healthCareProviderRemote;
+    }
+
+    public StudyObjectiveServiceRemote getStudyObjectiveService() {
+        return studyObjectiveService;
     }
 
    

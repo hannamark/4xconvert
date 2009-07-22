@@ -188,7 +188,7 @@ function tooltip() {
 		<s:set name="blindingSchemaCodeValues" value="@gov.nih.nci.pa.enums.BlindingSchemaCode@getDisplayNames()" />
         <td>
            <s:select headerKey="" headerValue="" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
-	           value="webDTO.blindingSchemaCode" cssStyle="width:100px" onchange="activate()" />
+	           value="webDTO.blindingSchemaCode" cssStyle="width:120px" onchange="activate()" />
 	       <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.blindingSchemaCode</s:param>

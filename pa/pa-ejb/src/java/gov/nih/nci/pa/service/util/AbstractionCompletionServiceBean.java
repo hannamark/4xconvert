@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -832,7 +833,7 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
         interventionsList = true;
         //validation rules for inactive interventions
         InterventionDTO iDto = interventionSvc.get(pa.getInterventionIdentifier());
-        if (iDto.getStatusCode().getCode().equalsIgnoreCase("INACTIVE")) {
+        if (ActiveInactiveCode.INACTIVE.getCode().equalsIgnoreCase(iDto.getStatusCode().getCode())) {
             abstractionWarnList.add(createError("Warning", "Select Interventions from Scientific Data menu.",
             "Intervention '" + iDto.getName().getValue() + "' status has been set to inactive"
             + ", Please select another Intervention."));

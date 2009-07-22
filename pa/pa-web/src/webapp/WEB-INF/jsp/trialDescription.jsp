@@ -36,10 +36,13 @@
 <div class="box">
 <pa:sucessMessage/>
 <pa:failureMessage/>
-<s:form name="trialDescription">
-    <s:if test="hasActionErrors()">
-    <div class="error_msg"><s:actionerror/></div>
-    </s:if>
+<s:form name="trialDescription" validate="true" method="POST">
+    <s:hidden name="studyObjectiveIip" id="studyObjectiveIip"/>
+    <s:hidden name="studyObjectiveIis" id="studyObjectiveIis"/>
+    <s:hidden name="studyObjectiveIit" id="studyObjectiveIit"/>
+     <s:if test="hasActionErrors()">
+            <div class="error_msg"><s:actionerror/></div>
+        </s:if>
     <h2><fmt:message key="trial.description" /></h2>
     <table class="form">
          <tr> 
@@ -52,7 +55,7 @@
                 <fmt:message key="trial.briefTitle"/> <span class="notRequired">*</span>
             </s:label>
             </td>
-            <td colspan="2" class="value"><s:textarea name="trialDescriptionDTO.trialBriefTitle" 
+            <td colspan="2" class="value"><s:textarea name="trialBriefTitle" 
                 cssStyle="width:606px" rows="4" /></td>
         </tr> 
         <tr> 
@@ -66,19 +69,69 @@
             </s:label>
             </td>
             <td colspan="2" class="value">
-            <s:textarea name="trialDescriptionDTO.trialBriefSummary" cssStyle="width:606px" rows="4"/></td>
+            <s:textarea name="trialBriefSummary" cssStyle="width:606px" rows="4"/></td>
         </tr>        
         <tr>
         <th colspan="2"><fmt:message key="trial.detailedDescription"/></th>
         </tr>
         <tr>
         <td class="label">
-           <label for=scientificDescrption>
+           <label for="scientificDescription">
                     <fmt:message key="trial.scientificDescription"/>
            </label>
          </td>
          <td class="value">
-        <s:textarea name="trialDescriptionDTO.scientificDescription" cssStyle="width:606px" rows="4"/> 
+        <s:textarea name="outline" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
+        <span class="formErrorMsg"> 
+                <s:fielderror>
+                    <s:param>outline</s:param>
+                </s:fielderror>                            
+            </span> 
+        </td>
+    </tr>
+         <tr>
+        <td class="label">
+           <label for="primary">
+                    <fmt:message key="trial.primary"/>
+           </label>
+         </td>
+         <td class="value">
+        <s:textarea name="primary" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
+            <span class="formErrorMsg"> 
+                <s:fielderror>
+                    <s:param>primary</s:param>
+                </s:fielderror>                            
+            </span>
+        </td>
+    </tr>
+        <tr>
+        <td class="label">
+           <label for="secondary">
+                    <fmt:message key="trial.secondary"/>
+           </label>
+         </td>
+         <td class="value">
+        <s:textarea name="secondary" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
+        <span class="formErrorMsg"> 
+                <s:fielderror>
+                    <s:param>secondary</s:param>
+                </s:fielderror>                            
+            </span>
+        </td>
+    </tr>
+        <tr>
+        <td class="label">
+           <label for="ternary">
+                    <fmt:message key="trial.ternary"/>
+           </label>
+         </td>
+         <td class="value">
+        <s:textarea name="ternary" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
+        <span class="formErrorMsg"> 
+                <s:fielderror>
+                    <s:param>ternary</s:param>
+                </s:fielderror>                            
+            </span>
         </td>
     </tr>
     

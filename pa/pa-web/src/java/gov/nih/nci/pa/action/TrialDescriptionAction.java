@@ -80,9 +80,11 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.dto.TrialDescriptionWebDTO;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
+import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -90,29 +92,45 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.util.List;
+
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  * action for study title and description.
  * @author Anupama Sharma
  *
  */
-
+@Validation
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class TrialDescriptionAction extends ActionSupport {
 
     private static final long serialVersionUID = -263739685830642951L;
-
-    private TrialDescriptionWebDTO trialDescriptionDTO = new TrialDescriptionWebDTO();
-    
     private static final int PUBLIC_TITLE = 300;
     private static final int PUBLIC_DESCRIPTION = 5000;
-    private static final int FIELD_LENGTH = 5000;
     private static final String RESULT = "edit";
+
+
+
+    private static final String MAX_LEN = "2000";
+    private String trialBriefTitle;
+    private String trialBriefSummary;
+    private String outline;
+    private String primary = "";
+    private String secondary = "";
+    private String ternary = ""; 
+    private String studyObjectiveIip;
+    private String studyObjectiveIis;
+    private String studyObjectiveIit;
     /**
      * @return res
      */
+    @SkipValidation
     public String query() {
         try {
 
@@ -121,6 +139,7 @@ public class TrialDescriptionAction extends ActionSupport {
 
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             copy(spDTO);
+            getStudyObjectiveFromDB(studyProtocolIi);
             
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -144,7 +163,8 @@ public class TrialDescriptionAction extends ActionSupport {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
-            
+            updateStudyObjective(studyProtocolIi);
+            getStudyObjectiveFromDB(studyProtocolIi);
             StudyProtocolQueryDTO  studyProtocolQueryDTO =
                 PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                         Long.valueOf(studyProtocolIi.getExtension()));
@@ -155,9 +175,6 @@ public class TrialDescriptionAction extends ActionSupport {
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().setAttribute(
                     Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
-
 
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
@@ -165,54 +182,221 @@ public class TrialDescriptionAction extends ActionSupport {
         }
 
     }
-
-
     private void copy(StudyProtocolDTO spDTO) {
-    trialDescriptionDTO.setTrialBriefTitle(spDTO.getPublicTitle().getValue());
-    trialDescriptionDTO.setTrialBriefSummary(spDTO.getPublicDescription().getValue());
-    trialDescriptionDTO.setScientificDescription(spDTO.getScientificDescription().getValue());   
+        setTrialBriefTitle(spDTO.getPublicTitle().getValue());
+        setTrialBriefSummary(spDTO.getPublicDescription().getValue());
+        setOutline(spDTO.getScientificDescription().getValue());   
     }
-
-
-   
-
+    
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(trialDescriptionDTO.getTrialBriefTitle(), 
-        PUBLIC_TITLE)));
-       spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(trialDescriptionDTO.getTrialBriefSummary()
-       , PUBLIC_DESCRIPTION)));
-spDTO.setScientificDescription(StConverter.convertToSt(PAUtil.stringSetter(
-trialDescriptionDTO.getScientificDescription(), FIELD_LENGTH)));
+        spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefTitle(), PUBLIC_TITLE)));
+        spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefSummary()
+                   , PUBLIC_DESCRIPTION)));
+        spDTO.setScientificDescription(StConverter.convertToSt(PAUtil.stringSetter(getOutline())));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
-
-    /**
-     *
-     * @return trialDescriptionDTO
-     */
-    public TrialDescriptionWebDTO getTrialDescriptionDTO() {
-        return trialDescriptionDTO;
-    }
-
-    /**
-     *
-     * @param trialDescriptionDTO trialDescriptionDTO
-     */
-    public void setTrialDescriptionDTO(TrialDescriptionWebDTO trialDescriptionDTO) {
-        this.trialDescriptionDTO = trialDescriptionDTO;
-    }
-
-    private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
-        String action = "";
-        if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
-            action = DocumentWorkflowStatusCode.REJECTED.getCode();
-        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)) {
-            action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
-        } else {
-            action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
+    private void getStudyObjectiveFromDB(Ii studyProtocolIi) throws PAException {
+        List<StudyObjectiveDTO> studyObjList = PaRegistry.getStudyObjectiveService().
+                    getByStudyProtocol(studyProtocolIi);
+        for (StudyObjectiveDTO dto : studyObjList) {
+            if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
+                setPrimary(StConverter.convertToString(dto.getDescription()));
+                setStudyObjectiveIip(IiConverter.convertToString(dto.getIdentifier()));
+            }
+            if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
+                setSecondary(StConverter.convertToString(dto.getDescription()));
+                setStudyObjectiveIis(IiConverter.convertToString(dto.getIdentifier()));
+            }
+            if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
+                setTernary(StConverter.convertToString(dto.getDescription()));
+                setStudyObjectiveIit(IiConverter.convertToString(dto.getIdentifier()));
+            }
         }
-        return action;
     }
+    private void updateStudyObjective(Ii studyProtocolIi) throws PAException {
+        StudyObjectiveDTO dto = new StudyObjectiveDTO();
+        if (PAUtil.isNotEmpty(getPrimary())) {
+            dto.setDescription(StConverter.convertToSt(getPrimary()));
+        } else {
+            dto.setDescription(StConverter.convertToSt(""));
+        }
+        dto.setStudyObjectiveTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.PRIMARY));
+        dto.setStudyProtocolIdentifier(studyProtocolIi);
+        if (getStudyObjectiveIip() != null) {
+            dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIip()));
+        }
+        saveOrUpdate(dto);
+        dto = new StudyObjectiveDTO();
+        if (PAUtil.isNotEmpty(getSecondary())) {
+            dto.setDescription(StConverter.convertToSt(getSecondary()));
+        } else {
+            dto.setDescription(StConverter.convertToSt(""));
+        }
+        dto.setStudyObjectiveTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.SECONDARY));
+        dto.setStudyProtocolIdentifier(studyProtocolIi);
+        if (getStudyObjectiveIis() != null) {
+            dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIis()));
+        }
+        saveOrUpdate(dto);
+        dto = new StudyObjectiveDTO();
+        if (PAUtil.isNotEmpty(getTernary())) {
+            dto.setDescription(StConverter.convertToSt(getTernary()));
+        } else {
+            dto.setDescription(StConverter.convertToSt(""));
+        }
+        dto.setStudyObjectiveTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.TERNARY));
+        dto.setStudyProtocolIdentifier(studyProtocolIi);
+        if (getStudyObjectiveIit() != null) {
+            dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIit()));
+        }
+        saveOrUpdate(dto);
+        
+    }
+
+    /**
+     * @param dto
+     * @throws PAException
+     */
+    private void saveOrUpdate(StudyObjectiveDTO dto) throws PAException {
+        if (PAUtil.isNotEmpty(IiConverter.convertToString(dto.getIdentifier()))) {
+            PaRegistry.getStudyObjectiveService().update(dto);    
+        } else {
+            PaRegistry.getStudyObjectiveService().create(dto);
+        }
+    }
+    /**
+     * @return the trialBriefTitle
+     */
+    public String getTrialBriefTitle() {
+        return trialBriefTitle;
+    }
+
+    /**
+     * @param trialBriefTitle the trialBriefTitle to set
+     */
+    public void setTrialBriefTitle(String trialBriefTitle) {
+        this.trialBriefTitle = trialBriefTitle;
+    }
+
+    /**
+     * @return the trialBriefSummary
+     */
+    public String getTrialBriefSummary() {
+        return trialBriefSummary;
+    }
+
+    /**
+     * @param trialBriefSummary the trialBriefSummary to set
+     */
+    public void setTrialBriefSummary(String trialBriefSummary) {
+        this.trialBriefSummary = trialBriefSummary;
+    }
+
+    /**
+     * @return the outline
+     */
+    @StringLengthFieldValidator(message = "Outline must be 200 characters max", maxLength = MAX_LEN)
+    public String getOutline() {
+        return outline;
+    }
+
+    /**
+     * @param outline the outline to set
+     */
+    public void setOutline(String outline) {
+        this.outline = outline;
+    }
+
+    /**
+     * @return the primary
+     */
+    @StringLengthFieldValidator(message = "Primary must be 200 characters max", maxLength = MAX_LEN)
+    public String getPrimary() {
+        return primary;
+    }
+
+    /**
+     * @param primary the primary to set
+     */
+    public void setPrimary(String primary) {
+        this.primary = primary;
+    }
+
+    /**
+     * @return the secondary
+     */
+    @StringLengthFieldValidator(message = "Secondary must be 200 characters max", maxLength = MAX_LEN)
+    public String getSecondary() {
+        return secondary;
+    }
+
+    /**
+     * @param secondary the secondary to set
+     */
+    public void setSecondary(String secondary) {
+        this.secondary = secondary;
+    }
+
+    /**
+     * @return the ternary
+     */
+    @StringLengthFieldValidator(message = "Ternary must be 200 characters max", maxLength = MAX_LEN)
+    public String getTernary() {
+        return ternary;
+    }
+
+    /**
+     * @param ternary the ternary to set
+     */
+    public void setTernary(String ternary) {
+        this.ternary = ternary;
+    }
+
+    /**
+     * @return the studyObjectiveIip
+     */
+    public String getStudyObjectiveIip() {
+        return studyObjectiveIip;
+    }
+
+    /**
+     * @param studyObjectiveIip the studyObjectiveIip to set
+     */
+    public void setStudyObjectiveIip(String studyObjectiveIip) {
+        this.studyObjectiveIip = studyObjectiveIip;
+    }
+
+    /**
+     * @return the studyObjectiveIis
+     */
+    public String getStudyObjectiveIis() {
+        return studyObjectiveIis;
+    }
+
+    /**
+     * @param studyObjectiveIis the studyObjectiveIis to set
+     */
+    public void setStudyObjectiveIis(String studyObjectiveIis) {
+        this.studyObjectiveIis = studyObjectiveIis;
+    }
+
+    /**
+     * @return the studyObjectiveIit
+     */
+    public String getStudyObjectiveIit() {
+        return studyObjectiveIit;
+    }
+
+    /**
+     * @param studyObjectiveIit the studyObjectiveIit to set
+     */
+    public void setStudyObjectiveIit(String studyObjectiveIit) {
+        this.studyObjectiveIit = studyObjectiveIit;
+    }
+
+    
+    
+    
 
 }
