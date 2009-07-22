@@ -10,7 +10,7 @@
     <properties>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.1.1</nci-commons.version>
+        <nci-commons.version>1.2.1</nci-commons.version>
         <compileSource>1.5</compileSource>
         <generatedStubsSrcDir>target/generated-sources/stubs</generatedStubsSrcDir>
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
@@ -213,7 +213,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>iso-datatypes</artifactId>
-            <version>1.2.4-SNAPSHOT</version>
+            <version>1.2.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
