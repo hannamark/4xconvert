@@ -133,6 +133,7 @@ public class StudyProtocol extends AbstractEntity {
     private String identifier; // used to store nci-accession number
     private String keywordText;
     private Integer maximumTargetAccrualNumber;
+    private Integer minimumTargetAccrualNumber;
     private String officialTitle;
     private PhaseCode phaseCode;
     private String phaseOtherText;
@@ -170,7 +171,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
 
 
-    private Integer minimumTargetAccrualNumber;
+   
     
     /** 
      * @return accrualReportingMethodCode
@@ -325,6 +326,19 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setMaximumTargetAccrualNumber(Integer maximumTargetAccrualNumber) {
         this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
+    }
+    /**
+     * @return the minimumTargetAccrualNumber
+     */
+    @Column(name = "MIN_TARGET_ACCRUAL_NUM")
+    public Integer getMinimumTargetAccrualNumber() {
+        return minimumTargetAccrualNumber;
+    }
+    /**
+     * @param minimumTargetAccrualNumber the minimumTargetAccrualNumber to set
+     */
+    public void setMinimumTargetAccrualNumber(Integer minimumTargetAccrualNumber) {
+        this.minimumTargetAccrualNumber = minimumTargetAccrualNumber;
     }
     /**
      * 
@@ -831,18 +845,6 @@ public class StudyProtocol extends AbstractEntity {
         this.programCodeText = programCodeText;
     }
     
-    /**
-     * @return the minimumTargetAccrualNumber
-     */
-    @Column(name = "MIN_TARGET_ACCRUAL_NUM")
-    public Integer getMinimumTargetAccrualNumber() {
-        return minimumTargetAccrualNumber;
-    }
-    /**
-     * @param minimumTargetAccrualNumber the minimumTargetAccrualNumber to set
-     */
-    public void setMinimumTargetAccrualNumber(Integer minimumTargetAccrualNumber) {
-        this.minimumTargetAccrualNumber = minimumTargetAccrualNumber;
-    }
+    
 }
 

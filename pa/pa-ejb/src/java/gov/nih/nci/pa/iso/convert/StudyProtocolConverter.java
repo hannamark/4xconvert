@@ -155,7 +155,8 @@ public class StudyProtocolConverter {
         /*studyProtocolDTO.setMaximumTargetAccrualNumber(
                 IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));*/
         studyProtocolDTO.setTargetAccuralNumber(
-                IvlConverter.convertInt().convertToIvl(studyProtocol.getMinimumTargetAccrualNumber(), null));
+                IvlConverter.convertInt().convertToIvl(studyProtocol.getMinimumTargetAccrualNumber(), 
+                        studyProtocol.getMaximumTargetAccrualNumber()));
         studyProtocolDTO.setIdentifier(IiConverter.converToStudyProtocolIi(studyProtocol.getId()));
         studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(studyProtocol.getPhaseCode()));
         studyProtocolDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocol.getPhaseOtherText()));
@@ -231,6 +232,8 @@ public class StudyProtocolConverter {
        if (studyProtocolDTO.getTargetAccuralNumber() != null) {
        studyProtocol.setMinimumTargetAccrualNumber(
                IvlConverter.convertInt().convertLow(studyProtocolDTO.getTargetAccuralNumber()));
+       studyProtocol.setMaximumTargetAccrualNumber(
+               IvlConverter.convertInt().convertHigh(studyProtocolDTO.getTargetAccuralNumber()));
        }
        studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));
        if (studyProtocolDTO.getPhaseCode() != null) {
