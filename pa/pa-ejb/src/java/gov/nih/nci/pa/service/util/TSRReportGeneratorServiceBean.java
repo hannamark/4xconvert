@@ -101,6 +101,7 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -148,12 +149,15 @@ import gov.nih.nci.pa.service.SubGroupsServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -324,6 +328,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
  
   /** The Constant NBSP. */
   private static final String NBSP = "&nbsp;&nbsp;&nbsp;";
+  
+  private static final int MAX_CONDITION = 9;
   
   /** The Constant LOG. */
   private static final Logger LOG  = Logger.getLogger(TSRReportGeneratorServiceBean.class);
@@ -584,20 +590,59 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       appendTDAndData(html, appendTRBold("Type"));
       appendTDAndData(html, appendTRBold("Lead"));
       appendTDAndData(html, appendTRBold("Name"));
+      appendTDAndData(html, appendTRBold("Alternate Name"));
       appendTDAndData(html, appendTRBold("Description"));
       html.append(TR_E);
       for (PlannedActivityDTO pa : paList) {
 
           InterventionDTO inter = interventionService.get(pa.getInterventionIdentifier());
+          String interventionAltName = getInterventionAltNames(inter);
           html.append(TR_B);
           appendTDAndData(html, getTableData(pa.getSubcategoryCode(), true));
           appendTDAndData(html, BlConverter.covertToBool(pa.getLeadProductIndicator()) ? "Yes" : "No");
           appendTDAndData(html, getData(inter.getName(), true));
+          appendTDAndData(html, interventionAltName);
           appendTDAndData(html, getData(pa.getTextDescription(), true));
           html.append(TR_E);
       }
       html.append(TBL_E);
     }
+  }
+  
+  private String getInterventionAltNames(InterventionDTO i) throws PAException {
+      List<InterventionAlternateNameDTO> ianList = 
+          interventionAlternateNameService.getByIntervention(i.getIdentifier()); 
+      int cnt = 1; 
+      StringBuffer interventionAltName = new StringBuffer();
+      List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
+
+      for (InterventionAlternateNameDTO ian : ianList) {
+          if (ian.getNameTypeCode().getValue() != null 
+                  && (ian.getNameTypeCode().getValue().equalsIgnoreCase("synonym") 
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("abbreviation")
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("us brand name")
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("foreign brand name")
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("code name"))) {
+              
+               interventionNames.add(ian);
+                 
+           if (cnt++ > PAAttributeMaxLen.LEN_5) {
+               break;
+           }
+         } 
+       }
+       Collections.sort(interventionNames, new Comparator() {
+           public int compare(Object o1, Object o2) {
+               InterventionAlternateNameDTO p1 = (InterventionAlternateNameDTO) o1;
+               InterventionAlternateNameDTO p2 = (InterventionAlternateNameDTO) o2;
+               return p1.getName().getValue().compareToIgnoreCase(p2.getName().getValue());
+            }
+        });
+       
+       for (InterventionAlternateNameDTO altname : interventionNames) {
+           interventionAltName.append(altname.getName().getValue()).append(", ");
+       }
+       return interventionAltName.toString().substring(0, interventionAltName.length() - 2);
   }
 
   /**
@@ -765,22 +810,52 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     List<StudyDiseaseDTO> sdDtos =
                     studyDiseaseService.getByStudyProtocol(studyProtocolIi);
     boolean first = true;
-    for (StudyDiseaseDTO sdDto : sdDtos) {
-      if (first) {
-        first = false;
-        html.append(TR_B);
-        appendTDAndData(html, appendTRBold("Name"));
-        appendTDAndData(html, appendTRBold("Lead"));
-        html.append(TR_E);
-      }
-
-      DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-      html.append(TR_B);
-      appendTDAndData(html, getData(d.getPreferredName(), true));
-      appendTDAndData(html, convertBLToString(sdDto.getLeadDiseaseIndicator() , false));
-      html.append(TR_E);
-    }
-    html.append(TBL_E);
+    if (sdDtos != null) {
+        if (first) {
+            first = false;
+            html.append(TR_B);
+            appendTDAndData(html, appendTRBold("Name"));
+            appendTDAndData(html, appendTRBold("Lead"));
+            html.append(TR_E);
+          }
+        for (StudyDiseaseDTO sdDto : sdDtos) {
+            if (sdDto.getLeadDiseaseIndicator() != null 
+                    && sdDto.getLeadDiseaseIndicator().getValue()) {
+                DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
+                html.append(TR_B);
+                appendTDAndData(html, getData(d.getPreferredName(), true));
+                appendTDAndData(html, convertBLToString(sdDto.getLeadDiseaseIndicator() , false));
+                html.append(TR_E);
+                break; 
+           }
+        } 
+        List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
+        int count = 0;
+        for (StudyDiseaseDTO sdDto : sdDtos) {
+         if (count < MAX_CONDITION 
+                    && sdDto.getLeadDiseaseIndicator() != null 
+                    && !sdDto.getLeadDiseaseIndicator().getValue()) {
+                DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
+                diseases.add(d);
+                count++;
+             }
+        }
+        Collections.sort(diseases, new Comparator() {
+           public int compare(Object o1, Object o2) {
+                DiseaseDTO p1 = (DiseaseDTO) o1;
+                DiseaseDTO p2 = (DiseaseDTO) o2;
+               return p1.getPreferredName().getValue().compareToIgnoreCase(p2.getPreferredName().getValue());
+            }
+ 
+        });
+       for (DiseaseDTO d : diseases) { 
+           html.append(TR_B);
+           appendTDAndData(html, getData(d.getPreferredName(), true));
+           appendTDAndData(html, "No");
+           html.append(TR_E);
+          }
+       }
+       html.append(TBL_E);
   }
 
   /**

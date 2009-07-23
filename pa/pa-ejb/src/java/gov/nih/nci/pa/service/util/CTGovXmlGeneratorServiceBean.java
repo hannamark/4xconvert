@@ -179,6 +179,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -439,23 +441,41 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
     private void createCondition(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
+        
         if (sdDtos != null) {
             int count = 0;
             for (StudyDiseaseDTO sdDto : sdDtos) {
-                if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
+                if (sdDto.getLeadDiseaseIndicator() != null 
+                        && sdDto.getLeadDiseaseIndicator().getValue()) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                     appendElement(root, createElement(
                             "condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
-               } else if (count < MAX_CONDITION) {
-                    
+                   break; 
+               }
+            } 
+            List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
+            for (StudyDiseaseDTO sdDto : sdDtos) {
+             if (count < MAX_CONDITION 
+                        && sdDto.getLeadDiseaseIndicator() != null 
+                        && !sdDto.getLeadDiseaseIndicator().getValue()) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-                    appendElement(root, createElement(
-                            "condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
+                    diseases.add(d);
                     count++;
                 }
-
             }
-
+            Collections.sort(diseases, new Comparator() {
+               public int compare(Object o1, Object o2) {
+                    DiseaseDTO p1 = (DiseaseDTO) o1;
+                    DiseaseDTO p2 = (DiseaseDTO) o2;
+                   return p1.getPreferredName().getValue().compareToIgnoreCase(p2.getPreferredName().getValue());
+                }
+     
+            });
+           for (DiseaseDTO d : diseases) { 
+            appendElement(root, createElement(
+                    "condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
+           }
+            
         }
     }
 
@@ -835,6 +855,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                                         interventionAlternateNameService.getByIntervention(i.getIdentifier()); 
                           
                 int cnt = 1; 
+                List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
+                
                 for (InterventionAlternateNameDTO ian : ianList) {
                    if (ian.getNameTypeCode().getValue() != null 
                            && (ian.getNameTypeCode().getValue().equalsIgnoreCase("synonym") 
@@ -842,12 +864,26 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase("us brand name")
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase("foreign brand name")
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase("code name"))) {
-                    appendElement(intervention,
-                            createElement("intervention_other_name" , ian.getName(), PAAttributeMaxLen.LEN_160 , doc));
+                       
+                        interventionNames.add(ian);
+                          
                     if (cnt++ > PAAttributeMaxLen.LEN_5) {
                         break;
                     }
                   } 
+                }
+                Collections.sort(interventionNames, new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        InterventionAlternateNameDTO p1 = (InterventionAlternateNameDTO) o1;
+                        InterventionAlternateNameDTO p2 = (InterventionAlternateNameDTO) o2;
+                        return p1.getName().getValue().compareToIgnoreCase(p2.getName().getValue());
+                     }
+                 });
+                
+                for (InterventionAlternateNameDTO ian : interventionNames) {                    
+                    appendElement(intervention,
+                            createElement("intervention_other_name" , ian.getName(), PAAttributeMaxLen.LEN_160 , doc));
+                    
                 }
 
                 List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());
