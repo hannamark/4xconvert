@@ -18,7 +18,10 @@
     <s:form><s:actionerror/>
     <h2><fmt:message key="subGroups.subtitle" /></h2>
     <s:if test="subGroupsList != null">
-    <display:table name="${subGroupsList}" id="row" class="data" sort="list"  pagesize="10" requestURI="subGroupsquery.action" export="false">    
+    <c:if test="${fn:length(subGroupsList) > 10}">
+    <div style="overflow:auto; height:356px;width:968px;">
+    </c:if>
+    <display:table name="${subGroupsList}" id="row" class="data" sort="list"  pagesize="200" requestURI="subGroupsquery.action" export="false">    
 	    <display:column titleKey="subGroups.code" property="groupNumberText" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="subGroups.description" property="description" sortable="true" headerClass="sortable" />
 	    <display:column title="Edit" class="action">
@@ -30,6 +33,9 @@
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
 		</display:column>  
     	</display:table>
+    	<c:if test="${fn:length(subGroupsList) > 10}">
+    	</div>
+    	</c:if>
   </s:if> 
 		<div class="actionsrow">
 			<del class="btnwrapper">

@@ -46,8 +46,12 @@ function handleCreate(){
 	<table class="form">
 		<%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
 		<tr>
-			<td colspan="2"><input type="hidden" name="cbValue" /> <display:table
-				name="organizationList" id="row" class="data">
+			<td colspan="2"><input type="hidden" name="cbValue" /> 
+			<c:if test="${fn:length(organizationList) > 10}">
+			<div style="overflow:auto; height:356px;width:968px;">
+			</c:if>
+			<display:table
+				name="organizationList" id="row" class="data" pagesize="200">
 				<display:column property="nciNumber"
                     titleKey="participatingOrganizations.nciNumber" class="sortable" />
 				<display:column property="name"
@@ -71,7 +75,11 @@ function handleCreate(){
 							alt="Un-link" width="16" height="16" />
 					</s:a>
 				</display:column>
-			</display:table></td>
+			</display:table>
+			<c:if test="${fn:length(organizationList) > 10}">
+			</div>
+			</c:if>
+			</td>
 		</tr>
 	</table>
 	<div class="actionsrow"><del class="btnwrapper">
