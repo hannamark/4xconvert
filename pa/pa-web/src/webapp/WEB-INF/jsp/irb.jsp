@@ -161,7 +161,7 @@ function loadDiv(orgid){
         <tr>
             <td class="label">Board Affiliation:</td>
              <td colspan="2" class="value">
-            <s:textarea name="contactAffiliation" cssStyle="width:606px" rows="4"/></td>
+            <s:textarea name="contactAffiliation" cssStyle="width:606px" rows="4"/><i><fmt:message key="irbaffiliation.maxCodeLength"/></i></td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
