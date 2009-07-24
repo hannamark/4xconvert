@@ -200,15 +200,15 @@ public class TrialDescriptionAction extends ActionSupport {
         List<StudyObjectiveDTO> studyObjList = PaRegistry.getStudyObjectiveService().
                     getByStudyProtocol(studyProtocolIi);
         for (StudyObjectiveDTO dto : studyObjList) {
-            if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
+            if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
                 setPrimary(StConverter.convertToString(dto.getDescription()));
                 setStudyObjectiveIip(IiConverter.convertToString(dto.getIdentifier()));
             }
-            if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
+            if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
                 setSecondary(StConverter.convertToString(dto.getDescription()));
                 setStudyObjectiveIis(IiConverter.convertToString(dto.getIdentifier()));
             }
-            if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
+            if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
                 setTernary(StConverter.convertToString(dto.getDescription()));
                 setStudyObjectiveIit(IiConverter.convertToString(dto.getIdentifier()));
             }
@@ -221,7 +221,7 @@ public class TrialDescriptionAction extends ActionSupport {
         } else {
             dto.setDescription(StConverter.convertToSt(""));
         }
-        dto.setStudyObjectiveTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.PRIMARY));
+        dto.setTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.PRIMARY));
         dto.setStudyProtocolIdentifier(studyProtocolIi);
         if (getStudyObjectiveIip() != null) {
             dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIip()));
@@ -233,7 +233,7 @@ public class TrialDescriptionAction extends ActionSupport {
         } else {
             dto.setDescription(StConverter.convertToSt(""));
         }
-        dto.setStudyObjectiveTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.SECONDARY));
+        dto.setTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.SECONDARY));
         dto.setStudyProtocolIdentifier(studyProtocolIi);
         if (getStudyObjectiveIis() != null) {
             dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIis()));
@@ -245,7 +245,7 @@ public class TrialDescriptionAction extends ActionSupport {
         } else {
             dto.setDescription(StConverter.convertToSt(""));
         }
-        dto.setStudyObjectiveTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.TERNARY));
+        dto.setTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.TERNARY));
         dto.setStudyProtocolIdentifier(studyProtocolIi);
         if (getStudyObjectiveIit() != null) {
             dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIit()));

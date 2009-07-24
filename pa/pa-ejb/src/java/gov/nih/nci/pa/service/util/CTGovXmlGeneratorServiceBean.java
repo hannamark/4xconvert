@@ -1212,7 +1212,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StringBuffer objectiveData = new StringBuffer();
         for (StudyObjectiveDTO dto : studyObjList) {
             if (!StConverter.convertToString(dto.getDescription()).trim().equals("")) {
-                if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
+                if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
                     objectiveData.append('\n');
                     objectiveData.append(StudyObjectiveTypeCode.PRIMARY.getCode());
                     objectiveData.append('\n');
@@ -1225,7 +1225,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         objectiveData.append('\n');
                     } 
                 }
-                if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
+                if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
                     objectiveData.append('\n');
                     objectiveData.append(StudyObjectiveTypeCode.SECONDARY.getCode());
                     objectiveData.append('\n');
@@ -1238,7 +1238,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         objectiveData.append('\n');
                     } 
                 }
-                if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
+                if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
                     objectiveData.append('\n');
                     objectiveData.append(StudyObjectiveTypeCode.TERNARY.getCode());
                     objectiveData.append('\n');
@@ -1255,7 +1255,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
         if (spDTO.getScientificDescription() != null && spDTO.getScientificDescription().getValue() != null) {
             objectiveData.append(NEW_LINE);
-            objectiveData.append("OUTLINE:");
+            objectiveData.append("Outline:");
             objectiveData.append(TAB);
             objectiveData.append(DASH);
             objectiveData.append(StConverter.convertToString(spDTO.getScientificDescription()));
@@ -1264,7 +1264,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         Integer projectedAccrual = IvlConverter.convertInt().convertLow(spDTO.getTargetAccuralNumber());
         if (projectedAccrual != null) {
             objectiveData.append(NEW_LINE);
-            objectiveData.append("PROJECTED ACCRUAL:");
+            objectiveData.append("Projected Accrual:");
             objectiveData.append(TAB);
             objectiveData.append(DASH);
             if (projectedAccrual > 0) { 
@@ -1278,7 +1278,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         if (objectiveData.length() > 1) {
             StringBuffer objectiveTitle = new StringBuffer();
             objectiveTitle.append(NEW_LINE);
-            objectiveTitle.append("OBJECTIVES:");
+            objectiveTitle.append("Objectives:");
             objectiveTitle.append(DASH);
             objectiveTitle.append(NEW_LINE);
             objectiveTitle.append(objectiveData);

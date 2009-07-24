@@ -97,38 +97,42 @@ import org.hibernate.validator.NotNull;
 @Entity
 @Table(name = "STUDY_OBJECTIVE")
 public class StudyObjective extends AbstractStudyEntity {
+    
   private static final long serialVersionUID = 1234509870L;
 
   private String description;
   private StudyObjectiveTypeCode studyObjectiveTypeCode;
   
-/**
- * @return the description
- */
+  /**
+   * @return the description
+   */
   @Column(name = "DESCRIPTION")
   @Length(max = PAAttributeMaxLen.LEN_2000)  
   @NotNull
   public String getDescription() {
     return description;
   }
-/**
- * @param description the description to set
- */
-  public void setDescription(String description) {
+  
+  /**
+   * @param description the description to set
+   */
+   public void setDescription(String description) {
     this.description = description;
-  }
-/**
- * @return the studyObjectiveTypeCode
- */
+   }
+   
+  /**
+   * @return the studyObjectiveTypeCode
+   */
   @Column(name = "TYPE_CODE")
   @Enumerated(EnumType.STRING)
   @NotNull
   public StudyObjectiveTypeCode getStudyObjectiveTypeCode() {
     return studyObjectiveTypeCode;
   }
-/**
- * @param studyObjectiveTypeCode the studyObjectiveTypeCode to set
- */
+  
+  /**
+   * @param studyObjectiveTypeCode the studyObjectiveTypeCode to set
+   */
   public void setStudyObjectiveTypeCode(
         StudyObjectiveTypeCode studyObjectiveTypeCode) {
     this.studyObjectiveTypeCode = studyObjectiveTypeCode;

@@ -127,7 +127,7 @@ public class StudyObjectiveServiceTest {
     public void createTest() throws Exception {
         // test reason code constraints
         StudyObjectiveDTO x = new StudyObjectiveDTO();
-        x.setStudyObjectiveTypeCode(CdConverter.convertToCd(studyObjTypeCode));
+        x.setTypeCode(CdConverter.convertToCd(studyObjTypeCode));
         x.setDescription(StConverter.convertToSt(description));
         x.setStudyProtocolIdentifier(spIi);
         StudyObjectiveDTO y  = null;
@@ -140,7 +140,7 @@ public class StudyObjectiveServiceTest {
         }
 
         assertEquals(description, StConverter.convertToString(y.getDescription()));
-        assertEquals(studyObjTypeCode, StudyObjectiveTypeCode.getByCode(CdConverter.convertCdToString(y.getStudyObjectiveTypeCode())));
+        assertEquals(studyObjTypeCode, StudyObjectiveTypeCode.getByCode(CdConverter.convertCdToString(y.getTypeCode())));
         assertEquals(spId, IiConverter.convertToLong(y.getIdentifier()));
     }
 }

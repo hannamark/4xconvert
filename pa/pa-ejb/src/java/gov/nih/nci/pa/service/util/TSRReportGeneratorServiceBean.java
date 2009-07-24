@@ -1578,7 +1578,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       StringBuffer objectiveData = new StringBuffer();
       for (StudyObjectiveDTO dto : studyObjList) {
           if (!StConverter.convertToString(dto.getDescription()).trim().equals("")) {
-              if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
+              if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
                   objectiveData.append(BR);
                   objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.PRIMARY.getCode()));
                   objectiveData.append(BR);
@@ -1592,7 +1592,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                       objectiveData.append(UL_E);
                   }
               }
-              if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
+              if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
                   objectiveData.append(BR);
                   objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.SECONDARY.getCode()));
                   objectiveData.append(BR);
@@ -1606,7 +1606,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                       objectiveData.append(UL_E);
                   }
               }
-              if (dto.getStudyObjectiveTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
+              if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
                   objectiveData.append(BR);
                   objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.TERNARY.getCode()));
                   objectiveData.append(BR);
@@ -1626,7 +1626,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       if (studyProtocolDto.getScientificDescription() != null 
               && studyProtocolDto.getScientificDescription().getValue() != null) {
           objectiveData.append(BR);
-          objectiveData.append(NBSP).append(appendBoldData("OUTLINE:"));
+          objectiveData.append(NBSP).append(appendBoldData("Outline:"));
           objectiveData.append(UL_B);
           objectiveData.append(LI_B);
           objectiveData.append(studyProtocolDto.getScientificDescription().getValue());
@@ -1636,7 +1636,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       Integer projectedAcc = IvlConverter.convertInt().convertLow(studyProtocolDto.getTargetAccuralNumber());
       if (projectedAcc != null) {
           objectiveData.append(BR);
-          objectiveData.append(NBSP).append(appendBoldData("PROJECTED ACCRUAL:"));
+          objectiveData.append(NBSP).append(appendBoldData("Projected Accrual:"));
           objectiveData.append(UL_B);
           objectiveData.append(LI_B);
           objectiveData.append(projectedAcc);
@@ -1645,7 +1645,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       if (objectiveData.length() > 1) {
           htmldata.append(BR).append(BR);
-          htmldata.append(NBSP).append(appendBoldData("OBJECTIVES:"));
+          htmldata.append(NBSP).append(appendBoldData("Objectives:"));
           htmldata.append(objectiveData);
       }
       return htmldata;

@@ -88,32 +88,31 @@ import gov.nih.nci.coppa.iso.St;
 public class StudyObjectiveDTO  extends StudyDTO {
   private static final long serialVersionUID = -487404345792624715L;
   private St description;
-  private Cd studyObjectiveTypeCode;
-/**
- * @return the description
- */
-public St getDescription() {
-    return description;
-}
-/**
- * @param description the description to set
- */
-public void setDescription(St description) {
-    this.description = description;
-}
-/**
- * @return the studyObjectiveTypeCode
- */
-public Cd getStudyObjectiveTypeCode() {
-    return studyObjectiveTypeCode;
-}
-/**
- * @param studyObjectiveTypeCode the studyObjectiveTypeCode to set
- */
-public void setStudyObjectiveTypeCode(Cd studyObjectiveTypeCode) {
-    this.studyObjectiveTypeCode = studyObjectiveTypeCode;
-}
- 
+  private Cd typeCode;
   
+  /**
+   * @return the description
+   */
+  public St getDescription() {
+    return description;
+  }
+  /**
+   * @param description the description to set
+   */
+  public void setDescription(St description) {
+    this.description = description;
+  }
+  /**
+   * @return the typeCode
+   */
+  public Cd getTypeCode() {
+    return typeCode;
+  }
+  /**
+   * @param typeCode the typeCode to set
+   */
+  public void setTypeCode(Cd typeCode) {
+    this.typeCode = typeCode;
+  }
   
 }

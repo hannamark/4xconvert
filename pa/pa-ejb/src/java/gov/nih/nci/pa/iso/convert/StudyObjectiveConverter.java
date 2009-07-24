@@ -103,7 +103,7 @@ public class StudyObjectiveConverter extends AbstractConverter<StudyObjectiveDTO
       StudyObjectiveDTO dto = new StudyObjectiveDTO();
       dto.setDescription(StConverter.convertToSt(bo.getDescription()));
       dto.setIdentifier(IiConverter.converToStudyObjectiveIi(bo.getId()));
-      dto.setStudyObjectiveTypeCode(CdConverter.convertToCd(bo.getStudyObjectiveTypeCode()));
+      dto.setTypeCode(CdConverter.convertToCd(bo.getStudyObjectiveTypeCode()));
       dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
       return dto;
   }
@@ -122,8 +122,9 @@ public class StudyObjectiveConverter extends AbstractConverter<StudyObjectiveDTO
       StudyObjective bo = new StudyObjective();
       bo.setDescription(StConverter.convertToString(dto.getDescription()));
       bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-      bo.setStudyObjectiveTypeCode(StudyObjectiveTypeCode.getByCode(
-              CdConverter.convertCdToString(dto.getStudyObjectiveTypeCode())));
+      if (dto.getTypeCode() != null) {
+      bo.setStudyObjectiveTypeCode(StudyObjectiveTypeCode.getByCode(dto.getTypeCode().getCode()));
+      }
       bo.setStudyProtocol(spBo);
       return bo;
   }
