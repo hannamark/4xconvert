@@ -9,6 +9,7 @@
         <link rel="address bar icon" href="<c:url value="/images/favicon.ico"/>" />
         <link rel="icon" href="<c:url value="/images/favicon.ico"/>" type="image/x-icon" />
         <link rel="shortcut icon" href="<c:url value="/images/favicon.ico"/>" type="image/x-icon" />
+        <!-- Version: <c:out value='${initParam["appTagVersion"]}'/>, revision: <c:out value='${initParam["appTagRevision"]}'/> -->
         <decorator:head/>
     </head>
     <body onload="setFocusToFirstControl();">

@@ -221,13 +221,13 @@
                                         <include name="**/*"/>
                                     </fileset>
                                 </copy>
-                                <delete dir="${junk.target.dir}"/>
+                                <delete dir="${junk.target.dir}"/>    
                             </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
+                    </execution>                    
                 </executions>
             </plugin>
             <plugin>
@@ -255,7 +255,7 @@
                                             help/**
                                         </include>
                                     </includes>
-                                </resource>
+                                </resource>                                
                             </webResources>
                         </configuration>
                     </execution>
@@ -271,6 +271,23 @@
                         </excludes>
                     </instrumentation>
                 </configuration>
+            </plugin>
+            <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <version>1.0-beta-3</version>
+            <executions>
+               <execution>
+                <phase>validate</phase>
+                <goals>
+                <goal>create</goal>
+                </goals>
+                </execution>
+            </executions>
+            <configuration>
+            <doCheck>false</doCheck>
+            <doUpdate>false</doUpdate>
+            </configuration>
             </plugin>
         </plugins>
         <resources>
