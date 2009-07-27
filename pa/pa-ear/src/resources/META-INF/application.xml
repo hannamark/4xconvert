@@ -24,7 +24,10 @@
         <ejb>pa-ejb.jar</ejb>
     </module>
     <module>
-        <java>po-services-client-2.2.jar</java>
+        <java>po-services-client-1.1.0.rc1.jar</java>
+    </module>
+    <module>
+        <java>xsnapshot-1.1-beta2.jar</java>
     </module>
     <module>
         <java>iso-datatypes-1.2.4.jar</java>
