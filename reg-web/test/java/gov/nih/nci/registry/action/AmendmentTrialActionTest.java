@@ -546,7 +546,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         dto.setStatusCode("Administratively Complete");
         dto.setReason("reason");
         dto.setCompletionDateType("Actual");
-        dto.setCompletionDate("01/22/2009");
+        dto.setCompletionDate("01/10/2008");
         trialAction.setTrialDTO(dto);
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());

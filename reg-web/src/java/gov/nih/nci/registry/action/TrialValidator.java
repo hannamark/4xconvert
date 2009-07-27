@@ -198,13 +198,16 @@ public class TrialValidator {
                             + "should be future date if Trial Status is changed from 'Approved' to 'Withdrawn'.  ");
             }
             if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
+                StudyOverallStatusDTO oldStatusDto = RegistryServiceLocator.getStudyOverallStatusService()
+                        .getCurrentByStudyProtocol(IiConverter.convertToIi(trialDto.getIdentifier()));
                 if (trialDto.getCompletionDateType().equals(anticipatedString)) {
                     addActionError.add("Primary Completion Date cannot be 'Anticipated' when "
                             + "Current Trial Status is '" + newCode.getCode() + "'.");
                 }
-                if (!newStatusTimestamp.equals(PAUtil.dateStringToTimestamp(trialDto.getCompletionDate()))) {
-                    addActionError.add("Current Trial Status Date and Primary Completion Date must be the same when "
-                            + "Current Trial Status is '" + newCode.getCode() + "'.");
+                if (PAUtil.dateStringToTimestamp(trialDto.getCompletionDate())
+                        .before(TsConverter.convertToTimestamp(oldStatusDto.getStatusDate()))) {
+                    addActionError.add("Primary Completion Date must be the same or greater than "
+                            + "Current Trial Status Date when Current Trial Status is '" + newCode.getCode() + "'.");
                 }
             } else {
                 if (!trialDto.getCompletionDateType().equals(anticipatedString)) {
