@@ -346,12 +346,12 @@ public class TrialBatchDataValidator {
           }
           // Constraint/Rule: 27 If Current Trial Status is 'Completed', Primary Completion Date must be the 
           // same as Current Trial Status Date and have 'actual' type.
-          if (TrialStatusCode.COMPLETE.getCode().equals(dto.getCurrentTrialStatus())
+          /*if (TrialStatusCode.COMPLETE.getCode().equals(dto.getCurrentTrialStatus())
                   && (!statusDate.equals(trialCompletionDate) 
                   || !dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
                     errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual "
                                 + " and same as Current Trial Status Date\n");
-          }            
+          }*/            
           // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed', 
           // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type 
           // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'.
