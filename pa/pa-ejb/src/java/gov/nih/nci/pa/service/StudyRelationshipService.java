@@ -91,16 +91,6 @@ import java.util.List;
  */
 public interface StudyRelationshipService extends BasePaService<StudyRelationshipDTO> {
 
-    /**
-    *
-    * @param dto of StudyRelationshipDTO
-    * @return List StudyRelationshipDTOs
-    * @throws PAException on error
-    * @deprecated
-    */
-   @Deprecated
-   List<StudyRelationshipDTO> search(final StudyRelationshipDTO dto) throws PAException;
-
    /**
     * This method is an extension of the existing search method. The key difference being the support for paginated
     * results (similar to SQL LIMIT OFFSET queries).

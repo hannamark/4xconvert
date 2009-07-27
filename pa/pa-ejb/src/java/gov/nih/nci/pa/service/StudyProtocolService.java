@@ -83,8 +83,6 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
-import java.util.List;
-
 /**
  * @author Bala Nair
  * @since 03/23/2009
@@ -102,18 +100,6 @@ public interface StudyProtocolService {
      * @throws PAException PAException
      */
     StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException;
-    
-   
-    /**
-     * Searches the study protocol. 
-     * @param dto the dto 
-     * @return the study protocol 
-     * @throws PAException the PA exception
-     * @deprecated
-     */
-    @Deprecated
-    List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException;
-    
     /**
      * 
      * @param studyProtocolDTO studyProtocolDTO

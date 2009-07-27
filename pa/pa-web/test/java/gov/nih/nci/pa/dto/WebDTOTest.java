@@ -38,7 +38,7 @@ public class WebDTOTest {
       assertGetterSetterBehavior(new StudyResourcingWebDTO());
       assertGetterSetterBehavior(new SubGroupsWebDTO());
       assertGetterSetterBehavior(new TrialArmsWebDTO());
-      assertGetterSetterBehavior(new TrialDescriptionWebDTO());
+//      assertGetterSetterBehavior(new TrialDescriptionWebDTO());
       assertGetterSetterBehavior(new TrialDocumentWebDTO());
       assertGetterSetterBehavior(new TrialFundingWebDTO());
       assertGetterSetterBehavior(new TrialHistoryWebDTO());

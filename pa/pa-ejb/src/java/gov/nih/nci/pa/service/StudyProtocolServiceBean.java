@@ -189,43 +189,6 @@ import org.hibernate.criterion.Example;
         return studyProtocolDTO;
 
     }
-
-    /**
-     *
-     * @param dto of StudyProtocolDTO
-     * @return List StudyProtocolDTO
-     * @throws PAException PAException
-     * @deprecated
-     */
-    @Deprecated
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException {
-        if (dto == null) {
-            LOG.error(" StudyProtocolDTO should not be null ");
-            throw new PAException(" StudyProtocolDTO should not be null ");
-        }
-        LOG.info("Entering search");
-        Session session = null;
-        List<StudyProtocol> studyProtocolList = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StudyProtocol exampleDO = new StudyProtocol();
-            exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
-            Example example = Example.create(exampleDO);
-            studyProtocolList = session.createCriteria(StudyProtocol.class).add(example).list();
-            session.flush();
-
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving StudyProtocol for dto = " + hbe);
-            throw new PAException(" Hibernate exception while retrieving " + "StudyProtocol for dto = " + hbe);
-        }
-
-        List<StudyProtocolDTO> studyProtocolDTOList = convertFromDomainToDTO(studyProtocolList);
-        LOG.info("Leaving search");
-        return studyProtocolDTOList;
-
-    }
-
     /**
      *
      * @param studyProtocolDTO studyProtocolDTO

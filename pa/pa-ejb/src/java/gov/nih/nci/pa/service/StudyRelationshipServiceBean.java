@@ -114,44 +114,8 @@ import org.hibernate.criterion.Example;
 public class StudyRelationshipServiceBean extends
     AbstractBaseIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>
     implements StudyRelationshipServiceLocal , StudyRelationshipServiceRemote {
-    private final transient StudyRelationshipConverter srConverter = new StudyRelationshipConverter();
+    //private final transient StudyRelationshipConverter srConverter = new StudyRelationshipConverter();
     private static final Logger LOG  = Logger.getLogger(StudyRelationshipServiceBean.class);
-
-    /**
-    *
-    * @param dto of StudyRelationshipDTO
-    * @return List StudyRelationshipDTOs
-    * @throws PAException on error
-    * @deprecated
-    */
-   @Deprecated
-   public List<StudyRelationshipDTO> search(final StudyRelationshipDTO dto) throws PAException {
-       if (dto == null) {
-           throw new PAException(" StudyRelationship should not be null ");
-       }
-
-       try {
-           Session session = HibernateUtil.getCurrentSession();
-           String hql = " select sr from StudyRelationship sr  join sr.sourceStudyProtocol sp "
-                   + " where sp.id = " + dto.getSourceStudyProtocolIdentifier().getExtension();
-           List <StudyRelationship> srList = session.createQuery(hql).list();
-
-
-           List<StudyRelationshipDTO> srDTOList = null;
-
-           if (srList != null) {
-               srDTOList = new ArrayList<StudyRelationshipDTO>();
-               for (StudyRelationship sp : srList) {
-                   srDTOList.add(srConverter.convertFromDomainToDto(sp));
-               }
-           }
-           return srDTOList;
-       }  catch (HibernateException hbe) {
-           throw new PAException("Hibernate exception while retrieving StudyRelationship for dto", hbe);
-       }
-
-   }
-
    /**
     * {@inheritDoc}
     */
