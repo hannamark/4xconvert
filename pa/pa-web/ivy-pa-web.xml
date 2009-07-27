@@ -43,7 +43,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.0.7"           conf="runtime->master"/>
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="runtime->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="runtime->master"/>
-    <dependency org="ognl"                   name="ognl"                    rev="2.6.11"           conf="runtime->default"/>
+    <dependency org="ognl"                   name="ognl"                    rev="2.6.11"          conf="runtime->default"/>
     <dependency org="opensymphony"           name="sitemesh"                rev="2.2.1"           conf="runtime->master"/>
     <dependency org="opensymphony"           name="xwork"                   rev="2.0.7"           conf="runtime->default"/>
     <dependency org="org.directwebremoting"  name="dwr"                     rev="2.0.1"           conf="runtime->master"/>
@@ -62,9 +62,9 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
-    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.3"       	  conf="compile->master"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="1.1.0.rc1"       conf="compile->master"/>
-    <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.1"           conf="compile->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"       	  conf="compile->master"/>
+    <dependency org="ncicb"                  name="po-services-client"      rev="2.2"       	  conf="compile->master"/>
+    <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"           conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
 
     <!-- test -->
