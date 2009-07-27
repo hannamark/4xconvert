@@ -403,6 +403,11 @@
     <target name="ivy-runtime" depends="init:ivy">
         <ivy:resolve refresh="true" conf="runtime" />
         <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
+        
+        <!-- copy a runtime library, not worthy of putting in ivy -->
+        <copy file="${pa.dir}/lib-temp/xsnapshot-1.1-beta2.jar" 
+              todir="${lib.dir}/pa-ear/runtime" overwrite="true" />
+        
     </target>
     <target name="ivy-container" depends="init:ivy">
         <ivy:resolve refresh="true" conf="container" />
