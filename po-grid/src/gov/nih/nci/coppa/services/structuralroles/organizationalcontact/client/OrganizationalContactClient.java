@@ -22,12 +22,12 @@ import org.iso._21090.CD;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.2
  */
-public class OrganizationalContactClient extends OrganizationalContactClientBase implements OrganizationalContactI {	
+public class OrganizationalContactClient extends OrganizationalContactClientBase implements OrganizationalContactI {
 
-	/**
+    /**
      * The identifier name for.
      */
     public static final String ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME = "Organizational contact identifier";
@@ -36,57 +36,57 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
      * The ii root value.
      */
     public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
-    
-	public OrganizationalContactClient(String url) throws MalformedURIException, RemoteException {
-		this(url,null);	
-	}
 
-	public OrganizationalContactClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(url,proxy);
-	}
-	
-	public OrganizationalContactClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-	   	this(epr,null);
-	}
-	
-	public OrganizationalContactClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(epr,proxy);
-	}
+    public OrganizationalContactClient(String url) throws MalformedURIException, RemoteException {
+        this(url,null);
+    }
 
-	public static void usage(){
-		System.out.println(OrganizationalContactClient.class.getName() + " -url <service url>");
-	}
-	
-	public static void main(String [] args){
-	    System.out.println("Running the Grid Service Client");
-		try{
-		if(!(args.length < 2)){
-			if(args[0].equals("-url")){
-			  OrganizationalContactClient client = new OrganizationalContactClient(args[1]);
-			  // place client calls here if you want to use this main as a
-			  // test....
-			  getOrgContact(client);
-			  searchOrgContact(client);
-			  queryOrgContact(client);
-			} else {
-				usage();
-				System.exit(1);
-			}
-		} else {
-			usage();
-			System.exit(1);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
+    public OrganizationalContactClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(url,proxy);
+    }
 
-	private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
+    public OrganizationalContactClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
+           this(epr,null);
+    }
+
+    public OrganizationalContactClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(epr,proxy);
+    }
+
+    public static void usage(){
+        System.out.println(OrganizationalContactClient.class.getName() + " -url <service url>");
+    }
+
+    public static void main(String [] args){
+        System.out.println("Running the Grid Service Client");
+        try{
+        if(!(args.length < 2)){
+            if(args[0].equals("-url")){
+              OrganizationalContactClient client = new OrganizationalContactClient(args[1]);
+              // place client calls here if you want to use this main as a
+              // test....
+              getOrgContact(client);
+              searchOrgContact(client);
+              queryOrgContact(client);
+            } else {
+                usage();
+                System.exit(1);
+            }
+        } else {
+            usage();
+            System.exit(1);
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
         id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
-        id.setExtension("610");
+        id.setExtension("631");
         OrganizationalContact result = client.getById(id);
         ClientUtils.handleResult(result);
     }
@@ -96,19 +96,16 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         OrganizationalContact[] results = client.search(criteria);
         ClientUtils.handleSearchResults(results);
     }
-    
+
     private static void queryOrgContact(OrganizationalContactClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);
-        limitOffset.setOffset(0);        
+        limitOffset.setOffset(0);
         OrganizationalContact criteria = createCriteria();
         OrganizationalContact[] results = client.query(criteria, limitOffset);
         ClientUtils.handleSearchResults(results);
     }
 
-    /**
-     * @return
-     */
     private static OrganizationalContact createCriteria() {
         OrganizationalContact criteria = new OrganizationalContact();
         CD statusCode = new CD();
@@ -117,7 +114,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         return criteria;
     }
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+    public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateRequest();

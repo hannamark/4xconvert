@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PhoneNotEmptyValidator;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniquePlayerScoper;
 
@@ -104,6 +105,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
+import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
@@ -302,6 +304,19 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "person_id")
+    @ForeignKey(name = "personrole_per_fkey")
+    @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
+    public Person getPlayer() {
+        return super.getPlayer();
     }
 
 }

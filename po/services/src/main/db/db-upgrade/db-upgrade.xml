@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+
 <databaseChangeLog
-	xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
-	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd">
-	<preConditions>            
-		<dbms type="postgresql" />                     
-	</preConditions>                                       
-	<changeSet id="PO-787" author="smiller">
-	   <comment>Upgrade for PO-787 - ctep oids</comment>
-	   <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1/ctepOids.sql"/>
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd">
+    <preConditions>
+        <dbms type="postgresql" />
+    </preConditions>
+    <changeSet id="PO-787" author="smiller">
+       <comment>Upgrade for PO-787 - ctep oids</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1/ctepOids.sql"/>
     </changeSet>
-	<changeSet id="PO-933" author="smatyas">
-	   <comment>Upgrade for PO-933 - setting organization.name and organizationcr.name lengths to 160</comment>
-	   <sqlFile path="${db-upgrade.run.dir}/postgresql/2.1/PO-933.sql"/>
+    <changeSet id="PO-933" author="smatyas">
+       <comment>Upgrade for PO-933 - setting organization.name and organizationcr.name lengths to 160</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/2.1/PO-933.sql"/>
     </changeSet>
-	<changeSet id="PO-1119" author="smatyas">
-	   <comment>Upgrade for PO-1119 - dropping auditlogdetail.foreignkey column </comment>
-	   <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-1119.sql"/>
+    <changeSet id="PO-1119" author="smatyas">
+       <comment>Upgrade for PO-1119 - dropping auditlogdetail.foreignkey column </comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-1119.sql"/>
+    </changeSet>
+    <changeSet id="PO-893" author="slustbader">
+       <comment>Upgrade for PO-893 - organization generic contact</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-893.sql"/>
     </changeSet>
 </databaseChangeLog>

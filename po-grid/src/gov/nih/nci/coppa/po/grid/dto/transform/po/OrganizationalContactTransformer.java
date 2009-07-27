@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 /**
@@ -25,8 +26,7 @@ public final class OrganizationalContactTransformer
     /**
      * {@inheritDoc}
      */
-    public OrganizationalContactDTO toDto(OrganizationalContact input)
-           throws DtoTransformException {
+    public OrganizationalContactDTO toDto(OrganizationalContact input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
@@ -38,6 +38,7 @@ public final class OrganizationalContactTransformer
         dto.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         dto.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
         dto.setTypeCode(DSETCDTransformer.INSTANCE.toDto(input.getTypeCode()));
+        dto.setTitle(STTransformer.INSTANCE.toDto(input.getTitle()));
 
         return dto;
     }
@@ -45,8 +46,7 @@ public final class OrganizationalContactTransformer
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public OrganizationalContact toXml(OrganizationalContactDTO input)
-           throws DtoTransformException {
+    public OrganizationalContact toXml(OrganizationalContactDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
@@ -58,15 +58,15 @@ public final class OrganizationalContactTransformer
         xml.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         xml.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
         xml.setTypeCode(DSETCDTransformer.INSTANCE.toXml(input.getTypeCode()));
+        xml.setTitle(STTransformer.INSTANCE.toXml(input.getTitle()));
         return xml;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationalContact[] createXmlArray(int arg0)
-            throws DtoTransformException {
-        return new OrganizationalContact[arg0];
+    public OrganizationalContact[] createXmlArray(int size) throws DtoTransformException {
+        return new OrganizationalContact[size];
     }
 
 }

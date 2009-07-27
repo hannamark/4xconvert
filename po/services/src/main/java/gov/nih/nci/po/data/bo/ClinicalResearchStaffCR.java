@@ -1,5 +1,7 @@
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
+
 import java.util.List;
 import java.util.Set;
 
@@ -16,7 +18,10 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  *
@@ -209,6 +214,19 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     @Valid
     public List<URL> getUrl() {
         return super.getUrl();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "person_id")
+    @ForeignKey(name = "personrole_per_fkey")
+    @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
+    public Person getPlayer() {
+        return super.getPlayer();
     }
 
 }

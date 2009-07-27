@@ -5,6 +5,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
@@ -212,6 +213,16 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
                 .getServiceLocator().getOversightCommitteeService();
         return service.getHotRoleCount(organization);
     }
+    
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotOrganizationalContactCount() {
+        OrganizationalContactServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getOrganizationalContactService();
+        return service.getScoperHotRoleCount(organization);
+    }
+
 
     /**
      * @return the duplicateOf

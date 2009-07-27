@@ -10,7 +10,7 @@ import org.hibernate.validator.ValidatorClass;
 
 /**
  * Used to validate that the scoper is unique for the given player, ignoring NULLIFIED records.
- * 
+ *
  * @author smatyas
  */
 @Documented
@@ -22,6 +22,11 @@ public @interface UniquePlayerScoper {
      * returns the friendly-type name.
      */
     String friendlyName();
+
+    /**
+     * the article to be displayed before the friendly name, such as "A" or "An".
+     */
+    String article() default "A";
 
     /**
      * get the message.

@@ -132,6 +132,7 @@ public class Organization extends AbstractOrganization
     private Set<OversightCommittee> oversightCommittees = new HashSet<OversightCommittee>();
     private Set<HealthCareFacility> healthCareFacilities = new HashSet<HealthCareFacility>();
     private Set<IdentifiedOrganization> identifiedOrganizations = new HashSet<IdentifiedOrganization>();
+    private Set<OrganizationalContact> organizationalContacts = new HashSet<OrganizationalContact>();
 
     private String comments;
 
@@ -366,6 +367,23 @@ public class Organization extends AbstractOrganization
     @SuppressWarnings("unused")
     private void setResearchOrganizations(Set<ResearchOrganization> researchOrganizations) {
         this.researchOrganizations = researchOrganizations;
+    }
+
+    /**
+     * @return organizationalContacts.
+     */
+    @OneToMany(mappedBy = "scoper")
+    @Where(clause = "status <> 'NULLIFIED' and person_id IS NULL")
+    public Set<OrganizationalContact> getOrganizationalContacts() {
+        return organizationalContacts;
+    }
+
+    /**
+     * @param organizationalContacts organizationalContacts.
+     */
+    @SuppressWarnings("unused")
+    private void setOrganizationalContacts(Set<OrganizationalContact> organizationalContacts) {
+        this.organizationalContacts = organizationalContacts;
     }
 
     /**

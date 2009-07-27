@@ -127,11 +127,10 @@ public final class AddressConverter {
                 Ad iso = new Ad();
                 iso.setNullFlavor(NullFlavor.NI);
                 return iso;
-            } else {
-                return AddressConverterUtil.create(a.getStreetAddressLine(), a.getDeliveryAddressLine(), a
-                        .getCityOrMunicipality(), a.getStateOrProvince(), a.getPostalCode(),
-                        a.getCountry().getAlpha3(), a.getCountry().getName());
             }
+            return AddressConverterUtil.create(a.getStreetAddressLine(), a.getDeliveryAddressLine(),
+                    a.getCityOrMunicipality(), a.getStateOrProvince(), a.getPostalCode(), a.getCountry().getAlpha3(),
+                    a.getCountry().getName());
         }
     }
 

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Person;
 
@@ -99,4 +100,11 @@ public interface OrganizationalContactServiceLocal extends GenericStructrualRole
      * @return the count of roles that need attention.
      */
     int getHotRoleCount(Person per);
+
+    /**
+     * Get the number of roles that need attention from the curator.
+     * @param org the scoper organization for the roles.
+     * @return the count of roles that need attention.
+     */
+    int getScoperHotRoleCount(Organization org);
 }

@@ -89,7 +89,8 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 /**
- * Class that stores organizational contact information.
+ * Class that stores organizational contact information.  An organiztional contact is considered "generic" if the title
+ * is set instead of the player (ie, the contact is "CEO" instead of "Bill Gates").
  *
  * @author smatyas
  *
@@ -103,7 +104,14 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Default long string column length.
+     */
+    protected static final int LONG_COL_LENGTH = 255;
+
     private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private String title;
+
 
     /**
      * Get org contact type codes.
@@ -124,5 +132,23 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
      */
     public void setTypes(Set<OrganizationalContactType> types) {
         this.types = types;
+    }
+
+    /**
+     * @return the title
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
+     */
+    @Transient
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

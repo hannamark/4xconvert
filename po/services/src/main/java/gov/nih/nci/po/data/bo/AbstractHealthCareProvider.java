@@ -85,10 +85,14 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -103,6 +107,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
+@SuppressWarnings("PMD.UselessOverridingMethod")
 public abstract class AbstractHealthCareProvider extends AbstractPersonRole implements Contactable {
     private static final long serialVersionUID = 1L;
     private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
@@ -128,4 +133,18 @@ public abstract class AbstractHealthCareProvider extends AbstractPersonRole impl
     public void setCertificateLicenseText(String certificateLicenseText) {
         this.certificateLicenseText = certificateLicenseText;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "person_id")
+    @ForeignKey(name = "personrole_per_fkey")
+    @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
+    public Person getPlayer() {
+        return super.getPlayer();
+    }
+
 }

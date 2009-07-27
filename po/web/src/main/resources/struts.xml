@@ -435,6 +435,21 @@
             <result name="success" type="redirectAction">person/curate/start?person.id=${personId}</result>
         </action>        
         
+        <!-- Person/Organization -> Edit/Curate -> Assign Organizational Contact Role (can be done from either the P or O side -->
+        <action name="roles/*/OrganizationalContact/*" class="gov.nih.nci.po.web.roles.OrganizationalContactAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/roles/OrganizationalContact/form.jsp</result>
+            <result name="success">/WEB-INF/jsp/roles/OrganizationalContact/manage.jsp</result>
+        </action>
+        <action name="ajax/roles/*/OrganizationalContact/*" class="gov.nih.nci.po.web.roles.OrganizationalContactAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/roles/OrganizationalContact/roleCrInfo.jsp</result>
+        </action>
+        <action name="ajax/roles/*/OrganizationalContact/results/*" class="gov.nih.nci.po.web.roles.OrganizationalContactAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/roles/OrganizationalContact/list.jsp</result>
+        </action>  
+
         <!-- Organization -> Edit/Curate -> Assign Organizational Roles -->
         <action name="roles/organizational/*/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">
             <interceptor-ref name="poPerMethodValidationStack" />
@@ -470,7 +485,7 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/roles/person/{1}/list.jsp</result>
         </action>  
-        
+                
         <action name="import/ctep/org/*" class="gov.nih.nci.po.web.externalimport.CtepImportAction" method="{1}">
             <result name="input">/WEB-INF/jsp/import/ctep/importOrgs.jsp</result>
             <result name="success">/WEB-INF/jsp/import/ctep/importOrgs.jsp</result>

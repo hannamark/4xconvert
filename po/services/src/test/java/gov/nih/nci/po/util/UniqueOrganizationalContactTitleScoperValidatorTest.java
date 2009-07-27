@@ -80,46 +80,31 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.Organization;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.AbstractHibernateTestCase;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import org.junit.Test;
 
 /**
- * @author smatyas
+ * @author Steve Lustbader
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationalContactServiceBean extends AbstractCuratableServiceBean<OrganizationalContact>
-        implements OrganizationalContactServiceLocal {
+public class UniqueOrganizationalContactTitleScoperValidatorTest extends AbstractHibernateTestCase {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long create(OrganizationalContact obj) throws EntityValidationException {
-        obj.setStatus(RoleStatus.PENDING);
-        return super.create(obj);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public int getHotRoleCount(Person per) {
-        return super.getHotRoleCount(per.getId(), OrganizationalContact.class);
-    }
+    @Test
+    public void isValidType() {
+        UniqueOrganizationalContactTitleScoperValidator validator =
+                new UniqueOrganizationalContactTitleScoperValidator();
+        assertFalse(validator.isValid(new HealthCareFacility()));
+        OrganizationalContact oc = new OrganizationalContact();
+        assertTrue(validator.isValid(oc));
 
-    /**
-     * {@inheritDoc}
-     */
-    public int getScoperHotRoleCount(Organization org) {
-        return super.getScoperHotRoleCount(org.getId(), OrganizationalContact.class);
+        oc.setTitle("test title");
+        assertTrue(validator.isValid(oc));
     }
 
 }

@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
@@ -30,6 +31,7 @@ import org.junit.Test;
 
 
 public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
+    private static final String TEST_TITLE = "test title";
     private final Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
 
     @Before
@@ -49,11 +51,12 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
 
     @Override
     protected AbstractPersonRole getExampleTestClass() {
-        OrganizationalContact hcp = new OrganizationalContact();
-        fillInExamplePersonRoleFields(hcp);
-        hcp.setTypes(getTypes());
+        OrganizationalContact oc = new OrganizationalContact();
+        fillInExamplePersonRoleFields(oc);
+        oc.setTypes(getTypes());
+        oc.setTitle(TEST_TITLE);
 
-        return hcp;
+        return oc;
     }
 
     @Override
@@ -71,6 +74,11 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         dto.setIdentifier(ii);
 
         dto.setTypeCode(OrganizationalContactTypeConverter.convertToDsetOfCd(getTypes()));
+
+        St title = new St();
+        title.setValue(TEST_TITLE);
+        dto.setTitle(title);
+
         return dto;
     }
 
@@ -84,6 +92,9 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         assertEquals(expectedValues.size(), actualValues.size());
         assertTrue(expectedValues.containsAll(actualValues));
         assertTrue(actualValues.containsAll(expectedValues));
+
+        assertEquals(TEST_TITLE, organizationalContact.getTitle());
+
     }
 
     public static List<String> getCodeValues(Collection<OrganizationalContactType> list) {
@@ -124,6 +135,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         assertEquals(expectedValues.size(), actualValues.size());
         assertTrue(expectedValues.containsAll(actualValues));
         assertTrue(actualValues.containsAll(expectedValues));
+        assertEquals(TEST_TITLE, organizationalContactDTO.getTitle().getValue());
 
     }
 

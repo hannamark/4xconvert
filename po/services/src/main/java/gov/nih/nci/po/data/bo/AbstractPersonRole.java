@@ -159,12 +159,8 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "person_id")
-    @ForeignKey(name = "personrole_per_fkey")
     @Searchable(fields = {"id" })
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
+    @Transient
     public Person getPlayer() {
         return this.player;
     }

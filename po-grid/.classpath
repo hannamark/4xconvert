@@ -91,12 +91,12 @@
 	<classpathentry kind="lib" path="build/lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/jaxb-api-2.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/jaxb-impl-2.1.4.jar"/>
-	<classpathentry kind="lib" path="build/lib/po-services-1.3-SNAPSHOT-client.jar"/>
 	<classpathentry kind="lib" path="build/lib/stax-api-1.0-2.jar"/>
-	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.1.jar"/>
-	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.jar"/>
-	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2-tests.jar"/>
 	<classpathentry kind="var" path="PO_GLOBUS"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.2.jar"/>
+	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.4.jar"/>
+	<classpathentry kind="lib" path="build/lib/po-services-2.2-SNAPSHOT-client.jar"/>
+	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.2-tests.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

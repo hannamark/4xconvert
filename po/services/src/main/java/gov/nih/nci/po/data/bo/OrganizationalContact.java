@@ -83,8 +83,11 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PhoneNotEmptyValidator;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.RequiredOrganizationalContactTitleOrPerson;
 import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.UniquePlayerScoper;
+import gov.nih.nci.po.util.UniqueOrganizationalContactTitleScoper;
+import gov.nih.nci.po.util.UniquePlayerScoperPlayerOptional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -105,6 +108,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
@@ -120,14 +124,15 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Entity
 @RoleStatusChange
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-@UniquePlayerScoper(friendlyName = "Organizational Contact")
+@RequiredOrganizationalContactTitleOrPerson
+@UniqueOrganizationalContactTitleScoper
+@UniquePlayerScoperPlayerOptional(article = "An", friendlyName = "Organizational Contact")
 @PhoneNotEmptyValidator.PhoneNotEmpty
 public class OrganizationalContact extends AbstractOrganizationalContact implements Correlation {
 
     private static final long serialVersionUID = 1L;
 
     private Set<OrganizationalContactCR> changeRequests = new HashSet<OrganizationalContactCR>();
-
     private OrganizationalContact duplicateOf;
 
     /**
@@ -322,4 +327,28 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     public List<URL> getUrl() {
         return super.getUrl();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    @ForeignKey(name = "personrole_per_fkey")
+    @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
+    public Person getPlayer() {
+        return super.getPlayer();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Length(max = LONG_COL_LENGTH)
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public String getTitle() {
+        return super.getTitle();
+    }
+
 }

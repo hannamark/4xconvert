@@ -288,12 +288,11 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     public Collection<RoleStatus> getAvailableStatus() {
         if (getBaseRole().getId() != null) {
             return getBaseRole().getPriorStatus().getAllowedTransitions();
-        } else {
-            List<RoleStatus> set = new ArrayList<RoleStatus>();
-            set.add(RoleStatus.PENDING);
-            set.add(RoleStatus.ACTIVE);
-            return set;
         }
+        List<RoleStatus> set = new ArrayList<RoleStatus>();
+        set.add(RoleStatus.PENDING);
+        set.add(RoleStatus.ACTIVE);
+        return set;
     }
 
     /**

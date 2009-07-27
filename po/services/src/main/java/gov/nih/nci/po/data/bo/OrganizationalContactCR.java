@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
+
 import java.util.List;
 import java.util.Set;
 
@@ -99,6 +101,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.Valid;
 
 /**
@@ -303,4 +306,24 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     public List<URL> getUrl() {
         return super.getUrl();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    @ForeignKey(name = "personrole_per_fkey")
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
+    public Person getPlayer() {
+        return super.getPlayer();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Length(max = LONG_COL_LENGTH)
+    public String getTitle() {
+        return super.getTitle();
+    }
+
 }

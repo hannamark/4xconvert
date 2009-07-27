@@ -118,6 +118,9 @@ public class OrganizationalContactAction extends
     private OrganizationalContact duplicateOf = new OrganizationalContact();
     private OrganizationalContactCR cr = new OrganizationalContactCR();
     private String rootKey;
+    private Organization organization = new Organization();
+    // a generic contact has a scoper but no player - the title takes the place of a specific person
+    private boolean genericContact = false;
 
     /**
      * {@inheritDoc}
@@ -132,11 +135,13 @@ public class OrganizationalContactAction extends
         if (getRole() == null) {
             setRole(new OrganizationalContact());
         }
-        if (getRole().getPlayer() == null) { // if not set, then set to default
+        if (genericContact) {
+            getRole().setPlayer(null);
+        } else if (getRole().getPlayer() == null) { // if not set, then set to default
             getRole().setPlayer(getPerson());
         }
         if (getRole().getScoper() == null) { // if not set, then set to default
-            getRole().setScoper(new Organization());
+            getRole().setScoper(getOrganization());
         }
     }
 
@@ -240,10 +245,14 @@ public class OrganizationalContactAction extends
     @Override
     protected SearchCriteria<OrganizationalContact> getDuplicateCriteria() {
         OrganizationalContact dupOfBOCrit = new OrganizationalContact();
-        AnnotatedBeanSearchCriteria<OrganizationalContact> duplicateOfCriteria
-        = new AnnotatedBeanSearchCriteria<OrganizationalContact>(
-                dupOfBOCrit);
-        dupOfBOCrit.setPlayer(getPerson());
+        AnnotatedBeanSearchCriteria<OrganizationalContact> duplicateOfCriteria =
+                new AnnotatedBeanSearchCriteria<OrganizationalContact>(dupOfBOCrit);
+        if (getPerson() != null && getPerson().getId() != null) {
+            dupOfBOCrit.setPlayer(getPerson());
+        } else {
+            dupOfBOCrit.setScoper(getOrganization());
+            dupOfBOCrit.setTitle("%");
+        }
         return duplicateOfCriteria;
     }
 
@@ -271,9 +280,17 @@ public class OrganizationalContactAction extends
         OrganizationalContact boCrit = new OrganizationalContact();
         AnnotatedBeanSearchCriteria<OrganizationalContact> criteria
             = new AnnotatedBeanSearchCriteria<OrganizationalContact>(boCrit);
-        Person player = new Person();
-        player.setId(getPerson().getId());
-        boCrit.setPlayer(player);
+        if (getPerson() != null && getPerson().getId() != null) {
+            Person critPlayer = new Person();
+            critPlayer.setId(getPerson().getId());
+            boCrit.setPlayer(critPlayer);
+        }
+        if (getOrganization().getId() != null) {
+            Organization scoper = new Organization();
+            scoper.setId(getOrganization().getId());
+            boCrit.setScoper(scoper);
+            boCrit.setTitle("%");
+        }
         return criteria;
     }
 
@@ -346,4 +363,33 @@ public class OrganizationalContactAction extends
     public void setDuplicateOf(OrganizationalContact duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
+
+    /**
+     * @return organization scoper
+     */
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    /**
+     * @param organization scoper
+     */
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @param genericContact the genericContact to set
+     */
+    public void setGenericContact(boolean genericContact) {
+        this.genericContact = genericContact;
+    }
+
+    /**
+     * @return the isGenericContact
+     */
+    public boolean isGenericContact() {
+        return genericContact;
+    }
+
 }

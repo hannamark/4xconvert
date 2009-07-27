@@ -167,13 +167,31 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
      * @return the count of roles that need attention.
      */
     protected int getHotRoleCount(long entityId, Class<? extends Correlation> roleClass) {
-        final String hql =
-                "select count(distinct r) from " + roleClass.getName() + " r"
-                + " LEFT OUTER JOIN r.changeRequests as rcr"
-                + " where r.player.id = " + entityId
-                + " and "
-                + " (r.status = 'PENDING' or rcr.processed = 'false')";
-        Number n = (Number) PoHibernateUtil.getCurrentSession().createQuery(hql).uniqueResult();
+        return getHotRoleCount(entityId, roleClass, true);
+    }
+
+    /**
+     * Get the number of roles that need attention from the curator, based on the given scoper.
+     * @param entityId the scoper entity's id for the roles.
+     * @param roleClass the type of role.
+     * @return the count of roles that need attention.
+     */
+    protected int getScoperHotRoleCount(long entityId, Class<? extends Correlation> roleClass) {
+        return getHotRoleCount(entityId, roleClass, false);
+    }
+
+    private int getHotRoleCount(long entityId, Class<? extends Correlation> roleClass, boolean player) {
+        final StringBuffer hql =
+                new StringBuffer("select count(distinct r) from " + roleClass.getName()
+                        + " r LEFT OUTER JOIN r.changeRequests as rcr where ");
+        if (player) {
+            hql.append(" r.player.id = ");
+        } else {
+            hql.append(" r.scoper.id = ");
+        }
+
+        hql.append(entityId).append(" and (r.status = 'PENDING' or rcr.processed = 'false')");
+        Number n = (Number) PoHibernateUtil.getCurrentSession().createQuery(hql.toString()).uniqueResult();
         return n.intValue();
     }
 }

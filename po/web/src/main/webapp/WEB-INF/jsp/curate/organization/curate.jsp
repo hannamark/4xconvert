@@ -164,11 +164,15 @@
                 <c:url var="manageHcf" value="/protected/roles/organizational/HealthCareFacility/load.action">
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
+                <c:url var="manageOrganizationalContacts" value="/protected/roles/organizational/OrganizationalContact/start.action">
+                    <c:param name="organization" value="${organization.id}"/>
+                </c:url>
                 <ul>
                     <li><a href="${manageResearchOrgs}"><s:text name="researchOrganization.manage.title"/></a> (${fn:length(organization.researchOrganizations)}) <c:if test="${hotResearchOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
                     <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a> (${fn:length(organization.identifiedOrganizations)}) <c:if test="${hotIdentifiedOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
                     <li><a href="${manageOversightComms}"><s:text name="oversightCommittee.manage.title"/></a> (${fn:length(organization.oversightCommittees)}) <c:if test="${hotOversightCommitteeCount > 0}"><span class='required'>*</span></c:if></li>
                     <li><a href="${manageHcf}">Manage Health Care Facility</a> (${fn:length(organization.healthCareFacilities)}) <c:if test="${hotHealthCareFacilityCount > 0}"><span class='required'>*</span></c:if></li>
+                    <li><a href="${manageOrganizationalContacts}"><s:text name="organizationalContact.manage.title"/></a> (${fn:length(organization.organizationalContacts)}) <c:if test="${hotOrganizationalContactCount > 0}"><span class='required'>*</span></c:if></li>
                 </ul>
                 <div class="clear"></div>
             </div>

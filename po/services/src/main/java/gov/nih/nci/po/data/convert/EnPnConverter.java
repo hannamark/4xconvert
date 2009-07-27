@@ -137,11 +137,11 @@ public class EnPnConverter {
 
     private static void validateCoppaConstraints(Enxp part) {
         if (part.getType() == null) {
-            throw new PoIsoConstraintException("PO will not provess EnPn's whose Enxp's have no type.");
+            throw new PoIsoConstraintException("PO will not process EnPns whose Enxps have no type.");
         }
 
         if (part.getQualifier() != null && !part.getQualifier().isEmpty()) {
-            throw new PoIsoConstraintException("PO will not provess EnPn's whose Enxp's have qualifiers.");
+            throw new PoIsoConstraintException("PO will not process EnPns whose Enxps have qualifiers.");
         }
     }
 
@@ -149,7 +149,7 @@ public class EnPnConverter {
         String delimieter = " ";
         if (previousPart != null && EntityNamePartType.DEL.equals(previousPart.getType())) {
             if (previousType == null || previousType != part.getType()) {
-                throw new PoIsoConstraintException("A delimiter came between two parts of an ENPN that wer not "
+                throw new PoIsoConstraintException("A delimiter came between two parts of an ENPN that were not "
                         + "of the same type.");
             } else {
                 delimieter = previousPart.getValue();

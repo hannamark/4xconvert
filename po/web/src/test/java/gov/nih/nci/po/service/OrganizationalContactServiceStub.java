@@ -1,5 +1,6 @@
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Person;
 
@@ -14,6 +15,10 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 public class OrganizationalContactServiceStub implements OrganizationalContactServiceLocal {
 
     public int getHotRoleCount(Person per) {
+        return 0;
+    }
+
+    public int getScoperHotRoleCount(Organization org) {
         return 0;
     }
 

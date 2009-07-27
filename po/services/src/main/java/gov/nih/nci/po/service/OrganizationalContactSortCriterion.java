@@ -115,6 +115,11 @@ public enum OrganizationalContactSortCriterion implements PoSortCriterion<Organi
     SCOPER_ID("scoper.id", null),
 
     /**
+     * Sort by OrganizationalContact's title.
+     */
+    TITLE("title", null),
+
+    /**
      * Sort by OrganizationalContact's status date.
      */
     STATUS_DATE("statusDate", null);

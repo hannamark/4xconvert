@@ -105,7 +105,7 @@ public abstract class AbstractOrganizationRoleAction
     private Organization organization = new Organization();
 
     /**
-     * Default Constructor (force subclasses to initialize.
+     * Default Constructor (force subclasses to initialize).
      */
     public AbstractOrganizationRoleAction() {
         super();

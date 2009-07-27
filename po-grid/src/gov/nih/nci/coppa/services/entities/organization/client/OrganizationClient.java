@@ -1,7 +1,7 @@
 package gov.nih.nci.coppa.services.entities.organization.client;
 
-import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.common.LimitOffset;
+import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
@@ -22,10 +22,10 @@ import org.iso._21090.CD;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.2
  */
-public class OrganizationClient extends OrganizationClientBase implements OrganizationI {	
+public class OrganizationClient extends OrganizationClientBase implements OrganizationI {
     /**
      * The identifier name for org ii's.
      */
@@ -35,61 +35,61 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
      * The ii root value for orgs.
      */
     public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
-    
-	public OrganizationClient(String url) throws MalformedURIException, RemoteException {
-		this(url,null);	
-	}
 
-	public OrganizationClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(url,proxy);
-	}
-	
-	public OrganizationClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-	   	this(epr,null);
-	}
-	
-	public OrganizationClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(epr,proxy);
-	}
+    public OrganizationClient(String url) throws MalformedURIException, RemoteException {
+        this(url,null);
+    }
 
-	public static void usage(){
-		System.out.println(OrganizationClient.class.getName() + " -url <service url>");
-	}
-	
-	public static void main(String [] args){
-	    System.out.println("Running the Grid Service Client");
-		try{
-		if(!(args.length < 2)){
-			if(args[0].equals("-url")){
-			  OrganizationClient client = new OrganizationClient(args[1]);
-			  // place client calls here if you want to use this main as a
-			  // test....
-			  getOrg(client);
-			  searchOrganizations(client);
-			  queryOrganizations(client);
-			} else {
-				usage();
-				System.exit(1);
-			}
-		} else {
-			usage();
-			System.exit(1);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-	
+    public OrganizationClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(url,proxy);
+    }
+
+    public OrganizationClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
+           this(epr,null);
+    }
+
+    public OrganizationClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+           super(epr,proxy);
+    }
+
+    public static void usage(){
+        System.out.println(OrganizationClient.class.getName() + " -url <service url>");
+    }
+
+    public static void main(String [] args){
+        System.out.println("Running the Grid Service Client");
+        try{
+        if(!(args.length < 2)){
+            if(args[0].equals("-url")){
+              OrganizationClient client = new OrganizationClient(args[1]);
+              // place client calls here if you want to use this main as a
+              // test....
+              getOrg(client);
+              searchOrganizations(client);
+              queryOrganizations(client);
+            } else {
+                usage();
+                System.exit(1);
+            }
+        } else {
+            usage();
+            System.exit(1);
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
     private static void getOrg(OrganizationClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(ORG_ROOT);
         id.setIdentifierName(ORG_IDENTIFIER_NAME);
-        id.setExtension("516");
+        id.setExtension("499");
         Organization result = client.getById(id);
         ClientUtils.handleResult(result);
     }
-    
+
     private static Organization createCriteria() {
         Organization criteria = new Organization();
         CD statusCode = new CD();
@@ -97,16 +97,16 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         criteria.setStatusCode(statusCode);
         return criteria;
     }
-    
+
     private static void searchOrganizations(OrganizationClient client) throws RemoteException {
         Organization criteria = createCriteria();
         Organization[] results = client.search(criteria);
         ClientUtils.handleSearchResults(results);
     }
-    
+
     private static void queryOrganizations(OrganizationClient client) throws RemoteException {
         Organization criteria = createCriteria();
-        
+
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(2);
         limitOffset.setOffset(0);
