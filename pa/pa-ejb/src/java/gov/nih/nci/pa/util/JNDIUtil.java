@@ -101,7 +101,7 @@ import org.apache.log4j.Logger;
 public final class JNDIUtil {
 
     private static final Logger LOG = Logger.getLogger(JNDIUtil.class);
-    private static final String RESOURCE_NAME = "jndi.pa.properties";
+    private static final String RESOURCE_NAME = "jndi.properties";
 
     private static JNDIUtil theInstance = new JNDIUtil();
     private final InitialContext context;

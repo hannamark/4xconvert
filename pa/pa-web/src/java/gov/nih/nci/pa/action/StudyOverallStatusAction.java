@@ -501,8 +501,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
                             + "Current Trial Status is '" + newCode.getCode() + "'.");
                 }
                 if (completionTimestamp.before(TsConverter.convertToTimestamp(oldStatusDto.getStatusDate()))) {
-                    addActionError("Current Trial Status Date and Primary Completion Date must be the same "
-                            + "or greater when Current Trial Status is '" + newCode.getCode() + "'.");
+                    addActionError("Primary Completion Date must be the same or greater than "
+                            + "Current Trial Status Date when Current Trial Status is '" + newCode.getCode() + "'.");
                 }
             } else {
                 if (!completionDateType.equals(anticipatedString)) {
