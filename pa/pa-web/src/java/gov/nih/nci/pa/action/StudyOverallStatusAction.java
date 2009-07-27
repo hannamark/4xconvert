@@ -163,37 +163,42 @@ public class StudyOverallStatusAction extends ActionSupport implements
 
     /**
      * @return Action result.
-     * @throws Exception exception.
      */
     @Override
-    public String execute() throws Exception {
+    public String execute()  {
+        try {
         loadForm();
+        } catch (PAException e) {
+            addActionError(e.getMessage());   
+        }
         return Action.SUCCESS;
     }
 
     /**
      * @return result
-     * @throws Exception exception
      */
-    public String update() throws Exception {
+    public String update() {
         clearErrorsAndMessages();
 
-        boolean statusChanged = enforceBusinessRules();
-        validateTrialDates();
-        if (hasActionErrors()) {
-            return Action.SUCCESS;
-        }
-        
-        
-        if (statusChanged) {
+        boolean statusChanged;
+        try {
+            statusChanged = enforceBusinessRules();
+            validateTrialDates();
+            if (hasActionErrors()) {
+                return Action.SUCCESS;
+            }
+            if (statusChanged) {
                 insertOrUpdateStudyOverallStatus();
-        }
-        if (!hasActionErrors()) {
-           updateStudyProtocol();
-        }
-        if (!hasActionErrors()) {
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-            loadForm();
+            }
+            if (!hasActionErrors()) {
+                updateStudyProtocol();
+            }
+            if (!hasActionErrors()) {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+                loadForm();
+            }
+        } catch (PAException e) {
+          addActionError(e.getMessage());
         }
         return Action.SUCCESS;
     }
@@ -384,7 +389,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         }
     }
 
-    private void loadForm() throws Exception {
+    private void loadForm() throws PAException  {
         StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
         StudyOverallStatusDTO sosDto = null;
         sosDto = sosService.getCurrentByStudyProtocol(spIdIi);
@@ -430,7 +435,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     }
 
     @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
-    private boolean enforceBusinessRules() throws Exception {
+    private boolean enforceBusinessRules() throws PAException {
         StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
 
         Timestamp statusTimestamp = PAUtil.dateStringToTimestamp(statusDate);
@@ -445,7 +450,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
             oldDate = TsConverter.convertToTimestamp(sos.getStatusDate());
             oldReason = StConverter.convertToString(sos.getReasonText());
         }
-
+        StudyOverallStatusDTO oldStatusDto = sosService.getCurrentByStudyProtocol(spIdIi);
         boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);
         boolean dateChanged = (oldDate == null) ? (statusTimestamp != null) : !oldDate.equals(statusTimestamp);
         boolean reasonChanged = (oldReason == null) ? (statusReason != null) : !oldReason.equals(statusReason);
@@ -495,9 +500,9 @@ public class StudyOverallStatusAction extends ActionSupport implements
                     addActionError("Primary Completion Date cannot be 'Anticipated' when "
                             + "Current Trial Status is '" + newCode.getCode() + "'.");
                 }
-                if (!statusTimestamp.equals(completionTimestamp)) {
-                    addActionError("Current Trial Status Date and Primary Completion Date must be the same when "
-                            + "Current Trial Status is '" + newCode.getCode() + "'.");
+                if (completionTimestamp.before(TsConverter.convertToTimestamp(oldStatusDto.getStatusDate()))) {
+                    addActionError("Current Trial Status Date and Primary Completion Date must be the same "
+                            + "or greater when Current Trial Status is '" + newCode.getCode() + "'.");
                 }
             } else {
                 if (!completionDateType.equals(anticipatedString)) {
@@ -587,11 +592,10 @@ public class StudyOverallStatusAction extends ActionSupport implements
             && PAUtil.isNotEmpty(completionDate) && PAUtil.isNotEmpty(completionDateType)
             && StudyStatusCode.COMPLETE.getCode().equals(currentTrialStatus)) {
                   userStatusDate = PAUtil.dateStringToTimestamp(statusDate);
-                  Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(completionDate);
-                  if (!statusDate.equals(trialCompletionDate) || !completionDateType.equals(
+                  //Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(completionDate);
+                  if (!completionDateType.equals(
                           ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                      addActionError("If Current Trial Status is Complete, Primary Completion Date must be Actual and "
-                              + " same as Current Trial Status Date");
+                      addActionError("If Current Trial Status is Complete, Primary Completion Date must be Actual");
               }                
           }            
         // Constraint/Rule: 24 If Current Trial Status is 'Completed' or 'Administratively Completed', 
