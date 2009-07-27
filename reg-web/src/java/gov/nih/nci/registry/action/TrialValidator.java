@@ -373,17 +373,16 @@ public class TrialValidator {
         }        
         //Constraint/Rule: 23 If Current Trial Status is 'Completed', Primary Completion Date must be the 
         //same as Current Trial Status Date and have 'actual' type.
-        /*if (PAUtil.isNotEmpty(trialDto.getStatusCode()) && PAUtil.isNotEmpty(trialDto.getStatusDate())
+        if (PAUtil.isNotEmpty(trialDto.getStatusCode()) && PAUtil.isNotEmpty(trialDto.getStatusDate())
             && PAUtil.isNotEmpty(trialDto.getCompletionDate()) && PAUtil.isNotEmpty(trialDto.getCompletionDateType())
-            && TrialStatusCode.COMPLETE.getCode().equals(trialDto.getStatusCode())) {
-                  Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
-                  Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(trialDto.getCompletionDate());
-                  if (!statusDate.equals(trialCompletionDate) || !trialDto.getCompletionDateType().equals(
+            && TrialStatusCode.COMPLETE.getCode().equals(trialDto.getStatusCode())//) {
+                  //Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
+                  //Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(trialDto.getCompletionDate());
+                  && !trialDto.getCompletionDateType().equals(
                           ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                               addFieldError.put("trialDTO.completionDate", 
                                   getText("error.submit.invalidCompletionDate"));
-              }                
-          }*/            
+          }            
         //Constraint/Rule: 24 If Current Trial Status is 'Completed' or 'Administratively Completed', 
         //Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type 
         //for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'. 
