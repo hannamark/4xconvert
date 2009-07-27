@@ -7,10 +7,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceStub;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
@@ -81,15 +83,29 @@ public class OrganizationalContactActionTest extends AbstractPoTest {
     }
 
     @Test
+    public void testPrepareGenericContact() throws Exception {
+        action.setGenericContact(true);
+        action.prepare();
+        assertNull(action.getRole().getPlayer());
+    }
+
+    @Test
     public void testStart() {
         assertEquals(Action.SUCCESS, action.start());
     }
 
     @Test
-    public void testOrganizationProperty() {
+    public void testPersonProperty() {
         assertNotNull(action.getPerson());
         action.setPerson(null);
         assertNull(action.getPerson());
+    }
+
+    @Test
+    public void testOrganizationProperty() {
+        assertNotNull(action.getOrganization());
+        action.setOrganization(null);
+        assertNull(action.getOrganization());
     }
 
     @Test
@@ -132,6 +148,9 @@ public class OrganizationalContactActionTest extends AbstractPoTest {
 
     @Test
     public void testEditWithDuplicate() throws JMSException {
+        assertEquals(Action.SUCCESS, action.edit());
+        assertNull(action.getRole().getDuplicateOf());
+
         OrganizationalContact o = new OrganizationalContact();
         action.setDuplicateOf(o);
         assertEquals(Action.SUCCESS, action.edit());
@@ -141,6 +160,7 @@ public class OrganizationalContactActionTest extends AbstractPoTest {
         action.setDuplicateOf(o);
         assertEquals(Action.SUCCESS, action.edit());
         assertEquals(1, action.getRole().getDuplicateOf().getId().longValue());
+        assertEquals(action.getDuplicateOf().getId().longValue(), action.getRole().getDuplicateOf().getId().longValue());
     }
 
     @Test
@@ -174,6 +194,15 @@ public class OrganizationalContactActionTest extends AbstractPoTest {
 
     @Test
     public void testGetAvailableDuplicateOfs() {
+        action.getRole().setId(null);
+        action.setPerson(null);
+        assertNull(action.getAvailableDuplicateOfs());
+
+        action.getRole().setId(null);
+        action.setPerson(new Person());
+        action.getPerson().setId(null);
+        assertNull(action.getAvailableDuplicateOfs());
+
         final Long playerId = 1L;
 
         action.getRole().setId(null);
@@ -193,27 +222,52 @@ public class OrganizationalContactActionTest extends AbstractPoTest {
                     @Override
                     public List<OrganizationalContact> search(SearchCriteria<OrganizationalContact> criteria) {
                         List<OrganizationalContact> results = new ArrayList<OrganizationalContact>();
-                        results.add(create(playerId, 1L));
-                        results.add(create(playerId, 2L));
-                        results.add(create(playerId, 3L));
-                        results.add(create(playerId, 4L));
-                        results.add(create(playerId, 5L));
+                        AnnotatedBeanSearchCriteria<OrganizationalContact> crit =
+                                (AnnotatedBeanSearchCriteria<OrganizationalContact>) criteria;
+                        if (crit.getCriteria().getPlayer() != null) {
+                            for (long i = 1; i <= 5; i++) {
+                                results.add(createPlayedOc(playerId, i));
+                            }
+                        } else {
+                            for (long i = 1; i <= 5; i++) {
+                                results.add(createGenericOc(playerId, i));
+                            }
+                        }
                         return results;
                     }
 
-                    private OrganizationalContact create(Long pId, Long id) {
-                        OrganizationalContact ro = new OrganizationalContact();
-                        ro.setPlayer(new Person());
-                        ro.getPlayer().setId(pId);
-                        ro.setId(id);
-                        return ro;
+                    private OrganizationalContact createPlayedOc(Long pId, Long id) {
+                        OrganizationalContact oc = new OrganizationalContact();
+                        oc.setPlayer(new Person());
+                        oc.getPlayer().setId(pId);
+                        oc.setId(id);
+                        return oc;
                     }
+
+                    private OrganizationalContact createGenericOc(Long oId, Long id) {
+                        OrganizationalContact oc = new OrganizationalContact();
+                        oc.setScoper(new Organization());
+                        oc.getScoper().setId(oId);
+                        oc.setId(id);
+                        return oc;
+                    }
+
                 };
             }
         };
         action.getRole().setId(5L);
-        action.getPerson().setId(1L);
+        action.getPerson().setId(playerId);
         Iterator<OrganizationalContact> iterator = action.getAvailableDuplicateOfs().iterator();
+        assertEquals(1L, iterator.next().getId().longValue());
+        assertEquals(2L, iterator.next().getId().longValue());
+        assertEquals(3L, iterator.next().getId().longValue());
+        assertEquals(4L, iterator.next().getId().longValue());
+        assertFalse(iterator.hasNext());
+
+        action.setPerson(null);
+        action.setOrganization(new Organization());
+        action.getOrganization().setId(1L);
+        iterator = action.getAvailableDuplicateOfs().iterator();
         assertEquals(1L, iterator.next().getId().longValue());
         assertEquals(2L, iterator.next().getId().longValue());
         assertEquals(3L, iterator.next().getId().longValue());
