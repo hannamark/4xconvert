@@ -158,12 +158,14 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
 
         DTO dto = getCorrelationService().getCorrelation(correlationId);
         getCorrelationService().updateCorrelation(dto);
+        getCorrelationService().updateCorrelation(dto);
+        getCorrelationService().updateCorrelation(dto);
 
         rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension());
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();
-        assertEquals(count0 + 1, count1);
+        assertEquals(count0 + 3, count1);
     }
 
     @Test

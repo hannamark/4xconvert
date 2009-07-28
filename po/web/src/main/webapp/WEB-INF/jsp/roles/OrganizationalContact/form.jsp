@@ -148,7 +148,7 @@
                 </s:else>
                 <s:hidden key="rootKey"/>
                 <s:select name="cr" list="selectChangeRequests" value="cr.id"
-                          onchange="submitAjaxForm('changeCrForm','crinfo', null, true);" />
+                          onchange="$('curateRoleForm_cr').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" />
             </s:form>
             </div>
         </c:if>

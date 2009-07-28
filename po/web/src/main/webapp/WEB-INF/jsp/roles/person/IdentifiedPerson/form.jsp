@@ -97,13 +97,13 @@
     <c:if test="${fn:length(role.changeRequests) > 1}">
     <div class="crselect">
     <s:form action="ajax/roles/person/IdentifiedPerson/changeCurrentChangeRequest.action" id="changeCrForm" theme="simple">
-        <s:hidden key="organization"/>
+        <s:hidden key="person"/>
         <s:hidden key="role.id" />
         <s:select
            name="cr"
            list="selectChangeRequests"
            value="cr.id"
-           onchange="$('curateRoleForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
+           onchange="$('curateRoleForm_cr').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
            />
     </s:form>
     </div>

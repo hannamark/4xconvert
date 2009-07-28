@@ -110,7 +110,7 @@
            name="cr"
            list="selectChangeRequests"
            value="cr.id"
-           onchange="$('curateRoleForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
+           onchange="$('curateRoleForm_cr').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
            />
     </s:form>
     </div>

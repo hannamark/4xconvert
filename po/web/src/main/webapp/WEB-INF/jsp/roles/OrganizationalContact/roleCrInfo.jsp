@@ -23,7 +23,7 @@
                 </s:if>
                 <s:else>
                     <po:copyButton id="copy_curateCrForm_role_scoper"
-                        onclick="copyValueToTextField('${cr.scoper.id}', 'curateRoleForm.role.scoper.id'); showPopWinCallback('${cr.scoper.id}');"
+                        onclick="copyValueToTextField('${cr.scoper.id}', 'curateRoleForm.role.scoper.id'); showPopWinCallback(new IdValue('${cr.scoper.id}','${cr.scoper.name}'));"
                         bodyStyle="float:left;" buttonStyle="float:right;">
                         <po:field labelKey="organizationalContact.scoper.id">
                             ${cr.scoper.name} (${cr.scoper.id})
