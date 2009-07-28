@@ -98,35 +98,39 @@ function fireEvent(eventElement, firefoxEvent, ieEvent) {
 
 
 function copyValueToTextField(value, textFieldId) {
-    $(textFieldId).value = value;
+	if ($(textFieldId) && $(textFieldId).type == 'text') {
+		$(textFieldId).value = value;
+	}
 }
 
 function selectValueInSelectField(value, selectBoxId, firefoxEvent, ieEvent) {
 	var found = false;
-    for ( var i = 0; i <= $(selectBoxId).length - 1; i = i + 1) {
-		var selectedText = $(selectBoxId).options[i].value;
-		if (selectedText == value) {
-			var isFireEvent = false;
-			if ($(selectBoxId).selectedIndex != i) {
-				isFireEvent = true;
-			}
-			$(selectBoxId).selectedIndex = i;
-			found = true;
-			if (isFireEvent) {
-				if (firefoxEvent == null) {
-					firefoxEvent = 'change';
+	if ($(selectBoxId) && $(selectBoxId).type == 'select-one') { 
+		for ( var i = 0; i <= $(selectBoxId).length - 1; i = i + 1) {
+			var selectedText = $(selectBoxId).options[i].value;
+			if (selectedText == value) {
+				var isFireEvent = false;
+				if ($(selectBoxId).selectedIndex != i) {
+					isFireEvent = true;
 				}
-				if (ieEvent == null) {
-					ieEvent = 'onchange';
+				$(selectBoxId).selectedIndex = i;
+				found = true;
+				if (isFireEvent) {
+					if (firefoxEvent == null) {
+						firefoxEvent = 'change';
+					}
+					if (ieEvent == null) {
+						ieEvent = 'onchange';
+					}
+					fireEvent($(selectBoxId), firefoxEvent, ieEvent);
 				}
-				fireEvent($(selectBoxId), firefoxEvent, ieEvent);
+				break;
 			}
-			break;
 		}
-	}     
-    if (!found) {
-    	alert('' + value + ' not found!');
-    }
+		if (!found) {
+			alert('' + value + ' not found!');
+		}
+	}
 }
 
 function selectValuesInMultiSelectField(values, multiSelectBoxId, firefoxEvent, ieEvent) {
@@ -135,8 +139,8 @@ function selectValuesInMultiSelectField(values, multiSelectBoxId, firefoxEvent, 
 	var isFireEvent = false;
 	for (var j = 0; j <= values.length -1; j = j + 1) {
 		value = values[j];
-	    for ( var i = 0; i <= $(multiSelectBoxId).length - 1; i = i + 1) {
-	    	var option = $(multiSelectBoxId).options[i];
+		for ( var i = 0; i <= $(multiSelectBoxId).length - 1; i = i + 1) {
+			var option = $(multiSelectBoxId).options[i];
 			var selectBoxValue = option.value;
 			if (selectBoxValue == value) {
 				if (!option.selected) {
