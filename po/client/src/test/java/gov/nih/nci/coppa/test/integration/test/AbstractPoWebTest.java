@@ -93,7 +93,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     /**
      * Searches in the given column for the given text
-     * 
+     *
      * @param text - string to search for
      * @param column - table column to search in
      * @return the row number where the text was found. -1 if not found
@@ -286,19 +286,84 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.type("curateEntityForm_person_lastName", lName);
         selenium.type("curateEntityForm_person_suffix", suffix);
         // add postal addresss info
-        selenium.type("curateEntityForm_person_postalAddress_streetAddressLine", address.getStreetAddressLine());
-        selenium.type("curateEntityForm_person_postalAddress_deliveryAddressLine", address.getDeliveryAddressLine());
-        selenium.type("curateEntityForm_person_postalAddress_postalCode", address.getPostalCode());
-        selenium.select("curateEntityForm.person.postalAddress.country", "label=" + address.getCountry());
-        waitForElementById("person.postalAddress.stateOrProvince", 10);
-        selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", address.getCityOrMunicipality());
-        selenium.select("person.postalAddress.stateOrProvince", "value=" + address.getStateOrProvince());
+        inputAddressInfo(address, "curateEntityForm", "person");
         // add contact info
         inputContactInfo(email, phone, url, fax);
         //save the person
         clickAndWaitSaveButton();
         //verify person created message
         assertTrue("Success message is missing", selenium.isTextPresent("Person was successfully created"));
+    }
+
+    protected void createOrganization(String status, String name, Address address, String email, String phone,
+            String url, String fax) {
+        openCreateOrganization();
+        selenium.select("curateEntityForm.organization.statusCode", "label=" + status);
+        selenium.type("curateEntityForm_organization_name", name);
+
+        // add postal address info
+        inputAddressInfo(address, "curateEntityForm", "organization");
+
+        // add contact info
+        inputContactInfo(email, phone, url, fax);
+
+        // save the organization
+        clickAndWaitSaveButton();
+        // verify organization created message
+        assertTrue("Success message is missing", selenium.isTextPresent("Organization was successfully created"));
+    }
+
+    protected void createGenericOrganizationalContact(String status, String title, String[] types, Address address,
+            String email, String phone, String url, String fax, boolean verify) {
+        waitForTelecomFormsToLoad();
+        selenium.type("curateRoleForm_role_title", title);
+        selenium.select("curateRoleForm.role.status", "label=" + status);
+        for (String type : types) {
+            selenium.addSelection("curateRoleForm.role.types", "label=" + type);
+        }
+
+        // add postal address info
+        if (address != null) {
+            inputAddressInfoPopup(address);
+            waitForTelecomFormsToLoad();
+        }
+
+        // add contact info
+        inputContactInfo(email, phone, url, fax);
+
+        // save the OC
+        clickAndWaitSaveButton();
+        if (verify) {
+            // verify OC created message
+            assertTrue("Success message is missing", selenium
+                    .isTextPresent("Organizational Contact was successfully created"));
+        }
+    }
+
+    private void inputAddressInfo(Address address, String formName, String objectType) {
+        selenium.select(formName + "." + objectType + ".postalAddress.country", "label=" + address.getCountry());
+        waitForElementById(objectType + ".postalAddress.stateOrProvince", 10);
+        selenium.type(formName + "_" + objectType + "_postalAddress_streetAddressLine", address.getStreetAddressLine());
+        selenium.type(formName + "_" + objectType + "_postalAddress_deliveryAddressLine", address
+                .getDeliveryAddressLine());
+        selenium
+        .type(formName + "_" + objectType + "_postalAddress_cityOrMunicipality", address.getCityOrMunicipality());
+        selenium.select(objectType + ".postalAddress.stateOrProvince", "value=" + address.getStateOrProvince());
+        selenium.type(formName + "_" + objectType + "_postalAddress_postalCode", address.getPostalCode());
+    }
+
+    private void inputAddressInfoPopup(Address address) {
+        clickAndWaitButton("add_address");
+        selenium.selectFrame("popupFrame");
+        selenium.select("postalAddressForm.address.country", "label=" + address.getCountry());
+        waitForElementById("address.stateOrProvince", 10);
+        selenium.type("postalAddressForm_address_streetAddressLine", address.getStreetAddressLine());
+        selenium.type("postalAddressForm_address_deliveryAddressLine", address.getDeliveryAddressLine());
+        selenium.type("postalAddressForm_address_cityOrMunicipality", address.getCityOrMunicipality());
+        selenium.select("address.stateOrProvince", "value=" + address.getStateOrProvince());
+        selenium.type("postalAddressForm_address_postalCode", address.getPostalCode());
+        clickAndWaitButton("submitPostalAddressForm");
+        selenium.selectFrame("relative=up");
     }
 
     private void inputContactInfo(String email, String phone, String url, String fax) {
@@ -329,10 +394,17 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected String createPerson() {
-        String lname = "lastName" + Long.toString(System.currentTimeMillis());
+        String lname = "lastName" + System.currentTimeMillis();
         createPerson("PENDING", "Dr", "Jakson", "L", lname, "III",
                 getAddress(), "sample@email.com", "703-111-2345", "http://www.createperson.com", "703-111-1234");
         return lname;
+    }
+
+    protected String createOrganization() {
+        String name = "orgName" + System.currentTimeMillis();
+        createOrganization("ACTIVE", name, getAddress(), "sample@email.com", "703-111-2345",
+                "http://www.createorg.com", "703-111-1234");
+        return name;
     }
 
     public enum ENTITYTYPE {
