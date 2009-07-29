@@ -82,7 +82,6 @@ package gov.nih.nci.pa.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -101,7 +100,6 @@ public class ResearchOrganization extends StructuralRole {
     private static final long serialVersionUID = 1736507890L;
 
     private Organization organization;
-    private String identifier;
     private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
 
     /**
@@ -119,19 +117,6 @@ public class ResearchOrganization extends StructuralRole {
      */
     public void setOrganization(Organization organization) {
         this.organization = organization;
-    }
-    /**
-     * @return the identifier
-     */
-    @Column(name = "ASSIGNED_IDENTIFIER")
-    public String getIdentifier() {
-        return identifier;
-    }
-    /**
-     * @param identifier the identifier to set
-     */
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
     }
     /**
      *

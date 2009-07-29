@@ -49,6 +49,7 @@ public class PAOrganizationServiceTest {
         ResearchOrganization ro = new ResearchOrganization();
         ro.setOrganization(o);
         ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro.setIdentifier("abc");
         TestSchema.addUpdObject(ro);
         StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
         spc.setResearchOrganization(ro);

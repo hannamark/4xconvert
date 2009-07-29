@@ -78,26 +78,17 @@
 */
 package gov.nih.nci.pa.service.correlation;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
+import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
-import gov.nih.nci.services.entity.NullifiedEntityException;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 /**
  * A Service bean for maintaining Individuals who are employed and/or involved in any aspect of clinical research.
@@ -107,24 +98,38 @@ import org.hibernate.Session;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+
+
+@Stateless
+@Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
+public class OrganizationalContactCorrelationServiceBean extends 
+    AbstractPABaseCorrelation<PAOrganizationalContactDTO , 
+    OrganizationalContactDTO , 
+    OrganizationalContact , OrganizationalContactConverter> 
+implements OrganizationalContactCorrelationService  {
 
-
-public class OrganizationalContactCorrelationServiceBean {
-
-    private static final Logger LOG  = Logger.getLogger(OrganizationalContactCorrelationServiceBean.class);
+    
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
      * @param personPoIdentifer po primary person id
      * @return id id
      * @throws PAException pe 
+     * @deprecated use create method
      */
     public Long createOrganizationalContactCorrelations(String orgPoIdentifier, 
-                                           String personPoIdentifer) throws PAException { 
+                                           String personPoIdentifer) throws PAException {
         
-        LOG.debug("Entering createClinicalResearchStaffCorrelation");
+        PAOrganizationalContactDTO paDto = new PAOrganizationalContactDTO();
+        paDto.setOrganizationIdentifier(orgPoIdentifier);
+        paDto.setPersonIdentifier(personPoIdentifer);
+        return super.create(paDto);
+        //throw new PAException("Do not use this method, instead use create ");
+        
+/*        LOG.debug("Entering createClinicalResearchStaffCorrelation");
         
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
@@ -206,8 +211,9 @@ public class OrganizationalContactCorrelationServiceBean {
         }
         LOG.debug("Leaving createOrganizationalContactCorrelation");
         return oc.getId();
+         */
     }
-
+   
     
     /**
      * 
@@ -215,6 +221,7 @@ public class OrganizationalContactCorrelationServiceBean {
      * @return OrganizationalContact
      * @throws PAException PAException
      */
+        /*
     private OrganizationalContact createPAOrganizationalContact(OrganizationalContact oc) throws PAException {
         if (oc == null) {
             LOG.error(" OrganizationalContact should not be null ");
@@ -237,5 +244,6 @@ public class OrganizationalContactCorrelationServiceBean {
         LOG.debug("Leaving create OrganizationalContact ");
         return oc;
     }
+    */
     
 }

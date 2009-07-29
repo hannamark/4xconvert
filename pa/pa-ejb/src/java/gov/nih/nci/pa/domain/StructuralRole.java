@@ -100,6 +100,23 @@ public class StructuralRole extends AbstractEntity {
     private static final long serialVersionUID = 7498499786106581528L;
     private StructuralRoleStatusCode  statusCode;
     private Timestamp statusDateRangeLow;
+    private String identifier;
+
+    /**
+     * @return the identifier
+     */
+    @Column(name = "assigned_identifier")
+    @NotNull
+    public String getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
 
     /**
      *

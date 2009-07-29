@@ -1,4 +1,4 @@
-/*
+/**
 * caBIG Open Source Software License
 * 
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,110 +76,20 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.CountryTest;
-import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.HealthCareFacilityTest;
-import gov.nih.nci.pa.domain.HealthCareProvider;
-import gov.nih.nci.pa.domain.HealthCareProviderTest;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PersonTest;
-import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyContactTest;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationTest;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.TestSchema;
+package gov.nih.nci.pa.service.correlation;
 
-import java.util.List;
+import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 
-import org.junit.Before;
-import org.junit.Test;
+import javax.ejb.Remote;
 
 /**
  * 
  * @author NAmiruddin
  *
  */
-public class ProtocolQueryServiceTest {
-    
-    private ProtocolQueryServiceBean bean = new ProtocolQueryServiceBean();
-    private ProtocolQueryServiceLocal localEjb = bean;
+@Remote
+public interface OrganizationalContactCorrelationService extends 
+    PABaseCorrelationService<PAOrganizationalContactDTO> {
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
-        TestSchema.addUpdObject(sp);
-        Organization o = OrganizationTest.createOrganizationObj();
-        TestSchema.addUpdObject(o);
-        Person p = PersonTest.createPersonObj();
-        p.setIdentifier("11");
-        TestSchema.addUpdObject(p);
-        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
-        TestSchema.addUpdObject(hcf);
-        
-        HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(p, o);
-        TestSchema.addUpdObject(hcp);
-        
-        Country c = CountryTest.createCountryObj();
-        TestSchema.addUpdObject(c);
-        
-        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
-        TestSchema.addUpdObject(crs);
-
-        StudyContact sc = StudyContactTest.createStudyContactObj(sp, c, hcp, crs);
-        TestSchema.addUpdObject(sc);
-        
-        ResearchOrganization ro = new ResearchOrganization();
-        ro.setOrganization(o);
-        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-        ro.setIdentifier("abc");
-        TestSchema.addUpdObject(ro);
-        StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
-        spc.setResearchOrganization(ro);
-        TestSchema.addUpdObject(spc);
-    }
-
-    @Test
-    public void getStudyProtocolByCriteriaTest() throws Exception {
-        List<StudyProtocolQueryDTO> data = localEjb.getStudyProtocolByCriteria(new StudyProtocolQueryCriteria());
-        assertNotNull(data);
-        assertEquals("Size does not match  " , data.size(), 1);
-        assertEquals("Title does not match  " , data.get(0).getOfficialTitle(), "Cancer for kids");
-        assertEquals("NCI Identifier does not match  " , data.get(0).getNciIdentifier(), "NCI-2008-0001");
-        
-    }
-
-    @Test
-    public void getTrialSummaryByStudyProtocolIdTest() throws Exception {
-        StudyProtocolQueryDTO data = localEjb.getTrialSummaryByStudyProtocolId(Long.valueOf(1));
-        assertNotNull(data);
-        assertEquals("Title does not match  " , data.getOfficialTitle(), "Cancer for kids");
-        assertEquals("NCI Identifier does not match  " , data.getNciIdentifier(), "NCI-2008-0001");
-    }
-    
-    @Test(expected=PAException.class)
-    public void nullParameter1() throws Exception {
-        localEjb.getTrialSummaryByStudyProtocolId(null);
-    }
-    
-    @Test(expected=PAException.class)
-    public void nullParameter2() throws Exception {
-        localEjb.getTrialSummaryByStudyProtocolId(Long.valueOf(1000));
-    }
 }

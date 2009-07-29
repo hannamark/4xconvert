@@ -410,12 +410,14 @@ public class TestSchema {
             ResearchOrganization rOrg = new ResearchOrganization();
             rOrg.setOrganization(org);
             rOrg.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+            rOrg.setIdentifier("abc");
             addUpdObject(rOrg);
             researchOrganizationIds.add(rOrg.getId());
             
             OversightCommittee oCommittee = new OversightCommittee();
             oCommittee.setOrganization(org);
             oCommittee.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+            oCommittee.setIdentifier("abc");
             addUpdObject(oCommittee);
             oversightCommitteeIds.add(oCommittee.getId());
                      

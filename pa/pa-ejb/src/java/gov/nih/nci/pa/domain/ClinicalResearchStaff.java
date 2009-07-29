@@ -81,7 +81,6 @@ package gov.nih.nci.pa.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -106,27 +105,10 @@ import org.hibernate.validator.NotNull;
 public class ClinicalResearchStaff  extends StructuralRole {
     private static final long serialVersionUID = 1234567890L;
 
-    private String identifier;
     private Person person;
     private Organization organization;
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     private List<StudyParticipationContact> studyPartContacts = new ArrayList<StudyParticipationContact>();
-
-    /**
-     * @return the identifier
-     */
-    @Column(name = "assigned_identifier")
-    @NotNull
-    public String getIdentifier() {
-        return identifier;
-    }
-    /**
-     * @param identifier the identifier to set
-     */
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
 
     /**
      *
