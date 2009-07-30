@@ -174,9 +174,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
         if (identifiedOrg == null) {
             return importOrganization(ctepOrgId);
-        } else {
-            return identifiedOrg.getPlayer();
         }
+            return identifiedOrg.getPlayer();
     }
 
     /**
@@ -191,6 +190,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             // get org from ctep and convert to local data model
             OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(ctepOrgId);
             printOrgDataToDebugLog(ctepOrgDto);
+            fixCountryCodeSystem(ctepOrgDto.getPostalAddress(), "organization");
             Ii assignedId = ctepOrgDto.getIdentifier();
             Organization ctepOrg = convertToLocalOrg(ctepOrgDto);
 
@@ -198,9 +198,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(assignedId);
             if (identifiedOrg == null) {
                 return createCtepOrg(ctepOrg, assignedId);
-            } else {
-                return updateCtepOrg(ctepOrg, identifiedOrg, assignedId);
             }
+            return updateCtepOrg(ctepOrg, identifiedOrg, assignedId);
         } catch (gov.nih.nci.common.exceptions.CTEPEntException e) {
             // id not found in ctep, therefore we can safely inactivate the entity if it exists locally.
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);

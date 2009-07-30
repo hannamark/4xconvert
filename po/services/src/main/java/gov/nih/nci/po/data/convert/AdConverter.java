@@ -160,7 +160,7 @@ public class AdConverter {
                     if (type != AddressPartType.CNT && type != AddressPartType.DEL) {
                         verify(part);
                     }
-                    
+
                     switch (type) {
                         case CAR:
                             ddelimitor += "c/o ";
@@ -218,11 +218,11 @@ public class AdConverter {
                 throw new PoIsoConstraintException("Adxp.value is required");
             }
         }
-        
+
         private static void verifyCnt(Adxp part) {
             String code = StringUtils.trimToNull(part.getCode());
             String codeSystem = StringUtils.trimToNull(part.getCodeSystem());
-            
+
             if (code != null && codeSystem == null) {
                 throw new PoIsoConstraintException("Adxp.codeSystem is required");
             }
