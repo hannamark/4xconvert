@@ -139,7 +139,7 @@ public class StudyRegulatoryAuthorityConverterTest {
     dto.setIdentifier(IiConverter.converToStudyRegulatoryAuthorityIi((Long) null));
     dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(ra.getId()));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
-    assertEquals(dto.getIdentifier().getIdentifierName(),"Regulatory authority identifier");
+    assertEquals(dto.getIdentifier().getIdentifierName(),"Study Regulatory authority identifier");
     
     StudyRegulatoryAuthorityConverter sg = new StudyRegulatoryAuthorityConverter();
     StudyRegulatoryAuthority bo = sg.convertFromDtoToDomain(dto);
