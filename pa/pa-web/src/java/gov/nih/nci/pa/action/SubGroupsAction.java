@@ -119,7 +119,7 @@ public class SubGroupsAction extends ActionSupport {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
-            List<StratumGroupDTO> isoList = PaRegistry.getSubGroupsService().
+            List<StratumGroupDTO> isoList = PaRegistry.getStratumGroupService().
             getByStudyProtocol(studyProtocolIi);
             if (!(isoList.isEmpty())) {
                 subGroupsList = new ArrayList<SubGroupsWebDTO>();
@@ -162,7 +162,7 @@ public class SubGroupsAction extends ActionSupport {
              sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
-             PaRegistry.getSubGroupsService().create(sgDTO);
+             PaRegistry.getStratumGroupService().create(sgDTO);
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
              return SUCCESS;
@@ -180,7 +180,7 @@ public class SubGroupsAction extends ActionSupport {
          LOG.info("Entering edit from SubGroupsAction");
          try {
              StratumGroupDTO  sgDTO =
-                 PaRegistry.getSubGroupsService().get(IiConverter.convertToIi(id));
+                 PaRegistry.getStratumGroupService().get(IiConverter.convertToIi(id));
              subGroupsWebDTO = new SubGroupsWebDTO(sgDTO);
          } catch (Exception e) {
              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -207,7 +207,7 @@ public class SubGroupsAction extends ActionSupport {
              sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
-             PaRegistry.getSubGroupsService().update(sgDTO);
+             PaRegistry.getStratumGroupService().update(sgDTO);
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
              query();
          } catch (Exception e) {
@@ -224,7 +224,7 @@ public class SubGroupsAction extends ActionSupport {
 
          LOG.info("Entering delete from SubGroupsAction");
          try {
-             PaRegistry.getSubGroupsService().delete(IiConverter.convertToIi(id));
+             PaRegistry.getStratumGroupService().delete(IiConverter.convertToIi(id));
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
              return SUCCESS;

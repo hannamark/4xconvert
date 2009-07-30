@@ -161,7 +161,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceBean;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.SubGroupsServiceLocal;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
@@ -236,7 +236,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
     @EJB
-    SubGroupsServiceLocal subGroupsService = null;
+    StratumGroupServiceLocal subGroupsService = null;
     @EJB
     StudyParticipationServiceLocal studyParticipationService = null;
     @EJB
@@ -275,7 +275,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final int HOURS = 24;
     private static final int MINUTES = 60;
     private static final int MAX_AGE = 999;
-    private static final int MAX_CONDITION = 9;
     private static final int ERROR_COUNT = 5;
     private static final String FIRST_NAME = "first_name";
     private static final String LAST_NAME = "last_name";
@@ -443,7 +442,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
         
         if (sdDtos != null) {
-            int count = 0;
             for (StudyDiseaseDTO sdDto : sdDtos) {
                 if (sdDto.getLeadDiseaseIndicator() != null 
                         && sdDto.getLeadDiseaseIndicator().getValue()) {
@@ -455,12 +453,10 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             } 
             List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
             for (StudyDiseaseDTO sdDto : sdDtos) {
-             if (count < MAX_CONDITION 
-                        && sdDto.getLeadDiseaseIndicator() != null 
+             if (sdDto.getLeadDiseaseIndicator() != null 
                         && !sdDto.getLeadDiseaseIndicator().getValue()) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                     diseases.add(d);
-                    count++;
                 }
             }
             Collections.sort(diseases, new Comparator() {

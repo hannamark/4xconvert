@@ -76,18 +76,73 @@
 * 
 * 
 */
-
 package gov.nih.nci.pa.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.TestSchema;
 
-import javax.ejb.Local;
+import java.util.List;
 
-/**
- * @author Naveen Amiruddin
- * @since 03/28/2009
- */
-@Local
-public interface SubGroupsServiceLocal extends StudyPaService<StratumGroupDTO> {
+import org.junit.Before;
+import org.junit.Test;
 
+public class StratumGroupServiceBeanTest {
+
+    private StratumGroupServiceRemote remoteEjb = new StratumGroupServiceBean();;
+    Ii pid;
+
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset1();
+        TestSchema.primeData();
+        pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+    }
+
+    @Test
+    public void get() throws Exception {
+        List<StratumGroupDTO> statusList =
+            remoteEjb.getByStudyProtocol(pid);
+        assertEquals(2, statusList.size());
+
+        StratumGroupDTO dto =
+            remoteEjb.get(statusList.get(1).getIdentifier());
+        assertEquals(IiConverter.convertToLong(statusList.get(1).getIdentifier())
+                , (IiConverter.convertToLong(dto.getIdentifier())));
+        StratumGroupDTO dto2 = null;
+
+            dto2 = new StratumGroupDTO();
+            dto2 = remoteEjb.update(dto);
+            assertEquals(dto.getDescription().getValue()
+                    , dto2.getDescription().getValue());
+
+         remoteEjb.delete(dto.getIdentifier());
+    }
+
+    @Test
+    public void create() throws Exception {
+        StratumGroupDTO dto = new StratumGroupDTO();
+        dto.setStudyProtocolIdentifier(pid);
+        dto.setDescription(StConverter.convertToSt("Description"));
+        dto.setGroupNumberText(StConverter.convertToSt("Code"));
+        StratumGroupDTO dto2 = null;
+        dto2 = new StratumGroupDTO();
+        dto2 = remoteEjb.create(dto);
+        assertEquals(dto.getStudyProtocolIdentifier(), pid);
+    }
+
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StratumGroupDTO> dtoList = remoteEjb.getByStudyProtocol(pid);
+        assertTrue(dtoList.size() > 0);
+        StratumGroupDTO dto = dtoList.get(0);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STRATUM_GROUP_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

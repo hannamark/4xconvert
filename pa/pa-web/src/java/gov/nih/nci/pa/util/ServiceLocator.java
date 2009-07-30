@@ -102,7 +102,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -203,9 +203,9 @@ public interface ServiceLocator {
     DocumentServiceRemote getDocumentService();
     /**
      * 
-     * @return SubGroupsServiceRemote
+     * @return StratumGroupServiceRemote
      */
-    SubGroupsServiceRemote getSubGroupsService();
+    StratumGroupServiceRemote getStratumGroupService();
     
     /**
     *
@@ -313,5 +313,7 @@ public interface ServiceLocator {
      * @return StudyObjectiveServiceRemote
      */
     StudyObjectiveServiceRemote getStudyObjectiveService();
+    
+    
 }
 

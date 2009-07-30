@@ -98,7 +98,8 @@ import javax.interceptor.Interceptors;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class SubGroupsServiceBean extends AbstractStudyIsoService<StratumGroupDTO, StratumGroup, StratumGroupConverter>
-implements SubGroupsServiceRemote , SubGroupsServiceLocal {
+public class StratumGroupServiceBean extends 
+    AbstractStudyIsoService<StratumGroupDTO, StratumGroup, StratumGroupConverter>
+    implements StratumGroupServiceRemote , StratumGroupServiceLocal {
 
 }

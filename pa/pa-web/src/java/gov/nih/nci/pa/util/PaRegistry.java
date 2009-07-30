@@ -102,7 +102,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -265,10 +265,10 @@ public final class PaRegistry {
     }
     /**
      * 
-     * @return SubGroupsServiceRemote
+     * @return StratumGroupServiceRemote
      */
-    public static SubGroupsServiceRemote getSubGroupsService() {
-        return getInstance().getServiceLocator().getSubGroupsService();
+    public static StratumGroupServiceRemote getStratumGroupService() {
+        return getInstance().getServiceLocator().getStratumGroupService();
     }
 
     /**
@@ -426,5 +426,6 @@ public final class PaRegistry {
     public static StudyObjectiveServiceRemote getStudyObjectiveService() {
         return getInstance().getServiceLocator().getStudyObjectiveService();
     }
+    
 }
 

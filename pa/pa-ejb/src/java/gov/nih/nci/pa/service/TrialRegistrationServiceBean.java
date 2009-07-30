@@ -181,7 +181,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
     @EJB
-    SubGroupsServiceLocal subGroupsService = null;
+    StratumGroupServiceLocal subGroupsService = null;
     @EJB
     StudyParticipationServiceLocal studyParticipationService = null;
     @EJB

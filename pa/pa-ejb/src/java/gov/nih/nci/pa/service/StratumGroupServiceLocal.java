@@ -76,20 +76,18 @@
 * 
 * 
 */
+
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
- * @author Kalpana Guthikonda
- * @since 10/13/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Naveen Amiruddin
+ * @since 03/28/2009
  */
-@Remote
-public interface SubGroupsServiceRemote extends StudyPaService<StratumGroupDTO> {
-    
+@Local
+public interface StratumGroupServiceLocal extends StudyPaService<StratumGroupDTO> {
+
 }

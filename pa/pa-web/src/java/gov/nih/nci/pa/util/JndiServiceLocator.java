@@ -102,7 +102,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -226,10 +226,10 @@ public class JndiServiceLocator implements ServiceLocator {
 
     
     /**
-     * @return SubGroupsService
+     * @return StratumGroupService
      */
-    public SubGroupsServiceRemote getSubGroupsService() {
-        return (SubGroupsServiceRemote) JNDIUtil.lookup("pa/SubGroupsServiceBean/remote");
+    public StratumGroupServiceRemote getStratumGroupService() {
+        return (StratumGroupServiceRemote) JNDIUtil.lookup("pa/StratumGroupServiceBean/remote");
     }
     
     
@@ -377,4 +377,5 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudyObjectiveServiceRemote getStudyObjectiveService() {
         return (StudyObjectiveServiceRemote) JNDIUtil.lookup("/pa/StudyObjectiveServiceBean/remote");
     }
+   
 }

@@ -189,6 +189,7 @@ public class TestSchema {
         public static ArrayList<Long> oversightCommitteeIds;
         public static ArrayList<Long> diseaseIds;
         public static ArrayList<Long> outcomeIds;
+        public static ArrayList<Long> regAuthIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -315,6 +316,7 @@ public class TestSchema {
                     statement.executeUpdate("delete from DISEASE_ALTERNAME");
                     statement.executeUpdate("delete from DISEASE");
                     statement.executeUpdate("delete from STUDY_OBJECTIVE");
+                    statement.executeUpdate("delete from REGULATORY_AUTHORITY");
                     connection.commit();
                     statement.close();
                 } catch (HibernateException e) {
@@ -374,6 +376,7 @@ public class TestSchema {
             oversightCommitteeIds = new ArrayList<Long>();
             diseaseIds = new ArrayList<Long>();
             outcomeIds = new ArrayList<Long>();
+            regAuthIds = new ArrayList<Long>();
                 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -639,6 +642,12 @@ public class TestSchema {
             StudyMilestone studyMilestone = StudyMilestoneTest.createStudyMilestoneObj("comment 01", sp);
             addUpdObject(studyMilestone);
            
+            RegulatoryAuthority rega = new RegulatoryAuthority();
+            rega.setCountry(country);
+            rega.setAuthorityName("Authority");
+            addUpdObject(rega);
+            regAuthIds.add(rega.getId());
+            
             HibernateUtil.getCurrentSession().clear();
         }
 }

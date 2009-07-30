@@ -145,7 +145,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.SubGroupsServiceLocal;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -195,7 +195,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
     @EJB
-    SubGroupsServiceLocal subGroupsService = null;
+    StratumGroupServiceLocal subGroupsService = null;
     @EJB
     StudyParticipationServiceLocal studyParticipationService = null;
     @EJB
@@ -329,8 +329,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   /** The Constant NBSP. */
   private static final String NBSP = "&nbsp;&nbsp;&nbsp;";
   
-  private static final int MAX_CONDITION = 9;
-  
+   
   /** The Constant LOG. */
   private static final Logger LOG  = Logger.getLogger(TSRReportGeneratorServiceBean.class);
   
@@ -830,15 +829,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
            }
         } 
         List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
-        int count = 0;
         for (StudyDiseaseDTO sdDto : sdDtos) {
-         if (count < MAX_CONDITION 
-                    && sdDto.getLeadDiseaseIndicator() != null 
+         if (sdDto.getLeadDiseaseIndicator() != null 
                     && !sdDto.getLeadDiseaseIndicator().getValue()) {
                 DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                 diseases.add(d);
-                count++;
-             }
+            }
         }
         Collections.sort(diseases, new Comparator() {
            public int compare(Object o1, Object o2) {

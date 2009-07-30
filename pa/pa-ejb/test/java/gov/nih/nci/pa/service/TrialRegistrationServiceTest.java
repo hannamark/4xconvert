@@ -109,7 +109,7 @@ public class TrialRegistrationServiceTest {
     StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseServiceBean();
     ArmServiceLocal armService = new ArmServiceBean();  
     PlannedActivityServiceLocal plannedActivityService = new PlannedActivityServiceBean();
-    SubGroupsServiceLocal subGroupsService = new SubGroupsServiceBean();
+    StratumGroupServiceLocal subGroupsService = new StratumGroupServiceBean();
     StudyParticipationServiceLocal studyParticipationService = new StudyParticipationServiceBean();
     StudyParticipationContactServiceLocal studyParticipationContactService = new StudyParticipationContactServiceBean(); 
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusServiceBean();

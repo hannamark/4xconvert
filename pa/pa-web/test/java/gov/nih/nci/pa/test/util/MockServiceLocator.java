@@ -90,6 +90,10 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.RegulatoryAuthorityServiceBean;
+import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
+import gov.nih.nci.pa.service.StratumGroupServiceBean;
+import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
@@ -106,7 +110,6 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceBean;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -168,7 +171,8 @@ public class MockServiceLocator implements ServiceLocator {
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
     private final StudyOutcomeMeasureServiceRemote studyOutcomeMService = new MockStudyOutcomeMeasureService();
     private final StudyObjectiveServiceRemote studyObjectiveService = new MockStudyObjectiveService();
-    
+    private final RegulatoryAuthorityServiceRemote regulatoryAuthorityService = new RegulatoryAuthorityServiceBean();
+    private final StratumGroupServiceRemote stratumGroupService = new StratumGroupServiceBean();
     /**
      * @return mock service
      */
@@ -324,7 +328,7 @@ public class MockServiceLocator implements ServiceLocator {
     /** 
      * return SubGroupsServiceRemote
      */
-    public SubGroupsServiceRemote getSubGroupsService() {
+    public StratumGroupServiceRemote getSubGroupsService() {
         return null;
     }
 
@@ -442,6 +446,20 @@ public class MockServiceLocator implements ServiceLocator {
 
     public StudyObjectiveServiceRemote getStudyObjectiveService() {
         return studyObjectiveService;
+    }
+
+    /**
+     * @return the regulatoryAuthorityService
+     */
+    public RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService() {
+        return regulatoryAuthorityService;
+    }
+
+    /**
+     * @return the stratumGroupService
+     */
+    public StratumGroupServiceRemote getStratumGroupService() {
+        return stratumGroupService;
     }
 
    

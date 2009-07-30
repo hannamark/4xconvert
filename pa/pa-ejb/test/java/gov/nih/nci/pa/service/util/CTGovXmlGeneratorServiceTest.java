@@ -115,8 +115,8 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.SubGroupsServiceBean;
-import gov.nih.nci.pa.service.SubGroupsServiceLocal;
+import gov.nih.nci.pa.service.StratumGroupServiceBean;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
@@ -141,7 +141,7 @@ public class CTGovXmlGeneratorServiceTest {
     
     PlannedActivityServiceLocal plannedActivityService = new PlannedActivityServiceBean();
     
-    SubGroupsServiceLocal subGroupsService = new SubGroupsServiceBean();
+    StratumGroupServiceLocal subGroupsService = new StratumGroupServiceBean();
     
     StudyParticipationServiceLocal studyParticipationService = new StudyParticipationServiceBean();
     
