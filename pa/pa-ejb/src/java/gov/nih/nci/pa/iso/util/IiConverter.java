@@ -249,10 +249,10 @@ public class IiConverter {
     public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
     
     /** The identifier name for. */
-    public static final String REGULATORY_AUTHORITY_IDENTIFIER_NAME = "Regulatory authority identifier";
+    public static final String STUDY_REGULATORY_AUTHORITY_IDENTIFIER_NAME = "Study Regulatory authority identifier";
 
     /** The ii root value. */
-    public static final String REGULATORY_AUTHORITY_ROOT = "2.16.840.1.113883.3.26.4.4.9";
+    public static final String STUDY_REGULATORY_AUTHORITY_ROOT = "2.16.840.1.113883.3.26.4.4.9";
     
     
 
@@ -323,6 +323,25 @@ public class IiConverter {
     /** The ii root value. */
     public static final String STUDY_OBJECTIVE_ROOT = "2.16.840.1.113883.3.26.4.3.15";
  
+    /** The identifier name for. */
+    public static final String STUDY_MILESTONE_IDENTIFIER_NAME = "Study Milestone identifier";
+
+    /** The ii root value. */
+    public static final String STUDY_MILESTONE_ROOT = "2.16.840.1.113883.3.26.4.3.16";
+    
+    /** The identifier name for. */
+    public static final String REGULATORY_AUTHORITY_IDENTIFIER_NAME = "Regulatory authority identifier";
+
+    /** The ii root value. */
+    public static final String REGULATORY_AUTHORITY_ROOT = "2.16.840.1.113883.3.26.4.4.17";
+
+    
+    /** The identifier name for. */
+    public static final String COUNTRY_IDENTIFIER_NAME = "Country identifier";
+
+    /** The ii root value. */
+    public static final String COUNTRY_ROOT = "2.16.840.1.113883.3.26.4.4.18";
+
     
     /**
      * Convert to ii.
@@ -753,8 +772,8 @@ public class IiConverter {
      */
     public static Ii converToStudyRegulatoryAuthorityIi(Long id) {
         Ii ii = convertToIi(id);
-        ii.setIdentifierName(REGULATORY_AUTHORITY_IDENTIFIER_NAME);
-        ii.setRoot(REGULATORY_AUTHORITY_ROOT);
+        ii.setIdentifierName(STUDY_REGULATORY_AUTHORITY_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_REGULATORY_AUTHORITY_ROOT);
         return ii;
     }
     
@@ -838,6 +857,47 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_OBJECTIVE_IDENTIFIER_NAME);
         ii.setRoot(STUDY_OBJECTIVE_ROOT);
+        return ii;
+    }
+    /**
+     * Conver to study Milestone ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToStudyMilestoneIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_MILESTONE_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_MILESTONE_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to regulatory authority ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToRegulatoryAuthorityIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(REGULATORY_AUTHORITY_IDENTIFIER_NAME);
+        ii.setRoot(REGULATORY_AUTHORITY_ROOT);
+        return ii;
+    }
+    
+    /**
+     * Conver to regulatory authority ii.
+     * 
+     * @param id the id
+     * 
+     * @return the ii
+     */
+    public static Ii converToCountryIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(COUNTRY_IDENTIFIER_NAME);
+        ii.setRoot(COUNTRY_ROOT);
         return ii;
     }
 }
