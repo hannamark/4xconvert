@@ -16,7 +16,6 @@ function formReset(){
     or in CTEP Identifier field  in the lower frame.
     <br>
     Please do not use wildcard characters.<br>
-	(Example: to search for city Rockville, Rock, etc).
 </p>
 <table  class="form">
    	<tr> 	

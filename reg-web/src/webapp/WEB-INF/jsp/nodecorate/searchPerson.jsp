@@ -18,8 +18,7 @@ function formReset(){
     or in CTEP Identifier field  in the lower frame.
     <br>
     Please do not use wildcard characters.<br>
-    (Example: to search for the person with the first name Mary etc).
-     
+         
 </p>
 <table  class="form">  
    	<tr> 	
