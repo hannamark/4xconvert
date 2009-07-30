@@ -139,6 +139,7 @@
 <!-- main content begins-->
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="regulatory.title" /></h1>
+<c:set var="topic" scope="request" value="abstract_regulatory"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
    <pa:sucessMessage/>

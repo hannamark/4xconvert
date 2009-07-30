@@ -41,6 +41,7 @@ function resetValues(){
 </SCRIPT>
 <body>
 <!-- main content begins-->
+    <c:set var="topic" scope="request" value="search_trial"/>
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <div class="box" id="filters">

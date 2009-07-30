@@ -17,6 +17,7 @@
 </head>
 
 <body onload="setFocusToFirstControl();">
+ <c:set var="topic" scope="request" value="trial_details"/>
 <!-- <div id="contentwide"> -->
  <h1>Trial Identification</h1>
 

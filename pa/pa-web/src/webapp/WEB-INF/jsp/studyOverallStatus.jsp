@@ -52,7 +52,12 @@
 </head>
 <body onload="setFocusToFirstControl();">
 <h1><fmt:message key="trialStatus.title" /></h1>
-
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+<c:set var="topic" scope="request" value="review_status"/>
+</c:if>
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
+<c:set var="topic" scope="request" value="abstract_status"/>
+</c:if>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>

@@ -45,96 +45,130 @@
     <Document title="Overview of Protocol Abstraction" href="GettingStarted.2.2.html" />
     <Document title="Logging In to Protocol Abstraction" href="GettingStarted.2.3.html" />
     <Document title="Logging Out of Protocol Abstraction" href="GettingStarted.2.4.html" />
-    <Document title="Validating Trials" href="validate.3.1.html" />
-    <Document title="About Trial Validation" href="validate.3.2.html" />
-    <Document title="Selecting Trials that Require Validation" href="validate.3.3.html" />
-    <Document title="Navigating the Validation Workspace" href="validate.3.4.html" />
-    <Document title="Saving Trial Information" href="validate.3.5.html" />
-    <Document title="Reviewing Recorded Trial Details" href="validate.3.6.html" />
-    <Document title="Reviewing Trial Documents" href="validate.3.7.html" />
-    <Document title="Reviewing Trial Status Details" href="validate.3.8.html" />
-    <Document title="Reviewing Funding Details" href="validate.3.9.html" />
-    <Document title="Reviewing IND/IDE Details" href="validate.3.10.html" />
-    <Document title="Validating Amended Trial Submissions" href="validate.3.11.html" />
-    <Document title="Accepting and Rejecting Trials" href="validate.3.12.html" />
-    <Document title="Abstracting Trial Overview Data" href="overviewData.4.1.html" />
-    <Document title="About Trial Overview Data" href="overviewData.4.2.html" />
-    <Document title="Abstracting Trial History Information" href="overviewData.4.3.html" />
-    <Document title="Abstracting Trial Milestones" href="overviewData.4.4.html" />
-    <Document title="Trial Summary Report Life Cycle" href="overviewData.4.5.html" />
-    <Document title="Milestone and Processing Status Rules" href="overviewData.4.6.html" />
-    <Document title="Viewing and Adding Milestones" href="overviewData.4.7.html" />
-    <Document title="Abstracting On-hold Information" href="overviewData.4.8.html" />
-    <Document title="Adding On-hold Records" href="overviewData.4.9.html" />
-    <Document title="Editing On-hold Records" href="overviewData.4.10.html" />
-    <Document title="Abstracting Administrative Data" href="Admin.5.1.html" />
-    <Document title="About Administrative Data" href="Admin.5.2.html" />
-    <Document title="Abstracting General Trial Details" href="Admin.5.3.html" />
-    <Document title="Abstracting Trial Titles" href="Admin.5.4.html" />
-    <Document title="Abstracting Trial Descriptions" href="Admin.5.5.html" />
-    <Document title="Abstracting Lead Organizations and Principle Investigators" href="Admin.5.6.html" />
-    <Document title="Abstracting Sponsors and Responsible Parties" href="Admin.5.7.html" />
-    <Document title="Abstracting Central Contacts" href="Admin.5.8.html" />
-    <Document title="Abstracting NCI-Specific Information" href="Admin.5.9.html" />
-    <Document title="Abstracting Regulatory Information" href="Admin.5.10.html" />
-    <Document title="Abstracting Human Subject Safety Information" href="Admin.5.11.html" />
-    <Document title="Abstracting Trial IND/IDE Information" href="Admin.5.12.html" />
-    <Document title="Abstracting Trial Status Information" href="Admin.5.13.html" />
-    <Document title="Abstracting Trial Funding Information" href="Admin.5.14.html" />
-    <Document title="Abstracting Participating Site Information" href="Admin.5.15.html" />
-    <Document title="Linking Organizations to a Trial" href="Admin.5.16.html" />
-    <Document title="Linking Investigators to a Trial" href="Admin.5.17.html" />
-    <Document title="Abstracting Contacts" href="Admin.5.18.html" />
-    <Document title="Unlinking Participating Sites From a Trial" href="Admin.5.19.html" />
-    <Document title="Editing Participating Site Information" href="Admin.5.20.html" />
-    <Document title="Abstracting Collaborator Information" href="Admin.5.21.html" />
-    <Document title="Unlinking Collaborators From a Trial" href="Admin.5.22.html" />
-    <Document title="Abstracting Trial-Related Documents" href="Admin.5.23.html" />
-    <Document title="Adding Trial-Related Documents" href="Admin.5.24.html" />
-    <Document title="Deleting Trial-Related Documents" href="Admin.5.25.html" />
-    <Document title="Editing and Replacing Documents" href="Admin.5.26.html" />
-    <Document title="Abstracting Scientific Data" href="science.6.1.html" />
-    <Document title="Abstracting Trial Descriptions" href="science.6.2.html" />
-    <Document title="Abstracting Interventional Trial Design" href="science.6.3.html" />
-    <Document title="Abstracting Interventional Trial Design Details" href="science.6.4.html" />
-    <Document title="Abstracting Interventional Trial Outcome Measures" href="science.6.5.html" />
-    <Document title="Adding Outcome Measures" href="science.6.6.html" />
-    <Document title="Editing Outcome Measures" href="science.6.7.html" />
-    <Document title="Deleting Outcome Measures" href="science.6.8.html" />
-    <Document title="Abstracting Interventional Trial Eligibility Criteria" href="science.6.9.html" />
-    <Document title="Adding Other Eligibility Criteria" href="science.6.10.html" />
-    <Document title="Editing Other Eligibility Criteria" href="science.6.11.html" />
-    <Document title="Deleting Eligibility Criteria" href="science.6.12.html" />
-    <Document title="Abstracting Diseases/Conditions" href="science.6.13.html" />
-    <Document title="Viewing Disease/Condition Details" href="science.6.14.html" />
-    <Document title="Adding Diseases/Conditions to a Trial" href="science.6.15.html" />
-    <Document title="Unlinking Diseases/Conditions from a Trial" href="science.6.16.html" />
-    <Document title="Abstracting Interventions" href="science.6.17.html" />
-    <Document title="Adding Interventions to a Trial" href="science.6.18.html" />
-    <Document title="Editing Intervention Records" href="science.6.19.html" />
-    <Document title="Unlinking Interventions from a Trial" href="science.6.20.html" />
-    <Document title="Abstracting Arm Information" href="science.6.21.html" />
-    <Document title="Adding Arms to a Trial" href="science.6.22.html" />
-    <Document title="Editing Arm Records" href="science.6.23.html" />
-    <Document title="Deleting Arms" href="science.6.24.html" />
-    <Document title="Abstracting Sub-Groups" href="science.6.25.html" />
-    <Document title="Adding Sub-groups to a Trial" href="science.6.26.html" />
-    <Document title="Editing Sub-group Records" href="science.6.27.html" />
-    <Document title="Deleting Sub-groups" href="science.6.28.html" />
-    <Document title="Completing Abstractions" href="complete.7.1.html" />
-    <Document title="About Abstraction Validation" href="complete.7.2.html" />
-    <Document title="Trial Completion Criteria" href="complete.7.3.html" />
-    <Document title="Trial Reporting" href="complete.7.4.html" />
-    <Document title="Completing and Validating Abstractions" href="complete.7.5.html" />
-    <Document title="Working With Person Records" href="persons.8.1.html" />
-    <Document title="Looking Up Registered Persons" href="persons.8.2.html" />
-    <Document title="Working With Organization Records" href="orgs.9.1.html" />
-    <Document title="Looking Up Registered Organizations" href="orgs.9.2.html" />
-    <Document title="Metadata Definitions" href="metadata.10.1.html" />
-    <Document title="Glossary" href="Glossary.11.1.html" />
-    <Document title="Application Support" href="appSupport.12.1.html" />
+    <Document title="Searching For Trials in the Clinical Trials Reporting Program" href="searchTrials.3.1.html" />
+    <Document title="Searching for Trials" href="searchTrials.3.2.html" />
+    <Document title="Navigating the Search Results List" href="searchTrials.3.3.html" />
+    <Document title="Viewing Trial Identification Details" href="searchTrials.3.4.html" />
+    <Document title="Validating Trials" href="validate.4.1.html" />
+    <Document title="About Trial Validation" href="validate.4.2.html" />
+    <Document title="Selecting Trials that Require Validation" href="validate.4.3.html" />
+    <Document title="Navigating the Validation Workspace" href="validate.4.4.html" />
+    <Document title="Saving Trial Information" href="validate.4.5.html" />
+    <Document title="Reviewing Recorded Trial Details" href="validate.4.6.html" />
+    <Document title="Reviewing Trial Documents" href="validate.4.7.html" />
+    <Document title="Reviewing Trial Status Details" href="validate.4.8.html" />
+    <Document title="Reviewing Funding Details" href="validate.4.9.html" />
+    <Document title="Reviewing IND/IDE Details" href="validate.4.10.html" />
+    <Document title="Validating Amended Trial Submissions" href="validate.4.11.html" />
+    <Document title="Accepting and Rejecting Trials" href="validate.4.12.html" />
+    <Document title="Abstracting Trial Overview Data" href="overviewData.5.1.html" />
+    <Document title="About Trial Overview Data" href="overviewData.5.2.html" />
+    <Document title="Abstracting Trial History Information" href="overviewData.5.3.html" />
+    <Document title="Abstracting Trial Milestones" href="overviewData.5.4.html" />
+    <Document title="Trial Summary Report Life Cycle" href="overviewData.5.5.html" />
+    <Document title="Milestone and Processing Status Rules" href="overviewData.5.6.html" />
+    <Document title="Viewing and Adding Milestones" href="overviewData.5.7.html" />
+    <Document title="Abstracting On-hold Information" href="overviewData.5.8.html" />
+    <Document title="Adding On-hold Records" href="overviewData.5.9.html" />
+    <Document title="Editing On-hold Records" href="overviewData.5.10.html" />
+    <Document title="Abstracting Administrative Data" href="Admin.6.1.html" />
+    <Document title="About Administrative Data" href="Admin.6.2.html" />
+    <Document title="Abstracting General Trial Details" href="Admin.6.3.html" />
+    <Document title="Abstracting Trial Titles" href="Admin.6.4.html" />
+    <Document title="Abstracting Trial Descriptions" href="Admin.6.5.html" />
+    <Document title="Abstracting Lead Organizations and Principle Investigators" href="Admin.6.6.html" />
+    <Document title="Abstracting Sponsors and Responsible Parties" href="Admin.6.7.html" />
+    <Document title="Abstracting Central Contacts" href="Admin.6.8.html" />
+    <Document title="Abstracting NCI-Specific Information" href="Admin.6.9.html" />
+    <Document title="Abstracting Regulatory Information" href="Admin.6.10.html" />
+    <Document title="Abstracting Human Subject Safety Information" href="Admin.6.11.html" />
+    <Document title="Abstracting Trial IND/IDE Information" href="Admin.6.12.html" />
+    <Document title="Abstracting Trial Status Information" href="Admin.6.13.html" />
+    <Document title="Abstracting Trial Funding Information" href="Admin.6.14.html" />
+    <Document title="Abstracting Participating Site Information" href="Admin.6.15.html" />
+    <Document title="Linking Organizations to a Trial" href="Admin.6.16.html" />
+    <Document title="Linking Investigators to a Trial" href="Admin.6.17.html" />
+    <Document title="Abstracting Contacts" href="Admin.6.18.html" />
+    <Document title="Unlinking Participating Sites From a Trial" href="Admin.6.19.html" />
+    <Document title="Editing Participating Site Information" href="Admin.6.20.html" />
+    <Document title="Abstracting Collaborator Information" href="Admin.6.21.html" />
+    <Document title="Unlinking Collaborators From a Trial" href="Admin.6.22.html" />
+    <Document title="Abstracting Trial-Related Documents" href="Admin.6.23.html" />
+    <Document title="Adding Trial-Related Documents" href="Admin.6.24.html" />
+    <Document title="Deleting Trial-Related Documents" href="Admin.6.25.html" />
+    <Document title="Editing and Replacing Documents" href="Admin.6.26.html" />
+    <Document title="Abstracting Scientific Data" href="science.7.1.html" />
+    <Document title="Abstracting Trial Descriptions" href="science.7.2.html" />
+    <Document title="Abstracting Interventional Trial Design" href="science.7.3.html" />
+    <Document title="Abstracting Interventional Trial Design Details" href="science.7.4.html" />
+    <Document title="Abstracting Interventional Trial Outcome Measures" href="science.7.5.html" />
+    <Document title="Adding Outcome Measures" href="science.7.6.html" />
+    <Document title="Editing Outcome Measures" href="science.7.7.html" />
+    <Document title="Deleting Outcome Measures" href="science.7.8.html" />
+    <Document title="Abstracting Interventional Trial Eligibility Criteria" href="science.7.9.html" />
+    <Document title="Adding Other Eligibility Criteria" href="science.7.10.html" />
+    <Document title="Editing Other Eligibility Criteria" href="science.7.11.html" />
+    <Document title="Deleting Eligibility Criteria" href="science.7.12.html" />
+    <Document title="Abstracting Diseases/Conditions" href="science.7.13.html" />
+    <Document title="Viewing Disease/Condition Details" href="science.7.14.html" />
+    <Document title="Adding Diseases/Conditions to a Trial" href="science.7.15.html" />
+    <Document title="Unlinking Diseases/Conditions from a Trial" href="science.7.16.html" />
+    <Document title="Abstracting Interventions" href="science.7.17.html" />
+    <Document title="Adding Interventions to a Trial" href="science.7.18.html" />
+    <Document title="Editing Intervention Records" href="science.7.19.html" />
+    <Document title="Unlinking Interventions from a Trial" href="science.7.20.html" />
+    <Document title="Abstracting Arm Information" href="science.7.21.html" />
+    <Document title="Adding Arms to a Trial" href="science.7.22.html" />
+    <Document title="Editing Arm Records" href="science.7.23.html" />
+    <Document title="Deleting Arms" href="science.7.24.html" />
+    <Document title="Abstracting Sub-Groups" href="science.7.25.html" />
+    <Document title="Adding Sub-groups to a Trial" href="science.7.26.html" />
+    <Document title="Editing Sub-group Records" href="science.7.27.html" />
+    <Document title="Deleting Sub-groups" href="science.7.28.html" />
+    <Document title="Completing Abstractions" href="complete.8.1.html" />
+    <Document title="About Abstraction Validation" href="complete.8.2.html" />
+    <Document title="Trial Completion Criteria" href="complete.8.3.html" />
+    <Document title="Trial Reporting" href="complete.8.4.html" />
+    <Document title="Completing and Validating Abstractions" href="complete.8.5.html" />
+    <Document title="Working With Person Records" href="persons.9.1.html" />
+    <Document title="Looking Up Registered Persons" href="persons.9.2.html" />
+    <Document title="Working With Organization Records" href="orgs.10.1.html" />
+    <Document title="Looking Up Registered Organizations" href="orgs.10.2.html" />
+    <Document title="Metadata Definitions" href="metadata.11.1.html" />
+    <Document title="Glossary" href="Glossary.12.1.html" />
+    <Document title="Application Support" href="appSupport.13.1.html" />
   </DocumentInfo>
   <TopicMap>
     <Topic name="Welcome" href="Welcome.1.1.html#1099392" />
+    <Topic name="login" href="GettingStarted.2.3.html#1063966" />
+    <Topic name="search_trial" href="searchTrials.3.1.html#1131775" />
+    <Topic name="trial_details" href="searchTrials.3.4.html#1093731" />
+    <Topic name="validate_trial" href="validate.4.1.html#1119639" />
+    <Topic name="review_docs" href="validate.4.7.html#1141921" />
+    <Topic name="review_status" href="validate.4.8.html#1127581" />
+    <Topic name="review_funding" href="validate.4.9.html#1147343" />
+    <Topic name="review_ind" href="validate.4.10.html#1127505" />
+    <Topic name="trial_history" href="overviewData.5.3.html#1173926" />
+    <Topic name="trial_milestones" href="overviewData.5.4.html#1171712" />
+    <Topic name="trial_onhold" href="overviewData.5.8.html#1170468" />
+    <Topic name="abstract_general" href="Admin.6.3.html#1127767" />
+    <Topic name="abstract_nci" href="Admin.6.9.html#1100816" />
+    <Topic name="abstract_regulatory" href="Admin.6.10.html#1107552" />
+    <Topic name="abstract_safety" href="Admin.6.11.html#1115272" />
+    <Topic name="abstract_ind" href="Admin.6.12.html#1112726" />
+    <Topic name="abstract_status" href="Admin.6.13.html#1093776" />
+    <Topic name="abstract_funding" href="Admin.6.14.html#1093777" />
+    <Topic name="abstract_site" href="Admin.6.15.html#1153336" />
+    <Topic name="abstract_collaborator" href="Admin.6.21.html#1093823" />
+    <Topic name="abstract_docs" href="Admin.6.23.html#1093829" />
+    <Topic name="abstract_description" href="science.7.2.html#1156003" />
+    <Topic name="abstract_design" href="science.7.3.html#1127545" />
+    <Topic name="abstract_outcome" href="science.7.5.html#1132834" />
+    <Topic name="abstract_eligibility" href="science.7.9.html#1132841" />
+    <Topic name="abstract_disease" href="science.7.13.html#1129199" />
+    <Topic name="abstract_interventions" href="science.7.17.html#1129205" />
+    <Topic name="abstract_arms" href="science.7.21.html#1140772" />
+    <Topic name="abstract_subgroups" href="science.7.25.html#1129315" />
+    <Topic name="validate_abstract" href="complete.8.1.html#1132968" />
   </TopicMap>
 </WebWorksHelpBook>

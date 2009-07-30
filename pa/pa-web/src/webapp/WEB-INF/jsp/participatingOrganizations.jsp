@@ -36,7 +36,7 @@ function handleDelete(studyResourcingId){
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.title" /></h1>
-
+<c:set var="topic" scope="request" value="abstract_site"/>
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

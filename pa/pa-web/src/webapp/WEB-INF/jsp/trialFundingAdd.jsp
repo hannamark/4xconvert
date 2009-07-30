@@ -29,7 +29,12 @@ function tooltip() {
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+<c:set var="topic" scope="request" value="review_funding"/>
+</c:if>
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
+<c:set var="topic" scope="request" value="abstract_funding"/>
+</c:if>
  <h1><fmt:message key="trialFunding.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  

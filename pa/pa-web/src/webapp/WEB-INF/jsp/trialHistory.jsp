@@ -26,7 +26,7 @@ function handlePopup(a,b,c)  // write corresponding content to the popup window
 </head>
 <body onload="setFocusToFirstControl();">
 <h1><fmt:message key="trialHistory.title"/></h1>
-
+<c:set var="topic" scope="request" value="trial_history"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage /> 

@@ -24,7 +24,7 @@ function handleAction(){
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-
+<c:set var="topic" scope="request" value="trial_history"/>
  <h1><fmt:message key="trialHistory.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  

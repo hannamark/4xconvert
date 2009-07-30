@@ -32,7 +32,7 @@
 </head>
 <body onload="setFocusToFirstControl();">
 <h1><fmt:message key="milestone.details.title" /></h1>
-
+<c:set var="topic" scope="request" value="trial_milestones"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage /> 

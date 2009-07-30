@@ -16,7 +16,7 @@
 </head>
 
 <body onload="setFocusToFirstControl();">
-
+<c:set var="topic" scope="request" value="abstract_outcome"/>
  <h1><c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>

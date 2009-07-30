@@ -30,7 +30,7 @@ else
 <h1><fmt:message key="login.title" /></h1>
 <div class="box"> 
 <form action="j_security_check" method="post" id="loginForm">   
-
+<c:set var="topic" scope="request" value="login"/>
  <table class="form">                 
             <c:if test="${not empty param.failedLogin}">
               <p class="directions"><fmt:message key="errors.password.mismatch"/></p>

@@ -41,7 +41,7 @@ function handleCreate(){
 </head>
 <body onload="setFocusToFirstControl();">
 <h1><fmt:message key="disease.details.title"/></h1>
-
+<c:set var="topic" scope="request" value="abstract_disease"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage /> 

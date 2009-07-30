@@ -138,7 +138,12 @@ function SelectSubCat(i){
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+<c:set var="topic" scope="request" value="review_ind"/>
+</c:if>
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
+<c:set var="topic" scope="request" value="abstract_ind"/>
+</c:if>
  <h1><fmt:message key="trialIndide.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  

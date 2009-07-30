@@ -24,7 +24,7 @@ function handleEdit(rowId){
 </head>
 <body onload="setFocusToFirstControl();">
 <h1><fmt:message key="onhold.title"/></h1>
-
+<c:set var="topic" scope="request" value="trial_onhold"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage /> 
