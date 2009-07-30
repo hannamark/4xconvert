@@ -212,41 +212,10 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         }
         DiseaseDTO dto = diseaseSvc.get(IiConverter.convertToIi(getDisease().getDiseaseIdentifier()));
         String menu = StConverter.convertToString(dto.getMenuDisplayName());
-        ArrayList<Long> parentList = new ArrayList<Long>();
-        ArrayList<Long> childList = new ArrayList<Long>();
-        // get parent diseases
-        List<DiseaseParentDTO> dpList = diseaseParentSvc.getByChildDisease(dto.getIdentifier());
-        for (DiseaseParentDTO dp : dpList) {
-            parentList.add(IiConverter.convertToLong(dp.getParentDiseaseIdentifier()));
-        }
-        // get child diseases
-        dpList = diseaseParentSvc.getByParentDisease(dto.getIdentifier());
-        for (DiseaseParentDTO dp : dpList) {
-            childList.add(IiConverter.convertToLong(dp.getDiseaseIdentifier()));
-        }
-        List<StudyDiseaseDTO> sdList = studyDisesaeSvc.getByStudyProtocol(spIi);
-        boolean hasParent = false;
-        boolean hasChild = false;
-        for (StudyDiseaseDTO sd : sdList) {
-            long existingId = IiConverter.convertToLong(sd.getDiseaseIdentifier());
-            if (parentList.contains(existingId)) {
-                hasParent = true;
-            }
-            if (childList.contains(existingId)) {
-                hasChild = true;
-            }
-        }
-
         if (PAUtil.isEmpty(menu)) {
             addActionError("Diseases without a menu display name are not suitable for reporting.  ");
         }
-        if (hasParent) {
-            addActionError("Redundancy error:  this trial already includes a parent of the selected disease.  ");
-        }
-        if (hasChild) {
-            addActionError("Redundancy error:  this trial already includes a child of the selected disease.  ");
-        }
-    }
+      }
     
     private String buildParentPreferredName(String diseaseId) throws PAException {
         List<DiseaseParentDTO> parentList = diseaseParentSvc.getByChildDisease(IiConverter.convertToIi(diseaseId));
