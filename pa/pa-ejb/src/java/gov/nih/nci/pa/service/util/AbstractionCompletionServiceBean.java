@@ -707,6 +707,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           + " Administrative Data menu.",  "No Participating Sites exists for the trial."));
       return;
     }
+    //fix for the tracker 22506
+    boolean centralContactDefined = checkIfCentralContactDefined(studyProtocolIi);
+    
     for (StudyParticipationDTO spartDto : spList) {
       List<StudyParticipationContactDTO> spContactDtos =
                 studyParticipationContactService.getByStudyParticipation(spartDto.getIdentifier());
@@ -740,12 +743,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     + " Administrative Data menu.",  "Treating site can not have duplicate investigator."));
                     break;
         } 
-            
-        if (!contactFound) {
-            abstractionList.add(createError("Error",
+         //22506 Change abstraction validation rule for participating site contact   
+        if (!contactFound && !centralContactDefined) {
+           /* abstractionList.add(createError("Error",
                     "Select Participating Sites from Administrative Data menu.",
-                    "Participating site # " + orgBo.getIdentifier() + " Must have a Contact"));
-
+                    "Participating site # " + orgBo.getIdentifier() + " Must have a Contact"));*/
+            abstractionList.add(createError("Error", " ", "Participating Site Contact OR Central Contact"
+                  +  " information is mandatory. Complete Central Contact (General Trial Details screen)"
+                  +  " or each Participating Site Contact (Participating Sites screen)  information."));
         }
 
     }
@@ -755,6 +760,21 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                + " Administrative Data menu.",  "Trial can not have dupicate Treating Site."));
     }    
 
+  }
+  
+  private boolean checkIfCentralContactDefined(Ii studyProtocolIi) throws PAException {
+      
+      boolean ccDefined = false;
+      List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolIi);
+      if (scDtos != null && !scDtos.isEmpty()) {
+             for (StudyContactDTO studyContactDTO : scDtos) {
+                 if (StudyContactRoleCode.CENTRAL_CONTACT.getCode().equalsIgnoreCase(studyContactDTO.
+                         getRoleCode().getCode())) {
+                     ccDefined = true;
+                 }
+             }
+      }      
+       return ccDefined;      
   }
   private void enforceCollaborator(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
