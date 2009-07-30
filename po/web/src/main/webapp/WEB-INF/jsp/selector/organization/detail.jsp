@@ -93,8 +93,17 @@
 <div class="clearfloat"></div>
 </div>
 <div class="btnwrapper">
+
+    <script type="text/javascript">
+    <!--
+	    // If there are any apostrophes in the name, it will screw up creating the IdValue below,
+	    // so we define it as a variable separately
+        var name${organization.id} = "${organization.name}";
+    -->
+    </script>
+    
 	<po:buttonRow>
 	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="continue" text="Back to Search Results" />
-	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${organization.id}', '${organization.name}'));" style="reject" text="Select" />
+	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${organization.id}', name${organization.id}));" style="reject" text="Select" />
 	</po:buttonRow>
 </div>
