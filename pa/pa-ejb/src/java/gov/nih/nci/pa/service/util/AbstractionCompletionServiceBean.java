@@ -707,8 +707,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           + " Administrative Data menu.",  "No Participating Sites exists for the trial."));
       return;
     }
-    //fix for the tracker 22506
-    boolean centralContactDefined = checkIfCentralContactDefined(studyProtocolIi);
+   //check if central contact exits for the study
+    boolean centralContactDefined = isCentralContactDefined(studyProtocolIi);
     
     for (StudyParticipationDTO spartDto : spList) {
       List<StudyParticipationContactDTO> spContactDtos =
@@ -727,34 +727,30 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
           
         }
-        //Fix for #21889 Error Message ID Does Not Match Participating Site PO ID#
         Organization orgBo = getPoOrg(spartDto);
         if (!piFound) {
-            //Fix for #21889 Error Message ID Does Not Match Participating Site PO ID#
+            // Error Message ID Does Not Match Participating Site PO ID#
             abstractionList.add(createError("Error",
                     "Select Participating Sites from Administrative Data menu.",
                     "Participating site # " + orgBo.getIdentifier()
                     + " Must have an Investigator"));
 
         }
-      //Use_case AC_12. No investigator duplicates must exist on the same treating site for the same trial.
+      // No investigator duplicates must exist on the same treating site for the same trial.
         if (piFound && hasDuplicate(getPIForTreatingSite(spContactDtos))) {
                     abstractionList.add(createError("Error", "Select Participating Sites from "
                     + " Administrative Data menu.",  "Treating site can not have duplicate investigator."));
                     break;
         } 
-         //22506 Change abstraction validation rule for participating site contact   
+         //abstraction validation rule for participating site contact and central contact  
         if (!contactFound && !centralContactDefined) {
-           /* abstractionList.add(createError("Error",
-                    "Select Participating Sites from Administrative Data menu.",
-                    "Participating site # " + orgBo.getIdentifier() + " Must have a Contact"));*/
-            abstractionList.add(createError("Error", " ", "Participating Site Contact OR Central Contact"
+                abstractionList.add(createError("Error", " ", "Participating Site Contact OR Central Contact"
                   +  " information is mandatory. Complete Central Contact (General Trial Details screen)"
                   +  " or each Participating Site Contact (Participating Sites screen)  information."));
         }
 
     }
-    //Fix UC_AC#11. No participating site duplicates playing same role must exist on the same trial
+    //No participating site duplicates playing same role must exist on the same trial
     if (hasDuplicate(getTreatingSiteOrg(spList))) {
            abstractionList.add(createError("Error", "Select Participating Sites from "
                + " Administrative Data menu.",  "Trial can not have dupicate Treating Site."));
@@ -762,7 +758,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
   }
   
-  private boolean checkIfCentralContactDefined(Ii studyProtocolIi) throws PAException {
+  private boolean isCentralContactDefined(Ii studyProtocolIi) throws PAException {
       
       boolean ccDefined = false;
       List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolIi);

@@ -161,7 +161,6 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceBean;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
@@ -235,8 +234,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     ArmServiceLocal armService = null;
     @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
-    @EJB
-    StratumGroupServiceLocal subGroupsService = null;
     @EJB
     StudyParticipationServiceLocal studyParticipationService = null;
     @EJB
