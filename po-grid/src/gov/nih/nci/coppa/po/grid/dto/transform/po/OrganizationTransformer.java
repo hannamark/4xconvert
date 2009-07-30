@@ -61,7 +61,7 @@ public final class OrganizationTransformer
     /**
      * {@inheritDoc}
      */
-    public Organization[] createXmlArray(int arg0) throws DtoTransformException {
-        return new Organization[arg0];
+    public Organization[] createXmlArray(int size) throws DtoTransformException {
+        return new Organization[size];
     }
 }
