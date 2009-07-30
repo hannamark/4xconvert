@@ -141,8 +141,6 @@ public class CTGovXmlGeneratorServiceTest {
     
     PlannedActivityServiceLocal plannedActivityService = new PlannedActivityServiceBean();
     
-    StratumGroupServiceLocal subGroupsService = new StratumGroupServiceBean();
-    
     StudyParticipationServiceLocal studyParticipationService = new StudyParticipationServiceBean();
     
     StudyParticipationContactServiceLocal studyParticipationContactService = new StudyParticipationContactServiceBean();
@@ -184,7 +182,6 @@ public class CTGovXmlGeneratorServiceTest {
         bean.studyParticipationContactService=studyParticipationContactService;
         bean.studyRegulatoryAuthorityService=studyRegulatoryAuthorityService;
         bean.studySiteAccrualStatusService=studySiteAccrualStatusService;
-        bean.subGroupsService=  subGroupsService;  
         bean.regulatoryInformationService = regulatoryInformationService;
         bean.diseaseService = diseaseService;
         bean.interventionAlternateNameService = interventionAlternateNameService;
