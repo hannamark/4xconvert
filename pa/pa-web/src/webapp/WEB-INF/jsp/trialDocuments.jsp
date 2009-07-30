@@ -53,14 +53,7 @@
 				  </c:when>
 				<c:otherwise>
 					<li><a href="collaborators.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-					<c:choose>
-                     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
-           				<li><a href="interventionalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        			</c:when>
-        			<c:otherwise>
-          				<li><a href="observationalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        			</c:otherwise>
-        			</c:choose>
+					<li><a href="trialDescriptionquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 			 </c:otherwise>
 			</c:choose>
 				</ul>	
