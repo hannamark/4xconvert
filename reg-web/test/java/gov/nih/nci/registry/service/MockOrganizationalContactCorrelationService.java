@@ -9,6 +9,8 @@ import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -96,6 +98,12 @@ public class MockOrganizationalContactCorrelationService implements
      * @see gov.nih.nci.services.CorrelationService#validate(gov.nih.nci.services.PoDto)
      */
     public Map<String, String[]> validate(OrganizationalContactDTO arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<OrganizationalContactDTO> search(OrganizationalContactDTO arg0,
+            LimitOffset arg1) throws TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -167,7 +167,6 @@ public class PopupAction extends ActionSupport implements Preparable {
     public String displayOrgList() {
         return populateOrgs(false);
     }
-
     /**
     * @throws PAException on error
      * @return res
@@ -200,7 +199,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             if ((firstName != null) && (firstName.equals("")) && (lastName != null) && (lastName.equals(""))
                     && (email.equals("")) && ctep != null && !(ctep.length() > 0) 
                     && (city != null) && (city.equals("")) 
-                    && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))) {
+                    && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))
+                    && country.equals("")) {
                 String message = "Please enter at least one search criteria";
                 persons = null;
                 addActionError(message);
@@ -628,7 +628,6 @@ public class PopupAction extends ActionSupport implements Preparable {
             orgs.add(displayElement);
         }
     }
-
     /**
      * @return the countryList
      */

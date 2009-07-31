@@ -249,7 +249,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.responsiblePartyType}"/>
                  </td>
            </tr> 
-           <c:if test="${trialDTO.responsiblePersonName != ''}">  
+           <c:if test="${fn:trim(trialDTO.responsiblePersonName) != ''}">  
                <tr>     
                     <td scope="row" class="label">
                     <label for="Responsible Party Contact">
@@ -258,6 +258,18 @@ var winprint=window.open("","",sOption);
                     </td>
                      <td class="value">
                         <c:out value="${trialDTO.responsiblePersonName}"/>
+                     </td>
+               </tr>
+           </c:if>
+           <c:if test="${fn:trim(trialDTO.responsibleGenericContactName) != ''}">  
+               <tr>     
+                    <td scope="row" class="label">
+                    <label for="Responsible Party Contact">
+                        <fmt:message key="view.trial.respPartyContact"/>                
+                    </label>
+                    </td>
+                     <td class="value">
+                        <c:out value="${trialDTO.responsibleGenericContactName}"/>
                      </td>
                </tr>
            </c:if>

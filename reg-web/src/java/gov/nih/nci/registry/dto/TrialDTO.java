@@ -52,7 +52,8 @@ public class TrialDTO {
     private String amendmentDate;
     private String identifier;
     private String programCodeText;
-   
+    private String responsibleGenericContactName;
+      
     private List<TrialFundingWebDTO> fundingDtos;
     private List<TrialDocumentWebDTO> docDtos;
     private List <TrialIndIdeDTO> indIdeDtos;
@@ -543,5 +544,18 @@ public class TrialDTO {
      */
     public void setProgramCodeText(String programCodeText) {
         this.programCodeText = programCodeText;
-    } 
+    }
+    /**
+     * @return the responsibleGenericContactName
+     */
+    public String getResponsibleGenericContactName() {
+        return responsibleGenericContactName;
+    }
+    /**
+     * @param responsibleGenericContactName the responsibleGenericContactName to set
+     */
+    public void setResponsibleGenericContactName(
+            String responsibleGenericContactName) {
+        this.responsibleGenericContactName = responsibleGenericContactName;
+    }
 }

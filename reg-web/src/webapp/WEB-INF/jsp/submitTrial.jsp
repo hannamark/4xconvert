@@ -30,19 +30,25 @@
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="submitProtocol"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
+<c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
 var chosenname;
 var persid;
 var respartOrgid;
+var contactMail;
+var contactPhone;
 function setorgid(orgIdentifier, oname){
     orgid = orgIdentifier;
     chosenname = oname;
 }
-function setpersid(persIdentifier, sname){
+function setpersid(persIdentifier, sname,email,phone){
     persid = persIdentifier;
     chosenname = sname;
+    contactMail = email;
+    contactPhone = phone;
 }
+
 //
 function lookup4loadleadorg(){
     showPopWin('${lookupOrgUrl}', 900, 400, loadLeadOrgDiv, 'Select Lead Organization');
@@ -51,10 +57,16 @@ function lookup4loadleadpers(){
     showPopWin('${lookupPersUrl}', 900, 500, loadLeadPersDiv, 'Select Principal Investigator');
 }
 function lookup4sponsor(){
+	//clear info for resp party
     showPopWin('${lookupOrgUrl}', 900, 400, loadSponsorDiv, 'Select Sponsor');
 } 
 function lookup4loadresponsibleparty(){ 
+	var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
     showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible Party Contact');
+}
+function lookup4loadresponsiblepartygenericcontact(){ 
+	var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
+    showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function lookup4loadSummary4Sponsor(){
     showPopWin('${lookupOrgUrl}', 900, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
@@ -67,7 +79,6 @@ function loadLeadOrgDiv() {
 function loadLeadPersDiv() {
     document.getElementById("trialDTO.piIdentifier").value = persid;
     document.getElementById('trialDTO.piName').value = chosenname;
-
 }
 function loadSponsorDiv() {
     document.getElementById("trialDTO.sponsorIdentifier").value = orgid;
@@ -79,6 +90,15 @@ function createOrgContactDiv() {
     document.getElementById("trialDTO.responsiblePersonIdentifier").value = persid;
     document.getElementById('trialDTO.responsiblePersonName').value = chosenname;
     document.getElementById('lookupbtn4RP').disabled = "";
+    document.getElementById('trialDTO.responsibleGenericContactName').value = ''; // unset the responsible generic contact
+}
+function createOrgGenericContactDiv() {
+	document.getElementById('trialDTO.responsiblePersonIdentifier').value = persid;
+    document.getElementById('trialDTO.responsibleGenericContactName').value = chosenname;
+    document.getElementById("trialDTO.contactEmail").value = contactMail;
+    document.getElementById("trialDTO.contactPhone").value = contactPhone;    
+    document.getElementById('lookupbtn4RP').disabled = "";
+    document.getElementById('trialDTO.responsiblePersonName').value = ''; // unset the responsible personname
 }
 function loadSummary4SponsorDiv() {
     document.getElementById("trialDTO.summaryFourOrgName").value = chosenname;
@@ -105,10 +125,12 @@ function callAjax(url, div){
 function manageRespPartyLookUp(){
     if(document.getElementById('trialDTO.responsiblePartyTypepi').checked==true) {
         document.getElementById('rpcid').style.display='none';
+        document.getElementById('rpgcid').style.display='none';
         document.getElementById('trialDTO.responsiblePersonName').value = '';
     }
     if(document.getElementById('trialDTO.responsiblePartyTypesponsor').checked==true) {             
                 document.getElementById('rpcid').style.display='';
+                document.getElementById('rpgcid').style.display='';
     }
 }
 function trim(val) {
@@ -404,6 +426,16 @@ function toggledisplay2 (it) {
               </div>                                                                                             
               </td>
              </tr>
+              <tr id="rpgcid">
+                    <td scope="row" class="label">
+                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label> 
+                    </td>
+                    <td class="value">
+                        <div id="loadResponsiblePartyGenericContactField">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
+                        </div>      
+                    </td>
+          </tr>   
          </c:when>
          <c:otherwise>
             <tr id="rpcid" style="display:none">
@@ -416,6 +448,16 @@ function toggledisplay2 (it) {
                                </div>                                                                                             
                      </td>
             </tr>
+            <tr id="rpgcid"  style="display:none">
+                    <td scope="row" class="label">
+                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label> 
+                    </td>
+                    <td class="value">
+                        <div id="loadResponsiblePartyGenericContactField">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
+                        </div>      
+                    </td>
+          </tr>   
          </c:otherwise>
         </c:choose>                                          
                 
@@ -429,7 +471,7 @@ function toggledisplay2 (it) {
                    <label for="submitTrial_contactEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label> 
                 </td>
                 <td class="value">
-                    <s:textfield name="trialDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px"/>
+                    <s:textfield id="trialDTO.contactEmail" name="trialDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px"/>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialDTO.contactEmail</s:param>
@@ -442,7 +484,7 @@ function toggledisplay2 (it) {
                  <label for="submitTrial_contactPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
                 </td>
                 <td class="value">
-                    <s:textfield name="trialDTO.contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="trialDTO.contactPhone"  id="trialDTO.contactPhone" maxlength="200" size="100"  cssStyle="width:200px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialDTO.contactPhone</s:param>

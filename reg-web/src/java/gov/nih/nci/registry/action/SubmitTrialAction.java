@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
@@ -194,12 +195,19 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             StudyParticipationContactDTO studyParticipationContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
-            PersonDTO responsiblePartyContactDTO = null;
+            Ii responsiblePartyContactIi = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
             } else {
                 studyParticipationContactDTO = util.convertToStudyParticipationContactDTO(trialDTO);
-                responsiblePartyContactDTO = util.convertToResponsiblePartyContactDTO(trialDTO);
+                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
+                  responsiblePartyContactIi = IiConverter.converToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                }
+                if (trialDTO.getResponsibleGenericContactName() != null 
+                        && !trialDTO.getResponsibleGenericContactName().equals("")) {
+                  responsiblePartyContactIi = IiConverter.
+                      converToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
@@ -208,7 +216,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgParticipationIdDTO,
                     nctIdentifierParticipationIdDTO, studyContactDTO, studyParticipationContactDTO,
-                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactDTO);
+                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi);
              //send a notification mail
              RegistryServiceLocator.getMailManagerService().sendNotificationMail(studyProtocolIi);
              TrialValidator.removeSessionAttributes();

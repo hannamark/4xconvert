@@ -6,6 +6,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
@@ -38,6 +39,7 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -123,8 +125,10 @@ public class TrialUtil {
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
+     * @throws NullifiedRoleException  
      */
-    private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+    private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException,
+        NullifiedRoleException  {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos =  RegistryServiceLocator.getStudyContactService()
@@ -146,12 +150,16 @@ public class TrialUtil {
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
                 CorrelationUtils cUtils = new CorrelationUtils();
-                Person p = cUtils.getPAPersonByPAOrganizationalContactId((
+                PAContactDTO paDto = cUtils.getContactByPAOrganizationalContactId((
                         Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
-                trialDTO.setResponsiblePersonIdentifier(p.getIdentifier());
-                 trialDTO.setResponsiblePersonName(p.getFirstName() + ", " + p.getLastName());
-
-
+                if (paDto.getFullName() != null) {
+                    trialDTO.setResponsiblePersonName(paDto.getFullName());
+                    trialDTO.setResponsiblePersonIdentifier(paDto.getPersonIdentifier().getExtension());
+                } 
+                if (paDto.getTitle() != null)  {
+                   trialDTO.setResponsibleGenericContactName(paDto.getTitle());
+                   trialDTO.setResponsiblePersonIdentifier(paDto.getSrIdentifier().getExtension());
+                }
             }
         }
         copy(dset, trialDTO);
@@ -602,8 +610,9 @@ public class TrialUtil {
     * @param studyProtocolIi Ii
     * @return dto
     * @throws PAException ex
+ * @throws NullifiedRoleException e
     */
-   public TrialDTO getTrialDTOFromDb(Ii studyProtocolIi) throws PAException {
+   public TrialDTO getTrialDTOFromDb(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
        TrialDTO trialDTO = new TrialDTO();
        StudyProtocolDTO spDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
        StudyProtocolQueryDTO spqDto = RegistryServiceLocator.getProtocolQueryService().

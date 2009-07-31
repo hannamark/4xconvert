@@ -224,6 +224,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * 
      * @return s
      */
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String amend() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         if (trialDTO == null) {
@@ -244,12 +245,19 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             StudyParticipationContactDTO studyParticipationContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
-            PersonDTO responsiblePartyContactDTO = null;
+            Ii responsiblePartyContactIi = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
             } else {
                 studyParticipationContactDTO = util.convertToStudyParticipationContactDTO(trialDTO);
-                responsiblePartyContactDTO = util.convertToResponsiblePartyContactDTO(trialDTO);
+                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
+                  responsiblePartyContactIi = IiConverter.converToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                }
+                if (trialDTO.getResponsibleGenericContactName() != null 
+                          && !trialDTO.getResponsibleGenericContactName().equals("")) {
+                    responsiblePartyContactIi = IiConverter.
+                        converToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
@@ -257,7 +265,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, 
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgParticipationIdDTO, 
                     nctIdentifierParticipationIdDTO, studyContactDTO, studyParticipationContactDTO, summary4orgDTO, 
-                    summary4studyResourcingDTO, responsiblePartyContactDTO);  
+                    summary4studyResourcingDTO, responsiblePartyContactIi);  
             TrialValidator.removeSessionAttributes();
             //send mail
             RegistryServiceLocator.getMailManagerService().sendAmendNotificationMail(amendId);

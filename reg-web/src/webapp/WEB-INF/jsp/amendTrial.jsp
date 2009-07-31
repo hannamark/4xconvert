@@ -31,18 +31,24 @@
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocol"/>
+<c:url value="/protected/ajaxorganizationGenericContactdisplayTitleList.action" var="lookupOrgGenericContactsUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
 var chosenname;
 var persid;
 var respartOrgid;
+var contactMail;
+var contactPhone;
+
 function setorgid(orgIdentifier, oname){
 	orgid = orgIdentifier;
 	chosenname = oname;
 }
-function setpersid(persIdentifier, sname){
-	persid = persIdentifier;
-	chosenname = sname;
+function setpersid(persIdentifier, sname,email,phone){
+    persid = persIdentifier;
+    chosenname = sname;
+    contactMail = email;
+    contactPhone = phone;
 }
 //
 function lookup4loadleadorg(){
@@ -56,6 +62,9 @@ function lookup4sponsor(){
 } 
 function lookup4loadresponsibleparty(){	
 	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible Party Contact');
+}
+function lookup4loadresponsiblepartygenericcontact(){ 
+    showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function lookup4loadSummary4Sponsor(){
     showPopWin('${lookupOrgUrl}', 900, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
@@ -80,6 +89,15 @@ function createOrgContactDiv() {
 	document.getElementById("trialDTO.responsiblePersonIdentifier").value = persid;
     document.getElementById('trialDTO.responsiblePersonName').value = chosenname;
     document.getElementById('lookupbtn4RP').disabled = "";
+    document.getElementById('trialDTO.responsibleGenericContactName').value = ''; // unset the responsible generic contact
+}
+function createOrgGenericContactDiv() {
+    document.getElementById('trialDTO.responsiblePersonIdentifier').value = persid;
+    document.getElementById('trialDTO.responsibleGenericContactName').value = chosenname;
+    document.getElementById("trialDTO.contactEmail").value = contactMail;
+    document.getElementById("trialDTO.contactPhone").value = contactPhone;    
+    document.getElementById('lookupbtn4RP').disabled = "";
+    document.getElementById('trialDTO.responsiblePersonName').value = ''; // unset the responsible personname
 }
 function loadSummary4SponsorDiv() {
 	document.getElementById("trialDTO.summaryFourOrgName").value = chosenname;
@@ -107,10 +125,12 @@ function callAjax(url, div){
 function manageRespPartyLookUp(){
 	if(document.getElementById('trialDTO.responsiblePartyTypepi').checked==true) {
 		document.getElementById('rpcid').style.display='none';
+        document.getElementById('rpgcid').style.display='none';
         document.getElementById('trialDTO.responsiblePersonName').value = '';
 	}
 	if(document.getElementById('trialDTO.responsiblePartyTypesponsor').checked==true) {				
 				document.getElementById('rpcid').style.display='';
+                document.getElementById('rpgcid').style.display='';
 	}
 }
 function trim(val) {
@@ -464,6 +484,16 @@ function toggledisplay2 (it) {
               </div>                                                                                             
               </td>
              </tr>
+              <tr id="rpgcid">
+                    <td scope="row" class="label">
+                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label> 
+                    </td>
+                    <td class="value">
+                        <div id="loadResponsiblePartyGenericContactField">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
+                        </div>      
+                    </td>
+          </tr>   
          </c:when>
          <c:otherwise>
             <tr id="rpcid" style="display:none">
@@ -476,16 +506,30 @@ function toggledisplay2 (it) {
                                </div>                                                                                             
                      </td>
             </tr>
+            <tr id="rpgcid"  style="display:none">
+                    <td scope="row" class="label">
+                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label> 
+                    </td>
+                    <td class="value">
+                        <div id="loadResponsiblePartyGenericContactField">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
+                        </div>      
+                    </td>
+          </tr>   
          </c:otherwise>
         </c:choose>                                          
 				
-
+         <tr>
+         <td colspan="2">
+          <p><b><I>Please provide professional contact information only.</I></b></p>
+         </td>
+         </tr>
           <tr>
                 <td scope="row" class="label">
                    <label for="submitTrial_contactEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label> 
                 </td>
                 <td class="value">
-                    <s:textfield name="trialDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px"/>
+                    <s:textfield id="trialDTO.contactEmail" name="trialDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px"/>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialDTO.contactEmail</s:param>
@@ -498,7 +542,7 @@ function toggledisplay2 (it) {
                  <label for="submitTrial_contactPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
                 </td>
                 <td class="value">
-                    <s:textfield name="trialDTO.contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="trialDTO.contactPhone"  id="trialDTO.contactPhone" maxlength="200" size="100"  cssStyle="width:200px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialDTO.contactPhone</s:param>
@@ -506,6 +550,12 @@ function toggledisplay2 (it) {
                      </span>
                 </td>           
           </tr>				
+          <tr>
+         <td colspan="2">
+          <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
+         </td>
+         </tr>
+          <tr>           
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>

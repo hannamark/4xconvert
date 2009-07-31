@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -107,6 +108,7 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -246,6 +248,9 @@ public class SearchTrialAction extends ActionSupport {
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
             return "view";
         } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+            return ERROR;
+        } catch (NullifiedRoleException e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         } finally {
@@ -486,6 +491,9 @@ public class SearchTrialAction extends ActionSupport {
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
+        } catch (NullifiedRoleException e) {
+            addActionError(e.getLocalizedMessage());
+            return ERROR;
         }
     }
     
@@ -583,7 +591,7 @@ public class SearchTrialAction extends ActionSupport {
     }
     
     private void getReponsibleParty(
-                Ii studyProtocolIi, boolean maskFields) throws PAException {
+                Ii studyProtocolIi, boolean maskFields) throws PAException, NullifiedRoleException {
         
         try {
             // retrieve responsible party info
@@ -598,6 +606,7 @@ public class SearchTrialAction extends ActionSupport {
             DSet dset = null;
             CorrelationUtils cUtils = new CorrelationUtils();
             Person respPartyContact = null;
+            String respPartyContactName = null;
             if (scDtos != null && scDtos.size() > 0) {
                 scDto = scDtos.get(0);
                 dset = scDto.getTelecomAddresses();
@@ -607,6 +616,7 @@ public class SearchTrialAction extends ActionSupport {
                     respParty = "PI";
 
                 }
+                respPartyContactName = respPartyContact.getFullName();
             } else {
                 StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
                 spart.setRoleCode(CdConverter.convertToCd(
@@ -616,10 +626,12 @@ public class SearchTrialAction extends ActionSupport {
                 if (spDtos != null && spDtos.size() > 0) {
                     spart = spDtos.get(0);
                     dset = spart.getTelecomAddresses();
-                    respPartyContact = cUtils.getPAPersonByPAOrganizationalContactId((
+                    PAContactDTO paDto = cUtils.getContactByPAOrganizationalContactId((
                             Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
-                }
-                if (respPartyContact != null) {
+                    
+                    respPartyContactName = paDto.getResponsiblePartyContactName();
+                    }
+                if (respPartyContactName != null) {
                     respParty = "Sponsor";
                 }
             }
@@ -644,12 +656,12 @@ public class SearchTrialAction extends ActionSupport {
                 sponsor = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
                             Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
             }
-            if (sponsor != null && respPartyContact != null && !maskFields) {
+            if (sponsor != null && respPartyContactName != null && !maskFields) {
                 ServletActionContext.getRequest().setAttribute(
                                 Constants.RESP_PARTY, respParty);
                 if (respParty.equals("Sponsor")) {
                     ServletActionContext.getRequest().setAttribute(
-                                Constants.RESP_PARTY_CONTACT, respPartyContact.getFullName());
+                                Constants.RESP_PARTY_CONTACT, respPartyContactName);
                 }                
                 ServletActionContext.getRequest().setAttribute(
                                 Constants.SPONSOR, sponsor.getName());

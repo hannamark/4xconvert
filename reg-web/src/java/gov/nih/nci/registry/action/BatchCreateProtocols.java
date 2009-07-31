@@ -265,12 +265,19 @@ public class BatchCreateProtocols {
             StudyParticipationContactDTO studyParticipationContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
-            PersonDTO responsiblePartyContactDTO = null;
+            Ii responsiblePartyContactIi = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
             } else {
                 studyParticipationContactDTO = util.convertToStudyParticipationContactDTO(trialDTO);
-                responsiblePartyContactDTO = util.convertToResponsiblePartyContactDTO(trialDTO);
+                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
+                 responsiblePartyContactIi = IiConverter.converToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                  }
+                  if (trialDTO.getResponsibleGenericContactName() != null 
+                            && !trialDTO.getResponsibleGenericContactName().equals("")) {
+                      responsiblePartyContactIi = IiConverter.
+                          converToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                  }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
@@ -280,7 +287,7 @@ public class BatchCreateProtocols {
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgParticipationIdDTO,
                     nctIdentifierParticipationIdDTO, studyContactDTO, studyParticipationContactDTO,
-                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactDTO);
+                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi);
             //get the protocol
              protocolAssignedId = " Successfully Registered with NCI Identifier " 
                  + RegistryServiceLocator.getStudyProtocolService()

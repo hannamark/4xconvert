@@ -127,6 +127,12 @@
 		<result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
 		<result name="display_org_created_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
 	</action>     
+	<action name="ajaxorganizationGenericContact*" class="gov.nih.nci.registry.action.OrganizationGenericContactAction" method="{1}">
+        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+        <result name="display_org_genericcontacts">/WEB-INF/jsp/nodecorate/lookupByTitle.jsp</result>
+        <result name="display_org_created_genericcontact">/WEB-INF/jsp/nodecorate/responsibleGenericContact.jsp</result>
+        <result name="create_org_contact_response">/WEB-INF/jsp/nodecorate/displayTitleList.jsp</result>
+    </action>      
 	<action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
         <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
         <result name="redirect_to" type="redirect-action">

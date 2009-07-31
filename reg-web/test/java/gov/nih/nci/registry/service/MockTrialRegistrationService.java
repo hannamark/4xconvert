@@ -40,12 +40,12 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             StudyParticipationContactDTO studyParticipationContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
-            PersonDTO responsiblePartyContactDTO) throws PAException {
-            if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
-                throw new PAException("test");
-            }
-        return IiConverter.convertToIi("2");
-    }
+            Ii responsiblePartyContactIi) throws PAException {
+                if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+                    throw new PAException("test");
+                }
+                return IiConverter.convertToIi("2");
+        }
 
     public Ii createInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO,
@@ -62,7 +62,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             StudyParticipationContactDTO studyParticipationContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
-            PersonDTO responsiblePartyContactDTO) throws PAException {
+            Ii responsiblePartyContactIi) throws PAException {
         if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
             throw new PAException("test");
         }
