@@ -10,6 +10,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
@@ -125,6 +127,12 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
      * @see gov.nih.nci.services.person.PersonEntityServiceRemote#validate(gov.nih.nci.services.person.PersonDTO)
      */
     public Map<String, String[]> validate(PersonDTO arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<PersonDTO> search(PersonDTO arg0, LimitOffset arg1)
+            throws TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }

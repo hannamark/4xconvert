@@ -84,6 +84,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialDTO;
 import gov.nih.nci.pa.dto.TrialDocumentDTO;
@@ -115,6 +116,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -131,7 +133,7 @@ import java.util.List;
  * @author vrushali
  *
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class TrialUtil {
     private static final String SPONSOR = "sponsor";
     private static final int MAXF = 1024;
@@ -198,8 +200,9 @@ public class TrialUtil {
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
+     * @throws NullifiedRoleException e
      */
-    public void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+    public void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos =  PoPaServiceBeanLookup.getStudyContactService()
@@ -221,12 +224,17 @@ public class TrialUtil {
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
                 CorrelationUtils cUtils = new CorrelationUtils();
-                Person p = cUtils.getPAPersonByPAOrganizationalContactId((
+                PAContactDTO paCDto =  cUtils.getContactByPAOrganizationalContactId((
                         Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
-                trialDTO.setResponsiblePersonIdentifier(p.getIdentifier());
-                 trialDTO.setResponsiblePersonName(p.getFirstName() + ", " + p.getLastName());
+                if (paCDto.getFullName() != null) {
+                    trialDTO.setResponsiblePersonName(paCDto.getFullName());
+                    trialDTO.setResponsiblePersonIdentifier(paCDto.getPersonIdentifier().getExtension());
 
-
+                } 
+                if (paCDto.getTitle() != null) {
+                   //trialDTO.setResponsibleGenericContactName(StConverter.convertToString(isoDto.getTitle()));
+                    trialDTO.setResponsiblePersonIdentifier(paCDto.getSrIdentifier().getExtension());
+                }
             }
         }
         copy(dset, trialDTO);

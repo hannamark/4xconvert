@@ -2,7 +2,7 @@
 <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
-
+<c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
 <script language="JavaScript">
 
 function lookup4loadresponsibleparty1(){
@@ -53,12 +53,24 @@ function createOrgContactDiv() {
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding responsible contact...</div>';
     callAjax(url, div);
 }
+function createOrgGenericContactDiv() {
+    document.getElementById('gtdDTO.responsiblePersonIdentifier').value = persid;
+    document.getElementById('gtdDTO.responsibleGenericContactName').value = selectedName;
+    document.getElementById("gtdDTO.contactEmail").value = contactMail;
+    document.getElementById("gtdDTO.contactPhone").value = contactPhone;    
+    document.getElementById('gtdDTO.responsiblePersonName').value = ''; // unset the responsible personname
+}
+function lookup4loadresponsiblepartygenericcontact(){
+	var orgid = document.getElementById('sponsorIdentifier').value;
+    showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+}
+
 
 </script> 
     <tr>
         <th colspan="2"> Lead Organization/Principal Investigator</th>
     </tr>
-    
+    <s:hidden name="gtdDTO.responsiblePersonIdentifier" id="gtdDTO.responsiblePersonIdentifier"/>
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
@@ -117,12 +129,23 @@ function createOrgContactDiv() {
                 </div>                                    
             </td>
         </tr>
+        <tr id="rpgcid">
+            <td scope="row" class="label">
+                <label for="resPartyGenericContact">Responsible Party Generic Contact:</label> 
+            </td>
+            <td class="value">
+                <div id="loadResponsiblePartyGenericContactField">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
+                </div>      
+            </td>
+          </tr>   
+        
         <tr>
             <td scope="row" class="label">
                Email Address:<span class="required">*</span>
             </td>
             <td class="value">
-                <s:textfield name="gtdDTO.contactEmail"  maxlength="199" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.contactEmail"  id="gtdDTO.contactEmail" maxlength="199" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>gtdDTO.contactEmail</s:param>
@@ -133,7 +156,7 @@ function createOrgContactDiv() {
         <tr>
             <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
             <td class="value">
-                <s:textfield name="gtdDTO.contactPhone"  maxlength="199" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.contactPhone" id="gtdDTO.contactPhone" maxlength="199" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>gtdDTO.contactPhone</s:param>

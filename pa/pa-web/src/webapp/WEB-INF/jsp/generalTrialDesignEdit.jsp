@@ -23,6 +23,10 @@
  <script type="text/javascript"> 
     var orgid;
     var persid;
+    var contactMail;
+    var contactPhone;
+    var selectedName;    
+    
     function handleAction(){
         document.forms[0].action="generalTrialDesignupdate.action";
         document.forms[0].submit(); 
@@ -40,8 +44,11 @@
     function setorgid(orgIdentifier){
         orgid = orgIdentifier;
     }
-    function setpersid(persIdentifier){
+    function setpersid(persIdentifier,name,email,phone){
         persid = persIdentifier;
+        selectedName = name;
+        contactMail = email;
+        contactPhone = phone;
     }
     function tooltip() {
         BubbleTips.activateTipOn("acronym");

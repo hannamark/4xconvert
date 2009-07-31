@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -390,8 +391,10 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     // create a new crs 
                     OrganizationalContactCorrelationServiceBean ocBean = 
                         new OrganizationalContactCorrelationServiceBean();
-                    duplicateOcId = ocBean.createOrganizationalContactCorrelations(
-                            organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
+                    PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
+                    orgContacPaDto.setOrganizationIdentifier(organizationDto.getIdentifier());
+                    orgContacPaDto.setPersonIdentifier(personDto.getIdentifier());
+                    duplicateOcId = ocBean.create(orgContacPaDto);
                     OrganizationalContact dupOc = new OrganizationalContact();
                     dupOc.setId(duplicateOcId);
                     dupOc = cUtils.getPAOrganizationalContact(dupOc);

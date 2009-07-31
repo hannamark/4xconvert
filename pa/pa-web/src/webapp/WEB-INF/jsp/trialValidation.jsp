@@ -14,11 +14,14 @@
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
  <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
- 
  <!-- /po integration -->    
  <script type="text/javascript"> 
     var orgid;
     var persid;
+    var respartOrgid;
+    var contactMail;
+    var contactPhone;
+    var selectedName;    
     function handleAction(){
         document.forms[0].action="trialValidationupdate.action";
         document.forms[0].submit(); 
@@ -35,8 +38,11 @@
     function setorgid(orgIdentifier){
         orgid = orgIdentifier;
     }
-    function setpersid(persIdentifier){
+    function setpersid(persIdentifier,name,email,phone){
         persid = persIdentifier;
+        selectedName = name;
+        contactMail = email;
+        contactPhone = phone;
     }
     function tooltip() {
         BubbleTips.activateTipOn("acronym");
@@ -72,6 +78,11 @@
     	var orgid = document.getElementById('sponsorIdentifier').value;
     	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
     }
+    function lookup4loadresponsiblepartygenericcontact(){
+    	var orgid = document.getElementById('sponsorIdentifier').value;
+        showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+    }
+        
 
 </script>
     

@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -112,6 +113,7 @@ public class OrganizationalContactCorrelationServiceBean extends
 implements OrganizationalContactCorrelationService  {
 
     
+ 
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
@@ -124,8 +126,8 @@ implements OrganizationalContactCorrelationService  {
                                            String personPoIdentifer) throws PAException {
         
         PAOrganizationalContactDTO paDto = new PAOrganizationalContactDTO();
-        paDto.setOrganizationIdentifier(orgPoIdentifier);
-        paDto.setPersonIdentifier(personPoIdentifer);
+        paDto.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        paDto.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
         return super.create(paDto);
         //throw new PAException("Do not use this method, instead use create ");
         

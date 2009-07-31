@@ -92,6 +92,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -152,6 +153,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -1192,9 +1194,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * @param studyProtocolIi the study protocol ii
    * 
    * @throws PAException the PA exception
+ * @throws NullifiedRoleException  
    */
   @SuppressWarnings({"PMD" })
-  private void appendOrgsAndPersons(StringBuffer html , Ii studyProtocolIi) throws PAException {
+  private void appendOrgsAndPersons(StringBuffer html , Ii studyProtocolIi) throws PAException,
+      NullifiedRoleException  {
       Organization sponsor = ocsr.getOrganizationByFunctionRole(
               studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
       Organization lead = ocsr.getOrganizationByFunctionRole(
@@ -1249,13 +1253,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
       scDtos = studyContactService.getByStudyProtocol(studyProtocolIi, scDto);
       Person rp = null;
+      String resPartyContactName = null;
       Organization sponsorResponsible = null;
       if (scDtos != null && !scDtos.isEmpty()) {
           scDto = scDtos.get(0);
           rp = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
                   Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
           dset = scDto.getTelecomAddresses();
-          
+          resPartyContactName = rp.getFullName();
           StudyParticipationDTO spartDTO = new StudyParticipationDTO();
           spartDTO.setFunctionalCode(
                   CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
@@ -1273,8 +1278,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               .getByStudyProtocol(studyProtocolIi, spart);
           
           if (spDtos != null && !spDtos.isEmpty()) {
-              rp = correlationUtils.getPAPersonByPAOrganizationalContactId((
+              PAContactDTO paCDto =   correlationUtils.getContactByPAOrganizationalContactId((
                       Long.valueOf(spDtos.get(0).getOrganizationalContactIi().getExtension())));
+              
+              resPartyContactName = paCDto.getResponsiblePartyContactName();
+              
               dset = spDtos.get(0).getTelecomAddresses();
               
               StudyParticipationDTO spDto = new StudyParticipationDTO();
@@ -1290,7 +1298,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           }
       }
       html.append(DL_B  + DT_B);
-      html.append(appendData("Responsible Party" , rp.getFullName() , false , true));
+      html.append(appendData("Responsible Party" , resPartyContactName , false , true));
       html.append(DT_E + DT_B);
       
       // get the organization

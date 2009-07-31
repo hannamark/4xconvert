@@ -10,6 +10,8 @@ import java.util.Map;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -90,6 +92,12 @@ public class MockPoClinicalResearchStaffCorrelationService implements
      * @see gov.nih.nci.services.CorrelationService#validate(gov.nih.nci.services.PoDto)
      */
     public Map<String, String[]> validate(ClinicalResearchStaffDTO arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<ClinicalResearchStaffDTO> search(ClinicalResearchStaffDTO arg0,
+            LimitOffset arg1) throws TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }

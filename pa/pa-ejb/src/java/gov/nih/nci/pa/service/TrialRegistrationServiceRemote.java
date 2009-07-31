@@ -132,7 +132,7 @@ public interface TrialRegistrationServiceRemote {
      * @param studyParticipationContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactDTO name of the person when sponsor is responsible
+     * @param responsiblePartyContactIi Id of the person when sponsor is responsible
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -152,7 +152,7 @@ public interface TrialRegistrationServiceRemote {
             StudyParticipationContactDTO studyParticipationContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
-            PersonDTO responsiblePartyContactDTO)
+            Ii responsiblePartyContactIi)
     throws PAException;
     
     /**
@@ -175,7 +175,7 @@ public interface TrialRegistrationServiceRemote {
      * @param studyParticipationContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactDTO name of the person when sponsor is responsible
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -195,7 +195,7 @@ public interface TrialRegistrationServiceRemote {
             StudyParticipationContactDTO studyParticipationContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
-            PersonDTO responsiblePartyContactDTO)
+            Ii responsiblePartyContactIi)
     throws PAException;
 
 }

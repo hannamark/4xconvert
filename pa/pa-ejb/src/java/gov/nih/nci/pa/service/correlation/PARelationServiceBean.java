@@ -80,6 +80,8 @@ package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
@@ -92,6 +94,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 
@@ -150,31 +153,21 @@ public class PARelationServiceBean {
 
     /**
      * 
-     * @param orgPoIdentifier orgPoIdentifier
-     * @param personPoIdentifer personPoIdentifer
-     * @param studyProtocolId studyProtocolId
-     * @param email as String
-     * @param phone as String
+     * @param contactDto dto
      * @throws PAException pe
      */
-    public void createSponsorAsPrimaryContactRelations(String orgPoIdentifier, String personPoIdentifer,
-            Long studyProtocolId, String email, String phone) throws PAException {
-        if (orgPoIdentifier == null) {
+    public void createSponsorAsPrimaryContactRelations(PAContactDTO contactDto) throws PAException {
+        if (PAUtil.isIiNull(contactDto.getOrganizationIdentifier())) {
             throw new PAException(" Organization PO Identifier is null");
         }
-        if (personPoIdentifer == null) {
-            throw new PAException(" Person PO Identifier is null");
+        if (PAUtil.isIiNull(contactDto.getPersonIdentifier()) && PAUtil.isIiNull(contactDto.getSrIdentifier())) {
+            throw new PAException(" Person or Tilte PO Identifier is null");
         }
-        if (studyProtocolId == null) {
+        if (PAUtil.isIiNull(contactDto.getStudyProtocolIdentifier())) {
             throw new PAException("Study Protocol Identifer is null");
         }
-        StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.converToStudyProtocolIi(studyProtocolId));
-        if (spDTO == null) {
-            throw new PAException("No Study Protocol found for = " + studyProtocolId);
-        }
         OrganizationCorrelationServiceBean ocs = new OrganizationCorrelationServiceBean();
-        Long roId = ocs.createResearchOrganizationCorrelations(orgPoIdentifier);
+        Long roId = ocs.createResearchOrganizationCorrelations(contactDto.getOrganizationIdentifier().getExtension());
         if (roId == null) {
             throw new PAException("Research Organization could not be created");
         }
@@ -183,18 +176,24 @@ public class PARelationServiceBean {
         studyPartDTO.setFunctionalCode(CdConverter.convertStringToCd(
                 StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR.getCode()));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
-        studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+        studyPartDTO.setStudyProtocolIdentifier(contactDto.getStudyProtocolIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
+        
         // now create study participation contact as responsible party
         OrganizationalContactCorrelationServiceBean oc = new OrganizationalContactCorrelationServiceBean();
-        Long ocId = oc.createOrganizationalContactCorrelations(orgPoIdentifier, personPoIdentifer);
+        PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
+        orgContacPaDto.setOrganizationIdentifier(contactDto.getOrganizationIdentifier());
+        orgContacPaDto.setIdentifier(contactDto.getSrIdentifier());
+        orgContacPaDto.setPersonIdentifier(contactDto.getPersonIdentifier());
+        Long ocId = oc.create(orgContacPaDto);
+        
         StudyParticipationContactDTO spcDTO = new StudyParticipationContactDTO();
         // set the DSET
         ArrayList<String> emailList = new ArrayList<String>();
         ArrayList<String> telList = new ArrayList<String>();
-        emailList.add(email);
-        telList.add(phone);
+        emailList.add(contactDto.getEmail());
+        telList.add(contactDto.getPhone());
         DSet<Tel> list = new DSet<Tel>();
         list = DSetConverter.convertListToDSet(emailList, "EMAIL", list);
         list = DSetConverter.convertListToDSet(telList, "PHONE", list);
@@ -204,7 +203,7 @@ public class PARelationServiceBean {
         spcDTO.setRoleCode(CdConverter.convertToCd(
                 StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
         spcDTO.setStudyParticipationIi(studyPartDTO.getIdentifier());
-        spcDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+        spcDTO.setStudyProtocolIdentifier(contactDto.getStudyProtocolIdentifier());
         spcDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
         PoPaServiceBeanLookup.getStudyParticipationContactService().create(spcDTO);
     }

@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
@@ -126,6 +127,7 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -178,6 +180,8 @@ public class TrialValidationAction extends ActionSupport {
             copyResponsibleParty(studyProtocolIi);
             copySponsor(studyProtocolIi);
         } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        } catch (NullifiedRoleException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return EDIT;
@@ -390,7 +394,8 @@ public class TrialValidationAction extends ActionSupport {
                     getText("Primary Purpose Other other text must be entered"));
         }
         if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
+                && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())
+                && PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
             addFieldError("gtdDTO.responsiblePersonName",
                     getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
         }
@@ -484,7 +489,7 @@ public class TrialValidationAction extends ActionSupport {
         }
     }
 
-    private void copyResponsibleParty(Ii studyProtocolIi) throws PAException {
+    private void copyResponsibleParty(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
@@ -505,10 +510,17 @@ public class TrialValidationAction extends ActionSupport {
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
                 CorrelationUtils cUtils = new CorrelationUtils();
-                Person p = cUtils.getPAPersonByPAOrganizationalContactId((Long.valueOf(spart
-                        .getOrganizationalContactIi().getExtension())));
-                gtdDTO.setResponsiblePersonIdentifier(p.getIdentifier());
-                gtdDTO.setResponsiblePersonName(p.getFullName());
+                PAContactDTO conDto = cUtils.getContactByPAOrganizationalContactId((
+                        Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
+
+                if (conDto.getFullName() != null) {
+                 gtdDTO.setResponsiblePersonName(conDto.getFullName());
+                 gtdDTO.setResponsiblePersonIdentifier(conDto.getPersonIdentifier().getExtension());
+                } 
+                if (conDto.getTitle() != null) {
+                    gtdDTO.setResponsiblePersonIdentifier(conDto.getSrIdentifier().getExtension());
+                    gtdDTO.setResponsibleGenericContactName(conDto.getTitle());
+                }
             }
         }
         copy(dset);
@@ -639,9 +651,20 @@ public class TrialValidationAction extends ActionSupport {
             parb.createPIAsResponsiblePartyRelations(gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier(),
                     Long.valueOf(studyProtocolIi.getExtension()), gtdDTO.getContactEmail(), phone);
         } else if (gtdDTO.getResponsiblePartyType().equals(SPONSOR)) {
-            parb.createSponsorAsPrimaryContactRelations(gtdDTO.getSponsorIdentifier(), gtdDTO
-                    .getResponsiblePersonIdentifier(), Long.valueOf(studyProtocolIi.getExtension()), gtdDTO
-                    .getContactEmail(), phone);
+            PAContactDTO contactDto = new PAContactDTO();
+            contactDto.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
+            contactDto.setStudyProtocolIdentifier(studyProtocolIi);
+            contactDto.setEmail(gtdDTO.getContactEmail());
+            contactDto.setPhone(phone);
+            if (!PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
+                contactDto.setPersonIdentifier(IiConverter.converToPoPersonIi(gtdDTO.getResponsiblePersonIdentifier()));
+              }
+              if (!PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
+                  contactDto.setSrIdentifier(IiConverter.converToPoOrganizationalContactIi(
+                          gtdDTO.getResponsiblePersonIdentifier()));
+              }
+            parb.createSponsorAsPrimaryContactRelations(contactDto);
+
         }
     }
 

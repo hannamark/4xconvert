@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -114,6 +115,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
@@ -166,6 +168,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
             copyCentralContact(studyProtocolIi);
             copyNctNummber(studyProtocolIi);
         } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        } catch (NullifiedRoleException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return RESULT;
@@ -238,7 +242,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         gtdDTO.setPiName(p.getFullName());
     }
 
-    private void copyResponsibleParty(Ii studyProtocolIi) throws PAException {
+    private void copyResponsibleParty(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
@@ -259,11 +263,18 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
                 CorrelationUtils cUtils = new CorrelationUtils();
-                Person p = cUtils.getPAPersonByPAOrganizationalContactId((
+                
+                PAContactDTO contactDto = cUtils.getContactByPAOrganizationalContactId((
                         Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
-                gtdDTO.setResponsiblePersonIdentifier(p.getIdentifier());
-                 gtdDTO.setResponsiblePersonName(p.getFirstName() + ", " + p.getLastName());
 
+                if (contactDto.getFullName() != null) {
+                 gtdDTO.setResponsiblePersonName(contactDto.getFullName());
+                 gtdDTO.setResponsiblePersonIdentifier(contactDto.getPersonIdentifier().getExtension());
+                }
+                if (contactDto.getTitle() != null) {
+                    gtdDTO.setResponsiblePersonIdentifier(contactDto.getSrIdentifier().getExtension());
+                    gtdDTO.setResponsibleGenericContactName(contactDto.getTitle());
+                }
 
             }
         }
@@ -540,9 +551,19 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier(),
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
         } else if (gtdDTO.getResponsiblePartyType().equals(SPONSOR)) {
-            parb.createSponsorAsPrimaryContactRelations(gtdDTO.getSponsorIdentifier(),
-                    gtdDTO.getResponsiblePersonIdentifier(),
-                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
+            PAContactDTO contactDto = new PAContactDTO();
+            contactDto.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
+            contactDto.setStudyProtocolIdentifier(studyProtocolIi);
+            contactDto.setEmail(gtdDTO.getContactEmail());
+            contactDto.setPhone(phone);
+            if (!PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
+                contactDto.setPersonIdentifier(IiConverter.converToPoPersonIi(gtdDTO.getResponsiblePersonIdentifier()));
+              }
+              if (!PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
+                  contactDto.setSrIdentifier(IiConverter.converToPoOrganizationalContactIi(
+                          gtdDTO.getResponsiblePersonIdentifier()));
+              }
+            parb.createSponsorAsPrimaryContactRelations(contactDto);
         }
     }
 
@@ -595,9 +616,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
       if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
           addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
       }
-if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
-          addFieldError("gtdDTO.responsiblePersonName",
+      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())
+              && PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
+          addFieldError("responsiblePersonName",
                   getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
       }
       if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {

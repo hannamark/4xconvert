@@ -101,6 +101,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
@@ -168,6 +169,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -992,7 +994,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
     }
 
-    private void createSponsors(Ii studyProtocolIi  , Document doc , Element root) throws PAException {
+    private void createSponsors(Ii studyProtocolIi  , Document doc , Element root) throws PAException,
+        NullifiedRoleException {
         Element sponsors = doc.createElement("sponsors");
         Element lead = createLeadSponsor(studyProtocolIi , doc);
         if (lead != null && lead.hasChildNodes()) {
@@ -1012,7 +1015,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
     }
     private Element createResponsibleParty(Ii studyProtocolIi  , Document doc)
-    throws PAException {
+    throws PAException, NullifiedRoleException {
         Element responsibleParty = doc.createElement("resp_party");
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
@@ -1021,13 +1024,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         DSet<Tel> dset = null;
         CorrelationUtils cUtils = new CorrelationUtils();
         Person person = null;
+        String resPartyContactName = null;
         Organization sponsor = null;
         if (scDtos != null && !scDtos.isEmpty()) {
             scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
             person = cUtils.getPAPersonByPAClinicalResearchStaffId(
                     Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
-
+            resPartyContactName = person.getFullName();
             StudyParticipationDTO spartDTO = new StudyParticipationDTO();
             spartDTO.setFunctionalCode(
                     CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
@@ -1047,8 +1051,10 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             if (spcDtos != null && !spcDtos.isEmpty()) {
                 spart = spcDtos.get(0);
                 dset = spart.getTelecomAddresses();
-                person = cUtils.getPAPersonByPAOrganizationalContactId((
+                PAContactDTO paCDto =  cUtils.getContactByPAOrganizationalContactId((
                         Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
+                resPartyContactName = paCDto.getResponsiblePartyContactName();
+
             }
             StudyParticipationDTO spDto = new StudyParticipationDTO();
             spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
@@ -1061,8 +1067,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
 
         }
-        if (person != null) {
-            appendElement(responsibleParty , createElement("name_title" , person.getFullName() , doc));
+        if (resPartyContactName != null) {
+            appendElement(responsibleParty , createElement("name_title" , resPartyContactName , doc));
         }
         if (sponsor != null) {
             appendElement(responsibleParty , createElement("organization" , sponsor.getName() , doc));

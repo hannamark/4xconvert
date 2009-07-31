@@ -3,6 +3,8 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -65,6 +67,12 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
     }
 
     public Map<String, String[]> validate(HealthCareFacilityDTO arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<HealthCareFacilityDTO> search(HealthCareFacilityDTO arg0,
+            LimitOffset arg1) throws TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }

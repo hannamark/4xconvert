@@ -106,7 +106,7 @@ public class OrganizationalContact extends StructuralRole {
 
     @ManyToOne
     @JoinColumn(name = "PERSON_IDENTIFIER", updatable = false)
-    @NotNull
+//    @NotNull
     public Person getPerson() {
         return person;
     }

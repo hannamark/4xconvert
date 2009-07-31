@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.util.List;
+
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 
@@ -106,6 +108,7 @@ public class PaPersonDTO {
     private String fax;
     private String url;
     private String address;
+    private List<String> emailList;
     
     /*
      * This field is used to further identify this person whether he is primary contact or not
@@ -446,5 +449,20 @@ public class PaPersonDTO {
         this.statusCode = statusCode;
     }
 
+    /**
+     * @return the emailList
+     */
+    public List<String> getEmailList() {
+        return emailList;
+    }
+
+    /**
+     * @param emailList the emailList to set
+     */
+    public void setEmailList(List<String> emailList) {
+        this.emailList = emailList;
+    }
+
+    
    
 }

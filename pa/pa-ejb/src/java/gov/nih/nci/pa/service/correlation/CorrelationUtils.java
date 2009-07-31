@@ -93,13 +93,19 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -212,13 +218,15 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @param paOrganizationalContactId id
      * @return Person
      * @throws PAException e
+     * @throws NullifiedRoleException ex
      */
-    public Person getPAPersonByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException {
+    public PAContactDTO getContactByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException,
+        NullifiedRoleException {
         if (paOrganizationalContactId == null) {
             LOG.error("Check the id value.  Null found.  ");
             throw new PAException("Check the id value.  Null found.  ");
         }
-        Person person = null;
+        PAContactDTO returnDto = new PAContactDTO();
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -230,12 +238,24 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
             }
-            person = organizationalContact.getPerson();
+            
+            Person paPerson = organizationalContact.getPerson();
+            if (paPerson != null) {
+                returnDto.setFullName(paPerson.getFullName());
+                returnDto.setPersonIdentifier(IiConverter.convertToIi(paPerson.getIdentifier()));
+            } else {
+                //this means this is genericOrgContact
+                OrganizationalContactDTO isoDto = PoRegistry.getOrganizationalContactCorrelationService()
+                    .getCorrelation(IiConverter.converToPoOrganizationalContactIi(
+                            organizationalContact.getIdentifier()));
+                returnDto.setTitle(StConverter.convertToString(isoDto.getTitle()));
+                returnDto.setSrIdentifier(isoDto.getIdentifier());
+            }
         } catch (HibernateException hbe) {
             LOG.error("Hibernate exception in getPAPersonByPAOrganizationalContactId().  ", hbe);
             throw new PAException("Hibernate exception in getPAPersonByPAOrganizationalContact().  ", hbe);
         }
-        return person;
+        return returnDto;
     }
 
     /**

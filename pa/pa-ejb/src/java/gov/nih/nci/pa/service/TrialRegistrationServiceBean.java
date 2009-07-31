@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -235,7 +236,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param studyParticipationContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactDTO name of the person when sponsor is responsible
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -256,7 +257,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyParticipationContactDTO studyParticipationContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
-            PersonDTO responsiblePartyContactDTO)
+            Ii responsiblePartyContactIi)
     throws PAException {
 
         Ii studyProtocolIi = null;
@@ -276,7 +277,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 studyParticipationContactDTO ,
                 summary4organizationDTO ,
                 summary4studyResourcingDTO ,
-                responsiblePartyContactDTO , false);
+                responsiblePartyContactIi, false);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -306,7 +307,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param studyParticipationContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactDTO name of the person when sponsor is responsible
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -327,7 +328,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyParticipationContactDTO studyParticipationContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
-            PersonDTO responsiblePartyContactDTO)
+            Ii responsiblePartyContactIi)
     throws PAException {
         Ii fromStudyProtocolii = null;
         Ii toStudyProtocolIi = null;
@@ -349,7 +350,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     studyParticipationContactDTO ,
                     summary4organizationDTO ,
                     summary4studyResourcingDTO ,
-                    responsiblePartyContactDTO , true);
+                    responsiblePartyContactIi , true);
 
             deepCopy(fromStudyProtocolii , toStudyProtocolIi);
             deepCopyParticipation(fromStudyProtocolii , toStudyProtocolIi);
@@ -489,7 +490,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyParticipationContactDTO studyParticipationContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
-            PersonDTO responsiblePartyContactDTO  , boolean isAmend)
+            Ii responsiblePartyContactIi , boolean isAmend)
     throws PAException {
 
         enforceBusinessRules(
@@ -568,7 +569,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             createPIAsResponsibleParty(studyProtocolIi , leadOrganizationDTO ,
                     principalInvestigatorDTO , studyContactDTO);
         } else if (studyParticipationContactDTO != null) {
-            createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO, responsiblePartyContactDTO,
+            createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO, responsiblePartyContactIi,
                     studyParticipationContactDTO);
         }
 
@@ -826,16 +827,23 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
 
     private void createSponsorAsPrimaryContact(Ii studyProtocolIi ,
             OrganizationDTO sponsorOrganizationDto ,
-            PersonDTO responsiblePartyContactDTO ,
+            Ii responsiblePartyContactIi ,
             StudyParticipationContactDTO studyParticipationContactDTO) throws PAException {
 
         DSet<Tel> dset = studyParticipationContactDTO.getTelecomAddresses();
-        new PARelationServiceBean().createSponsorAsPrimaryContactRelations(
-                sponsorOrganizationDto.getIdentifier().getExtension(),
-                responsiblePartyContactDTO.getIdentifier().getExtension(),
-                IiConverter.convertToLong(studyProtocolIi),
-                DSetConverter.convertDSetToList(dset, PAConstants.EMAIL).get(0),
-                DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));
+        PAContactDTO contactDto = new PAContactDTO();
+        contactDto.setOrganizationIdentifier(
+                IiConverter.converToPoOrganizationIi(sponsorOrganizationDto.getIdentifier().getExtension()));
+        contactDto.setStudyProtocolIdentifier(studyProtocolIi);
+        contactDto.setEmail(DSetConverter.convertDSetToList(dset, PAConstants.EMAIL).get(0));
+        contactDto.setPhone(DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));
+        if (responsiblePartyContactIi.getRoot().equalsIgnoreCase(IiConverter.PERSON_ROOT)) {
+            contactDto.setPersonIdentifier(responsiblePartyContactIi);
+        }
+        if (responsiblePartyContactIi.getRoot().equalsIgnoreCase(IiConverter.ORGANIZATIONAL_CONTACT_ROOT)) {
+            contactDto.setSrIdentifier(responsiblePartyContactIi);
+        }
+        new PARelationServiceBean().createSponsorAsPrimaryContactRelations(contactDto);
     }
     
     private void createMilestone(Ii studyProtocolIi) throws PAException {

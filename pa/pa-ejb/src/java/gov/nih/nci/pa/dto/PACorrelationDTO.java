@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.coppa.iso.Ii;
+
 import java.io.Serializable;
 
 /**
@@ -89,9 +91,9 @@ public class PACorrelationDTO implements Serializable {
     
     private static final long serialVersionUID = 1234567890L;
 
-    private String identifier = null;
-    private String organizationIdentifier; // org
-    private String personIdentifier; // person
+    private Ii identifier = null;
+    private Ii organizationIdentifier; // org
+    private Ii personIdentifier; // person
     
     private boolean organizationMandatory;
     private boolean personMandatory;
@@ -101,42 +103,42 @@ public class PACorrelationDTO implements Serializable {
      * 
      * @return identifier
      */
-    public String getIdentifier() {
+    public Ii getIdentifier() {
         return identifier;
     }
     /**
      * 
      * @param identifier identifier
      */
-    public void setIdentifier(String identifier) {
+    public void setIdentifier(Ii identifier) {
         this.identifier = identifier;
     }
     /**
      * 
      * @return organizationIdentifer
      */
-    public String getOrganizationIdentifier() {
+    public Ii getOrganizationIdentifier() {
         return organizationIdentifier;
     }
     /**
      * 
      * @param orgIdentifier organization Identifier
      */
-    public void setOrganizationIdentifier(String orgIdentifier) {
+    public void setOrganizationIdentifier(Ii orgIdentifier) {
         this.organizationIdentifier = orgIdentifier;
     }
     /**
      * 
      * @return personIdentifier
      */
-    public String getPersonIdentifier() {
+    public Ii getPersonIdentifier() {
         return personIdentifier;
     }
     /**
      * 
      * @param personIdentifier person Identifier
      */
-    public void setPersonIdentifier(String personIdentifier) {
+    public void setPersonIdentifier(Ii personIdentifier) {
         this.personIdentifier = personIdentifier;
     }
     /**

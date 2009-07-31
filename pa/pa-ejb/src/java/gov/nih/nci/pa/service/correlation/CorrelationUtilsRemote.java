@@ -81,7 +81,9 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 /**
  * An interface for the CorrealtionUtils service.
@@ -110,10 +112,12 @@ public interface CorrelationUtilsRemote {
 
     /**
      * @param paOrganizationalContactId id
-     * @return Person
+     * @return long
      * @throws PAException e
+     * @throws NullifiedRoleException ex
      */
-    Person getPAPersonByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException;
+    PAContactDTO getContactByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException, 
+        NullifiedRoleException;
 
     /**
      * 

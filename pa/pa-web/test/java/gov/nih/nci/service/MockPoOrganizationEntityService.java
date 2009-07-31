@@ -3,6 +3,8 @@ package gov.nih.nci.service;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -140,6 +142,12 @@ public class MockPoOrganizationEntityService implements
      * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#validate(gov.nih.nci.services.organization.OrganizationDTO)
      */
     public Map<String, String[]> validate(OrganizationDTO arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1)
+            throws TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }

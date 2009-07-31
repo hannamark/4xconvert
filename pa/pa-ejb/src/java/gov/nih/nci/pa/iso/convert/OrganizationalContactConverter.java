@@ -5,8 +5,9 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 /**
@@ -27,7 +28,7 @@ public class OrganizationalContactConverter
         OrganizationalContact oc = new OrganizationalContact();
         oc.setPerson(per);
         oc.setOrganization(org);
-        oc.setIdentifier(dto.getIdentifier());
+        oc.setIdentifier(dto.getIdentifier().getExtension());
         oc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return oc;
     }
@@ -40,8 +41,14 @@ public class OrganizationalContactConverter
         OrganizationalContactDTO poOcDto = null;
         if (dto != null) {
             poOcDto = new OrganizationalContactDTO();
-            poOcDto.setPlayerIdentifier(IiConverter.converToPoPersonIi(dto.getPersonIdentifier()));
-            poOcDto.setScoperIdentifier(IiConverter.converToPoOrganizationIi(dto.getOrganizationIdentifier()));
+            if (!PAUtil.isIiNull(dto.getPersonIdentifier())) {
+                poOcDto.setPlayerIdentifier(dto.getPersonIdentifier());
+            }
+            poOcDto.setScoperIdentifier(dto.getOrganizationIdentifier());
+            poOcDto.setTitle(StConverter.convertToSt(dto.getTitle()));
+            if (!PAUtil.isIiNull(dto.getIdentifier())) {
+                poOcDto.setIdentifier(dto.getIdentifier());
+            }
         }
         return poOcDto;
 

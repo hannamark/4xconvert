@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 
@@ -185,6 +186,12 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
      * @throws PAException
      */
     public Person getPAPersonByPAOrganizationalContactId(
+            Long paOrganizationalContactId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public PAContactDTO getContactByPAOrganizationalContactId(
             Long paOrganizationalContactId) throws PAException {
         // TODO Auto-generated method stub
         return null;

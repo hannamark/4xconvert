@@ -8,9 +8,9 @@ import gov.nih.nci.pa.dto.PACorrelationDTO;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.iso.convert.AbstractPoConverter;
 import gov.nih.nci.pa.iso.convert.POConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
@@ -67,26 +67,28 @@ public abstract class AbstractPABaseCorrelation <
      */
     public Long create(PADTO dto) throws PAException {   
         CorrelationUtils corrUtils = new CorrelationUtils();
-        if (dto.isPersonMandatory() && dto.getPersonIdentifier() == null) {
+        if (dto.isPersonMandatory() && PAUtil.isIiNull(dto.getPersonIdentifier())) {
             throw new PAException(" Person Ii must not be null");
         }
-        if (dto.isOrganizationMandatory() && dto.getOrganizationIdentifier() == null) {
+        if (dto.isOrganizationMandatory() && PAUtil.isIiNull(dto.getOrganizationIdentifier())) {
             throw new PAException(" Organization PO Identifier is null");
         }
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoRegistry.getOrganizationEntityService().
-                getOrganization(IiConverter.converToPoOrganizationIi(dto.getOrganizationIdentifier()));
+                getOrganization(dto.getOrganizationIdentifier());
         } catch (NullifiedEntityException e) {
            throw new PAException("This Organization is no longer available instead use ", e);
         }
+        
+        //check if Ii is of Person or SR
         
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         if (dto.getPersonIdentifier() != null) {
             try {
                 poPer = PoRegistry.getPersonEntityService().
-                getPerson(IiConverter.converToPoPersonIi(dto.getPersonIdentifier()));
+                getPerson(dto.getPersonIdentifier());
             } catch (NullifiedEntityException e) {
                 throw new PAException("This Person is no longer available instead use ", e);
             }
@@ -108,14 +110,18 @@ public abstract class AbstractPABaseCorrelation <
             srPoIi = poDtos.get(0).getIdentifier();
         }         
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , dto.getOrganizationIdentifier());
+        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null 
+                , dto.getOrganizationIdentifier().getExtension());
         if (paOrg == null) {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
+        Person paPer = null;
+        if (dto.getPersonIdentifier() != null) {
         // Step 4 : check for pa person, if not create one
-        Person paPer = corrUtils.getPAPersonByIndetifers(null , dto.getPersonIdentifier());
-        if (paPer == null) {
-            paPer = corrUtils.createPAPerson(poPer);
+            paPer = corrUtils.getPAPersonByIndetifers(null , dto.getPersonIdentifier().getExtension());
+            if (paPer == null) {
+                paPer = corrUtils.createPAPerson(poPer);
+            }
         }
         Long srPaIdentifier = getStructuralRole(srPoIi.getExtension());
         StructuralRole sr = null;
