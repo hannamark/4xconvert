@@ -8,7 +8,6 @@
 	{	
 		//top.window.loadPersDiv(persid, func);
 		var email = document.getElementById(persid+"email")[document.getElementById(persid+"email").selectedIndex].value;
-		alert(email);
 		var phone = document.getElementById(persid+"phone")[document.getElementById(persid+"phone").selectedIndex].value;
 		top.window.setpersid(persid, name,email,phone);
 		window.top.hidePopWin(true); 
