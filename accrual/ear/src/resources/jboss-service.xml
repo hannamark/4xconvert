@@ -3,7 +3,7 @@
 PUBLIC "-//JBoss//DTD MBean Service 4.2//EN"
 "http://www.jboss.org/j2ee/dtd/jboss-service_4_2.dtd">
 <server>
-    <mbean code="org.jboss.security.auth.login.DynamicLoginConfig" name="jboss.security.tests:service=LoginConfig">
+    <mbean code="org.jboss.security.auth.login.DynamicLoginConfig" name="jboss.security.tests:service=AccrualLoginConfig">
         <attribute name="AuthConfig">META-INF/security-config.xml</attribute>
         <depends optional-attribute-name="LoginConfigService">
             jboss.security:service=XMLLoginConfig

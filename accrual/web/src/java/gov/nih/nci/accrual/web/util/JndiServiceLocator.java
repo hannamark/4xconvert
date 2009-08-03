@@ -88,6 +88,6 @@ import gov.nih.nci.accrual.util.JNDIUtil;
 public class JndiServiceLocator implements ServiceLocator {
 
     public SampleAccrualRemote getSampleAccrualService() {
-        return (SampleAccrualRemote) JNDIUtil.lookup("accrual-services/SampleAccrualBean/remote");
+        return (SampleAccrualRemote) JNDIUtil.lookup("accrual/SampleAccrualBean/remote");
     }
 }
