@@ -109,4 +109,19 @@ public class PAConstants {
      * The maxmium number of search results to be returned for a remote service method.
      */
     public static final int MAX_SEARCH_RESULTS = 500;
+    
+    /** SYNONYM. **/
+    public static final String SYNONYM = "Synonym";
+    
+    /** ABBREVIATION. **/
+    public static final String ABBREVIATION = "Abbreviation";
+    
+    /** US_BRAND_NAME. **/
+    public static final String US_BRAND_NAME = "US Brand Name";
+    
+    /** FOREIGN_BRAND_NAME. **/
+    public static final String FOREIGN_BRAND_NAME = "Foreign Brand Name";
+ 
+    /** CODE_NAME. **/
+    public static final String CODE_NAME = "Code Name";
 }
