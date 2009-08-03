@@ -65,7 +65,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-coreless-1.0-beta-1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-sources-1.0-beta-1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-tests-1.0-beta-1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-1.1.0.rc1.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-1.2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-1.1.0.rc1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/activation-4.0.5.GA.jar"/>
@@ -75,13 +75,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/jbossall-client-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/jboss-ejb3x-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/hibernate3-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/NCI/Projects/COPPA/code/pa/pa-libJunit/antlr-2.7.4.jar"/>
-	<classpathentry kind="lib" path="C:/NCI/Projects/COPPA/code/pa/pa-libJunit/antlr-runtime.jar"/>
-	<classpathentry kind="lib" path="C:/NCI/Projects/COPPA/code/pa/pa-libJunit/asm.jar"/>
-	<classpathentry kind="lib" path="C:/NCI/Projects/COPPA/code/pa/pa-libJunit/asm-attrs.jar"/>
-	<classpathentry kind="lib" path="C:/NCI/Projects/COPPA/code/pa/pa-libJunit/cglib-2.1.3.jar"/>
-	<classpathentry kind="lib" path="C:/NCI/Projects/COPPA/code/target/pa/lib/pa-ejb/compile/oc4j-internal-10.1.3.4.0.jar"/>
-	<classpathentry kind="lib" path="C:/NCI/Projects/COPPA/code/target/pa/lib/pa-ejb/compile/oc4jclient-10.1.3.1.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.2.2.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
