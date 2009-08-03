@@ -124,4 +124,8 @@
             <comment>execute studyObjective.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyObjective.sql"/>
     </changeSet>
+	    <changeSet id="30" author="Vrushali">
+            <comment>execute pa-18746.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/2.2/pa-18746.sql"/>
+    </changeSet>
 </databaseChangeLog>
