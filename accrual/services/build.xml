@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- ant script for CTRP Viewer Services                                    -->
+<!-- ====================================================================== -->
+
+<project name="accrual.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property file="${basedir}/../build.properties"/>
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="resource.dir" value="${basedir}/../resources"/>
+    <property name="pmdFile" value="${resourceDir}/accrualPmd.xml"/>
+    <property name="checkstyleFile" value="${resourceDir}/accrualCheckstyle.xml"/>
+
+    <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
+    <property name="services.report.dir" value="${software.dir}/target/accrual/reports/services"/>
+    <property name="services.build.dir" value="${basedir}/target"/>
+    <property name="services.build.outputDir" value="${services.build.dir}/classes"/>
+    <property name="services.build.srcDir" value="${basedir}/src/java"/>
+    <property name="services.build.resourceDir" value="${basedir}/src/resources"/>
+    <property name="services.jar" value="accrual-services.jar"/>
+    <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
+
+    <property name="common.dir" value="${resource.dir}"/>
+    <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
+    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
+    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
+    <property name="ivy.def.file" location="ivy-accrual-services.xml" />
+    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+
+
+    <!-- ====================================================================== -->
+    <!-- Defining classpaths                                                    -->
+    <!-- ====================================================================== -->
+
+    <property name="compile.jar.dir" location="${lib.dir}/services/compile"/>
+    <path id="compile.classpath">
+        <fileset dir="${compile.jar.dir}"/>
+    </path>
+
+    <property name="test-simian.jar.dir" location="${lib.dir}/services/test-simian"/>
+    <path id="test-simian.classpath">
+        <fileset dir="${test-simian.jar.dir}"/>
+    </path>
+
+    <property name="test-cobertura.jar.dir" location="${lib.dir}/services/test-cobertura"/>
+    <path id="test-cobertura.classpath">
+        <fileset dir="${test-cobertura.jar.dir}"/>
+    </path>
+
+    <property name="test-checkstyle.jar.dir" location="${lib.dir}/services/test-checkstyle"/>
+    <path id="test-checkstyle.classpath">
+        <fileset dir="${test-checkstyle.jar.dir}"/>
+    </path>
+
+    <property name="test-pmd.jar.dir" location="${lib.dir}/services/test-pmd"/>
+    <path id="test-pmd.classpath">
+        <fileset dir="${test-pmd.jar.dir}"/>
+    </path>
+
+    <path id="ivy.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="${ivy.file}"/>
+            <include name="${ivy-core.file}"/>
+        </fileset>
+    </path>
+
+    <!-- ====================================================================== -->
+    <!-- Task definitions                                                       -->
+    <!-- ====================================================================== -->
+    
+    <mkdir dir="${lib.dir}"/>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
+
+    <!-- ====================================================================== -->
+    <!-- Cleaning target                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="pre-clean" 
+            description="Deletes subproject's classes and other target directories which should not exist before starting the build">
+        <delete dir="${services.build.dir}"/>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Compile target                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="compile" depends="pre-clean" description="Compiles the subproject">
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <mkdir dir="${services.build.outputDir}"/>
+        <javac destdir="${services.build.outputDir}" 
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
+            <src>
+                <pathelement location="${services.build.srcDir}"/>
+            </src>
+            <classpath>
+                <path refid="compile.classpath"/> 
+            </classpath>
+        </javac>
+        <copy todir="${services.build.outputDir}">
+            <fileset dir="${services.build.resourceDir}"/>
+        </copy>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run checkstyle                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="test-checkstyle">
+        <taskdef resource="checkstyletask.properties" 
+             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
+             
+        <checkstyle config="${checkstyleFile}" failOnViolation="true">
+            <classpath>
+                <path refid="ejb.package.classpath"/> 
+            </classpath>
+            <fileset dir="src" includes="**/*.java"/>
+            <formatter type="plain"/>
+            <formatter type="plain" toFile="${report.dir}/checkstyle.txt"/>
+            <formatter type="xml" toFile="${report.dir}/checkstyle.xml"/>
+        </checkstyle>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run PMD                                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-pmd">
+        <taskdef name="pmd" 
+             classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
+             classname="net.sourceforge.pmd.ant.PMDTask"/>
+             
+        <pmd shortFilenames="true" failOnRuleViolation="true" 
+                                   rulesetfiles="${pmdFile}">
+            <formatter type="text" toConsole="true"/>
+            <formatter type="text" toFile="${report.dir}/pmd.txt"/>
+            <formatter type="xml"  toFile="${report.dir}/pmd.xml"/>
+            <fileset dir="src">
+                <include name="**/*.java"/>
+            </fileset>
+         </pmd>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run Simian                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-simian">
+       <taskdef resource="simiantask.properties" 
+             classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
+       <simian>
+            <fileset dir="src" includes="**/*.java"/>
+            <formatter type="plain" toFile="${report.dir}/simian.txt"/>
+            <formatter type="xml" toFile="${report.dir}/simian.xml"/>
+            <formatter type="plain"/>
+        </simian>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Static analysis target                                                 -->
+    <!-- ====================================================================== -->
+
+    <target name="inspect" depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
+            description="Runs various static analysis tools such as PMD, Checkstyle, Simian">
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Package targets                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="create-jar">
+        <jar jarfile="${services.build.dir}/${services.jar}" 
+             compress="true" 
+             index="false" 
+             basedir="${services.build.outputDir}"/>
+    </target>
+    
+    <target name="jar" depends="ivy-get, compile, inspect, create-jar" 
+            description="Makes services jar">
+    </target>
+    
+    <target name="jar-notest" depends="ivy-compile, compile, create-jar"
+            description="Makes services jar, doesn't run tests">
+    </target>
+
+    <target name="jar-notest-noivy" depends="compile, create-jar"/>
+
+
+    <!-- ====================================================================== -->
+    <!-- Ivy targets                                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="init:ivy">
+        <mkdir dir="${local.repo.dir}"/>
+        <mkdir dir="${lib.dir}/services"/>
+        <property name="ivy.dep.file" value="${ivy.def.file}"/>
+        <ivy:settings file="${ivy.settings.file}"/>
+    </target>
+    
+    <target name="ivy-test-pmd" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-pmd"/>
+        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test-pmd"/>
+    </target>
+
+    <target name="ivy-test-checkstyle" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-checkstyle"/>
+        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle"/>
+    </target>
+
+    <target name="ivy-test-simian" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-simian"/>
+        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test-simian"/>
+    </target>
+    
+    <target name="ivy-compile" depends="init:ivy" 
+            description="Resolves and retrieves the JARs needed to compile the subproject">
+        <ivy:resolve refresh="true" conf="compile"/>
+        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="compile"/>
+    </target>
+
+    <target name="ivy-test" 
+            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian" 
+            description="Resolves and retrieves the JARs needed to test the subproject">
+    </target>
+
+    <target name="ivy-get" 
+            depends="ivy-compile, ivy-test" 
+            description="Updates the local ivy repository">
+    </target>
+    
+    <target name="ivy-clean" description="Delete jars.">
+        <delete dir="${lib.dir}/services"/>
+    </target>
+
+</project>

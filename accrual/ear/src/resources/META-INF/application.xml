@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application PUBLIC
+  "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
+  "http://java.sun.com/dtd/application_1_3.dtd">
+<application>
+    <display-name>accrual</display-name>
+    <module>
+        <ejb>accrual-services.jar</ejb>
+    </module>
+    <module>
+        <web>
+            <web-uri>accrual.war</web-uri>
+            <context-root>/accrual</context-root>
+        </web>
+    </module>
+    <module>
+        <java>accrual-ds.xml</java>
+    </module>
+    <module>
+        <java>jboss-service.xml</java>
+    </module>
+    <module>
+        <java>iso-datatypes-1.2.3.jar</java>
+    </module>
+    <security-role><role-name>Abstractor</role-name></security-role>
+    <security-role><role-name>Submitter</role-name></security-role>
+    <security-role><role-name>ReportViewer</role-name></security-role>
+</application>

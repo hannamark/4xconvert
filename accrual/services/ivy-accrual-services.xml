@@ -1,0 +1,46 @@
+<ivy-module version="1.0">
+  <info organisation="cbiit" module="ctrp-accrual-services"/>
+        
+  <configurations>
+    <conf name="compile"/>
+    <conf name="test-pmd"/>
+    <conf name="test-checkstyle"/>
+    <conf name="test-simian"/>
+  </configurations>
+  
+  <dependencies>
+    <!-- compile -->
+    <dependency org="aopalliance"            name="aopalliance"             rev="1.0"             conf="compile->master"/>
+    <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="compile->master"/>
+    <dependency org="itext"                  name="itext"                   rev="2.0.6"           conf="compile->master"/>
+    <dependency org="jakarta"                name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
+    <dependency org="jakarta"                name="commons-fileupload"      rev="1.2.1"           conf="compile->master"/>
+    <dependency org="jakarta"                name="commons-io"              rev="1.4"             conf="compile->master"/>
+    <dependency org="jakarta"                name="commons-lang"            rev="2.4"             conf="compile->master"/>
+    <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
+    <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
+    <dependency org="javax.transaction"      name="jta"                     rev="1.0.1B"          conf="compile->master"/>
+    <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
+    <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.3"           conf="compile->master"/>
+    <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
+    <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="compile->master"/>
+    <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
+    <dependency org="org.directwebremoting"  name="dwr"                     rev="2.0.1"           conf="compile->master"/>
+    <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0"           conf="compile->master"/>
+    <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.GA"        conf="compile->master"/>
+    <dependency org="org.hibernate"  name="hibernate-commons-annotations"   rev="3.3.0.GA"        conf="compile->master"/>
+    <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="compile->master"/>
+    <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
+    <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="compile->master"/>
+    
+    <!-- test targets -->
+    <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
+    <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>
+    <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->runtime"/>  
+  </dependencies>
+</ivy-module>

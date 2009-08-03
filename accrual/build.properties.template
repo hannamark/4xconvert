@@ -1,0 +1,9 @@
+csm.db.username=pauser
+csm.db.password=pauser
+csm.jdbc.url=jdbc:postgresql://localhost:5432/ctods_pa
+accrual.db.username=pauser
+accrual.db.password=pauser
+accrual.jdbc.url=jdbc:postgresql://localhost:5432/ctods_pa
+jdbc.driver=org.postgresql.Driver
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+jboss.deploy.directory=C:/jboss/jboss-4.0.5.GA/server/default/deploy

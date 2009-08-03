@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ========================================================================== -->
+<!-- Master ant script for Accrual application                                  -->
+<!-- ========================================================================== -->
+
+<project name="viewer" default="deploy-notest" basedir=".">
+    <property file="${basedir}/build.properties"/>
+    <property name="resource.dir" value="${basedir}/resources"/>
+    <property name="software.dir" value="${basedir}/.."/>
+
+    <property name="earDir" value="${basedir}/ear"/>
+    <property name="earEar" value="${earDir}/target/accrual.ear"/>
+    <property name="webDir" value="${basedir}/web"/>
+    <property name="webWar" value="${webDir}/target/accrual.war"/>
+    <property name="servicesDir" value="${basedir}/services"/>
+    <property name="servicesJar" value="${servicesDir}/target/accrual-services.jar"/>
+
+    <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
+    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+
+    <!-- ====================================================================== -->
+    <!-- Package targets                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="package">
+        <ant target="jar" dir="${servicesDir}"/>
+        <ant target="war" dir="${webDir}"/>
+        <ant target="ear" dir="${earDir}"/>
+    </target>
+
+    <target name="package-notest-noivy">
+        <ant target="jar-notest-noivy" dir="${servicesDir}"/>
+        <ant target="war-notest-noivy" dir="${webDir}"/>
+        <ant target="ear" dir="${earDir}"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Deploy targets                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="echoTime">
+        <tstamp>
+            <format property="now" pattern="yyyy MMMM dd HH:mm:ss" locale="en"/>
+        </tstamp>
+        <echo message="Build completed at ${now}" />
+    </target>
+
+    <target name="deploy-ear">
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+        <available file="${earEar}" property="earEarPresent"/>
+        <fail unless="earEarPresent" message="Ear file not found."/>
+        <copy todir="${jboss.deploy.directory}" file="${earEar}"/>
+    </target>
+    
+    <target name="deploy" depends="package, deploy-ear, echoTime" 
+            description="Build test and deploy."/>
+            
+    <target name="deploy-notest" depends="package-notest-noivy, deploy-ear, echoTime" 
+            description="Build and deploy without testing or getting dependencies.">
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Ivy targets                                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="ivy-init"> 
+        <mkdir dir="${local.repo.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <copy todir="${lib.dir}" overwrite="false">
+          <fileset dir="${resource.dir}/bda-download">
+            <include name="*.jar"/>
+          </fileset>
+        </copy>
+    </target>
+
+    <target name="ivy-get" depends="ivy-init"> 
+        <ant target="ivy-get" dir="${webDir}"/>
+        <ant target="ivy-get" dir="${servicesDir}"/>
+        <ant target="ivy-get" dir="${earDir}"/>
+    </target>
+    
+    <target name="ivy-clean" description="Delete jars.">
+        <ant target="ivy-clean" dir="${webDir}"/>
+        <ant target="ivy-clean" dir="${servicesDir}"/>
+        <ant target="ivy-clean" dir="${earDir}"/>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Copies JSP to the tmp folder                                           -->
+    <!-- ====================================================================== -->
+        
+    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
+        <ant target="copy-jsp" dir="${webDir}"/>
+    </target> 
+
+</project>
