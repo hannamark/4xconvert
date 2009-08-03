@@ -146,11 +146,11 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -170,7 +170,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-
 /**
  * service bean for generating TSR.
  * 
@@ -196,8 +195,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     ArmServiceLocal armService = null;
     @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
-    @EJB
-    StratumGroupServiceLocal subGroupsService = null;
     @EJB
     StudyParticipationServiceLocal studyParticipationService = null;
     @EJB
@@ -305,6 +302,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   
   /** The Constant MAX_AGE. */
   private static final int MAX_AGE = 999;
+  
+  /** The Constant MAX_AGE. */
+  private static final int MIN_LEN = 3;
    
   /** The Constant FONT_TITLE. */
   private static final String FONT_TITLE = "<FONT SIZE='5'>";
@@ -619,11 +619,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
       for (InterventionAlternateNameDTO ian : ianList) {
           if (ian.getNameTypeCode().getValue() != null 
-                  && (ian.getNameTypeCode().getValue().equalsIgnoreCase("synonym") 
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("abbreviation")
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("us brand name")
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("foreign brand name")
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase("code name"))) {
+                  && (ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.SYNONYM) 
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.ABBREVIATION)
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.US_BRAND_NAME)
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.FOREIGN_BRAND_NAME)
+                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.CODE_NAME))) {
               
                interventionNames.add(ian);
                  
@@ -632,18 +632,20 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
            }
          } 
        }
-       Collections.sort(interventionNames, new Comparator() {
-           public int compare(Object o1, Object o2) {
-               InterventionAlternateNameDTO p1 = (InterventionAlternateNameDTO) o1;
-               InterventionAlternateNameDTO p2 = (InterventionAlternateNameDTO) o2;
-               return p1.getName().getValue().compareToIgnoreCase(p2.getName().getValue());
+       Collections.sort(interventionNames, new Comparator<InterventionAlternateNameDTO>() {
+           public int compare(InterventionAlternateNameDTO o1, InterventionAlternateNameDTO o2) {
+                   return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
             }
         });
        
        for (InterventionAlternateNameDTO altname : interventionNames) {
            interventionAltName.append(altname.getName().getValue()).append(", ");
        }
-       return interventionAltName.toString().substring(0, interventionAltName.length() - 2);
+       if ("".equals(interventionAltName) && interventionAltName.length() > MIN_LEN) {
+         return interventionAltName.substring(0, interventionAltName.length() - 2);
+       } else {
+           return interventionAltName.toString();
+       }
   }
 
   /**
@@ -838,11 +840,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 diseases.add(d);
             }
         }
-        Collections.sort(diseases, new Comparator() {
-           public int compare(Object o1, Object o2) {
-                DiseaseDTO p1 = (DiseaseDTO) o1;
-                DiseaseDTO p2 = (DiseaseDTO) o2;
-               return p1.getPreferredName().getValue().compareToIgnoreCase(p2.getPreferredName().getValue());
+        Collections.sort(diseases, new Comparator<DiseaseDTO>() {
+           public int compare(DiseaseDTO o1, DiseaseDTO o2) {
+                return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
             }
  
         });

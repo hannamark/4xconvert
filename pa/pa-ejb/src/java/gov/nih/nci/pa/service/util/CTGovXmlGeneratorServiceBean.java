@@ -167,6 +167,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -458,11 +459,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     diseases.add(d);
                 }
             }
-            Collections.sort(diseases, new Comparator() {
-               public int compare(Object o1, Object o2) {
-                    DiseaseDTO p1 = (DiseaseDTO) o1;
-                    DiseaseDTO p2 = (DiseaseDTO) o2;
-                   return p1.getPreferredName().getValue().compareToIgnoreCase(p2.getPreferredName().getValue());
+            Collections.sort(diseases, new Comparator<DiseaseDTO>() {
+               public int compare(DiseaseDTO o1, DiseaseDTO o2) {
+                    return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
                 }
      
             });
@@ -854,11 +853,11 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 
                 for (InterventionAlternateNameDTO ian : ianList) {
                    if (ian.getNameTypeCode().getValue() != null 
-                           && (ian.getNameTypeCode().getValue().equalsIgnoreCase("synonym") 
-                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("abbreviation")
-                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("us brand name")
-                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("foreign brand name")
-                           || ian.getNameTypeCode().getValue().equalsIgnoreCase("code name"))) {
+                           && (ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.SYNONYM) 
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.ABBREVIATION)
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.US_BRAND_NAME)
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.FOREIGN_BRAND_NAME)
+                           || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.CODE_NAME))) {
                        
                         interventionNames.add(ian);
                           
@@ -867,11 +866,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     }
                   } 
                 }
-                Collections.sort(interventionNames, new Comparator() {
-                    public int compare(Object o1, Object o2) {
-                        InterventionAlternateNameDTO p1 = (InterventionAlternateNameDTO) o1;
-                        InterventionAlternateNameDTO p2 = (InterventionAlternateNameDTO) o2;
-                        return p1.getName().getValue().compareToIgnoreCase(p2.getName().getValue());
+                Collections.sort(interventionNames, new Comparator<InterventionAlternateNameDTO>() {
+                    public int compare(InterventionAlternateNameDTO o1, InterventionAlternateNameDTO o2) {
+                          return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
                      }
                  });
                 
