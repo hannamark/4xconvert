@@ -8,8 +8,8 @@
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="resource.dir" value="${basedir}/../resources"/>
-    <property name="pmdFile" value="${resourceDir}/accrualPmd.xml"/>
-    <property name="checkstyleFile" value="${resourceDir}/accrualCheckstyle.xml"/>
+    <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
+    <property name="checkstyleFile" value="${resource.dir}/accrualCheckstyle.xml"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="web.report.dir" value="${software.dir}/target/accrual/reports/web"/>
@@ -19,6 +19,10 @@
     <property name="web.build.srcDir" value="${basedir}/src/java"/>
     <property name="web.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="web.war" value="accrual.war"/>
+    <property name="web.build.testSrcDir" value="${basedir}/test/java"/>
+    <property name="web.build.testOutputDir" value="${web.build.dir}/test-classes"/>
+    <property name="web.build.coberturaOutputDir" value="${web.build.dir}/generated-classes"/>
+    <property name="web.test.reports" value="${web.report.dir}/test-reports"/>
 
     <property name="common.dir" value="${resource.dir}"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
@@ -40,6 +44,12 @@
            <include name="*.jar"/>
         </fileset>
     </path>
+
+    <property name="test.jar.dir" location="${lib.dir}/web/test"/>
+    <path id="test.classpath">
+        <fileset dir="${test.jar.dir}"/>
+    </path>
+
 
     <property name="test-simian.jar.dir" location="${lib.dir}/web/test-simian"/>
     <path id="test-simian.classpath">
@@ -74,6 +84,7 @@
     <!-- ====================================================================== -->
     
     <mkdir dir="${lib.dir}"/>
+    <mkdir dir="${web.report.dir}"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
     <path id="macrodef">
         <fileset dir="${resource.dir}">
@@ -122,6 +133,88 @@
 
 
     <!-- ====================================================================== -->
+    <!-- Test-compilation target                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="compile-tests" 
+      depends="compile" 
+      description="Compile the test code"> 
+        <mkdir dir="${web.build.testOutputDir}"/>
+        <javac destdir="${web.build.testOutputDir}" 
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
+            <src>
+                <pathelement location="${web.build.testSrcDir}"/>
+            </src>
+            <classpath>
+                <pathelement location="${web.build.outputDir}"/> 
+                <path refid="compile.classpath"/> 
+                <path refid="test.classpath"/>
+            </classpath>
+        </javac>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-cobertura" depends="compile-tests">
+
+        <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties"/>
+
+        <delete file="${web.build.dir}/cobertura.ser"/>
+
+        <cobertura-instrument datafile="${web.build.dir}/cobertura.ser"
+                              toDir="${web.build.coberturaOutputDir}">
+            <fileset dir="${web.build.outputDir}">
+                <include name="**/*.class"/>
+            </fileset>
+        </cobertura-instrument>
+
+        <mkdir dir="${web.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <sysproperty key="basedir" value="."/>
+            <sysproperty key="net.sourceforge.cobertura.datafile"
+                    file="${web.build.dir}/cobertura.ser"/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${web.build.coberturaOutputDir}"/>
+            <classpath location="${web.build.outputDir}"/>
+            <classpath location="${web.build.testOutputDir}"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+            <batchtest todir="${web.test.reports}">
+                <fileset dir="${web.build.testSrcDir}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        
+        <cobertura-report datafile="${web.build.dir}/cobertura.ser"
+                          destdir="${web.test.reports}" 
+                          srcdir="${web.build.srcDir}"/>
+        
+        <cobertura-report datafile="${web.build.dir}/cobertura.ser"
+                          format="xml"
+                          destdir="${web.test.reports}" 
+                          srcdir="${web.build.srcDir}"/>
+
+        <cobertura-check datafile="${web.build.dir}/cobertura.ser"
+                         totalbranchrate="10" 
+                         totallinerate="10"
+                         haltonfailure="true"/>
+     </target>
+
+    <!-- ====================================================================== -->
     <!-- Run Checkstyle                                                         -->
     <!-- ====================================================================== -->
 
@@ -130,13 +223,10 @@
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
              
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
-            <classpath>
-                <path refid="ejb.package.classpath"/> 
-            </classpath>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain"/>
-            <formatter type="plain" toFile="${report.dir}/checkstyle.txt"/>
-            <formatter type="xml"   toFile="${report.dir}/checkstyle.xml"/>
+            <formatter type="plain" toFile="${web.report.dir}/checkstyle.txt"/>
+            <formatter type="xml"   toFile="${web.report.dir}/checkstyle.xml"/>
         </checkstyle>
     </target>
 
@@ -153,8 +243,8 @@
         <pmd shortFilenames="true" failOnRuleViolation="true" 
                                    rulesetfiles="${pmdFile}">
             <formatter type="text" toConsole="true"/>
-            <formatter type="text" toFile="${report.dir}/pmd.txt"/>
-            <formatter type="xml"  toFile="${report.dir}/pmd.xml"/>
+            <formatter type="text" toFile="${web.report.dir}/pmd.txt"/>
+            <formatter type="xml"  toFile="${web.report.dir}/pmd.xml"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
@@ -171,8 +261,8 @@
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
-            <formatter type="plain" toFile="${report.dir}/simian.txt"/>
-            <formatter type="xml" toFile="${report.dir}/simian.xml"/>
+            <formatter type="plain" toFile="${web.report.dir}/simian.txt"/>
+            <formatter type="xml" toFile="${web.report.dir}/simian.xml"/>
             <formatter type="plain"/>
         </simian>
     </target>
@@ -184,6 +274,15 @@
 
     <target name="inspect" depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
             description="Runs various static analysis tools such as PMD, Checkstyle, Simian">
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- JUnit/Cobertura target                                                 -->
+    <!-- ====================================================================== -->
+
+    <target name="test" depends="ivy-get,compile-tests,test-cobertura"
+            description="Runs various tests in the subproject">
     </target>
 
 
@@ -206,7 +305,7 @@
         </war>
     </target>
 
-    <target name="war" depends="ivy-get, compile, inspect, create-war"/>
+    <target name="war" depends="ivy-get, compile, inspect, test-cobertura, create-war"/>
 
     <target name="war-notest" depends="ivy-compile, ivy-runtime, compile, create-war"
             description="Package the application.  Do not run tests."/>
@@ -240,6 +339,11 @@
         <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test-simian"/>
     </target>
 
+    <target name="ivy-test-cobertura" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-cobertura"/>
+        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura"/>
+    </target>
+
     <target name="ivy-compile" depends="init:ivy"
             description="Resolves and retrieves the JARs needed to compile the subproject">
         <ivy:resolve refresh="true" conf="compile"/>
@@ -253,8 +357,10 @@
     </target>
 
     <target name="ivy-test"
-            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian" 
+            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura"
             description="Resolves and retrieves the JARs needed to test the subproject">
+        <ivy:resolve refresh="true" conf="test"/>
+        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test"/>
     </target>
 
     <target name="ivy-get"

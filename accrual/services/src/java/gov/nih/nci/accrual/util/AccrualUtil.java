@@ -220,6 +220,7 @@ public class AccrualUtil {
      * @param inDate string to be normalized
      * @return Date
      */
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     private static Date dateStringToDate(String inDate) {
         if (inDate == null) {
             return null;

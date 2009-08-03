@@ -91,7 +91,9 @@ public class SampleAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = 2272623477532897394L;
 
+    /** criteria. */
     public String enteredValue;
+    /** result. */
     public String resultValue;
 
     /**
@@ -110,7 +112,8 @@ public class SampleAction extends AbstractAccrualAction {
     public String getResult() {
         SampleAccrualRemote service = AccrualServiceLocator.getInstance().getSampleAccrualService();
         try {
-            setResultValue(StConverter.convertToString(service.getSquare(IntConverter.convertToInt(getEnteredValue()))));
+            setResultValue(StConverter.convertToString(
+                    service.getSquare(IntConverter.convertToInt(getEnteredValue()))));
         } catch (RemoteException e) {
             setResultValue("Error getting result:  " + e.getMessage());
         }

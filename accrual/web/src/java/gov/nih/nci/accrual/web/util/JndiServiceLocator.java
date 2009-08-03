@@ -87,6 +87,9 @@ import gov.nih.nci.accrual.util.JNDIUtil;
  */
 public class JndiServiceLocator implements ServiceLocator {
 
+    /**
+     * {@inheritDoc}
+     */
     public SampleAccrualRemote getSampleAccrualService() {
         return (SampleAccrualRemote) JNDIUtil.lookup("accrual/SampleAccrualBean/remote");
     }

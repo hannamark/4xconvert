@@ -4,9 +4,11 @@
   <configurations>
     <conf name="runtime"/>
     <conf name="compile" extends="runtime"/>
+    <conf name="test"/>
     <conf name="test-pmd"/>
     <conf name="test-checkstyle"/>
     <conf name="test-simian"/>
+    <conf name="test-cobertura"/>
   </configurations>
 
   <dependencies>
@@ -59,9 +61,14 @@
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="compile->master"/>
 
+    <!-- test -->
+    <dependency org="mockrunner"             name="mockrunner"              rev="0.4.1"           conf="test->master"/>
+    <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>
+
     <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
     <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>
     <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->compile"/>    
+    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>  
   </dependencies>
 </ivy-module>

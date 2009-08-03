@@ -92,8 +92,11 @@ import javax.ejb.Stateless;
 @Stateless
 public class SampleAccrualBean implements SampleAccrualRemote {
 
+    /**
+     * {@inheritDoc}
+     */
     public St getSquare(Int integer) throws RemoteException {
         Integer value = IntConverter.convertToInteger(integer);
-        return StConverter.convertToSt(((Integer)(value * value)).toString());
+        return StConverter.convertToSt(((Integer) (value * value)).toString());
     }
 }
