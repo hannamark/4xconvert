@@ -89,13 +89,12 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
      * @return list of roles associated to the entity.
      */
     @SuppressWarnings("unchecked")
-    protected <C extends Correlation> List<C> getAssociatedRoles(
-            Long entityId, Class<C> type, String property, Session s) {
+    protected <C extends Correlation> List<C> getAssociatedRoles(Long entityId, Class<C> type, String property,
+            Session s) {
 
         Criteria c = s.createCriteria(type);
-        LogicalExpression and = Restrictions.and(
-                Restrictions.eq(property, entityId),
-                Restrictions.ne("status", RoleStatus.NULLIFIED));
+        LogicalExpression and =
+                Restrictions.and(Restrictions.eq(property, entityId), Restrictions.ne("status", RoleStatus.NULLIFIED));
         c.add(and);
         return c.list();
     }

@@ -211,11 +211,11 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         PoHibernateUtil.getCurrentSession().clear();
         return orgId;
     }
-    
+
     public long createOrganizationNoSessionFlushAndClear() throws EntityValidationException {
         return createOrganizationNoSessionFlushAndClear("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
     }
-    
+
     public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality, String abbrvName, String desc) throws EntityValidationException {
         Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345",
                 getDefaultCountry());
@@ -236,7 +236,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     public void testCreateOrgWithInvalidInput() throws Exception {
         orgServiceBean.create(new Organization());
     }
-    
+
     /**
      * Test creating a Org with a name that exceed maximum limit.
      */
@@ -259,13 +259,12 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
             long orgId = orgServiceBean.create(org);
             fail("expected to receive an EntityValidationException on .name property");
         } catch (EntityValidationException e) {
-            System.out.println(e.getErrors());
             //ensure an error exists on the name field
             assertNotNull(e.getErrors().get("name"));
         }
     }
-    
-    
+
+
     @Test
     public void testCreateOrg() throws EntityValidationException {
         Country country = new Country("testorg", "996", "IJ", "IJI");

@@ -122,13 +122,12 @@ public class EnConverter <ENXX extends En> extends AbstractXSnapshotConverter<EN
 
         if (iso.getNullFlavor() != null) {
             return null;
-        } else {
-            StringBuffer sb = new StringBuffer();
-            for (Enxp e : iso.getPart()) {
-                sb.append(e.getValue());
-            }
-            return sb.toString();
         }
+        StringBuffer sb = new StringBuffer();
+        for (Enxp e : iso.getPart()) {
+            sb.append(e.getValue());
+        }
+        return sb.toString();
     }
 
     private static void validate(En iso) {

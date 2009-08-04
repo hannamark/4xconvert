@@ -24,4 +24,8 @@
        <comment>Upgrade for PO-893 - organization generic contact</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-893.sql"/>
     </changeSet>
+    <changeSet id="PO-1189" author="slustbader">
+       <comment>Upgrade for PO-1189 - new organizational contact types</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-1189.sql"/>
+    </changeSet>
 </databaseChangeLog>

@@ -146,16 +146,15 @@ public class EnPnConverter {
     }
 
     private static String extractDelimiter(Enxp previousPart, EntityNamePartType previousType, Enxp part) {
-        String delimieter = " ";
+        String delimiter = " ";
         if (previousPart != null && EntityNamePartType.DEL.equals(previousPart.getType())) {
             if (previousType == null || previousType != part.getType()) {
                 throw new PoIsoConstraintException("A delimiter came between two parts of an ENPN that were not "
                         + "of the same type.");
-            } else {
-                delimieter = previousPart.getValue();
             }
+            delimiter = previousPart.getValue();
         }
-        return delimieter;
+        return delimiter;
     }
 
     private static void processPart(Enxp part, AbstractPerson person, String delimiter) {
@@ -177,8 +176,7 @@ public class EnPnConverter {
     private static String produceNewValue(String oldValue, String addition, String del) {
         if (oldValue == null) {
             return addition;
-        } else {
-            return oldValue + del + addition;
         }
+        return oldValue + del + addition;
     }
 }
