@@ -576,9 +576,12 @@ public class StudyOverallStatusAction extends ActionSupport implements
         if (PAUtil.isNotEmpty(currentTrialStatus)
                          && PAUtil.isNotEmpty(startDateType)) {
           if (StudyStatusCode.APPROVED.getCode().equals(currentTrialStatus)
-              || StudyStatusCode.IN_REVIEW.getCode().equals(currentTrialStatus)) {
+              || StudyStatusCode.IN_REVIEW.getCode().equals(currentTrialStatus)
+              || StudyStatusCode.DISAPPROVED.getCode().equals(currentTrialStatus)
+              || StudyStatusCode.WITHDRAWN.getCode().equals(currentTrialStatus)) {
               if (!startDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                  addActionError("If Current Trial Status is Approved/In-Review, Trial Start Date must be Anticipated");
+                  addActionError("If Current Trial Status is " + currentTrialStatus   
+                          + " , Trial Start Date must be Anticipated");
               }                
           } else {
               if (!startDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
