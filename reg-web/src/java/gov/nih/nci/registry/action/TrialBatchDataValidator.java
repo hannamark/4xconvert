@@ -520,6 +520,7 @@ public class TrialBatchDataValidator {
      */
     public boolean orgDTOIsEmpty(OrganizationBatchDTO dto) {
         int nullCount = 0;
+        boolean orgIsEmpty = false;
         if (PAUtil.isEmpty(dto.getName())) {
             nullCount += 1;
         }
@@ -544,10 +545,10 @@ public class TrialBatchDataValidator {
         if (PAUtil.isEmpty(dto.getPhone())) {
             nullCount += 1;
         }
-        if (nullCount > 0 && nullCount < ORG_FIELD) {
-            return false;
+        if (nullCount == ORG_FIELD) {
+            orgIsEmpty = true;
         }
-        return true;
+        return orgIsEmpty;
     }
     /**
      * 
