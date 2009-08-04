@@ -80,12 +80,14 @@ package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -95,6 +97,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.util.ArrayList;
 
@@ -181,7 +184,11 @@ public class PARelationServiceBean {
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
         
         // now create study participation contact as responsible party
-        OrganizationalContactCorrelationServiceBean oc = new OrganizationalContactCorrelationServiceBean();
+        PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
+            OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO , 
+        OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
+        PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
+        
         PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
         orgContacPaDto.setOrganizationIdentifier(contactDto.getOrganizationIdentifier());
         orgContacPaDto.setIdentifier(contactDto.getSrIdentifier());

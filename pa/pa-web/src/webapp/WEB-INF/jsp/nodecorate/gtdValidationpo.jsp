@@ -49,6 +49,8 @@ function callAjax(url, div){
 }
 function createOrgContactDiv() {
     var url = 'ajaxTrialValidationcreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
+    document.getElementById('gtdDTO.responsibleGenericContactName').value = '';
+    document.getElementById('gtdDTO.responsiblePersonIdentifier').value = persid;
     var div = document.getElementById('loadResponsibleContactField');   
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding responsible contact...</div>';
     callAjax(url, div);

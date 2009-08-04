@@ -20,6 +20,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +37,7 @@ import org.hibernate.Session;
  * @param <CONVERTER> 
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "unchecked" , "PMD.ExcessiveMethodLength" })
-public abstract class AbstractPABaseCorrelation <
-    PADTO extends PACorrelationDTO , 
+public class PABaseCorrelation < PADTO extends PACorrelationDTO , 
     PODTO extends CorrelationDto,  
     BO extends StructuralRole , 
     CONVERTER extends AbstractPoConverter<PADTO, PODTO , BO>> 
@@ -53,13 +53,29 @@ public abstract class AbstractPABaseCorrelation <
      * default constructor.
      */
     @SuppressWarnings(UNCHECKED)
-    public AbstractPABaseCorrelation() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+    public PABaseCorrelation() {
+        Type myType = getClass(); // get the parameterized type, recursively resolving type parameters
+        ParameterizedType parameterizedType = (ParameterizedType) myType;
         typeArgument = (Class) parameterizedType.getActualTypeArguments()[0];
         srArgument = (Class) parameterizedType.getActualTypeArguments()[TWO];
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[THREE];
-        
     }
+    
+    /**
+     * 
+     * @param typeArgument padto
+     * @param srArgument bo
+     * @param converterArgument converter
+     */
+    public PABaseCorrelation(Class<PADTO> typeArgument, Class<BO> srArgument,
+            Class<CONVERTER> converterArgument) {
+        super();
+        this.typeArgument = typeArgument;
+        this.srArgument = srArgument;
+        this.converterArgument = converterArgument;
+    }
+
+
     /**
      * @param dto dto
      * @return dto

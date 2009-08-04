@@ -210,6 +210,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
             StudyProtocolQueryDTO  studyProtocolQueryDTO =
                 PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                         Long.valueOf(studyProtocolIi.getExtension()));
+            gtdDTO = new GeneralTrialDesignWebDTO();
+            query();
             // put an entry in the session and store StudyProtocolQueryDTO
             studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(),
                     PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));

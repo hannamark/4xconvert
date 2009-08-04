@@ -28,7 +28,7 @@ public class OrganizationalContactConverter
         OrganizationalContact oc = new OrganizationalContact();
         oc.setPerson(per);
         oc.setOrganization(org);
-        oc.setIdentifier(dto.getIdentifier().getExtension());
+        //oc.setIdentifier(dto.getIdentifier().getExtension());
         oc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return oc;
     }

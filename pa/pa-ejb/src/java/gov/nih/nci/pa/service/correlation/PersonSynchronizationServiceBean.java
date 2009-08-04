@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -389,8 +390,11 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                 if (personDto != null && organizationDto != null) {
                     // create a new crs 
-                    OrganizationalContactCorrelationServiceBean ocBean = 
-                        new OrganizationalContactCorrelationServiceBean();
+                    PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
+                    OrganizationalContactConverter> ocBean = new PABaseCorrelation<PAOrganizationalContactDTO , 
+                OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
+                PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
+                    
                     PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
                     orgContacPaDto.setOrganizationIdentifier(organizationDto.getIdentifier());
                     orgContacPaDto.setPersonIdentifier(personDto.getIdentifier());
