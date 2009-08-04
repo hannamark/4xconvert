@@ -78,10 +78,12 @@
 */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -94,6 +96,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -217,6 +220,14 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
              list.getItem().add(telemail);
             
             contactDTO.setTelecomAddress(list);
+            
+            DSet<Cd> orgContactType = new DSet<Cd>();
+            Set<Cd> orgContactCd = new HashSet<Cd>();
+            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
+            orgContactType.setItem(orgContactCd);
+            
+            contactDTO.setTypeCode(orgContactType);
+            
             RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .createCorrelation(contactDTO);
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();

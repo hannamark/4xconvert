@@ -5,10 +5,10 @@
 	<display:column title="PO-ID" property="identifier.extension"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Title" property="title"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 	<display:column title="Email">
-         <s:select name="emails" id="%{#attr.row.identifier.extension}email"  list="%{#attr.row.emails}"/>
+         <s:select name="emails" headerKey=""  headerValue="--Select--" id="%{#attr.row.identifier.extension}email"  list="%{#attr.row.emails}"/>
     </display:column>
     <display:column title="Phone">
-         <s:select name="phones" id="%{#attr.row.identifier.extension}phone"  list="%{#attr.row.phones}"/>
+         <s:select name="phones" headerKey=""  headerValue="--Select--" id="%{#attr.row.identifier.extension}phone"  list="%{#attr.row.phones}"/>
     </display:column>
 	<display:column title="Action" class="action" sortable="false"  headerScope="col">	
 	<a href="#" class="btn" onclick="submitform('${row.identifier.extension}','${fn:replace(row.title,'\'','')}')">
