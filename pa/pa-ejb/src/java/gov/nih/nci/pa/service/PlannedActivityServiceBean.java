@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
 import gov.nih.nci.pa.iso.convert.PlannedEligibilityCriterionConverter;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -99,6 +100,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -122,7 +124,9 @@ public class PlannedActivityServiceBean
  extends AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter>
         implements PlannedActivityServiceRemote , PlannedActivityServiceLocal {
 
-
+    @EJB
+    InterventionServiceRemote interventionSrv;
+    
     private void businessRules(PlannedActivityDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new PAException("PlannedActivity.studyProtocol must be set.");
@@ -141,6 +145,9 @@ public class PlannedActivityServiceBean
             if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
                 throw new PAException("An Intervention must be selected.");
             }
+            if (checkDuplicate(dto)) {
+                throw new PAException("Redundancy error:  this trial already includes the selected intervention. ");
+            }
             if (!isDrug && (dto.getLeadProductIndicator() != null)) {
                 getLogger().info("Setting lead product indicator to null for non-drug PlannedActivity.");
                 dto.setLeadProductIndicator(null);
@@ -149,6 +156,30 @@ public class PlannedActivityServiceBean
                 drugBusinessRules(dto);
             }
         }
+    }
+    
+    private boolean checkDuplicate(PlannedActivityDTO dto) throws PAException {
+        boolean duplicate = false;
+            InterventionDTO iDto = interventionSrv.get(dto.getInterventionIdentifier());
+            String interventionName = iDto.getName().getValue();
+       
+            List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (PlannedActivityDTO padto : paList) {
+            
+                if (!PAUtil.isIiNull(padto.getInterventionIdentifier())) {
+                    InterventionDTO interDto = interventionSrv.get(padto.getInterventionIdentifier());
+                    String interName = interDto.getName().getValue();
+           
+                   if (interName.equals(interventionName) 
+                     && padto.getSubcategoryCode().getCode().equals(dto.getSubcategoryCode().getCode()) 
+                     && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null)
+                       || (padto.getTextDescription().getValue() != null && dto.getTextDescription().getValue() != null
+                            && padto.getTextDescription().getValue().equals(dto.getTextDescription().getValue())))) {
+                       duplicate = true;
+                   }
+                }
+            }    
+          return duplicate;
     }
 
     private void drugBusinessRules(PlannedActivityDTO dto) throws PAException {

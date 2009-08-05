@@ -108,8 +108,12 @@ import org.junit.Test;
  *
  */
 public class PlannedActivityServiceTest {
-    private PlannedActivityServiceRemote remoteEjb = new PlannedActivityServiceBean();
+    
+    private PlannedActivityServiceBean remoteBean = new PlannedActivityServiceBean();
+    private PlannedActivityServiceRemote remoteEjb = remoteBean;
     private ArmServiceRemote remoteArmEjb = new ArmServiceBean();
+    private InterventionServiceRemote remoteIntervention = new InterventionServiceBean();
+   
     private Ii ii;
     private Ii spIi;
     private Ii armIi;
@@ -121,6 +125,7 @@ public class PlannedActivityServiceTest {
         ii = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
         armIi = IiConverter.convertToIi(TestSchema.armIds.get(0));
+        remoteBean.interventionSrv = remoteIntervention;
      }    
     @Test 
     public void getTest() throws Exception {
