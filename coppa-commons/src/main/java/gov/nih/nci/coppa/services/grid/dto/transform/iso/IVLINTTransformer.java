@@ -10,7 +10,7 @@ import org.iso._21090.INT;
 import org.iso._21090.IVLINT;
 
 /**
- * Transforms timestamp intervals.
+ * Transforms integer intervals.
  */
 public final class IVLINTTransformer extends AbstractTransformer<IVLINT, Ivl<Int>> implements
         Transformer<IVLINT, Ivl<Int>> {
