@@ -13,5 +13,8 @@
 	                </div>
 	            </fieldset>
 	            </c:forEach>        
+                <c:if test="${fn:length(cr.postalAddresses) > 0}">
+                    <p>Because there may be multiple postal addresses, no copy button is provided. Curators must manually make address changes.</p>
+                </c:if>
 	        </div>       
         </div>       
