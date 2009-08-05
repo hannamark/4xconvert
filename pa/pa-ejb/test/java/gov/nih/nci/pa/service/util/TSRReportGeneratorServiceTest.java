@@ -195,7 +195,6 @@ public class TSRReportGeneratorServiceTest {
         bean.studyParticipationContactService=studyParticipationContactService;
         bean.studyRegulatoryAuthorityService=studyRegulatoryAuthorityService;
         bean.studySiteAccrualStatusService=studySiteAccrualStatusService;
-        //bean.subGroupsService=  subGroupsService;  
         bean.regulatoryInformationService = regulatoryInformationService;
         bean.diseaseService = diseaseService;
         bean.interventionAlternateNameService = interventionAlternateNameService;

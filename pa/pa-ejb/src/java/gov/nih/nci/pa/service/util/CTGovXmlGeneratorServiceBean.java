@@ -1230,7 +1230,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     while (stoken.hasMoreElements()) { 
                         objectiveData.append(TAB);
                         objectiveData.append(DASH);
-                        objectiveData.append(stoken.nextElement().toString());
+                        objectiveData.append(stoken.nextElement().toString().trim());
                         objectiveData.append('\n');
                     } 
                 }
@@ -1243,7 +1243,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     while (stoken.hasMoreElements()) { 
                         objectiveData.append(TAB);
                         objectiveData.append(DASH);
-                        objectiveData.append(stoken.nextElement().toString());
+                        objectiveData.append(stoken.nextElement().toString().trim());
                         objectiveData.append('\n');
                     } 
                 }    
@@ -1251,11 +1251,17 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
         if (spDTO.getScientificDescription() != null && spDTO.getScientificDescription().getValue() != null) {
             objectiveData.append(NEW_LINE);
-            objectiveData.append("Outline:");
-            objectiveData.append(TAB);
-            objectiveData.append(DASH);
-            objectiveData.append(StConverter.convertToString(spDTO.getScientificDescription()));
-            objectiveData.append(NEW_LINE);
+            objectiveData.append("Outline:\n");
+            StringTokenizer stoken = new StringTokenizer(
+                    StConverter.convertToString(spDTO.getScientificDescription()).trim(), ".");
+            while (stoken.hasMoreElements()) { 
+                objectiveData.append(TAB);
+                objectiveData.append(DASH);
+                String s = stoken.nextElement().toString().trim().replaceAll("\\n", " ");
+                String s1 = s.replaceAll("\\r", " ");
+                objectiveData.append(s1);
+                objectiveData.append('\n');
+            } 
         }
         Integer projectedAccrual = IvlConverter.convertInt().convertLow(spDTO.getTargetAccuralNumber());
         if (projectedAccrual != null) {

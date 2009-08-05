@@ -76,21 +76,6 @@
         </tr>
         <tr>
         <td class="label">
-           <label for="scientificDescription">
-                    <fmt:message key="trial.scientificDescription"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textarea name="outline" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
-        <span class="formErrorMsg"> 
-                <s:fielderror>
-                    <s:param>outline</s:param>
-                </s:fielderror>                            
-            </span> 
-        </td>
-    </tr>
-         <tr>
-        <td class="label">
            <label for="primary">
                     <fmt:message key="trial.primary"/>
            </label>
@@ -134,7 +119,21 @@
             </span>
         </td>
     </tr>
-    
+     <tr>
+        <td class="label">
+           <label for="scientificDescription">
+                    <fmt:message key="trial.scientificDescription"/>
+           </label>
+         </td>
+         <td class="value">
+        <s:textarea name="outline" cssStyle="width:606px" rows="4"/> (Max 12000 chars)
+        <span class="formErrorMsg"> 
+                <s:fielderror>
+                    <s:param>outline</s:param>
+                </s:fielderror>                            
+            </span> 
+        </td>
+    </tr>
     </table>
    
 <div class="actionsrow">

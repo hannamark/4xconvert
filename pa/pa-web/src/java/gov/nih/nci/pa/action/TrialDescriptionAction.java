@@ -118,6 +118,7 @@ public class TrialDescriptionAction extends ActionSupport {
 
 
     private static final String MAX_LEN = "2000";
+    private static final String MAX_LEN_OUTLINE = "12000";
     private String trialBriefTitle;
     private String trialBriefSummary;
     private String outline;
@@ -296,7 +297,7 @@ public class TrialDescriptionAction extends ActionSupport {
     /**
      * @return the outline
      */
-    @StringLengthFieldValidator(message = "Outline must be 200 characters max", maxLength = MAX_LEN)
+    @StringLengthFieldValidator(message = "Outline must be 12000 characters max", maxLength = MAX_LEN_OUTLINE)
     public String getOutline() {
         return outline;
     }
@@ -311,7 +312,7 @@ public class TrialDescriptionAction extends ActionSupport {
     /**
      * @return the primary
      */
-    @StringLengthFieldValidator(message = "Primary must be 200 characters max", maxLength = MAX_LEN)
+    @StringLengthFieldValidator(message = "Primary must be 2000 characters max", maxLength = MAX_LEN)
     public String getPrimary() {
         return primary;
     }
@@ -326,7 +327,7 @@ public class TrialDescriptionAction extends ActionSupport {
     /**
      * @return the secondary
      */
-    @StringLengthFieldValidator(message = "Secondary must be 200 characters max", maxLength = MAX_LEN)
+    @StringLengthFieldValidator(message = "Secondary must be 2000 characters max", maxLength = MAX_LEN)
     public String getSecondary() {
         return secondary;
     }
@@ -341,7 +342,7 @@ public class TrialDescriptionAction extends ActionSupport {
     /**
      * @return the ternary
      */
-    @StringLengthFieldValidator(message = "Ternary must be 200 characters max", maxLength = MAX_LEN)
+    @StringLengthFieldValidator(message = "Ternary must be 2000 characters max", maxLength = MAX_LEN)
     public String getTernary() {
         return ternary;
     }

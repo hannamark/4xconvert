@@ -1586,12 +1586,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   objectiveData.append(BR);
                   objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.PRIMARY.getCode()));
                   objectiveData.append(BR);
-                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()).trim(),
                       ".");
                   while (stoken.hasMoreElements()) {
                       objectiveData.append(UL_B);
                       objectiveData.append(LI_B);
-                      objectiveData.append(stoken.nextElement().toString());
+                      objectiveData.append(stoken.nextElement().toString().trim());
                       objectiveData.append(LI_E);
                       objectiveData.append(UL_E);
                   }
@@ -1600,12 +1600,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   objectiveData.append(BR);
                   objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.SECONDARY.getCode()));
                   objectiveData.append(BR);
-                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()).trim(),
                       ".");
                   while (stoken.hasMoreElements()) {
                       objectiveData.append(UL_B);
                       objectiveData.append(LI_B);
-                      objectiveData.append(stoken.nextElement().toString());
+                      objectiveData.append(stoken.nextElement().toString().trim());
                       objectiveData.append(LI_E);
                       objectiveData.append(UL_E);
                   }
@@ -1614,12 +1614,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   objectiveData.append(BR);
                   objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.TERNARY.getCode()));
                   objectiveData.append(BR);
-                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
+                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()).trim(),
                       ".");
                   while (stoken.hasMoreElements()) {
                       objectiveData.append(UL_B);
                       objectiveData.append(LI_B);
-                      objectiveData.append(stoken.nextElement().toString());
+                      objectiveData.append(stoken.nextElement().toString().trim());
                       objectiveData.append(LI_E);
                       objectiveData.append(UL_E);
                   }
@@ -1631,11 +1631,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               && studyProtocolDto.getScientificDescription().getValue() != null) {
           objectiveData.append(BR);
           objectiveData.append(NBSP).append(appendBoldData("Outline:"));
-          objectiveData.append(UL_B);
-          objectiveData.append(LI_B);
-          objectiveData.append(studyProtocolDto.getScientificDescription().getValue());
-          objectiveData.append(UL_E);
-          objectiveData.append(LI_E);
+          objectiveData.append(BR);
+          StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(
+                  studyProtocolDto.getScientificDescription()).trim(), ".");
+          while (stoken.hasMoreElements()) {
+           objectiveData.append(UL_B);
+           objectiveData.append(LI_B);
+           objectiveData.append(stoken.nextElement().toString().trim());
+           objectiveData.append(LI_E);
+           objectiveData.append(UL_E);
+         }
+          
       }
       Integer projectedAcc = IvlConverter.convertInt().convertLow(studyProtocolDto.getTargetAccuralNumber());
       if (projectedAcc != null) {
