@@ -5,8 +5,8 @@ import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 
@@ -38,7 +38,7 @@ public final class DocumentWorkflowStatusTransformer
         result.setCommentText(STTransformer.INSTANCE.toDto(xml.getCommentText()));
         result.setIdentifier(IITransformer.INSTANCE.toDto(xml.getIdentifier()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(xml.getStatusCode()));
-        result.setStatusDateRange(TSTransformer.INSTANCE.toDto(xml.getStatusDateRange()));
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toDto(xml.getStatusDateRange()));
         result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toDto(xml.getStudyProtocolIdentifier()));
         return result;
     }
@@ -56,7 +56,7 @@ public final class DocumentWorkflowStatusTransformer
         result.setCommentText(STTransformer.INSTANCE.toXml(dto.getCommentText()));
         result.setIdentifier(IITransformer.INSTANCE.toXml(dto.getIdentifier()));
         result.setStatusCode(CDTransformer.INSTANCE.toXml(dto.getStatusCode()));
-        result.setStatusDateRange(TSTransformer.INSTANCE.toXml(dto.getStatusDateRange()));
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(dto.getStatusDateRange()));
         result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toXml(dto.getStudyProtocolIdentifier()));
         return result;
     }

@@ -129,20 +129,4 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throws PAException {
         throw new PAException("ObservationStudyProtocal methods are not implemented!");
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated -- DO NOT USE
-     */
-    @Deprecated
-    public List<StudyProtocolDTO> search(StudyProtocolDTO dto) throws PAException {
-        try {
-            return locator.getStudyProtocolService().search(dto);
-        } catch (PAException pae) {
-            throw pae;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
 }

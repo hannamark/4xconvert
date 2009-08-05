@@ -91,7 +91,7 @@
                     <xs:element name="fdaRegulatedIndicator" type="ISO:BL" />
                     <xs:element name="reviewBoardApprovalRequiredIndicator" type="ISO:BL" />
                     <xs:element name="officialTitle" type="ISO:ST" />
-                    <xs:element name="maximumTargetAccrualNumber" type="ISO:INT" />
+                    <xs:element name="targetAccrualNumber" type="ISO:IVL_INT" />
                     <xs:element name="phaseCode" type="ISO:CD" />
                     <xs:element name="phaseOtherText" type="ISO:ST" />
                     <xs:element name="primaryCompletionDate" type="ISO:TS" />
@@ -158,7 +158,7 @@
                     <xs:sequence>
                         <xs:element name="commentText" type="ISO:ST" />
                         <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDateRange" type="ISO:TS" />
+                        <xs:element name="statusDateRange" type="ISO:IVL_TS" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

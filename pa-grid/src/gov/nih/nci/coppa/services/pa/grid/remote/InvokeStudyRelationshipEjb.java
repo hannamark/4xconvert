@@ -40,20 +40,4 @@ public class InvokeStudyRelationshipEjb extends InvokePaServiceEjb<StudyRelation
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public List<StudyRelationshipDTO> search(StudyRelationshipDTO arg0) throws PAException {
-        try {
-            return locator.getStudyRelationshipService().search(arg0);
-        } catch (PAException pae) {
-            throw pae;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
 }

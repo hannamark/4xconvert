@@ -89,6 +89,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLINTTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.coppa.services.pa.StudyProtocolType;
@@ -169,8 +170,9 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setStartDate(TSTransformer.INSTANCE.toDto(input.getStartDate()));
         result.setStatusDate(TSTransformer.INSTANCE.toDto(input.getStatusDate()));
         // INT
-        result.setMaximumTargetAccrualNumber(INTTransformer.INSTANCE.toDto(input.getMaximumTargetAccrualNumber()));
         result.setSubmissionNumber(INTTransformer.INSTANCE.toDto(input.getSubmissionNumber()));
+        // IVLINT
+        result.setTargetAccuralNumber(IVLINTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
 
         return result;
     }
@@ -226,8 +228,10 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setStartDate(TSTransformer.INSTANCE.toXml(input.getStartDate()));
         result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
         // INT
-        result.setMaximumTargetAccrualNumber(INTTransformer.INSTANCE.toXml(input.getMaximumTargetAccrualNumber()));
         result.setSubmissionNumber(INTTransformer.INSTANCE.toXml(input.getSubmissionNumber()));
+        // IVLINT
+        result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toXml(input.getTargetAccuralNumber()));
+
         return result;
     }
 }

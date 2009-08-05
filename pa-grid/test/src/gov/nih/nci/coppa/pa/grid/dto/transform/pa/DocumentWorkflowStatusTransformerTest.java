@@ -3,8 +3,8 @@ package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentWorkflowStatusTransformer;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -21,7 +21,7 @@ public class DocumentWorkflowStatusTransformerTest extends
         result.setCommentText(new STTransformerTest().makeDtoSimple());
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setStatusCode(new CDTransformerTest().makeDtoSimple());
-        result.setStatusDateRange(new TSTransformerTest().makeDtoSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         return result;
     }
@@ -32,7 +32,7 @@ public class DocumentWorkflowStatusTransformerTest extends
         result.setCommentText(new STTransformerTest().makeXmlSimple());
         result.setIdentifier(new IITransformerTest().makeXmlSimple());
         result.setStatusCode(new CDTransformerTest().makeXmlSimple());
-        result.setStatusDateRange(new TSTransformerTest().makeXmlSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
         return result;
     }
@@ -42,7 +42,7 @@ public class DocumentWorkflowStatusTransformerTest extends
         new STTransformerTest().verifyDtoSimple(input.getCommentText());
         new IITransformerTest().verifyDtoSimple(input.getIdentifier());
         new CDTransformerTest().verifyDtoSimple(input.getStatusCode());
-        new TSTransformerTest().verifyDtoSimple(input.getStatusDateRange());
+        new IVLTSTransformerTest().verifyDtoSimple(input.getStatusDateRange());
         new IITransformerTest().verifyDtoSimple(input.getStudyProtocolIdentifier());
     }
 
@@ -51,7 +51,7 @@ public class DocumentWorkflowStatusTransformerTest extends
         new STTransformerTest().verifyXmlSimple(input.getCommentText());
         new IITransformerTest().verifyXmlSimple(input.getIdentifier());
         new CDTransformerTest().verifyXmlSimple(input.getStatusCode());
-        new TSTransformerTest().verifyXmlSimple(input.getStatusDateRange());
+        new IVLTSTransformerTest().verifyXmlSimple(input.getStatusDateRange());
         new IITransformerTest().verifyXmlSimple(input.getStudyProtocolIdentifier());
     }
 }

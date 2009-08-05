@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLINTTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
@@ -136,8 +137,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setStartDate(new TSTransformerTest().makeDtoSimple());
         result.setStatusDate(new TSTransformerTest().makeDtoSimple());
         //INT
-        result.setMaximumTargetAccrualNumber(new INTTransformerTest().makeDtoSimple());
         result.setSubmissionNumber(new INTTransformerTest().makeDtoSimple());
+        //IVLINT
+        result.setTargetAccuralNumber(new IVLINTTransformerTest().makeDtoSimple());
 
         return result;
     }
@@ -183,8 +185,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setStartDate(new TSTransformerTest().makeXmlSimple());
         result.setStatusDate(new TSTransformerTest().makeXmlSimple());
         //INT
-        result.setMaximumTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
         result.setSubmissionNumber(new INTTransformerTest().makeXmlSimple());
+        //IVLINT
+        result.setTargetAccrualNumber(new IVLINTTransformerTest().makeXmlSimple());
 
         return result;
     }
@@ -229,8 +232,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new TSTransformerTest().verifyDtoSimple(x.getStartDate());
         new TSTransformerTest().verifyDtoSimple(x.getStatusDate());
         //INT
-        new INTTransformerTest().verifyDtoSimple(x.getMaximumTargetAccrualNumber());
         new INTTransformerTest().verifyDtoSimple(x.getSubmissionNumber());
+        //IVLINT
+        new IVLINTTransformerTest().verifyDtoSimple(x.getTargetAccuralNumber());
     }
 
     @Override
@@ -273,7 +277,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new TSTransformerTest().verifyXmlSimple(x.getStartDate());
         new TSTransformerTest().verifyXmlSimple(x.getStatusDate());
         //INT
-        new INTTransformerTest().verifyXmlSimple(x.getMaximumTargetAccrualNumber());
         new INTTransformerTest().verifyXmlSimple(x.getSubmissionNumber());
+        //IVLINT
+        new IVLINTTransformerTest().verifyXmlSimple(x.getTargetAccrualNumber());
+
     }
 }
