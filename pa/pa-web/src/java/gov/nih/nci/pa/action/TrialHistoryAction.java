@@ -93,6 +93,7 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.enums.ActStatusCode;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -114,6 +115,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  * @author Anupama Sharma
  * @since 04/16/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public final class TrialHistoryAction extends AbstractListEditAction  implements
 ServletResponseAware {
 
@@ -232,14 +234,25 @@ ServletResponseAware {
 
         StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
-        List<StudyProtocolDTO> spList;
+        spDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+        List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
         try {
-            spList = studyProtocolSvc.search(spDTO, limit);
+            List<StudyProtocolDTO> activeList = studyProtocolSvc.search(spDTO, limit);
+            if (activeList != null && !activeList.isEmpty()) {
+                spList.addAll(activeList);
+            }
+            
+            spDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+            List<StudyProtocolDTO> inactiveList = studyProtocolSvc.search(spDTO, limit);
+            if (inactiveList != null && !inactiveList.isEmpty()) {
+                spList.addAll(inactiveList);
+            }
+            
         } catch (TooManyResultsException e) {
              throw new PAException(e.getMessage());
         }
         List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
-        if (spList != null) {
+        if (!spList.isEmpty()) {
             for (StudyProtocolDTO sp : spList) {
                 TrialHistoryWebDTO dto = new TrialHistoryWebDTO(sp);
                 dto.setDocuments(getDocuments(sp));

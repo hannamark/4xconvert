@@ -730,7 +730,12 @@ import org.hibernate.criterion.Example;
                 String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";
                 exampleDO.setOfficialTitle(title);
             }
-            exampleDO.setStatusCode(ActStatusCode.ACTIVE);
+            if (dto.getStatusCode() == null || dto.getStatusCode().getCode().equals(ActStatusCode.ACTIVE.getCode())) {
+                exampleDO.setStatusCode(ActStatusCode.ACTIVE);
+            }
+            if (dto.getStatusCode() != null && dto.getStatusCode().getCode().equals(ActStatusCode.INACTIVE.getCode())) {
+                exampleDO.setStatusCode(ActStatusCode.INACTIVE);
+            }
             Example example = Example.create(exampleDO);
             example.enableLike();
             Criteria criteria = session.createCriteria(StudyProtocol.class).add(example);
