@@ -106,7 +106,7 @@ import org.xml.sax.Attributes;
 public class JaxbSerializer implements Serializer {
 
     private static final long serialVersionUID = -3204978709399586948L;
-    private static final Map<String, Marshaller> MAP = new HashMap<String, Marshaller>();
+    private static final Map<String, JAXBContext> MAP = new HashMap<String, JAXBContext>();
 
     /**
      * {@inheritDoc}
@@ -115,15 +115,14 @@ public class JaxbSerializer implements Serializer {
     public void serialize(QName name, Attributes attributes, Object value, SerializationContext context)
             throws IOException {
         try {
-            Marshaller marshaller = MAP.get(value.getClass().getPackage().getName());
-            if (marshaller == null) {
-                final JAXBContext jaxbContext = JAXBContext.newInstance(value.getClass().getPackage().getName());
-                marshaller = jaxbContext.createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-                // marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-                MAP.put(value.getClass().getPackage().getName(), marshaller);
+            JAXBContext jaxbContext = MAP.get(value.getClass().getPackage().getName());
+            if (jaxbContext == null) {           
+                jaxbContext = JAXBContext.newInstance(value.getClass().getPackage().getName());
+                MAP.put(value.getClass().getPackage().getName(), jaxbContext);
             }
-
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            // marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(value, new Filter(context));
 
         } catch (Exception e) {
