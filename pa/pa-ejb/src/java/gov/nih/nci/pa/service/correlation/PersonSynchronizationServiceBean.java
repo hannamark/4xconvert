@@ -403,7 +403,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                   }
                   if (nullfiedIi != null) {
                       srIi = nullifiedEntities.get(nullfiedIi);
-                      srIi = IiConverter.converToPoOrganizationalContactIi("12897");
+                      //srIi = IiConverter.converToPoOrganizationalContactIi("12897");
                   }
                   if (srIi != null) {
                       //nullified with Duplicate
