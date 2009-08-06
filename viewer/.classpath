@@ -56,6 +56,6 @@
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate-commons-annotations-3.3.0.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate-validator-3.0.0.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/test/cglib-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/iso-datatypes-1.1.0.rc1.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/compile/iso-datatypes-1.2.4.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>
