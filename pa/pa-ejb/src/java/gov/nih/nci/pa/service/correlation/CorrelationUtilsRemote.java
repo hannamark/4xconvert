@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -149,12 +148,4 @@ public interface CorrelationUtilsRemote {
      */
     Organization getPAOrganizationByPAOversightCommitteeId(Long paOversightCommitteeId) throws PAException;
     
-    /**
-     * 
-     * @param oc oc
-     * @return oc
-     * @throws PAException pe
-     */
-    
-    OrganizationalContact getPAOrganizationalContact(OrganizationalContact oc) throws PAException;
 }

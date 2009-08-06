@@ -53,7 +53,7 @@ BubbleTips.activateTipOn("dfn");
                             <fmt:message key="trialDocument.type"/><span class="required">*</span>
                      </label>
                     </td>
-    				<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.DocumentTypeCode@getDisplayNames()" />
+    				<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.DocumentTypeCode@getDocTypeCodes()" />
                     <td class="value">
     					<s:if test="page.equals('Edit')">
                       		<s:select headerKey="" headerValue="" 

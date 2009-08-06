@@ -81,6 +81,10 @@ package gov.nih.nci.pa.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 /**
  *
  * @author Kalpana Guthikonda
@@ -164,4 +168,17 @@ public enum DocumentTypeCode implements CodedEnum<String> {
         }
         return codedNames;
     }        
+    /**
+     * @return String[] display names of enums
+     */
+    @SuppressWarnings({"PMD.UseStringBufferForStringAppends" })
+    public static String[] getDocTypeCodes() {
+        String[] codedNames = getDisplayNames();
+        List<String> list = new ArrayList<String>(Arrays.asList(codedNames)); 
+        list.remove("TSR");
+        codedNames = new String[list.size()];
+        codedNames = list.toArray(codedNames);
+        return codedNames;
+    } 
+
 }

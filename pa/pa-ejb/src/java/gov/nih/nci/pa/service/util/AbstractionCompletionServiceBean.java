@@ -278,7 +278,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceTreatingSite(studyProtocolIi, abstractionList);
     enforceStudyContactNullification(studyProtocolIi, abstractionWarnList);
     enforceStudyParticipationNullification(studyProtocolIi, abstractionWarnList);
-    enforceStudyParticipationContactNullification(studyProtocolIi, abstractionWarnList);
+    enforceStudyParticipationContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
     enforceArmGroup(studyProtocolIi, studyProtocolDTO, abstractionList);
     enforceTrialFunding(studyProtocolIi, abstractionList);
     enforceDisease(studyProtocolIi, abstractionList);
@@ -411,7 +411,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
   
    private void enforceStudyParticipationContactNullification(
-          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)  throws PAException {
+          Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList, 
+          List<AbstractionCompletionDTO> abstractionList)  throws PAException {
       
         List<StudyParticipationContactDTO> scDtos = 
           studyParticipationContactService.getByStudyProtocol(studyProtocolIi);
@@ -444,7 +445,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               if (StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT.getCode().
                       equalsIgnoreCase(studyParticipationContactDTO.getRoleCode().getCode())) {
           
-                  abstractionWarnList.add(createError("Warning", 
+                  abstractionList.add(createError("Error", 
                    "Select General Trial Details from Administrative Data menu.",
                    "Responsible Party Sponsor Contact status has been set to nullified, " 
                    + "Please select another Responsible Party Sponsor Contact")); 

@@ -271,10 +271,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
                 if (contactDto.getFullName() != null) {
                  gtdDTO.setResponsiblePersonName(contactDto.getFullName());
-                 gtdDTO.setResponsiblePersonIdentifier(contactDto.getPersonIdentifier().getExtension());
+                 gtdDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(contactDto.getPersonIdentifier()));
                 }
                 if (contactDto.getTitle() != null) {
-                    gtdDTO.setResponsiblePersonIdentifier(contactDto.getSrIdentifier().getExtension());
+                    gtdDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(contactDto.getSrIdentifier()));
                     gtdDTO.setResponsibleGenericContactName(contactDto.getTitle());
                 }
 

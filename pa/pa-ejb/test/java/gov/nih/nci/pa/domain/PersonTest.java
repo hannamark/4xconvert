@@ -141,7 +141,7 @@ public class PersonTest {
         p.setFirstName("Naveen");
         p.setLastName("Amiruddin");
         p.setMiddleName("S");
-        p.setIdentifier("abc");
+        p.setIdentifier("3");
         p.setStatusCode(EntityStatusCode.PENDING);
         return p;
     }

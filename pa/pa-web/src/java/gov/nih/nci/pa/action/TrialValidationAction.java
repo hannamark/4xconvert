@@ -515,10 +515,10 @@ public class TrialValidationAction extends ActionSupport {
 
                 if (conDto.getFullName() != null) {
                  gtdDTO.setResponsiblePersonName(conDto.getFullName());
-                 gtdDTO.setResponsiblePersonIdentifier(conDto.getPersonIdentifier().getExtension());
+                 gtdDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(conDto.getPersonIdentifier()));
                 } 
                 if (conDto.getTitle() != null) {
-                    gtdDTO.setResponsiblePersonIdentifier(conDto.getSrIdentifier().getExtension());
+                    gtdDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(conDto.getSrIdentifier()));
                     gtdDTO.setResponsibleGenericContactName(conDto.getTitle());
                 }
             }

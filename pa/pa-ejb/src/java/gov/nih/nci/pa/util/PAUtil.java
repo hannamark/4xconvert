@@ -495,5 +495,17 @@ public class PAUtil {
         }
         return ret;
     }
+    /**
+     * 
+     * @param identifier Ii
+     * @return str
+     */
+    public static String getIiExtension(Ii identifier) {
+        String ext = "";
+        if (!isIiNull(identifier)) {
+            ext = identifier.getExtension();
+        }
+        return ext;
+    }
 
 }

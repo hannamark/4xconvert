@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -104,7 +105,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -116,6 +119,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -370,51 +375,81 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
     private void updateOrganizationalContact(final Ii ocIdentifier , 
             final OrganizationalContactDTO ocDto) throws PAException {
-        OrganizationalContact oc = new OrganizationalContact();
-        oc.setIdentifier(ocIdentifier.getExtension());
-        oc = cUtils.getPAOrganizationalContact(oc);
+        OrganizationalContact oc = getPAOrganizationalContact(ocIdentifier.getExtension());
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
         if (oc != null) {
-            // process only if pa has any clinical research staff records
+            // process only if pa has any oc  records
             session = HibernateUtil.getCurrentSession();
             if (ocDto == null) { 
+                Ii srIi = null;
+                //nullified without duplicate
+                //so check if Entity or SR are not nullified 
+                //if nullified just update the Status to nullified in PA 
                 // this is a nullified, so treat it in a special manner
                 // step 1: get the po person,org identifier (player)
-                Long paOrgId = oc.getOrganization().getId();
-                Long paPerId = oc.getPerson().getId();
                 Long duplicateOcId = null;
-                String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
-                String poPerId = cUtils.getPAPersonByIndetifers(paPerId, null).getIdentifier();
-                PersonDTO personDto = getPoPerson(poPerId);
-                OrganizationDTO organizationDto = getPoOrganization(poOrgId);
-                if (personDto != null && organizationDto != null) {
-                    // create a new crs 
-                    PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
-                    OrganizationalContactConverter> ocBean = new PABaseCorrelation<PAOrganizationalContactDTO , 
-                OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
-                PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
-                    
-                    PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
-                    orgContacPaDto.setOrganizationIdentifier(organizationDto.getIdentifier());
-                    orgContacPaDto.setPersonIdentifier(personDto.getIdentifier());
-                    duplicateOcId = ocBean.create(orgContacPaDto);
-                    OrganizationalContact dupOc = new OrganizationalContact();
-                    dupOc.setId(duplicateOcId);
-                    dupOc = cUtils.getPAOrganizationalContact(dupOc);
-                    newRoleCode = dupOc.getStatusCode();
-                    // replace the old, with the new change identifiers
-                    replaceStudyContactIdentifiers(
-                            IiConverter.converToPoOrganizationalContactIi(oc.getId().toString()), 
-                            IiConverter.converToPoOrganizationalContactIi(duplicateOcId.toString()) ,
-                            STUDY_PART_CONTACT);
-                    // nullify the current 
-                    oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                } else {
-                    // this is nullified scenario with no org or person associated, in that case nullify the role
-                    oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                    newRoleCode = StructuralRoleStatusCode.NULLIFIED;
-                }
+                try {
+                    PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifier);
+                } catch (NullifiedRoleException e) {
+                  LOG.info("Nullified Role exception for Organizational Contatc for id" + oc.getIdentifier());
+                  // SR is nullified, find out if it has any duplicates
+                  Ii nullfiedIi = null;
+                  Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+                  for (Ii tmp : nullifiedEntities.keySet()) {
+                      if (tmp.getExtension().equals(ocIdentifier.getExtension())) {
+                          nullfiedIi = tmp;
+                      }
+                  }
+                  if (nullfiedIi != null) {
+                      srIi = nullifiedEntities.get(nullfiedIi);
+                      srIi = IiConverter.converToPoOrganizationalContactIi("12897");
+                  }
+                  if (srIi != null) {
+                      //nullified with Duplicate
+                      replaceStudyContactIdentifiers(ocIdentifier, srIi, STUDY_PART_CONTACT);
+                  } else {
+                    String poOrgId = oc.getOrganization().getIdentifier();
+                    PersonDTO personDto = null;
+                    String poPerId = null;
+                    OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+
+                    if (oc.getPerson() != null && PAUtil.isNotEmpty(oc.getPerson().getIdentifier())) {
+                          poPerId = oc.getPerson().getIdentifier();
+                          personDto = getPoPerson(poPerId);
+                    }
+                    if (organizationDto != null && personDto != null) {
+                        //This means Oc is having player as person
+                      // create a new crs 
+                      PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , 
+                      OrganizationalContact , OrganizationalContactConverter> ocBean = new 
+                      PABaseCorrelation<PAOrganizationalContactDTO , 
+                      OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
+                      PAOrganizationalContactDTO.class, OrganizationalContact.class,
+                      OrganizationalContactConverter.class);
+                            
+                      PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
+                      orgContacPaDto.setOrganizationIdentifier(organizationDto.getIdentifier());
+                      orgContacPaDto.setPersonIdentifier(personDto.getIdentifier());
+                      duplicateOcId = ocBean.create(orgContacPaDto);
+                      OrganizationalContact dupOc = new OrganizationalContact();
+                      dupOc = getPAOrganizationalContact(duplicateOcId.toString());
+                      newRoleCode = dupOc.getStatusCode();
+                      // replace the old, with the new change identifiers
+                      replaceStudyContactIdentifiers(
+                             IiConverter.converToPoOrganizationalContactIi(oc.getId().toString()), 
+                             IiConverter.converToPoOrganizationalContactIi(duplicateOcId.toString()) ,
+                                    STUDY_PART_CONTACT);
+                                // nullify the current 
+                      oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                  } else {
+                      // this is nullified scenario with no org or person associated, in that case nullify the role
+                      // or this can also mean the Player was SR
+                            oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                            newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+                        }
+                    }
+                  } //end if (ocDto == null)
             } else if (!oc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()))) {
                 // this is a update scenario with a status change
                 newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus());
@@ -425,7 +460,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             spcLocal.cascadeRoleStatus(ocIdentifier, CdConverter.convertToCd(newRoleCode));
         }
     }
-
+    
     private void replaceStudyContactIdentifiers(final Ii fromId  , final Ii toId , final String tableName) {
         String sql = null;
         if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {    
@@ -512,5 +547,49 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
        }
        return organizationDto; 
     }
+    /**
+    *
+    * @param oc oc
+    * @return oc
+    * @throws PAException pe
+    */
 
+   @SuppressWarnings("unchecked")
+   private OrganizationalContact getPAOrganizationalContact(String identifier)
+   throws PAException {
+       if (identifier == null) {
+           LOG.error("Clinicial Research Staff cannot be null");
+           throw new PAException("Clinicial Research Staff cannot be null");
+       }
+       OrganizationalContact ocOut = null;
+       Session session = null;
+       List<OrganizationalContact> queryList = new ArrayList<OrganizationalContact>();
+       StringBuffer hql = new StringBuffer();
+       
+       hql.append(" select oc from OrganizationalContact oc  "
+               + " where oc.identifier = :identifier");
+       try {
+           session = HibernateUtil.getCurrentSession();
+           Query query = null;
+           query = session.createQuery(hql.toString());
+           query.setParameter("identifier", identifier);
+           queryList = query.list();
+
+       if (queryList.size() > 1) {
+           LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
+           throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
+
+       }
+   }  catch (HibernateException hbe) {
+       LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
+       throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
+   } finally {
+       session.flush();
+   }
+
+   if (!queryList.isEmpty()) {
+       ocOut = queryList.get(0);
+   }
+   return ocOut;
+   }
 }
