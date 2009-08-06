@@ -616,7 +616,7 @@ public class BatchCreateProtocols {
         //check if the values are present..
         if (!isIndIdeEmpty(dto)) {
             TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
-            indldeDTO.setIndIdeId(dto.getIndType());
+            indldeDTO.setIndIde(dto.getIndType());
             indldeDTO.setNumber(dto.getIndNumber());
             indldeDTO.setGrantor(dto.getIndGrantor());
             indldeDTO.setHolderType(dto.getIndHolderType());

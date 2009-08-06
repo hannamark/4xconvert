@@ -154,11 +154,11 @@ public class TrialUtil {
                         Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
                 if (paDto.getFullName() != null) {
                     trialDTO.setResponsiblePersonName(paDto.getFullName());
-                    trialDTO.setResponsiblePersonIdentifier(paDto.getPersonIdentifier().getExtension());
+                    trialDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(paDto.getPersonIdentifier()));
                 } 
                 if (paDto.getTitle() != null)  {
                    trialDTO.setResponsibleGenericContactName(paDto.getTitle());
-                   trialDTO.setResponsiblePersonIdentifier(paDto.getSrIdentifier().getExtension());
+                   trialDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(paDto.getSrIdentifier()));
                 }
             }
         }
