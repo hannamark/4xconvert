@@ -139,7 +139,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         //INT
         result.setSubmissionNumber(new INTTransformerTest().makeDtoSimple());
         //IVLINT
-        result.setTargetAccuralNumber(new IVLINTTransformerTest().makeDtoSimple());
+        result.setTargetAccrualNumber(new IVLINTTransformerTest().makeDtoSimple());
 
         return result;
     }
@@ -234,7 +234,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         //INT
         new INTTransformerTest().verifyDtoSimple(x.getSubmissionNumber());
         //IVLINT
-        new IVLINTTransformerTest().verifyDtoSimple(x.getTargetAccuralNumber());
+        new IVLINTTransformerTest().verifyDtoSimple(x.getTargetAccrualNumber());
     }
 
     @Override

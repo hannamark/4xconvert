@@ -172,7 +172,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         // INT
         result.setSubmissionNumber(INTTransformer.INSTANCE.toDto(input.getSubmissionNumber()));
         // IVLINT
-        result.setTargetAccuralNumber(IVLINTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
+        result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
 
         return result;
     }
@@ -230,7 +230,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         // INT
         result.setSubmissionNumber(INTTransformer.INSTANCE.toXml(input.getSubmissionNumber()));
         // IVLINT
-        result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toXml(input.getTargetAccuralNumber()));
+        result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
 
         return result;
     }
