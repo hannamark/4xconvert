@@ -11,6 +11,7 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
 
 public class WelcomeActionTest extends AbstractAccrualActionTest {
 
+    private static String AR_LOGOUT = "logout";
     private static String AR_ACCRUAL_ADMIN = "adminWelcome";
     private static String AR_SUBMITTING_SITES = "publicWelcome";
 
@@ -37,7 +38,7 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void nullRoleTest() {
-        assertEquals(null, action.execute());
+        assertEquals(AR_LOGOUT, action.execute());
     }
 
 }
