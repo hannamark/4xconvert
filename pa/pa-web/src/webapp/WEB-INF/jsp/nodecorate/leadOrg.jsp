@@ -5,7 +5,7 @@
 <s:textfield label="Organization Name" name="gtdDTO.leadOrganizationName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly"/>
  </td><td> 
                   <ul style="margin-top:-1px;">             
-                        <li style="padding-left:0"><a href="#" class="btn" onclick="lookup4loadleadorg();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
+                        <li style="padding-left:0"><a href="#" class="btn" onclick="lookup4loadleadorg();"/><span class="btn_img"><span class="organization">Look Up</span></span></a></li>
                   </ul><s:hidden name="gtdDTO.leadOrganizationIdentifier" />
                    </td>
       </tr>

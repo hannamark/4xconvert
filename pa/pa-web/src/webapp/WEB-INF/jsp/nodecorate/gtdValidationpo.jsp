@@ -66,7 +66,20 @@ function lookup4loadresponsiblepartygenericcontact(){
 	var orgid = document.getElementById('sponsorIdentifier').value;
     showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
+function manageRespPartyLookUp(){
+    if(document.getElementById('gtdDTO.responsiblePartyTypepi').checked==true) {
+        document.getElementById('rpcid').style.display='none';
+        document.getElementById('rpgcid').style.display='none';
+        document.getElementById('gtdDTO.responsiblePersonName').value = '';
+        document.getElementById('gtdDTO.responsibleGenericContactName').value = '';
+        document.getElementById('gtdDTO.responsiblePersonIdentifier').value  = '';
+    }
+    if(document.getElementById('gtdDTO.responsiblePartyTypesponsor').checked==true) {             
+                document.getElementById('rpcid').style.display='';
+                document.getElementById('rpgcid').style.display='';
+    }
 
+}
 
 </script> 
     <tr>
@@ -117,31 +130,55 @@ function lookup4loadresponsiblepartygenericcontact(){
     <tr>
         <td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
         <td>
-        	<s:radio name="gtdDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
+        	<s:radio id="gtdDTO.responsiblePartyType"  name="gtdDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
         </td>
         </tr> 
-        <tr>               
-        
-            <td scope="row" class="label">
-                <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
-            </td>               
-            <td class="value">
-                <div id="loadResponsibleContactField">
+         <c:choose>
+         <c:when test="${gtdDTO.responsiblePartyType == 'sponsor'}">
+             <tr id="rpcid" >
+                <td scope="row" class="label">
+                    <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+                </td>               
+                <td class="value">
+                    <div id="loadResponsibleContactField">
                     <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
-                </div>                                    
-            </td>
-        </tr>
-        <tr id="rpgcid">
-            <td scope="row" class="label">
-                <label for="resPartyGenericContact">Responsible Party Generic Contact:</label> 
-            </td>
-            <td class="value">
-                <div id="loadResponsiblePartyGenericContactField">
+                    </div>                                    
+                </td>
+            </tr>
+            <tr id="rpgcid">
+                <td scope="row" class="label">
+                    <label for="resPartyGenericContact">Responsible Party Generic Contact:</label> 
+                </td>
+                <td class="value">
+                    <div id="loadResponsiblePartyGenericContactField">
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
-                </div>      
-            </td>
-          </tr>   
-        
+                    </div>      
+                </td>
+            </tr>   
+        </c:when>
+        <c:otherwise>
+            <tr id="rpcid" style="display:none">
+                <td scope="row" class="label">
+                    <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+                </td>               
+                <td class="value">
+                    <div id="loadResponsibleContactField">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+                    </div>                                    
+                </td>
+            </tr>
+            <tr id="rpgcid" style="display:none">
+                <td scope="row" class="label">
+                    <label for="resPartyGenericContact">Responsible Party Generic Contact:</label> 
+                </td>
+                <td class="value">
+                    <div id="loadResponsiblePartyGenericContactField">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
+                    </div>      
+                </td>
+            </tr>
+        </c:otherwise>
+        </c:choose>
         <tr>
             <td scope="row" class="label">
                Email Address:<span class="required">*</span>

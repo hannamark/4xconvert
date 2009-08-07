@@ -63,17 +63,6 @@
 	    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
 	    return false;
 	}
-	function manageRespPartyLookUp(){
-/*	
-	if(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypepi').checked==true) {							
-			document.getElementById('rpcid').style.display='none';
-	}
-	if(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypesponsor').checked==true) {	
-			document.getElementById('rpcid').style.display='';
-	}
-*/
-    }
-
     function lookup4loadresponsibleparty(){
     	var orgid = document.getElementById('sponsorIdentifier').value;
     	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
@@ -87,7 +76,7 @@
 </script>
     
 </head>
-<body onload="manageRespPartyLookUp();">
+<body>
 <c:set var="topic" scope="request" value="validate_trial"/>
     <h1><fmt:message key="trialValidation.page.title" /></h1>
     <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

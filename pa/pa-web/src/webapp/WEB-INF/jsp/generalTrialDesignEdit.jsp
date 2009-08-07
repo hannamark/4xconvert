@@ -73,16 +73,6 @@
         var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
         return false;
     }
-function manageRespPartyLookUp(){
-    //alert(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypepi').checked == true);
-/*  if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypepi').checked==true) {                            
-            document.getElementById('rpcid').style.display='none';
-    }
-    if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypesponsor').checked==true) {   
-            document.getElementById('rpcid').style.display='';
-    }
-    */
-}    
 </script>
     
 </head>
