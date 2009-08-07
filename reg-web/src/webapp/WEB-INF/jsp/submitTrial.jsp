@@ -127,6 +127,8 @@ function manageRespPartyLookUp(){
         document.getElementById('rpcid').style.display='none';
         document.getElementById('rpgcid').style.display='none';
         document.getElementById('trialDTO.responsiblePersonName').value = '';
+        document.getElementById('trialDTO.responsibleGenericContactName').value = '';
+        document.getElementById('trialDTO.responsiblePersonIdentifier').value  = '';
     }
     if(document.getElementById('trialDTO.responsiblePartyTypesponsor').checked==true) {             
                 document.getElementById('rpcid').style.display='';

@@ -31,7 +31,7 @@
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocol"/>
-<c:url value="/protected/ajaxorganizationGenericContactdisplayTitleList.action" var="lookupOrgGenericContactsUrl"/>
+<c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
 var chosenname;
@@ -64,6 +64,7 @@ function lookup4loadresponsibleparty(){
 	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible Party Contact');
 }
 function lookup4loadresponsiblepartygenericcontact(){ 
+	var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
     showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function lookup4loadSummary4Sponsor(){
@@ -127,6 +128,8 @@ function manageRespPartyLookUp(){
 		document.getElementById('rpcid').style.display='none';
         document.getElementById('rpgcid').style.display='none';
         document.getElementById('trialDTO.responsiblePersonName').value = '';
+        document.getElementById('trialDTO.responsibleGenericContactName').value = '';
+        document.getElementById('trialDTO.responsiblePersonIdentifier').value  = '';
 	}
 	if(document.getElementById('trialDTO.responsiblePartyTypesponsor').checked==true) {				
 				document.getElementById('rpcid').style.display='';
