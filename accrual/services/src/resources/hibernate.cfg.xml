@@ -17,5 +17,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="show_sql">true</property>
 
         <!-- mapping classes -->
+        <mapping class="gov.nih.nci.accrual.domain.Epoch" />
     </session-factory>
 </hibernate-configuration>

@@ -27,8 +27,8 @@
     <package name="public" namespace="/public" extends="default">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
             <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result>
-            <result name="ctroWelcome" type="redirectAction">
-                <param name="namespace">../ctro</param>
+            <result name="adminWelcome" type="redirectAction">
+                <param name="namespace">../admin</param>
                 <param name="actionName">welcome</param>
             </result>
         </action>
@@ -36,9 +36,9 @@
             <result>/WEB-INF/jsp/sample.jsp</result> 
         </action>
     </package>
-    <package name="ctro" namespace="/ctro" extends="public">
+    <package name="admin" namespace="/admin" extends="public">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
-            <result name="ctroWelcome">/WEB-INF/jsp/ctroWelcome.jsp</result>
+            <result name="adminWelcome">/WEB-INF/jsp/adminWelcome.jsp</result>
         </action>
     </package>
 </struts>

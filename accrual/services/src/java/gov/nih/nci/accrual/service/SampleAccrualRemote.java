@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
 
@@ -95,4 +96,11 @@ public interface SampleAccrualRemote {
      * @throws RemoteException exception.
      */
     St getSquare(Int integer) throws RemoteException;
+
+    /**
+     * @param ii index of object
+     * @return preferred name of disease
+     * @throws RemoteException exception.
+     */
+    St getEpochNameByIi(Ii ii) throws RemoteException;
 }

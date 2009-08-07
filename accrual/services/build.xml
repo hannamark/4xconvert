@@ -106,6 +106,9 @@
             </classpath>
         </javac>
         <copy todir="${services.build.outputDir}">
+            <filterset>
+                <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
+            </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>
     </target>

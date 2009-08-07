@@ -76,10 +76,11 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.iso.util.IntConverter;
-import gov.nih.nci.accrual.iso.util.StConverter;
 import gov.nih.nci.accrual.service.SampleAccrualRemote;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
 
@@ -116,6 +117,20 @@ public class SampleAction extends AbstractAccrualAction {
                     service.getSquare(IntConverter.convertToInt(getEnteredValue()))));
         } catch (RemoteException e) {
             setResultValue("Error getting result:  " + e.getMessage());
+        }
+        return super.execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String lookupEpoch() {
+        SampleAccrualRemote service = AccrualServiceLocator.getInstance().getSampleAccrualService();
+        try {
+            setResultValue(StConverter.convertToString(
+                    service.getEpochNameByIi(IiConverter.convertToIi(getEnteredValue()))));
+        } catch (RemoteException e) {
+            setResultValue("Error looking up disease:  " + e.getMessage());
         }
         return super.execute();
     }

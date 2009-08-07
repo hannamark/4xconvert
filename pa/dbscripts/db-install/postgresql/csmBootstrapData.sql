@@ -75,6 +75,8 @@ INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALU
 ;
 INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('RegAdmin', 'Registry Administrator - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
 ;
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('AccrualAdmin', 'Accrual Administrator - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
+;
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES (2, 1)
 ;
 -- Password is pass
@@ -121,4 +123,11 @@ INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) V
 INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID, UPDATE_DATE) VALUES ((select protection_element_id from csm_protection_element where protection_element_name = 'pa'), (select user_id from csm_user where login_name = 'submitter'),current_date)
 ;
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'submitter'), (select group_id from csm_group where group_name = 'Submitter'))
+;
+-- Password is pass
+INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('accrual', 'Test', 'Accrual Administrator','BtM2GNbiAxg=',current_date)
+;
+INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID, UPDATE_DATE) VALUES ((select protection_element_id from csm_protection_element where protection_element_name = 'pa'), (select user_id from csm_user where login_name = 'accrual'),current_date)
+;
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'accrual'), (select group_id from csm_group where group_name = 'AccrualAdmin'))
 ;

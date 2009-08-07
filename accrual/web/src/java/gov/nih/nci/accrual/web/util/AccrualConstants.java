@@ -89,10 +89,8 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_ROLE = "accrualRole";
     /** Role-name for the public role. */
     public static final String ROLE_PUBLIC = "Submitter";
-    /** Role-name for the ctro staff role. */
-    public static final String ROLE_CTRO = "Abstractor";
-    /** Role-name to view ctro staff reports without write access to PA. */
-    public static final String ROLE_REPORTING = "ReportViewer";
+    /** Role-name for the administrator role. */
+    public static final String ROLE_ADMINISTRATOR = "AccrualAdmin";
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";

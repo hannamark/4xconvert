@@ -96,18 +96,16 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Submitter</role-name>
-            <role-name>ReportViewer</role-name>
-            <role-name>Abstractor</role-name>
+            <role-name>AccrualAdmin</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>ctro</web-resource-name>
-            <url-pattern>/ctro/*</url-pattern>
+            <web-resource-name>admin</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>ReportViewer</role-name>
-            <role-name>Abstractor</role-name>
+            <role-name>AccrualAdmin</role-name>
         </auth-constraint>
     </security-constraint>
     <login-config>
@@ -119,12 +117,8 @@
     </login-config>
 
     <security-role>
-        <description>Role for Clinical Trials Reporting Office personnel.</description>
-        <role-name>Abstractor</role-name>
-    </security-role>
-    <security-role>
-        <description>Read-only role to view Clinical Trials Reporting Office reports.</description>
-        <role-name>ReportViewer</role-name>
+        <description>Role for accrual administrator.</description>
+        <role-name>AccrualAdmin</role-name>
     </security-role>
     <security-role>
         <description>Role for users who have created an id through Protocol Registry</description>

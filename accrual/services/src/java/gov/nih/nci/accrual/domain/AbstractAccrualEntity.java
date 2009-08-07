@@ -73,96 +73,48 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.accrual.iso.util;
+package gov.nih.nci.accrual.domain;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
+import org.hibernate.validator.NotNull;
 
 /**
- * utility method for converting Ii and Id.
- *
- * @author Naveen Amiruddin
- * @since 08/26/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Hugh Reinhart
+ * @since 7/7/2009
  */
-public class IiConverter {
+@MappedSuperclass
+public abstract class AbstractAccrualEntity implements Serializable {
+
+    private static final long serialVersionUID = 2654905009983348135L;
+
+    /** Default maximum length for strings. */
+    public static final int DEFAULT_MAX = 200;
+
+    private Long identifier;
 
     /**
-     * Convert to ii.
-     *
-     * @param id id
-     *
-     * @return Ii ii
+     * @return the identifier
      */
-    public static Ii convertToIi(Long id) {
-        Ii ii = new Ii();
-        if (id == null) {
-            ii.setNullFlavor(NullFlavor.NI);
-        } else {
-            ii.setExtension(id.toString());
-            //@todo : set others attributes of II;
-        }
-        return ii;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "IDENTIFIER")
+    @NotNull
+    public Long getIdentifier() {
+        return identifier;
     }
 
     /**
-     * Convert to ii.
-     *
-     * @param str string
-     *
-     * @return Ii
+     * @param identifier the identifier to set
      */
-    public static Ii convertToIi(String str) {
-        Ii ii = new Ii();
-        if (str == null) {
-            ii.setNullFlavor(NullFlavor.NI);
-        } else {
-            ii.setExtension(str);
-            //ii.setRoot("UID.for.nci.entity.organization");
-        }
-        return ii;
-
-    }
-
-    /**
-     * Convert to long.
-     *
-     * @param ii ii
-     *
-     * @return long
-     */
-    public static Long convertToLong(Ii ii) {
-        if (ii == null || ii.getNullFlavor() != null) {
-            return null;
-        }
-        if (ii.getExtension() == null) {
-            return null;
-        }
-        return Long.valueOf(ii.getExtension());
-    }
-
-    /**
-     * Convert to string.
-     *
-     * @param ii ii
-     *
-     * @return String str
-     */
-    public static String convertToString(Ii ii) {
-        if (ii == null || ii.getNullFlavor() != null) {
-            return null;
-        }
-        if (ii.getExtension() == null) {
-         // @todo : throw proper exception
-            ii.setNullFlavor(NullFlavor.NI);
-        }
-        return ii.getExtension();
+    public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
     }
 }

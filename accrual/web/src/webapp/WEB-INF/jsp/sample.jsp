@@ -4,9 +4,12 @@
 <title><fmt:message key="sample.header" /></title>
 <s:head />
 <script type="text/javascript">
-
 function handleAction(){
     document.forms[0].action="samplegetResult.action";
+    document.forms[0].submit();
+}
+function handleHibernateAction(){
+    document.forms[0].action="samplelookupEpoch.action";
     document.forms[0].submit();
 }
 </script>
@@ -31,6 +34,9 @@ function handleAction(){
                 <ul class="btnrow">
                     <li>
                         <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Get square</span></span></s:a>  
+                    </li>
+                    <li>
+                        <s:a href="#" cssClass="btn" onclick="handleHibernateAction()"><span class="btn_img"><span class="search">Lookup epoch</span></span></s:a>  
                     </li>
                 </ul>
             </del>

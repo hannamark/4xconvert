@@ -78,13 +78,13 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.iso.util.StConverter;
-import gov.nih.nci.accrual.iso.util.TsConverter;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;

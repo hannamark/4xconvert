@@ -92,15 +92,11 @@ public class WelcomeAction extends AbstractAccrualAction {
      */
     @Override
     public String execute() {
-        String actionResult = null;
-        if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_CTRO)) {
+        String actionResult = "logout";
+        if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_ADMINISTRATOR)) {
             ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_CTRO);
-            actionResult =  "ctroWelcome";
-        } else if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_REPORTING)) {
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_CTRO);
-            actionResult =  "ctroWelcome";
+                    AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_ADMINISTRATOR);
+            actionResult =  "adminWelcome";
         } else if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_PUBLIC)) {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_PUBLIC);

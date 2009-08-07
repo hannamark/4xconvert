@@ -28,7 +28,6 @@
     <module>
         <java>po-services-client-2.2.0rc1.jar</java>
     </module>
-    <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>Submitter</role-name></security-role>
-    <security-role><role-name>ReportViewer</role-name></security-role>
+    <security-role><role-name>AccrualAdmin</role-name></security-role>
 </application>

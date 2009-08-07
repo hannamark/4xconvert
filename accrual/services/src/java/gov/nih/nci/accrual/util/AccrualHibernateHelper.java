@@ -73,59 +73,169 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.accrual.iso.util;
+package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.Ts;
+import java.security.acl.Group;
+import java.util.Iterator;
 
-import java.sql.Timestamp;
+import org.apache.log4j.Logger;
+import org.hibernate.ConnectionReleaseMode;
+import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
+import org.hibernate.Interceptor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.NamingStrategy;
+import org.hibernate.context.ManagedSessionContext;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.mapping.Collection;
 
 /**
- * utility method for converting Ts and Timestamp.
- *
- * @author Naveen Amiruddin
- * @since 08/26/2008
+ * HibernateHelper for viewer.
  */
-public class TsConverter {
+public class AccrualHibernateHelper implements CtrpHibernateHelper {
+
+    private static final Logger LOG = Logger.getLogger(AccrualHibernateHelper.class);
+
+    private Configuration configuration;
+    private SessionFactory sessionFactory;
 
     /**
+     * Default constructor.
+     */
+    public AccrualHibernateHelper() {
+        this(null, null);
+    }
+
+    /**
+     * Constructor to build the hibernate helper.
+     * @param namingStrategy the name strategy, if one is needed, null otherwise.
+     * @param interceptor the interceptor, if one is needed, null otherwise.
+     */
+    public AccrualHibernateHelper(NamingStrategy namingStrategy,
+            Interceptor interceptor) {
+        try {
+            configuration = new AnnotationConfiguration();
+            initializeConfig(namingStrategy, interceptor);
+            configuration = configuration.configure();
+            // We call buildSessionFactory twice, because it appears that the annotated classes are
+            // not 'activated' in the config until we build. The filters required the classes to
+            // be present, so we throw away the first factory and use the second. If this is
+            // removed, you'll likely see a NoClassDefFoundError in the unit tests
+            configuration.buildSessionFactory();
+
+            @SuppressWarnings("unchecked")
+            Iterator<Collection> it = configuration.getCollectionMappings();
+            final String role = Group.class.getName() + ".users";
+            while (it.hasNext()) {
+                Collection c = it.next();
+                if (c.getRole().equals(role)) {
+                    c.setLazy(true);
+                    c.setExtraLazy(true);
+                }
+            }
+            sessionFactory = configuration.buildSessionFactory();
+        } catch (HibernateException e) {
+            LOG.warn("Failed to initialize HibernateHelper using hibernate.cfg.xml.  "
+                     + "This is expected behavior during unit testing.");
+         }
+    }
+
+    private void initializeConfig(NamingStrategy namingStrategy, Interceptor interceptor) {
+        if (namingStrategy != null) {
+            configuration.setNamingStrategy(namingStrategy);
+        }
+        if (interceptor != null) {
+            configuration.setInterceptor(interceptor);
+        }
+    }
+
+    /**
+     * @return the configuration
+     */
+    public Configuration getConfiguration() {
+        return this.configuration;
+    }
+
+    /**
+     * @param configuration the configuration to set
+     */
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
+     * @return the sessionFactory
+     */
+    public SessionFactory getSessionFactory() {
+        return this.sessionFactory;
+    }
+
+    /**
+     * @param sessionFactory the sessionFactory to set
+     */
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    /**
+     * Get the session that is bound to the current context.
+     * @return the current session
+     */
+    public Session getCurrentSession() {
+        return getSessionFactory().getCurrentSession();
+    }
+
+    /**
+     * Starts a transaction on the current Hibernate session. Intended for use in
+     * unit tests - DAO / Service layer logic should rely on container-managed transactions
      *
-     * @param timeStamp timestamp
-     * @return Ts
+     * @return a Hibernate session.
      */
-    public static Ts convertToTs(Timestamp timeStamp) {
-        Ts ts = new Ts();
-        if (timeStamp == null) {
-            ts.setNullFlavor(NullFlavor.NI);
-            return ts;
-        }
-        ts.setValue(timeStamp);
-        return ts;
+    public Transaction beginTransaction() {
+        return getSessionFactory().getCurrentSession().beginTransaction();
     }
 
     /**
-     * @param tsIso iso Ts
-     * @return java Timestamp
+     * Checks if the transaction is active and then rolls it back.
+     *
+     * @param tx the Transaction to roll back.
      */
-    public static Timestamp convertToTimestamp(Ts tsIso) {
-        if (tsIso == null || tsIso.getValue() == null) {
-            return null;
+    public void rollbackTransaction(Transaction tx) {
+        if (tx != null && tx.isActive()) {
+            tx.rollback();
         }
-        return new Timestamp(tsIso.getValue().getTime());
     }
 
     /**
-     * @param tsIso iso Ts
-     * @return java String
+     * Open a hibernate session and bind it as the current session via
+     * {@link ManagedSessionContext#bind(org.hibernate.classic.Session)}. The hibernate property
+     * "hibernate.current_session_context_class" must be set to "managed" for this to have effect This method should be
+     * called from within an Interceptor or Filter type class that is setting up the scope of the Session. This method
+     * should then call {@link HibernateUtil#unbindAndCleanupSession()} when the scope of the Session is expired.
+     *
+     * @see ManagedSessionContext#bind(org.hibernate.classic.Session)
      */
-    public static String convertToString(Ts tsIso) {
-        if (tsIso == null || tsIso.getValue() == null) {
-            return null;
-        }
-        return AccrualUtil.normalizeDateString(convertToTimestamp(tsIso).toString());
+    public void openAndBindSession() {
+        SessionFactoryImplementor sessionFactoryImplementor = (SessionFactoryImplementor) getSessionFactory();
+        org.hibernate.classic.Session currentSession = sessionFactoryImplementor.openSession(null, true, false,
+                ConnectionReleaseMode.AFTER_STATEMENT);
+        currentSession.setFlushMode(FlushMode.COMMIT);
+        ManagedSessionContext.bind(currentSession);
+    }
+
+    /**
+     * Close the current session and unbind it via {@link ManagedSessionContext#unbind(SessionFactory)}. The hibernate
+     * property "hibernate.current_session_context_class" must be set to "managed" for this to have effect. This method
+     * should be called from within an Interceptor or Filter type class that is setting up the scope of the Session,
+     * when this scope is about to expire.
+     */
+    public void unbindAndCleanupSession() {
+        org.hibernate.classic.Session currentSession = ManagedSessionContext.unbind(getSessionFactory());
+        currentSession.close();
     }
 }

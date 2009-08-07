@@ -2,6 +2,6 @@
 <c:set var="topic" scope="request" value="run_reports"/> 
 <body>
     <p class="intro">
-        Welcome trial submitter.  To enter accrual information select from the menu at left.
+        Welcome accrual adminstrator.  To enter accrual information select from the menu at left.
     </p>
 </body>

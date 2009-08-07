@@ -76,20 +76,32 @@
 */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.iso.util.IntConverter;
-import gov.nih.nci.accrual.iso.util.StConverter;
+import gov.nih.nci.accrual.domain.Epoch;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
 * @author Hugh Reinhart
 * @since 7/28/2009
 */
 @Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
 public class SampleAccrualBean implements SampleAccrualRemote {
 
     /**
@@ -98,5 +110,30 @@ public class SampleAccrualBean implements SampleAccrualRemote {
     public St getSquare(Int integer) throws RemoteException {
         Integer value = IntConverter.convertToInteger(integer);
         return StConverter.convertToSt(((Integer) (value * value)).toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public St getEpochNameByIi(Ii ii) throws RemoteException {
+        String result = "";
+        try {
+            Session session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "FROM Epoch AS ep "
+                       + "WHERE ep.identifier = :id ";
+            query = session.createQuery(hql);
+            query.setParameter("id", IiConverter.convertToLong(ii));
+            @SuppressWarnings("unchecked")
+            List<Epoch> queryList = query.list();
+            if (queryList.size() > 0) {
+                result = queryList.get(0).getName();
+            } else {
+                result = "not found";
+            }
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in " + this.getClass(), hbe);
+        }
+        return StConverter.convertToSt(result);
     }
 }
