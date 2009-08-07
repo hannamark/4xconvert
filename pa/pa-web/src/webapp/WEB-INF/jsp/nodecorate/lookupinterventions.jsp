@@ -19,12 +19,12 @@
     function loadDiv() {        
         var jsName = document.getElementById("searchName").value;
         var includeSyn = false;  
-        if (document.getElementById("includeSynonym").checked==true)
+        if (document.getElementById("includeSynonym") != null && document.getElementById("includeSynonym").checked==true)
         {
             includeSyn = true;
         } 
         var exactMat = false;
-        if (document.getElementById("exactMatch").checked == true)
+        if (document.getElementById("exactMatch") != null && document.getElementById("exactMatch").checked == true)
         {
            exactMat = true; 
         }
@@ -67,7 +67,7 @@
                    <label  for="includeSynonym"> <fmt:message key="interventions.includeSynonym"/></label>                        
                 </td>
                 <td>
-                    <s:checkbox name="includeSynonym" />
+                    <s:checkbox name="includeSynonym" id="includeSynonym" />
                 </td>                
             </tr>
              <tr> 
@@ -75,7 +75,7 @@
                      <label  for="exactMatch"> <fmt:message key="interventions.exactMatch"/></label>                        
                 </td>
                 <td>
-                    <s:checkbox name="exactMatch" />
+                    <s:checkbox name="exactMatch" id="exactMatch"/>
                 </td>                
             </tr>
    

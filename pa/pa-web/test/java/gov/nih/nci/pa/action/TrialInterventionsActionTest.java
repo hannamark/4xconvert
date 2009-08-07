@@ -197,7 +197,7 @@ public class TrialInterventionsActionTest extends AbstractPaActionTest {
 
         // enter data and save
         act.setInterventionDescription("desc");
-        act.setInterventionType(ActivitySubcategoryCode.COSMETIC.getCode());
+        act.setInterventionType(ActivitySubcategoryCode.OTHER.getCode());
         assertEquals(AbstractListEditAction.AR_LIST, act.add());
         assertEquals(initialCount + 1, act.getInterventionsList().size());
         assertFalse(act.hasErrors());
