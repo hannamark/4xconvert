@@ -7,19 +7,18 @@
 	function submitform(persid, name)
 	{	
 		//top.window.loadPersDiv(persid, func);
-        var email = document.getElementById(persid+"email")[document.getElementById(persid+"email").selectedIndex];
-        var phone = document.getElementById(persid+"phone")[document.getElementById(persid+"phone").selectedIndex];
-        if(email == undefined) {
+        var email = document.getElementById(persid+'email');
+        var phone = document.getElementById(persid+'phone');
+        if(email == undefined || email.value == '') {
             email = '';
         } else {
-            email = email.value;
+            email = [document.getElementById(persid+'email').selectedIndex].value;
         }
-        if(phone == undefined) {
+        if(phone == undefined || phone.value == '') {
             phone = '';
         } else {
-            phone = phone.value;
-        }
-		top.window.setpersid(persid, name,email,phone);
+            phone = [document.getElementById(persid+'phone').selectedIndex].value;
+        }		top.window.setpersid(persid, name,email,phone);
 		window.top.hidePopWin(true); 
 	}
 	 
