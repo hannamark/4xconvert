@@ -152,7 +152,7 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                     StConverter.convertToSt(webDTO.getBiospecimenDescription()));  
            /* ospFromDatabaseDTO.setMaximumTargetAccrualNumber(
                     IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));*/
-            ospFromDatabaseDTO.setTargetAccuralNumber(
+            ospFromDatabaseDTO.setTargetAccrualNumber(
                     IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
             PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospFromDatabaseDTO);
             detailsQuery();
@@ -255,8 +255,8 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                 dto.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue().toString());
             }                
 
-            if (ospDTO.getTargetAccuralNumber().getLow().getValue() != null) {
-                dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccuralNumber().getLow().getValue().toString());
+            if (ospDTO.getTargetAccrualNumber().getLow().getValue() != null) {
+                dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccrualNumber().getLow().getValue().toString());
             }
 
             if (ospDTO.getStudyModelOtherText() != null) {

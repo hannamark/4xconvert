@@ -375,7 +375,7 @@ public class StudyProtocolServiceBeanTest {
         assertNotNull(ii.getExtension());
         ObservationalStudyProtocolDTO saved =  remoteEjb.getObservationalStudyProtocol(ii);
         
-        saved.setTargetAccuralNumber(IvlConverter.convertInt().convertToIvl(1234, null));
+        saved.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(1234, null));
         
         ObservationalStudyProtocolDTO update =  remoteEjb.updateObservationalStudyProtocol(saved);
 
@@ -385,7 +385,7 @@ public class StudyProtocolServiceBeanTest {
         assertEquals(update.getBiospecimenDescription().getValue(),saved.getBiospecimenDescription().getValue());
         assertEquals(update.getBiospecimenRetentionCode().getCode(),saved.getBiospecimenRetentionCode().getCode());
         assertEquals(update.getNumberOfGroups().getValue() ,saved.getNumberOfGroups().getValue());
-        assertEquals(IvlConverter.convertInt().convertLow(update.getTargetAccuralNumber()).intValue() ,IvlConverter.convertInt().convertLow(saved.getTargetAccuralNumber()).intValue());
+        assertEquals(IvlConverter.convertInt().convertLow(update.getTargetAccrualNumber()).intValue() ,IvlConverter.convertInt().convertLow(saved.getTargetAccrualNumber()).intValue());
         assertNotNull(update.getIdentifier().getExtension());
     }
     @Test

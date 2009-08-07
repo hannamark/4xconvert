@@ -797,7 +797,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     } // if
     html.append(appendData("Allocation", getData(ispDTO.getAllocationCode(), true), true , true));
     html.append(appendData("Study Classification", getData(ispDTO.getStudyClassificationCode(), true), true , true));
-    html.append(appendData("Target Enrollment", getData(ispDTO.getTargetAccuralNumber().getLow(), true), true , true));
+    html.append(appendData("Target Enrollment", getData(ispDTO.getTargetAccrualNumber().getLow(), true), true , true));
   }
 
   /**
@@ -1643,7 +1643,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
          }
           
       }
-      Integer projectedAcc = IvlConverter.convertInt().convertLow(studyProtocolDto.getTargetAccuralNumber());
+      Integer projectedAcc = IvlConverter.convertInt().convertLow(studyProtocolDto.getTargetAccrualNumber());
       if (projectedAcc != null) {
           objectiveData.append(BR);
           objectiveData.append(NBSP).append(appendBoldData("Projected Accrual:"));

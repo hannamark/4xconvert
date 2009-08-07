@@ -981,7 +981,7 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
      abstractionList.add(createError("Error", "Select Design Details from "
           + "Observational Trial Design under Scientific Data menu.", "Number of Groups/Cohorts must be Entered"));
     }
-    if (ospDTO.getTargetAccuralNumber().getLow().getValue() == null) {
+    if (ospDTO.getTargetAccrualNumber().getLow().getValue() == null) {
       abstractionList.add(createError("Error", "Select Design Details from "
           + "Observational Trial Design under Scientific Data menu.", "Target Enrollment must be Entered"));
     }
@@ -1033,7 +1033,7 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
       abstractionList.add(createError("Error", "Select Design Details from "
           + "Interventional Trial Design under Scientific Data menu.", "Allocation must be Entered"));
     }
-    if (ispDTO.getTargetAccuralNumber().getLow().getValue() == null) {
+    if (ispDTO.getTargetAccrualNumber().getLow().getValue() == null) {
       abstractionList.add(createError("Error",
           "Select Design Details from "
           + "Interventional Trial Design under Scientific Data menu.", "Target Enrollment must be Entered"));

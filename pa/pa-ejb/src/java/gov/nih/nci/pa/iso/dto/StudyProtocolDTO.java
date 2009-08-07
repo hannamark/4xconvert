@@ -132,7 +132,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Cd amendmentReasonCode;
     private Int submissionNumber;
     private St programCodeText;
-   private Ivl<Int> targetAccuralNumber;
+   private Ivl<Int> targetAccrualNumber;
     
     /**
      * 
@@ -640,17 +640,17 @@ public void setProgramCodeText(St programCodeText) {
 }
 
 /**
- * @return the targetAccuralNumber
+ * @return the targetAccrualNumber
  */
-public Ivl<Int> getTargetAccuralNumber() {
-    return targetAccuralNumber;
+public Ivl<Int> getTargetAccrualNumber() {
+    return targetAccrualNumber;
 }
 
 /**
- * @param targetAccuralNumber the targetAccuralNumber to set
+ * @param targetAccrualNumber the targetAccrualNumber to set
  */
-public void setTargetAccuralNumber(Ivl<Int> targetAccuralNumber) {
-    this.targetAccuralNumber = targetAccuralNumber;
+public void setTargetAccrualNumber(Ivl<Int> targetAccrualNumber) {
+    this.targetAccrualNumber = targetAccrualNumber;
 }
     
     

@@ -346,7 +346,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createSecondaryOutcome(somDtos , doc , root);
             createCondition(studyProtocolIi, doc, root);
             appendElement(root ,  createElement("enrollment", 
-                    IvlConverter.convertInt().convertLowToString(spDTO.getTargetAccuralNumber()), doc));
+                    IvlConverter.convertInt().convertLowToString(spDTO.getTargetAccrualNumber()), doc));
             appendElement(root ,  createElement("enrollment_type", "anticipated", doc));
             createArmGroup(spDTO, doc, root);
             createIntervention(spDTO.getIdentifier(), doc, root);
@@ -1263,7 +1263,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 objectiveData.append('\n');
             } 
         }
-        Integer projectedAccrual = IvlConverter.convertInt().convertLow(spDTO.getTargetAccuralNumber());
+        Integer projectedAccrual = IvlConverter.convertInt().convertLow(spDTO.getTargetAccrualNumber());
         if (projectedAccrual != null) {
             objectiveData.append(NEW_LINE);
             objectiveData.append("Projected Accrual:");

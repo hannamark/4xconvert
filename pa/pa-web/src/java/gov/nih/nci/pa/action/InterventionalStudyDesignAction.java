@@ -180,7 +180,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     StConverter.convertToSt(webDTO.getPhaseOtherText()));
           //  ispDTO.setMaximumTargetAccrualNumber(
             //        IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
-            ispDTO.setTargetAccuralNumber(
+            ispDTO.setTargetAccrualNumber(
                     IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
             ispDTO.setStudyClassificationCode(
                     CdConverter.convertToCd(StudyClassificationCode.getByCode(webDTO.getStudyClassificationCode())));
@@ -328,9 +328,9 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     }
                 }
             }
-            if (ispDTO.getTargetAccuralNumber().getLow().getValue() != null) {
+            if (ispDTO.getTargetAccrualNumber().getLow().getValue() != null) {
                 dto.setMinimumTargetAccrualNumber(
-                        ispDTO.getTargetAccuralNumber().getLow().getValue().toString());
+                        ispDTO.getTargetAccrualNumber().getLow().getValue().toString());
             }
             if (ispDTO.getStudyClassificationCode() != null) {
                 dto.setStudyClassificationCode(ispDTO.getStudyClassificationCode().getCode());
