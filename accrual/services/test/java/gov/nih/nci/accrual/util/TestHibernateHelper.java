@@ -74,44 +74,80 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.util;
 
-import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.domain.Epoch;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.opensymphony.xwork2.Action;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 
 /**
  * @author Hugh Reinhart
  * @since 7/7/2009
  */
-public class SampleActionTest extends AbstractAccrualActionTest {
+public class TestHibernateHelper implements CtrpHibernateHelper {
 
-    SampleAction action;
+    private final Configuration configuration;
+    private final SessionFactory sessionFactory;
+    private final Session testSession;
 
-    @Before
-    public void initAction() {
-        action = new SampleAction();
+    /**
+     * Default constructor.
+     */
+    public TestHibernateHelper() {
+        configuration = new AnnotationConfiguration().
+
+        // Accrual classes
+        addAnnotatedClass(Epoch.class).
+
+        // hibernate properties
+        setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
+        setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
+        setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
+        setProperty("hibernate.connection.username", "sa").
+        setProperty("hibernate.connection.password", "").
+        setProperty("hibernate.connection.pool_size", "1").
+        setProperty("hibernate.connection.autocommit", "true").
+        setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
+        setProperty("hibernate.hbm2ddl.auto", "create-drop").
+        setProperty("hibernate.show_sql", "false");
+
+        sessionFactory = configuration.buildSessionFactory();
+        testSession = sessionFactory.openSession();
     }
 
-    @Test
-    public void executeTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
+    /**
+     * {@inheritDoc}
+     */
+    public Session getCurrentSession() {
+        return testSession;
     }
 
-    @Test
-    public void getResultTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
+    /**
+     * {@inheritDoc}
+     */
+   public Configuration getConfiguration() {
+        return null;
+    }
 
-        // user enters value
-        action.setEnteredValue("2");
+    /**
+     * {@inheritDoc}
+     */
+    public SessionFactory getSessionFactory() {
+        return null;
+    }
 
-        // user presses "Get square" button
-        assertEquals(Action.SUCCESS, action.getResult());
-        assertEquals("4", action.getResultValue());
+    /**
+     * {@inheritDoc}
+     */
+    public void openAndBindSession() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void unbindAndCleanupSession() {
     }
 }

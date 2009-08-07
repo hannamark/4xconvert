@@ -74,44 +74,68 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.util;
 
-import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.domain.Epoch;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.opensymphony.xwork2.Action;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
- * @author Hugh Reinhart
- * @since 7/7/2009
- */
-public class SampleActionTest extends AbstractAccrualActionTest {
+* @author Hugh Reinhart
+* @since 08/07/2009
+*/
+public class TestSchema {
+    public static List<Epoch> epochs;
 
-    SampleAction action;
+    private static boolean dataLoaded = false;
+    private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
-    @Before
-    public void initAction() {
-        action = new SampleAction();
+    /**
+     *
+     */
+    public static void reset() {
+        AccrualHibernateUtil.testHelper = testHelper;
+        if (!dataLoaded) {
+            primeData();
+        }
     }
 
-    @Test
-    public void executeTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
+    /**
+     * @param <T> t
+     * @param obj o
+     */
+    public static <T> void addUpdObject(T obj) {
+        Session session = AccrualHibernateUtil.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.saveOrUpdate(obj);
+        transaction.commit();
     }
 
-    @Test
-    public void getResultTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-
-        // user enters value
-        action.setEnteredValue("2");
-
-        // user presses "Get square" button
-        assertEquals(Action.SUCCESS, action.getResult());
-        assertEquals("4", action.getResultValue());
+    /**
+     *
+     * @param <T> t
+     * @param oList o
+     */
+    public static <T> void addUpdObjects(ArrayList<T> oList) {
+        for (T obj : oList) {
+            addUpdObject(obj);
+        }
     }
+
+    public static void primeData() {
+        epochs = new ArrayList<Epoch>();
+
+        Epoch ep = new Epoch();
+        ep.setName("epoch 1");
+        ep.setStudyProtocolIdentifier(1L);
+        addUpdObject(ep);
+        epochs.add(ep);
+
+        dataLoaded = true;
+    }
+
 }

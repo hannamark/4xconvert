@@ -74,44 +74,35 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import com.opensymphony.xwork2.Action;
 
 /**
  * @author Hugh Reinhart
  * @since 7/7/2009
  */
-public class SampleActionTest extends AbstractAccrualActionTest {
+public class SampleAccrualServiceTest extends AbstractServiceTest {
 
-    SampleAction action;
+    SampleAccrualRemote bean;
 
+    @Override
     @Before
-    public void initAction() {
-        action = new SampleAction();
+    public void setUp() throws Exception {
+        bean = new SampleAccrualBean();
+        super.setUp();
     }
 
     @Test
-    public void executeTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-    }
-
-    @Test
-    public void getResultTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-
-        // user enters value
-        action.setEnteredValue("2");
-
-        // user presses "Get square" button
-        assertEquals(Action.SUCCESS, action.getResult());
-        assertEquals("4", action.getResultValue());
+    public void ccdc() throws Exception {
+        St result = bean.getEpochNameByIi(IiConverter.convertToIi(TestSchema.epochs.get(0).getIdentifier()));
+        assertEquals(TestSchema.epochs.get(0).getName(), StConverter.convertToString(result));
     }
 }

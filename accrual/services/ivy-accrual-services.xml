@@ -3,9 +3,11 @@
         
   <configurations>
     <conf name="compile"/>
+    <conf name="test"/>
     <conf name="test-pmd"/>
     <conf name="test-checkstyle"/>
     <conf name="test-simian"/>
+    <conf name="test-cobertura"/>
   </configurations>
   
   <dependencies>
@@ -26,7 +28,7 @@
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
-    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.3"           conf="compile->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
     <dependency org="ncicb"                  name="pa-ejb-client"           rev="2.1-milestone1"  conf="compile->master"/>
     <dependency org="ncicb"                  name="po-services-client"      rev="2.2.0rc1"        conf="compile->master"/>
@@ -40,9 +42,17 @@
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="compile->master"/>
     
-    <!-- test targets -->
+    <!-- unit test target -->
+    <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
+    <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>    
+    <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
+    <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->runtime"/>
+    <dependency org="org.antlr"              name="antlr"                   rev="2.7.6"           conf="test->master"/>
+
+    <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
     <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>
     <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->runtime"/>  
+    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>  
   </dependencies>
 </ivy-module>

@@ -18,7 +18,10 @@
     <property name="services.build.srcDir" value="${basedir}/src/java"/>
     <property name="services.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="services.jar" value="accrual-services.jar"/>
+    <property name="services.build.testSrcDir" value="${basedir}/test/java"/>
+    <property name="services.build.testOutputDir" value="${services.build.dir}/test-classes"/>
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
+    <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
 
     <property name="common.dir" value="${resource.dir}"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
@@ -35,6 +38,12 @@
     <property name="compile.jar.dir" location="${lib.dir}/services/compile"/>
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
+    </path>
+
+
+    <property name="test.jar.dir" location="${lib.dir}/services/test"/>
+    <path id="test.classpath">
+        <fileset dir="${test.jar.dir}"/>
     </path>
 
     <property name="test-simian.jar.dir" location="${lib.dir}/services/test-simian"/>
@@ -115,6 +124,89 @@
 
 
     <!-- ====================================================================== -->
+    <!-- Test-compilation target                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="compile-tests" 
+      depends="compile" 
+      description="Compile the test code"> 
+        <mkdir dir="${services.build.testOutputDir}"/>
+        <javac destdir="${services.build.testOutputDir}" 
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
+            <src>
+                <pathelement location="${services.build.testSrcDir}"/>
+            </src>
+            <classpath>
+                <pathelement location="${services.build.outputDir}"/> 
+                <path refid="compile.classpath"/> 
+                <path refid="test.classpath"/>
+            </classpath>
+        </javac>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-cobertura" depends="compile-tests">
+
+        <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties"/>
+
+        <delete file="${services.build.dir}/cobertura.ser"/>
+
+        <cobertura-instrument datafile="${services.build.dir}/cobertura.ser"
+                              toDir="${services.build.coberturaOutputDir}">
+            <fileset dir="${services.build.outputDir}">
+                <include name="**/*.class"/>
+            </fileset>
+        </cobertura-instrument>
+
+        <mkdir dir="${services.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <sysproperty key="basedir" value="."/>
+            <sysproperty key="net.sourceforge.cobertura.datafile"
+                    file="${services.build.dir}/cobertura.ser"/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${services.build.coberturaOutputDir}"/>
+            <classpath location="${services.build.outputDir}"/>
+            <classpath location="${services.build.testOutputDir}"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+            <batchtest todir="${services.test.reports}">
+                <fileset dir="${services.build.testSrcDir}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        
+        <cobertura-report datafile="${services.build.dir}/cobertura.ser"
+                          destdir="${services.test.reports}" 
+                          srcdir="${services.build.srcDir}"/>
+        
+        <cobertura-report datafile="${services.build.dir}/cobertura.ser"
+                          format="xml"
+                          destdir="${services.test.reports}" 
+                          srcdir="${services.build.srcDir}"/>
+
+        <cobertura-check datafile="${services.build.dir}/cobertura.ser"
+                         totalbranchrate="2" 
+                         totallinerate="2"
+                         haltonfailure="true"/>
+     </target>
+
+
+    <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
 
@@ -178,6 +270,15 @@
 
 
     <!-- ====================================================================== -->
+    <!-- JUnit/Cobertura target                                                 -->
+    <!-- ====================================================================== -->
+
+    <target name="test" depends="test-cobertura"
+            description="Runs various tests in the subproject">
+    </target>
+
+
+    <!-- ====================================================================== -->
     <!-- Package targets                                                        -->
     <!-- ====================================================================== -->
 
@@ -188,7 +289,7 @@
              basedir="${services.build.outputDir}"/>
     </target>
     
-    <target name="jar" depends="ivy-get, compile, inspect, create-jar" 
+    <target name="jar" depends="ivy-get, compile, inspect, test, create-jar" 
             description="Makes services jar">
     </target>
     
@@ -224,7 +325,12 @@
         <ivy:resolve refresh="true" conf="test-simian"/>
         <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test-simian"/>
     </target>
-    
+
+    <target name="ivy-test-cobertura" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-cobertura"/>
+        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura"/>
+    </target>
+
     <target name="ivy-compile" depends="init:ivy" 
             description="Resolves and retrieves the JARs needed to compile the subproject">
         <ivy:resolve refresh="true" conf="compile"/>
@@ -232,8 +338,10 @@
     </target>
 
     <target name="ivy-test" 
-            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian" 
+            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura" 
             description="Resolves and retrieves the JARs needed to test the subproject">
+        <ivy:resolve refresh="true" conf="test"/>
+        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test"/>
     </target>
 
     <target name="ivy-get" 

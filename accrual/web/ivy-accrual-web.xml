@@ -57,7 +57,7 @@
     <dependency org="jboss"                  name="javax.servlet.jsp"       rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
-    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.3"           conf="compile->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           conf="compile->master"/>
     <dependency org="ncicb"                  name="po-services-client"      rev="1.1.0.rc1"       conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>

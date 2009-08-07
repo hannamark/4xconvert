@@ -20,7 +20,7 @@
         <java>jboss-service.xml</java>
     </module>
     <module>
-        <java>iso-datatypes-1.2.3.jar</java>
+        <java>iso-datatypes-1.2.4.jar</java>
     </module>
     <module>
         <java>pa-ejb-client-2.1-milestone1.jar</java>

@@ -50,7 +50,6 @@
         <fileset dir="${test.jar.dir}"/>
     </path>
 
-
     <property name="test-simian.jar.dir" location="${lib.dir}/web/test-simian"/>
     <path id="test-simian.classpath">
         <fileset dir="${test-simian.jar.dir}"/>
@@ -214,6 +213,7 @@
                          haltonfailure="true"/>
      </target>
 
+
     <!-- ====================================================================== -->
     <!-- Run Checkstyle                                                         -->
     <!-- ====================================================================== -->
@@ -281,7 +281,7 @@
     <!-- JUnit/Cobertura target                                                 -->
     <!-- ====================================================================== -->
 
-    <target name="test" depends="ivy-get,compile-tests,test-cobertura"
+    <target name="test" depends="test-cobertura"
             description="Runs various tests in the subproject">
     </target>
 
@@ -305,7 +305,7 @@
         </war>
     </target>
 
-    <target name="war" depends="ivy-get, compile, inspect, test-cobertura, create-war"/>
+    <target name="war" depends="ivy-get, compile, inspect, test, create-war"/>
 
     <target name="war-notest" depends="ivy-compile, ivy-runtime, compile, create-war"
             description="Package the application.  Do not run tests."/>
