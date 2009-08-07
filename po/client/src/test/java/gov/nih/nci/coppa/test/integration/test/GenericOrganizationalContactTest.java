@@ -94,24 +94,24 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
         clickAndWaitButton("add_button");
         waitForTelecomFormsToLoad();
         createGenericOrganizationalContact("PENDING", "", new String[] { "IRB" }, getAddress(), "gen@oc.com",
-                "", "http://www.genoc.com", "123-123-1234", false);
+                "", "123-123-1234", null, "http://www.genoc.com", false);
         assertTrue("Title should be required", selenium.isTextPresent("Title or Affiliated Person must be set"));
         assertFalse("Phone number should not be required for pending roles", selenium
                 .isTextPresent("Phone number is required for this status."));
 
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", new String[] { "IRB" }, null, "",
-                "", "", "", false);
+                "", "", null, "", false);
         assertFalse("Title should be set", selenium.isTextPresent("Title or Affiliated Person must be set"));
         assertTrue("Phone number should be required for active roles", selenium
                 .isTextPresent("Phone number is required for this status."));
 
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", new String[] { "IRB" }, null, "",
-                "098-765-4321", "", "", true);
+                "098-765-4321", "", null, "", true);
 
         clickAndWaitButton("add_button");
         waitForTelecomFormsToLoad();
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", new String[] { "IRB" }, null, "gen@oc.com",
-                "098-765-4321", "http://www.genoc.com", "123-123-1234", false);
+                "098-765-4321", "123-123-1234", null, "http://www.genoc.com", false);
         assertTrue(selenium
                 .isTextPresent("An Organizational Contact already exists with the same Title, please choose another"));
     }

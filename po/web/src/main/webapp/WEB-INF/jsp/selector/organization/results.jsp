@@ -26,16 +26,8 @@
             </c:choose>
         </display:column>
         <display:column titleKey="th.action" class="action">
-            <script type="text/javascript">
-            <!--
-                // If there are any apostrophes in the name, it will screw up creating the IdValue below,
-                // so we define it as a variable separately
-                var name${row.id} = "${row.name}";
-            -->
-            </script>
-            
             <po:buttonRow>
-                <po:button id="mark_as_dup_${row.id}"href="javascript://nop/" onclick="selectAndClose(new IdValue('${row.id}', name${row.id}));" style="reject" text="Select" />
+                <po:button id="mark_as_dup_${row.id}" href="javascript://nop/" onclick="selectAndClose(new IdValue('${row.id}', '${pofn:escapeJavaScript(row.name)}'));" style="reject" text="Select" />
             </po:buttonRow>
         </display:column>
     </display:table>

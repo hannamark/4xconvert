@@ -48,11 +48,11 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
         
         verifyTrue(selenium.isTextPresent("Address 1"));
 
-        verifyEquals(address.getCountry(), selenium.getText("wwctrl_address.country"));
-        verifyEquals(address.getStreetAddressLine(), selenium.getText("wwctrl_address.streetAddressLine"));
-        verifyEquals(address.getDeliveryAddressLine(), selenium.getText("wwctrl_address.deliveryAddressLine"));
-        verifyEquals(address.getCityOrMunicipality(), selenium.getText("wwctrl_address.cityOrMunicipality"));
-        verifyEquals(address.getStateOrProvince(), selenium.getText("wwctrl_address.stateOrProvince"));
-        verifyEquals(address.getPostalCode(), selenium.getText("wwctrl_address.postalCode"));
+        verifyEquals(address.getCountry(), selenium.getText("wwctrl_address.country1"));
+        verifyEquals(address.getStreetAddressLine(), selenium.getText("wwctrl_address.streetAddressLine1"));
+        verifyEquals(address.getDeliveryAddressLine(), selenium.getText("wwctrl_address.deliveryAddressLine1"));
+        verifyEquals(address.getCityOrMunicipality(), selenium.getText("wwctrl_address.cityOrMunicipality1"));
+        verifyEquals(address.getStateOrProvince(), selenium.getText("wwctrl_address.stateOrProvince1"));
+        verifyEquals(address.getPostalCode(), selenium.getText("wwctrl_address.postalCode1"));
     }
 }

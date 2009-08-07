@@ -1,5 +1,21 @@
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+
+import javax.naming.NamingException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -70,7 +86,11 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         if (!isLoggedIn()) {
             loginAsCurator();
         }
-        selenium.open("/po-web/protected/home.action");
+        openAndWait("/po-web/protected/home.action");
+    }
+
+    protected void openAndWait(String url) {
+        selenium.open(url);
         waitForPageToLoad();
     }
 
@@ -288,7 +308,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         // add postal addresss info
         inputAddressInfo(address, "curateEntityForm", "person");
         // add contact info
-        inputContactInfo(email, phone, url, fax);
+        inputContactInfo(email, phone, fax, null, url);
         //save the person
         clickAndWaitSaveButton();
         //verify person created message
@@ -296,7 +316,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void createOrganization(String status, String name, Address address, String email, String phone,
-            String url, String fax) {
+            String fax, String tty, String url) {
         openCreateOrganization();
         selenium.select("curateEntityForm.organization.statusCode", "label=" + status);
         selenium.type("curateEntityForm_organization_name", name);
@@ -305,7 +325,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         inputAddressInfo(address, "curateEntityForm", "organization");
 
         // add contact info
-        inputContactInfo(email, phone, url, fax);
+        inputContactInfo(email, phone, fax, tty, url);
 
         // save the organization
         clickAndWaitSaveButton();
@@ -314,7 +334,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void createGenericOrganizationalContact(String status, String title, String[] types, Address address,
-            String email, String phone, String url, String fax, boolean verify) {
+            String email, String phone, String fax, String tty, String url, boolean verify) {
         waitForTelecomFormsToLoad();
         selenium.type("curateRoleForm_role_title", title);
         selenium.select("curateRoleForm.role.status", "label=" + status);
@@ -329,7 +349,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         }
 
         // add contact info
-        inputContactInfo(email, phone, url, fax);
+        inputContactInfo(email, phone, fax, tty, url);
 
         // save the OC
         clickAndWaitSaveButton();
@@ -340,7 +360,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         }
     }
 
-    private void inputAddressInfo(Address address, String formName, String objectType) {
+    protected void inputAddressInfo(Address address, String formName, String objectType) {
         selenium.select(formName + "." + objectType + ".postalAddress.country", "label=" + address.getCountry());
         waitForElementById(objectType + ".postalAddress.stateOrProvince", 10);
         selenium.type(formName + "_" + objectType + "_postalAddress_streetAddressLine", address.getStreetAddressLine());
@@ -352,7 +372,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.type(formName + "_" + objectType + "_postalAddress_postalCode", address.getPostalCode());
     }
 
-    private void inputAddressInfoPopup(Address address) {
+    protected void inputAddressInfoPopup(Address address) {
         clickAndWaitButton("add_address");
         selenium.selectFrame("popupFrame");
         selenium.select("postalAddressForm.address.country", "label=" + address.getCountry());
@@ -366,7 +386,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.selectFrame("relative=up");
     }
 
-    private void inputContactInfo(String email, String phone, String url, String fax) {
+    protected void inputContactInfo(String email, String phone, String fax, String tty, String url) {
         if (StringUtils.isNotBlank(email)) {
             selenium.type("emailEntry_value", email);
             selenium.click("email-add");
@@ -377,15 +397,20 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
             selenium.click("phone-add");
             waitForElementById("phone-entry-0", 5);
         }
-        if (StringUtils.isNotBlank(url)) {
-            selenium.type("urlEntry_value", url);
-            selenium.click("url-add");
-            waitForElementById("url-entry-0", 5);
-        }
         if (StringUtils.isNotBlank(fax)) {
             selenium.type("faxEntry_value", fax);
             selenium.click("fax-add");
             waitForElementById("fax-entry-0", 5);
+        }
+        if (StringUtils.isNotBlank(tty)) {
+            selenium.type("ttyEntry_value", fax);
+            selenium.click("tty-add");
+            waitForElementById("tty-entry-0", 5);
+        }
+        if (StringUtils.isNotBlank(url)) {
+            selenium.type("urlEntry_value", url);
+            selenium.click("url-add");
+            waitForElementById("url-entry-0", 5);
         }
     }
 
@@ -403,11 +428,101 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected String createOrganization() {
         String name = "orgName" + System.currentTimeMillis();
         createOrganization("ACTIVE", name, getAddress(), "sample@email.com", "703-111-2345",
-                "http://www.createorg.com", "703-111-1234");
+                "703-111-1234", null, "http://www.createorg.com");
         return name;
     }
 
+    protected void accessManageClinicalResearchStaffScreen() {
+        clickAndWait("link=Manage Clinical Research Staff(s)");
+        verifyTrue(selenium.isTextPresent("Clinical Research Staff Information"));
+    }
+
+    protected void selectOrganizationScoper(String orgId, String orgName) {
+        clickAndWaitButton("select_scoper");
+        selenium.selectFrame("popupFrame");
+        selenium.type("duplicateOrganizationForm_criteria_organization_id", orgId);
+        /* search for dups */
+        selenium.click("//a[@id='submitDuplicateOrganizationForm']/span/span");
+        /* wait for results to load */
+        waitForElementById("mark_as_dup_" + orgId, 10);
+        /* select record to use at duplicate */
+        clickAndWaitButton("mark_as_dup_" + orgId);
+        selenium.selectFrame("relative=parent");
+        verifyEquals(orgName + " (" + orgId + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
+    }
+    
+    /**Use this to add postal addresses using the popup
+     * Verifies values exists somewhere on the page after the popup save button is pressed. 
+     * Unfortunately, we're unable to control the order the postalAdresses are display (backed by a HashSet) 
+     * so, we can only do verify the existence of text on the page.
+     * 
+     * *** SPECIFY UNIQUE VALUES ON THE PAGE 
+     */
+    protected void addPostalAddressUsingPopup(String street1, String street2, String city, String stateCode, String zip,
+            String countryName, int totalNumberOfAddressesAfterAdd) {
+                assertTrue(totalNumberOfAddressesAfterAdd > 0);
+                waitForElementById("add_address", 10);
+                clickAndWaitButton("add_address");
+                selenium.selectFrame("popupFrame");
+                selenium.select("postalAddressForm.address.country", "label="+countryName);
+                //might need to wait for //div[@id=address.div_stateOrProvince] to reload 
+                waitForElementById("address.stateOrProvince", 10);
+                
+                selenium.type("postalAddressForm_address_streetAddressLine", street1);
+                selenium.type("postalAddressForm_address_deliveryAddressLine", street2);
+                selenium.type("postalAddressForm_address_cityOrMunicipality", city);
+                if (selenium.isElementPresent("css=input[name=address.stateOrProvince]")){
+                    selenium.type("address.stateOrProvince", stateCode);
+                    
+                } else if (selenium.isElementPresent("css=select[name=address.stateOrProvince]")) {
+                    selenium.select("address.stateOrProvince", "value="+stateCode);
+                } else {
+                    fail("Unable to determine the form element.type of address.stateOrProvince");
+                }
+                selenium.type("postalAddressForm_address_postalCode", zip);
+                selenium.click("//a[@id='submitPostalAddressForm']/span/span");
+                selenium.selectFrame("relative=parent");
+                selenium.waitForPageToLoad("30000");
+                totalNumberOfAddressesAfterAdd--;
+                waitForElementById("postalAddress"+totalNumberOfAddressesAfterAdd, 10);
+                selenium.isTextPresent(street1);
+                selenium.isTextPresent(street2);
+                selenium.isTextPresent(city);
+                selenium.isTextPresent(stateCode);
+                selenium.isTextPresent(zip);
+                selenium.isTextPresent(countryName);
+                
+            }
+
     public enum ENTITYTYPE {
         person, organization;
+    }
+    
+    protected Ii createRemoteOrg(String orgName) throws EntityValidationException, NamingException, URISyntaxException {
+        
+        OrganizationDTO dto = new OrganizationDTO();
+        dto.setName(RemoteApiUtils.convertToEnOn(orgName));
+        dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        dto.setTelecomAddress(telco);
+
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
+        dto.getTelecomAddress().getItem().add(email);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI(DEFAULT_URL));
+        dto.getTelecomAddress().getItem().add(url);
+        Ii id = RemoteServiceHelper.getOrganizationEntityService().createOrganization(dto);
+        dto.setIdentifier(id);
+        return id;
+    }
+    
+    protected void savePersonAsActive(Ii id) {
+        selenium.select("curateEntityForm.person.statusCode", "label=ACTIVE");
+        clickAndWaitSaveButton();
+        verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
+        assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
 }

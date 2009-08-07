@@ -9,14 +9,14 @@
 	        ${cr.id} 
 	        </po:field>
             
-	        <po:copyButton id="copy_curateEntityForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateEntityForm.organization.statusCode');"
+	        <po:copyButton id="copy_curateEntityForm_organization_statusCode" onclick="selectValueInSelectField('${pofn:escapeJavaScript(cr.statusCode)}', 'curateEntityForm.organization.statusCode');"
 	            bodyStyle="float:left;" buttonStyle="float:right;">
 	            <po:field labelKey="organization.statusCode">
 		            ${cr.statusCode}
 	            </po:field>
 	        </po:copyButton>
             
-            <po:copyButton id="copy_curateEntityForm_organization_name" onclick="copyValueToTextField('${cr.name}', 'curateEntityForm_organization_name');" 
+            <po:copyButton id="copy_curateEntityForm_organization_name" onclick="copyValueToTextField('${pofn:escapeJavaScript(cr.name)}', 'curateEntityForm_organization_name');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield name="cr.name" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
             </po:copyButton>
@@ -30,13 +30,13 @@
             <script type="text/javascript">
             function copyPostalAddressField() {
             	//set State before Country to ensure State is properly populated with the CR's State value after the Country onchange event is fired and complete
-            	copyValueToTextField('${cr.postalAddress.stateOrProvince}', 'organization.postalAddress.stateOrProvince');
-            	selectValueInSelectField('${cr.postalAddress.stateOrProvince}', 'organization.postalAddress.stateOrProvince');
-            	selectValueInSelectField('${cr.postalAddress.country.id}', 'curateEntityForm.organization.postalAddress.country');
-            	copyValueToTextField('${cr.postalAddress.streetAddressLine}', 'curateEntityForm_organization_postalAddress_streetAddressLine');
-            	copyValueToTextField('${cr.postalAddress.deliveryAddressLine}', 'curateEntityForm_organization_postalAddress_deliveryAddressLine');
-            	copyValueToTextField('${cr.postalAddress.cityOrMunicipality}', 'curateEntityForm_organization_postalAddress_cityOrMunicipality');
-            	copyValueToTextField('${cr.postalAddress.postalCode}', 'curateEntityForm_organization_postalAddress_postalCode');
+            	copyValueToTextField('${pofn:escapeJavaScript(cr.postalAddress.stateOrProvince)}', 'organization.postalAddress.stateOrProvince');
+            	selectValueInSelectField('${pofn:escapeJavaScript(cr.postalAddress.stateOrProvince)}', 'organization.postalAddress.stateOrProvince');
+            	selectValueInSelectField('${pofn:escapeJavaScript(cr.postalAddress.country.id)}', 'curateEntityForm.organization.postalAddress.country');
+            	copyValueToTextField('${pofn:escapeJavaScript(cr.postalAddress.streetAddressLine)}', 'curateEntityForm_organization_postalAddress_streetAddressLine');
+            	copyValueToTextField('${pofn:escapeJavaScript(cr.postalAddress.deliveryAddressLine)}', 'curateEntityForm_organization_postalAddress_deliveryAddressLine');
+            	copyValueToTextField('${pofn:escapeJavaScript(cr.postalAddress.cityOrMunicipality)}', 'curateEntityForm_organization_postalAddress_cityOrMunicipality');
+            	copyValueToTextField('${pofn:escapeJavaScript(cr.postalAddress.postalCode)}', 'curateEntityForm_organization_postalAddress_postalCode');
             }
             </script>
             <po:copyButton id="copy_curateEntityForm_organization_postalAddress" onclick="copyPostalAddressField();" bodyStyle="clear:left;float:left;" buttonStyle="float:right;">

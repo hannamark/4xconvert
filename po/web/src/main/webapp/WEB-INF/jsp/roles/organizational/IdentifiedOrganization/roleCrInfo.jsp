@@ -16,19 +16,19 @@
 
             <po:copyButton
              id="copy_curateCrForm_role_status"
-             onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
+             onclick="selectValueInSelectField('${pofn:escapeJavaScript(cr.status)}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('identifiedOrganization.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
             
             <script type="text/javascript">
             function copyIsoIIFields() {
-                selectValueInSelectField('${cr.assignedIdentifier.displayable}', 'curateRoleForm.role.assignedIdentifier.displayable');
-                copyValueToTextField('${cr.assignedIdentifier.extension}', 'curateRoleForm.role.assignedIdentifier.extension');
-                copyValueToTextField('${cr.assignedIdentifier.identifierName}', 'curateRoleForm.role.assignedIdentifier.identifierName');
-                selectValueInSelectField('${cr.assignedIdentifier.reliability}', 'curateRoleForm.role.assignedIdentifier.reliability');
-                copyValueToTextField('${cr.assignedIdentifier.root}', 'curateRoleForm.role.assignedIdentifier.root');
-                selectValueInSelectField('${cr.assignedIdentifier.scope}', 'curateRoleForm.role.assignedIdentifier.scope');
+                selectValueInSelectField('${pofn:escapeJavaScript(cr.assignedIdentifier.displayable)}', 'curateRoleForm.role.assignedIdentifier.displayable');
+                copyValueToTextField('${pofn:escapeJavaScript(cr.assignedIdentifier.extension)}', 'curateRoleForm.role.assignedIdentifier.extension');
+                copyValueToTextField('${pofn:escapeJavaScript(cr.assignedIdentifier.identifierName)}', 'curateRoleForm.role.assignedIdentifier.identifierName');
+                selectValueInSelectField('${pofn:escapeJavaScript(cr.assignedIdentifier.reliability)}', 'curateRoleForm.role.assignedIdentifier.reliability');
+                copyValueToTextField('${pofn:escapeJavaScript(cr.assignedIdentifier.root)}', 'curateRoleForm.role.assignedIdentifier.root');
+                selectValueInSelectField('${pofn:escapeJavaScript(cr.assignedIdentifier.scope)}', 'curateRoleForm.role.assignedIdentifier.scope');
             }
             </script>            
             <div class="clear"></div>

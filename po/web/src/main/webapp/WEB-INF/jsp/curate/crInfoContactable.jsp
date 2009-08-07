@@ -14,7 +14,7 @@
                 <div id="email-list-ro">
                 <ul>
                     <s:iterator value="cr.email" status="e">
-                        <po:copyButton id="copy_emailEntry_value${e.index}" onclick="addValue('${value}', 'emailEntry_value','email-add');" 
+                        <po:copyButton id="copy_emailEntry_value${e.index}" onclick="addValue('${pofn:escapeJavaScript(value)}', 'emailEntry_value','email-add');" 
                             bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
                         <li id="email-entry-${e.index}">
                             ${value}
@@ -29,7 +29,7 @@
                 <div id="phone-list-ro">
                 <ul>
                     <s:iterator value="cr.phone" status="e">
-                       <po:copyButton id="copy_phoneEntry_value${e.index}" onclick="addValue('${value}', 'phoneEntry_value','phone-add');" 
+                       <po:copyButton id="copy_phoneEntry_value${e.index}" onclick="addValue('${pofn:escapeJavaScript(value)}', 'phoneEntry_value','phone-add');" 
                             bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
                         <li id="phone-entry-${e.index}">
                             ${value}
@@ -44,7 +44,7 @@
                 <div id="fax-list-ro">
                 <ul>
                     <s:iterator value="cr.fax" status="e">
-                       <po:copyButton id="copy_faxEntry_value${e.index}" onclick="addValue('${value}', 'faxEntry_value','fax-add');" 
+                       <po:copyButton id="copy_faxEntry_value${e.index}" onclick="addValue('${pofn:escapeJavaScript(value)}', 'faxEntry_value','fax-add');" 
                             bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
                         <li id="fax-entry-${e.index}">
                             ${value}
@@ -59,7 +59,7 @@
                 <div id="tty-list-ro">
                 <ul>
                     <s:iterator value="cr.tty" status="e">
-                       <po:copyButton id="copy_ttyEntry_value${e.index}" onclick="addValue('${value}', 'ttyEntry_value','tty-add');" 
+                       <po:copyButton id="copy_ttyEntry_value${e.index}" onclick="addValue('${pofn:escapeJavaScript(value)}', 'ttyEntry_value','tty-add');" 
                             bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
                         <li id="tty-entry-${e.index}">
                             ${value}
@@ -74,7 +74,7 @@
                 <div id="url-list-ro">
                 <ul>
                     <s:iterator value="cr.url" status="e">
-                       <po:copyButton id="copy_urlEntry_value${e.index}" onclick="addValue('${value}', 'urlEntry_value','url-add');" 
+                       <po:copyButton id="copy_urlEntry_value${e.index}" onclick="addValue('${pofn:escapeJavaScript(value)}', 'urlEntry_value','url-add');" 
                             bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
                         <li id="url-entry-${e.index}">          
                             <a href="${value}" target="_blank"><s:property value="@java.net.URLDecoder@decode(value)" /></a>

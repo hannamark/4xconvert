@@ -63,13 +63,13 @@
 	        <c:set var="parentAddress" value="${mailable.player.postalAddress}" scope="request"/>
             <script type="text/javascript">
             function copyPostalAddressField() {
-                selectValueInSelectField('${parentAddress.country.id}', 'postalAddressForm.address.country');
-                copyValueToTextField('${parentAddress.streetAddressLine}', 'postalAddressForm_address_streetAddressLine');
-                copyValueToTextField('${parentAddress.deliveryAddressLine}', 'postalAddressForm_address_deliveryAddressLine');
-                copyValueToTextField('${parentAddress.cityOrMunicipality}', 'postalAddressForm_address_cityOrMunicipality');
-                copyValueToTextField('${parentAddress.postalCode}', 'postalAddressForm_address_postalCode');
-                copyValueToTextField('${parentAddress.stateOrProvince}', 'address.stateOrProvince');
-                selectValueInSelectField('${parentAddress.stateOrProvince}', 'address.stateOrProvince'); 
+                selectValueInSelectField('${pofn:escapeJavaScript(parentAddress.country.id)}', 'postalAddressForm.address.country');
+                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.streetAddressLine)}', 'postalAddressForm_address_streetAddressLine');
+                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.deliveryAddressLine)}', 'postalAddressForm_address_deliveryAddressLine');
+                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.cityOrMunicipality)}', 'postalAddressForm_address_cityOrMunicipality');
+                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.postalCode)}', 'postalAddressForm_address_postalCode');
+                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.stateOrProvince)}', 'address.stateOrProvince');
+                selectValueInSelectField('${pofn:escapeJavaScript(parentAddress.stateOrProvince)}', 'address.stateOrProvince'); 
             }
             </script>
             <po:button href="javascript://noop/" style="copy" id="copy_parent_postalAddress" onclick="copyPostalAddressField(); $('postalAddressForm').submit();" text="Use Person's Address"/>

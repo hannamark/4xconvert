@@ -73,7 +73,7 @@
 		        <display:column titleKey="th.action" class="action">
 		           <po:copyButton
 		             id="copy_curateCrForm_role_status"
-		             onclick="selectValueInSelectField('${row.status}', 'curateRoleForm.role.status');" 
+		             onclick="selectValueInSelectField('${pofn:escapeJavaScript(row.status)}', 'curateRoleForm.role.status');" 
 		                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
 		           </po:copyButton>
 		        </display:column>

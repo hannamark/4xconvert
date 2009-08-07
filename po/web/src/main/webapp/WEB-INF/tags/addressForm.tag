@@ -6,6 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
+<%@ taglib uri="/WEB-INF/po-functions.tld" prefix="pofn" %>
 <s:set name="countryService" value="@gov.nih.nci.po.util.PoRegistry@getCountryService()" />
 <script type="text/javascript"><!--
 /*
@@ -71,7 +72,7 @@ function loadStateProvince(code, v) {
             Loading States...
         </div>
         <script type="text/javascript"><!--
-            loadStateProvince($('${formNameBase}.${addressKeyBase}.country').value, '${address.stateOrProvince}');
+            loadStateProvince($('${formNameBase}.${addressKeyBase}.country').value, '${pofn:escapeJavaScript(address.stateOrProvince)}');
         --></script>
     </po:inputRowElement>
     <po:inputRowElement>

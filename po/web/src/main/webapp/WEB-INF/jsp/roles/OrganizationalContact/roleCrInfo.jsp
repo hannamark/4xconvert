@@ -14,7 +14,7 @@
             <div class="box_white">
                 <s:if test="%{#ocType == 'organizational'}">
                     <po:copyButton id="copy_curateCrForm_role_title"
-                                   onclick="copyValueToTextField('${cr.title}', 'curateRoleForm_role_title');"
+                                   onclick="copyValueToTextField('${pofn:escapeJavaScript(cr.title)}', 'curateRoleForm_role_title');"
                                    bodyStyle="float:left;" buttonStyle="float:right;">
                         <po:field labelKey="organizationalContact.title">
                             ${cr.title}
@@ -33,7 +33,7 @@
 
             <po:copyButton
              id="copy_curateCrForm_role_status"
-             onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');"
+             onclick="selectValueInSelectField('${pofn:escapeJavaScript(cr.status)}', 'curateRoleForm.role.status');"
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('organizationalContact.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>

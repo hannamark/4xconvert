@@ -7,7 +7,7 @@ No Postal Address(es) found.
 <fieldset id="postalAddress${e.index}">
     <legend>Address ${e.index + 1}</legend>
     <div>
-    <po:address address="${addy}"/>
+    <po:address address="${addy}" idSuffix="${e.index + 1}"/>
     </div>
     <c:url var="removeAction" value="../../mailable/remove.action">
         <c:param name="rootKey" value="${rootKey}"/>

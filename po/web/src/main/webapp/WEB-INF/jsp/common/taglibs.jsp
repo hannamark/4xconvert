@@ -8,3 +8,4 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <%@ taglib uri="http://ajaxtags.org/tags/ajax" prefix="ajax" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
+<%@ taglib uri="/WEB-INF/po-functions.tld" prefix="pofn" %>

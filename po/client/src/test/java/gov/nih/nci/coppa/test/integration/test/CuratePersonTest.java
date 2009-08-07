@@ -59,7 +59,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         verifyPostalAddress(ENTITYTYPE.person);
         verifyTelecom();
 
-        saveAsActive(id);
+        savePersonAsActive(id);
     }
 
     public void testCuratePersonWithCRs() throws Exception {
@@ -99,13 +99,13 @@ public class CuratePersonTest extends AbstractPoWebTest {
 
         verifyTelecom();
 
-        saveAsActive(id);
+        savePersonAsActive(id);
     }
 
     public void testCurateNewPersonThenCurateAfterRemoteUpdateToActive() throws Exception {
         Ii id = curateNewPersonThenCurateAfterRemoteUpdate();
 
-        saveAsActive(id);
+        savePersonAsActive(id);
     }
 
     public void testCurateNewPersonThenCurateAfterRemoteUpdateToNullify() throws Exception {
@@ -189,7 +189,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
 
         verifyTelecom();
 
-        saveAsActive(id);
+        savePersonAsActive(id);
         return id;
     }
 
@@ -220,13 +220,6 @@ public class CuratePersonTest extends AbstractPoWebTest {
         selenium.open("/po-web/protected/curate/search/listPersons.action");
         selenium.click("id=EntityInboxPerson");
         waitForPageToLoad();
-    }
-
-    private void saveAsActive(Ii id) {
-        selenium.select("curateEntityForm.person.statusCode", "label=ACTIVE");
-        clickAndWaitSaveButton();
-        verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
-        assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void saveAsInactive(Ii id) {
