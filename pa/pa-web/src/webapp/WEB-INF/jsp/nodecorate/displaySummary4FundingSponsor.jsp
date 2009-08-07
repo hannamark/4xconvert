@@ -6,7 +6,7 @@
 <%--<input type="button" value="Look Up" onclick="lookup4loadSummary4Sponsor();"/>--%>
 </td><td> 
                   <ul style="margin-top:-2px;">             
-                        <li style="padding-left:0"><a href="#" class="btn" onclick="lookup4loadSummary4Sponsor();"/><span class="btn_img"><span class="organization">Look Up</span></span></a></li>
+                        <li style="padding-left:0"><a href="#" class="btn" onclick="lookup4loadSummary4Sponsor();"/><span class="btn_img"><span class="organization">Look Up Sponsor</span></span></a></li>
                   </ul><s:hidden name="gtdDTO.summaryFourOrgIdentifier"/>
                    </td>
       </tr>

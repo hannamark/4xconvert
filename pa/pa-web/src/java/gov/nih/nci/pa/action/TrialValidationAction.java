@@ -394,8 +394,7 @@ public class TrialValidationAction extends ActionSupport {
                     getText("Primary Purpose Other other text must be entered"));
         }
         if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())
-                && PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
+                && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
             addFieldError("gtdDTO.responsiblePersonName",
                     getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
         }

@@ -7,8 +7,18 @@
     function submitform(persid, name)
     {   
         //top.window.loadPersDiv(persid, func);
-        var email = document.getElementById(persid+"email")[document.getElementById(persid+"email").selectedIndex].value;
-        var phone = document.getElementById(persid+"phone")[document.getElementById(persid+"phone").selectedIndex].value;
+        var email = document.getElementById(persid+"email")[document.getElementById(persid+"email").selectedIndex];
+        var phone = document.getElementById(persid+"phone")[document.getElementById(persid+"phone").selectedIndex];
+        if(email == undefined) {
+            email = '';
+        } else {
+            email = email.value;
+        }
+        if(phone == undefined) {
+            phone = '';
+        } else {
+            phone = phone.value;
+        }
         top.window.setpersid(persid, name,email,phone);
         window.top.hidePopWin(true); 
     }

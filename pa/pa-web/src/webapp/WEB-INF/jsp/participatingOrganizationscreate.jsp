@@ -19,6 +19,7 @@
 <c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
 <c:url value="/protected/popuplookupcontactpersons.action" var="lookupContactPersonsUrl"/>
+<c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
 <style type="text/css"> 
 .disabled 
 { 
@@ -181,7 +182,18 @@
 	}
 	function setorgid(orgid){
 	}
-
+	function lookup4loadresponsibleparty(){ 
+	    var orgid = document.getElementById('editOrg.identifier').value;
+	    alert(orgid);
+	    showPopWin('${lookupOrgGenericContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Contact');
+	}
+	function createOrgGenericContactDiv() {
+	    document.getElementById('personContactWebDTO.responsiblePersonName').value = '';
+	    document.getElementById("personContactWebDTO.email").value = contactMail;
+	    document.getElementById("personContactWebDTO.telephone").value = contactPhone;    
+		    
+	}
+		
 </script>      
 </head>
 <body onload="setFocusToFirstControl();">
@@ -197,7 +209,7 @@
  <s:if test="hasActionErrors()">
     <div class="error_msg"><s:actionerror/></div>
     </s:if>
-  
+  <s:hidden name="editOrg.identifier" id="editOrg.identifier" ></s:hidden>
 <h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>

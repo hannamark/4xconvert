@@ -619,8 +619,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
           addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
       }
       if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())
-              && PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
+              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
           addFieldError("responsiblePersonName",
                   getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
       }

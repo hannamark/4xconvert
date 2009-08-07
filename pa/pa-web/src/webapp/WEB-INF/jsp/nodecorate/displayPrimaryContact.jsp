@@ -10,7 +10,7 @@
 	  
 	    <td class="value" colspan="2">
 	    	
-	        <s:textfield name="personContactWebDTO.telephone" maxlength="200" size="200"				         
+	        <s:textfield name="personContactWebDTO.telephone" id="personContactWebDTO.telephone" maxlength="200" size="200"				         
 	        cssStyle="width: 200px" />
                      <span class="formErrorMsg"> 
                            <s:fielderror>
@@ -23,7 +23,7 @@
 	    <td scope="row" class="label"><s:label for="editOrg.postalCode">Email Address:</s:label><span class="required">*</span></td>
 	 
 	    <td class="value" colspan="2">
-	        <s:textfield name="personContactWebDTO.email" maxlength="200" size="200" 
+	        <s:textfield name="personContactWebDTO.email" id="personContactWebDTO.email" maxlength="200" size="200" 
 	         cssStyle="width: 200px" />
                      <span class="formErrorMsg"> 
                            <s:fielderror>
