@@ -47,9 +47,6 @@ function handleCreate(){
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2"><input type="hidden" name="cbValue" /> 
-             <c:if test="${fn:length(interventionsList) > 10}">
-            <div style="overflow:auto; height:356px;width:968px;">
-            </c:if>
             <display:table name="interventionsList" id="row" class="data" sort="list" pagesize="200" 
                     requestURI="trialInterventions.action" export="false">
                 <display:column property="name" sortable="true"
@@ -78,9 +75,7 @@ function handleCreate(){
                     </s:a>
                 </display:column>
             </display:table>
-            <c:if test="${fn:length(interventionsList) > 10}">
-            </div>
-            </c:if></td>
+           </td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">

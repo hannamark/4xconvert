@@ -45,9 +45,6 @@ function handleDelete(studyProtocolIi){
     <s:if test="studyIndideList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="cbValue" />
-    <c:if test="${fn:length(studyIndideList) > 10}">
-    <div style="overflow:auto; height:356px;width:968px;">
-    </c:if>
     <display:table name="${studyIndideList}" id="row" class="data" sort="list"  pagesize="200" requestURI="trialIndidequery.action" export="false">    
         <display:column titleKey="trialIndide.indldeType" property="indldeType" sortable="true" headerClass="sortable" />
         <display:column titleKey="trialIndide.indideNumber" property="indldeNumber" sortable="true" headerClass="sortable" />
@@ -65,9 +62,6 @@ function handleDelete(studyProtocolIi){
         	<s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
         </display:column>
     </display:table>
-    <c:if test="${fn:length(studyIndideList) > 10}">
-    </div>
-    </c:if>
   </s:if> 
         <div class="actionsrow">
             <del class="btnwrapper">

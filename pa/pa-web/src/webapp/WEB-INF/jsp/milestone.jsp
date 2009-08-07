@@ -33,9 +33,6 @@ function handleCreate(){
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
-              <c:if test="${fn:length(milestoneList) > 10}">
-                <div style="overflow:auto; height:356px;width:968px;">
-              </c:if>
             <display:table name="milestoneList" id="row" class="data" sort="list" pagesize="200" requestURI="milestone.action">
                 <display:column property="milestone" sortable="false"
                     titleKey="milestone.milestone" />
@@ -44,9 +41,6 @@ function handleCreate(){
                 <display:column property="comment" sortable="false"
                     titleKey="milestone.comment" />
             </display:table>
-            <c:if test="${fn:length(milestoneList) > 10}">
-                </div>
-              </c:if>
               </td>
         </tr>
     </table>

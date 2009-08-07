@@ -30,9 +30,6 @@
     <s:if test="outcomeList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="id" />
-        <c:if test="${fn:length(outcomeList) > 10}">
-        <div style="overflow:auto; height:356px;width:968px;">
-        </c:if>
 	<display:table name="${outcomeList}" id="row" class="data" sort="list"  pagesize="200" requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">    
 	    <display:column titleKey="osdesign.outcome.primary" property="primaryIndicator" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="osdesign.outcome.description" property="name" sortable="true" headerClass="sortable" />
@@ -47,9 +44,6 @@
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
 		</display:column>  
 	</display:table>
-	   <c:if test="${fn:length(outcomeList)>10}">
-        </div>
-        </c:if>
   </s:if> 
 		<div class="actionsrow">
 			<del class="btnwrapper">

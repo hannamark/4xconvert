@@ -42,9 +42,6 @@ function handleDelete(studyResourcingId){
     <s:if test="trialFundingList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="cbValue" />
-    <c:if test="${fn:length(trialFundingList) > 10}">
-    <div style="overflow:auto; height:356px;width:968px;">
-    </c:if>
 	<display:table name="${trialFundingList}" id="row" class="data" sort="list"  pagesize="200" requestURI="trialFundingquery.action" export="false">    
 	    <display:column titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
@@ -57,9 +54,6 @@ function handleDelete(studyResourcingId){
     		<s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
     	</display:column>
 	</display:table>
-	<c:if test="${fn:length(trialFundingList) > 10}">
-	</div>
-	</c:if>
   </s:if> 
 		<div class="actionsrow">
 			<del class="btnwrapper">

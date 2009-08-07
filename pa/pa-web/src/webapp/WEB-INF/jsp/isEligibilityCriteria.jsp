@@ -184,9 +184,6 @@ BubbleTips.activateTipOn("dfn");
     <s:if test="eligibilityList != null">    
     	<input type="hidden" name="page" />
     	<input type="hidden" name="id" /> 
-    	 <c:if test="${fn:length(eligibilityList) > 10}">
-    	<div style="overflow:auto; height:356px;width:968px;">
-    	</c:if>
     	<display:table name="${eligibilityList}" id="row" class="data" 
     	       sort="list"  pagesize="200" requestURI="eligibilityCriteriaquery.action" export="false">
             <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriatype" property="inclusionIndicator" sortable="true" headerClass="sortable" />
@@ -204,9 +201,6 @@ BubbleTips.activateTipOn("dfn");
         		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
         	</display:column>
         </display:table>
-         <c:if test="${fn:length(eligibilityList) > 10}">
-        </div>
-        </c:if>
     </s:if> 
 	<div class="actionsrow">
         <del class="btnwrapper">
