@@ -12,12 +12,12 @@
         if(email == undefined || email.value == '') {
             email = '';
         } else {
-            email = [document.getElementById(persid+'email').selectedIndex].value;
+            email = email[document.getElementById(persid+'email').selectedIndex].value;
         }
         if(phone == undefined || phone.value == '') {
             phone = '';
         } else {
-            phone = [document.getElementById(persid+'phone').selectedIndex].value;
+            phone = phone[document.getElementById(persid+'phone').selectedIndex].value;
         }		top.window.setpersid(persid, name,email,phone);
 		window.top.hidePopWin(true); 
 	}
