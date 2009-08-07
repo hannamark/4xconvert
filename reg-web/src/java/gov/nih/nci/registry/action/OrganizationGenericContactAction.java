@@ -158,6 +158,12 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
             contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactId));
             contactDTO.setTitle(StConverter.convertToSt(title));    
+            DSet<Cd> orgContactType = new DSet<Cd>();
+            Set<Cd> orgContactCd = new HashSet<Cd>();
+            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
+            orgContactType.setItem(orgContactCd);
+            
+            contactDTO.setTypeCode(orgContactType);
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
             isoDtoList = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .search(contactDTO);
