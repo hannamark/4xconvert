@@ -182,17 +182,6 @@
 	}
 	function setorgid(orgid){
 	}
-	function lookup4loadresponsibleparty(){ 
-	    var orgid = document.getElementById('editOrg.identifier').value;
-	    alert(orgid);
-	    showPopWin('${lookupOrgGenericContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Contact');
-	}
-	function createOrgGenericContactDiv() {
-	    document.getElementById('personContactWebDTO.responsiblePersonName').value = '';
-	    document.getElementById("personContactWebDTO.email").value = contactMail;
-	    document.getElementById("personContactWebDTO.telephone").value = contactPhone;    
-		    
-	}
 		
 </script>      
 </head>
