@@ -11,8 +11,8 @@ x.t("trials","chapter");
 x.t("trials","information");
 x.t("trials","future");
 x.t("trials","submitted");
+x.t("trials","ctrp");
 x.t("trials","additionally");
-x.t("trials","trp");
 x.t("create","account");
 x.t("currently","register");
 x.t("currently","registered");
@@ -80,7 +80,6 @@ x.t("(8.0.6001.18702)","firefox");
 x.t("additionally","users");
 x.t("interventional","trials");
 x.t("produce","enable");
-x.t("trp","registration");
 x.t("clinical","trials");
 x.t("clinical","trial");
 }

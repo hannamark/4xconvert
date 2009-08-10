@@ -1,6 +1,7 @@
 function FileData_Pairs(x)
 {
 x.t("searching","trials");
+x.t("appendix","metadata");
 x.t("trials","provides");
 x.t("trials","clinical");
 x.t("captures","trial");
@@ -40,7 +41,7 @@ x.t("ctrp","registration");
 x.t("submitted","validated");
 x.t("protocol","submitter");
 x.t("subset","registered");
-x.t("elements","metadata");
+x.t("elements","appendix");
 x.t("definitions","describes");
 x.t("associated","trials");
 x.t("clinical","trial");

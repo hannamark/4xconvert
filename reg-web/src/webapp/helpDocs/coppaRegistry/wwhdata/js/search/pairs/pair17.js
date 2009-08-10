@@ -1,9 +1,10 @@
 function FileData_Pairs(x)
 {
 x.t("searching","trials");
+x.t("appendix","metadata");
 x.t("trials","viewing");
 x.t("submitter","refer");
-x.t("refer","metadata");
+x.t("refer","appendix");
 x.t("description","metadata");
 x.t("responsible","party");
 x.t("ind/ide","nih");

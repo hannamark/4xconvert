@@ -2,39 +2,45 @@
 <WebWorksHelpIX version="5.0" xmlns="urn:WebWorks-Help-Index-Schema">
   <g t="A" o="002">
     <i t="accepted trial, defined">
-      <j l="66#1094421" />
+      <j l="69#1075234" />
     </i>
     <i t="accounts, creating">
-      <j l="5#1089226" />
+      <j l="5#1077572" />
     </i>
     <i t="accrual, defined">
-      <j l="66#1094427" />
+      <j l="69#1075240" />
+    </i>
+    <i t="Administrative Processing Completed Date, defined">
+      <j l="68#1082152" />
+    </i>
+    <i t="Administrative Processing Start Date, defined">
+      <j l="68#1082138" />
     </i>
     <i t="allocation, defined">
-      <j l="58#1210155" />
+      <j l="68#1077513" />
     </i>
     <i t="ancillary trial, defined">
-      <j l="14#1110982" />
-      <j l="58#1210771" />
+      <j l="14#1078115" />
+      <j l="68#1082743" />
     </i>
     <i t="application support">
-      <j l="67#1083653" />
+      <j l="70#1077942" />
     </i>
     <i t="approved, defined">
-      <j l="66#1094439" />
+      <j l="69#1075252" />
     </i>
     <i t="arm, defined">
-      <j l="66#1094433" />
+      <j l="69#1075246" />
     </i>
   </g>
   <g t="B" o="002">
     <i t="basic science, defined">
-      <j l="58#1210797" />
-      <j l="66#1094445" />
+      <j l="68#1082777" />
+      <j l="69#1075258" />
     </i>
     <i t="batch upload">
       <i t="rules for">
-        <j l="38#1163964" />
+        <j l="40#1079688" />
       </i>
       <i t="template for">
         <j l="11" />
@@ -44,328 +50,328 @@
       <j l="1" />
     </i>
     <i t="bio-availability study, defined">
-      <j l="58#1210929" />
+      <j l="68#1083259" />
     </i>
     <i t="bio-equivalence study, defined">
-      <j l="58#1210950" />
+      <j l="68#1083284" />
     </i>
     <i t="browsers, supported">
-      <j l="4#1092258" />
+      <j l="4#1077558" />
     </i>
   </g>
   <g t="C" o="002">
     <i t="caDSR, defined">
-      <j l="66#1094457" />
+      <j l="69#1075270" />
     </i>
     <i t="CBER, defined">
-      <j l="66#1094463" />
+      <j l="69#1075276" />
     </i>
     <i t="CBIIT application support">
-      <j l="67#1083653" />
+      <j l="70#1077942" />
     </i>
     <i t="CBIIT, defined">
-      <j l="66#1094469" />
+      <j l="69#1075282" />
     </i>
     <i t="CCB, defined">
-      <j l="66#1094474" />
+      <j l="69#1075287" />
     </i>
     <i t="CCCT, defined">
-      <j l="66#1094479" />
+      <j l="69#1075292" />
     </i>
     <i t="CCR, defined">
-      <j l="66#1094484" />
+      <j l="69#1075297" />
     </i>
     <i t="CDE, defined">
-      <j l="66#1094490" />
+      <j l="69#1075303" />
     </i>
     <i t="CDER, defined">
-      <j l="66#1094495" />
+      <j l="69#1075308" />
     </i>
     <i t="CDP, defined">
-      <j l="66#1094501" />
+      <j l="69#1075314" />
     </i>
     <i t="CGH, defined">
-      <j l="66#1094507" />
+      <j l="69#1075320" />
     </i>
     <i t="CIP, defined">
-      <j l="66#1094513" />
+      <j l="69#1075326" />
     </i>
     <i t="ClinicalTrials.gov registration">
-      <j l="20#1064030" />
+      <j l="20#1077976" />
     </i>
     <i t="compressed file, defined">
-      <j l="66#1094833" />
+      <j l="69#1075358" />
     </i>
     <i t="correlative trial, defined">
-      <j l="14#1110983" />
-      <j l="58#1210781" />
+      <j l="14#1078118" />
+      <j l="68#1082755" />
     </i>
     <i t="creating accounts">
-      <j l="5#1089226" />
+      <j l="5#1077572" />
     </i>
     <i t="cross-over intervention model, defined">
-      <j l="58#1210396" />
+      <j l="68#1080845" />
     </i>
     <i t="CTAC, defined">
-      <j l="66#1094519" />
+      <j l="69#1075332" />
     </i>
     <i t="CTEP, defined">
-      <j l="66#1094524" />
+      <j l="69#1075337" />
     </i>
     <i t="CTRO, defined">
-      <j l="66#1094530" />
+      <j l="69#1075343" />
     </i>
     <i t="CTRP templates and resources">
       <j l="7" />
     </i>
     <i t="CTRP, defined">
-      <j l="66#1094535" />
+      <j l="69#1075348" />
     </i>
     <i t="CTWG, defined">
-      <j l="66#1094540" />
+      <j l="69#1075353" />
     </i>
     <i t="current processing status, defined">
-      <j l="16#1114750" />
+      <j l="16#1078332" />
     </i>
     <i t="current trial status">
       <i t="categories">
-        <j l="26#1108539" />
+        <j l="28#1078909" />
       </i>
       <i t="defined">
-        <j l="16#1114729" />
+        <j l="16#1078324" />
       </i>
     </i>
   </g>
   <g t="D" o="002">
     <i t="data monitoring committee">
-      <j l="66#1094586" />
+      <j l="69#1075406" />
     </i>
     <i t="DCB, defined">
-      <j l="66#1094545" />
+      <j l="69#1075364" />
     </i>
     <i t="DCCPS, defined">
-      <j l="66#1094551" />
+      <j l="69#1075370" />
     </i>
     <i t="DCEG, defined">
-      <j l="66#1094557" />
+      <j l="69#1075376" />
     </i>
     <i t="DCP, defined">
-      <j l="66#1094563" />
+      <j l="69#1075382" />
     </i>
     <i t="DCTD, defined">
-      <j l="66#1094569" />
+      <j l="69#1075388" />
     </i>
     <i t="DEA, defined">
-      <j l="66#1094574" />
+      <j l="69#1075394" />
     </i>
     <i t="delayed posting, defined">
-      <j l="66#1094592" />
+      <j l="69#1075412" />
     </i>
     <i t="diagnostic trial, defined">
-      <j l="58#1210787" />
+      <j l="68#1082765" />
     </i>
     <i t="disapproved, defined">
-      <j l="66#1094598" />
+      <j l="69#1075418" />
     </i>
     <i t="documents">
       <i t="required">
-        <j l="30#1113188" />
+        <j l="32#1079280" />
       </i>
       <i t="required, for batch uploads">
-        <j l="37#1136608" />
+        <j l="39#1079655" />
       </i>
     </i>
     <i t="double blind masking, defined">
-      <j l="58#1210463" />
+      <j l="68#1081131" />
     </i>
     <i t="downloading">
       <i t="CTRP registration templates">
-        <j l="8#1090373" />
+        <j l="8#1077810" />
       </i>
       <i t="trial-related documents">
         <j l="18" />
       </i>
     </i>
     <i t="DTP, defined">
-      <j l="66#1094580" />
+      <j l="69#1075400" />
     </i>
   </g>
   <g t="E" o="002">
     <i t="early detection trial, defined">
-      <j l="14#1114388" />
-      <j l="58#1210777" />
+      <j l="14#1078091" />
+      <j l="68#1082749" />
     </i>
     <i t="EBI, defined">
-      <j l="66#1094604" />
+      <j l="69#1075424" />
     </i>
     <i t="efficacy study, defined">
-      <j l="58#1210934" />
+      <j l="68#1083264" />
     </i>
     <i t="eligibility criteria, defined">
-      <j l="66#1094632" />
+      <j l="69#1075452" />
     </i>
     <i t="epidemiologic trial, defined">
-      <j l="58#1210747" />
+      <j l="68#1082713" />
     </i>
     <i t="EVS, defined">
-      <j l="66#1094610" />
+      <j l="69#1075430" />
     </i>
     <i t="expanded access">
-      <j l="28#1112000" />
+      <j l="30#1079095" />
     </i>
     <i t="expanded access states">
-      <j l="28#1158668" />
+      <j l="30#1079100" />
     </i>
     <i t="expanded access trial, defined">
-      <j l="14#1114377" />
+      <j l="14#1078079" />
     </i>
     <i t="externally peer-reviewed funding, defined">
-      <j l="58#1210981" />
+      <j l="68#1083386" />
     </i>
   </g>
   <g t="F" o="002">
     <i t="factorial intervention model, defined">
-      <j l="58#1210400" />
+      <j l="68#1080851" />
     </i>
     <i t="FDA, defined">
-      <j l="66#1094616" />
+      <j l="69#1075436" />
     </i>
     <i t="FDAAA, defined">
-      <j l="66#1094621" />
+      <j l="69#1075441" />
     </i>
   </g>
   <g t="G" o="002">
     <i t="grant codes">
-      <j l="25#1173944" />
+      <j l="27#1078603" />
     </i>
     <i t="grantors">
-      <j l="28#1149167" />
+      <j l="30#1079051" />
     </i>
   </g>
   <g t="H" o="002">
     <i t="health services research trial, defined">
-      <j l="58#1210791" />
+      <j l="68#1082771" />
     </i>
     <i t="holder types">
-      <j l="28#1149271" />
-      <j l="29#1149133" />
+      <j l="30#1079069" />
+      <j l="31#1079151" />
     </i>
   </g>
   <g t="I" o="002">
     <i t="IDE, defined">
-      <j l="66#1094626" />
+      <j l="69#1075446" />
     </i>
     <i t="In Review, defined">
-      <j l="66#1094650" />
+      <j l="69#1075470" />
     </i>
     <i t="inclusion/exclusion criteria, defined">
-      <j l="66#1094632" />
+      <j l="69#1075452" />
     </i>
     <i t="IND, defined">
-      <j l="66#1094638" />
+      <j l="69#1075458" />
     </i>
     <i t="industrial funding category, defined">
-      <j l="58#1210985" />
+      <j l="68#1083393" />
     </i>
     <i t="Initial Abstraction Verified Date, defined">
-      <j l="58#1210547" />
+      <j l="68#1082168" />
     </i>
     <i t="institute code, defined">
-      <j l="58#1210266" />
+      <j l="68#1077552" />
     </i>
     <i t="institutional funding category, defined">
-      <j l="58#1210975" />
+      <j l="68#1083381" />
     </i>
     <i t="intervention model, defined">
-      <j l="58#1210376" />
+      <j l="68#1077601" />
     </i>
     <i t="IRB, defined">
-      <j l="66#1094644" />
+      <j l="69#1075464" />
     </i>
   </g>
   <g t="L" o="002">
     <i t="lead organization trial identifier, defined">
-      <j l="16#1114700" />
+      <j l="16#1078328" />
     </i>
     <i t="lead organization, defined">
-      <j l="16#1114660" />
-      <j l="58#1210261" />
-      <j l="66#1094656" />
+      <j l="16#1078326" />
+      <j l="68#1079661" />
+      <j l="69#1075476" />
     </i>
     <i t="logging in">
-      <j l="6#1081540" />
+      <j l="6#1077675" />
     </i>
     <i t="login">
-      <j l="6#1081540" />
+      <j l="6#1077675" />
       <i t="editing user information">
-        <j l="54#1064243" />
+        <j l="56#1077964" />
       </i>
     </i>
   </g>
   <g t="M" o="002">
     <i t="masking, defined">
-      <j l="58#1210451" />
+      <j l="68#1077631" />
     </i>
     <i t="MedDRA, defined">
-      <j l="66#1094662" />
+      <j l="69#1075482" />
     </i>
   </g>
   <g t="N" o="002">
     <i t="N/A, defined">
-      <j l="66#1094667" />
+      <j l="69#1075487" />
     </i>
     <i t="national funding category, defined">
-      <j l="58#1210972" />
+      <j l="68#1083376" />
     </i>
     <i t="NCI, defined">
-      <j l="66#1094673" />
+      <j l="69#1075493" />
     </i>
     <i t="NCICB">
       <i t="defined">
-        <j l="66#1094678" />
+        <j l="69#1075498" />
       </i>
     </i>
     <i t="NCICB application support">
-      <j l="67#1083653" />
+      <j l="70#1077942" />
     </i>
     <i t="NCT">
       <i t="defined">
-        <j l="66#1094683" />
+        <j l="69#1075503" />
       </i>
     </i>
     <i t="NCTID, defined">
-      <j l="66#1094688" />
+      <j l="69#1075508" />
     </i>
     <i t="NIH divsion/progam codes">
-      <j l="25#1108085" />
+      <j l="27#1078695" />
     </i>
     <i t="NIH institute codes">
-      <j l="25#1107238" />
+      <j l="27#1078650" />
     </i>
     <i t="non-randomized trial allocation method, defined">
-      <j l="58#1210171" />
+      <j l="68#1078078" />
     </i>
   </g>
   <g t="O" o="002">
     <i t="observational trial, defined">
-      <j l="14#1110705" />
-      <j l="58#1210751" />
+      <j l="14#1078153" />
+      <j l="68#1082719" />
     </i>
     <i t="OCE, defined">
-      <j l="66#1094693" />
+      <j l="69#1075513" />
     </i>
     <i t="OD, defined">
-      <j l="66#1094698" />
+      <j l="69#1075518" />
     </i>
     <i t="On-going Abstraction Verified Date, defined">
-      <j l="58#1210555" />
+      <j l="68#1082181" />
     </i>
     <i t="Online help">
       <i t="locating topics of interest">
-        <j l="1#1086625" />
+        <j l="1#1078094" />
       </i>
       <i t="printing">
-        <j l="1#1086653" />
+        <j l="1#1078125" />
       </i>
       <i t="using navigation tools">
         <j l="2" />
@@ -375,123 +381,123 @@
       <j l="1" />
     </i>
     <i t="open masking, defined">
-      <j l="58#1210460" />
+      <j l="68#1081126" />
     </i>
     <i t="OSB/SPOREs, defined">
-      <j l="66#1094704" />
+      <j l="69#1075524" />
     </i>
     <i t="outcome trial, defined">
-      <j l="14#1110969" />
-      <j l="58#1210761" />
+      <j l="14#1078112" />
+      <j l="68#1082731" />
     </i>
   </g>
   <g t="P" o="002">
     <i t="P01, defined">
-      <j l="66#1094710" />
+      <j l="69#1075530" />
     </i>
     <i t="parallel intervention model, defined">
-      <j l="58#1210390" />
+      <j l="68#1080839" />
     </i>
     <i t="participating site document rules">
-      <j l="64#1000214" />
+      <j l="65#1077958" />
     </i>
     <i t="participating sites">
       <i t="document rules">
-        <j l="64#1000214" />
+        <j l="65#1077958" />
       </i>
       <i t="template for">
         <j l="10" />
       </i>
     </i>
     <i t="PDQ Abstraction Completed Date, defined">
-      <j l="58#1210523" />
+      <j l="68#1082134" />
     </i>
     <i t="PDQ, defined">
-      <j l="66#1094716" />
+      <j l="69#1075536" />
     </i>
     <i t="pharmacodynamics study, defined">
-      <j l="58#1210945" />
+      <j l="68#1083279" />
     </i>
     <i t="pharmacokinetics study, defined">
-      <j l="58#1210937" />
+      <j l="68#1083269" />
     </i>
     <i t="pharmacokinetics/dynamics study, defined">
-      <j l="58#1210953" />
+      <j l="68#1083289" />
     </i>
     <i t="phase, defined">
-      <j l="58#1211027" />
+      <j l="68#1077889" />
     </i>
     <i t="PI, defined">
-      <j l="66#1094722" />
+      <j l="69#1075542" />
     </i>
     <i t="PIO, defined">
-      <j l="66#1094727" />
+      <j l="69#1075547" />
     </i>
     <i t="prevention trial, defined">
-      <j l="58#1210767" />
+      <j l="68#1082737" />
     </i>
     <i t="primary purpose">
       <i t="ancillary, defined">
-        <j l="58#1210771" />
+        <j l="68#1082743" />
       </i>
       <i t="basic science">
-        <j l="58#1210797" />
+        <j l="68#1082777" />
       </i>
       <i t="defined">
-        <j l="58#1210730" />
+        <j l="68#1077750" />
       </i>
       <i t="epidemiologic, defined">
-        <j l="58#1210747" />
+        <j l="68#1082713" />
       </i>
       <i t="health services research, defined">
-        <j l="58#1210791" />
+        <j l="68#1082771" />
       </i>
       <i t="observational, defined">
-        <j l="58#1210751" />
+        <j l="68#1082719" />
       </i>
       <i t="outcome, defined">
-        <j l="58#1210761" />
+        <j l="68#1082731" />
       </i>
       <i t="prevention, defined">
-        <j l="58#1210767" />
+        <j l="68#1082737" />
       </i>
       <i t="screening, defined">
-        <j l="58#1210801" />
+        <j l="68#1082783" />
       </i>
       <i t="supportive care, defined">
-        <j l="58#1210807" />
+        <j l="68#1082789" />
       </i>
       <i t="treatment, defined">
-        <j l="58#1210757" />
+        <j l="68#1082725" />
       </i>
     </i>
     <i t="principal investigator">
-      <j l="58#1210812" />
+      <j l="68#1077801" />
       <i t="defined">
-        <j l="16#1114680" />
-        <j l="66#1094732" />
+        <j l="16#1078330" />
+        <j l="69#1075552" />
       </i>
       <i t="registering new">
-        <j l="36" />
+        <j l="38" />
       </i>
       <i t="searching for">
-        <j l="35" />
+        <j l="37" />
       </i>
     </i>
     <i t="processing status">
       <i t="defined">
-        <j l="58#1210832" />
+        <j l="68#1077807" />
       </i>
       <i t="definitions of">
-        <j l="15#1112713" />
+        <j l="15#1079129" />
       </i>
     </i>
     <i t="processing statuses">
-      <j l="58#1210832" />
+      <j l="68#1077807" />
     </i>
     <i t="proprietary protocol">
       <i t="documents required for">
-        <j l="30#1136456" />
+        <j l="32#1079283" />
       </i>
     </i>
     <i t="proprietary trials">
@@ -501,174 +507,180 @@
     </i>
     <i t="protocol">
       <i t="specifications for batch uploads">
-        <j l="62" />
+        <j l="63" />
       </i>
     </i>
     <i t="protocols">
       <i t="amending">
-        <j l="42" />
+        <j l="44" />
       </i>
       <i t="submitting">
-        <j l="20#1064030" />
+        <j l="20#1077976" />
       </i>
     </i>
     <i t="purpose values">
-      <j l="21#1169484" />
+      <j l="23#1078176" />
     </i>
     <i t="purpose, defined">
-      <j l="58#1210730" />
+      <j l="68#1077750" />
     </i>
   </g>
   <g t="Q" o="002">
     <i t="QC Completed Date, defined">
-      <j l="58#1210503" />
+      <j l="68#1082110" />
     </i>
     <i t="QC Start Date, defined">
-      <j l="58#1210503" />
+      <j l="68#1082113" />
     </i>
     <i t="QC, defined">
-      <j l="66#1094738" />
+      <j l="69#1075558" />
     </i>
   </g>
   <g t="R" o="002">
     <i t="R01, defined">
-      <j l="66#1094751" />
+      <j l="69#1075571" />
     </i>
     <i t="randomized controlled trial allocation method, defined">
-      <j l="58#1210166" />
+      <j l="68#1078074" />
     </i>
     <i t="Ready for PDQ Abstraction Date, defined">
-      <j l="58#1210510" />
+      <j l="68#1082117" />
     </i>
     <i t="Ready for QC Date, defined">
-      <j l="58#1210493" />
+      <j l="68#1082098" />
     </i>
     <i t="registering new users">
-      <j l="5#1086300" />
+      <j l="5#1077581" />
     </i>
     <i t="Registration">
       <j l="1" />
     </i>
     <i t="rejected trial, defined">
-      <j l="66#1094745" />
+      <j l="69#1075565" />
     </i>
     <i t="required documents">
-      <j l="30#1113188" />
+      <j l="32#1079280" />
       <i t="for batch uploads">
-        <j l="37#1136608" />
+        <j l="39#1079655" />
       </i>
     </i>
     <i t="RRP, defined">
-      <j l="66#1094757" />
+      <j l="69#1075577" />
     </i>
     <i t="rules">
       <i t="amendment-specific">
-        <j l="42#1185083" />
+        <j l="44#1078130" />
       </i>
       <i t="for batch uploads">
-        <j l="38#1163964" />
+        <j l="40#1079688" />
       </i>
       <i t="for participating sties documents">
-        <j l="64#1000214" />
+        <j l="65#1077958" />
       </i>
       <i t="for trial status dates">
-        <j l="26#1108532" />
+        <j l="28#1078836" />
       </i>
       <i t="trial status dates">
-        <j l="26#1108532" />
+        <j l="28#1078836" />
       </i>
     </i>
   </g>
   <g t="S" o="002">
     <i t="safety study, defined">
-      <j l="58#1210926" />
+      <j l="68#1083254" />
     </i>
     <i t="safety/efficacy study, defined">
-      <j l="58#1210942" />
+      <j l="68#1083274" />
+    </i>
+    <i t="Scientific Processing Completed Date, defined">
+      <j l="68#1082175" />
+    </i>
+    <i t="Scientific Processing Start Date, defined">
+      <j l="68#1082162" />
     </i>
     <i t="screening trial, defined">
-      <j l="58#1210801" />
+      <j l="68#1082783" />
     </i>
     <i t="search results">
       <i t="data displayed">
-        <j l="16#1114612" />
+        <j l="16#1078317" />
       </i>
     </i>
     <i t="section 801 trial, defined">
-      <j l="66#1094763" />
+      <j l="69#1075583" />
     </i>
     <i t="single blind masking, defined">
-      <j l="58#1210468" />
+      <j l="68#1081136" />
     </i>
     <i t="single group intervention model, defined">
-      <j l="58#1210386" />
+      <j l="68#1080833" />
     </i>
     <i t="sponsor, defined">
-      <j l="66#1094775" />
+      <j l="69#1075595" />
     </i>
     <i t="SPORE, defined">
-      <j l="66#1094770" />
+      <j l="69#1075590" />
     </i>
     <i t="status">
       <i t="see also trial status">
-        <j l="58#1211108" />
+        <j l="68#1084545" />
       </i>
       <i t="user view criteria">
-        <j l="15#1102063" />
+        <j l="15#1079132" />
       </i>
     </i>
     <i t="study classification, defined">
-      <j l="58#1210917" />
+      <j l="68#1077840" />
     </i>
     <i t="Submission Acceptance Date, defined">
-      <j l="58#1210499" />
+      <j l="68#1082104" />
     </i>
     <i t="Submission Received Date, defined">
-      <j l="58#1210489" />
+      <j l="68#1077641" />
     </i>
     <i t="Submission Rejection Date, defined">
-      <j l="58#1210519" />
+      <j l="68#1082128" />
     </i>
     <i t="Submitter Trial Summary Report Feedback Date, defined">
-      <j l="58#1210539" />
+      <j l="68#1082158" />
     </i>
     <i t="submitting new trials">
-      <j l="20#1063869" />
+      <j l="20#1078019" />
     </i>
     <i t="summary 4 categories">
-      <j l="24#1148994" />
+      <j l="26#1078479" />
     </i>
     <i t="summary 4 funding category">
       <i t="defined">
-        <j l="58#1210956" />
+        <j l="68#1077862" />
       </i>
       <i t="externally peer-reviewed, defined">
-        <j l="58#1210981" />
+        <j l="68#1083386" />
       </i>
       <i t="industrial defined">
-        <j l="58#1210985" />
+        <j l="68#1083393" />
       </i>
       <i t="institutional, defined">
-        <j l="58#1210975" />
+        <j l="68#1083381" />
       </i>
       <i t="national, defined">
-        <j l="58#1210972" />
+        <j l="68#1083376" />
       </i>
     </i>
     <i t="summary 4 sponsor/source, defined">
-      <j l="58#1210988" />
+      <j l="68#1077878" />
     </i>
     <i t="supported browsers">
-      <j l="4#1092258" />
+      <j l="4#1077558" />
     </i>
     <i t="supportive care trial, defined">
-      <j l="58#1210807" />
+      <j l="68#1082789" />
     </i>
   </g>
   <g t="T" o="002">
     <i t="templates">
       <i t="downloading">
-        <j l="8#1090373" />
+        <j l="8#1077810" />
       </i>
       <i t="for batch uploads">
         <j l="11" />
@@ -684,155 +696,155 @@
       <j l="7" />
     </i>
     <i t="treatment trial, defined">
-      <j l="14#1114380" />
-      <j l="58#1210757" />
+      <j l="14#1078082" />
+      <j l="68#1082725" />
     </i>
     <i t="trial ownership">
-      <j l="15#1112654" />
+      <j l="15#1078218" />
     </i>
     <i t="trial phase, defined">
-      <j l="58#1211027" />
+      <j l="68#1077889" />
     </i>
     <i t="trial phases">
-      <j l="21#1124998" />
+      <j l="23#1078110" />
     </i>
     <i t="trial status">
       <i t="approved, defined">
-        <j l="58#1211108" />
+        <j l="68#1084545" />
       </i>
       <i t="closed to accrual and invention, defined">
-        <j l="58#1211136" />
+        <j l="68#1084576" />
       </i>
       <i t="closed to accrual, defined">
-        <j l="58#1211127" />
+        <j l="68#1084565" />
       </i>
       <i t="complete, defined">
-        <j l="58#1211140" />
+        <j l="68#1084583" />
       </i>
       <i t="defined">
-        <j l="66#1094786" />
+        <j l="69#1075606" />
       </i>
       <i t="temporarily closed to accrual and invention, defined">
-        <j l="58#1211112" />
+        <j l="68#1084549" />
       </i>
       <i t="temporarily closed to accrual, defined">
-        <j l="58#1211121" />
+        <j l="68#1084560" />
       </i>
     </i>
     <i t="trial status date rules">
-      <j l="26#1108532" />
+      <j l="28#1078836" />
     </i>
     <i t="trial summary report">
-      <j l="20#1064030" />
+      <j l="20#1077976" />
       <i t="see also TSR" />
     </i>
     <i t="Trial Summary Report Sent Date, defined">
-      <j l="58#1210531" />
+      <j l="68#1082148" />
     </i>
     <i t="trial type">
       <i t="ancillary, defined">
-        <j l="14#1110982" />
+        <j l="14#1078115" />
       </i>
       <i t="basic science, defined">
-        <j l="14#1110955" />
+        <j l="14#1078106" />
       </i>
       <i t="correlative, defined">
-        <j l="14#1110983" />
-        <j l="58#1210781" />
+        <j l="14#1078118" />
+        <j l="68#1082755" />
       </i>
       <i t="defined">
-        <j l="58#1211150" />
-        <j l="66#1094792" />
+        <j l="68#1077958" />
+        <j l="69#1075612" />
       </i>
       <i t="diagnostic, defined">
-        <j l="14#1110948" />
-        <j l="58#1210787" />
+        <j l="14#1078088" />
+        <j l="68#1082765" />
       </i>
       <i t="early detection, defined">
-        <j l="14#1114388" />
-        <j l="58#1210777" />
+        <j l="14#1078091" />
+        <j l="68#1082749" />
       </i>
       <i t="epidemiologic, defined">
-        <j l="14#1114398" />
+        <j l="14#1078097" />
       </i>
       <i t="expanded access, defined">
-        <j l="14#1114377" />
+        <j l="14#1078079" />
       </i>
       <i t="health services research">
-        <j l="14#1110954" />
+        <j l="14#1078103" />
       </i>
       <i t="observational, defined">
-        <j l="14#1110960" />
-        <j l="14#1110705" />
+        <j l="14#1078109" />
+        <j l="14#1078153" />
       </i>
       <i t="outcome, defined">
-        <j l="14#1110969" />
+        <j l="14#1078112" />
       </i>
       <i t="prevention, defined">
-        <j l="14#1110947" />
+        <j l="14#1078085" />
       </i>
       <i t="screening, defined">
-        <j l="14#1110951" />
+        <j l="14#1078100" />
       </i>
       <i t="supportive care, defined">
-        <j l="14#1110949" />
+        <j l="14#1078094" />
       </i>
       <i t="treatment, defined">
-        <j l="14#1114380" />
+        <j l="14#1078082" />
       </i>
     </i>
     <i t="trial validation">
-      <j l="15#1101931" />
+      <j l="15#1078198" />
     </i>
     <i t="trial-related documents">
       <j l="18" />
       <i t="uploading">
-        <j l="30#1099195" />
+        <j l="32#1079297" />
       </i>
     </i>
     <i t="trials">
       <i t="searching for">
-        <j l="14#1101098" />
+        <j l="14#1078008" />
       </i>
       <i t="viewing details">
-        <j l="17#1105500" />
+        <j l="17#1078435" />
       </i>
     </i>
     <i t="TRP, defined">
-      <j l="66#1094781" />
-      <j l="66#1094798" />
+      <j l="69#1075601" />
+      <j l="69#1075618" />
     </i>
     <i t="TSR">
       <i t="content of">
-        <j l="41#1182404" />
+        <j l="43#1078043" />
       </i>
       <i t="defined">
-        <j l="66#1094804" />
+        <j l="69#1075624" />
       </i>
       <i t="in amendment process">
-        <j l="41#1180541" />
+        <j l="43#1078037" />
       </i>
     </i>
   </g>
   <g t="U" o="002">
     <i t="uploading">
       <i t="batches">
-        <j l="37#1139659" />
+        <j l="39#1079668" />
       </i>
     </i>
     <i t="URI, defined">
-      <j l="66#1094809" />
+      <j l="69#1075629" />
     </i>
     <i t="URL, defined">
-      <j l="66#1094814" />
+      <j l="69#1075634" />
     </i>
     <i t="user">
       <i t="editing">
-        <j l="54#1064243" />
+        <j l="56#1077964" />
       </i>
     </i>
     <i t="user roles">
-      <j l="15#1112619" />
+      <j l="15#1078214" />
     </i>
     <i t="Using online help">
       <j l="1" />
@@ -840,41 +852,41 @@
   </g>
   <g t="V" o="002">
     <i t="valid current trial status categories">
-      <j l="26#1108539" />
+      <j l="28#1078909" />
     </i>
     <i t="valid expanded access states">
-      <j l="28#1158668" />
+      <j l="30#1079100" />
     </i>
     <i t="valid grantors">
-      <j l="28#1149167" />
+      <j l="30#1079051" />
     </i>
     <i t="valid holder types">
-      <j l="28#1149271" />
-      <j l="29#1149133" />
+      <j l="30#1079069" />
+      <j l="31#1079151" />
     </i>
     <i t="valid NIH division/program codes">
-      <j l="25#1108085" />
+      <j l="27#1078695" />
     </i>
     <i t="valid NIH grant codes">
-      <j l="25#1173944" />
+      <j l="27#1078603" />
     </i>
     <i t="valid NIH institute codes">
-      <j l="25#1107238" />
+      <j l="27#1078650" />
     </i>
     <i t="valid purpose values">
-      <j l="21#1169484" />
+      <j l="23#1078176" />
     </i>
     <i t="valid summary 4 categories">
-      <j l="24#1148994" />
+      <j l="26#1078479" />
     </i>
     <i t="valid trial phases">
-      <j l="21#1124998" />
+      <j l="23#1078110" />
     </i>
     <i t="validated trial, defined">
-      <j l="66#1094819" />
+      <j l="69#1075639" />
     </i>
     <i t="validated trials">
-      <j l="15#1101931" />
+      <j l="15#1078198" />
     </i>
     <i t="viewing">
       <j l="18" />
@@ -885,12 +897,12 @@
   </g>
   <g t="X" o="002">
     <i t="XML, defined">
-      <j l="66#1094825" />
+      <j l="69#1075645" />
     </i>
   </g>
   <g t="Z" o="002">
     <i t="zip, defined">
-      <j l="66#1094856" />
+      <j l="69#1075650" />
     </i>
   </g>
 </WebWorksHelpIX>
