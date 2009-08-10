@@ -92,11 +92,12 @@ P.fA("About Abstraction Validation","complete.8.2.html");
 P.fA("Trial Completion Criteria","complete.8.3.html");
 P.fA("Trial Reporting","complete.8.4.html");
 P.fA("Completing and Validating Abstractions","complete.8.5.html");
-P.fA("Working With Person Records","persons.9.1.html");
-P.fA("Looking Up Registered Persons","persons.9.2.html");
-P.fA("Working With Organization Records","orgs.10.1.html");
-P.fA("Looking Up Registered Organizations","orgs.10.2.html");
+P.fA("Working With Organization Records","orgs.9.1.html");
+P.fA("Looking Up Registered Organizations","orgs.9.2.html");
+P.fA("Working With Person Records","persons.10.1.html");
+P.fA("Looking Up Registered Persons","persons.10.2.html");
 P.fA("Metadata Definitions","metadata.11.1.html");
+P.fA("Definitions and Valid Values for Clinical Trials","metadata.11.2.html");
 P.fA("Glossary","Glossary.12.1.html");
 P.fA("Application Support","appSupport.13.1.html");
 }

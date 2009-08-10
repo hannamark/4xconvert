@@ -116,13 +116,15 @@
     </i>
     <i t="Completing and Validating Abstractions" l="91" />
   </i>
-  <i t="Working With Person Records" l="92">
-    <i t="Looking Up Registered Persons" l="93" />
+  <i t="Working With Organization Records" l="92">
+    <i t="Looking Up Registered Organizations" l="93" />
   </i>
-  <i t="Working With Organization Records" l="94">
-    <i t="Looking Up Registered Organizations" l="95" />
+  <i t="Working With Person Records" l="94">
+    <i t="Looking Up Registered Persons" l="95" />
   </i>
-  <i t="Metadata Definitions" l="96" />
-  <i t="Glossary" l="97" />
-  <i t="Application Support" l="98" />
+  <i t="Metadata Definitions" l="96">
+    <i t="Definitions and Valid Values for Clinical Trials" l="97" />
+  </i>
+  <i t="Glossary" l="98" />
+  <i t="Application Support" l="99" />
 </WebWorksHelpTOC>

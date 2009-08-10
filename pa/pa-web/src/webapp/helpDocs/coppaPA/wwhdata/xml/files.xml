@@ -130,45 +130,46 @@
     <Document title="Trial Completion Criteria" href="complete.8.3.html" />
     <Document title="Trial Reporting" href="complete.8.4.html" />
     <Document title="Completing and Validating Abstractions" href="complete.8.5.html" />
-    <Document title="Working With Person Records" href="persons.9.1.html" />
-    <Document title="Looking Up Registered Persons" href="persons.9.2.html" />
-    <Document title="Working With Organization Records" href="orgs.10.1.html" />
-    <Document title="Looking Up Registered Organizations" href="orgs.10.2.html" />
+    <Document title="Working With Organization Records" href="orgs.9.1.html" />
+    <Document title="Looking Up Registered Organizations" href="orgs.9.2.html" />
+    <Document title="Working With Person Records" href="persons.10.1.html" />
+    <Document title="Looking Up Registered Persons" href="persons.10.2.html" />
     <Document title="Metadata Definitions" href="metadata.11.1.html" />
+    <Document title="Definitions and Valid Values for Clinical Trials" href="metadata.11.2.html" />
     <Document title="Glossary" href="Glossary.12.1.html" />
     <Document title="Application Support" href="appSupport.13.1.html" />
   </DocumentInfo>
   <TopicMap>
-    <Topic name="Welcome" href="Welcome.1.1.html#1099392" />
-    <Topic name="login" href="GettingStarted.2.3.html#1063966" />
-    <Topic name="search_trial" href="searchTrials.3.1.html#1131775" />
-    <Topic name="trial_details" href="searchTrials.3.4.html#1093731" />
-    <Topic name="validate_trial" href="validate.4.1.html#1119639" />
-    <Topic name="review_docs" href="validate.4.7.html#1141921" />
-    <Topic name="review_status" href="validate.4.8.html#1127581" />
-    <Topic name="review_funding" href="validate.4.9.html#1147343" />
-    <Topic name="review_ind" href="validate.4.10.html#1127505" />
-    <Topic name="trial_history" href="overviewData.5.3.html#1173926" />
-    <Topic name="trial_milestones" href="overviewData.5.4.html#1171712" />
-    <Topic name="trial_onhold" href="overviewData.5.8.html#1170468" />
-    <Topic name="abstract_general" href="Admin.6.3.html#1127767" />
-    <Topic name="abstract_nci" href="Admin.6.9.html#1100816" />
-    <Topic name="abstract_regulatory" href="Admin.6.10.html#1107552" />
-    <Topic name="abstract_safety" href="Admin.6.11.html#1115272" />
-    <Topic name="abstract_ind" href="Admin.6.12.html#1112726" />
-    <Topic name="abstract_status" href="Admin.6.13.html#1093776" />
-    <Topic name="abstract_funding" href="Admin.6.14.html#1093777" />
-    <Topic name="abstract_site" href="Admin.6.15.html#1153336" />
-    <Topic name="abstract_collaborator" href="Admin.6.21.html#1093823" />
-    <Topic name="abstract_docs" href="Admin.6.23.html#1093829" />
-    <Topic name="abstract_description" href="science.7.2.html#1156003" />
-    <Topic name="abstract_design" href="science.7.3.html#1127545" />
-    <Topic name="abstract_outcome" href="science.7.5.html#1132834" />
-    <Topic name="abstract_eligibility" href="science.7.9.html#1132841" />
-    <Topic name="abstract_disease" href="science.7.13.html#1129199" />
-    <Topic name="abstract_interventions" href="science.7.17.html#1129205" />
-    <Topic name="abstract_arms" href="science.7.21.html#1140772" />
-    <Topic name="abstract_subgroups" href="science.7.25.html#1129315" />
-    <Topic name="validate_abstract" href="complete.8.1.html#1132968" />
+    <Topic name="Welcome" href="Welcome.1.1.html#1077975" />
+    <Topic name="login" href="GettingStarted.2.3.html#1078033" />
+    <Topic name="search_trial" href="searchTrials.3.1.html#1077976" />
+    <Topic name="trial_details" href="searchTrials.3.4.html#1078331" />
+    <Topic name="validate_trial" href="validate.4.1.html#1077977" />
+    <Topic name="review_docs" href="validate.4.7.html#1078303" />
+    <Topic name="review_status" href="validate.4.8.html#1078408" />
+    <Topic name="review_funding" href="validate.4.9.html#1078543" />
+    <Topic name="review_ind" href="validate.4.10.html#1078634" />
+    <Topic name="trial_history" href="overviewData.5.3.html#1078061" />
+    <Topic name="trial_milestones" href="overviewData.5.4.html#1078170" />
+    <Topic name="trial_onhold" href="overviewData.5.8.html#1078738" />
+    <Topic name="abstract_general" href="Admin.6.3.html#1078144" />
+    <Topic name="abstract_nci" href="Admin.6.9.html#1078407" />
+    <Topic name="abstract_regulatory" href="Admin.6.10.html#1078570" />
+    <Topic name="abstract_safety" href="Admin.6.11.html#1078750" />
+    <Topic name="abstract_ind" href="Admin.6.12.html#1078903" />
+    <Topic name="abstract_status" href="Admin.6.13.html#1079383" />
+    <Topic name="abstract_funding" href="Admin.6.14.html#1079589" />
+    <Topic name="abstract_site" href="Admin.6.15.html#1079925" />
+    <Topic name="abstract_collaborator" href="Admin.6.21.html#1080352" />
+    <Topic name="abstract_docs" href="Admin.6.23.html#1080591" />
+    <Topic name="abstract_description" href="science.7.2.html#1078017" />
+    <Topic name="abstract_design" href="science.7.3.html#1078039" />
+    <Topic name="abstract_outcome" href="science.7.5.html#1078522" />
+    <Topic name="abstract_eligibility" href="science.7.9.html#1078761" />
+    <Topic name="abstract_disease" href="science.7.13.html#1079037" />
+    <Topic name="abstract_interventions" href="science.7.17.html#1079407" />
+    <Topic name="abstract_arms" href="science.7.21.html#1079728" />
+    <Topic name="abstract_subgroups" href="science.7.25.html#1080021" />
+    <Topic name="validate_abstract" href="complete.8.1.html#1077976" />
   </TopicMap>
 </WebWorksHelpBook>
