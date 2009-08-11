@@ -20,6 +20,7 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -49,6 +50,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,9 +77,10 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
      * test get org behavior.
      * @throws EntityValidationException
      * @throws NullifiedEntityException
+     * @throws JMSException 
      */
     @Test
-    public void getOrganization() throws EntityValidationException, NullifiedEntityException {
+    public void getOrganization() throws EntityValidationException, NullifiedEntityException, JMSException {
         long id = super.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
         OrganizationDTO result = remote.getOrganization(new OrgIdConverter().convertToIi(id));
@@ -86,9 +90,10 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
 
     /**
      * test create organization behavior.
+     * @throws CurationException 
      */
     @Test
-    public void createOrg() throws EntityValidationException, URISyntaxException {
+    public void createOrg() throws EntityValidationException, URISyntaxException, CurationException {
         OrganizationDTO dto = new OrganizationDTO();
         dto.setName(StringConverter.convertToEnOn("some name"));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(), getDefaultCountry().getName()));
@@ -305,7 +310,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
 
     @Test
-    public void updateOrganization() throws EntityValidationException, URISyntaxException, NullifiedEntityException {
+    public void updateOrganization() throws EntityValidationException, URISyntaxException, NullifiedEntityException, JMSException {
         long id = super.createOrganization();
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
@@ -328,7 +333,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void updateOrganizationChangeCtatus() throws EntityValidationException, NullifiedEntityException {
+    public void updateOrganizationChangeCtatus() throws EntityValidationException, NullifiedEntityException, JMSException {
         long id = super.createOrganization();
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
@@ -337,7 +342,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
 
     @Test
-    public void updateOrganizationStatus() throws EntityValidationException {
+    public void updateOrganizationStatus() throws EntityValidationException, JMSException {
         long id = super.createOrganization();
         Ii ii = ISOUtils.ID_ORG.convertToIi(id);
         Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.INACTIVE);

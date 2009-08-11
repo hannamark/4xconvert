@@ -27,6 +27,8 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +40,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
 
 
     @Before
-    public void setupData() throws EntityValidationException {
+    public void setupData() throws EntityValidationException, JMSException {
         ost = new OrganizationServiceBeanTest();
         ost.loadData();
         ost.setUpData();

@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
@@ -112,8 +113,9 @@ public interface OrganizationEntityServiceRemote {
      * @param org organization
      * @return db id
      * @throws EntityValidationException if validation fails
+     * @throws CurationException if any unrecoverable error occurred
      */
-    Ii createOrganization(OrganizationDTO org) throws EntityValidationException;
+    Ii createOrganization(OrganizationDTO org) throws EntityValidationException, CurationException;
 
     /**
      * Validate that an entity has acceptable values.

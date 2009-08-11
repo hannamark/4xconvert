@@ -84,6 +84,8 @@ package gov.nih.nci.po.util.jms;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -94,6 +96,8 @@ import javax.jms.ObjectMessage;
  */
 public class ObjectMessageStub implements ObjectMessage {
 
+    private Map<String, String> stringProps = new HashMap<String, String>();
+    
     private Serializable object;
 
     public ObjectMessageStub() {
@@ -236,7 +240,7 @@ public class ObjectMessageStub implements ObjectMessage {
     }
 
     public String getStringProperty(String arg0) throws JMSException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return stringProps.get(arg0);
     }
 
     public Object getObjectProperty(String arg0) throws JMSException {
@@ -276,7 +280,7 @@ public class ObjectMessageStub implements ObjectMessage {
     }
 
     public void setStringProperty(String arg0, String arg1) throws JMSException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        stringProps.put(arg0, arg1);
     }
 
     public void setObjectProperty(String arg0, Object arg1) throws JMSException {

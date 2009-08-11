@@ -92,6 +92,8 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 import org.junit.Test;
 /**
  * @author Scott Miller
@@ -102,9 +104,10 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
     /**
      * {@inheritDoc}
      * @throws EntityValidationException
+     * @throws JMSException 
      */
     @Override
-    ClinicalResearchStaff getSampleStructuralRole() throws EntityValidationException {
+    ClinicalResearchStaff getSampleStructuralRole() throws EntityValidationException, JMSException {
         ClinicalResearchStaff crs = new ClinicalResearchStaff();
         createAndGetOrganization();
         fillinPersonRoleFields(crs);
@@ -120,7 +123,7 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
     }
 
     @Test
-    public void testHotRoleCount() throws EntityValidationException {
+    public void testHotRoleCount() throws EntityValidationException, JMSException {
         ClinicalResearchStaff hcf = getSampleStructuralRole();
         ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();
         s.create(hcf);

@@ -100,6 +100,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 
 import org.hibernate.Session;
 
@@ -114,10 +115,11 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
 
     /**
      * {@inheritDoc}
+     * @throws JMSException 
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long create(Organization org) throws EntityValidationException {
+    public long create(Organization org) throws EntityValidationException, JMSException {
         org.setStatusCode(EntityStatus.PENDING);
         return super.create(org);
     }

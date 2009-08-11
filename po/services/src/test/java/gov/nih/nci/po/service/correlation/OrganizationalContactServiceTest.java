@@ -106,6 +106,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jms.JMSException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -134,7 +136,7 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
     }
 
     @Override
-    OrganizationalContact getSampleStructuralRole() throws EntityValidationException {
+    OrganizationalContact getSampleStructuralRole() throws EntityValidationException, JMSException {
         OrganizationalContact oc = new OrganizationalContact();
         createAndGetOrganization();
         fillinPersonRoleFields(oc);
@@ -318,7 +320,7 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
     }
 
     @Test
-    public void testHotRoleCount() throws EntityValidationException {
+    public void testHotRoleCount() throws EntityValidationException, JMSException {
         OrganizationalContact hcf = getSampleStructuralRole();
         OrganizationalContactServiceLocal s = (OrganizationalContactServiceLocal) getService();
         s.create(hcf);

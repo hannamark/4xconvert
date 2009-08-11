@@ -89,6 +89,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 
 /**
  * @author Scott Miller
@@ -100,9 +101,10 @@ public class ClinicalResearchStaffServiceBean extends AbstractCuratableServiceBe
 
     /**
      * {@inheritDoc}
+     * @throws JMSException 
      */
     @Override
-    public long create(ClinicalResearchStaff obj) throws EntityValidationException {
+    public long create(ClinicalResearchStaff obj) throws EntityValidationException, JMSException {
         obj.setStatus(RoleStatus.PENDING);
         return super.create(obj);
     }

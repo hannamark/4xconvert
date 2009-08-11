@@ -1,12 +1,12 @@
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.service.EntityValidationException;
 
 import org.junit.Test;
 
 
-public abstract class AbstractPersonRoleServiceTest<T extends AbstractPersonRole> extends AbstractStructrualRoleServiceTest<T>{
+public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extends AbstractStructrualRoleServiceTest<T>{
 
     @Test(expected = EntityValidationException.class)
     public void testUniqueConstraint() throws Exception {

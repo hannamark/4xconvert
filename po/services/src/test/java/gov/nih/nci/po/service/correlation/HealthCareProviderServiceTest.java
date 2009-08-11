@@ -100,6 +100,8 @@ import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
@@ -111,7 +113,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest<HealthCareProvider> {
 
     @Override
-    HealthCareProvider getSampleStructuralRole() throws EntityValidationException  {
+    HealthCareProvider getSampleStructuralRole() throws EntityValidationException, JMSException  {
         HealthCareProvider hcp = new HealthCareProvider();
         createAndGetOrganization();
         fillinPersonRoleFields(hcp);
@@ -305,7 +307,7 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
     }
 
     @Test
-    public void testHotRoleCount() throws EntityValidationException {
+    public void testHotRoleCount() throws EntityValidationException, JMSException {
         HealthCareProvider hcf = getSampleStructuralRole();
         HealthCareProviderServiceLocal s = (HealthCareProviderServiceLocal) getService();
         s.create(hcf);

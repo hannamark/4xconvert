@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
@@ -114,8 +115,9 @@ public interface PersonEntityServiceRemote {
      * @param person Person
      * @return db id
      * @throws EntityValidationException if validation fails.
+     * @throws CurationException if any unrecoverable error occurred
      */
-    Ii createPerson(PersonDTO person) throws EntityValidationException;
+    Ii createPerson(PersonDTO person) throws EntityValidationException, CurationException;
 
     /**
      * Validate a person entity.

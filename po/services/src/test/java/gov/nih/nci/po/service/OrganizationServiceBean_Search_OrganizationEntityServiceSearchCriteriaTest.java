@@ -13,6 +13,8 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,12 +29,12 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Override
-    public long createOrganization() throws EntityValidationException {
+    public long createOrganization() throws EntityValidationException, JMSException {
         return super.createOrganization(getBasicOrganization());
     }
 
     @Test
-    public void findByName() throws EntityValidationException {
+    public void findByName() throws EntityValidationException, JMSException {
         createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
         createOrganization("abc", "defaultCity", "defaultOrgCode", "defaultDescription");
 
@@ -50,7 +52,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByEmail() throws EntityValidationException {
+    public void findByEmail() throws EntityValidationException, JMSException {
         /* create a person with two email addresses */
         createOrganization();
 
@@ -78,7 +80,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByPhone() throws EntityValidationException {
+    public void findByPhone() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -105,7 +107,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByFax() throws EntityValidationException {
+    public void findByFax() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -132,7 +134,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByTty() throws EntityValidationException {
+    public void findByTty() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -159,7 +161,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByUrl() throws EntityValidationException {
+    public void findByUrl() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -185,7 +187,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         assertEquals(1, getOrgServiceBean().search(sc).size());
     }
 
-    private void createOrgsWithAddresses() throws EntityValidationException {
+    private void createOrgsWithAddresses() throws EntityValidationException, JMSException {
         Organization p = getBasicOrganization();
         Address pa = new Address("P.O. Box 12345", "New-City", "VA", "12345-6789", getDefaultCountry());
         pa.setDeliveryAddressLine("c/o Mark Wild");
@@ -205,7 +207,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByAddressStreetAddressLine() throws EntityValidationException {
+    public void findByAddressStreetAddressLine() throws EntityValidationException, JMSException {
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -227,7 +229,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByAddressDeliveryAddressLine() throws EntityValidationException {
+    public void findByAddressDeliveryAddressLine() throws EntityValidationException, JMSException {
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -253,7 +255,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByAddressCity() throws EntityValidationException {
+    public void findByAddressCity() throws EntityValidationException, JMSException {
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -280,7 +282,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByAddressPostalCode() throws EntityValidationException {
+    public void findByAddressPostalCode() throws EntityValidationException, JMSException {
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -307,7 +309,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     @SuppressWarnings("deprecation")
-    public void findByAddressCountry() throws EntityValidationException {
+    public void findByAddressCountry() throws EntityValidationException, JMSException {
         createOrgsWithAddresses();
 
         sc.getCriteria().setPostalAddress(new Address());
@@ -327,7 +329,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
 
     @Test
-    public void findByStatusCode() throws EntityValidationException {
+    public void findByStatusCode() throws EntityValidationException, JMSException {
         createOrgsWithAddresses();
 
         sc.getCriteria().setStatusCode(EntityStatus.ACTIVE);
@@ -341,7 +343,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     @SuppressWarnings("unchecked")
-    public void findByStatusCodeEnsureRejectedAreNotReturned() throws EntityValidationException {
+    public void findByStatusCodeEnsureRejectedAreNotReturned() throws EntityValidationException, JMSException {
         createOrgsWithAddresses();
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Organization o");
         List<Organization> list = query.list();

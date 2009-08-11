@@ -20,6 +20,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -47,6 +48,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import javax.jms.JMSException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +105,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createPersonRemoteException() throws EntityValidationException {
+    public void createPersonRemoteException() throws EntityValidationException, CurationException {
         PersonDTO dto = new PersonDTO();
         Ii isoId = new Ii();
         isoId.setRoot("test");
@@ -112,7 +115,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void createPersonRemote() throws EntityValidationException, URISyntaxException {
+    public void createPersonRemote() throws EntityValidationException, URISyntaxException, CurationException {
         PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
         Enxp part = new Enxp(EntityNamePartType.GIV);
@@ -186,7 +189,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstName() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    public void findByFirstName() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -196,7 +199,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "%a%", null, null));
@@ -205,7 +208,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardsInSitu() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    public void findByFirstNameWildcardsInSitu() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "b%b", null, null));
@@ -214,7 +217,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt1() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    public void findByFirstNameWilcardAttempt1() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "?a?", null, null));
@@ -223,7 +226,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt2() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    public void findByFirstNameWilcardAttempt2() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "_a_", null, null));
@@ -232,7 +235,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameNoMatches() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    public void findByFirstNameNoMatches() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
@@ -240,7 +243,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(0, result.size());
     }
 
-    private void init() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    private void init() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         PersonDTO dto = new PersonDTO();
         dto.setName(PersonNameConverterUtil.convertToEnPn("bab", "m", "a", "c", "d"));
         Person p = (Person) PoXsnapshotHelper.createModel(dto);
@@ -282,7 +285,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByMiddleName() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
+    public void findByMiddleName() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -297,7 +300,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void updatePerson() throws EntityValidationException, URISyntaxException, NullifiedEntityException {
+    public void updatePerson() throws EntityValidationException, URISyntaxException, NullifiedEntityException, JMSException {
         long id = super.createPerson();
         Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
@@ -323,7 +326,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void updatePersonChangeCtatus() throws EntityValidationException, NullifiedEntityException {
+    public void updatePersonChangeCtatus() throws EntityValidationException, NullifiedEntityException, JMSException {
         long id = super.createPerson();
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
@@ -332,7 +335,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void updatePersonStatus() throws EntityValidationException {
+    public void updatePersonStatus() throws EntityValidationException, JMSException {
         long id = super.createPerson();
         Ii ii = ISOUtils.ID_PERSON.convertToIi(id);
         Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.INACTIVE);
@@ -345,7 +348,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
     
     @Test 
-    public void search() throws TooManyResultsException, EntityValidationException {
+    public void search() throws TooManyResultsException, EntityValidationException, JMSException {
         int max = 7;
         PersonEntityServiceBean.setMaxResultsReturnedLimit(max-2);
         for(int i = 0 ; i < max; i++) {

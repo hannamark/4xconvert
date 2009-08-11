@@ -86,6 +86,9 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Curatable;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
 /**
  * Base for all entity change request (CR) services.
  * @param <CR> the PersistentObject type.
@@ -96,4 +99,14 @@ import gov.nih.nci.po.data.bo.Curatable;
     // needed, there are no more special methods, but the class remains in case some return.
 public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Curatable>
         extends AbstractBaseServiceBean<CR> {
+    /**
+     * Save the object.
+     * @param obj the object
+     * @return the id
+     * @throws EntityValidationException any validation errors.
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public long create(CR obj) throws EntityValidationException {
+        return super.createHelper(obj);
+    }
 }

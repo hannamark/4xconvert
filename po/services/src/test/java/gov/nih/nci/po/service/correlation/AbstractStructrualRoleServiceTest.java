@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.Email;
@@ -98,8 +99,8 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
@@ -115,19 +116,19 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Skeleton for testing structural role services.
  *
  * @param <T> structural role under test
  */
-public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObject> extends AbstractBeanTest {
+public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> extends AbstractBeanTest {
 
     ServiceLocator locator = new TestServiceLocator();
     protected Person basicPerson = null;
@@ -183,7 +184,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     abstract void verifyStructuralRole(T expected, T actual);
 
     @SuppressWarnings("unchecked")
-    protected AbstractBaseServiceBean<T> getService() {
+    protected AbstractCuratableServiceBean<T> getService() {
         // find the correct service via reflection
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
@@ -205,7 +206,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
             Class<?> serviceType = (Class<?>) pt.getActualTypeArguments()[0];
             if (myType.equals(serviceType)) {
                 try {
-                    return (AbstractBaseServiceBean<T>) m.invoke(locator);
+                    return (AbstractCuratableServiceBean<T>) m.invoke(locator);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -228,7 +229,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
             assertNull(c.getStatusDate());
         }
 
-        AbstractBaseServiceBean<T> service = getService();
+        AbstractCuratableServiceBean<T> service = getService();
 
         service.create(structuralRole);
 
@@ -246,7 +247,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
 
     @Test
     public void testGetByIds() throws Exception {
-        AbstractBaseServiceBean<T> service = getService();
+        AbstractCuratableServiceBean<T> service = getService();
 
         T sr1 = createSample();
 
@@ -274,7 +275,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     }
 
     protected T createSample() throws Exception {
-        AbstractBaseServiceBean<T> service = getService();
+        AbstractCuratableServiceBean<T> service = getService();
         T r = getSampleStructuralRole();
         service.create(r);
         return r;
@@ -379,7 +380,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         }
     }
 
-    protected void createAndGetOrganization() throws EntityValidationException {
+    protected void createAndGetOrganization() throws EntityValidationException, JMSException {
         OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
         orgTest.setDefaultCountry(getDefaultCountry());
         orgTest.setUser(getUser());

@@ -170,7 +170,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         return org;
     }
 
-    protected long createOrganization(Organization org) throws EntityValidationException {
+    protected long createOrganization(Organization org) throws EntityValidationException, JMSException {
         assertNull(org.getStatusDate());
         long id = getOrgServiceBean().create(org);
         PoHibernateUtil.getCurrentSession().flush();
@@ -185,6 +185,8 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         List<AuditLogRecord> alr = AuditTestUtil.find(Organization.class, saved.getId());
         AuditTestUtil.assertDetail(alr, AuditType.INSERT, "name", null, "oName", false);
+        
+        MessageProducerTest.assertMessageCreated(org, getOrgServiceBean(), true);
         return id;
     }
 
@@ -200,23 +202,23 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(expected.getUrl().size(), found.getUrl().size());
     }
 
-    public long createOrganization() throws EntityValidationException {
+    public long createOrganization() throws EntityValidationException, JMSException {
         return createOrganization("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
     }
 
     public long createOrganization(String oName, String cityOrMunicipality, String abbrvName, String desc)
-            throws EntityValidationException {
+            throws EntityValidationException, JMSException {
         long orgId = createOrganizationNoSessionFlushAndClear(oName, cityOrMunicipality, abbrvName, desc);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         return orgId;
     }
 
-    public long createOrganizationNoSessionFlushAndClear() throws EntityValidationException {
+    public long createOrganizationNoSessionFlushAndClear() throws EntityValidationException, JMSException {
         return createOrganizationNoSessionFlushAndClear("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
     }
 
-    public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality, String abbrvName, String desc) throws EntityValidationException {
+    public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality, String abbrvName, String desc) throws EntityValidationException, JMSException {
         Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345",
                 getDefaultCountry());
         Organization org = new Organization();
@@ -239,9 +241,10 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
     /**
      * Test creating a Org with a name that exceed maximum limit.
+     * @throws JMSException 
      */
     @Test
-    public void testCreateOrgWithNameTooLong() {
+    public void testCreateOrgWithNameTooLong() throws JMSException {
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
 
@@ -266,7 +269,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
 
     @Test
-    public void testCreateOrg() throws EntityValidationException {
+    public void testCreateOrg() throws EntityValidationException, JMSException {
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
 
@@ -291,6 +294,8 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         List<Organization> orgs = getAllOrganizations();
         assertEquals(1, orgs.size());
         assertEquals(new Long(orgId), orgs.get(0).getId());
+        
+        MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
     }
 
     @SuppressWarnings("unchecked")
@@ -308,7 +313,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         getOrgServiceBean().curate(o);
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.PENDING, result.getStatusCode());
-        MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
 
     @Test
@@ -320,7 +325,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         getOrgServiceBean().curate(o);
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
-        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
 
     @Test
@@ -352,7 +357,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
 
-        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
 
     @Test
@@ -382,7 +387,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
 
-        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
 
     @Test
@@ -509,32 +514,32 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getUrl().size());
 
         assertTrue(result.getChangeRequests().isEmpty());
-        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
 
 
     @Test
     public void curatorCreatesOrgAsPENDING() throws JMSException {
         Organization o = curatorCreatesOrg(EntityStatus.PENDING);
-        MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), true);
     }
 
     @Test
     public void curatorCreatesOrgAsACTIVE() throws JMSException {
         Organization o = curatorCreatesOrg(EntityStatus.ACTIVE);
-        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), true);
     }
 
     @Test
     public void curatorCreatesOrgAsNULLIFIED() throws JMSException {
         Organization o = curatorCreatesOrg(EntityStatus.NULLIFIED);
-        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), true);
     }
 
     @Test
     public void curatorCreatesOrgAsINACTIVE() throws JMSException {
         Organization o = curatorCreatesOrg(EntityStatus.INACTIVE);
-        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), true);
     }
 
     private Organization curatorCreatesOrg(EntityStatus status) throws JMSException {

@@ -103,8 +103,9 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @param org new organization
      * @return id
      * @throws EntityValidationException if validation fails
+     * @throws JMSException if JMS fails
      */
-    long create(Organization org) throws EntityValidationException;
+    long create(Organization org) throws EntityValidationException, JMSException;
 
     /**
      * @param id db id to get

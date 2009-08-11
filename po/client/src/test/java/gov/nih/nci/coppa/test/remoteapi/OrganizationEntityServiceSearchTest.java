@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -25,7 +26,7 @@ import org.junit.Test;
 public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEntityService {
     private final Map<Ii, OrganizationDTO> catalogOrgs = new HashMap<Ii, OrganizationDTO>();
 
-    private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException {
+    private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException, CurationException {
         Ii id = getOrgService().createOrganization(org);
         org.setIdentifier(id);
         catalogOrgs.put(id, org);

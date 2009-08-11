@@ -109,6 +109,8 @@ import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -145,7 +147,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         PoHibernateUtil.getCurrentSession().flush();
     }
 
-    protected void createAndSetOrganization() throws EntityValidationException {
+    protected void createAndSetOrganization() throws EntityValidationException, JMSException {
         OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
         orgTest.setDefaultCountry(getDefaultCountry());
         orgTest.setUser(getUser());

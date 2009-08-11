@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -27,7 +28,7 @@ import org.junit.Test;
 public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     private static final Map<Ii, PersonDTO> catalog = new HashMap<Ii, PersonDTO>();
 
-    private static Ii remoteCreateAndCatalog(PersonDTO person) throws EntityValidationException, NamingException {
+    private static Ii remoteCreateAndCatalog(PersonDTO person) throws EntityValidationException, NamingException, CurationException {
         Ii id = RemoteServiceHelper.getPersonEntityService().createPerson(person);
         person.setIdentifier(id);
         catalog.put(id, person);

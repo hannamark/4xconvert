@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
@@ -112,7 +113,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+import javax.jms.JMSException;
 
+import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -128,6 +131,7 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 @SecurityDomain("po")
 public class OrganizationEntityServiceBean implements OrganizationEntityServiceRemote {
 
+    private static final Logger LOG = Logger.getLogger(OrganizationEntityServiceBean.class);
     private static int maxResults = Utils.MAX_SEARCH_RESULTS;
     private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
     private OrganizationServiceLocal orgService;
@@ -176,11 +180,18 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
 
     /**
      * {@inheritDoc}
+     * @throws CurationException 
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public Ii createOrganization(OrganizationDTO org) throws EntityValidationException {
+    @SuppressWarnings("PMD.PreserveStackTrace")
+    public Ii createOrganization(OrganizationDTO org) throws EntityValidationException, CurationException {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
-        return new OrgIdConverter().convertToIi(orgService.create(orgBO));
+        try {
+            return new OrgIdConverter().convertToIi(orgService.create(orgBO));
+        } catch (JMSException e) {
+            LOG.error("Problem is JMS, unable to complete requst to create data.", e);
+            throw new CurationException("Unable to publish the creation message.");
+        }
     }
 
     /**

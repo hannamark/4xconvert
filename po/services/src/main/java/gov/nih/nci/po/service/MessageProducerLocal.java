@@ -96,4 +96,10 @@ public interface MessageProducerLocal {
      * @throws JMSException on error
      */
     void sendUpdate(Class<?> c, Curatable<?, ?> e) throws JMSException;
+    /**
+     * @param c the class of the entity being updated.
+     * @param e entity to send update announcement for
+     * @throws JMSException on error
+     */
+    void sendCreate(Class<?> c, Curatable<?, ?> e) throws JMSException;
 }

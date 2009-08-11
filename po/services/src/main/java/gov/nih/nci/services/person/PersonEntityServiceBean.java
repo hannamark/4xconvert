@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
@@ -112,7 +113,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+import javax.jms.JMSException;
 
+import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -129,6 +132,7 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 @SecurityDomain("po")
 public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 
+    private static final Logger LOG = Logger.getLogger(PersonEntityServiceBean.class);
     private PersonServiceLocal perService;
     private PersonCRServiceLocal perCRService;
     private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
@@ -178,9 +182,15 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      * {@inheritDoc}
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public Ii createPerson(PersonDTO person) throws EntityValidationException {
+    @SuppressWarnings("PMD.PreserveStackTrace")
+    public Ii createPerson(PersonDTO person) throws EntityValidationException, CurationException {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
-        return new PersonIdConverter().convertToIi(perService.create(perBO));
+        try {
+            return new PersonIdConverter().convertToIi(perService.create(perBO));
+        } catch (JMSException e) {
+            LOG.error("Problem is JMS, unable to complete requst to create data.", e);
+            throw new CurationException("Unable to publish the creation message.");
+        }
     }
 
     /**

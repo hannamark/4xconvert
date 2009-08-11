@@ -84,10 +84,6 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.bo.CuratableEntity;
-import gov.nih.nci.po.data.bo.CuratableRole;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
@@ -110,8 +106,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * EJB that handles publishing changes to people and organizations to
@@ -174,30 +168,56 @@ public class MessageProducerBean implements MessageProducerLocal {
     protected Topic getTopic(InitialContext ic) {
         return (Topic) JNDIUtil.lookup(ic, "/topic/" + MessageProducerBean.TOPIC_NAME);
     }
+    
+    /**
+     * Callback to modify the javax.jms.ObjectMessage message without weaving potentially complicated
+     * logic instead a simple method (using behavior injection). 
+     * @author smatyas
+     *
+     */
+    interface ObjectMessageAdjusterCallback {
+        String CREATE = "CREATE";
+        String UPDATE = "UPDATE";
+        String ANNOUNCEMENT_TYPE = "announcementType";
+        void adjust(ObjectMessage msg) throws JMSException;
+    }
 
+    private static ObjectMessageAdjusterCallback msgUpdate = new ObjectMessageAdjusterCallback() {
+            public void adjust(ObjectMessage msg) throws JMSException {
+                msg.setStringProperty(ANNOUNCEMENT_TYPE, UPDATE);
+            }
+        };
+    
+    private static ObjectMessageAdjusterCallback msgCreate = new ObjectMessageAdjusterCallback() {
+            public void adjust(ObjectMessage msg) throws JMSException {
+                msg.setStringProperty(ANNOUNCEMENT_TYPE, CREATE);
+            }
+        };
+    
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     public void sendUpdate(Class c, Curatable entity) throws JMSException {
-        if (entity instanceof CuratableEntity) {
-            CuratableEntity castedEntity = (CuratableEntity) entity;
-            if (!EntityStatus.PENDING.equals(castedEntity.getStatusCode())) {
-                Ii ii = IdConverterRegistry.find(c).convertToIi(((PersistentObject) entity).getId());
-                SubscriberUpdateMessage msg = new SubscriberUpdateMessage(ii);
-                send(msg);
-            }
-        } else if (entity instanceof CuratableRole) {
-            CuratableRole castedEntity = (CuratableRole) entity;
-            if (!RoleStatus.PENDING.equals(castedEntity.getStatus())) {
-                Ii ii = IdConverterRegistry.find(c).convertToIi(((PersistentObject) entity).getId());
-                SubscriberUpdateMessage msg = new SubscriberUpdateMessage(ii);
-                send(msg);
-            }
-        }
+        sendMessage(c, entity, msgUpdate);
     }
 
-    private synchronized void send(Serializable o) throws JMSException {
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public void sendCreate(Class c, Curatable entity) throws JMSException {
+        sendMessage(c, entity, msgCreate);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void sendMessage(Class c, Curatable entity, ObjectMessageAdjusterCallback callback) throws JMSException {
+        Ii ii = IdConverterRegistry.find(c).convertToIi(entity.getId());
+        SubscriberUpdateMessage msg = new SubscriberUpdateMessage(ii);
+        send(msg, callback);
+    }
+
+    private synchronized void send(Serializable o, ObjectMessageAdjusterCallback callback) throws JMSException {
         Connection connection = null;
         Session session = null;
         MessageProducer sender = null;
@@ -208,16 +228,15 @@ public class MessageProducerBean implements MessageProducerLocal {
             session = connection.createSession(true, Session.SESSION_TRANSACTED);
             sender = session.createProducer(topic);
             ObjectMessage msg = session.createObjectMessage(o);
+            if (callback instanceof ObjectMessageAdjusterCallback) {
+                callback.adjust(msg);
+            }
             sender.send(msg);
         } finally {
-            closeAfterSend(connection, session, sender);
+            close(sender);
+            close(session);
+            close(connection);
         }
-    }
-
-    private void closeAfterSend(Connection connection, Session session, MessageProducer sender) {
-        close(sender);
-        close(session);
-        close(connection);
     }
 
     private void close(Connection connection) {

@@ -96,6 +96,8 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
@@ -196,7 +198,7 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
     }
 
     @Test
-    public void testHotRoleCount() throws EntityValidationException {
+    public void testHotRoleCount() throws EntityValidationException, JMSException {
         HealthCareFacility hcf = getSampleStructuralRole();
         HealthCareFacilityServiceLocal s = (HealthCareFacilityServiceLocal) getService();
         s.create(hcf);

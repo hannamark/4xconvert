@@ -85,9 +85,11 @@ package gov.nih.nci.po.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.po.util.jms.TopicStub;
@@ -112,15 +114,25 @@ import org.junit.Test;
  */
 public class MessageProducerTest extends AbstractHibernateTestCase {
 
-    public static <T extends Curatable<?, ?>> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service)
+    public static <T extends Curatable<?, ?>> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service, boolean isCreate)
             throws JMSException {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
-        assertEquals(1, topic.messages.size());
-        Message msg = topic.messages.get(0);
+        assertMessageCreated(id, isCreate, topic);
+    }
+
+    private static <T extends Curatable<?, ?>> void assertMessageCreated(T id, boolean isCreate, Topic topic) throws JMSException {
+        TopicStub topicStub = (TopicStub) topic;
+        assertEquals(1, topicStub.messages.size());
+        Message msg = topicStub.messages.remove(0);
         assertTrue(msg instanceof ObjectMessage);
         ObjectMessage om = (ObjectMessage) msg;
         assertEquals(SubscriberUpdateMessage.class.getName(), om.getObject().getClass().getName());
         assertEquals(id.getId(), IiConverter.convertToLong(((SubscriberUpdateMessage) om.getObject()).getId()));
+        if (isCreate) {
+            assertEquals("CREATE", om.getStringProperty("announcementType"));
+        } else {
+            assertEquals("UPDATE", om.getStringProperty("announcementType"));
+        }
     }
 
     public static <T extends Curatable<?, ?>> void assertNoMessageCreated(T id, AbstractBaseServiceBean<T> service) {
@@ -178,50 +190,77 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         assertNotNull(mp.getTopic());
     }
 
-    private Organization createOrg() throws EntityValidationException {
-        OrganizationServiceBeanTest test = new OrganizationServiceBeanTest();
-        test.loadData();
-        test.setUpData();
-        Organization o = test.getBasicOrganization();
-        long id = test.createOrganization(o);
-        return test.getOrgServiceBean().getById(id);
-    }
-
     @Test
-    public void noMessageSentWhenStatusIsPENDING() throws Exception {
+    public void messageSentRegardlessOfEntityStatus() throws Exception {
         MessageProducerBean mp = EjbTestHelper.getMessageProducer();
-
-        Organization org = createOrg();
-        assertEquals(org.getStatusCode(), EntityStatus.PENDING);
-        mp.sendUpdate(Organization.class, org);
-
-        TopicStub topic = (TopicStub) mp.getTopic(null);
-        assertEquals(0, topic.messages.size());
+        Organization o = new Organization();
+        o.setId(-1L);
+        o.setStatusCode(EntityStatus.PENDING);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
+        
+        
+        o.setStatusCode(EntityStatus.ACTIVE);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
+        
+        o.setStatusCode(EntityStatus.NULLIFIED);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
+        
+        
+        o.setStatusCode(EntityStatus.INACTIVE);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
+        
     }
-
     @Test
-    public void messagesSentWhenNotPENDING() throws Exception {
-        OrganizationServiceBean bean = EjbTestHelper.getOrganizationServiceBean();
-        MessageProducerBean mp = (MessageProducerBean) bean.getPublisher();
+    public void messageSentRegardlessOfRoleStatus() throws Exception {
+        MessageProducerBean mp = EjbTestHelper.getMessageProducer();
+        ClinicalResearchStaff o = new ClinicalResearchStaff();
+        o.setId(-1L);
+        o.setStatus(RoleStatus.PENDING);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
+        
+        
+        o.setStatus(RoleStatus.ACTIVE);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
 
-        Organization org = createOrg();
-        org.getId();
+        o.setStatus(RoleStatus.NULLIFIED);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
 
-        // verify ACTIVE
-        assertEquals(org.getStatusCode(), EntityStatus.PENDING);
-        org.setStatusCode(EntityStatus.ACTIVE);
-        mp.sendUpdate(Organization.class, org);
-        assertMessageCreated(org, bean);
+        
+        o.setStatus(RoleStatus.SUSPENDED);
+        mp.sendCreate(o.getClass(), o);
+        assertMessageCreated(o, true, mp.getTopic());
+        
+        mp.sendUpdate(o.getClass(), o);
+        assertMessageCreated(o, false, mp.getTopic());
 
-        clearMessages(bean);
-        org.setStatusCode(EntityStatus.INACTIVE);
-        mp.sendUpdate(Organization.class, org);
-        assertMessageCreated(org, bean);
-
-        clearMessages(bean);
-        org.setStatusCode(EntityStatus.NULLIFIED);
-        mp.sendUpdate(Organization.class, org);
-        assertMessageCreated(org, bean);
     }
 
 }

@@ -89,6 +89,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 
 /**
  * Implementation of interface.
@@ -100,9 +101,10 @@ public class ResearchOrganizationServiceBean extends AbstractCuratableServiceBea
 
     /**
      * {@inheritDoc}
+     * @throws JMSException 
      */
     @Override
-    public long create(ResearchOrganization obj) throws EntityValidationException {
+    public long create(ResearchOrganization obj) throws EntityValidationException, JMSException {
         obj.setStatus(RoleStatus.PENDING);
         return super.create(obj);
     }

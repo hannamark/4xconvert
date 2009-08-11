@@ -103,8 +103,9 @@ public interface GenericStructrualRoleServiceLocal<T extends Correlation>
      * @param structuralRole new role
      * @return id
      * @throws EntityValidationException if validation fails
+     * @throws JMSException if JMS fails
      */
-    long create(T structuralRole) throws EntityValidationException;
+    long create(T structuralRole) throws EntityValidationException, JMSException;
 
 
     /**

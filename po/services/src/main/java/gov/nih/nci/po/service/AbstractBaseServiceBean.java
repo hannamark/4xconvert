@@ -188,7 +188,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
      * @throws EntityValidationException any validation errors.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long create(T obj) throws EntityValidationException {
+    protected long createHelper(T obj) throws EntityValidationException {
         if (obj.getId() != null) {
             throw new IllegalArgumentException("id must be null on calls to create!");
         }
@@ -198,6 +198,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         ensureValid(obj);
         return ((Long) s.save(obj)).longValue();
     }
+
 
      /**
       *

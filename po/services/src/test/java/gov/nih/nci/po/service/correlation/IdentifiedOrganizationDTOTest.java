@@ -2,6 +2,9 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import javax.jms.JMSException;
+
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
@@ -91,7 +94,7 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testSnapshotToModelToSnapshot() throws EntityValidationException {
+    public void testSnapshotToModelToSnapshot() throws EntityValidationException, JMSException {
         // verify that moving from snapshot to model and back to snapshot results in original data.
         OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
         orgTest.loadData();

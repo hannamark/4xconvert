@@ -93,6 +93,8 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -146,15 +148,15 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
     }
 
     @Test
-    public void create() throws EntityValidationException {
+    public void create() throws EntityValidationException, JMSException {
         createPerson();
     }
 
-    public long createPerson() throws EntityValidationException {
+    public long createPerson() throws EntityValidationException, JMSException {
         return createPerson(getBasicPerson());
     }
 
-    protected long createPerson(Person person) throws EntityValidationException {
+    protected long createPerson(Person person) throws EntityValidationException, JMSException {
         long id = personServiceBean.create(person);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -172,7 +174,7 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
     }
 
     @Test
-    public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
+    public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException, JMSException {
         Person person = getBasicPerson();
         person.setStatusCode(EntityStatus.ACTIVE);
         person.setFirstName("fName");

@@ -10,6 +10,7 @@ import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
@@ -166,7 +167,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         saveAsInactive(id);
     }
 
-    private Ii createNewPersonThenCurateAsActive() throws EntityValidationException, URISyntaxException {
+    private Ii createNewPersonThenCurateAsActive() throws EntityValidationException, URISyntaxException, CurationException {
         /* create a new person via remote API. */
         String firstName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String lastName = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Z', 10);
@@ -194,7 +195,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
     }
 
     private Ii curateNewPersonThenCurateAfterRemoteUpdate() throws EntityValidationException, NullifiedEntityException,
-            URISyntaxException {
+            URISyntaxException, CurationException {
         Ii id = createNewPersonThenCurateAsActive();
 
         PersonDTO proposedState = remoteGetPerson(id);
@@ -240,7 +241,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
 
-    private Ii remoteCreateAndCatalog(PersonDTO org) throws EntityValidationException {
+    private Ii remoteCreateAndCatalog(PersonDTO org) throws EntityValidationException, CurationException {
         Ii id = getPersonService().createPerson(org);
         org.setIdentifier(id);
         catalogPersons.put(id, org);

@@ -102,6 +102,20 @@ import org.hibernate.Session;
 public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractBaseServiceBean<T> {
 
     /**
+     * Save the object.
+     * @param obj the object
+     * @return the id
+     * @throws EntityValidationException any validation errors.
+     * @throws JMSException any problems publishing announcements via JMS
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public long create(T obj) throws EntityValidationException, JMSException {
+        long id = super.createHelper(obj);
+        getPublisher().sendCreate(getTypeArgument(), obj);
+        return id;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -111,10 +125,11 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         if (object.getId() != null) {
             object = loadAndMerge(object, s);
             handleExistingObjectCuration(s, object);
+            getPublisher().sendUpdate(getTypeArgument(), object);
         } else {
             s.save(object);
+            getPublisher().sendCreate(getTypeArgument(), object);
         }
-        getPublisher().sendUpdate(getTypeArgument(), object);
     }
 
     @SuppressWarnings("unchecked")

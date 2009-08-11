@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
@@ -118,8 +119,9 @@ public interface CorrelationService<T extends PoDto> {
      * @param dto the dto.
      * @return the identifier of the correlation.
      * @throws EntityValidationException the validation errors, if any.
+     * @throws CurationException if any unrecoverable error occurred
      */
-    Ii createCorrelation(T dto) throws EntityValidationException;
+    Ii createCorrelation(T dto) throws EntityValidationException, CurationException;
 
     /**
      * Validate that an entity has acceptable values.

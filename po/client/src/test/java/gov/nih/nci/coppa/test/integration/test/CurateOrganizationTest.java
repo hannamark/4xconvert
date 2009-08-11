@@ -10,6 +10,7 @@ import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -165,7 +166,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         saveAsInactive(id);
     }
 
-    private Ii createNewOrgThenCurateAsActive() throws EntityValidationException, URISyntaxException {
+    private Ii createNewOrgThenCurateAsActive() throws EntityValidationException, URISyntaxException, CurationException {
         // create a new org via remote API.
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         Ii id = remoteCreateAndCatalog(create(name));
@@ -191,7 +192,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private Ii curateNewOrgThenCurateAfterRemoteUpdate() throws EntityValidationException, NullifiedEntityException,
-            URISyntaxException {
+            URISyntaxException, CurationException {
         Ii id = createNewOrgThenCurateAsActive();
 
         OrganizationDTO proposedState = remoteGetOrganization(id);
@@ -243,7 +244,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
-    private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException {
+    private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException, CurationException {
         Ii id = getOrgService().createOrganization(org);
         org.setIdentifier(id);
         catalogOrgs.put(id, org);

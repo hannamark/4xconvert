@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.convert.CdConverter;
@@ -108,6 +109,9 @@ import java.util.Set;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+
+import org.apache.log4j.Logger;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
@@ -122,6 +126,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 public abstract class AbstractCorrelationServiceBean
         <T extends Correlation, CR extends CorrelationChangeRequest<T>, DTO extends CorrelationDto> {
 
+    private static final Logger LOG = Logger.getLogger(AbstractCorrelationServiceBean.class);
     /**
      * client role.
      */
@@ -162,12 +167,18 @@ public abstract class AbstractCorrelationServiceBean
      * @param dto dto
      * @return identifier
      * @throws EntityValidationException on error
+     * @throws CurationException if any unrecoverable error occurred
      */
-    @SuppressWarnings(UNCHECKED)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public Ii createCorrelation(DTO dto) throws EntityValidationException {
+    @SuppressWarnings({UNCHECKED, "PMD.PreserveStackTrace" })
+    public Ii createCorrelation(DTO dto) throws EntityValidationException, CurationException {
         T po = (T) PoXsnapshotHelper.createModel(dto);
-        return getIdConverter().convertToIi(getLocalService().create(po));
+        try {
+            return getIdConverter().convertToIi(getLocalService().create(po));
+        } catch (JMSException e) {
+            LOG.error("Problem is JMS, unable to complete requst to create data.", e);
+            throw new CurationException("Unable to publish the creation message.");
+        }
     }
 
     /**

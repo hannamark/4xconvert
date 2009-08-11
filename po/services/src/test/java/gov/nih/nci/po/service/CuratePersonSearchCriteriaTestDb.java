@@ -27,6 +27,8 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +39,7 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
     private long perId;
 
     @Before
-    public void setupData() throws EntityValidationException {
+    public void setupData() throws EntityValidationException, JMSException {
         pst = new PersonServiceBeanTest();
         pst.loadData();
         pst.setUpData();

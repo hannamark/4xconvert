@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -503,7 +504,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         person, organization;
     }
     
-    protected Ii createRemoteOrg(String orgName) throws EntityValidationException, NamingException, URISyntaxException {
+    protected Ii createRemoteOrg(String orgName) throws EntityValidationException, NamingException, URISyntaxException, CurationException {
         
         OrganizationDTO dto = new OrganizationDTO();
         dto.setName(RemoteApiUtils.convertToEnOn(orgName));

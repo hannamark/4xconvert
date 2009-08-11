@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -25,7 +26,7 @@ import org.junit.Test;
 public class OrganizationTelecomAddressTest extends AbstractOrganizationEntityService {
     private final Map<Ii, OrganizationDTO> testOrgs = new HashMap<Ii, OrganizationDTO>();
 
-    private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException {
+    private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException, CurationException {
         Ii id = getOrgService().createOrganization(org);
         org.setIdentifier(id);
         testOrgs.put(id, org);
@@ -234,7 +235,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     }
 
     @Test
-    public void createTelcomAddressOnlyByEmailNotValid() {
+    public void createTelcomAddressOnlyByEmailNotValid() throws CurationException {
         List<String> email = Arrays.asList(new String[] { "test" });
         DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, null, null, null);
         try {
@@ -250,7 +251,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 
     // JIRA PO-833 -This test case needs to fails bcoz entering junk value in phone -
     @Test
-    public void createTelcomAddressOnlyByPhoneNotValid() {
+    public void createTelcomAddressOnlyByPhoneNotValid() throws CurationException {
         List<String> phone = Arrays.asList(new String[] { ";?:&type=ds#/^`" });
         List<String> email = Arrays.asList(new String[] { "mailAdd@add.com" });
         DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, phone, null, null);

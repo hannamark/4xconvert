@@ -128,7 +128,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @UniqueOrganizationalContactTitleScoper
 @UniquePlayerScoperPlayerOptional(article = "An", friendlyName = "Organizational Contact")
 @PhoneNotEmptyValidator.PhoneNotEmpty
-public class OrganizationalContact extends AbstractOrganizationalContact implements Correlation {
+public class OrganizationalContact extends AbstractOrganizationalContact implements Correlation, PersonRole {
 
     private static final long serialVersionUID = 1L;
 

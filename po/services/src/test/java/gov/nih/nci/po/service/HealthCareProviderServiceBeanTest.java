@@ -94,6 +94,8 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -148,7 +150,7 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         return createHealthCareProvider(getBasicHealthCareProvider());
     }
 
-    protected long createHealthCareProvider(HealthCareProvider hcp) throws EntityValidationException {
+    protected long createHealthCareProvider(HealthCareProvider hcp) throws EntityValidationException, JMSException {
         long id = hcpServiceBean.create(hcp);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();

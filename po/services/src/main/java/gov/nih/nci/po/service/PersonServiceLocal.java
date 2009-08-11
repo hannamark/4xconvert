@@ -103,8 +103,9 @@ public interface PersonServiceLocal extends GenericSearchService<Person, SearchC
      * @param person new Person
      * @return id
      * @throws EntityValidationException if validation fails
+     * @throws JMSException if JMS fails
      */
-    long create(Person person) throws EntityValidationException;
+    long create(Person person) throws EntityValidationException, JMSException;
 
     /**
      * @param id db id to get

@@ -14,6 +14,8 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +49,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByFirstName() throws EntityValidationException {
+    public void findByFirstName() throws EntityValidationException, JMSException {
         createPerson();
         createPerson();
 
@@ -61,7 +63,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByEmail() throws EntityValidationException {
+    public void findByEmail() throws EntityValidationException, JMSException {
         /* create a person with two email addresses */
         createPerson();
 
@@ -87,7 +89,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByPhone() throws EntityValidationException {
+    public void findByPhone() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createPerson();
 
@@ -113,7 +115,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByFax() throws EntityValidationException {
+    public void findByFax() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createPerson();
 
@@ -140,7 +142,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByTty() throws EntityValidationException {
+    public void findByTty() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createPerson();
 
@@ -167,7 +169,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByUrl() throws EntityValidationException {
+    public void findByUrl() throws EntityValidationException, JMSException {
         /* create a person with two phone numbers */
         createPerson();
 
@@ -193,7 +195,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         assertEquals(1, getPersonServiceBean().search(sc).size());
     }
 
-    private void createPeopleWithAddresses() throws EntityValidationException {
+    private void createPeopleWithAddresses() throws EntityValidationException, JMSException {
         Person p = getBasicPerson();
         Address pa = new Address("P.O. Box 12345", "New-City", "VA", "12345-6789", getDefaultCountry());
         pa.setDeliveryAddressLine("c/o Mark Wild");
@@ -213,7 +215,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByAddressStreetAddressLine() throws EntityValidationException {
+    public void findByAddressStreetAddressLine() throws EntityValidationException, JMSException {
         createPeopleWithAddresses();
         // contains
         personSc.setPostalAddress(new Address());
@@ -235,7 +237,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByAddressDeliveryAddressLine() throws EntityValidationException {
+    public void findByAddressDeliveryAddressLine() throws EntityValidationException, JMSException {
         createPeopleWithAddresses();
         // starts with (part of contains)
         personSc.setPostalAddress(new Address());
@@ -266,7 +268,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByAddressCity() throws EntityValidationException {
+    public void findByAddressCity() throws EntityValidationException, JMSException {
         createPeopleWithAddresses();
 
         // contains
@@ -300,7 +302,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByAddressPostalCode() throws EntityValidationException {
+    public void findByAddressPostalCode() throws EntityValidationException, JMSException {
         createPeopleWithAddresses();
 
         personSc.setPostalAddress(new Address());
@@ -327,7 +329,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByAddressCountry() throws EntityValidationException {
+    public void findByAddressCountry() throws EntityValidationException, JMSException {
         createPeopleWithAddresses();
 
         personSc.setPostalAddress(new Address());
@@ -346,7 +348,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
-    public void findByStatusCode() throws EntityValidationException {
+    public void findByStatusCode() throws EntityValidationException, JMSException {
         createPeopleWithAddresses();
 
         personSc.setStatusCode(EntityStatus.ACTIVE);
@@ -360,7 +362,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
 
     @Test
     @SuppressWarnings("unchecked")
-    public void findByStatusCodeEnsureDeprecatedAreNotReturned() throws EntityValidationException {
+    public void findByStatusCodeEnsureDeprecatedAreNotReturned() throws EntityValidationException, JMSException {
         createPeopleWithAddresses();
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Person p");
         List<Person> list = query.list();

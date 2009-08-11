@@ -319,6 +319,7 @@
                     <generateClient>true</generateClient>
                     <clientIncludes>
                         <clientInclude>gov/nih/nci/services/**/**</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/CurationException.class</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/OneCriterionRequiredException.class</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/SearchCriteriaValidationException.class</clientInclude>

@@ -123,7 +123,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 @UniquePlayerScoper(friendlyName = "Clinical Research Staff")
 @PhoneNotEmptyValidator.PhoneNotEmpty
-public class ClinicalResearchStaff extends AbstractPersonRole implements Correlation {
+public class ClinicalResearchStaff extends AbstractPersonRole implements Correlation, PersonRole {
     private static final long serialVersionUID = 1L;
 
     private Set<ClinicalResearchStaffCR> changeRequests = new HashSet<ClinicalResearchStaffCR>();
