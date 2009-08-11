@@ -139,10 +139,9 @@ public class DocumentServiceBeanTest {
         docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
         docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
         docDTO.setText(EdConverter.convertToEd("test".getBytes()));
-        DocumentDTO docDTO2 = null;
+
         try {
-            docDTO2 = new DocumentDTO();
-            docDTO2 = remoteEjb.create(docDTO);
+            remoteEjb.create(docDTO);
         } catch(PAException e) {
             // expected behavior
         }

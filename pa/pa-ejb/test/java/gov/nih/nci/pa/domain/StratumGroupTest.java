@@ -112,6 +112,7 @@ public class StratumGroupTest {
         assertNotNull(sp);
         Serializable spid = sp.getId();
         StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
+        assertNotNull(spSaved);
         assertNotNull(spid);
 
         TestSchema.addUpdObject(create);

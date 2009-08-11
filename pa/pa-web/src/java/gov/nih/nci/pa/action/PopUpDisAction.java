@@ -108,7 +108,6 @@ import com.opensymphony.xwork2.ActionSupport;
 public class PopUpDisAction extends ActionSupport {
     private static final long serialVersionUID = 8987838321L;
 
-    @SuppressWarnings("hiding")
     private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
     private static final int MAX_SEARCH_RESULT_SIZE = 500;
 

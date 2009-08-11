@@ -484,7 +484,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Element overallContact = doc.createElement("overall_contact");
             appendElement(overallContact, createElement(FIRST_NAME, p.getFirstName() , doc));
             appendElement(overallContact, createElement(LAST_NAME, p.getLastName() , doc));
-            DSet dset = scDTO.getTelecomAddresses();
+            DSet<Tel> dset = scDTO.getTelecomAddresses();
             if (dset != null) {
                 List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
                 List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");

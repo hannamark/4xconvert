@@ -78,18 +78,13 @@
 */
 package gov.nih.nci.pa.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.util.TestSchema;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Harsha
@@ -114,7 +109,6 @@ public class RegulatoryAuthorityTest {
     /**
      * Test Method.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void createRegulatoryAuthority() {            
         Session session  = TestSchema.getSession();
@@ -128,25 +122,6 @@ public class RegulatoryAuthorityTest {
         assertEquals("Authoruty Name does not match", create.getAuthorityName() , saved.getAuthorityName());
         assertEquals("Country Id does not match", create.getCountry().getId() , saved.getCountry().getId());
         
-//        String hql = " select ra.id , c.id from RegulatoryAuthority as ra  "
-//            + " join ra.country as c"
-//            + " where ra.id = "+create.getId();       
-        List<StudyRegulatoryAuthority> queryList = new ArrayList<StudyRegulatoryAuthority>();
-        Query query = null;
-        //query = session.createQuery(hql);
-        //queryList = query.list();
-        
-        String className = "Country";
-        String id = "1077";
-        String hql1 = " select val.name  from " + className + " as val where val.id=" + c1.getId();
-        query = session.createQuery(hql1);
-        queryList = query.list();
-        //System.out.println("-------------------------------****************************8"+queryList.get(0));
-            
-        List results = session.createQuery("select distinct country from RegulatoryAuthority ra where ra.id = " 
-                + id).list();
-
-         
     }
     
     public static RegulatoryAuthority createRegulatoryObj(Country c){

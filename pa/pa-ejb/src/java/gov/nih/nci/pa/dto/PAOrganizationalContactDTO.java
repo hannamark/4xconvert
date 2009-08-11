@@ -88,6 +88,10 @@ import java.util.List;
  */
 public class PAOrganizationalContactDTO  extends PACorrelationDTO {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String typeCode;
     private List<String> emails;
     private List<String> phones;

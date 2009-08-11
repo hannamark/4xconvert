@@ -201,11 +201,7 @@ public class PAUtil {
             this.endIndex = pattern.length();
             this.lenient = false;
         }
-        public ValidDateFormat(String pattern, Integer length, Boolean lenient) {
-            this.pattern = pattern;
-            this.endIndex = length;
-            this.lenient = lenient;
-        }
+
     }
 
     /**

@@ -135,10 +135,7 @@ public class StudySiteAccrualStatusServiceBeanTest {
     dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
     dto.setStatusDate(TsConverter.convertToTs(new java.sql.Timestamp((new java.util.Date()).getTime())));
     dto.setStudyParticipationIi(studyParticipationId);
-    StudySiteAccrualStatusDTO dto2 = null;
-    dto2 = new StudySiteAccrualStatusDTO();
-    dto2 = remoteEjb.createStudySiteAccrualStatus(dto);
-    assertEquals(dto.getStudyParticipationIi()
-        , studyParticipationId);
+    remoteEjb.createStudySiteAccrualStatus(dto);
+    assertEquals(dto.getStudyParticipationIi(), studyParticipationId);
   }
 }

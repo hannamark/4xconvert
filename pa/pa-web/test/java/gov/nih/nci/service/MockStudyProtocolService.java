@@ -100,9 +100,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
 /**
  * @author hreinhart
  *

@@ -195,7 +195,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             query = session.createQuery(queryStr);
             queryList = query.list();
             Object[] searchResult = null;
-            for (int i = 0; i < queryList.size(); i++) {
+            for (int i = 0; i < queryList.size();) {
                 searchResult = (Object[]) queryList.get(i);
                 if (searchResult == null) {
                     return null;

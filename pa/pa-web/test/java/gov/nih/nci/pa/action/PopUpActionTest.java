@@ -22,7 +22,7 @@ public class PopUpActionTest extends AbstractPaActionTest {
     @Before
     public void setUp(){
         popUpAction = new PopUpAction();
-        List countryList = new ArrayList();
+        List<String> countryList = new ArrayList <String>();
         getSession().setAttribute("countrylist",countryList);
         
     }

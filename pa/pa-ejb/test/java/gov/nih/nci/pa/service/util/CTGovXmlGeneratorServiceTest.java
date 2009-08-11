@@ -115,8 +115,6 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.StratumGroupServiceBean;
-import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.MockPoServiceLocator;

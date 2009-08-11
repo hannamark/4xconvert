@@ -79,26 +79,14 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
-import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;

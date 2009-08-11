@@ -93,9 +93,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -108,7 +105,6 @@ import org.junit.Test;
  */
 public class StudyParticipationContactServiceTest {
     private StudyParticipationContactServiceRemote remoteEjb = new StudyParticipationContactServiceBean();
-    private PAHealthCareProviderRemote paRemote = new PAHealthCareProviderServiceBean();
     Long protocolId;
     Ii protocolIi;
     Long participationId;

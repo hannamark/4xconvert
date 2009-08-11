@@ -2,17 +2,15 @@ package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.organization.OrganizationDTO;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;

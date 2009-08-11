@@ -125,7 +125,7 @@ public class RegulatoryInformationServiceTest {
 
     @Test
     public void getRegulatoryAuthorityNameIdTest() throws Exception {
-        List lst = remoteEjb.getRegulatoryAuthorityNameId(Long.valueOf(1));
+        List<?> lst = remoteEjb.getRegulatoryAuthorityNameId(Long.valueOf(1));
         assertNotNull(lst);
         RegulatoryAuthOrgDTO data = (RegulatoryAuthOrgDTO) lst.get(0);
         assertEquals("Name does not match  " , data.getName(), "BWI reg body");

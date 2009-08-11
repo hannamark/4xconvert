@@ -105,7 +105,6 @@ import org.junit.Test;
  */
 public class StudyOverallStatusServiceTest {
     private StudyOverallStatusServiceRemote remoteEjb = new StudyOverallStatusServiceBean();
-    private StudyProtocolServiceRemote protocolEjb = new StudyProtocolServiceBean();
     Ii pid;
     
     @Before

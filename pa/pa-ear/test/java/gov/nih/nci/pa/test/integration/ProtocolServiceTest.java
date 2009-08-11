@@ -125,12 +125,7 @@ public class ProtocolServiceTest {
     //@Test
     public void serviceAvailableTest() throws Exception
     {
-        StudyProtocolServiceRemote bean = RemoteServiceHelper.getProtocolService();
-        //ProtocolSearchCriteria sc = new ProtocolSearchCriteria();
-        //sc.setNciIdentifier("NCI-2008-0006");
-        //List<ProtocolDTO> p = bean.getProtocol(sc);
-        //assertEquals(p.get(0).getLongTitleText(), "A Phase I study of Taxol in refractory leukemia in children");
-        //assertNotNull(bean);
+        RemoteServiceHelper.getProtocolService();
         
     }
 }

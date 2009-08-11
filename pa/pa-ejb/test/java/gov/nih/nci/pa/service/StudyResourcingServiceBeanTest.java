@@ -88,7 +88,6 @@ import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudyResourcingTest;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -176,7 +175,8 @@ public class StudyResourcingServiceBeanTest {
         assertNotNull(srDTO3);
         assertEquals (srDTO3.getSerialNumber().getValue().toString(), "123123");
 
-        List<StudyResourcingDTO> statusList =remoteEjb.getstudyResourceByStudyProtocol(pid);        
+        List<StudyResourcingDTO> statusList =remoteEjb.getstudyResourceByStudyProtocol(pid);
+        assertNotNull(statusList);
     }
 
     @Test 

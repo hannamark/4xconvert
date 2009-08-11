@@ -1,10 +1,5 @@
 package gov.nih.nci.pa.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
@@ -15,10 +10,14 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali

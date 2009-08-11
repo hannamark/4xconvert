@@ -220,7 +220,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
      * @param roleStatusCode role status code
      * @throws PAException on error
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" , "PMD.ConsecutiveLiteralAppends" })
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" , "PMD.ConsecutiveLiteralAppends", "unchecked" })
     public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
         List<BO> sps = null;
         Session session = null;

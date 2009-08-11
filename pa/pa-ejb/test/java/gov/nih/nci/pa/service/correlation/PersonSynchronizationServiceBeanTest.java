@@ -18,8 +18,6 @@ import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,11 +48,6 @@ public class PersonSynchronizationServiceBeanTest {
         remoteEjb.synchronizePerson(roIi);
         Person np = null;
         np = (Person) TestSchema.getSession().load(Person.class, personId);
-//        System.out.println("==============");
-//        System.out.println("id = "+personId);
-//        System.out.println("id = "+np.getId());
-//        System.out.println("name id = "+np.getFirstMiddleLastName());
-//        System.out.println("name id = "+np.getStatusCode());
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
     }    

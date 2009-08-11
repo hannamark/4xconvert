@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.coppa.iso.Ed;
 
 import org.junit.Test;
 

@@ -112,8 +112,7 @@ public class StudyResourcingConverterTest {
     bo.setStudyProtocol(sp);
     bo.setSummary4ReportedResourceIndicator(Boolean.TRUE);
     bo.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
-    StudyResourcingConverter sg = new StudyResourcingConverter();
-    StudyResourcingDTO dto = sg.convertFromDomainToDTO(bo);
+    StudyResourcingDTO dto = StudyResourcingConverter.convertFromDomainToDTO(bo);
     assertStudyResourcingConverter(bo, dto);
   }
 
@@ -133,8 +132,7 @@ public class StudyResourcingConverterTest {
     dto.setOrganizationIdentifier(IiConverter.convertToIi("100"));
     dto.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
     dto.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
-    StudyResourcingConverter sg = new StudyResourcingConverter();
-    StudyResourcing bo = sg.convertFromDTOToDomain(dto);
+    StudyResourcing bo = StudyResourcingConverter.convertFromDTOToDomain(dto);
     assertStudyResourcingConverter(bo, dto);
   }
 

@@ -79,20 +79,9 @@
 package gov.nih.nci.pa.iso.dto;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.AllocationCode;
-import gov.nih.nci.pa.enums.AmendmentReasonCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-
-import java.sql.Timestamp;
-import java.util.Date;
 
 import org.junit.Test;
 

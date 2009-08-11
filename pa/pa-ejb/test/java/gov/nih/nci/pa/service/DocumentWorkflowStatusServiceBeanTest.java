@@ -133,9 +133,6 @@ public class DocumentWorkflowStatusServiceBeanTest {
       dto.setStudyProtocolIdentifier(pid);
       dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
       dto.setCommentText(StConverter.convertToSt("Common text"));
-      DocumentWorkflowStatusDTO dto2 = null;
-      dto2 = new DocumentWorkflowStatusDTO();
-      dto2 = remoteEjb.create(dto);
       assertEquals(dto.getStudyProtocolIdentifier() , pid);
   }
   

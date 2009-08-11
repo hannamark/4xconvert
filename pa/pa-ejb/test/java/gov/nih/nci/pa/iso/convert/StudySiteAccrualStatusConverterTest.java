@@ -112,8 +112,7 @@ public class StudySiteAccrualStatusConverterTest {
     bo.setStatusDate(new java.sql.Timestamp((new java.util.Date()).getTime()));
     bo.setStudyParticipation(sp);
 
-    StudySiteAccrualStatusConverter sg = new StudySiteAccrualStatusConverter();
-    StudySiteAccrualStatusDTO dto = sg.convertFromDomainToDTO(bo);
+    StudySiteAccrualStatusDTO dto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
     assertStudySiteAccrualStatusConverter(bo, dto);
   }
 
@@ -135,8 +134,7 @@ public class StudySiteAccrualStatusConverterTest {
     dto.setStudyParticipationIi(IiConverter.convertToIi(sp.getId()));
     assertEquals(dto.getIdentifier().getRoot(),"2.16.840.1.113883.3.26.4.5.4");
     
-    StudySiteAccrualStatusConverter sg = new StudySiteAccrualStatusConverter();
-    StudySiteAccrualStatus bo = sg.convertFromDtoToDomain(dto);
+    StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);
     assertStudySiteAccrualStatusConverter(bo, dto);
     
   }

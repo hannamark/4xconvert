@@ -130,9 +130,7 @@ public class StratumGroupServiceBeanTest {
         dto.setStudyProtocolIdentifier(pid);
         dto.setDescription(StConverter.convertToSt("Description"));
         dto.setGroupNumberText(StConverter.convertToSt("Code"));
-        StratumGroupDTO dto2 = null;
-        dto2 = new StratumGroupDTO();
-        dto2 = remoteEjb.create(dto);
+        remoteEjb.create(dto);
         assertEquals(dto.getStudyProtocolIdentifier(), pid);
     }
 

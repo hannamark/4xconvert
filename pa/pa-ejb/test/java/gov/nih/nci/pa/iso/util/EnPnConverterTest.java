@@ -2,11 +2,6 @@ package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
@@ -14,6 +9,9 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.services.person.PersonDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;

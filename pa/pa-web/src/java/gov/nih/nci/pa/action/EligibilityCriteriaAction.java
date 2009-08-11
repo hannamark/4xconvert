@@ -112,7 +112,8 @@ import com.opensymphony.xwork2.ActionSupport;
  *        holder, NCI.
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
-  "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" })
+  "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" , 
+      "PMD.AvoidDeeplyNestedIfStmts" })
   public class EligibilityCriteriaAction extends ActionSupport {
 
   private static final long serialVersionUID = -5307419735675359757L;
@@ -141,7 +142,7 @@ private static final String ELIGIBILITY = "eligibility";
   /**
    * @return res
    */
-  @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts" })
+
   public String query() {
 
     try {

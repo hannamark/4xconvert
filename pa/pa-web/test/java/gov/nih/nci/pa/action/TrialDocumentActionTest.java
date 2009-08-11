@@ -5,7 +5,6 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;

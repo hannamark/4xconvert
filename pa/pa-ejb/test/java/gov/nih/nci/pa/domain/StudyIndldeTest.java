@@ -115,7 +115,7 @@ public class StudyIndldeTest {
         TestSchema.addUpdObject(sp);
         assertNotNull(sp);
         Serializable spid = sp.getId();
-        StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
+        
         assertNotNull(spid);
 
         TestSchema.addUpdObject(create);

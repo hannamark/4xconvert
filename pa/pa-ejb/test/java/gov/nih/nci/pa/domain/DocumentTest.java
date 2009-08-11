@@ -80,11 +80,10 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
-
-import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -113,6 +112,7 @@ public class DocumentTest {
         assertNotNull(sp);
         Serializable spid = sp.getId();
         StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
+        assertNotNull(spSaved);
         assertNotNull(spid);
 
         TestSchema.addUpdObject(create);

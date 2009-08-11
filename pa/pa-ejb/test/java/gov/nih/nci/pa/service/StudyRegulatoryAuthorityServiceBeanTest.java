@@ -134,11 +134,8 @@ public class StudyRegulatoryAuthorityServiceBeanTest {
     StudyRegulatoryAuthorityDTO dto = new StudyRegulatoryAuthorityDTO();
     dto.setStudyProtocolIdentifier(pid);
     dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(ra.getId()));
-    StudyRegulatoryAuthorityDTO dto2 = null;
-    dto2 = new StudyRegulatoryAuthorityDTO();
-    dto2 = remoteEjb.create(dto);
-    assertEquals(dto.getStudyProtocolIdentifier()
-        , pid);
+    remoteEjb.create(dto);
+    assertEquals(dto.getStudyProtocolIdentifier(), pid);
   }
   
   @Test 

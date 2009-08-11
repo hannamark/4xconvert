@@ -115,7 +115,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 public class NCISpecificInformationAction extends ActionSupport {
     private static final long serialVersionUID = -5560377425534113809L;
     private static final String DISPLAY_ORG_FLD = "displayOrgFld";
-    @SuppressWarnings("hiding")
     private static final Logger LOG = Logger.getLogger(NCISpecificInformationAction.class);
     private NCISpecificInformationWebDTO nciSpecificInformationWebDTO = new NCISpecificInformationWebDTO();
     private String chosenOrg;

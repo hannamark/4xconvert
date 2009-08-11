@@ -18,7 +18,7 @@ import org.junit.Test;
 
 public class WebDTOTest {
 
-	private static final Map DEFAULT_ARGUMENTS = new HashMap();
+	private static final Map<String, Comparable> DEFAULT_ARGUMENTS = new HashMap<String, Comparable>();
 
 	@Test
 	public void testProperties() {
@@ -79,7 +79,7 @@ public class WebDTOTest {
 	        Object arg = argument;
 
 	        if (arg == null) {
-	            Class type = descriptor.getPropertyType();
+	            Class<?> type = descriptor.getPropertyType();
 	            if (DEFAULT_ARGUMENTS.containsKey(type.getName())) {
 	                arg = DEFAULT_ARGUMENTS.get(type.getName());
 	            }

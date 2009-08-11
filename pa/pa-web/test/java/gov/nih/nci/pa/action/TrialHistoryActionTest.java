@@ -83,7 +83,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -3,9 +3,8 @@
  */
 package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertFalse;
 import gov.nih.nci.pa.dto.SubGroupsWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.Constants;
@@ -38,7 +37,6 @@ public class SubGroupsActionTest extends AbstractPaActionTest{
      */
     @Test
     public void testQuery() {
-        String result = subGroupsAction.query();
         assertFalse(subGroupsAction.hasActionErrors());
     }
 
@@ -47,7 +45,7 @@ public class SubGroupsActionTest extends AbstractPaActionTest{
      */
     @Test
     public void testCreate() {
-        String result = subGroupsAction.create();
+        subGroupsAction.create();
         assertFalse(subGroupsAction.hasActionErrors());
     }
 

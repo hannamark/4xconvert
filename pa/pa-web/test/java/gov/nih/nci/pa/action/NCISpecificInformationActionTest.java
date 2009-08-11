@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.*;
-import gov.nih.nci.pa.dto.DiseaseWebDTO;
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;

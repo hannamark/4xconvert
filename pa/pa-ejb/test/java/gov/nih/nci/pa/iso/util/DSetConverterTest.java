@@ -105,7 +105,7 @@ public class DSetConverterTest {
         DSet<Tel> master = new DSet<Tel>();
         DSet<Tel> dset = DSetConverter.convertListToDSet(phones, "PHONE",master);
         assertNotNull(dset);
-        Iterator it = dset.getItem().iterator();
+        Iterator<Tel> it = dset.getItem().iterator();
         while(it.hasNext()){
            Object o = it.next();
            if( o instanceof TelPhone) {
@@ -124,7 +124,7 @@ public class DSetConverterTest {
         in.add("7037071113");
         DSet<Tel> master = new DSet<Tel>();
         DSet<Tel> dset = DSetConverter.convertListToDSet(in, "PHONE",master);        
-        List dsetTel = DSetConverter.convertDSetToList(dset, "PHONE");
+        List<?> dsetTel = DSetConverter.convertDSetToList(dset, "PHONE");
         for (int i=0 ; i<dsetTel.size(); i++) {
                assertTrue(in.contains(dsetTel.get(i))); 
            }

@@ -117,8 +117,7 @@ public class PlannedEligibilityCriterionConverterTest {
     bo.setStudyProtocol(sp);
     bo.setValue(new BigDecimal("14"));
     bo.setUnit(UnitsCode.MONTHS.getCode());
-    PlannedEligibilityCriterionConverter sg = new PlannedEligibilityCriterionConverter();
-    PlannedEligibilityCriterionDTO dto = sg.convertFromDomainToDTO(bo);
+    PlannedEligibilityCriterionDTO dto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
     assertPlannedEligibilityCriterionConverter(bo, dto);
   }
 
@@ -146,8 +145,7 @@ public class PlannedEligibilityCriterionConverterTest {
     pq.setUnit(UnitsCode.YEARS.getCode());
     dto.setValue(pq);
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
-    PlannedEligibilityCriterionConverter sg = new PlannedEligibilityCriterionConverter();
-    PlannedEligibilityCriterion bo = sg.convertFromDTOToDomain(dto);
+    PlannedEligibilityCriterion bo = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
     assertPlannedEligibilityCriterionConverter(bo, dto);
   }
 

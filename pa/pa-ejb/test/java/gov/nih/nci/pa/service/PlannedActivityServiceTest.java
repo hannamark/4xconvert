@@ -217,9 +217,6 @@ public class PlannedActivityServiceTest {
         pq.setValue(new BigDecimal("80"));
         pq.setUnit(UnitsCode.YEARS.getCode());
         dto.setValue(pq);
-        PlannedEligibilityCriterionDTO dto2 = null;
-        dto2 = new PlannedEligibilityCriterionDTO();
-        dto2 = remoteEjb.createPlannedEligibilityCriterion(dto);
         assertEquals(dto.getStudyProtocolIdentifier()
                 , spIi);
     }

@@ -29,7 +29,6 @@ import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatusTest;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceBean;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;

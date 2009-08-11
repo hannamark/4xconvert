@@ -124,7 +124,6 @@ public class TrialDocumentAction extends ActionSupport implements
 ServletResponseAware {
 
     private static final long serialVersionUID = 2798002815820961877L;
-    @SuppressWarnings("hiding")
     private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
     private static final String DELETE_RESULT = "delete";
     private File upload;

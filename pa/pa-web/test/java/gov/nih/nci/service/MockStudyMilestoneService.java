@@ -3,11 +3,6 @@
  */
 package gov.nih.nci.service;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
@@ -17,6 +12,9 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vrushali

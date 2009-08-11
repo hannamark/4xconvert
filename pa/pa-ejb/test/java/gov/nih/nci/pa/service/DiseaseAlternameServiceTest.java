@@ -131,9 +131,6 @@ public class DiseaseAlternameServiceTest {
 
     @Test
     public void createTest() throws Exception {
-        List<DiseaseAlternameDTO> dtoList = bean.getByDisease(dIi);
-        int oldSize = dtoList.size();
-        
         Disease disease = new Disease();
         disease.setId(IiConverter.convertToLong(dIi));        
         DiseaseAltername bo = DiseaseAlternameTest.createDiseaseAlternameObj("new name", disease);

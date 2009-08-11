@@ -3,10 +3,6 @@
  */
 package gov.nih.nci.pa.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
@@ -15,10 +11,13 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali

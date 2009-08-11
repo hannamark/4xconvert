@@ -88,19 +88,17 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
-import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
 public class RegulatoryAuthorityConverterTest {
  
-  private Session sess;
   private Country c;
   @Before
   public void setUp() throws Exception {
     TestSchema.reset1();
     TestSchema.primeData();
-    sess = TestSchema.getSession();  
+    TestSchema.getSession();  
     c = CountryTest.createCountryObj();
     TestSchema.addUpdObject(c);
     assertNotNull(c.getId());

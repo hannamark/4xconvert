@@ -113,7 +113,6 @@ public class StudyContactTest   {
     @Test
     public void createStudyContactTest() {
         Session session = TestSchema.getSession();
-        Transaction t = session.beginTransaction();
         Person p = PersonTest.createPersonObj();
         TestSchema.addUpdObject(p);
         Person savedP = (Person) session.load(Person.class, p.getId());

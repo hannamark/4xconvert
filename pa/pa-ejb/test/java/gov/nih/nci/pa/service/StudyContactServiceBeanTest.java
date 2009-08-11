@@ -130,9 +130,7 @@ public class StudyContactServiceBeanTest {
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
     dto.setClinicalResearchStaffIi(clinicalResearchStaffId);
-    StudyContactDTO dto2 = null;
-    dto2 = new StudyContactDTO();
-    dto2 = remoteEjb.create(dto);
+    remoteEjb.create(dto);
     assertEquals(dto.getStudyProtocolIdentifier()
         , pid);
   }

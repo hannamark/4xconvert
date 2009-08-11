@@ -116,14 +116,8 @@ public class ClinicalResearchStaffTest   {
         TestSchema.addUpdObject(p);
         assertNotNull(p.getId());
         ClinicalResearchStaff crs = createClinicalResearchStaffObj(o, p);
-        try {
-        Transaction t = session.beginTransaction();    
-        //session.save(crs);
         TestSchema.addUpdObject(crs);
-        //t.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertNotNull(crs.getId());
     }
     
     public static ClinicalResearchStaff createClinicalResearchStaffObj(Organization o , Person p) {

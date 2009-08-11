@@ -98,7 +98,6 @@ import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;

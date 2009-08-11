@@ -107,7 +107,6 @@ public class TrialIndideAction extends ActionSupport {
     private static final long serialVersionUID = -9192130934354005933L;
     private static final String QUERY_RESULT = "query";
     private static final String EDIT_RESULT = "edit";
-    @SuppressWarnings("hiding")
     private static final Logger LOG  = Logger.getLogger(TrialIndideAction.class);
     private StudyIndldeWebDTO studyIndldeWebDTO = new StudyIndldeWebDTO();
     private List<StudyIndldeWebDTO> studyIndideList;

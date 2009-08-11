@@ -129,11 +129,8 @@ public class StudyParticipationContactServiceBeanTest {
     dto.setStudyParticipationIi(studyParticipationId);
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-      StudyParticipationContactDTO dto2 = null;
-      dto2 = new StudyParticipationContactDTO();
-      dto2 = remoteEjb.create(dto);
-      assertEquals(dto.getStudyProtocolIdentifier()
-              , pid);
+    remoteEjb.create(dto);
+      assertEquals(dto.getStudyProtocolIdentifier(), pid);
   }
 
 

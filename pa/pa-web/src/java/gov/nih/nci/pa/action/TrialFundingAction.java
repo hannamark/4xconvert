@@ -111,8 +111,7 @@ public class TrialFundingAction extends ActionSupport {
   private static final long serialVersionUID = 4865176377748106852L;
 private static final String QUERY_RESULT = "query";
   private static final String DELETE_RESULT = "delete";
-  @SuppressWarnings("hiding")
-private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
+  private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
   private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
   private List<TrialFundingWebDTO> trialFundingList;
   private Long cbValue;

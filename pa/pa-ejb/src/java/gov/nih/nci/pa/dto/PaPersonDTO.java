@@ -78,10 +78,10 @@
 */
 package gov.nih.nci.pa.dto;
 
-import java.util.List;
-
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
+
+import java.util.List;
 
 /**
  * Person DTO  for transferring Person object .
@@ -107,7 +107,6 @@ public class PaPersonDTO {
     private String tty;
     private String fax;
     private String url;
-    private String address;
     private List<String> emailList;
     
     /*
@@ -432,7 +431,6 @@ public class PaPersonDTO {
      * @param address the address to set
      */
     public void setAddress(String address) {
-        this.address = address;
     }
 
     /**

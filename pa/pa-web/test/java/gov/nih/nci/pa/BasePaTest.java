@@ -82,12 +82,10 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-//import org.springframework.mock.web.MockHttpServletRequest;
-//import org.springframework.mock.web.MockHttpSession;
+
 import com.opensymphony.xwork2.ActionContext;
 
 /**

@@ -80,17 +80,12 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.StudyObjective;
-import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
-import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
