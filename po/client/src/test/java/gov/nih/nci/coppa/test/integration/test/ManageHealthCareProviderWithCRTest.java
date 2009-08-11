@@ -202,6 +202,8 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         selenium.click("copy_faxEntry_value0");
         selenium.click("copy_ttyEntry_value0");
         selenium.click("copy_urlEntry_value0");
+        
+        waitForTelecomFormsToLoad();
         assertEquals("CR cert license change", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
         // email, phone, fax, tty, url
         
