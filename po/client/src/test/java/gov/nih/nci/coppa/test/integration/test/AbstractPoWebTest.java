@@ -403,7 +403,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
             waitForElementById("fax-entry-0", 5);
         }
         if (StringUtils.isNotBlank(tty)) {
-            selenium.type("ttyEntry_value", fax);
+            selenium.type("ttyEntry_value", tty);
             selenium.click("tty-add");
             waitForElementById("tty-entry-0", 5);
         }
@@ -435,6 +435,11 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected void accessManageClinicalResearchStaffScreen() {
         clickAndWait("link=Manage Clinical Research Staff(s)");
         verifyTrue(selenium.isTextPresent("Clinical Research Staff Information"));
+    }
+    
+    protected void accessManageHealthCareProviderScreen() {
+        clickAndWait("link=Manage Health Care Provider(s)");
+        verifyTrue(selenium.isTextPresent("Health Care Provider Information"));
     }
 
     protected void selectOrganizationScoper(String orgId, String orgName) {
@@ -525,4 +530,5 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
+    
 }

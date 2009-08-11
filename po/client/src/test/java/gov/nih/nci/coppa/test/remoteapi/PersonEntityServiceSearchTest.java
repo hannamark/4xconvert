@@ -363,7 +363,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "r", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(7, results.size());
+        assertEquals(8, results.size());
     }
 
     @Test
@@ -371,7 +371,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "R", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(7, results.size());
+        assertEquals(8, results.size());
     }
 
     @Test
