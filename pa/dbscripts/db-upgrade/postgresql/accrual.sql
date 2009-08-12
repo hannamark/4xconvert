@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS epoch;
 DROP TABLE IF EXISTS study_subject;  -- includes Subject
 DROP TABLE IF EXISTS patient;
-DROP TABLE IF EXISTS planned_study_subject_milestone;  -- includes PlannedAdministrativeActivity
+DROP TABLE IF EXISTS planned_study_subject_milestone;  -- NO LONGER USED, USING InheritanceType.SINGLE_TABLE
 DROP TABLE IF EXISTS observation_result;  -- includes PlannedObservationResult and PerformedObservationResult
 DROP TABLE IF EXISTS performed_activity;  -- includes PerformedObservation, PerformedSubjectMilestone, and PerformedAdministrativeActivity
 
@@ -74,34 +74,23 @@ FOREIGN KEY (arm_identifier) REFERENCES arm (identifier)
 ON DELETE SET NULL;
 
 
--- Table:  planned_study_subject_milestone
-CREATE TABLE planned_study_subject_milestone (
-    identifier SERIAL NOT NULL,
-    date_last_created TIMESTAMP,
-    user_last_create VARCHAR(200) ,
-    date_last_updated TIMESTAMP,
-    user_last_updated VARCHAR(200) ,
-    PRIMARY KEY (identifier)
-)WITH (OIDS=FALSE);
-
-ALTER TABLE planned_study_subject_milestone ADD CONSTRAINT fk_planned_study_subject_milestone_planned_activity
-FOREIGN KEY (identifier) REFERENCES planned_activity (identifier)
-ON DELETE RESTRICT;
-
-
 -- Table:  performed_activity
 CREATE TABLE performed_activity (
     identifier SERIAL NOT NULL,
+    category_code VARCHAR(200),
+    subcategory_code VARCHAR(200),
+    text_description VARCHAR(2000),
     actual_date_range_low TIMESTAMP,
     actual_date_range_high TIMESTAMP,
     informed_consent_date TIMESTAMP,
     reason_not_completed_type_other VARCHAR(200),
-    performed_activity_type VARCHAR(200),
     study_protocol_identifier BIGINT NOT NULL,
+    performed_activity_type VARCHAR(100),
     date_last_created TIMESTAMP,
-    user_last_create VARCHAR(200) ,
+    user_last_created VARCHAR(200),
     date_last_updated TIMESTAMP,
-    user_last_updated VARCHAR(200) ,
+    user_last_updated VARCHAR(200),
+
     PRIMARY KEY (identifier)
 )WITH (OIDS=FALSE);
 

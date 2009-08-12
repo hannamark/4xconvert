@@ -1,4 +1,4 @@
-/**
+/***
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,66 +78,51 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import java.sql.Timestamp;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 /**
  * @author Hugh Reinhart
- * @since 10/28/2008
+ * @since 08/12/2009
  */
-@MappedSuperclass
-public class Activity extends AbstractStudyEntity {
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "performed_activity_type", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "performed_activity")
+public class PerformedActivity extends Activity {
 
-    private static final long serialVersionUID = -4911602940850620244L;
+    private static final long serialVersionUID = 8294885421919695669L;
 
-    private ActivityCategoryCode categoryCode;
-    private ActivitySubcategoryCode subcategoryCode;
-    private String textDescription;
-
+    private Timestamp actualDateRangeLow;
+    private Timestamp actualDateRangeHigh;
     /**
-     * @return the categoryCode
+     * @return the actualDateRangeLow
      */
-    @Column(name = "CATEGORY_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivityCategoryCode getCategoryCode() {
-        return categoryCode;
+    public Timestamp getActualDateRangeLow() {
+        return actualDateRangeLow;
     }
     /**
-     * @param categoryCode the categoryCode to set
+     * @param actualDateRangeLow the actualDateRangeLow to set
      */
-    public void setCategoryCode(ActivityCategoryCode categoryCode) {
-        this.categoryCode = categoryCode;
+    public void setActualDateRangeLow(Timestamp actualDateRangeLow) {
+        this.actualDateRangeLow = actualDateRangeLow;
     }
     /**
-     * @return the subcategoryCode
+     * @return the actualDateRangeHigh
      */
-    @Column(name = "SUBCATEGORY_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivitySubcategoryCode getSubcategoryCode() {
-        return subcategoryCode;
+    public Timestamp getActualDateRangeHigh() {
+        return actualDateRangeHigh;
     }
     /**
-     * @param subcategoryCode the subcategoryCode to set
+     * @param actualDateRangeHigh the actualDateRangeHigh to set
      */
-    public void setSubcategoryCode(ActivitySubcategoryCode subcategoryCode) {
-        this.subcategoryCode = subcategoryCode;
-    }
-    /**
-     * @return textDescription
-     */
-    @Column(name = "TEXT_DESCRIPTION")
-    public String getTextDescription() {
-      return textDescription;
-    }
-    /**
-     * @param textDescription textDescription
-     */
-    public void setTextDescription(String textDescription) {
-      this.textDescription = textDescription;
+    public void setActualDateRangeHigh(Timestamp actualDateRangeHigh) {
+        this.actualDateRangeHigh = actualDateRangeHigh;
     }
 }

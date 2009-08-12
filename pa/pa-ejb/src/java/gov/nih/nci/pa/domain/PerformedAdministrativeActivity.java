@@ -1,4 +1,4 @@
-/**
+/***
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,66 +78,50 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
 
 /**
  * @author Hugh Reinhart
- * @since 10/28/2008
+ * @since 08/12/2009
  */
-@MappedSuperclass
-public class Activity extends AbstractStudyEntity {
+@Entity
+@DiscriminatorColumn(name = "PerformedAdministrativeActivity", discriminatorType = DiscriminatorType.STRING)
+public class PerformedAdministrativeActivity extends PerformedActivity {
 
-    private static final long serialVersionUID = -4911602940850620244L;
+    private static final long serialVersionUID = 2944634020633053461L;
 
-    private ActivityCategoryCode categoryCode;
-    private ActivitySubcategoryCode subcategoryCode;
-    private String textDescription;
+    private Timestamp informedConsentDate;
+    private String reasonNotCompletedTypeOther;
 
     /**
-     * @return the categoryCode
+     * @return the informedConsentDate
      */
-    @Column(name = "CATEGORY_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivityCategoryCode getCategoryCode() {
-        return categoryCode;
+    @Column(name = "informed_consent_dateR")
+    public Timestamp getInformedConsentDate() {
+        return informedConsentDate;
     }
     /**
-     * @param categoryCode the categoryCode to set
+     * @param informedConsentDate the informedConsentDate to set
      */
-    public void setCategoryCode(ActivityCategoryCode categoryCode) {
-        this.categoryCode = categoryCode;
+    public void setInformedConsentDate(Timestamp informedConsentDate) {
+        this.informedConsentDate = informedConsentDate;
     }
     /**
-     * @return the subcategoryCode
+     * @return the reasonNotCompletedTypeOther
      */
-    @Column(name = "SUBCATEGORY_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivitySubcategoryCode getSubcategoryCode() {
-        return subcategoryCode;
+    @Column(name = "reason_not_completed_type_other")
+    public String getReasonNotCompletedTypeOther() {
+        return reasonNotCompletedTypeOther;
     }
     /**
-     * @param subcategoryCode the subcategoryCode to set
+     * @param reasonNotCompletedTypeOther the reasonNotCompletedTypeOther to set
      */
-    public void setSubcategoryCode(ActivitySubcategoryCode subcategoryCode) {
-        this.subcategoryCode = subcategoryCode;
-    }
-    /**
-     * @return textDescription
-     */
-    @Column(name = "TEXT_DESCRIPTION")
-    public String getTextDescription() {
-      return textDescription;
-    }
-    /**
-     * @param textDescription textDescription
-     */
-    public void setTextDescription(String textDescription) {
-      this.textDescription = textDescription;
+    public void setReasonNotCompletedTypeOther(String reasonNotCompletedTypeOther) {
+        this.reasonNotCompletedTypeOther = reasonNotCompletedTypeOther;
     }
 }

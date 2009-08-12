@@ -1,4 +1,4 @@
-/**
+/***
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,66 +78,35 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
 
 /**
  * @author Hugh Reinhart
- * @since 10/28/2008
+ * @since 08/12/2009
  */
-@MappedSuperclass
-public class Activity extends AbstractStudyEntity {
+@Entity
+@DiscriminatorColumn(name = "PlannedObservationResult", discriminatorType = DiscriminatorType.STRING)
+public class PlannedObservationResult extends ObservationResult {
 
-    private static final long serialVersionUID = -4911602940850620244L;
+    private static final long serialVersionUID = -1097115233546766008L;
 
-    private ActivityCategoryCode categoryCode;
-    private ActivitySubcategoryCode subcategoryCode;
-    private String textDescription;
+    private Long temp;
 
     /**
-     * @return the categoryCode
+     * @return the temp
      */
-    @Column(name = "CATEGORY_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivityCategoryCode getCategoryCode() {
-        return categoryCode;
+    @Column(name = "planned_activity_identifiert")
+    public Long getTemp() {
+        return temp;
     }
+
     /**
-     * @param categoryCode the categoryCode to set
+     * @param temp the temp to set
      */
-    public void setCategoryCode(ActivityCategoryCode categoryCode) {
-        this.categoryCode = categoryCode;
-    }
-    /**
-     * @return the subcategoryCode
-     */
-    @Column(name = "SUBCATEGORY_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivitySubcategoryCode getSubcategoryCode() {
-        return subcategoryCode;
-    }
-    /**
-     * @param subcategoryCode the subcategoryCode to set
-     */
-    public void setSubcategoryCode(ActivitySubcategoryCode subcategoryCode) {
-        this.subcategoryCode = subcategoryCode;
-    }
-    /**
-     * @return textDescription
-     */
-    @Column(name = "TEXT_DESCRIPTION")
-    public String getTextDescription() {
-      return textDescription;
-    }
-    /**
-     * @param textDescription textDescription
-     */
-    public void setTextDescription(String textDescription) {
-      this.textDescription = textDescription;
+    public void setTemp(Long temp) {
+        this.temp = temp;
     }
 }
