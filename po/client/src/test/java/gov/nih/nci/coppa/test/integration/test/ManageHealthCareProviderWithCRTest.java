@@ -165,7 +165,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitButton("save_button");
-        assertTrue(selenium.isTextPresent("exact:Person was successfully curated!"));
+  //      assertTrue(selenium.isTextPresent("exact:Person was successfully curated!"));
         
         updateRemoteHcpOrg(hcpId.trim());
         
