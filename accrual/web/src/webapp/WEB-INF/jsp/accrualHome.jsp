@@ -21,14 +21,22 @@
         </tr></table>
         <h1>Accrual Home
         </h1>
-        <p class="intro">
-            This Portal enables you to enter accrual information about trials registered with NCI&#39;s Clinical Trials Reporting Program.
-        </p>
-        <p class="intro">
-            Want to learn more about the Accrual Program? Visit the 
-            <a href="http://www.cancer.gov/clinicaltrials/ctrp"  target="new1">NCI Clinical Trials Reporting Program</a>
-            web site.  You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> 
-            if you have questions or need assistance
-        </p>
+<p class="padme2">
+This Site enables you to report accrual information for a trial with NCI's Clinical Trials Reporting Program. You can
+</p>
+        
+<ul class="padme10">
+                
+<li><a href="/accrual/public/welcome.action">Log In</a> to your account and</li> 
+    <menu> 
+         <li>Report Accruals on Multiple Trials</li>
+         <li>Generate Basic Results report for <a href="http://www.clinicaltrials.gov/">ClinicalTrials.gov</a></li>
+     </menu>                                               
+</ul>                    
+<p class="padme2">
+Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/ctrp"  target="new1">NCI Clinical Trials Reporting Program</a> website
+ <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance
+ </p>
+     
     </div>
 </body>
