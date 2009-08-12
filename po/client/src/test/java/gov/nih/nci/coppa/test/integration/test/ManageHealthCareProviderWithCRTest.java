@@ -210,24 +210,29 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         waitForElementById("curateRoleForm.role.certificateLicenseText", 5);
         assertEquals("CR cert license change", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
         
-        //selenium.click("copy_emailEntry_value0");
+        selenium.click("copy_emailEntry_value0");
         //waitForElementById("email-remove-1", 5);
-        //assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
+        pause(5000);
+        assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
         
         selenium.click("copy_phoneEntry_value0");
-        waitForElementById("phone-remove-1", 5);
+        //waitForElementById("phone-remove-1", 5);
+        pause(5000);
         assertEquals("1122334455 | Remove", selenium.getText("//div[@id='phone-list']/ul/li[@id='phone-entry-1']"));
        
         selenium.click("copy_faxEntry_value0");
-        waitForElementById("fax-remove-1", 5);
+        //waitForElementById("fax-remove-1", 5);
+        pause(5000);
         assertEquals("1122334455 | Remove", selenium.getText("//div[@id='fax-list']/ul/li[@id='fax-entry-1']"));
       
         selenium.click("copy_ttyEntry_value0");
-        waitForElementById("tty-remove-1", 5);
+        //waitForElementById("tty-remove-1", 5);
+        pause(5000);
         assertEquals("1122334455 | Remove", selenium.getText("//div[@id='tty-list']/ul/li[@id='tty-entry-1']"));
         
         selenium.click("copy_urlEntry_value0");
-        waitForElementById("url-remove-1", 5);
+        //waitForElementById("url-remove-1", 5);
+        pause(5000);
         assertEquals("http://www.cr.com | Remove", selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-1']"));
        
         clickAndWaitButton("save_button");
