@@ -187,8 +187,6 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertEquals("67890", selenium.getText("wwctrl_address.postalCode1"));
         assertEquals("United States", selenium.getText("wwctrl_address.country1"));
 
-        verifyEquals("abc@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
-
         // email, phone, fax, tty, url
         waitForElementById("email-remove-0", 5);
         assertEquals("abc@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
@@ -212,9 +210,9 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         waitForElementById("curateRoleForm.role.certificateLicenseText", 5);
         assertEquals("CR cert license change", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
         
-        selenium.click("copy_emailEntry_value0");
-        waitForElementById("email-remove-1", 5);
-        assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
+        //selenium.click("copy_emailEntry_value0");
+        //waitForElementById("email-remove-1", 5);
+        //assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
         
         selenium.click("copy_phoneEntry_value0");
         waitForElementById("phone-remove-1", 5);
