@@ -93,7 +93,8 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
 
     private static String AR_LOGOUT = "logout";
     private static String AR_ACCRUAL_ADMIN = "adminWelcome";
-    private static String AR_SUBMITTING_SITES = "publicWelcome";
+    //private static String AR_SUBMITTING_SITES = "publicWelcome";
+    private static String AR_SUBMITTING_SITES = "show_Disclaimer_Page";
 
     WelcomeAction action;
 
