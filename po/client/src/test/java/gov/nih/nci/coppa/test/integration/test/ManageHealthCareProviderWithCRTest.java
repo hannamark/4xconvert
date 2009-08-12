@@ -136,10 +136,10 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
         selenium.type("curateRoleForm.role.certificateLicenseText", "CR Original");
-        //assert validation messages
         clickAndWaitButton("save_button");
+        //assert validation messages
         assertEquals("ACTIVE", selenium.getSelectedLabel("curateRoleForm.role.status"));
-        assertTrue(selenium.isTextPresent("exact:Affiliated Organization ID must be set"));
+        assertTrue(selenium.isTextPresent("exact:Affiliated Organization ID must be set")); 
         assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
         assertFalse(selenium.isTextPresent("exact:Role status not compatible with associated entity's status."));
         
