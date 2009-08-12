@@ -22,6 +22,53 @@
                        <li><a href="sample.action" >Sample Action</a></li>
                     </c:otherwise>
                 </c:choose>
+                
+                <c:choose>
+                    <c:when test="${requestScope.topic == ''}">
+                       <li><a href="" class="selected">View Protocol</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="" >View Protocol</a></li>
+                    </c:otherwise>
+                </c:choose>
+                
+                 <li>Accrual Submission</li> 
+                <c:choose>
+                    <c:when test="${requestScope.topic == ''}">
+                       <li><a href="" class="selected">View Previous Submission</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="" >View Previous Submission</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == ''}">
+                       <li><a href="" class="selected">New Submission</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="" >New Submission</a></li>
+                    </c:otherwise>
+                </c:choose>
+                
+                 <li>Reporting</li> 
+                <c:choose>
+                    <c:when test="${requestScope.topic == ''}">
+                       <li><a href="" class="selected">CDS Reporting</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="" >CDS Reporting</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == ''}">
+                       <li><a href="" class="selected">Basic Results Reporting</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="" >Basic Results Reporting</a></li>
+                    </c:otherwise>
+                </c:choose>
+                
+                
               <li><a href="/accrual/logout.action" >Log Out</a></li>
             </c:when>
             <c:otherwise>
