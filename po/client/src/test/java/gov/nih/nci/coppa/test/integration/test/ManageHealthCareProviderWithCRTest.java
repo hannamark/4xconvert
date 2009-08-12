@@ -186,36 +186,52 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertEquals("AZ", selenium.getText("wwctrl_address.stateOrProvince1"));
         assertEquals("67890", selenium.getText("wwctrl_address.postalCode1"));
         assertEquals("United States", selenium.getText("wwctrl_address.country1"));
+
+        verifyEquals("abc@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
+
         // email, phone, fax, tty, url
-        assertTrue(selenium.getText("email-list").contains("abc@example.com"));
-        assertTrue(selenium.getText("phone-list").contains("1234567890"));
-        assertTrue(selenium.getText("fax-list").contains("2345678901"));
-        assertTrue(selenium.getText("tty-list").contains("3456789012"));
-        assertTrue(selenium.getText("url-list").contains("http://www.example.com"));
+        waitForElementById("email-remove-0", 5);
+        assertEquals("abc@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
         
+        waitForElementById("phone-remove-0", 5);
+        assertEquals("1234567890 | Remove", selenium.getText("//div[@id='phone-list']/ul/li[@id='phone-entry-0']"));
+        
+        waitForElementById("fax-remove-0", 5);
+        assertEquals("2345678901 | Remove", selenium.getText("//div[@id='fax-list']/ul/li[@id='fax-entry-0']"));
+        
+        waitForElementById("tty-remove-0", 5);
+        assertEquals("3456789012 | Remove", selenium.getText("//div[@id='tty-list']/ul/li[@id='tty-entry-0']"));
+        
+        waitForElementById("url-remove-0", 5);
+        assertEquals("http://www.example.com | Remove", selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-0']"));
+         
         // new cert
         assertEquals("CR cert license change", selenium.getText("wwctrl_curateCrForm_cr_certificateLicenseText").trim());
         // copy over new cert license
         selenium.click("copy_curateCrForm_role_certificateLicenseText");
-        pause(60000);
-        selenium.click("copy_emailEntry_value0");
-        pause(60000);
-        selenium.click("copy_phoneEntry_value0");
-        pause(60000);
-        selenium.click("copy_faxEntry_value0");
-        pause(60000);
-        selenium.click("copy_ttyEntry_value0");
-        pause(60000);
-        selenium.click("copy_urlEntry_value0");
-        pause(60000);
+        waitForElementById("curateRoleForm.role.certificateLicenseText", 5);
         assertEquals("CR cert license change", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
-        // email, phone, fax, tty, url
         
-        assertTrue(selenium.getText("email-list").contains("cr@cr.com"));
-        assertTrue(selenium.getText("phone-list").contains("1122334455"));
-        assertTrue(selenium.getText("fax-list").contains("1122334455"));
-        assertTrue(selenium.getText("tty-list").contains("1122334455"));
-        assertTrue(selenium.getText("url-list").contains("http://www.cr.com"));
+        selenium.click("copy_emailEntry_value0");
+        waitForElementById("email-remove-1", 5);
+        assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
+        
+        selenium.click("copy_phoneEntry_value0");
+        waitForElementById("phone-remove-1", 5);
+        assertEquals("1122334455 | Remove", selenium.getText("//div[@id='phone-list']/ul/li[@id='phone-entry-1']"));
+       
+        selenium.click("copy_faxEntry_value0");
+        waitForElementById("fax-remove-1", 5);
+        assertEquals("1122334455 | Remove", selenium.getText("//div[@id='fax-list']/ul/li[@id='fax-entry-1']"));
+      
+        selenium.click("copy_ttyEntry_value0");
+        waitForElementById("tty-remove-1", 5);
+        assertEquals("1122334455 | Remove", selenium.getText("//div[@id='tty-list']/ul/li[@id='tty-entry-1']"));
+        
+        selenium.click("copy_urlEntry_value0");
+        waitForElementById("url-remove-1", 5);
+        assertEquals("http://www.cr.com | Remove", selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-1']"));
+       
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully updated!".trim()));
     }
