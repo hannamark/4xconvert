@@ -131,7 +131,7 @@ public class StudyRelationshipConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudyRelationshipDTO dto = new StudyRelationshipDTO();
-    dto.setIdentifier(IiConverter.converToStudyRelationshipIi((Long) null));
+    dto.setIdentifier(IiConverter.convertToStudyRelationshipIi((Long) null));
     dto.setCommentText(StConverter.convertToSt("Comments"));
     dto.setSourceStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setTypeCode(CdConverter.convertToCd(StudyRelationshipTypeCode.MOD));

@@ -128,7 +128,7 @@ public class StudySiteAccrualStatusConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyParticipation sp = (StudyParticipation) sess.load(StudyParticipation.class, TestSchema.studyParticipationIds.get(0));
     StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-    dto.setIdentifier(IiConverter.converToStudySiteAccuralStatusIi((Long) null));
+    dto.setIdentifier(IiConverter.convertToStudySiteAccuralStatusIi((Long) null));
     dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
     dto.setStatusDate(TsConverter.convertToTs(new java.sql.Timestamp((new java.util.Date()).getTime())));
     dto.setStudyParticipationIi(IiConverter.convertToIi(sp.getId()));

@@ -44,7 +44,7 @@ public class PersonSynchronizationServiceBeanTest {
     
     @Test
     public void synchronizePersonUpdateTest()  throws Exception {
-        Ii roIi = IiConverter.converToPoPersonIi("abc");
+        Ii roIi = IiConverter.convertToPoPersonIi("abc");
         remoteEjb.synchronizePerson(roIi);
         Person np = null;
         np = (Person) TestSchema.getSession().load(Person.class, personId);
@@ -53,7 +53,7 @@ public class PersonSynchronizationServiceBeanTest {
     }    
     @Test
     public void synchronizePersonNullifiy()  throws Exception {
-        Ii roIi = IiConverter.converToPoPersonIi("abc");
+        Ii roIi = IiConverter.convertToPoPersonIi("abc");
         roIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizePerson(roIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
@@ -62,7 +62,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeClinicalResearchStaffUpdateTest()  throws Exception {
-        Ii crsIi = IiConverter.converToPoClinicalResearchStaffIi("abc");
+        Ii crsIi = IiConverter.convertToPoClinicalResearchStaffIi("abc");
         remoteEjb.synchronizeClinicalResearchStaff(crsIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
@@ -70,7 +70,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeClinicalResearchStaffNullifyTest()  throws Exception {
-        Ii crsIi = IiConverter.converToPoClinicalResearchStaffIi("abc");
+        Ii crsIi = IiConverter.convertToPoClinicalResearchStaffIi("abc");
         crsIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizeClinicalResearchStaff(crsIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
@@ -79,7 +79,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeHealthCareProviderUpdateTest()  throws Exception {
-        Ii hcpIi = IiConverter.converToPoHealtcareProviderIi("abc");
+        Ii hcpIi = IiConverter.convertToPoHealtcareProviderIi("abc");
         remoteEjb.synchronizeHealthCareProvider(hcpIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
@@ -87,7 +87,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeHealthCareProviderNulllifyTest()  throws Exception {
-        Ii hcpIi = IiConverter.converToPoHealtcareProviderIi("abc");
+        Ii hcpIi = IiConverter.convertToPoHealtcareProviderIi("abc");
         hcpIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizeHealthCareProvider(hcpIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
@@ -96,7 +96,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeOrganizationalContactUpdateTest()  throws Exception {
-        Ii ocIi = IiConverter.converToPoOrganizationalContactIi("abc");
+        Ii ocIi = IiConverter.convertToPoOrganizationalContactIi("abc");
         remoteEjb.synchronizeOrganizationalContact(ocIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
@@ -104,7 +104,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeOrganizationalContactNullifyTest()  throws Exception {
-        Ii ocIi = IiConverter.converToPoOrganizationalContactIi("abc");
+        Ii ocIi = IiConverter.convertToPoOrganizationalContactIi("abc");
         ocIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizeOrganizationalContact(ocIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to

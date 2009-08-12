@@ -422,7 +422,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToStudyProtocolIi(Long id) {
+    public static Ii convertToStudyProtocolIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_PROTOCOL_IDENTIFIER_NAME);
         ii.setRoot(STUDY_PROTOCOL_ROOT);
@@ -436,7 +436,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToStudyOutcomeMeasureIi(Long id) {
+    public static Ii convertToStudyOutcomeMeasureIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_OUTCOME_MEASURE_IDENTIFIER_NAME);
         ii.setRoot(STUDY_OUTCOME_MEASURE_ROOT);
@@ -450,7 +450,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToStudyIndIdeIi(Long id) {
+    public static Ii convertToStudyIndIdeIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_IND_IDE_IDENTIFIER_NAME);
         ii.setRoot(STUDY_IND_IDE_ROOT);
@@ -464,7 +464,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToArmIi(Long id) {
+    public static Ii convertToArmIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(ARM_IDENTIFIER_NAME);
         ii.setRoot(ARM_ROOT);
@@ -478,7 +478,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToStratumGroupIi(Long id) {
+    public static Ii convertToStratumGroupIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STRATUM_GROUP_IDENTIFIER_NAME);
         ii.setRoot(STRATUM_GROUP_ROOT);
@@ -492,7 +492,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToStudyOverallStatusIi(Long id) {
+    public static Ii convertToStudyOverallStatusIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_OVERALL_STATUS_IDENTIFIER_NAME);
         ii.setRoot(STUDY_OVERALL_STATUS_ROOT);
@@ -506,7 +506,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToActivityIi(Long id) {
+    public static Ii convertToActivityIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(ACTIVITY_IDENTIFIER_NAME);
         ii.setRoot(ACTIVITY_ROOT);
@@ -520,7 +520,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToStudyResourcingIi(Long id) {
+    public static Ii convertToStudyResourcingIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_RESOURCING_IDENTIFIER_NAME);
         ii.setRoot(STUDY_RESOURCING_ROOT);
@@ -534,7 +534,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToDocumentIi(Long id) {
+    public static Ii convertToDocumentIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(DOCUMENT_IDENTIFIER_NAME);
         ii.setRoot(DOCUMENT_ROOT);
@@ -548,7 +548,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoPersonIi(String id) {
+    public static Ii convertToPoPersonIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(PERSON_IDENTIFIER_NAME);
         ii.setRoot(PERSON_ROOT);
@@ -562,7 +562,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoOrganizationIi(String id) {
+    public static Ii convertToPoOrganizationIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(ORG_IDENTIFIER_NAME);
         ii.setRoot(ORG_ROOT);
@@ -576,7 +576,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToIdentifiedEntityIi(String id) {
+    public static Ii convertToIdentifiedEntityIi(String id) {
         Ii ii = convertToIi(id);
         //ii.setIdentifierName(CTEP_IDENTIFIED_NAME);
         ii.setRoot("Cancer Therapy Evaluation Program");
@@ -590,7 +590,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToIdentifiedOrgEntityIi(String id) {
+    public static Ii convertToIdentifiedOrgEntityIi(String id) {
         Ii ii = convertToIi(id);
         ii.setRoot(CTEP_ORG_IDENTIFIER_ROOT);
         return ii;
@@ -603,7 +603,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToIdentifiedPersonEntityIi(String id) {
+    public static Ii convertToIdentifiedPersonEntityIi(String id) {
         Ii ii = convertToIi(id);
         ii.setRoot(CTEP_PERSON_IDENTIFIER_ROOT);
         return ii;
@@ -616,7 +616,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoOrganizationalContactIi(String id) {
+    public static Ii convertToPoOrganizationalContactIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         ii.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
@@ -630,7 +630,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoClinicalResearchStaffIi(String id) {
+    public static Ii convertToPoClinicalResearchStaffIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
         ii.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
@@ -644,7 +644,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoHealtcareProviderIi(String id) {
+    public static Ii convertToPoHealtcareProviderIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         ii.setRoot(HEALTH_CARE_PROVIDER_ROOT);
@@ -658,7 +658,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoHealthCareFacilityIi(String id) {
+    public static Ii convertToPoHealthCareFacilityIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         ii.setRoot(HEALTH_CARE_FACILITY_ROOT);
@@ -672,7 +672,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoResearchOrganizationIi(String id) {
+    public static Ii convertToPoResearchOrganizationIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
         ii.setRoot(RESEARCH_ORG_ROOT);
@@ -686,7 +686,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToPoOversightCommitteeIi(String id) {
+    public static Ii convertToPoOversightCommitteeIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
         ii.setRoot(OVERSIGHT_COMMITTEE_ROOT);
@@ -700,7 +700,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyRelationshipIi(Long id) {
+    public static Ii convertToStudyRelationshipIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_RELATIONSHIP_IDENTIFIER_NAME);
         ii.setRoot(STUDY_RELATIONSHIP_ROOT);
@@ -714,7 +714,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyContactIi(Long id) {
+    public static Ii convertToStudyContactIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_CONTACT_IDENTIFIER_NAME);
         ii.setRoot(STUDY_CONTACT_ROOT);
@@ -728,7 +728,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyParticipationContactIi(Long id) {
+    public static Ii convertToStudyParticipationContactIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_PARTICIPATION_CONTACT_IDENTIFIER_NAME);
         ii.setRoot(STUDY_PARTICIPATION_CONTACT_ROOT);
@@ -756,7 +756,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyRecruitmentStatusIi(Long id) {
+    public static Ii convertToStudyRecruitmentStatusIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_RECRUITMENT_STATUS_IDENTIFIER_NAME);
         ii.setRoot(STUDY_RECRUITMENT_STATUS_ROOT);
@@ -770,7 +770,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyRegulatoryAuthorityIi(Long id) {
+    public static Ii convertToStudyRegulatoryAuthorityIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_REGULATORY_AUTHORITY_IDENTIFIER_NAME);
         ii.setRoot(STUDY_REGULATORY_AUTHORITY_ROOT);
@@ -784,7 +784,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyDiseaseIi(Long id) {
+    public static Ii convertToStudyDiseaseIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_DISEASE_IDENTIFIER_NAME);
         ii.setRoot(STUDY_DISEASE_ROOT);
@@ -798,7 +798,7 @@ public class IiConverter {
      * 
      * @return Ii
      */
-    public static Ii converToDocumentWorkFlowStatusIi(Long id) {
+    public static Ii convertToDocumentWorkFlowStatusIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(DOCUMENT_WORKFLOW_STATUS_IDENTIFIER_NAME);
         ii.setRoot(DOCUMENT_WORKFLOW_STATUS_ROOT);
@@ -812,7 +812,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudySiteAccuralStatusIi(Long id) {
+    public static Ii convertToStudySiteAccuralStatusIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME);
         ii.setRoot(STUDY_SITE_ACCURAL_STATUS_ROOT);
@@ -826,7 +826,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyOnHoldIi(Long id) {
+    public static Ii convertToStudyOnHoldIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_ONHOLD_IDENTIFIER_NAME);
         ii.setRoot(STUDY_ONHOLD_ROOT);
@@ -840,7 +840,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToPlannedActivityIi(Long id) {
+    public static Ii convertToPlannedActivityIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(PLANNED_ACTIVITY_IDENTIFIER_NAME);
         ii.setRoot(PLANNED_ACTIVITY_ROOT);
@@ -853,7 +853,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyObjectiveIi(Long id) {
+    public static Ii convertToStudyObjectiveIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_OBJECTIVE_IDENTIFIER_NAME);
         ii.setRoot(STUDY_OBJECTIVE_ROOT);
@@ -866,7 +866,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToStudyMilestoneIi(Long id) {
+    public static Ii convertToStudyMilestoneIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_MILESTONE_IDENTIFIER_NAME);
         ii.setRoot(STUDY_MILESTONE_ROOT);
@@ -880,7 +880,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToRegulatoryAuthorityIi(Long id) {
+    public static Ii convertToRegulatoryAuthorityIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(REGULATORY_AUTHORITY_IDENTIFIER_NAME);
         ii.setRoot(REGULATORY_AUTHORITY_ROOT);
@@ -894,7 +894,7 @@ public class IiConverter {
      * 
      * @return the ii
      */
-    public static Ii converToCountryIi(Long id) {
+    public static Ii convertToCountryIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(COUNTRY_IDENTIFIER_NAME);
         ii.setRoot(COUNTRY_ROOT);

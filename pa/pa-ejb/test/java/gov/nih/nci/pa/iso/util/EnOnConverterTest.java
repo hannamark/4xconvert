@@ -25,7 +25,7 @@ public class EnOnConverterTest {
 	@Before
     public void setUp() {
 		org.setName(EnOnConverter.convertToEnOn("org"));
-		org.setIdentifier(IiConverter.converToPoOrganizationalContactIi("1"));
+		org.setIdentifier(IiConverter.convertToPoOrganizationalContactIi("1"));
 		Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
 		org.setPostalAddress(address);
 		TestSchema.reset();

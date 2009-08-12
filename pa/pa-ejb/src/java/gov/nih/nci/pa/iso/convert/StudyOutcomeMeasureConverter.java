@@ -106,10 +106,10 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcom
     @Override
     public StudyOutcomeMeasureDTO convertFromDomainToDto(StudyOutcomeMeasure som) {
         StudyOutcomeMeasureDTO somDTO = new StudyOutcomeMeasureDTO();
-        somDTO.setIdentifier(IiConverter.converToStudyOutcomeMeasureIi(som.getId()));
+        somDTO.setIdentifier(IiConverter.convertToStudyOutcomeMeasureIi(som.getId()));
         somDTO.setName(StConverter.convertToSt(som.getName()));
         somDTO.setTimeFrame(StConverter.convertToSt(som.getTimeFrame()));
-        somDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(som.getStudyProtocol().getId()));
+        somDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(som.getStudyProtocol().getId()));
         somDTO.setPrimaryIndicator(BlConverter.convertToBl(som.getPrimaryIndicator()));
         somDTO.setSafetyIndicator(BlConverter.convertToBl(som.getSafetyIndicator()));
         

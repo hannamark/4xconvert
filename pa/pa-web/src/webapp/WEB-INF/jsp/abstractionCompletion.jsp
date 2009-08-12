@@ -29,7 +29,7 @@ function generateTSR() {
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-<c:set var="topic" scope="request" value="validate_abstract"/>
+<c:set  var="topic" scope="request" value="validate_abstract"/>
  <h1>Abstraction Validation</h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  

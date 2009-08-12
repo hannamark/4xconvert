@@ -100,14 +100,14 @@ public class StudyRelationshipConverter extends AbstractConverter<StudyRelations
     @Override
     public StudyRelationshipDTO convertFromDomainToDto(StudyRelationship sr) {
         StudyRelationshipDTO srDTO = new StudyRelationshipDTO();
-        srDTO.setIdentifier(IiConverter.converToStudyRelationshipIi(sr.getId()));
+        srDTO.setIdentifier(IiConverter.convertToStudyRelationshipIi(sr.getId()));
         srDTO.setCommentText(StConverter.convertToSt(sr.getCommentText()));
         srDTO.setDescriptionText(StConverter.convertToSt(sr.getDescriptionText()));
         srDTO.setSequenceNumber(IntConverter.convertToInt(sr.getSequenceNumber()));
         srDTO.setSourceStudyProtocolIdentifier(
-                IiConverter.converToStudyProtocolIi(sr.getSourceStudyProtocol().getId()));
+                IiConverter.convertToStudyProtocolIi(sr.getSourceStudyProtocol().getId()));
         srDTO.setTargetStudyProtocolIdentifier(
-                IiConverter.converToStudyProtocolIi(sr.getTargetStudyProtocol().getId()));
+                IiConverter.convertToStudyProtocolIi(sr.getTargetStudyProtocol().getId()));
         srDTO.setTypeCode(CdConverter.convertToCd(sr.getTypeCode()));
         
         return srDTO;

@@ -31,7 +31,7 @@ public class MockPoOrganizationalContactCorrelationService implements
      */
     public Ii createCorrelation(OrganizationalContactDTO arg0)
             throws EntityValidationException {
-        return IiConverter.converToPoOrganizationalContactIi("1");   
+        return IiConverter.convertToPoOrganizationalContactIi("1");   
     }
 
     /* (non-Javadoc)
@@ -41,13 +41,13 @@ public class MockPoOrganizationalContactCorrelationService implements
             throws NullifiedRoleException {
         if (NullFlavor.NA.equals(ii.getNullFlavor())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-            nullifiedEntities.put(ii, IiConverter.converToPoOrganizationalContactIi("1"));
+            nullifiedEntities.put(ii, IiConverter.convertToPoOrganizationalContactIi("1"));
             throw new NullifiedRoleException(nullifiedEntities);
         }
         OrganizationalContactDTO oc = new OrganizationalContactDTO();
         oc.setIdentifier(ii);
-        oc.setPlayerIdentifier(IiConverter.converToPoPersonIi("abc"));
-        oc.setScoperIdentifier(IiConverter.converToPoOrganizationIi("abc"));
+        oc.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
+        oc.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         oc.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return oc;    
     }

@@ -692,7 +692,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             OrganizationDTO poOrg = null;
             try {
                 poOrg = PoRegistry.getOrganizationEntityService()
-                    .getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+                    .getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
             } catch (NullifiedEntityException e) {
                 // Map m = e.getNullifiedEntities();
                 // LOG.error("This Organization is no longer available instead use
@@ -833,7 +833,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         DSet<Tel> dset = studyParticipationContactDTO.getTelecomAddresses();
         PAContactDTO contactDto = new PAContactDTO();
         contactDto.setOrganizationIdentifier(
-                IiConverter.converToPoOrganizationIi(sponsorOrganizationDto.getIdentifier().getExtension()));
+                IiConverter.convertToPoOrganizationIi(sponsorOrganizationDto.getIdentifier().getExtension()));
         contactDto.setStudyProtocolIdentifier(studyProtocolIi);
         contactDto.setEmail(DSetConverter.convertDSetToList(dset, PAConstants.EMAIL).get(0));
         contactDto.setPhone(DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));

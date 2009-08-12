@@ -1043,7 +1043,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                       OrganizationDTO poOrg = null;
                       try {
                           poOrg = PoRegistry.getOrganizationEntityService().
-                              getOrganization(IiConverter.converToPoOrganizationIi(paOrg.getIdentifier()));
+                              getOrganization(IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier()));
                       } catch (NullifiedEntityException e) {
                           throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                       }

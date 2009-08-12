@@ -109,7 +109,7 @@ public class RegulatoryAuthorityServiceBeanTest {
     c = CountryTest.createCountryObj();
     TestSchema.addUpdObject(c);
     assertNotNull(c.getId());
-    dto =  remoteEjb.get(IiConverter.converToRegulatoryAuthorityIi(reg.getId()));
+    dto =  remoteEjb.get(IiConverter.convertToRegulatoryAuthorityIi(reg.getId()));
   }
 
   @Test
@@ -121,7 +121,7 @@ public class RegulatoryAuthorityServiceBeanTest {
   public void create() throws Exception {
       RegulatoryAuthorityDTO dtoNew = new RegulatoryAuthorityDTO();
       dtoNew.setAuthorityName(StConverter.convertToSt("Happy"));
-      dtoNew.setCountryIdentifier(IiConverter.converToCountryIi(c.getId()));
+      dtoNew.setCountryIdentifier(IiConverter.convertToCountryIi(c.getId()));
       remoteEjb.create(dtoNew);
   }
   

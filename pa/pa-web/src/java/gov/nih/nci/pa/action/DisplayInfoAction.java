@@ -151,7 +151,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
             //cUtils = new CorrelationUtils();
             Person userInfo = cUtils.getPAPersonByIndetifers(studyProtocolQueryDTO.getPiId(), null);
             PersonDTO poPerson = PoRegistry.getPersonEntityService().getPerson(
-                    IiConverter.converToPoPersonIi(userInfo.getIdentifier()));
+                    IiConverter.convertToPoPersonIi(userInfo.getIdentifier()));
             persWebDTO = EnPnConverter.convertToPaPersonDTO(poPerson);
             persWebDTO.setTelephone(null);
             return SUCCESS;

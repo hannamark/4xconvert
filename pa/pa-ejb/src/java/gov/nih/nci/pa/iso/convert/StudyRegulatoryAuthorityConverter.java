@@ -104,9 +104,9 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyRegulatoryAuthorityDTO, StudyR
     @Override
     public StudyRegulatoryAuthorityDTO convertFromDomainToDto(StudyRegulatoryAuthority sra) {
         StudyRegulatoryAuthorityDTO sriDTO = new StudyRegulatoryAuthorityDTO();
-        sriDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sra.getStudyProtocol().getId()));
+        sriDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(sra.getStudyProtocol().getId()));
         sriDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(sra.getRegulatoryAuthority().getId()));
-        sriDTO.setIdentifier(IiConverter.converToStudyRegulatoryAuthorityIi(sra.getId()));
+        sriDTO.setIdentifier(IiConverter.convertToStudyRegulatoryAuthorityIi(sra.getId()));
         return sriDTO;
     }
     

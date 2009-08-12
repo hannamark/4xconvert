@@ -45,7 +45,7 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
                 return "display_org_contacts";
             }
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-            contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactIdentifier));
+            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactIdentifier));
             List<OrganizationalContactDTO> list = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .search(contactDTO);
             for (OrganizationalContactDTO organizationalContactDTO : list) {

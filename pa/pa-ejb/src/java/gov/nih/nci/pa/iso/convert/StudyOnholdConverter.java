@@ -103,9 +103,9 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
           throws PAException {
       StudyOnholdDTO dto = new StudyOnholdDTO();
       dto.setOnholdReasonText(StConverter.convertToSt(bo.getOnholdReasonText()));
-      dto.setIdentifier(IiConverter.converToStudyOnHoldIi(bo.getId()));
+      dto.setIdentifier(IiConverter.convertToStudyOnHoldIi(bo.getId()));
       dto.setOnholdReasonCode(CdConverter.convertToCd(bo.getOnholdReasonCode()));
-      dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+      dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
       dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(bo.getOnholdDate(), bo.getOffholdDate()));
       return dto;
   }

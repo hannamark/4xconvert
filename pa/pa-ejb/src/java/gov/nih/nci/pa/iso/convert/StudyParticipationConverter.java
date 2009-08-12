@@ -139,7 +139,7 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
                 StConverter.convertToSt(bo.getReviewBoardOrganizationalAffiliation()));
         dto.setStatusDateRange(
                 IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 

@@ -59,8 +59,6 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-coreless-1.0-beta-1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-sources-1.0-beta-1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-tests-1.0-beta-1.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-1.1.0.rc1.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-1.1.0.rc1.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/poi-3.2-FINAL-20081019.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
@@ -68,7 +66,9 @@
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/mail-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/log4j-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-logging-4.0.5.GA.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.1-SNAPSHOT.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.2.2.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-1.2.4.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-2.2.0rc1.jar"/>
     <classpathentry combineaccessrules="false" kind="src" path="/pa"/>
     <classpathentry kind="output" path="target/classes"/>
 </classpath>

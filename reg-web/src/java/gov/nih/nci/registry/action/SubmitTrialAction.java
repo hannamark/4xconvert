@@ -201,12 +201,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             } else {
                 studyParticipationContactDTO = util.convertToStudyParticipationContactDTO(trialDTO);
                 if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                  responsiblePartyContactIi = IiConverter.converToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                  responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
                 }
                 if (trialDTO.getResponsibleGenericContactName() != null 
                         && !trialDTO.getResponsibleGenericContactName().equals("")) {
                   responsiblePartyContactIi = IiConverter.
-                      converToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                      convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
                 }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());

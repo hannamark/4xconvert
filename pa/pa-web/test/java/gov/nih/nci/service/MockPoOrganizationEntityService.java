@@ -84,7 +84,7 @@ public class MockPoOrganizationEntityService implements
             throws NullifiedEntityException {
         if (NullFlavor.NA.equals(arg0.getNullFlavor())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-            nullifiedEntities.put(arg0, IiConverter.converToPoOrganizationIi("584"));
+            nullifiedEntities.put(arg0, IiConverter.convertToPoOrganizationIi("584"));
             throw new NullifiedEntityException(nullifiedEntities);
         }
         

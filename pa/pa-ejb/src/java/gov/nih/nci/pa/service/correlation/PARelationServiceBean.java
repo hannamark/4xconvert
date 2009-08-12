@@ -130,7 +130,7 @@ public class PARelationServiceBean {
             throw new PAException("Study Protocol Identifer is null");
         }
         StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.converToStudyProtocolIi(studyProtocolId));
+                IiConverter.convertToStudyProtocolIi(studyProtocolId));
         if (spDTO == null) {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }

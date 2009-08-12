@@ -96,7 +96,7 @@ public class RegulatoryAuthorityDTOTest {
     public static RegulatoryAuthorityDTO createRegulatoryAuthorityDTOObj() {
     	RegulatoryAuthorityDTO ispDTO = new RegulatoryAuthorityDTO();
         ispDTO.setAuthorityName(StConverter.convertToSt("Authority"));
-        ispDTO.setCountryIdentifier(IiConverter.converToCountryIi(1L));
+        ispDTO.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
         return ispDTO;
     }
 

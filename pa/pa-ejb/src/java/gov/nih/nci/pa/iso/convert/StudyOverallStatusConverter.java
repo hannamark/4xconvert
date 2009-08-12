@@ -117,11 +117,11 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOverallStatusDTO, StudyOverall
     public StudyOverallStatusDTO convertFromDomainToDto(
             StudyOverallStatus bo) throws PAException {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setIdentifier(IiConverter.converToStudyOverallStatusIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToStudyOverallStatusIi(bo.getId()));
         dto.setReasonText(StConverter.convertToSt(bo.getCommentText()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 

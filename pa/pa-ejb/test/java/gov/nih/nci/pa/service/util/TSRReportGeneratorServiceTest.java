@@ -212,7 +212,7 @@ public class TSRReportGeneratorServiceTest {
     }
     @Test
     public void generateTSRHtmlTest() throws Exception {
-        Ii ii = IiConverter.converToStudyProtocolIi(Long.valueOf(1));
+        Ii ii = IiConverter.convertToStudyProtocolIi(Long.valueOf(1));
         String x = bean.generateTSRHtml(ii);
         assertNotNull(x);
     }

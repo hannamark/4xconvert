@@ -271,12 +271,12 @@ public class BatchCreateProtocols {
             } else {
                 studyParticipationContactDTO = util.convertToStudyParticipationContactDTO(trialDTO);
                 if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                 responsiblePartyContactIi = IiConverter.converToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                 responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
                   }
                   if (trialDTO.getResponsibleGenericContactName() != null 
                             && !trialDTO.getResponsibleGenericContactName().equals("")) {
                       responsiblePartyContactIi = IiConverter.
-                          converToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                          convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
                   }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
@@ -376,7 +376,7 @@ public class BatchCreateProtocols {
         if (batchDto.getOrgCTEPId() != null && batchDto.getOrgCTEPId().length() > 0) {
                IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
                identifiedOrganizationDTO.setAssignedId(
-                            IiConverter.converToIdentifiedOrgEntityIi(batchDto.getOrgCTEPId()));
+                            IiConverter.convertToIdentifiedOrgEntityIi(batchDto.getOrgCTEPId()));
                List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
                             .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
                if (identifiedOrgs != null && !identifiedOrgs.isEmpty()) {
@@ -500,7 +500,7 @@ public class BatchCreateProtocols {
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
         if (ctep != null && ctep.length() > 0) {
            IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-           identifiedPersonDTO.setAssignedId(IiConverter.converToIdentifiedPersonEntityIi(ctep));
+           identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctep));
            List<IdentifiedPersonDTO> retResultList = 
                                   RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
            if (retResultList != null && !retResultList.isEmpty()) {

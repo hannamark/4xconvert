@@ -141,7 +141,7 @@ public class HealthCareProviderCorrelationBean {
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoRegistry.getOrganizationEntityService().
-                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+                getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
            LOG.error("This Organization is no longer available instead use " , e);
@@ -152,7 +152,7 @@ public class HealthCareProviderCorrelationBean {
         PersonDTO poPer = null;
         try {
             poPer = PoRegistry.getPersonEntityService().
-                getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
+                getPerson(IiConverter.convertToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
             LOG.error("This Person is no longer available instead use " , e);
@@ -163,8 +163,8 @@ public class HealthCareProviderCorrelationBean {
         // Step 2 : check if PO has hcp correlation if not create one 
         HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
         List<HealthCareProviderDTO> hcpDTOs = null;
-        hcpDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        hcpDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+        hcpDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        hcpDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifer));
         hcpDTOs = PoRegistry.getHealthCareProviderCorrelationService().search(hcpDTO);
         if (hcpDTOs != null && hcpDTOs.size() > 1) {
             LOG.error("PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");

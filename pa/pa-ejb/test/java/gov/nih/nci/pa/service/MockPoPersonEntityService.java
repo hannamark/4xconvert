@@ -80,7 +80,7 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
     public PersonDTO getPerson(Ii arg0) throws NullifiedEntityException {
         if (NullFlavor.NA.equals(arg0.getNullFlavor())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-            nullifiedEntities.put(arg0, IiConverter.converToPoPersonIi("2"));
+            nullifiedEntities.put(arg0, IiConverter.convertToPoPersonIi("2"));
             throw new NullifiedEntityException(nullifiedEntities);
         }
         for(PersonDTO dto:personList){

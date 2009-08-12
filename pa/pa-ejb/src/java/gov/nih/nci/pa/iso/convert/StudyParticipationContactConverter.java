@@ -126,7 +126,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
                     + "StudyParticipationContactDTO.convertFromDomainToDTO().  ");
         }
         StudyParticipationContactDTO dto = new StudyParticipationContactDTO();
-        dto.setIdentifier(IiConverter.converToStudyParticipationContactIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToStudyParticipationContactIi(bo.getId()));
 //        dto.setPostalAddress(AddressConverterUtil.create(bo.getAddressLine(), bo.getDeliveryAddressLine(),
 //                bo.getCity(), bo.getState(), bo.getPostalCode(),
 //                (bo.getCountry() == null) ? "" : bo.getCountry().getAlpha3()));
@@ -139,7 +139,7 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyParticipationContactDTO,  Stu
             dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
         }
         if (bo.getStudyProtocol() != null) {
-            dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+            dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         }
         if (bo.getHealthCareProvider() != null) {
             dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));

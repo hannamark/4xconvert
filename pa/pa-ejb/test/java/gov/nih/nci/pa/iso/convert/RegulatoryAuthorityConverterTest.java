@@ -128,7 +128,7 @@ public class RegulatoryAuthorityConverterTest {
   @Test
   public void convertFromDTOToDomain() throws Exception {
     RegulatoryAuthorityDTO dto = new RegulatoryAuthorityDTO();
-    dto.setIdentifier(IiConverter.converToRegulatoryAuthorityIi((Long) null));
+    dto.setIdentifier(IiConverter.convertToRegulatoryAuthorityIi((Long) null));
     dto.setCountryIdentifier(IiConverter.convertToIi(c.getId()));
     assertEquals(dto.getIdentifier().getIdentifierName(),"Regulatory authority identifier");
     

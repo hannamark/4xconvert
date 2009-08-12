@@ -102,9 +102,9 @@ public class StudyObjectiveConverter extends AbstractConverter<StudyObjectiveDTO
           throws PAException {
       StudyObjectiveDTO dto = new StudyObjectiveDTO();
       dto.setDescription(StConverter.convertToSt(bo.getDescription()));
-      dto.setIdentifier(IiConverter.converToStudyObjectiveIi(bo.getId()));
+      dto.setIdentifier(IiConverter.convertToStudyObjectiveIi(bo.getId()));
       dto.setTypeCode(CdConverter.convertToCd(bo.getStudyObjectiveTypeCode()));
-      dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+      dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
       return dto;
   }
 

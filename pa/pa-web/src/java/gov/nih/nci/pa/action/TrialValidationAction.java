@@ -421,7 +421,7 @@ public class TrialValidationAction extends ActionSupport {
                 OrganizationDTO oDto;
                 try {
                     oDto = PoRegistry.getOrganizationEntityService().getOrganization(
-                            IiConverter.converToPoOrganizationIi(poIdentifer));
+                            IiConverter.convertToPoOrganizationIi(poIdentifer));
                 } catch (NullifiedEntityException e) {
                     throw new PAException(e);
                 }
@@ -651,15 +651,16 @@ public class TrialValidationAction extends ActionSupport {
                     Long.valueOf(studyProtocolIi.getExtension()), gtdDTO.getContactEmail(), phone);
         } else if (gtdDTO.getResponsiblePartyType().equals(SPONSOR)) {
             PAContactDTO contactDto = new PAContactDTO();
-            contactDto.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
+            contactDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
             contactDto.setStudyProtocolIdentifier(studyProtocolIi);
             contactDto.setEmail(gtdDTO.getContactEmail());
             contactDto.setPhone(phone);
             if (!PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
-                contactDto.setPersonIdentifier(IiConverter.converToPoPersonIi(gtdDTO.getResponsiblePersonIdentifier()));
+                contactDto.setPersonIdentifier(IiConverter.convertToPoPersonIi(
+                        gtdDTO.getResponsiblePersonIdentifier()));
               }
               if (!PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
-                  contactDto.setSrIdentifier(IiConverter.converToPoOrganizationalContactIi(
+                  contactDto.setSrIdentifier(IiConverter.convertToPoOrganizationalContactIi(
                           gtdDTO.getResponsiblePersonIdentifier()));
               }
             parb.createSponsorAsPrimaryContactRelations(contactDto);
@@ -796,7 +797,7 @@ public class TrialValidationAction extends ActionSupport {
      */
     public String getOrganizationContacts() {
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
-        Ii contactIi = IiConverter.converToPoOrganizationIi(orgContactIdentifier);
+        Ii contactIi = IiConverter.convertToPoOrganizationIi(orgContactIdentifier);
         OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
         contactDTO.setScoperIdentifier(contactIi);
         try {

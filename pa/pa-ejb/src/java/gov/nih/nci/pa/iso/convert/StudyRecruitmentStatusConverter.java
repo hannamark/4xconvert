@@ -116,10 +116,10 @@ gov.nih.nci.pa.iso.convert.AbstractConverter< StudyRecruitmentStatusDTO,  StudyR
 public StudyRecruitmentStatusDTO convertFromDomainToDto(
            StudyRecruitmentStatus bo) throws PAException {
        StudyRecruitmentStatusDTO dto = new StudyRecruitmentStatusDTO();
-       dto.setIdentifier(IiConverter.converToStudyRecruitmentStatusIi(bo.getId()));
+       dto.setIdentifier(IiConverter.convertToStudyRecruitmentStatusIi(bo.getId()));
        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
        dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-       dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+       dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
        return dto;
    }
 

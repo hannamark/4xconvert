@@ -554,15 +554,16 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
         } else if (gtdDTO.getResponsiblePartyType().equals(SPONSOR)) {
             PAContactDTO contactDto = new PAContactDTO();
-            contactDto.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
+            contactDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
             contactDto.setStudyProtocolIdentifier(studyProtocolIi);
             contactDto.setEmail(gtdDTO.getContactEmail());
             contactDto.setPhone(phone);
             if (!PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
-                contactDto.setPersonIdentifier(IiConverter.converToPoPersonIi(gtdDTO.getResponsiblePersonIdentifier()));
+                contactDto.setPersonIdentifier(IiConverter.convertToPoPersonIi(
+                        gtdDTO.getResponsiblePersonIdentifier()));
               }
               if (!PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
-                  contactDto.setSrIdentifier(IiConverter.converToPoOrganizationalContactIi(
+                  contactDto.setSrIdentifier(IiConverter.convertToPoOrganizationalContactIi(
                           gtdDTO.getResponsiblePersonIdentifier()));
               }
             parb.createSponsorAsPrimaryContactRelations(contactDto);

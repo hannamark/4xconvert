@@ -31,7 +31,7 @@ public class MockPoOversightCommitteeCorrelationService implements OversightComm
         }
         OversightCommitteeDTO oc = new OversightCommitteeDTO();
         oc.setIdentifier(Ii);
-        oc.setPlayerIdentifier(IiConverter.converToPoOversightCommitteeIi("1"));
+        oc.setPlayerIdentifier(IiConverter.convertToPoOversightCommitteeIi("1"));
         oc.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return oc;
     }

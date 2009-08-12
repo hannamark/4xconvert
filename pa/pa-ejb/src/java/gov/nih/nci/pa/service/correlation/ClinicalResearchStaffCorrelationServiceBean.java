@@ -137,7 +137,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoRegistry.getOrganizationEntityService().
-                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+                getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
            LOG.error("This Organization is no longer available instead use ");
@@ -148,7 +148,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         PersonDTO poPer = null;
         try {
             poPer = PoRegistry.getPersonEntityService().
-                getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
+                getPerson(IiConverter.convertToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
   //          Map m = e.getNullifiedEntities();
             LOG.error("This Person is no longer available instead use ");
@@ -159,8 +159,8 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 2 : check if PO has crs correlation if not create one 
         ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
         List<ClinicalResearchStaffDTO> crsDTOs = null;
-        crsDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        crsDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+        crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        crsDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifer));
         crsDTOs = PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
         if (crsDTOs != null && crsDTOs.size() > 1) {
             throw new PAException("PO CRS Correlation should not have more than 1  ");

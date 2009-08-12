@@ -154,7 +154,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoRegistry.getOrganizationEntityService().
-                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+                getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is no longer available instead use ");
            throw new PAException("This Organization is no longer available instead use ", e);
@@ -167,7 +167,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 2 : check if PO has hcf correlation if not create one
         HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
         List<HealthCareFacilityDTO> hcfDTOs = null;
-        hcfDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
 
         hcfDTOs = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
         if (hcfDTOs != null && hcfDTOs.size() > 1) {
@@ -229,7 +229,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoRegistry.getOrganizationEntityService().
-                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+                getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
            LOG.error("This Organization is no longer available instead use ");
            throw new PAException("This Organization is no longer available instead use ", e);
@@ -242,7 +242,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 2 : check if PO has hcf correlation if not create one
         ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
         List<ResearchOrganizationDTO> roDTOs = null;
-        roDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
 //        Cd cd = new Cd();
 //        cd.setCode(CANCER_CENTER_CODE);
 //        roDTO.setTypeCode(cd);
@@ -307,7 +307,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoRegistry.getOrganizationEntityService().
-                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+                getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
             throw new PAException("This Organization is no longer available instead use ", e);
         }
@@ -319,7 +319,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 2 : check if PO has oc correlation if not create one
         OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
         List<OversightCommitteeDTO> ocDTOs = null;
-        ocDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        ocDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         ocDTOs = PoRegistry.getOversightCommitteeCorrelationService().search(ocDTO);
         if (ocDTOs != null && ocDTOs.size() > 1) {
             throw new PAException("PO OversightCommitteeDTOs Correlation should not have more than 1.  ");

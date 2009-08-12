@@ -31,7 +31,7 @@ public class MockPoClinicalResearchStaffCorrelationService implements
      */
     public Ii createCorrelation(ClinicalResearchStaffDTO arg0)
             throws EntityValidationException {
-        return IiConverter.converToPoClinicalResearchStaffIi("1");
+        return IiConverter.convertToPoClinicalResearchStaffIi("1");
     }
 
     /* (non-Javadoc)
@@ -41,13 +41,13 @@ public class MockPoClinicalResearchStaffCorrelationService implements
             throws NullifiedRoleException {
         if (NullFlavor.NA.equals(ii.getNullFlavor())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-            nullifiedEntities.put(ii, IiConverter.converToPoClinicalResearchStaffIi("1"));
+            nullifiedEntities.put(ii, IiConverter.convertToPoClinicalResearchStaffIi("1"));
             throw new NullifiedRoleException(nullifiedEntities);
         }
         ClinicalResearchStaffDTO crs = new ClinicalResearchStaffDTO();
         crs.setIdentifier(ii);
-        crs.setPlayerIdentifier(IiConverter.converToPoPersonIi("abc"));
-        crs.setScoperIdentifier(IiConverter.converToPoOrganizationIi("abc"));
+        crs.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
+        crs.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         crs.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return crs;
     }

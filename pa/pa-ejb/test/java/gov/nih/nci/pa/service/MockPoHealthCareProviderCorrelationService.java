@@ -31,7 +31,7 @@ public class MockPoHealthCareProviderCorrelationService implements
      */
     public Ii createCorrelation(HealthCareProviderDTO arg0)
             throws EntityValidationException {
-        return IiConverter.converToPoHealtcareProviderIi("1");    
+        return IiConverter.convertToPoHealtcareProviderIi("1");    
     }
 
     /* (non-Javadoc)
@@ -40,13 +40,13 @@ public class MockPoHealthCareProviderCorrelationService implements
     public HealthCareProviderDTO getCorrelation(Ii ii) throws NullifiedRoleException {
     if (NullFlavor.NA.equals(ii.getNullFlavor())) {
         Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-        nullifiedEntities.put(ii, IiConverter.converToPoHealtcareProviderIi("1"));
+        nullifiedEntities.put(ii, IiConverter.convertToPoHealtcareProviderIi("1"));
         throw new NullifiedRoleException(nullifiedEntities);
     }
     HealthCareProviderDTO hcp = new HealthCareProviderDTO();
     hcp.setIdentifier(ii);
-    hcp.setPlayerIdentifier(IiConverter.converToPoPersonIi("abc"));
-    hcp.setScoperIdentifier(IiConverter.converToPoOrganizationIi("abc"));
+    hcp.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
+    hcp.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
     hcp.setStatus(CdConverter.convertStringToCd("ACTIVE"));
     return hcp;
     }

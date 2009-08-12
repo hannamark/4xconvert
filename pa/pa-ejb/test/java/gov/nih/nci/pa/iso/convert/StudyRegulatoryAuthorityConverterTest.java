@@ -136,7 +136,7 @@ public class StudyRegulatoryAuthorityConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudyRegulatoryAuthorityDTO dto = new StudyRegulatoryAuthorityDTO();
-    dto.setIdentifier(IiConverter.converToStudyRegulatoryAuthorityIi((Long) null));
+    dto.setIdentifier(IiConverter.convertToStudyRegulatoryAuthorityIi((Long) null));
     dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(ra.getId()));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     assertEquals(dto.getIdentifier().getIdentifierName(),"Study Regulatory authority identifier");

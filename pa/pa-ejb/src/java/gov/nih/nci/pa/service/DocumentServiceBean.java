@@ -225,7 +225,7 @@ public class DocumentServiceBean
             LOG.error(" Hibernate exception while createTrialDocument " , hbe);
             throw new PAException(" Hibernate exception while createTrialDocument " , hbe);
         }
-        docDTO.setIdentifier(IiConverter.converToDocumentIi(doc.getId()));
+        docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         saveFile(docDTO);
         LOG.debug("Leaving createStudyResourcing ");
         return docDTO;

@@ -134,7 +134,7 @@ public class DocumentWorkflowStatusConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
-    dto.setIdentifier(IiConverter.converToDocumentWorkFlowStatusIi((Long) null));
+    dto.setIdentifier(IiConverter.convertToDocumentWorkFlowStatusIi((Long) null));
     dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
     dto.setCommentText(StConverter.convertToSt("Common text"));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));

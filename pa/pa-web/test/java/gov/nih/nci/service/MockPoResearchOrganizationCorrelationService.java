@@ -30,7 +30,7 @@ public class MockPoResearchOrganizationCorrelationService implements ResearchOrg
         }
         ResearchOrganizationDTO ro = new ResearchOrganizationDTO();
         ro.setIdentifier(ii);
-        ro.setPlayerIdentifier(IiConverter.converToPoOrganizationIi("1"));
+        ro.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         ro.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return ro;
     }

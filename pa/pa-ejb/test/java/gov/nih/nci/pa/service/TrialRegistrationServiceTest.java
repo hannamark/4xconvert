@@ -145,11 +145,11 @@ public class TrialRegistrationServiceTest {
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getstudyResourceByStudyProtocol(spIi);
         List<DocumentDTO> documentDTOs = documentService.getDocumentsByStudyProtocol(spIi);
         OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.converToPoOrganizationIi("abc"));
+        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.converToPoPersonIi("abc"));
+        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
         OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.converToPoOrganizationIi("111"));
+        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
         StudyParticipationDTO spDto = new StudyParticipationDTO();
         spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
         StudyParticipationDTO leadOrganizationParticipationIdentifierDTO  = 

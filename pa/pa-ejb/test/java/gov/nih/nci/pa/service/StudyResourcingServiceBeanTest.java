@@ -189,7 +189,7 @@ public class StudyResourcingServiceBeanTest {
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
-        StudyResourcingDTO dto = remoteEjb.getStudyResourceByID(IiConverter.converToStudyResourcingIi(sr.getId()));
+        StudyResourcingDTO dto = remoteEjb.getStudyResourceByID(IiConverter.convertToStudyResourcingIi(sr.getId()));
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_RESOURCING_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);

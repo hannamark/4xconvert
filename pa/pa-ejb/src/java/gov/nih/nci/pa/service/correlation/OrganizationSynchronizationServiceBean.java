@@ -272,9 +272,9 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    dupRo.setId(duplicateRoId);
                    dupRo = cUtils.getPAResearchOrganization(dupRo);
                    newRoleCode = dupRo.getStatusCode();
-                   roCurrentIi = IiConverter.converToPoResearchOrganizationIi(duplicateRoId.toString());
+                   roCurrentIi = IiConverter.convertToPoResearchOrganizationIi(duplicateRoId.toString());
                    replaceStudyParticipationIdentifiers(
-                           IiConverter.converToPoResearchOrganizationIi(ro.getId().toString()),  roCurrentIi);     
+                           IiConverter.convertToPoResearchOrganizationIi(ro.getId().toString()),  roCurrentIi);     
                    ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                } else {
                    // this is nullified scenario with no org 
@@ -319,9 +319,9 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    dupOsc.setId(duplicateOscId);
                    dupOsc = cUtils.getPAOversightCommittee(dupOsc);
                    newRoleCode = dupOsc.getStatusCode();
-                   hcfCurrentIi = IiConverter.converToPoOversightCommitteeIi(duplicateOscId.toString());
+                   hcfCurrentIi = IiConverter.convertToPoOversightCommitteeIi(duplicateOscId.toString());
                    replaceStudyParticipationIdentifiers(
-                           IiConverter.converToPoOversightCommitteeIi(osc.getId().toString()),  hcfCurrentIi);     
+                           IiConverter.convertToPoOversightCommitteeIi(osc.getId().toString()),  hcfCurrentIi);     
                    osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                } else {
                    // this is nullified scenario with no org 
@@ -366,9 +366,9 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    dupHcf.setId(duplicateHcfId);
                    dupHcf = cUtils.getPAHealthCareFacility(dupHcf);
                    newRoleCode = dupHcf.getStatusCode();
-                   hcfCurrentIi = IiConverter.converToPoHealthCareFacilityIi(duplicateHcfId.toString());
+                   hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());
                    replaceStudyParticipationIdentifiers(
-                           IiConverter.converToPoHealthCareFacilityIi(hcf.getId().toString()),  hcfCurrentIi);     
+                           IiConverter.convertToPoHealthCareFacilityIi(hcf.getId().toString()),  hcfCurrentIi);     
                    hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                } else {
                    // this is nullified scenario with no org 
@@ -413,7 +413,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
        Ii organizationIi = null;
        try {
            organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(
-                   IiConverter.converToPoOrganizationIi(poOrgIdentifier));
+                   IiConverter.convertToPoOrganizationIi(poOrgIdentifier));
        } catch (NullifiedEntityException e) {
             // org is nullified, find out if it has any duplicates
            Ii nullfiedIi = null;

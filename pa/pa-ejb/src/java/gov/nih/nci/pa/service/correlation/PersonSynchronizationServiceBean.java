@@ -289,12 +289,12 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     newRoleCode = dupCrs.getStatusCode();
                     // replace the old, with the new change identifiers
                     replaceStudyContactIdentifiers(
-                                IiConverter.converToPoClinicalResearchStaffIi(crs.getId().toString()), 
-                                IiConverter.converToPoClinicalResearchStaffIi(duplicateCrsId.toString()) , 
+                                IiConverter.convertToPoClinicalResearchStaffIi(crs.getId().toString()), 
+                                IiConverter.convertToPoClinicalResearchStaffIi(duplicateCrsId.toString()) , 
                                 STUDY_CONTACT);
                     replaceStudyContactIdentifiers(
-                            IiConverter.converToPoClinicalResearchStaffIi(crs.getId().toString()), 
-                            IiConverter.converToPoClinicalResearchStaffIi(duplicateCrsId.toString()) , 
+                            IiConverter.convertToPoClinicalResearchStaffIi(crs.getId().toString()), 
+                            IiConverter.convertToPoClinicalResearchStaffIi(duplicateCrsId.toString()) , 
                             STUDY_PART_CONTACT);
                     // nullify the current 
                     crs.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
@@ -348,11 +348,11 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     newRoleCode = dupHcp.getStatusCode();
                     // replace the old, with the new change identifiers
                     replaceStudyContactIdentifiers(
-                                IiConverter.converToPoHealtcareProviderIi(hcp.getId().toString()), 
-                                IiConverter.converToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_CONTACT);
+                                IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()), 
+                                IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_CONTACT);
                     replaceStudyContactIdentifiers(
-                            IiConverter.converToPoHealtcareProviderIi(hcp.getId().toString()), 
-                            IiConverter.converToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_PART_CONTACT);
+                            IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()), 
+                            IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_PART_CONTACT);
                     // nullify the current 
                     hcp.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                 } else {
@@ -437,8 +437,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                       newRoleCode = dupOc.getStatusCode();
                       // replace the old, with the new change identifiers
                       replaceStudyContactIdentifiers(
-                             IiConverter.converToPoOrganizationalContactIi(oc.getId().toString()), 
-                             IiConverter.converToPoOrganizationalContactIi(duplicateOcId.toString()) ,
+                             IiConverter.convertToPoOrganizationalContactIi(oc.getId().toString()), 
+                             IiConverter.convertToPoOrganizationalContactIi(duplicateOcId.toString()) ,
                                     STUDY_PART_CONTACT);
                                 // nullify the current 
                       oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
@@ -489,7 +489,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         Ii personIi = null;
         try {
             personDto = PoRegistry.getPersonEntityService().getPerson(
-                     IiConverter.converToPoPersonIi(poPersonId));
+                     IiConverter.convertToPoPersonIi(poPersonId));
         } catch (NullifiedEntityException e) {
                // Person is nullified, find out if it has any duplicates
 
@@ -521,7 +521,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         OrganizationDTO organizationDto = null;
         Ii organizationIi = null;
         try {
-            Ii lookupPoIi = IiConverter.converToPoOrganizationIi(poOrganizationId);
+            Ii lookupPoIi = IiConverter.convertToPoOrganizationIi(poOrganizationId);
             organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(lookupPoIi);
         } catch (NullifiedEntityException e) {
                // org is nullified, find out if it has any duplicates

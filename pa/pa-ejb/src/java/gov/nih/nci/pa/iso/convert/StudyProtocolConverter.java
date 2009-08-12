@@ -157,7 +157,7 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setTargetAccrualNumber(
                 IvlConverter.convertInt().convertToIvl(studyProtocol.getMinimumTargetAccrualNumber(), 
                         studyProtocol.getMaximumTargetAccrualNumber()));
-        studyProtocolDTO.setIdentifier(IiConverter.converToStudyProtocolIi(studyProtocol.getId()));
+        studyProtocolDTO.setIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocol.getId()));
         studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(studyProtocol.getPhaseCode()));
         studyProtocolDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocol.getPhaseOtherText()));
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(studyProtocol.getPrimaryCompletionDate()));

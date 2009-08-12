@@ -135,7 +135,7 @@ public class StudyParticipationContactConverterTest {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudyParticipation spa = (StudyParticipation) sess.load(StudyParticipation.class, TestSchema.studyParticipationIds.get(0));
     StudyParticipationContactDTO dto = new StudyParticipationContactDTO();
-    dto.setIdentifier(IiConverter.converToStudyParticipationContactIi((Long) null));
+    dto.setIdentifier(IiConverter.convertToStudyParticipationContactIi((Long) null));
     dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setStudyParticipationIi(IiConverter.convertToIi(spa.getId()));

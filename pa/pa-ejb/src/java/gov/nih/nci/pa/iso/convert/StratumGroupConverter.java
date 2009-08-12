@@ -104,10 +104,10 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
     @Override
     public StratumGroupDTO convertFromDomainToDto(StratumGroup sg) {
         StratumGroupDTO sgDTO = new StratumGroupDTO();
-        sgDTO.setIdentifier(IiConverter.converToStratumGroupIi(sg.getId()));
+        sgDTO.setIdentifier(IiConverter.convertToStratumGroupIi(sg.getId()));
         sgDTO.setDescription(StConverter.convertToSt(sg.getDescription()));
         sgDTO.setGroupNumberText(StConverter.convertToSt(sg.getGroupNumberText()));
-        sgDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(sg.getStudyProtocol().getId()));
+        sgDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(sg.getStudyProtocol().getId()));
         return sgDTO;
     }
 

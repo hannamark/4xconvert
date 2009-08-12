@@ -128,17 +128,17 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
                     bo.getPrimaryIndicator()));
 
         if (bo.getHealthCareProvider() != null) {
-            dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
+            dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getIdentifier()));
         }
         if (bo.getClinicalResearchStaff() != null) {
             dto.setClinicalResearchStaffIi(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
         }
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
-        dto.setIdentifier(IiConverter.converToStudyContactIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToStudyContactIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRange(
                 IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         // handle phone and email
         DSet<Tel> telAddresses = new DSet<Tel>();
         ArrayList<String> emailList = new ArrayList<String>();

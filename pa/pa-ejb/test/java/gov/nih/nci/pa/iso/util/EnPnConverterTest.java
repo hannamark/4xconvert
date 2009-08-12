@@ -22,7 +22,7 @@ public class EnPnConverterTest {
 	@Before
     public void setUp() {
 		poPerson.setName(EnPnConverter.convertToEnPn("firstName", "middleName", "lastName", "prefix", "suffix"));
-		poPerson.setIdentifier(IiConverter.converToPoPersonIi("1"));
+		poPerson.setIdentifier(IiConverter.convertToPoPersonIi("1"));
 		 List<String> phones = new ArrayList<String>();
 		 String phone="1111111111";
 		 String email="a@a.com";

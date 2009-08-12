@@ -105,10 +105,10 @@ public class DocumentConverter {
      */
     public static DocumentDTO convertFromDomainToDTO(Document doc) {
         DocumentDTO docDTO = new DocumentDTO();
-        docDTO.setIdentifier(IiConverter.converToDocumentIi(doc.getId()));
+        docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
-        docDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(doc.getStudyProtocol().getId()));
+        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
         return docDTO;
     }
 

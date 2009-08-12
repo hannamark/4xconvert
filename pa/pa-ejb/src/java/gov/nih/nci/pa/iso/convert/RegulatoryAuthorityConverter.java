@@ -105,8 +105,8 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<RegulatoryAuthorityDTO, RegulatoryA
     public RegulatoryAuthorityDTO convertFromDomainToDto(RegulatoryAuthority sra) {
         RegulatoryAuthorityDTO sriDTO = new RegulatoryAuthorityDTO();
         sriDTO.setAuthorityName(StConverter.convertToSt(sra.getAuthorityName()));
-        sriDTO.setIdentifier(IiConverter.converToRegulatoryAuthorityIi(sra.getId()));
-        sriDTO.setCountryIdentifier(IiConverter.converToCountryIi(sra.getCountry().getId()));
+        sriDTO.setIdentifier(IiConverter.convertToRegulatoryAuthorityIi(sra.getId()));
+        sriDTO.setCountryIdentifier(IiConverter.convertToCountryIi(sra.getCountry().getId()));
         return sriDTO;
     }
     

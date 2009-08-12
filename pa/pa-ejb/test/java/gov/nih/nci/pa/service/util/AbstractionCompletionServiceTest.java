@@ -239,7 +239,7 @@ public class AbstractionCompletionServiceTest {
 
     @Test
     public void validateAbstractionCompletionTest() throws PAException {
-        Ii studyProtocolIi = IiConverter.converToStudyProtocolIi(Long
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long
                 .valueOf(1L));
         List<AbstractionCompletionDTO> errList = bean
                 .validateAbstractionCompletion(studyProtocolIi);

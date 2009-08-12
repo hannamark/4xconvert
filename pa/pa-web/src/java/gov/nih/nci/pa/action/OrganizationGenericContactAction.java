@@ -155,7 +155,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         }
         try {
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-            contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactId));
+            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
             contactDTO.setTitle(StConverter.convertToSt(title));
             DSet<Cd> orgContactType = new DSet<Cd>();
             Set<Cd> orgContactCd = new HashSet<Cd>();
@@ -210,7 +210,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         try {
                 
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-            contactDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgContactId));
+            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
             contactDTO.setTitle(StConverter.convertToSt(title));    
             DSet<Tel> list = new DSet<Tel>();
             list.setItem(new HashSet<Tel>());

@@ -107,7 +107,7 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setMilestoneCode(CdConverter.convertToCd(bo.getMilestoneCode()));
         dto.setMilestoneDate(TsConverter.convertToTs(bo.getMilestoneDate()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 

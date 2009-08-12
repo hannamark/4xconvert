@@ -476,7 +476,7 @@ public class IrbAction extends ActionSupport implements Preparable {
             return;
         }
         OrganizationDTO poOrg = PoRegistry.getOrganizationEntityService().
-            getOrganization(IiConverter.converToPoOrganizationIi(poOrgId));
+            getOrganization(IiConverter.convertToPoOrganizationIi(poOrgId));
         if (poOrg == null) {
             throw new PAException("Error getting organization data from PO for id = " + poOrgId
                     + ".  Check that PO service is running and databases are synchronized.  ");

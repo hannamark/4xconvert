@@ -248,7 +248,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
                 } else {
                     //this means this is genericOrgContact
                     OrganizationalContactDTO isoDto = PoRegistry.getOrganizationalContactCorrelationService()
-                        .getCorrelation(IiConverter.converToPoOrganizationalContactIi(
+                        .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(
                             organizationalContact.getIdentifier()));
                     returnDto.setTitle(StConverter.convertToString(isoDto.getTitle()));
                     returnDto.setSrIdentifier(isoDto.getIdentifier());

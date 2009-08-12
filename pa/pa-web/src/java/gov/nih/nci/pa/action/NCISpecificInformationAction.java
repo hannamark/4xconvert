@@ -207,7 +207,7 @@ public class NCISpecificInformationAction extends ActionSupport {
                 if (org == null) {
                     OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
                     OrganizationDTO oDto = PoRegistry.getOrganizationEntityService().getOrganization(
-                            IiConverter.converToPoOrganizationIi(poIdentifer));
+                            IiConverter.convertToPoOrganizationIi(poIdentifer));
                     // create a new org if its null
 //                    org = new Organization();
 //                    org.setIdentifier(poIdentifer);

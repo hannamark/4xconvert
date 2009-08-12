@@ -46,7 +46,7 @@ public class OrganizationSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeHealthCareFacilityActiveToPending() throws Exception {
-        Ii hcfIi = IiConverter.converToPoHealthCareFacilityIi("abc");
+        Ii hcfIi = IiConverter.convertToPoHealthCareFacilityIi("abc");
         createTestData1();
         remoteEjb.synchronizeHealthCareFacility(hcfIi);
     }
@@ -54,7 +54,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     
     @Test
     public void synchronizeHealthCareFacilityNullify() throws Exception {
-        Ii hcfIi = IiConverter.converToPoHealthCareFacilityIi("abc");
+        Ii hcfIi = IiConverter.convertToPoHealthCareFacilityIi("abc");
         hcfIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeHealthCareFacility(hcfIi);
@@ -63,7 +63,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     
     @Test
     public void synchronizeResearchOrganizationActiveToPending() throws Exception {
-        Ii roIi = IiConverter.converToPoResearchOrganizationIi("abc");
+        Ii roIi = IiConverter.convertToPoResearchOrganizationIi("abc");
         createTestData1();
         remoteEjb.synchronizeResearchOrganization(roIi);
 
@@ -71,7 +71,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     
     @Test
     public void synchronizeResearchOrganizationNullify() throws Exception {
-        Ii roIi = IiConverter.converToPoResearchOrganizationIi("abc");
+        Ii roIi = IiConverter.convertToPoResearchOrganizationIi("abc");
         roIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeResearchOrganization(roIi);
@@ -79,7 +79,7 @@ public class OrganizationSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizeOversightCommitteeActiveToPending() throws Exception {
-        Ii roIi = IiConverter.converToPoOversightCommitteeIi("abc");
+        Ii roIi = IiConverter.convertToPoOversightCommitteeIi("abc");
         createTestData1();
         remoteEjb.synchronizeOversightCommittee(roIi);
 
@@ -87,7 +87,7 @@ public class OrganizationSynchronizationServiceBeanTest {
     
     @Test
     public void synchronizeOversightCommitteeNullify() throws Exception {
-        Ii roIi = IiConverter.converToPoOversightCommitteeIi("abc");
+        Ii roIi = IiConverter.convertToPoOversightCommitteeIi("abc");
         roIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeOversightCommittee(roIi);
@@ -95,14 +95,14 @@ public class OrganizationSynchronizationServiceBeanTest {
     
     @Test
     public void synchronizeOrganization()  throws Exception {
-        Ii roIi = IiConverter.converToPoOrganizationIi("abc");
+        Ii roIi = IiConverter.convertToPoOrganizationIi("abc");
         createTestData1();
         remoteEjb.synchronizeOrganization(roIi);
     }
     
     @Test
     public void synchronizeOrganizationNullify()  throws Exception {
-        Ii roIi = IiConverter.converToPoOrganizationIi("abc");
+        Ii roIi = IiConverter.convertToPoOrganizationIi("abc");
         roIi.setNullFlavor(NullFlavor.NA);
         createTestData1();
         remoteEjb.synchronizeOrganization(roIi);

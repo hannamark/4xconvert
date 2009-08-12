@@ -21,19 +21,19 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
 
     public Ii createCorrelation(HealthCareFacilityDTO arg0)
             throws EntityValidationException {
-        return IiConverter.converToPoHealthCareFacilityIi("1");
+        return IiConverter.convertToPoHealthCareFacilityIi("1");
     }
 
     public HealthCareFacilityDTO getCorrelation(Ii ii)
             throws NullifiedRoleException {
         if (NullFlavor.NA.equals(ii.getNullFlavor())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-            nullifiedEntities.put(ii, IiConverter.converToPoHealthCareFacilityIi("1"));
+            nullifiedEntities.put(ii, IiConverter.convertToPoHealthCareFacilityIi("1"));
             throw new NullifiedRoleException(nullifiedEntities);
         }
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
         hcf.setIdentifier(ii);
-        hcf.setPlayerIdentifier(IiConverter.converToPoOrganizationIi("584"));
+        hcf.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("584"));
         hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return hcf;
     }
@@ -47,8 +47,8 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
     public List<HealthCareFacilityDTO> search(HealthCareFacilityDTO hcfDto) {
         List<HealthCareFacilityDTO> ar = new ArrayList<HealthCareFacilityDTO>();
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
-        hcf.setIdentifier(IiConverter.converToPoHealthCareFacilityIi("1"));
-        hcf.setPlayerIdentifier(IiConverter.converToPoOrganizationIi("1"));
+        hcf.setIdentifier(IiConverter.convertToPoHealthCareFacilityIi("1"));
+        hcf.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));       
         ar.add(hcf);
         return ar;

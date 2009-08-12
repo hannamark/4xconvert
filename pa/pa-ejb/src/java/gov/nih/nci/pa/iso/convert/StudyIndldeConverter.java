@@ -112,8 +112,8 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyIndldeDTO, StudyIndlde> {
     @Override
     public StudyIndldeDTO convertFromDomainToDto(StudyIndlde si) {
         StudyIndldeDTO siDTO = new StudyIndldeDTO();
-        siDTO.setIdentifier(IiConverter.converToStudyIndIdeIi(si.getId()));
-        siDTO.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(si.getStudyProtocol().getId()));
+        siDTO.setIdentifier(IiConverter.convertToStudyIndIdeIi(si.getId()));
+        siDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(si.getStudyProtocol().getId()));
         siDTO.setExpandedAccessStatusCode(CdConverter.convertToCd(si.getExpandedAccessStatusCode()));
         siDTO.setExpandedAccessIndicator(BlConverter.convertToBl(si.getExpandedAccessIndicator()));
         siDTO.setGrantorCode(CdConverter.convertToCd(si.getGrantorCode()));

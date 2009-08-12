@@ -21,115 +21,115 @@ public class IiConverterTest {
 	@Test
 	public void testConverToStudyProtocolIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToStudyProtocolIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToStudyProtocolIi(id)));
 	}
 
 	@Test
 	public void testConverToStudyOutcomeMeasureIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToStudyOutcomeMeasureIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToStudyOutcomeMeasureIi(id)));
 	}
 
 	@Test
 	public void testConverToStudyIndIdeIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToStudyIndIdeIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToStudyIndIdeIi(id)));
 	}
 
 	@Test
 	public void testConverToArmIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToArmIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToArmIi(id)));
 	}
 
 	@Test
 	public void testConverToStratumGroupIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToStratumGroupIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToStratumGroupIi(id)));
 	}
 
 	@Test
 	public void testConverToStudyOverallStatusIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToStudyOverallStatusIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToStudyOverallStatusIi(id)));
 	}
 
 	@Test
 	public void testConverToActivityIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToActivityIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToActivityIi(id)));
 	}
 
 	@Test
 	public void testConverToStudyResourcingIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToStudyResourcingIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToStudyResourcingIi(id)));
 	}
 
 	@Test
 	public void testConverToDocumentIi() {
 		Long id =null;
-		assertNull(IiConverter.convertToLong(IiConverter.converToDocumentIi(id)));
+		assertNull(IiConverter.convertToLong(IiConverter.convertToDocumentIi(id)));
 	}
 
 	@Test
 	public void testConverToPoPersonIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToPoPersonIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToPoPersonIi(id)));
 	}
 
 	@Test
 	public void testConverToPoOrganizationIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToIdentifiedPersonEntityIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToIdentifiedPersonEntityIi(id)));
 	}
 
 	@Test
 	public void testConverToIdentifiedEntityIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToIdentifiedEntityIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToIdentifiedEntityIi(id)));
 	}
 
 	@Test
 	public void testConverToIdentifiedOrgEntityIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToIdentifiedOrgEntityIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToIdentifiedOrgEntityIi(id)));
 	}
 
 	@Test
 	public void testConverToIdentifiedPersonEntityIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToIdentifiedPersonEntityIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToIdentifiedPersonEntityIi(id)));
 	}
 
 	@Test
 	public void testConverToPoOrganizationalContactIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToPoOrganizationalContactIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToPoOrganizationalContactIi(id)));
 	}
 
 	@Test
 	public void testConverToPoClinicalResearchStaffIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToPoClinicalResearchStaffIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToPoClinicalResearchStaffIi(id)));
 	}
 
 	@Test
 	public void testConverToPoHealtcareProviderIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToPoHealtcareProviderIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToPoHealtcareProviderIi(id)));
 	}
 
 	@Test
 	public void testConverToPoHealthCareFacilityIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToPoHealthCareFacilityIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToPoHealthCareFacilityIi(id)));
 	}
 
 	@Test
 	public void testConverToPoOversightCommitteeIi() {
 		String id =null;
-		assertNull(IiConverter.convertToString(IiConverter.converToPoOversightCommitteeIi(id)));
+		assertNull(IiConverter.convertToString(IiConverter.convertToPoOversightCommitteeIi(id)));
 	}
 
 }
