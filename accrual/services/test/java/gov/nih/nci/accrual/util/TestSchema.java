@@ -77,8 +77,11 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.domain.Epoch;
+import gov.nih.nci.pa.domain.PlannedObservationResult;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -90,6 +93,7 @@ import org.hibernate.Transaction;
 */
 public class TestSchema {
     public static List<Epoch> epochs;
+    public static List<PlannedObservationResult> plannedObservationResults;
 
     private static boolean dataLoaded = false;
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
@@ -128,6 +132,7 @@ public class TestSchema {
 
     public static void primeData() {
         epochs = new ArrayList<Epoch>();
+        plannedObservationResults = new ArrayList<PlannedObservationResult>();
 
         Epoch ep = new Epoch();
         ep.setName("epoch 1");
@@ -135,7 +140,19 @@ public class TestSchema {
         addUpdObject(ep);
         epochs.add(ep);
 
+        PlannedObservationResult por = new PlannedObservationResult();
+        por.setResultCode("resultCode");
+        por.setResultCodeModifiedText("resultCodeModifiedText");
+        por.setResultDateRangeLow(new Timestamp(new Date().getTime()));
+        por.setResultDateRangeHigh(new Timestamp(new Date().getTime()));
+        por.setResultIndicator(true);
+        por.setResultText("resultText");
+        por.setTypeCode("typeCode");
+        addUpdObject(por);
+        plannedObservationResults.add(por);
+
         dataLoaded = true;
+
     }
 
 }

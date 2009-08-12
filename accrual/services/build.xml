@@ -16,6 +16,7 @@
     <property name="services.build.dir" value="${basedir}/target"/>
     <property name="services.build.outputDir" value="${services.build.dir}/classes"/>
     <property name="services.build.srcDir" value="${basedir}/src/java"/>
+    <property name="services.build.domainDir" value="${services.build.srcDir}/gov/nih/nci/pa"/>
     <property name="services.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="services.jar" value="accrual-services.jar"/>
     <property name="services.build.testSrcDir" value="${basedir}/test/java"/>
@@ -92,10 +93,28 @@
 
 
     <!-- ====================================================================== -->
+    <!-- Get hibernate annotated classes/configuration                          -->
+    <!-- ====================================================================== -->
+
+    <target name="get-domain"> 
+        <delete dir="${services.build.domainDir}"/>
+        <copy todir="${services.build.domainDir}/domain">
+            <fileset dir="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/domain"/>
+        </copy>
+        <copy todir="${services.build.domainDir}/enums">
+            <fileset dir="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/enums"/>
+        </copy>
+        <copy todir="${services.build.domainDir}/util">
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
+        </copy>
+    </target>
+
+
+    <!-- ====================================================================== -->
     <!-- Compile target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="compile" depends="pre-clean" description="Compiles the subproject">
+    <target name="compile" depends="pre-clean, get-domain" description="Compiles the subproject">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <mkdir dir="${services.build.outputDir}"/>
         <javac destdir="${services.build.outputDir}" 
@@ -165,7 +184,7 @@
         <cobertura-instrument datafile="${services.build.dir}/cobertura.ser"
                               toDir="${services.build.coberturaOutputDir}">
             <fileset dir="${services.build.outputDir}">
-                <include name="**/*.class"/>
+                <include name="**/accrual/**/*.class"/>
             </fileset>
         </cobertura-instrument>
 
@@ -215,7 +234,7 @@
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
              
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
-            <fileset dir="src" includes="**/*.java"/>
+            <fileset dir="src" includes="**/accrual/**/*.java"/>
             <formatter type="plain"/>
             <formatter type="plain" toFile="${services.report.dir}/checkstyle.txt"/>
             <formatter type="xml" toFile="${services.report.dir}/checkstyle.xml"/>
@@ -238,7 +257,7 @@
             <formatter type="text" toFile="${services.report.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${services.report.dir}/pmd.xml"/>
             <fileset dir="src">
-                <include name="**/*.java"/>
+                <include name="**/accrual/**/*.java"/>
             </fileset>
          </pmd>
     </target>
@@ -252,7 +271,7 @@
        <taskdef resource="simiantask.properties" 
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
-            <fileset dir="src" includes="**/*.java"/>
+            <fileset dir="src" includes="**/accrual/**/*.java"/>
             <formatter type="plain" toFile="${services.report.dir}/simian.txt"/>
             <formatter type="xml" toFile="${services.report.dir}/simian.xml"/>
             <formatter type="plain"/>

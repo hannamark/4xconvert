@@ -77,6 +77,60 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.domain.Epoch;
+import gov.nih.nci.pa.domain.Arm;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.DiseaseAltername;
+import gov.nih.nci.pa.domain.DiseaseParent;
+import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.FundingMechanism;
+import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.Intervention;
+import gov.nih.nci.pa.domain.InterventionAlternateName;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NIHinstitute;
+import gov.nih.nci.pa.domain.ObservationResult;
+import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationalContact;
+import gov.nih.nci.pa.domain.OversightCommittee;
+import gov.nih.nci.pa.domain.PAProperties;
+import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.domain.PerformedAdministrativeActivity;
+import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.domain.PerformedObservationResult;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.PlannedAdministrativeActivity;
+import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
+import gov.nih.nci.pa.domain.PlannedObservationResult;
+import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StratumGroup;
+import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
+import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
+import gov.nih.nci.pa.domain.StudyDisease;
+import gov.nih.nci.pa.domain.StudyIndlde;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyObjective;
+import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.domain.StudyParticipationContact;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
+import gov.nih.nci.pa.domain.StudyRelationship;
+import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -99,8 +153,67 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
     public TestHibernateHelper() {
         configuration = new AnnotationConfiguration().
 
-        // Accrual classes
+        // temp
         addAnnotatedClass(Epoch.class).
+
+        // Accrual classes
+        addAnnotatedClass(ObservationResult.class).
+        addAnnotatedClass(PerformedActivity.class).
+        addAnnotatedClass(PerformedAdministrativeActivity.class).
+        addAnnotatedClass(PerformedObservation.class).
+        addAnnotatedClass(PerformedObservationResult.class).
+        addAnnotatedClass(PerformedSubjectMilestone.class).
+        addAnnotatedClass(PlannedAdministrativeActivity.class).
+        addAnnotatedClass(PlannedObservationResult.class).
+        addAnnotatedClass(PlannedStudySubjectMilestone.class).
+
+        // PA classes
+        addAnnotatedClass(StudyProtocol.class).
+        addAnnotatedClass(StudyRelationship.class).
+        addAnnotatedClass(InterventionalStudyProtocol.class).
+        addAnnotatedClass(Organization.class).
+        addAnnotatedClass(StudyCoordinatingCenter.class).
+        addAnnotatedClass(StudyCoordinatingCenterRole.class).
+        addAnnotatedClass(StudyOverallStatus.class).
+        addAnnotatedClass(DocumentWorkflowStatus.class).
+        addAnnotatedClass(Person.class).
+        addAnnotatedClass(HealthCareProvider.class).
+        addAnnotatedClass(StudyContact.class).
+        addAnnotatedClass(StudyParticipation.class).
+        addAnnotatedClass(Country.class).
+        addAnnotatedClass(RegulatoryAuthority.class).
+        addAnnotatedClass(StudyRegulatoryAuthority.class).
+        addAnnotatedClass(HealthCareFacility.class).
+        addAnnotatedClass(StudyResourcing.class).
+        addAnnotatedClass(FundingMechanism.class).
+        addAnnotatedClass(StudySiteAccrualStatus.class).
+        addAnnotatedClass(StudyParticipationContact.class).
+        addAnnotatedClass(OversightCommittee.class).
+        addAnnotatedClass(Document.class).
+        addAnnotatedClass(StudyRecruitmentStatus.class).
+        addAnnotatedClass(StratumGroup.class).
+        addAnnotatedClass(ResearchOrganization.class).
+        addAnnotatedClass(PlannedActivity.class).
+        addAnnotatedClass(PlannedEligibilityCriterion.class).
+        addAnnotatedClass(Intervention.class).
+        addAnnotatedClass(InterventionAlternateName.class).
+        addAnnotatedClass(ObservationalStudyProtocol.class).
+        addAnnotatedClass(StudyOutcomeMeasure.class).
+        addAnnotatedClass(StudyIndlde.class).
+        addAnnotatedClass(Arm.class).
+        addAnnotatedClass(ClinicalResearchStaff.class).
+        addAnnotatedClass(OrganizationalContact.class).
+        addAnnotatedClass(Disease.class).
+        addAnnotatedClass(DiseaseAltername.class).
+        addAnnotatedClass(DiseaseParent.class).
+        addAnnotatedClass(StudyDisease.class).
+        addAnnotatedClass(StudyMilestone.class).
+        addAnnotatedClass(StudyOnhold.class).
+        addAnnotatedClass(NIHinstitute.class).
+        addAnnotatedClass(PAProperties.class).
+        addAnnotatedClass(RegistryUser.class).
+        addAnnotatedClass(StudyRelationship.class).
+        addAnnotatedClass(StudyObjective.class).
 
         // hibernate properties
         setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
