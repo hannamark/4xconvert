@@ -13,6 +13,7 @@
                 <param name="namespace">/</param>
                 <param name="actionName">logout</param>
             </result>
+            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </global-results> 
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
@@ -23,10 +24,15 @@
         <action name="home">
             <result>/WEB-INF/jsp/accrualHome.jsp</result>
         </action>
+        
     </package>
     <package name="public" namespace="/public" extends="default">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
-            <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result>
+        	<result name="show_Disclaimer_Page" type="redirectAction">
+        		<param name="namespace">../protected</param>
+                <param name="actionName">disClaimerAction</param>
+        	</result>
+           
             <result name="adminWelcome" type="redirectAction">
                 <param name="namespace">../admin</param>
                 <param name="actionName">welcome</param>
@@ -35,10 +41,23 @@
         <action name="sample*" class="gov.nih.nci.accrual.web.action.SampleAction"  method="{1}">
             <result>/WEB-INF/jsp/sample.jsp</result> 
         </action>
+        
+        
     </package>
     <package name="admin" namespace="/admin" extends="public">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
             <result name="adminWelcome">/WEB-INF/jsp/adminWelcome.jsp</result>
         </action>
     </package>
+    
+    <package name="protected" namespace="/protected" extends="public">
+         
+        <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
+           <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
+            <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result>
+        </action>
+         
+    </package>
+    
+    
 </struts>
