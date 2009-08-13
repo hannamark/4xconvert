@@ -24,11 +24,11 @@
                 </c:choose>
                 
                 <c:choose>
-                    <c:when test="${requestScope.topic == ''}">
-                       <li><a href="" class="selected">View Protocol</a></li> 
+                    <c:when test="${requestScope.topic == 'list_protocols'}">
+                       <li><a href="viewProtocol.action" class="selected">View Protocol</a></li> 
                     </c:when>
                     <c:otherwise>
-                       <li><a href="" >View Protocol</a></li>
+                       <li><a href="viewProtocol.action" >View Protocol</a></li>
                     </c:otherwise>
                 </c:choose>
                 
