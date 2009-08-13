@@ -99,6 +99,14 @@ public class NullifiedRoleException extends AbstractNullifiedDataException {
     public NullifiedRoleException(Ii id) {
         super(id);
     }
+    
+    /**
+     * @param id the ISO identifier
+     * @param duplicateOf the ISO identifier for the duplicate of data/record
+     */
+    public NullifiedRoleException(Ii id, Ii duplicateOf) {
+        super(id, duplicateOf);
+    }
  
     /**
      * @param nullifiedEntities &lt;K,V&gt; where K is the identifier of the nullified entity and V is the duplicate of

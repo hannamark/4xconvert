@@ -181,8 +181,9 @@ public class NullifiedEntityInterceptorTest {
             fail("Expected NullifiedEntityException for Ii.extension="
                     + ((PoDto)testContext.returnValue).getIdentifier().getExtension());
         } catch (NullifiedEntityException e) {
-            assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
-            Ii duplicateIi = e.getNullifiedEntities().get(((PoDto)testContext.returnValue).getIdentifier());
+            Ii identifier = ((PoDto)testContext.returnValue).getIdentifier();
+            assertTrue(e.getNullifiedEntities().containsKey(identifier));
+            Ii duplicateIi = e.getNullifiedEntities().get(identifier);
             assertNotNull(duplicateIi);
             assertEquals(duplicateIi.getExtension(), p1.getId().toString());
         }

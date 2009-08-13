@@ -93,6 +93,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * Converts persistent objects to II's.
  * @author Scott Miller
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class PersistentObjectConverter extends AbstractXSnapshotConverter<PersistentObject> {
 
     /**
@@ -165,17 +166,108 @@ public class PersistentObjectConverter extends AbstractXSnapshotConverter<Persis
         }
     }
     
-     /**
-     * convert the Id of a person.
+    /**
+     * convert the Id of a {@link ResearchOrganization}.
      */
-    public static class PersistentHealthCareProviderConverter extends PersistentObjectConverter {
+    public static class PersistentROConverter extends PersistentObjectConverter {
         /**
          * {@inheritDoc}
          */
         @Override
         protected void initIiRootAndIdentifierName(Ii iso) {
-            iso.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
-            iso.setRoot(IdConverter.PERSON_ROOT);
+            iso.setIdentifierName(IdConverter.RESEARCH_ORG_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.RESEARCH_ORG_ROOT);
+        }
+    }
+     /**
+     * convert the Id of a {@link HealthCareProvider}.
+     */
+    public static class PersistentHCPConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.HEALTH_CARE_PROVIDER_ROOT);
+        }
+    }
+    /**
+     * convert the Id of a {@link ClinicalResearchStaff}.
+     */
+    public static class PersistentCRSConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+        }
+    }
+    /**
+     * convert the Id of a {@link HealthCareFacility}.
+     */
+    public static class PersistentHCFConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
+        }
+    }
+    /**
+     * convert the Id of a {@link OversightCommittee}.
+     */
+    public static class PersistentOvCConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.OVERSIGHT_COMMITTEE_ROOT);
+        }
+    }
+    /**
+     * convert the Id of a {@link OrganizationalContact}.
+     */
+    public static class PersistentOCConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.ORGANIZATIONAL_CONTACT_ROOT);
+        }
+    }
+    /**
+     * convert the Id of a {@link IdentifiedPerson}.
+     */
+    public static class PersistentIPConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.IDENTIFIED_PERSON_ROOT);
+        }
+    }
+    /**
+     * convert the Id of a {@link IdentifiedOrganization}.
+     */
+    public static class PersistentIOConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
         }
     }
 }

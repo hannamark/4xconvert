@@ -154,6 +154,9 @@ public class HealthCareFacility extends AbstractOrganizationRole implements Corr
 
     /**
      * {@inheritDoc}
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="duplicateOf"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentHCFConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter$CorrelationIiConverter"
      */
     @ManyToOne(optional = true)
     @JoinColumn(name = "duplicate_of", nullable = true)

@@ -83,12 +83,19 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiConverter.CorrelationIiConverter;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.Map;
 
@@ -131,6 +138,44 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         assertEquals(1, c);
     }
 
+    @Test
+    public void testConvertToCRS() throws Exception {
+        ClinicalResearchStaff input = getSampleStructuralRole();
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();
+        s.create(input);
+        
+        CorrelationIiConverter converter = new IiConverter.CorrelationIiConverter();
+
+        Class<ClinicalResearchStaff> returnClass = ClinicalResearchStaff.class;
+        ClinicalResearchStaff crs = converter.convert(returnClass, null);
+        assertEquals(null, crs);
+
+        Ii value = new Ii();
+        value.setNullFlavor(NullFlavor.NI);
+        crs = converter.convert(returnClass, value);
+        assertEquals(null, crs);
+
+        value = new Ii();
+        value.setExtension("" + input.getId());
+        try {
+            crs = converter.convert(returnClass, value);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            // expected
+        }
+
+        value.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+        try {
+            crs = converter.convert(returnClass, value);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            // expected
+        }
+
+        value.setIdentifierName(IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+        crs = converter.convert(returnClass, value);
+        assertEquals(input.getId(), crs.getId());
+    }
 
     @Override
     @Test(expected = EntityValidationException.class)

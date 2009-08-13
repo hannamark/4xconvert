@@ -83,11 +83,14 @@
 package gov.nih.nci.services.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.PoDto;
 
 import java.lang.reflect.Method;
@@ -124,13 +127,18 @@ public class NullifiedRoleInterceptorTest {
         OversightCommittee o2 = new OversightCommittee();
         o2.setId(1L);
         o2.setStatus(RoleStatus.NULLIFIED);
+        o2.setDuplicateOf(o1);
         testContext.returnValue = PoXsnapshotHelper.createSnapshot(o2);
+        assertNotNull(((CorrelationDto)testContext.returnValue).getDuplicateOf());
         try {
             interceptor.checkForNullified(testContext);
             fail("Expected NullifiedRoleException for Ii.extension="
                     + ((PoDto) testContext.returnValue).getIdentifier().getExtension());
         } catch (NullifiedRoleException e) {
             assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
+            Ii duplicateIi = e.getNullifiedEntities().get(((PoDto)testContext.returnValue).getIdentifier());
+            assertNotNull(duplicateIi);
+            assertEquals(duplicateIi.getExtension(), o1.getId().toString());            
         }
     }
 
@@ -149,12 +157,17 @@ public class NullifiedRoleInterceptorTest {
         OversightCommittee o2 = new OversightCommittee();
         o2.setId(1L);
         o2.setStatus(RoleStatus.NULLIFIED);
+        o2.setDuplicateOf(o1);
         testContext.returnValue = PoXsnapshotHelper.createSnapshot(o2);
+        assertNotNull(((CorrelationDto)testContext.returnValue).getDuplicateOf());
         try {
             interceptor.checkForNullified(testContext);
             fail("Expected NullifiedRoleException");
         } catch (NullifiedRoleException e) {
             assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
+            Ii duplicateIi = e.getNullifiedEntities().get(((PoDto)testContext.returnValue).getIdentifier());
+            assertNotNull(duplicateIi);
+            assertEquals(duplicateIi.getExtension(), o1.getId().toString());            
         }
     }
 

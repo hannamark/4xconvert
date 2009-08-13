@@ -146,7 +146,7 @@ public class NullifiedRoleInterceptor {
     private void handleDTO(CorrelationDto dto) throws NullifiedRoleException {
         Entry<Ii, Ii> entry = handle(dto);
         if (entry != null) {
-            throw new NullifiedRoleException(entry.getKey());
+            throw new NullifiedRoleException(entry.getKey(), entry.getValue());
         }
     }
 
@@ -154,7 +154,7 @@ public class NullifiedRoleInterceptor {
     private Entry<Ii, Ii> handle(CorrelationDto dto) {
         RoleStatus status = CdConverter.convertToRoleStatus(dto.getStatus());
         if (RoleStatus.NULLIFIED.equals(status)) {
-            return new UnmodifiableMapEntry(dto.getIdentifier(), null);
+            return new UnmodifiableMapEntry(dto.getIdentifier(), dto.getDuplicateOf());
         }
         return null;
     }

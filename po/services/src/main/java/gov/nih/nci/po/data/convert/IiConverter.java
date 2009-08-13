@@ -85,12 +85,18 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.services.PoIsoConstraintException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  *
@@ -113,6 +119,50 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         }
 
         throw new UnsupportedOperationException(returnClass.getName());
+    }
+
+    /**
+     * A converter to translate a Ii to a specific Correlation.
+     * NOTE: This could be generalized to handle any PersistentObject types
+     */
+    public static class CorrelationIiConverter extends IiConverter {
+        private static Map<String, String> rtIName = new HashMap<String, String>();
+        static {
+            rtIName.put(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT, IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.HEALTH_CARE_FACILITY_ROOT, IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.HEALTH_CARE_PROVIDER_ROOT, IdConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.IDENTIFIED_ORG_ROOT, IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.IDENTIFIED_PERSON_ROOT, IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.ORGANIZATIONAL_CONTACT_ROOT, IdConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.OVERSIGHT_COMMITTEE_ROOT, IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.RESEARCH_ORG_ROOT, IdConverter.RESEARCH_ORG_IDENTIFIER_NAME);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, Ii value) {
+            if (!Correlation.class.isAssignableFrom(returnClass)) {
+                throw new UnsupportedOperationException(returnClass.getName());
+            }
+            return convertHelper(returnClass, value);
+        }
+        private <TO> TO convertHelper(Class<TO> returnClass, Ii value) {
+            if (value == null || value.getNullFlavor() != null) {
+                return null;
+            }
+            
+            enforcePoIsoConstraints(value);
+            
+            Long id = Long.valueOf(value.getExtension());
+            if (!rtIName.keySet().contains(value.getRoot())) {
+                throw new PoIsoConstraintException("The ii.root value is not allowed.");
+            }
+            if (!rtIName.get(value.getRoot()).equals(value.getIdentifierName())) {
+                throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
+            }
+            return (TO) PoRegistry.getGenericService().getPersistentObject((Class<PersistentObject>) returnClass, id);
+        }
     }
 
     /**
