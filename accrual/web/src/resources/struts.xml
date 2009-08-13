@@ -56,6 +56,10 @@
            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
             <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result>
         </action>
+        
+        <action name="viewProtocol" class="gov.nih.nci.accrual.web.action.ViewProtocolAction">
+            <result name="list_protocols">/WEB-INF/jsp/listProtocols.jsp</result>
+        </action>
          
     </package>
     
