@@ -32,6 +32,7 @@ ON DELETE CASCADE;
 -- Table: patient
 CREATE TABLE patient (
     identifier SERIAL NOT NULL,
+    assigned_identifier VARCHAR(200) NOT NULL,
     person_identifier BIGINT NOT NULL,
     status_code VARCHAR(200) NOT NULL,
     status_date_range_low TIMESTAMP,
@@ -109,7 +110,6 @@ CREATE TABLE observation_result (
     result_indicator BOOLEAN,
     result_text VARCHAR(200),
     type_code VARCHAR(200),
-    unit_of_measure_code VARCHAR(200),
     observation_result_type VARCHAR(200),
     planned_activity_identifier BIGINT,
     performed_activity_identifier BIGINT,

@@ -78,10 +78,15 @@
 */
 package gov.nih.nci.pa.domain;
 
+import javax.persistence.Entity;
+
 /**
  * @author Hugh Reinhart
  * @since 08/12/2009
  */
+@Entity
 public class PerformedSubjectMilestone extends PerformedAdministrativeActivity {
+
+    private static final long serialVersionUID = 552072830898807202L;
 
 }

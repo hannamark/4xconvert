@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -90,6 +91,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -110,7 +112,7 @@ public class PlannedActivity extends Activity {
     private Intervention intervention;
 
     private Collection<Arm> arms = new ArrayList<Arm>();
-
+    private List<PlannedObservationResult> plannedObservationResult = new ArrayList<PlannedObservationResult>();
     /**
      * @return the leadProductIndicator
      */
@@ -153,5 +155,18 @@ public class PlannedActivity extends Activity {
      */
     public void setArms(Collection<Arm> arms) {
         this.arms = arms;
+    }
+    /**
+     * @return the plannedObservationResult
+     */
+    @OneToMany(mappedBy = "plannedActivity")
+    public List<PlannedObservationResult> getPlannedObservationResult() {
+        return plannedObservationResult;
+    }
+    /**
+     * @param plannedObservationResult the plannedObservationResult to set
+     */
+    public void setPlannedObservationResult(List<PlannedObservationResult> plannedObservationResult) {
+        this.plannedObservationResult = plannedObservationResult;
     }
 }

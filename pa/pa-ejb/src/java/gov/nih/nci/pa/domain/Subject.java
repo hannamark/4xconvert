@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,36 +78,16 @@
 */
 package gov.nih.nci.pa.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-import org.hibernate.validator.NotNull;
+import javax.persistence.MappedSuperclass;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 14, 2009
+ *
  */
-@Entity
-public class PerformedObservationResult extends ObservationResult {
+@MappedSuperclass
+public class Subject extends PersonFunctionalRole {
 
-    private static final long serialVersionUID = -3662714539666300766L;
+    private static final long serialVersionUID = 7802398346143336076L;
 
-    private PerformedObservation performedObservation;
-
-    /**
-     * @return the performedObservation
-     */
-    @ManyToOne
-    @JoinColumn(name = "performed_activity_identifier", updatable = false)
-    @NotNull
-    public PerformedObservation getPerformedObservation() {
-        return performedObservation;
-    }
-    /**
-     * @param performedObservation the performedObservation to set
-     */
-    public void setPerformedObservation(PerformedObservation performedObservation) {
-        this.performedObservation = performedObservation;
-    }
 }

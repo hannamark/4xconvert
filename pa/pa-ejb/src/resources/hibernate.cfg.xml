@@ -65,5 +65,18 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyRelationship" />
         <mapping class="gov.nih.nci.pa.domain.MessageLogAudit" />
         <mapping class="gov.nih.nci.pa.domain.StudyObjective"/>
+
+        <!-- mapping classes for Accrual -->
+        <mapping class="gov.nih.nci.pa.domain.ObservationResult" />
+        <mapping class="gov.nih.nci.pa.domain.Patient" />
+        <mapping class="gov.nih.nci.pa.domain.PerformedActivity" />
+        <mapping class="gov.nih.nci.pa.domain.PerformedAdministrativeActivity" />
+        <mapping class="gov.nih.nci.pa.domain.PerformedObservation" />
+        <mapping class="gov.nih.nci.pa.domain.PerformedObservationResult" />
+        <mapping class="gov.nih.nci.pa.domain.PerformedSubjectMilestone" />
+        <mapping class="gov.nih.nci.pa.domain.PlannedAdministrativeActivity" />
+        <mapping class="gov.nih.nci.pa.domain.PlannedObservationResult" />
+        <mapping class="gov.nih.nci.pa.domain.PlannedStudySubjectMilestone" />
+        <mapping class="gov.nih.nci.pa.domain.StudySubject" />
     </session-factory>
 </hibernate-configuration>

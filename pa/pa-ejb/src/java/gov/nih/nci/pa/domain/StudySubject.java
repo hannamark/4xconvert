@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -81,33 +81,65 @@ package gov.nih.nci.pa.domain;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 14, 2009
+ *
  */
 @Entity
-public class PerformedObservationResult extends ObservationResult {
+@Table(name = "study_subject")
+public class StudySubject extends Subject {
 
-    private static final long serialVersionUID = -3662714539666300766L;
+    private static final long serialVersionUID = -6946617177385690791L;
 
-    private PerformedObservation performedObservation;
+    private String paymentMethodCode;
+    private Patient patient;
+    private Arm arm;
 
     /**
-     * @return the performedObservation
+     * @return the paymentMethodCode
      */
-    @ManyToOne
-    @JoinColumn(name = "performed_activity_identifier", updatable = false)
-    @NotNull
-    public PerformedObservation getPerformedObservation() {
-        return performedObservation;
+    public String getPaymentMethodCode() {
+        return paymentMethodCode;
     }
     /**
-     * @param performedObservation the performedObservation to set
+     * @param paymentMethodCode the paymentMethodCode to set
      */
-    public void setPerformedObservation(PerformedObservation performedObservation) {
-        this.performedObservation = performedObservation;
+    public void setPaymentMethodCode(String paymentMethodCode) {
+        this.paymentMethodCode = paymentMethodCode;
+    }
+    /**
+     * @return the patient
+     */
+    @ManyToOne
+    @JoinColumn(name = "patient_identifier", updatable = false)
+    @NotNull
+    public Patient getPatient() {
+        return patient;
+    }
+    /**
+     * @param patient the patient to set
+     */
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+    /**
+     * @return the arm
+     */
+    @ManyToOne
+    @JoinColumn(name = "arm_identifier", updatable = false)
+    public Arm getArm() {
+        return arm;
+    }
+    /**
+     * @param arm the arm to set
+     */
+
+    public void setArm(Arm arm) {
+        this.arm = arm;
     }
 }

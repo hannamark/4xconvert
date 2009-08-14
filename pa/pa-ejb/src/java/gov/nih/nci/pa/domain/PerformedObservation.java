@@ -78,18 +78,35 @@
 */
 package gov.nih.nci.pa.domain;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 /**
  * @author Hugh Reinhart
  * @since 08/12/2009
  */
 @Entity
-@DiscriminatorColumn(name = "PerformedObservation", discriminatorType = DiscriminatorType.STRING)
 public class PerformedObservation extends PerformedActivity {
 
     private static final long serialVersionUID = -7669023715188869583L;
+
+    private List<PerformedObservationResult> performedObservationResult = new ArrayList<PerformedObservationResult>();
+
+    /**
+     * @return the performedObservationResult
+     */
+    @OneToMany(mappedBy = "performedObservation")
+    public List<PerformedObservationResult> getPerformedObservationResult() {
+        return performedObservationResult;
+    }
+    /**
+     * @param performedObservationResult the performedObservationResult to set
+     */
+    public void setPerformedObservationResult(List<PerformedObservationResult> performedObservationResult) {
+        this.performedObservationResult = performedObservationResult;
+    }
 
 }

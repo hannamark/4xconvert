@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,36 +78,56 @@
 */
 package gov.nih.nci.pa.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 14, 2009
+ *
  */
 @Entity
-public class PerformedObservationResult extends ObservationResult {
+@Table(name = "patient")
+public class Patient extends StructuralRole {
 
-    private static final long serialVersionUID = -3662714539666300766L;
+    private static final long serialVersionUID = 2013257396600913947L;
 
-    private PerformedObservation performedObservation;
-
+    private Person person;
+    private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
     /**
-     * @return the performedObservation
+     * @return the person
      */
     @ManyToOne
-    @JoinColumn(name = "performed_activity_identifier", updatable = false)
+    @JoinColumn(name = "PERSON_IDENTIFIER", updatable = false)
     @NotNull
-    public PerformedObservation getPerformedObservation() {
-        return performedObservation;
+    public Person getPerson() {
+        return person;
     }
     /**
-     * @param performedObservation the performedObservation to set
+     * @param person the person to set
      */
-    public void setPerformedObservation(PerformedObservation performedObservation) {
-        this.performedObservation = performedObservation;
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+    /**
+     * @return the studySubjects
+     */
+    @OneToMany(mappedBy = "patient")
+    public List<StudySubject> getStudySubjects() {
+        return studySubjects;
+    }
+    /**
+     * @param studySubjects the studySubjects to set
+     */
+    public void setStudySubjects(List<StudySubject> studySubjects) {
+        this.studySubjects = studySubjects;
     }
 }

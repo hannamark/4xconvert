@@ -78,35 +78,36 @@
 */
 package gov.nih.nci.pa.domain;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
  * @since 08/12/2009
  */
 @Entity
-@DiscriminatorColumn(name = "PlannedObservationResult", discriminatorType = DiscriminatorType.STRING)
 public class PlannedObservationResult extends ObservationResult {
 
     private static final long serialVersionUID = -1097115233546766008L;
 
-    private Long temp;
+    private PlannedActivity plannedActivity;
 
     /**
-     * @return the temp
+     * @return the plannedActivity
      */
-    @Column(name = "planned_activity_identifiert")
-    public Long getTemp() {
-        return temp;
+    @ManyToOne
+    @JoinColumn(name = "planned_activity_identifier", updatable = false)
+    @NotNull
+    public PlannedActivity getPlannedActivity() {
+        return plannedActivity;
     }
-
     /**
-     * @param temp the temp to set
+     * @param plannedActivity the plannedActivity to set
      */
-    public void setTemp(Long temp) {
-        this.temp = temp;
+    public void setPlannedActivity(PlannedActivity plannedActivity) {
+        this.plannedActivity = plannedActivity;
     }
 }

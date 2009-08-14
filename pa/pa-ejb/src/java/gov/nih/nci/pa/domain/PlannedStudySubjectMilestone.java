@@ -78,8 +78,6 @@
 */
 package gov.nih.nci.pa.domain;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 
 /**
@@ -87,7 +85,6 @@ import javax.persistence.Entity;
  * @since 08/12/2009
  */
 @Entity
-@DiscriminatorColumn(name = "PlannedStudySubjectMilestone", discriminatorType = DiscriminatorType.STRING)
 public class PlannedStudySubjectMilestone extends PlannedAdministrativeActivity {
 
     private static final long serialVersionUID = -3838394975439994194L;
