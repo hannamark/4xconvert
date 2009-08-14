@@ -1,4 +1,4 @@
-/**
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -79,37 +79,35 @@
 package gov.nih.nci.accrual.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-public class ObservationResultDto extends AbstractAccrualDto {
+public class ObservationResultDto extends BaseDTO {
 
     private static final long serialVersionUID = 4272049275963235308L;
 
-    private Cd resultCode;
+    private St resultCode;
     private St resultCodeModifiedText;
     private Ivl<Ts> resultDateRange;
     private Bl resultIndicator;
     private St resultText;
-    private Cd typeCode;
-    private Cd unitOfMeasure;
-
+    private St typeCode;
     /**
      * @return the resultCode
      */
-    public Cd getResultCode() {
+    public St getResultCode() {
         return resultCode;
     }
     /**
      * @param resultCode the resultCode to set
      */
-    public void setResultCode(Cd resultCode) {
+    public void setResultCode(St resultCode) {
         this.resultCode = resultCode;
     }
     /**
@@ -163,25 +161,13 @@ public class ObservationResultDto extends AbstractAccrualDto {
     /**
      * @return the typeCode
      */
-    public Cd getTypeCode() {
+    public St getTypeCode() {
         return typeCode;
     }
     /**
      * @param typeCode the typeCode to set
      */
-    public void setTypeCode(Cd typeCode) {
+    public void setTypeCode(St typeCode) {
         this.typeCode = typeCode;
-    }
-    /**
-     * @return the unitOfMeasure
-     */
-    public Cd getUnitOfMeasure() {
-        return unitOfMeasure;
-    }
-    /**
-     * @param unitOfMeasure the unitOfMeasure to set
-     */
-    public void setUnitOfMeasure(Cd unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
     }
 }

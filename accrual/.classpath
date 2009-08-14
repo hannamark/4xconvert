@@ -27,5 +27,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/cglib-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jta-1.0.1B.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/antlr-2.7.6.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jboss-ejb3x-4.0.5.GA.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

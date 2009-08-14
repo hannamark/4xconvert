@@ -73,23 +73,43 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Ii;
 
-import org.junit.Before;
-
+import java.rmi.RemoteException;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 13, 2009
+ *
+ * @param <DTO> iso dto
  */
-public class AbstractServiceTest {
-
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-    }
-
+public interface BaseAccrualService<DTO> {
+    /**
+     * @param ii index of object
+     * @return object
+     * @throws RemoteException exception
+     */
+    DTO get(Ii ii) throws RemoteException;
+    /**
+     * @param dto dto
+     * @return created object
+     * @throws RemoteException exception
+     */
+    DTO create(DTO dto) throws RemoteException;
+    /**
+     * @param dto dto
+     * @return updated object
+     * @throws RemoteException exception
+     */
+    DTO update(DTO dto) throws RemoteException;
+    /**
+     * @param ii index of object
+     * @throws RemoteException exception
+     */
+    void delete(Ii ii) throws RemoteException;
 }

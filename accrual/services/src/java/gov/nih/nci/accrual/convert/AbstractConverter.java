@@ -73,23 +73,33 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
-import org.junit.Before;
-
+import java.util.zip.DataFormatException;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 13, 2009
+ * @param <DTO> iso dto
+ * @param <BO> domain object
  */
-public class AbstractServiceTest {
-
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-    }
-
+public abstract class AbstractConverter <DTO extends BaseDTO, BO extends AbstractEntity> {
+    /**
+     * @param dto iso dto
+     * @return domain object
+     * @throws DataFormatException exception
+     */
+    public abstract BO convertFromDtoToDomain(DTO dto) throws DataFormatException;
+    /**
+     * @param bo domain object
+     * @return iso dto
+     * @throws DataFormatException exception
+     */
+    public abstract DTO convertFromDomainToDto(BO bo) throws DataFormatException;
 }

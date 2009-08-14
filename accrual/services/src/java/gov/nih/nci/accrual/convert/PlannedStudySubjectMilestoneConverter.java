@@ -73,23 +73,41 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.accrual.dto.PlannedStudySubjectMilestoneDto;
+import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
 
-import org.junit.Before;
-
+import java.util.zip.DataFormatException;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 13, 2009
  */
-public class AbstractServiceTest {
+@SuppressWarnings("PMD")
+public class PlannedStudySubjectMilestoneConverter extends AbstractConverter
+        <PlannedStudySubjectMilestoneDto, PlannedStudySubjectMilestone> {
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PlannedStudySubjectMilestoneDto convertFromDomainToDto(PlannedStudySubjectMilestone bo)
+            throws DataFormatException {
+        PlannedStudySubjectMilestoneDto dto = new PlannedStudySubjectMilestoneDto();
+        return dto;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PlannedStudySubjectMilestone convertFromDtoToDomain(PlannedStudySubjectMilestoneDto dto)
+            throws DataFormatException {
+        PlannedStudySubjectMilestone bo = new PlannedStudySubjectMilestone();
+        return bo;
+    }
 }

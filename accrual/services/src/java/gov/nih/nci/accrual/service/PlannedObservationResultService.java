@@ -73,23 +73,21 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.accrual.dto.PlannedObservationResultDto;
 
-import org.junit.Before;
-
+import javax.ejb.Remote;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 13, 2009
  */
-public class AbstractServiceTest {
-
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-    }
+@Remote
+public interface PlannedObservationResultService
+        extends BaseAccrualService<PlannedObservationResultDto> {
 
 }

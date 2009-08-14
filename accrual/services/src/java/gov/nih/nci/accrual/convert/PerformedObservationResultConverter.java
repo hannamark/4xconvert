@@ -73,23 +73,60 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
+import gov.nih.nci.pa.domain.PerformedObservationResult;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
-import org.junit.Before;
-
+import java.util.zip.DataFormatException;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 13, 2009
  */
-public class AbstractServiceTest {
+public class PerformedObservationResultConverter extends AbstractConverter
+        <PerformedObservationResultDto, PerformedObservationResult> {
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PerformedObservationResultDto convertFromDomainToDto(PerformedObservationResult bo)
+            throws DataFormatException {
+        PerformedObservationResultDto dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setPerformedActivityIdentifier(IiConverter.converToActivityIi(bo.getId()));
+        dto.setResultCode(StConverter.convertToSt(bo.getResultCode()));
+        dto.setResultCodeModifiedText(StConverter.convertToSt(bo.getResultCodeModifiedText()));
+        dto.setResultDateRange(IvlConverter.convertTs().convertToIvl(bo.getResultDateRangeLow(),
+                bo.getResultDateRangeHigh()));
+        dto.setResultIndicator(BlConverter.convertToBl(bo.getResultIndicator()));
+        dto.setResultText(StConverter.convertToSt(bo.getResultText()));
+        dto.setTypeCode(StConverter.convertToSt(bo.getTypeCode()));
+        return dto;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PerformedObservationResult convertFromDtoToDomain(PerformedObservationResultDto dto)
+            throws DataFormatException {
+        PerformedObservationResult bo = new PerformedObservationResult();
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setResultCode(StConverter.convertToString(dto.getResultCode()));
+        bo.setResultDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getResultDateRange()));
+        bo.setResultDateRangeLow(IvlConverter.convertTs().convertLow(dto.getResultDateRange()));
+        bo.setResultIndicator(BlConverter.covertToBoolean(dto.getResultIndicator()));
+        bo.setResultText(StConverter.convertToString(dto.getResultText()));
+        bo.setTypeCode(StConverter.convertToString(dto.getTypeCode()));
+        return bo;
+    }
 }

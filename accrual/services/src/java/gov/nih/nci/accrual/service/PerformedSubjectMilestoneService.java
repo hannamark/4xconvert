@@ -73,36 +73,21 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.dto;
+package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 
-import java.io.Serializable;
+import javax.ejb.Remote;
 
 /**
  * @author Hugh Reinhart
- * @since 8/13/2009
+ * @since Aug 13, 2009
  */
-public abstract class AbstractAccrualDto implements Serializable {
+@Remote
+public interface PerformedSubjectMilestoneService
+        extends BaseAccrualService<PerformedSubjectMilestoneDto> {
 
-    private static final long serialVersionUID = -8680865794047146888L;
-
-    private Ii identifier;
-
-    /**
-     *
-     * @return ii
-     */
-    public Ii getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     *
-     * @param ii ii
-     */
-    public void setIdentifier(Ii ii) {
-        this.identifier = ii;
-    }
 }

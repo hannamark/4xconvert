@@ -1,4 +1,4 @@
-/**
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -83,12 +83,13 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-public class AbstractActivityDto extends AbstractAccrualDto {
+public class AbstractActivityDto extends BaseDTO {
 
     private static final long serialVersionUID = 8158123295607300375L;
 

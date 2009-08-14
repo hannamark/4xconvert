@@ -98,6 +98,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.PAProperties;
+import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedAdministrativeActivity;
 import gov.nih.nci.pa.domain.PerformedObservation;
@@ -131,6 +132,7 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.domain.StudySubject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -158,6 +160,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
 
         // Accrual classes
         addAnnotatedClass(ObservationResult.class).
+        addAnnotatedClass(Patient.class).
         addAnnotatedClass(PerformedActivity.class).
         addAnnotatedClass(PerformedAdministrativeActivity.class).
         addAnnotatedClass(PerformedObservation.class).
@@ -166,6 +169,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(PlannedAdministrativeActivity.class).
         addAnnotatedClass(PlannedObservationResult.class).
         addAnnotatedClass(PlannedStudySubjectMilestone.class).
+        addAnnotatedClass(StudySubject.class).
 
         // PA classes
         addAnnotatedClass(StudyProtocol.class).

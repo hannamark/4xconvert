@@ -73,23 +73,50 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.util.TestSchema;
-
-import org.junit.Before;
-
-
+import gov.nih.nci.pa.domain.PerformedObservationResult;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.PlannedObservationResult;
+import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 13, 2009
  */
-public class AbstractServiceTest {
+public class Converters {
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
+    private static PlannedObservationResultConverter
+            plannedObservationResultConverter = new PlannedObservationResultConverter();
+    private static PerformedObservationResultConverter
+            performedObservationResultConverter = new PerformedObservationResultConverter();
+    private static PerformedSubjectMilestoneConverter
+            performedSubjectMilestoneConverter = new PerformedSubjectMilestoneConverter();
+    private static PlannedStudySubjectMilestoneConverter
+            plannedStudySubjectMilestoneConverter = new PlannedStudySubjectMilestoneConverter();
+
+    /**
+     * @param clazz class
+     * @param <TYPE> the converter type to get
+     * @return converter
+     */
+    @SuppressWarnings("unchecked")
+    public static <TYPE extends AbstractConverter> TYPE get(Class<TYPE> clazz) {
+        if (clazz.equals(PlannedObservationResult.class)) {
+            return (TYPE) plannedObservationResultConverter;
+        }
+        if (clazz.equals(PerformedObservationResult.class)) {
+            return (TYPE) performedObservationResultConverter;
+        }
+        if (clazz.equals(PerformedSubjectMilestone.class)) {
+            return (TYPE) performedSubjectMilestoneConverter;
+        }
+        if (clazz.equals(PlannedStudySubjectMilestone.class)) {
+            return (TYPE) plannedStudySubjectMilestoneConverter;
+        }
+        return null;
     }
-
 }
+

@@ -68,6 +68,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.accrual.domain.Epoch" />
 
         <mapping class="gov.nih.nci.pa.domain.ObservationResult" />
+        <mapping class="gov.nih.nci.pa.domain.Patient" />
         <mapping class="gov.nih.nci.pa.domain.PerformedActivity" />
         <mapping class="gov.nih.nci.pa.domain.PerformedAdministrativeActivity" />
         <mapping class="gov.nih.nci.pa.domain.PerformedObservation" />
@@ -76,5 +77,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.PlannedAdministrativeActivity" />
         <mapping class="gov.nih.nci.pa.domain.PlannedObservationResult" />
         <mapping class="gov.nih.nci.pa.domain.PlannedStudySubjectMilestone" />
+        <mapping class="gov.nih.nci.pa.domain.StudySubject" />
     </session-factory>
 </hibernate-configuration>
