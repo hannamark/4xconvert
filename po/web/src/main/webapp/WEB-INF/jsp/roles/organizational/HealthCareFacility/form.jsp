@@ -1,103 +1,141 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
-<s:set name="isCreate" value="role.id == null" /> 
-<s:set name="isNotCreate" value="role.id != null" /> 
+<s:set name="isCreate" value="role.id == null" />
+<s:set name="isNotCreate" value="role.id != null" />
 <s:if test="%{isCreate}">
-    <title>Create Health Care Facility</title>
+    <title>Create <s:text name="healthCareFacility"/></title>
 </s:if>
 <s:else>
-    <title>Edit Health Care Facility</title>
+   <c:if test="${fn:length(role.changeRequests) > 0}">
+      <title>Edit <s:text name="healthCareFacility"/> - Comparison</title>
+   </c:if>
+   <c:if test="${fn:length(role.changeRequests) == 0}">
+      <title>Edit <s:text name="healthCareFacility"/></title>
+   </c:if>
 </s:else>
-</head> 
+
+<%@include file="../../roleStatusOnChange_handleDuplicateOf.jsp" %>
+</head>
 <body>
+
+<s:if test="%{isNotCreate}">
+    <c:if test="${fn:length(role.changeRequests) > 0}">
+    <div>
+    <p class="directions">
+    <s:text name="curation.instructions.role.changerequests">
+        <s:param value="getText('healthCareFacility')"/>
+        <s:param>${fn:length(role.changeRequests)}</s:param>
+    </s:text>
+    </p>
+    </div>
+    </c:if>
+</s:if>
 
 <po:successMessages/>
 
 <div id="page" style="margin-top:10px;">
     <div class="boxouter_nobottom">
-    <h2>Health Care Facility Information</h2>
+    <h2><s:text name="healthCareFacility"/> Information</h2>
         <%@ include file="../orgInfo.jsp" %>
-		<div class="boxouter">
-			<s:if test="%{isCreate}">
-				<s:set name="formAction"
-					value="'roles/organizational/HealthCareFacility/add.action'" />
-			</s:if> 
-            <s:else>
-				<s:set name="formAction"
-					value="'roles/organizational/HealthCareFacility/edit.action'" />
-			</s:else>
-				<h2>Health Care Facility Role Information</h2>
-		    <div class="box_white">
-				<s:actionerror />
-				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
-                <s:if test="%{isCreate}">
-                    This Organization does not have a role of Health Care Facility assigned to it. Please select a Status and click 'Save' button to assign the new role.
-                </s:if>
-                <s:else>
-                    This Organization is currently a Health Care Facility.  To change the Role, please select a new Status and click the 'SAVE' button.
-                </s:else>
+        <div class="boxouter">
+            <s:if test="%{isCreate}">
+                <s:set name="formAction"
+                    value="'roles/organizational/HealthCareFacility/add.action'" />
+                <h2><s:text name="healthCareFacility"/> Role Information</h2>
+            </s:if> <s:else>
+                <s:set name="formAction"
+                    value="'roles/organizational/HealthCareFacility/edit.action'" />
+                <h2><s:text name="healthCareFacility"/> Role Information</h2>
+            </s:else>
+            <div class="box_white">
+                <s:actionerror/>
+                <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return isTelecomFieldsBlank() && confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+                <s:hidden key="cr"/>
+                <s:hidden key="organization"/>
+                <s:hidden key="rootKey"/>
+                
+                <s:textfield
+                    id="curateRoleForm.role.name"
+                    label="%{getText('healthCareFacility.name')}" name="role.name" value="%{role.name}" maxlength="160" size="50"/>
 
-				<s:hidden key="organization"/>
-     			<s:select
-     			   id="curateRoleForm.role.status"
-				   label="%{getText('hcf.status')}"
-				   name="role.status"
-				   list="availableStatus"
-				   listKey="name()"
-				   listValue="name()"
-				   value="role.status" 
-				   headerKey="" headerValue="--Select a Role Status--" 
-				   required="true" cssClass="required"
-				   />
-                 <input id="enableEnterSubmit" type="submit"/>			    
-			    </s:form>
-		    </div>
+                <s:select id="curateRoleForm.role.status"
+                   label="%{getText('healthCareFacility.status')}"
+                   name="role.status"
+                   list="availableStatus"
+                   listKey="name()"
+                   listValue="name()"
+                   value="role.status"
+                   headerKey="" headerValue="--Select a Role Status--"
+                   required="true" cssClass="required"
+                   onchange="handleDuplicateOf();"
+                   />
+                <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
+                <c:if test="${fn:length(availableDuplicateOfs) > 0}">
+                   <po:field labelKey="healthCareFacility.duplicateOf">
+                        <select id="curateRoleForm.duplicateOf" name="duplicateOf">
+                        <option value="">--Select a Duplicate Of Entry (ID - STATUS - DATE)--</option>
+                        <c:forEach var="dupEntry" items="${availableDuplicateOfs}">
+                            <option value="${dupEntry.id}">${dupEntry.id} -  ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
+                        </c:forEach>
+                        </select>
+                   </po:field>
+                </c:if>
+                </div>
+
+                <input id="enableEnterSubmit" type="submit"/>
+                </s:form>
+
+            </div>
         </div>
-    </div> 
+       <div class="boxouter">
+       <h2>Address Information</h2>
+            <%@ include file="../../../mailable/include.jsp" %>
+       </div>
+
+       <div class="boxouter_nobottom">
+       <h2>Contact Information</h2>
+           <div class="box_white">
+               <div class="clear"></div>
+               <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" />
+           </div>
+       </div>
+    </div>
 </div>
 
 <c:if test="${fn:length(role.changeRequests) > 0}">
 <div id="page" style="margin-top:10px;">
-<div id="crinfo">
-    <div class="boxouter_nobottom">
-    <h2>Change Request Information</h2>
-        <%@ include file="../orgInfo.jsp" %>    
-        <div class="boxouter">
-            <h2>Health Care Facility Role Change Request(s)</h2>
-            <div class="box_white">
-                <p>The table below lists the change requests for this Health Care Facility.</p>
-                <display:table class="data" uid="row" name="role.changeRequests">
-		        <po:displayTagProperties/>
-		        <display:column titleKey="hcf.status" property="status" />
-		        <display:column titleKey="th.action" class="action">
-		           <po:copyButton
-		             id="copy_curateCrForm_role_status"
-		             onclick="selectValueInSelectField('${pofn:escapeJavaScript(row.status)}', 'curateRoleForm.role.status');" 
-		                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-		           </po:copyButton>
-		        </display:column>
-		    </display:table>
-            <div class="clear"></div>
-            </div>
-        </div>    
+    <c:if test="${fn:length(role.changeRequests) > 1}">
+    <div class="crselect">
+    <s:form action="ajax/roles/organizational/HealthCareFacility/changeCurrentChangeRequest.action" id="changeCrForm" theme="simple">
+        <s:hidden key="organization"/>
+        <s:hidden key="rootKey"/>
+        <s:select
+           name="cr"
+           list="selectChangeRequests"
+           value="cr.id"
+           onchange="$('curateRoleForm_cr').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
+           />
+    </s:form>
     </div>
+    </c:if>
+<div id="crinfo">
+<%@ include file="roleCrInfo.jsp" %>
 </div>
 </div>
 </c:if>
 
-<div style="clear:left;">
-</div>    
+<div style="clear:left;"></div>
     <div class="btnwrapper" style="margin-bottom:20px;">
-    <%@include file="../../confirmThenSubmit.jsp" %> 
+    <%@include file="../../confirmThenSubmit.jsp" %>
     <po:buttonRow>
-       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
-        <c:url var="curateUrl" value="/protected/organization/curate/start.action">
-            <c:param name="organization.id" value="${organization.id}"/>
-        </c:url>
-        <s:set name="returnToPageTitle" value="%{'Return to ' + getText('organization.details.title')}"/>
-        <po:button id="return_to_button" href="${curateUrl}" style="continue" text="${returnToPageTitle}"/>
+       <po:button id="save_button" href="javascript://noop/" onclick="return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm'):false);" style="save" text="Save"/>
+       <c:url var="managePage" value="/protected/roles/organizational/HealthCareFacility/start.action">
+           <c:param name="organization" value="${organization.id}"/>
+       </c:url>
+       <s:set name="managePageTitle" value="%{'Return to ' + getText('healthCareFacility.manage.title')}"/>
+       <po:button id="return_to_button" href="${managePage}" onclick="" style="continue" text="${managePageTitle}"/>
     </po:buttonRow>
     </div>
 </body>
-</html>    
+</html>

@@ -95,7 +95,6 @@ import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import java.util.ArrayList;
 
 import javax.jms.JMSException;
-import javax.servlet.http.HttpSession;
 
 import org.displaytag.properties.SortOrderEnum;
 
@@ -138,10 +137,6 @@ public class ClinicalResearchStaffAction extends
         if (getRole().getScoper() == null) { // if not set, then set to default
             getRole().setScoper(new Organization());
         }
-    }
-
-    private HttpSession getSession() {
-        return PoHttpSessionUtil.getSession();
     }
 
     /**

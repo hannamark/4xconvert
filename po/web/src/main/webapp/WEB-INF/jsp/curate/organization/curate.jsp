@@ -161,7 +161,7 @@
                 <c:url var="manageOversightComms" value="/protected/roles/organizational/OversightCommittee/start.action">
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
-                <c:url var="manageHcf" value="/protected/roles/organizational/HealthCareFacility/load.action">
+                <c:url var="manageHcf" value="/protected/roles/organizational/HealthCareFacility/start.action">
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
                 <c:url var="manageOrganizationalContacts" value="/protected/roles/organizational/OrganizationalContact/start.action">

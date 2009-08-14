@@ -139,6 +139,11 @@
                         <xs:element name="playerIdentifier"
                             type="ISO:II" />
                         <xs:element name="status" type="ISO:CD" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="name" type="ISO:ST"/>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
@@ -279,6 +284,11 @@
                         <xs:element name="typeCode" type="ISO:CD" />
                         <xs:element name="fundingMechanism"
                             type="ISO:CD" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="name" type="ISO:ST"/>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

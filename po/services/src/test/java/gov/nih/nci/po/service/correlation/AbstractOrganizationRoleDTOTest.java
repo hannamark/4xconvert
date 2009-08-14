@@ -89,16 +89,19 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
+import gov.nih.nci.po.service.CountryTestUtil;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -106,6 +109,21 @@ import org.junit.Test;
  */
 public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateTestCase {
 
+    private Country defaultCountry;
+
+    public Country getDefaultCountry() {
+        return defaultCountry;
+    }
+
+    public void setDefaultCountry(Country defaultCountry) {
+        this.defaultCountry = defaultCountry;
+    }
+
+    @Before
+    public void setUpTestData() {
+        defaultCountry = CountryTestUtil.save(new Country("Afghanistan", "004", "AF", "AFG"));
+    }
+    
     protected AbstractOrganizationRole fillInExampleOrgRoleFields(AbstractOrganizationRole or) {
         or.setId(1L);
         or.setStatus(RoleStatus.ACTIVE);
@@ -114,7 +132,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
 
         return or;
     }
-
+    
     abstract protected AbstractOrganizationRole getExampleTestClass();
 
     abstract protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto);
@@ -159,7 +177,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         return ii;
     }
 
-    abstract protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId);
+    abstract protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) throws Exception;
 
     abstract protected void verifyTestClassDTOFields(AbstractOrganizationRole or);
 

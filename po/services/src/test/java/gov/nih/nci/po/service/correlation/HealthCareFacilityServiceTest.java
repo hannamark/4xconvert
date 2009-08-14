@@ -188,7 +188,7 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
         }
     }
 
-    @Test(expected = EntityValidationException.class)
+    @Test
     public void testUniqueConstraint() throws Exception {
         HealthCareFacility hcf = getSampleStructuralRole();
         HealthCareFacility hcf2 = getSampleStructuralRole();

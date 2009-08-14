@@ -85,21 +85,20 @@ package gov.nih.nci.po.web.roles;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.HealthCareFacilitySortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import javax.jms.JMSException;
 
 import org.displaytag.properties.SortOrderEnum;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
-import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
@@ -109,134 +108,238 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author Scott Miller
  *
  */
-public class HealthCareFacilityAction extends ActionSupport implements Preparable {
+public class HealthCareFacilityAction 
+    extends AbstractOrganizationRoleAction<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityServiceLocal> 
+    implements Preparable {
+
     private static final long serialVersionUID = 1L;
+    private HealthCareFacility role = new HealthCareFacility();
+    private HealthCareFacility duplicateOf = new HealthCareFacility();
+    private HealthCareFacilityCR cr = new HealthCareFacilityCR();
+    private String rootKey;
 
-    private Organization organization = new Organization();
-    private HealthCareFacility role;
 
-    private void useDefaultHealthCareFacility() {
-        HealthCareFacility newRole = new HealthCareFacility();
-        newRole.setStatus(RoleStatus.PENDING);
-        newRole.setPlayer(organization);
-        setRole(newRole);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        super.prepare();
+        if (getRootKey() != null) {
+            role = (HealthCareFacility) getSession().getAttribute(getRootKey());
+        }
+        if (getRole() == null) {
+            setRole(new HealthCareFacility());
+        }
+        if (getRole().getPlayer() == null) { //if not set, then set to default
+            getRole().setPlayer(getOrganization());
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void prepare() {
-        // serch to
-        HealthCareFacility example = new HealthCareFacility();
-        example.setPlayer(organization);
-        AnnotatedBeanSearchCriteria<HealthCareFacility> criteria =
-            new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
-        List<HealthCareFacility> hcfs =
-            PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().search(criteria);
-        if (hcfs != null && !hcfs.isEmpty()) {
-            // current org has a non-nullified role, use it
-            setRole(hcfs.get(0));
-            getRole().getChangeRequests().size();
-        } else {
-            useDefaultHealthCareFacility();
-        }
+    @Override
+    public String input() {
+        String result = super.input();
+        initializeCollections(getRole());
+        initialize(getRole());
+        setRootKey(PoHttpSessionUtil.addAttribute(getRole()));
+        return result;
     }
-
+    
     /**
-     * Action to load the role.
-     * @return INPUT
-     */
-    public String load() {
-        return INPUT;
-    }
-
-    /**
-     * Action for the curator to save the role.
-     * @return INPUT
-     * @throws JMSException on error
+     *
+     * {@inheritDoc}
      */
     @Validations(
-            customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                    parameters = { @ValidationParameter(name = "resourceKeyBase", value = "hcf") })
-            }
-        )    
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "healthCareFacility") })
+        }
+    )
+    @Override
+    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String add() throws JMSException {
-        PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().curate(role);
-        ActionHelper.saveMessage(getText("hcf.add.success"));
-        PoRegistry.getGenericService().refreshObject(role);
-        return INPUT;
+        return super.add();
     }
+    
+
 
     /**
-     * Action for the curator to save the role.
-     * @return INPUT
-     * @throws JMSException on error
+     * {@inheritDoc}
      */
     @Validations(
-            customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                    parameters = { @ValidationParameter(name = "resourceKeyBase", value = "hcf") })
-            }
-        )  
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "healthCareFacility") })
+        }
+    )
+    @Override
     public String edit() throws JMSException {
-        PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().curate(role);
-        ActionHelper.saveMessage(getText("hcf.update.success"));
-        if (role.getStatus().equals(RoleStatus.NULLIFIED)) {
-            useDefaultHealthCareFacility();
-        } else {
-            PoRegistry.getGenericService().refreshObject(role);
+        // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
+        // set person.duplicateOf.id directly, so we're setting it manually
+        if (duplicateOf != null && duplicateOf.getId() != null) {
+            role.setDuplicateOf(duplicateOf);
         }
-        return INPUT;
+        
+        return super.edit();
     }
 
     /**
-     * Get the available statuses for the drop down.
-     * @return the statuses.
+     * {@inheritDoc}
      */
-    public Collection<RoleStatus> getAvailableStatus() {
-        if (getRole().getId() != null) {
-            return getRole().getPriorStatus().getAllowedTransitions();
-        } else {
-            List<RoleStatus> set = new ArrayList<RoleStatus>();
-            set.add(RoleStatus.PENDING);
-            set.add(RoleStatus.ACTIVE);
-            return set;
-        }
+    @Override
+    protected SearchCriteria<HealthCareFacility> getDuplicateCriteria() {
+        HealthCareFacility dupOfBOCrit = new HealthCareFacility();
+        AnnotatedBeanSearchCriteria<HealthCareFacility> duplicateOfCriteria
+            = new AnnotatedBeanSearchCriteria<HealthCareFacility>(dupOfBOCrit);
+        dupOfBOCrit.setPlayer(getOrganization());
+        return duplicateOfCriteria;
     }
 
     /**
-     * @return the organization
+     * {@inheritDoc}
      */
-    public Organization getOrganization() {
-        return this.organization;
+    @Override
+    protected void defaultConstructorInit() {
+        setResults(new PaginatedList<HealthCareFacility>(0,
+                new ArrayList<HealthCareFacility>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
+                HealthCareFacilitySortCriterion.ID.name(), SortOrderEnum.ASCENDING));
     }
 
     /**
-     * @param organization the organization to set
+     * {@inheritDoc}
      */
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
+    @Override
+    protected HealthCareFacilityServiceLocal getRoleService() {
+        return PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService();
     }
 
     /**
-     * @return the role
+     * {@inheritDoc}
+     */
+    @Override
+    protected SearchCriteria<HealthCareFacility> getSearchCriteria() {
+        HealthCareFacility boCrit = new HealthCareFacility();
+        AnnotatedBeanSearchCriteria<HealthCareFacility> criteria
+            = new AnnotatedBeanSearchCriteria<HealthCareFacility>(boCrit);
+        Organization player = new Organization();
+        player.setId(getOrganization().getId());
+        boCrit.setPlayer(player);
+        return criteria;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Class<HealthCareFacilitySortCriterion> getSortCriterion() {
+        return HealthCareFacilitySortCriterion.class;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getAddSuccessMessageKey() {
+        return "healthCareFacility.create.success";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getEditSuccessMessageKey() {
+        return "healthCareFacility.update.success";
+    }
+    
+    /**
+     * {@inheritDoc}
      */
     public HealthCareFacility getRole() {
-        return this.role;
+        return role;
     }
-
+    
     /**
-     * @param role the role to set
+     * {@inheritDoc}
      */
     public void setRole(HealthCareFacility role) {
         this.role = role;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareFacilityCR getCr() {
+        return cr;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setCr(HealthCareFacilityCR cr) {
+        this.cr = cr;
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HealthCareFacilityCR getBaseCr() {
+        return getCr();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HealthCareFacility getBaseRole() {
+        return getRole();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseCr(HealthCareFacilityCR baseCr) {
+        setCr(baseCr);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseRole(HealthCareFacility baseRole) {
+        setRole(baseRole);
+    }
 
     /**
-     * @return list of change requests
+     * @return the duplicateOf
      */
-    public PaginatedList<HealthCareFacilityCR> getCrs() {
-        return new PaginatedList<HealthCareFacilityCR>(role.getChangeRequests().size(),
-                new ArrayList<HealthCareFacilityCR>(role.getChangeRequests()), role.getChangeRequests().size(), 1, null,
-                "status", SortOrderEnum.ASCENDING);
+    public HealthCareFacility getDuplicateOf() {
+        return duplicateOf;
     }
+
+    /**
+     * @param duplicateOf the duplicateOf to set
+     */
+    public void setDuplicateOf(HealthCareFacility duplicateOf) {
+        this.duplicateOf = duplicateOf;
+    }
+
+    /**
+     *
+     * @return the session key of the root object (org or person)
+     */
+    public String getRootKey() {
+        return rootKey;
+    }
+
+    /**
+     *
+     * @param rootKey the session key of the root object.
+     */
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
+    }
+    
 }

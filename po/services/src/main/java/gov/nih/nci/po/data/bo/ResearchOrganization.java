@@ -88,6 +88,7 @@ import gov.nih.nci.po.util.UniqueResearchOrganization;
 import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -95,12 +96,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
+import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -121,6 +126,10 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @UniqueResearchOrganization
 @ResearchOrganizationTypeCodeValidator.ResearchOrganizationTypeCode
 public class ResearchOrganization extends AbstractResearchOrganization implements Correlation {
+
+    private static final String VALUE = "value";
+    private static final String RO_ID = "ro_id";
+    private static final String IDX = "idx";
 
     private static final long serialVersionUID = 1L;
 
@@ -179,4 +188,132 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
         return super.getId();
     }
 
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "ro_address",
+            joinColumns = @JoinColumn(name = RO_ID),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "RO_ADDRESS_FK", inverseName = "ADDRESS_RO_FK")
+    @Valid
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public Set<Address> getPostalAddresses() {
+        return super.getPostalAddresses();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "ro_email",
+            joinColumns = @JoinColumn(name = RO_ID),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "RO_EMAIL_FK", inverseName = "EMAIL_RO_FK")
+    @Valid
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<Email> getEmail() {
+        return super.getEmail();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "ro_fax",
+            joinColumns = @JoinColumn(name = RO_ID),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "RO_FAX_FK", inverseName = "FAX_RO_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<PhoneNumber> getFax() {
+        return super.getFax();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "ro_phone",
+            joinColumns = @JoinColumn(name = RO_ID),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "RO_PHONE_FK", inverseName = "PHONE_RO_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<PhoneNumber> getPhone() {
+        return super.getPhone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "ro_tty",
+            joinColumns = @JoinColumn(name = RO_ID),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "RO_TTY_FK", inverseName = "TTY_RO_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<PhoneNumber> getTty() {
+        return super.getTty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "ro_url",
+            joinColumns = @JoinColumn(name = RO_ID),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "RO_URL_FK", inverseName = "URL_RO_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<URL> getUrl() {
+        return super.getUrl();
+    }
 }
+

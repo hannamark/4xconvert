@@ -90,6 +90,7 @@ import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.ArrayList;
 
@@ -120,68 +121,8 @@ public class ResearchOrganizationAction
     private ResearchOrganizationCR cr = new ResearchOrganizationCR();
     @SuppressWarnings("deprecation")
     private ResearchOrganizationType researchOrganizationType = new ResearchOrganizationType();
+    private String rootKey;
 
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganization getRole() {
-        return role;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setRole(ResearchOrganization role) {
-        this.role = role;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationCR getCr() {
-        return cr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setCr(ResearchOrganizationCR cr) {
-        this.cr = cr;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ResearchOrganizationCR getBaseCr() {
-        return getCr();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ResearchOrganization getBaseRole() {
-        return getRole();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setBaseCr(ResearchOrganizationCR baseCr) {
-        setCr(baseCr);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setBaseRole(ResearchOrganization baseRole) {
-        setRole(baseRole);
-    }
 
     /**
      * {@inheritDoc}
@@ -190,6 +131,9 @@ public class ResearchOrganizationAction
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() {
         super.prepare();
+        if (getRootKey() != null) {
+            role = (ResearchOrganization) getSession().getAttribute(getRootKey());
+        }
         if (getRole() == null) {
             setRole(new ResearchOrganization());
         }
@@ -206,6 +150,18 @@ public class ResearchOrganizationAction
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String input() {
+        String result = super.input();
+        initializeCollections(getRole());
+        initialize(getRole());
+        setRootKey(PoHttpSessionUtil.addAttribute(getRole()));
+        return result;
+    }
+    
     /**
      *
      * {@inheritDoc}
@@ -342,4 +298,82 @@ public class ResearchOrganizationAction
     public void setDuplicateOf(ResearchOrganization duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganization getRole() {
+        return role;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRole(ResearchOrganization role) {
+        this.role = role;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationCR getCr() {
+        return cr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setCr(ResearchOrganizationCR cr) {
+        this.cr = cr;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResearchOrganizationCR getBaseCr() {
+        return getCr();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResearchOrganization getBaseRole() {
+        return getRole();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseCr(ResearchOrganizationCR baseCr) {
+        setCr(baseCr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseRole(ResearchOrganization baseRole) {
+        setRole(baseRole);
+    }
+
+    /**
+     *
+     * @return the session key of the root object (org or person)
+     */
+    public String getRootKey() {
+        return rootKey;
+    }
+
+    /**
+     *
+     * @param rootKey the session key of the root object.
+     */
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
+    }
+    
 }

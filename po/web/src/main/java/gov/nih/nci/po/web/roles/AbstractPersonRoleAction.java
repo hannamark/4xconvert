@@ -82,10 +82,8 @@
  */
 package gov.nih.nci.po.web.roles;
 
-import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
-import gov.nih.nci.po.data.bo.Mailable;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 
@@ -123,17 +121,5 @@ public abstract class AbstractPersonRoleAction<ROLE extends Correlation, ROLECR 
      */
     public void setPerson(Person person) {
         this.person = person;
-    }
-
-    /**
-     * @param mailable initialize Mailable
-     */
-    protected void initialize(Mailable mailable) {
-        mailable.getPostalAddresses().size();
-        for (Address address : mailable.getPostalAddresses()) {
-            if (address.getCountry() != null) {
-                address.getCountry().getStates().size();
-            }
-        }
     }
 }

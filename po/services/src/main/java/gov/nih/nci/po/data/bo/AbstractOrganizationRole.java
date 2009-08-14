@@ -107,6 +107,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO"
+ *      implements="gov.nih.nci.services.CorrelationDto"
  *      serial-version-uid="1L"
  */
 @MappedSuperclass

@@ -53,6 +53,12 @@
             <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
                 <s:hidden key="cr"/>
                 <s:hidden key="organization"/>
+                <s:hidden key="rootKey"/>
+
+                <s:textfield
+                    id="curateRoleForm.role.name"
+                    label="%{getText('researchOrganization.name')}" name="role.name" value="%{role.name}" maxlength="160" size="50"/>
+                
                 <s:if test="%{isNotCreate}"><s:hidden key="role.id"/></s:if>
                 <script type="text/javascript"><!--
                 /*
@@ -104,8 +110,21 @@
                 </div>
                 <input id="enableEnterSubmit" type="submit"/>
             </s:form>
+
+            </div>
         </div>
+        <div class="boxouter">
+        <h2>Address Information</h2>
+            <%@ include file="../../../mailable/include.jsp" %>
         </div>
+        
+        <div class="boxouter_nobottom">
+        <h2>Contact Information</h2>
+           <div class="box_white">
+               <div class="clear"></div>
+               <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" />
+           </div>
+        </div>                
     </div>
 </div>
 
@@ -115,7 +134,7 @@
     <div class="crselect">
     <s:form action="ajax/roles/organizational/ResearchOrganization/changeCurrentChangeRequest.action" id="changeCrForm" theme="simple">
         <s:hidden key="organization"/>
-        <s:hidden key="role.id" />
+        <s:hidden key="rootKey"/>
         <s:select
            name="cr"
            list="selectChangeRequests"

@@ -83,10 +83,12 @@
 package gov.nih.nci.po.web.util;
 
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
 
@@ -103,6 +105,7 @@ import org.apache.struts2.ServletActionContext;
  * TODO revisit this implementations if you plan to use session replication for failover.
  * @author gax
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class PoHttpSessionUtil {
 
     private static int sidCounter = Integer.MIN_VALUE;
@@ -177,7 +180,7 @@ public class PoHttpSessionUtil {
     }
 
     /**
-     * Adds a org search criteria to the http session with a unique key.
+     * Adds a struts org search criteria to the http session with a unique key.
      * @param criteria the organization search criteria to add to the session
      * @return the key used to add the objects
      */
@@ -186,7 +189,7 @@ public class PoHttpSessionUtil {
     }
 
     /**
-     * Adds a person search criteria to the http session with a unique key.
+     * Adds a struts person search criteria to the http session with a unique key.
      * @param criteria the person search criteria to add to the session
      * @return the key used to add the objects
      */
@@ -195,7 +198,7 @@ public class PoHttpSessionUtil {
     }
 
     /**
-     * Adds a person role to the http session with a unique key.
+     * Adds a clinical research staff role to the http session with a unique key.
      * @param role the person role to add to the session
      * @return the key used to add the objects
      */
@@ -204,7 +207,7 @@ public class PoHttpSessionUtil {
     }
 
     /**
-     * Adds a person role to the http session with a unique key.
+     * Adds a health care provider role to the http session with a unique key.
      * @param role the person role to add to the session
      * @return the key used to add the objects
      */
@@ -213,11 +216,28 @@ public class PoHttpSessionUtil {
     }
 
     /**
-     * Adds a person role to the http session with a unique key.
+     * Adds a organziation contact role to the http session with a unique key.
      * @param role the person role to add to the session
      * @return the key used to add the objects
      */
     public static String addAttribute(OrganizationalContact role) {
         return addUniqueAttribute("oc-", role);
+    }
+    /**
+     * Adds a health care facility role to the http session with a unique key.
+     * @param role the person role to add to the session
+     * @return the key used to add the objects
+     */
+    public static String addAttribute(HealthCareFacility role) {
+        return addUniqueAttribute("hcf-", role);
+    }
+
+    /**
+     * Adds a research organization role to the http session with a unique key.
+     * @param role the person role to add to the session
+     * @return the key used to add the objects
+     */
+    public static String addAttribute(ResearchOrganization role) {
+        return addUniqueAttribute("ro-", role);
     }
 }

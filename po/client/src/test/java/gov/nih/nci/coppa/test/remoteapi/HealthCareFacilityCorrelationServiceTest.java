@@ -82,9 +82,18 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 
+import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.collections.set.ListOrderedSet;
 import org.junit.Assert;
 
 
@@ -95,11 +104,27 @@ public class HealthCareFacilityCorrelationServiceTest
         super("HealthCareFacilityCR");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected HealthCareFacilityDTO makeCorrelation() throws Exception {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         super.orgId = null;
         dto.setPlayerIdentifier(getOrgId());
+        
+        dto.setName(RemoteApiUtils.convertToSt("my name"));
+        
+        DSet<Ad> addys = new DSet<Ad>();
+        Set<Ad> set = new ListOrderedSet();
+        addys.setItem(set);
+        addys.getItem().add(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+        dto.setPostalAddress(addys);
+        
+        dto.setTelecomAddress(new DSet<Tel>());
+        dto.getTelecomAddress().setItem(new HashSet<Tel>());
+        
+        TelPhone ph1 = new TelPhone();
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        dto.getTelecomAddress().getItem().add(ph1);
         return dto;
     }
 
@@ -111,6 +136,6 @@ public class HealthCareFacilityCorrelationServiceTest
     @Override
     protected void verifyCreated(HealthCareFacilityDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
-
+        Assert.assertEquals("my name", dto.getName().getValue());
     }
 }

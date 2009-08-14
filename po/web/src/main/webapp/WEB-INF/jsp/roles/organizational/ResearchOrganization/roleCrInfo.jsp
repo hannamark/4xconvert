@@ -6,6 +6,12 @@
         <div class="boxouter">
             <h2><s:text name="researchOrganization"/> Information</h2>
             <div class="box_white">
+            <po:copyButton
+             id="copy_curateCrForm_role_name"
+             onclick="copyValueToTextField('${pofn:escapeJavaScript(cr.name)}', 'curateRoleForm.role.name');" 
+                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+                <s:textfield label="%{getText('researchOrganization.name')}" name="cr.name" maxlength="160" size="50"/>
+            </po:copyButton> 
             <po:copyButton 
                 id="copy_curateCrForm_role_typeCode" 
                 onclick="selectValueInSelectField('${cr.typeCode.id}', 'curateRoleForm_role_typeCode');" 
@@ -27,5 +33,7 @@
             <div class="clear"></div>
             </div>
         </div>
+        <%@ include file="../../person/crInfoMailable.jsp" %> 
+        <%@ include file="../../../curate/crInfoContactable.jsp" %>        
     </div>    
 </s:form>

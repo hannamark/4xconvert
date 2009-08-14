@@ -83,24 +83,36 @@
 package gov.nih.nci.po.web.roles;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.HealthCareFacilityServiceStub;
+import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.util.PrivateAccessor;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.jms.JMSException;
+
+import org.displaytag.properties.SortOrderEnum;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.opensymphony.xwork2.Action;
 
 /**
@@ -108,68 +120,253 @@ import com.opensymphony.xwork2.Action;
  *
  */
 public class HealthCareFacilityActionTest extends AbstractPoTest {
-    HealthCareFacilityAction action = new HealthCareFacilityAction();
+    private HealthCareFacilityAction action;
 
+    @Before
+    public void setUp() {
+        action = new HealthCareFacilityAction();
+        assertNotNull(action.getRole());
+        assertNotNull(action.getCr());
+        assertNotNull(action.getOrganization());
+    }
+    
     @Test
-    public void testLoad() {
-        assertEquals(Action.INPUT, action.load());
+    public void testInput() {
+        assertNull(action.getRootKey());
+        assertNull(action.getRole().getId());
+        assertEquals(Action.INPUT, action.input());
+        assertEquals(RoleStatus.PENDING, action.getRole().getStatus());
+        assertNotNull(action.getRootKey());
+        assertTrue(action.getRootKey().startsWith("hcf"));
+    }
+    
+    @Test
+    public void testInitialize() {
+        action.initialize(action.getRole());
+        action.initializeCollections(action.getRole());
     }
 
     @Test
-    public void testPrepare() {
-        Organization o = new Organization();
-        action.setOrganization(o);
-        assertNull(action.getRole());
+    public void testPrepareNoPersonId() throws Exception {
+        action.setRole(null);
         action.prepare();
-        assertEquals(o, action.getRole().getPlayer());
-        assertEquals(o, action.getOrganization());
+        assertSame(action.getOrganization(), action.getRole().getPlayer());
+
+        // calling again exercises the path where the object already has the player set
+        Organization o = action.getOrganization();
+        action.setOrganization(null);
+        action.prepare();
+        assertSame(o, action.getRole().getPlayer());
+    }
+    @Test
+    public void testPrepareNoRootKey() throws Exception {
+        HealthCareFacility initial = action.getRole();
+        action.prepare();
+        assertSame(initial, action.getRole());
     }
 
     @Test
-    public void testAdd() throws Exception {
-        assertEquals(Action.INPUT, action.add());
-        assertEquals(1, ActionHelper.getMessages().size());
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        action.setRootKey("a");
+        action.prepare();
+        //assertNull(action.getRole());
+        assertNotNull(action.getRole());
     }
 
     @Test
-    public void testEdit() throws Exception {
-        HealthCareFacility role = new HealthCareFacility();
-        action.setRole(role);
-        action.getRole().setStatus(RoleStatus.ACTIVE);
-        assertEquals(Action.INPUT, action.edit());
-        assertEquals(1, ActionHelper.getMessages().size());
-        assertSame(role, action.getRole());
-
-        action.getRole().setStatus(RoleStatus.NULLIFIED);
-        assertEquals(Action.INPUT, action.edit());
-        assertNotSame(role, action.getRole());
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        HealthCareFacility o = new HealthCareFacility();
+        action.setRootKey("a");
+        getSession().setAttribute(action.getRootKey(), o);
+        action.prepare();
+        assertSame(o, action.getRole());
     }
 
     @Test
-    public void testGetAvailableStatus() throws Exception {
-        HealthCareFacility hcf = new HealthCareFacility();
-        action.setRole(hcf);
+    public void testStart() {
+        assertEquals(Action.SUCCESS, action.start());
+    }
+
+    @Test
+    public void testOrganizationProperty() {
+        assertNotNull(action.getOrganization());
+        action.setOrganization(null);
+        assertNull(action.getOrganization());
+    }
+
+    @Test
+    public void testRoleProperty() {
+        assertSame(action.getRole(), action.getBaseRole());
+        assertNotNull(action.getRole());
+        action.setRole(null);
+        assertNull(action.getRole());
+
+        action.setBaseRole(new HealthCareFacility());
+        assertSame(action.getRole(), action.getBaseRole());
+    }
+
+    @Test
+    public void testResultsProperty() {
+        assertNotNull(action.getResults());
+        assertEquals(0, action.getResults().getFullListSize());
+        assertNotNull(action.getResults().getList());
+        assertEquals(PoRegistry.DEFAULT_RECORDS_PER_PAGE, action.getResults().getObjectsPerPage());
+        assertEquals(1, action.getResults().getPageNumber());
+        assertEquals(null, action.getResults().getSearchId());
+        assertEquals(ResearchOrganizationSortCriterion.ID.name(), action.getResults().getSortCriterion());
+        assertEquals(SortOrderEnum.ASCENDING, action.getResults().getSortDirection());
+    }
+
+    @Test
+    public void list() {
+        assertEquals(Action.SUCCESS, action.list());
+    }
+
+    @Test
+    public void testAdd() throws JMSException {
+        assertEquals(Action.SUCCESS, action.add());
+    }
+
+    @Test
+    public void testEdit() throws JMSException {
+        assertEquals(Action.SUCCESS, action.edit());
+    }
+
+    @Test
+    public void testEditWithDuplicate() throws JMSException {
+        HealthCareFacility o = new HealthCareFacility();
+        action.setDuplicateOf(o);
+        assertEquals(Action.SUCCESS, action.edit());
+        assertNull(action.getRole().getDuplicateOf());
+
+        o.setId(1L);
+        action.setDuplicateOf(o);
+        assertEquals(Action.SUCCESS, action.edit());
+        assertEquals(1, action.getRole().getDuplicateOf().getId().longValue());
+    }
+
+    @Test
+    public void testGetAvailableStatusForAddForm() {
         List<RoleStatus> expected = new ArrayList<RoleStatus>();
         expected.add(RoleStatus.PENDING);
         expected.add(RoleStatus.ACTIVE);
 
+        action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
+
         assertTrue(availableStatus.containsAll(expected));
         assertTrue(expected.containsAll(availableStatus));
+    }
 
-        hcf.setId(1L);
-        hcf.setStatus(RoleStatus.ACTIVE);
-        Method privateMethod = AbstractOrganizationRole.class.getDeclaredMethod("setPriorAsString",
-                new Class[] {String.class});
-        privateMethod.setAccessible(true); //hack
-        privateMethod.invoke(hcf, new Object[] {RoleStatus.ACTIVE.name()});
+    @Test
+    public void testGetAvailableStatusForEditForm() {
+        verifyAvailStatusForEditForm(RoleStatus.ACTIVE);
+        verifyAvailStatusForEditForm(RoleStatus.NULLIFIED);
+        verifyAvailStatusForEditForm(RoleStatus.PENDING);
+        verifyAvailStatusForEditForm(RoleStatus.SUSPENDED);
+    }
 
-        expected.clear();
-        expected.add(RoleStatus.ACTIVE);
-        expected.add(RoleStatus.SUSPENDED);
-        expected.add(RoleStatus.NULLIFIED);
-        availableStatus = action.getAvailableStatus();
-        assertTrue(availableStatus.containsAll(expected));
-        assertTrue(expected.containsAll(availableStatus));
+    private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
+        action.getRole().setId(1L);
+        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractOrganizationRole.class, "setPriorAsString",
+                new Object[] { roleStatus.name() });
+        assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
+        assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
+    }
+
+    @Test
+    public void testGetAvailableDuplicateOfs() {
+        final Long playerId = 1L;
+
+        action.getRole().setId(null);
+        action.getOrganization().setId(playerId);
+        assertNull(action.getAvailableDuplicateOfs());
+
+        action.getRole().setId(5L);
+        action.getOrganization().setId(playerId);
+        assertNull(action.getAvailableDuplicateOfs());
+
+        action = new HealthCareFacilityAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected HealthCareFacilityServiceLocal getRoleService() {
+                return new HealthCareFacilityServiceStub() {
+                    @Override
+                    public List<HealthCareFacility> search(SearchCriteria<HealthCareFacility> criteria) {
+                        List<HealthCareFacility> results = new ArrayList<HealthCareFacility>();
+                        results.add(create(playerId, 1L));
+                        results.add(create(playerId, 2L));
+                        results.add(create(playerId, 3L));
+                        results.add(create(playerId, 4L));
+                        results.add(create(playerId, 5L));
+                        return results;
+                    }
+
+                    private HealthCareFacility create(Long pId, Long id) {
+                        HealthCareFacility ro = new HealthCareFacility();
+                        ro.setPlayer(new Organization());
+                        ro.getPlayer().setId(pId);
+                        ro.setId(id);
+                        return ro;
+                    }
+                };
+            }
+        };
+        action.getRole().setId(5L);
+        action.getOrganization().setId(1L);
+        Iterator<HealthCareFacility> iterator = action.getAvailableDuplicateOfs().iterator();
+        assertEquals(1L, iterator.next().getId().longValue());
+        assertEquals(2L, iterator.next().getId().longValue());
+        assertEquals(3L, iterator.next().getId().longValue());
+        assertEquals(4L, iterator.next().getId().longValue());
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void changeCurrentChangeRequest() {
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+                .changeCurrentChangeRequest());
+
+        action.getCr().setId(1L);
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+                .changeCurrentChangeRequest());
+    }
+
+    @Test
+    public void testCrProperty() {
+        assertSame(action.getCr(), action.getBaseCr());
+        assertNotNull(action.getCr());
+        action.setCr(null);
+        assertNull(action.getCr());
+
+        action.setBaseCr(new HealthCareFacilityCR());
+        assertSame(action.getCr(), action.getBaseCr());
+    }
+
+    @Test
+    public void testGetSelectChangeRequests() {
+        action.getRole().setId(1L);
+        HealthCareFacilityCR cr1 = new HealthCareFacilityCR();
+        cr1.setId(1L);
+        action.getRole().getChangeRequests().add(cr1);
+        HealthCareFacilityCR cr2 = new HealthCareFacilityCR();
+        cr2.setId(2L);
+        action.getRole().getChangeRequests().add(cr2);
+        Map<String, String> selectChangeRequests = action.getSelectChangeRequests();
+        assertEquals(2, selectChangeRequests.size());
+        selectChangeRequests.values();
+        int i = 1;
+        for (String value : selectChangeRequests.values()) {
+            assertEquals("CR-ID-" + i, value);
+            i++;
+        }
+    }
+
+    @Test
+    public void testRootKeyProperty() {
+        assertNull(action.getRootKey());
+        action.setRootKey("abc");
+        assertNotNull(action.getRootKey());
     }
 }

@@ -28,4 +28,8 @@
        <comment>Upgrade for PO-1189 - new organizational contact types</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-1189.sql"/>
     </changeSet>
+    <changeSet id="PO-1214" author="smatyas">
+       <comment>Upgrade for PO-1214 - adding postal address and telecoms to HealthCareFacility and ResearchOrganizaiton</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1214.sql"/>
+    </changeSet>
 </databaseChangeLog>

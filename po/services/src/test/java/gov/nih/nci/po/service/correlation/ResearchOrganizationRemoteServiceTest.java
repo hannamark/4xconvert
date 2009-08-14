@@ -102,6 +102,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import java.util.List;
@@ -111,7 +112,7 @@ import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 /**
  * Remote service test.
  */
-public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRoleRemoteServiceTest<ResearchOrganizationDTO, ResearchOrganizationCR> {
+public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrganizationalRoleRemoteServiceTest<ResearchOrganizationDTO, ResearchOrganizationCR> {
 
     @Override
     CorrelationService<ResearchOrganizationDTO> getCorrelationService() {
@@ -121,14 +122,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
     @Override
     protected ResearchOrganizationDTO getSampleDto() throws Exception {
         ResearchOrganizationDTO dto = new ResearchOrganizationDTO();
-        Ii ii = new Ii();
-        ii.setExtension("" + basicOrganization.getId());
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.ORG_ROOT);
-        dto.setPlayerIdentifier(ii);
+        super.fillInFields(dto);
 
         Cd type = new Cd();
         type.setCode(getResearchOrgType().getCode());
@@ -140,7 +134,6 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
 
         // re-gen a player org for next sample for uniqueness
         createAndSetOrganization();
-
         return dto;
     }
 
@@ -180,109 +173,49 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
     }
 
 
+
+    protected ResearchOrganizationDTO getEmptySearchCriteria() {
+        return new ResearchOrganizationDTO();
+    }
+
     @Override
-    public void testSearch() throws Exception {
-        Organization org2 = new Organization();
-        org2.setName("org2 name");
-        org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
-        org2.setStatusCode(EntityStatus.ACTIVE);
-        org2.getEmail().add(new Email("foo@example.com"));
-        org2.getUrl().add(new URL("http://example.com"));
-        PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
-
-        ResearchOrganizationDTO correlation1 = getSampleDto();
-        Ii correlation1Id = getCorrelationService().createCorrelation(correlation1);
-
-        ResearchOrganizationDTO correlation2 = getSampleDto();
-        Ii ii = new Ii();
-        ii.setExtension("" + org2.getId());
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.ORG_ROOT);
-        correlation2.setPlayerIdentifier(ii);
-
+    protected void modifySubClassSpecificFieldsForCorrelation2(ResearchOrganizationDTO correlation2) {
+        assertEquals(getResearchOrgType().getCode(), correlation2.getTypeCode().getCode());
+        assertEquals(getFundingMechanism().getCode(), correlation2.getFundingMechanism().getCode());
         FundingMechanism otherFM = new FundingMechanism("BXX","???","Block Grants",FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(otherFM);
         Cd fm = new Cd();
         fm.setCode(otherFM.getCode());
         correlation2.setFundingMechanism(fm);
-
+        
         ResearchOrganizationType other = new ResearchOrganizationType("AT", "Another Type");
         other.getFundingMechanisms().add(otherFM);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         Cd type = new Cd();
         type.setCode(other.getCode());
         correlation2.setTypeCode(type);
+        
+    }
 
-        Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        ResearchOrganizationDTO searchCriteria = null;
-
-        try {
-            getCorrelationService().search(searchCriteria);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        searchCriteria = new ResearchOrganizationDTO();
-        try {
-            getCorrelationService().search(searchCriteria);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        // test search by primary id
-        searchCriteria.setIdentifier(new Ii());
-        searchCriteria.getIdentifier().setExtension(correlation1Id.getExtension());
-        searchCriteria.getIdentifier().setRoot(correlation1Id.getRoot());
-        searchCriteria.getIdentifier().setIdentifierName(correlation1Id.getIdentifierName());
-        searchCriteria.getIdentifier().setDisplayable(correlation1Id.getDisplayable());
-        searchCriteria.getIdentifier().setReliability(correlation1Id.getReliability());
-        searchCriteria.getIdentifier().setScope(correlation1Id.getScope());
-        List<ResearchOrganizationDTO> results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
-
-        searchCriteria.getIdentifier().setExtension(correlation2Id.getExtension());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
-
-        searchCriteria.getIdentifier().setExtension("999");
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
-
-        // test search by player id
-        searchCriteria.setIdentifier(null);
-        searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
-
+    @Override
+    protected void testSearchOnSubClassSpecificFields(ResearchOrganizationDTO correlation1, Ii id2,
+            ResearchOrganizationDTO searchCriteria) throws NullifiedRoleException {
+        Cd fm = new Cd();
+        fm.setCode("BXX");
+        
         // test by FundingMechanism id
         searchCriteria.setPlayerIdentifier(null);
         searchCriteria.setFundingMechanism(fm);
-        results = getCorrelationService().search(searchCriteria);
+        List<ResearchOrganizationDTO> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
 
         // test by Type id
         searchCriteria.setFundingMechanism(null);
-        searchCriteria.setTypeCode(type);
+        Cd type = new Cd();
+        type.setCode("AT");
+        searchCriteria.setTypeCode(type );
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-
-        searchCriteria.setTypeCode(null);
-        testNullifiedRoleNotFoundInSearch(correlation2Id, searchCriteria, ResearchOrganization.class);
-    }
-
-    protected ResearchOrganizationDTO getEmptySearchCriteria() {
-        return new ResearchOrganizationDTO();
+        
     }
 }

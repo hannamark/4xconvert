@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,78 +80,77 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.po.service;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
-import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.OrganizationServiceBeanTest;
-import gov.nih.nci.services.CorrelationService;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 
-import org.junit.Test;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Remote service tests.
+ * Enum of possible sort criterion for HealthCareFacility.
  */
-public class HealthCareFacilityRemoteServiceTest extends AbstractEnhancedOrganizationalRoleRemoteServiceTest<HealthCareFacilityDTO, HealthCareFacilityCR> {
+public enum HealthCareFacilitySortCriterion implements PoSortCriterion<HealthCareFacility> {
 
-    @Override
-    CorrelationService<HealthCareFacilityDTO> getCorrelationService() {
-        return EjbTestHelper.getHealthCareFacilityCorrelationServiceRemote();
+
+    /**
+     * Sort by HealthCareFacility's id.
+     */
+    ID("id", null),
+
+    /**
+     * Sort by HealthCareFacility's status.
+     */
+    ROLE_STATUS("status", null),
+
+    /**
+     * Sort by HealthCareFacility's status date.
+     */
+    STATUS_DATE("statusDate", null), 
+    
+    /**
+     * Sort by HealthCareFacility's name.
+     */
+    NAME("name", null);
+
+    private final String orderField;
+    private final String leftJoinField;
+    private final List<HealthCareFacilitySortCriterion> fields;
+
+    private HealthCareFacilitySortCriterion(String orderField, String leftJoinField) {
+        this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
+        this.fields = null;
     }
 
-    @Override
-    protected HealthCareFacilityDTO getSampleDto() throws Exception {
-        HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
-        super.fillInFields(dto);
-        
-        // re-gen a player org for next sample for uniqueness
-        createAndSetOrganization();
-        return dto;
+    private HealthCareFacilitySortCriterion(HealthCareFacilitySortCriterion... fields) {
+        this.orderField = null;
+        this.leftJoinField = null;
+        this.fields = Arrays.asList(fields);
     }
 
-    @Override
-    void verifyDto(HealthCareFacilityDTO expected, HealthCareFacilityDTO actual) {
-        assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
-        assertEquals("pending", actual.getStatus().getCode());
+    /**
+     * {@inheritDoc}
+     */
+    public String getOrderField() {
+        return this.orderField;
     }
 
-    @Test(expected = EntityValidationException.class)
-    public void testCreateWithException() throws Exception {
-        HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
-        getCorrelationService().createCorrelation(dto);
+    /**
+     * {@inheritDoc}
+     */
+    public List<HealthCareFacilitySortCriterion> getOrderByList() {
+        if (orderField != null) {
+            return Collections.singletonList(this);
+        }
+        return fields;
     }
 
-    @Test
-    public void testValidate() throws Exception {
-        HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
-        assertEquals(2, getCorrelationService().validate(dto).keySet().size());
-    }
-
-    @Override
-    protected void alter(HealthCareFacilityDTO dto) throws Exception {
-        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
-        orgTest.setDefaultCountry(getDefaultCountry());
-        orgTest.setUser(getUser());
-        orgTest.setUpData();
-        orgTest.createOrganization();
-    }
-
-    protected HealthCareFacilityDTO getEmptySearchCriteria() {
-        return new HealthCareFacilityDTO();
-    }
-
-    @Override
-    protected void modifySubClassSpecificFieldsForCorrelation2(HealthCareFacilityDTO correlation2) {
-    }
-
-    @Override
-    protected void testSearchOnSubClassSpecificFields(HealthCareFacilityDTO correlation1, Ii id2,
-            HealthCareFacilityDTO searchCriteria) throws NullifiedRoleException {
-        
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return this.leftJoinField;
     }
 }

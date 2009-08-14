@@ -84,16 +84,38 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.FundingMechanism;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.StConverter;
+import gov.nih.nci.po.data.convert.StringConverter;
+import gov.nih.nci.po.data.convert.TelDSetConverter;
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
@@ -110,20 +132,35 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
      */
     @Override
     protected AbstractOrganizationRole getExampleTestClass() {
-        ResearchOrganization oc = new ResearchOrganization();
-        fillInExampleOrgRoleFields(oc);
-        ResearchOrganizationType oct = new ResearchOrganizationType("CCR", "Cancer Center");
-        oc.setTypeCode(oct);
+        ResearchOrganization ro = new ResearchOrganization();
+        fillInExampleOrgRoleFields(ro);
+        ResearchOrganizationType rot = new ResearchOrganizationType("CCR", "Cancer Center");
+        ro.setTypeCode(rot);
         FundingMechanism fm = new FundingMechanism("B09","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
-        oc.setFundingMechanism(fm);
-        return oc;
+        ro.setFundingMechanism(fm);
+        ro.setName("my name");
+        fillInExampleOrgRoleFields(ro);
+        ro.setEmail(new ArrayList<Email>());
+        ro.getEmail().add(new Email("me@test.com"));
+        ro.setPhone(new ArrayList<PhoneNumber>());
+        ro.getPhone().add(new PhoneNumber("123-456-7890"));
+        ro.setFax(new ArrayList<PhoneNumber>());
+        ro.getFax().add(new PhoneNumber("098-765-4321"));
+        ro.setTty(new ArrayList<PhoneNumber>());
+        ro.getTty().add(new PhoneNumber("111-222-3333"));
+        ro.setUrl(new ArrayList<URL>());
+        ro.getUrl().add(new URL("http://www.google.com"));
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        ro.setPostalAddresses(Collections.singleton(a));
+        return ro;
     }
 
     /**
      * {@inheritDoc}
+     * @throws URISyntaxException 
      */
     @Override
-    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) {
+    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) throws URISyntaxException {
         ResearchOrganizationDTO dto = new ResearchOrganizationDTO();
         fillInOrgRoleDTOFields(dto, playerId);
         Ii ii = new Ii();
@@ -142,6 +179,37 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         Cd fm = new Cd();
         fm.setCode("B09");
         dto.setFundingMechanism(fm);
+        
+
+        dto.setName(StringConverter.convertToSt("my name"));
+        
+        DSet<Tel> tels = new DSet<Tel>();
+        tels.setItem(new HashSet<Tel>());
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:me@test.com"));
+        tels.getItem().add(email);
+
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI("tel:111-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-fax:222-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-tel:333-222-3333"));
+        tels.getItem().add(phone);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://www.google.com"));
+        tels.getItem().add(url);
+
+        dto.setTelecomAddress(tels);
+
+        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(), getDefaultCountry().getName());
+        dto.setPostalAddress(new DSet<Ad>());
+        dto.getPostalAddress().setItem(Collections.singleton(ad));      
         return dto;
     }
 
@@ -153,6 +221,9 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         ResearchOrganization bo = (ResearchOrganization) ro;
         assertEquals("CCR", bo.getTypeCode().getCode());
         assertEquals("B09", bo.getFundingMechanism().getCode());
+        
+        assertEquals("my name", bo.getName());
+        assertEquals("me@test.com", bo.getEmail().get(0).getValue());
     }
 
     /**
@@ -160,8 +231,9 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
      */
     @Override
     protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
-        assertEquals("CCR", ((ResearchOrganizationDTO) dto).getTypeCode().getCode());
-        assertEquals("B09", ((ResearchOrganizationDTO) dto).getFundingMechanism().getCode());
+        ResearchOrganizationDTO ro = (ResearchOrganizationDTO) dto;
+        assertEquals("CCR", ro.getTypeCode().getCode());
+        assertEquals("B09", ro.getFundingMechanism().getCode());
 
         // check id
         Ii expectedIi = new Ii();
@@ -171,6 +243,11 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         expectedIi.setReliability(IdentifierReliability.ISS);
         expectedIi.setIdentifierName(IdConverter.RESEARCH_ORG_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.RESEARCH_ORG_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((ResearchOrganizationDTO) dto).getIdentifier()));
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ro.getIdentifier()));
+        
+        assertEquals("my name", StConverter.convertToString(ro.getName()));
+        HealthCareFacility tmp = new HealthCareFacility();
+        TelDSetConverter.convertToContactList(ro.getTelecomAddress(), tmp);
+        assertEquals("me@test.com", tmp.getEmail().get(0).getValue());
     }
 }

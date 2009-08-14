@@ -104,7 +104,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.AbstractCorrelationServiceBean;
-import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -261,13 +260,6 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         
     }   
 
-    protected void verifyPersonRoleDto(AbstractPersonRoleDTO e, AbstractPersonRoleDTO a) {
-        assertEquals(e.getScoperIdentifier().getExtension(), a.getScoperIdentifier().getExtension());
-        assertEquals(e.getPlayerIdentifier().getExtension(), a.getPlayerIdentifier().getExtension());
-        assertEquals("pending", a.getStatus().getCode());
-        assertEquals(e.getPostalAddress().getItem().size(), a.getPostalAddress().getItem().size());
-        assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());
-    }
 
     @Test
     public void updateCorrelation() throws Exception {

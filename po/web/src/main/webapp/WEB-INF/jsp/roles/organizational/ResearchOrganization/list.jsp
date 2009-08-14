@@ -8,6 +8,7 @@
         <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         <display:column titleKey="researchOrganization.id" property="id" sortable="true" sortProperty="ID"/>
+        <display:column titleKey="researchOrganization.name" property="name" sortable="true" sortProperty="NAME"/>
         <display:column titleKey="researchOrganization.typeCode" sortable="true" sortProperty="TYPE_DESC">
             ${row.typeCode.description}
         </display:column>

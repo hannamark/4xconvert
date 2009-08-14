@@ -39,7 +39,12 @@ public enum ResearchOrganizationSortCriterion implements PoSortCriterion<Researc
     /**
      * Sort by Research Organization's status date.
      */
-    STATUS_DATE("statusDate", null);
+    STATUS_DATE("statusDate", null), 
+    
+    /**
+     * Sort by Research Organization's name.
+     */
+    NAME("name", null);
 
     private final String orderField;
     private final String leftJoinField;

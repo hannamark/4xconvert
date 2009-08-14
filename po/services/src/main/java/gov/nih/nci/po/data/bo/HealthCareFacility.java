@@ -83,9 +83,9 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.UniqueHealthCareFacility;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -93,12 +93,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Where;
+import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -107,15 +111,18 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole"
  *      implements="gov.nih.nci.services.CorrelationDto"
  *      serial-version-uid="1L"
  */
 @Entity
-@UniqueHealthCareFacility
 @RoleStatusChange
 @SuppressWarnings("PMD.UselessOverridingMethod")
-public class HealthCareFacility extends AbstractOrganizationRole implements Correlation {
+public class HealthCareFacility extends AbstractEnhancedOrganizationRole implements Correlation {
+
+    private static final String HCF_ID = "hcf_id";
+    private static final String VALUE = "value";
+    private static final String IDX = "idx";
 
     private static final long serialVersionUID = -5965985190603758915L;
 
@@ -166,8 +173,138 @@ public class HealthCareFacility extends AbstractOrganizationRole implements Corr
         return duplicateOf;
     }
 
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(HealthCareFacility duplicateOf) {
+    /**
+     * {@inheritDoc}
+     */
+    public void setDuplicateOf(HealthCareFacility duplicateOf) {
         this.duplicateOf = duplicateOf;
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "hcf_address",
+            joinColumns = @JoinColumn(name = HCF_ID),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "HCF_ADDRESS_FK", inverseName = "ADDRESS_HCF_FK")
+    @Valid
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public Set<Address> getPostalAddresses() {
+        return super.getPostalAddresses();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "hcf_email",
+            joinColumns = @JoinColumn(name = HCF_ID),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "HCF_EMAIL_FK", inverseName = "EMAIL_HCF_FK")
+    @Valid
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<Email> getEmail() {
+        return super.getEmail();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "hcf_fax",
+            joinColumns = @JoinColumn(name = HCF_ID),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "HCF_FAX_FK", inverseName = "FAX_HCF_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<PhoneNumber> getFax() {
+        return super.getFax();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "hcf_phone",
+            joinColumns = @JoinColumn(name = HCF_ID),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "HCF_PHONE_FK", inverseName = "PHONE_HCF_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<PhoneNumber> getPhone() {
+        return super.getPhone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "hcf_tty",
+            joinColumns = @JoinColumn(name = HCF_ID),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "HCF_TTY_FK", inverseName = "TTY_HCF_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<PhoneNumber> getTty() {
+        return super.getTty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "hcf_url",
+            joinColumns = @JoinColumn(name = HCF_ID),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "HCF_URL_FK", inverseName = "URL_HCF_FK")
+    @Valid
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public List<URL> getUrl() {
+        return super.getUrl();
     }
 }

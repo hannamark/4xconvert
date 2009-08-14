@@ -95,7 +95,6 @@ import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import java.util.ArrayList;
 
 import javax.jms.JMSException;
-import javax.servlet.http.HttpSession;
 
 import org.displaytag.properties.SortOrderEnum;
 
@@ -143,10 +142,6 @@ public class OrganizationalContactAction extends
         if (getRole().getScoper() == null) { // if not set, then set to default
             getRole().setScoper(getOrganization());
         }
-    }
-
-    private HttpSession getSession() {
-        return PoHttpSessionUtil.getSession();
     }
 
     /**

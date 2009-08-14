@@ -99,17 +99,16 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractResearchOrganizationDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole"
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
-public class AbstractResearchOrganization extends AbstractOrganizationRole {
+public abstract class AbstractResearchOrganization extends AbstractEnhancedOrganizationRole {
 
     private static final long serialVersionUID = 1L;
 
     private FundingMechanism fundingMechanism;
     private ResearchOrganizationType typeCode;
-
 
     /**
      * @return the fundingMechanism
@@ -151,4 +150,5 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
     public void setTypeCode(ResearchOrganizationType type) {
         this.typeCode = type;
     }
+
 }

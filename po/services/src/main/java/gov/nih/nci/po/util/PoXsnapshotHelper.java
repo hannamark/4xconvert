@@ -1,10 +1,13 @@
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
+import gov.nih.nci.services.correlation.ExtendedEnhancedOrganizationRoleDTOHelper;
 import gov.nih.nci.services.correlation.ExtendedPersonRoleDTOHelper;
 import gov.nih.nci.services.organization.AbstractOrganizationDTO;
 import gov.nih.nci.services.organization.ExtendedOrganizationDTOHelper;
@@ -67,6 +70,11 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
             snapshotClass = AbstractPersonRoleDTO.class;
             this.registerSnapshotClass(AbstractPersonRole.class, DEFAULT_ISO_SNAPSHOT_NAME, snapshotClass);
             this.registerHelper(snapshotClass, new ExtendedPersonRoleDTOHelper());
+            
+            snapshotClass = AbstractEnhancedOrganizationRoleDTO.class;
+            this.registerSnapshotClass(AbstractEnhancedOrganizationRole.class, DEFAULT_ISO_SNAPSHOT_NAME, 
+                    snapshotClass);
+            this.registerHelper(snapshotClass, new ExtendedEnhancedOrganizationRoleDTOHelper());
         } catch (ConfigurationException ex) {
             throw new RuntimeException("failed to init xsnapshot", ex);
         }

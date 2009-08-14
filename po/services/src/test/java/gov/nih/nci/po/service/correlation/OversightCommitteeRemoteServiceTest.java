@@ -110,7 +110,7 @@ import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 /**
  * Remote service test.
  */
-public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleRemoteServiceTest<OversightCommitteeDTO, OversightCommitteeCR> {
+public class OversightCommitteeRemoteServiceTest extends AbstractOrganizationalRoleRemoteServiceTest<OversightCommitteeDTO, OversightCommitteeCR> {
 
     @Override
     CorrelationService<OversightCommitteeDTO> getCorrelationService() {

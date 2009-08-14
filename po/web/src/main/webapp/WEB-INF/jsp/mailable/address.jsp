@@ -59,20 +59,30 @@
 	             id="submitPostalAddressForm"/>
             
 	        <c:if test="${mailable.player != null}">
-	        <c:if test="${mailable.player.postalAddress != null}">
-	        <c:set var="parentAddress" value="${mailable.player.postalAddress}" scope="request"/>
-            <script type="text/javascript">
-            function copyPostalAddressField() {
-                selectValueInSelectField('${pofn:escapeJavaScript(parentAddress.country.id)}', 'postalAddressForm.address.country');
-                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.streetAddressLine)}', 'postalAddressForm_address_streetAddressLine');
-                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.deliveryAddressLine)}', 'postalAddressForm_address_deliveryAddressLine');
-                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.cityOrMunicipality)}', 'postalAddressForm_address_cityOrMunicipality');
-                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.postalCode)}', 'postalAddressForm_address_postalCode');
-                copyValueToTextField('${pofn:escapeJavaScript(parentAddress.stateOrProvince)}', 'address.stateOrProvince');
-                selectValueInSelectField('${pofn:escapeJavaScript(parentAddress.stateOrProvince)}', 'address.stateOrProvince'); 
-            }
-            </script>
-            <po:button href="javascript://noop/" style="copy" id="copy_parent_postalAddress" onclick="copyPostalAddressField(); $('postalAddressForm').submit();" text="Use Person's Address"/>
+                <c:set var="personStr" value="Person"/>
+                <c:set var="orgStr" value="Organization"/>
+                <c:set var="isPerson" value="${fn:contains(mailable.player.class.name, personStr)}"/>
+                <c:set var="isOrg" value="${fn:contains(mailable.player.class.name, orgStr)}"/>
+    	        <c:if test="${mailable.player.postalAddress != null}">
+        	        <c:set var="parentAddress" value="${mailable.player.postalAddress}" scope="request"/>
+                    <script type="text/javascript">
+                    function copyPostalAddressField() {
+                        selectValueInSelectField('${pofn:escapeJavaScript(parentAddress.country.id)}', 'postalAddressForm.address.country');
+                        copyValueToTextField('${pofn:escapeJavaScript(parentAddress.streetAddressLine)}', 'postalAddressForm_address_streetAddressLine');
+                        copyValueToTextField('${pofn:escapeJavaScript(parentAddress.deliveryAddressLine)}', 'postalAddressForm_address_deliveryAddressLine');
+                        copyValueToTextField('${pofn:escapeJavaScript(parentAddress.cityOrMunicipality)}', 'postalAddressForm_address_cityOrMunicipality');
+                        copyValueToTextField('${pofn:escapeJavaScript(parentAddress.postalCode)}', 'postalAddressForm_address_postalCode');
+                        copyValueToTextField('${pofn:escapeJavaScript(parentAddress.stateOrProvince)}', 'address.stateOrProvince');
+                        selectValueInSelectField('${pofn:escapeJavaScript(parentAddress.stateOrProvince)}', 'address.stateOrProvince'); 
+                    }
+                    </script>
+                    <c:if test="${isPerson}">
+                    <po:button href="javascript://noop/" style="copy" id="copy_parent_postalAddress" onclick="copyPostalAddressField(); $('postalAddressForm').submit();" text="Use Person's Address"/>
+                    </c:if>
+                    <c:if test="${isOrg}">
+                    <po:button href="javascript://noop/" style="copy" id="copy_parent_postalAddress" onclick="copyPostalAddressField(); $('postalAddressForm').submit();" text="Use Organization's Address"/>
+                    </c:if>
+                
 	        </c:if>
 	        </c:if>
 	     </po:buttonRow>

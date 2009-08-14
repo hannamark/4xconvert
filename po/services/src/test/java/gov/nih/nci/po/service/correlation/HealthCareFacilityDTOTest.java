@@ -82,15 +82,36 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.StConverter;
+import gov.nih.nci.po.data.convert.StringConverter;
+import gov.nih.nci.po.data.convert.TelDSetConverter;
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
@@ -105,15 +126,29 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
     @Override
     protected AbstractOrganizationRole getExampleTestClass() {
         HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setName("my name");
         fillInExampleOrgRoleFields(hcf);
+        hcf.setEmail(new ArrayList<Email>());
+        hcf.getEmail().add(new Email("me@test.com"));
+        hcf.setPhone(new ArrayList<PhoneNumber>());
+        hcf.getPhone().add(new PhoneNumber("123-456-7890"));
+        hcf.setFax(new ArrayList<PhoneNumber>());
+        hcf.getFax().add(new PhoneNumber("098-765-4321"));
+        hcf.setTty(new ArrayList<PhoneNumber>());
+        hcf.getTty().add(new PhoneNumber("111-222-3333"));
+        hcf.setUrl(new ArrayList<URL>());
+        hcf.getUrl().add(new URL("http://www.google.com"));
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        hcf.setPostalAddresses(Collections.singleton(a));
         return hcf;
     }
 
     /**
      * {@inheritDoc}
+     * @throws URISyntaxException 
      */
     @Override
-    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) {
+    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) throws URISyntaxException {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         fillInOrgRoleDTOFields(dto, playerId);
 
@@ -125,7 +160,36 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         ii.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
         ii.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         dto.setIdentifier(ii);
+        
+        dto.setName(StringConverter.convertToSt("my name"));
+        
+        DSet<Tel> tels = new DSet<Tel>();
+        tels.setItem(new HashSet<Tel>());
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:me@test.com"));
+        tels.getItem().add(email);
 
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI("tel:111-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-fax:222-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-tel:333-222-3333"));
+        tels.getItem().add(phone);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://www.google.com"));
+        tels.getItem().add(url);
+
+        dto.setTelecomAddress(tels);
+
+        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(), getDefaultCountry().getName());
+        dto.setPostalAddress(new DSet<Ad>());
+        dto.getPostalAddress().setItem(Collections.singleton(ad));        
         return dto;
     }
 
@@ -134,7 +198,10 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      */
     @Override
     protected void verifyTestClassDTOFields(AbstractOrganizationRole or) {
+        HealthCareFacility hcf = (HealthCareFacility) or;
         // intentionally blank
+        assertEquals("my name", hcf.getName());
+        assertEquals("me@test.com", hcf.getEmail().get(0).getValue());
     }
 
     /**
@@ -142,6 +209,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      */
     @Override
     protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
+        HealthCareFacilityDTO hcf = (HealthCareFacilityDTO) dto;
      // check id
         Ii expectedIi = new Ii();
         expectedIi.setExtension("" + 1);
@@ -151,5 +219,10 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         expectedIi.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((HealthCareFacilityDTO) dto).getIdentifier()));
+        
+        assertEquals("my name", StConverter.convertToString(hcf.getName()));
+        HealthCareFacility tmp = new HealthCareFacility();
+        TelDSetConverter.convertToContactList(hcf.getTelecomAddress(), tmp);
+        assertEquals("me@test.com", tmp.getEmail().get(0).getValue());
     }
 }

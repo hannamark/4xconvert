@@ -96,7 +96,6 @@ import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import java.util.ArrayList;
 
 import javax.jms.JMSException;
-import javax.servlet.http.HttpSession;
 
 import org.displaytag.properties.SortOrderEnum;
 
@@ -139,6 +138,17 @@ public class HealthCareProviderAction extends
         if (getRole().getScoper() == null) { // if not set, then set to default
             getRole().setScoper(new Organization());
         }
+        
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void defaultConstructorInit() {
+        setResults(new PaginatedList<HealthCareProvider>(0,
+                new ArrayList<HealthCareProvider>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
+                ClinicalResearchStaffSortCriterion.ID.name(), SortOrderEnum.ASCENDING));
     }
 
     /**
@@ -151,20 +161,6 @@ public class HealthCareProviderAction extends
         initialize(getRole());
         setRootKey(PoHttpSessionUtil.addAttribute(getRole()));
         return result;
-    }
-
-    private HttpSession getSession() {
-        return PoHttpSessionUtil.getSession();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void defaultConstructorInit() {
-        setResults(new PaginatedList<HealthCareProvider>(0,
-                new ArrayList<HealthCareProvider>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
-                ClinicalResearchStaffSortCriterion.ID.name(), SortOrderEnum.ASCENDING));
     }
 
     /**

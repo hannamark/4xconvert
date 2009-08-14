@@ -82,12 +82,15 @@
  */
 package gov.nih.nci.po.web.roles;
 
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
+import gov.nih.nci.po.data.bo.Mailable;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,6 +101,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jms.JMSException;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -349,5 +353,25 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
         contactable.getPhone().size();
         contactable.getTty().size();
         contactable.getUrl().size();
+    }
+
+    /**
+     * @param mailable initialize Mailable
+     */
+    protected void initialize(Mailable mailable) {
+        mailable.getPostalAddresses().size();
+        for (Address address : mailable.getPostalAddresses()) {
+            if (address.getCountry() != null) {
+                address.getCountry().getStates().size();
+            }
+        }
+    }
+
+    /**
+     * Convenience method.
+     * @return HttpSession 
+     */
+    protected HttpSession getSession() {
+        return PoHttpSessionUtil.getSession();
     }
 }
