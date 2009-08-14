@@ -140,4 +140,8 @@ public class OversightCommitteeServiceStub implements OversightCommitteeServiceL
     public int getHotRoleCount(Organization org) {
         return 0;
     }
+
+    public List<OversightCommittee> getByPlayerIds(Long[] pids) {
+        return null;
+    }
 }

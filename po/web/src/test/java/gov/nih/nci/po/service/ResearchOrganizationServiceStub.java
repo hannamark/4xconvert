@@ -56,4 +56,8 @@ public class ResearchOrganizationServiceStub implements ResearchOrganizationServ
         return 0;
     }
 
+    public List<ResearchOrganization> getByPlayerIds(Long[] pids) {
+        return null;
+    }
+
 }

@@ -56,4 +56,8 @@ public class IdentifiedOrganizationServiceStub implements IdentifiedOrganization
         return 0;
     }
 
+    public List<IdentifiedOrganization> getByPlayerIds(Long[] pids) {
+        return null;
+    }
+
 }

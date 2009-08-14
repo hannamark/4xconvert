@@ -61,4 +61,8 @@ public class OrganizationalContactServiceStub implements OrganizationalContactSe
         return null;
     }
 
+    public List<OrganizationalContact> getByPlayerIds(Long[] pids) {
+        return null;
+    }
+
 }

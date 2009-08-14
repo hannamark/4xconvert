@@ -92,9 +92,14 @@ import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.correlation.AbstractIdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.AbstractIdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Test;
@@ -144,6 +149,31 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
     
     protected abstract void verifyCreated(DTO dto) throws Exception ;
 
+    @Test
+    public void getByPlayerIds() throws Exception {
+        DTO sr1 = makeCorrelation();
+        getCorrelationService().createCorrelation(sr1);
+    
+        Ii[] pids = null;
+        
+        if (sr1 instanceof AbstractPersonRoleDTO || sr1 instanceof AbstractIdentifiedPersonDTO) {
+            pids = new Ii[1];
+            pids[0] = this.getPersonId();
+        } else if (sr1 instanceof AbstractOrganizationRoleDTO || sr1 instanceof AbstractIdentifiedOrganizationDTO) {
+            pids = new Ii[1];
+            pids[0] = this.getOrgId();
+        } else {
+            throw new Exception("Could not determine what type of DTO this is.");
+        }
+        
+        List<DTO> returnVals = getCorrelationService().getCorrelationsByPlayerIds(pids);
+        assertEquals(1, returnVals.size());
+        
+        returnVals = getCorrelationService().getCorrelationsByPlayerIds(new Ii[1]);
+        assertEquals(0, returnVals.size());
+    
+   }
+    
     @Test
     public void update() throws Exception {
         if (correlationId == null) {

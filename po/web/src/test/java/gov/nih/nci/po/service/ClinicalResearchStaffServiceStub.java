@@ -56,4 +56,8 @@ public class ClinicalResearchStaffServiceStub implements ClinicalResearchStaffSe
         return 0;
     }
 
+    public List<ClinicalResearchStaff> getByPlayerIds(Long[] pids) {
+        return null;
+    }
+
 }

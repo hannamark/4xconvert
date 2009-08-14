@@ -139,4 +139,8 @@ public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceL
     public int getHotRoleCount(Organization org) {
         return 0;
     }
+
+    public List<HealthCareFacility> getByPlayerIds(Long[] pids) {
+        return null;
+    }
 }

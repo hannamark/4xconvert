@@ -85,6 +85,9 @@ package gov.nih.nci.po.service.correlation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization;
+import gov.nih.nci.po.data.bo.AbstractIdentifiedPerson;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -99,6 +102,7 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -266,6 +270,39 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         assertEquals(0, srs.size());
 
         srs = service.getByIds(new Long[0]);
+        assertEquals(0, srs.size());
+    }
+    
+    @Test
+    public void testGetByPlayerIds() throws Exception {
+        AbstractBaseServiceBean<T> service = getService();
+
+        T sr1 = createSample();
+
+        T sr2 = createSample();
+        
+        Long[] ids = null;
+        if (sr1 instanceof AbstractPersonRole || sr1 instanceof AbstractIdentifiedPerson){
+            ids = new Long[1];
+            ids[0] = basicPerson.getId();
+        } else if (sr2 instanceof AbstractOrganizationRole) {
+            ids = new Long[2];
+            ids[0] = basicOrganization.getId() - 1;
+            ids[1] = basicOrganization.getId() - 2;
+        } else if (sr2 instanceof AbstractIdentifiedOrganization) {
+            ids = new Long[1];
+            ids[0] = basicOrganization.getId();
+        } else {
+            throw new Exception("Can't figure out what type of SR dealing with.");
+        }
+        
+        List<T> srs = service.getByPlayerIds(ids);
+        assertEquals(2, srs.size());
+
+        srs = service.getByPlayerIds(null);
+        assertEquals(0, srs.size());
+
+        srs = service.getByPlayerIds(new Long[0]);
         assertEquals(0, srs.size());
     }
 

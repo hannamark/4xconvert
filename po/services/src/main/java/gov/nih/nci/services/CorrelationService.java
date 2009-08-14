@@ -113,6 +113,14 @@ public interface CorrelationService<T extends PoDto> {
      * @throws NullifiedRoleException if any of the requested ids contain any NULLIFIED role status
      */
     List<T> getCorrelations(Ii[] ids) throws NullifiedRoleException;
+    
+    /**
+     * Get the dtos with the given player ids.
+     * @param pids the id.
+     * @return the dtos
+     * @throws NullifiedRoleException if any of the requested ids contain any NULLIFIED role status
+     */
+    List<T> getCorrelationsByPlayerIds(Ii[] pids) throws NullifiedRoleException;
 
     /**
      * Create the correlationr.

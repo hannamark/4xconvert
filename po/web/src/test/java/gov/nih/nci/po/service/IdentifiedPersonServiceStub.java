@@ -56,4 +56,8 @@ public class IdentifiedPersonServiceStub implements IdentifiedPersonServiceLocal
         return null;
     }
 
+    public List<IdentifiedPerson> getByPlayerIds(Long[] pids) {
+        return null;
+    }
+
 }

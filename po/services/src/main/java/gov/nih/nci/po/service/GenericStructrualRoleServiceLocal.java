@@ -120,6 +120,13 @@ public interface GenericStructrualRoleServiceLocal<T extends Correlation>
      * @return the structural roles
      */
     List<T> getByIds(Long[] ids);
+    
+    /**
+     * get all of the structural roles with the given player ids.
+     * @param pids the ids.
+     * @return the structural roles
+     */
+    List<T> getByPlayerIds(Long[] pids);
 
     /**
      * @param entity the entity to validate

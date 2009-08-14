@@ -206,6 +206,22 @@ public abstract class AbstractCorrelationServiceBean
         List<T> hcps = getLocalService().getByIds(longIds.toArray(new Long[longIds.size()]));
         return PoXsnapshotHelper.createSnapshotList(hcps);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public List<DTO> getCorrelationsByPlayerIds(Ii[] pids) {
+        Set<Long> longIds = new HashSet<Long>();
+        for (Ii id : pids) {
+            longIds.add(IiConverter.convertToLong(id));
+        }
+        List<T> correlations = getLocalService().getByPlayerIds(longIds.toArray(new Long[longIds.size()]));
+        return PoXsnapshotHelper.createSnapshotList(correlations);
+    }
+
 
     /**
      * @param dto dto to convert

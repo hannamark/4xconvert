@@ -180,6 +180,29 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         q.setParameterList("ids_list", ids);
         return q.list();
     }
+    
+    /**
+     * Get the object of type T with the given IDs.
+     * @param pids the ids of players
+     * @return the object
+     */
+    @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<T> getByPlayerIds(Long[] pids) {
+        if (pids == null || pids.length == 0) {
+            return Collections.EMPTY_LIST;
+        }
+
+        if (pids.length > MAX_IN_CLAUSE_SIZE) {
+            throw new IllegalArgumentException("getByPlayerIds can only search for " 
+                    + MAX_IN_CLAUSE_SIZE + " at once.");
+        }
+
+        Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()
+                + " obj where obj.player.id in (:ids_list)");
+        q.setParameterList("ids_list", pids);
+        return q.list();
+    }
 
     /**
      * Save the object.
