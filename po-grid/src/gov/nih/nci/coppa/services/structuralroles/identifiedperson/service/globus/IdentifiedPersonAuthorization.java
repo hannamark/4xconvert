@@ -90,6 +90,10 @@ public class IdentifiedPersonAuthorization implements PDP {
 	public void authorizeQuery(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
+	   				
+	public void authorizeGetByPlayerIds(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -124,6 +128,9 @@ public class IdentifiedPersonAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("query")){
 			authorizeQuery(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getByPlayerIds")){
+			authorizeGetByPlayerIds(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

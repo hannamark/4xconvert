@@ -74,4 +74,10 @@ public class HealthCareFacilityProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsResponse();
+    boxedResult.setHealthCareFacility(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
 }

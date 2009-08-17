@@ -3,7 +3,10 @@ package gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
+import gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient;
 import gov.nih.nci.coppa.services.structuralroles.healthcareprovider.common.HealthCareProviderI;
 
 import java.rmi.RemoteException;
@@ -68,6 +71,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
               getHealthCareProvider(client);
               searchHealthCareProvider(client);
               queryHealthCareProvider(client);
+              getHealthCareProvidersByPlayerIds(client);
             } else {
                 usage();
                 System.exit(1);
@@ -105,6 +109,27 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         HealthCareProvider[] results = client.query(criteria, limitOffset);
         ClientUtils.handleSearchResults(results);
     }
+    
+    private static void getHealthCareProvidersByPlayerIds(HealthCareProviderClient client) {
+        Id id1 = new Id();
+        id1.setRoot(PersonClient.PERSON_ROOT);
+        id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id1.setExtension("501");
+        
+        Id id2 = new Id();
+        id2.setRoot(PersonClient.PERSON_ROOT);
+        id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id2.setExtension("2153");
+        
+        try {
+            HealthCareProvider[] results = client.getByPlayerIds(new Id[] {id1, id2});
+            ClientUtils.handleSearchResults(results);
+        } catch (NullifiedRoleFault e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * @return
@@ -116,6 +141,18 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         criteria.setStatus(statusCode);
         return criteria;
     }
+
+  public gov.nih.nci.coppa.po.HealthCareProvider[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
+    return boxedResult.getHealthCareProvider();
+    }
+  }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){

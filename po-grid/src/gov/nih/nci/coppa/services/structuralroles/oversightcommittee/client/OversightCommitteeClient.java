@@ -117,6 +117,18 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
         ClientUtils.handleSearchResults(results);
     }
 
+  public gov.nih.nci.coppa.po.OversightCommittee[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
+    return boxedResult.getOversightCommittee();
+    }
+  }
+
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");

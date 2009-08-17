@@ -26,6 +26,12 @@ public class ClinicalResearchStaffProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse();
+    boxedResult.setClinicalResearchStaff(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
     public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getClinicalResearchStaff().getClinicalResearchStaff()));

@@ -26,6 +26,12 @@ public class IdentifiedPersonProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse();
+    boxedResult.setIdentifiedPerson(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
     public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getIdentifiedPerson().getIdentifiedPerson()));

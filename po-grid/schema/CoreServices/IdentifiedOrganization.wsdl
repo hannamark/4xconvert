@@ -202,6 +202,26 @@
           </sequence>
         </complexType>
       </element>
+      <element name="GetByPlayerIdsRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns15:Id" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByPlayerIdsResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns15:IdentifiedOrganization" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="IdentifiedOrganizationResourceProperties">
         <complexType>
           <sequence />
@@ -258,6 +278,12 @@
   <message name="QueryResponse">
     <part name="parameters" element="tns:QueryResponse" />
   </message>
+  <message name="GetByPlayerIdsRequest">
+    <part name="parameters" element="tns:GetByPlayerIdsRequest" />
+  </message>
+  <message name="GetByPlayerIdsResponse">
+    <part name="parameters" element="tns:GetByPlayerIdsResponse" />
+  </message>
   <message name="EntityValidationFaultFaultMessage">
     <part name="fault" element="ns9:EntityValidationFault" />
   </message>
@@ -311,6 +337,11 @@
       <input message="tns:QueryRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/QueryRequest" />
       <output message="tns:QueryResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/QueryResponse" />
       <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/TooManyResultsFaultFaultMessage" />
+    </operation>
+    <operation name="getByPlayerIds">
+      <input message="tns:GetByPlayerIdsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/GetByPlayerIdsRequest" />
+      <output message="tns:GetByPlayerIdsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/GetByPlayerIdsResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/NullifiedRoleFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

@@ -117,6 +117,18 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
         ClientUtils.handleSearchResults(results);
     }
 
+  public gov.nih.nci.coppa.po.ResearchOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
+    return boxedResult.getResearchOrganization();
+    }
+  }
+
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");

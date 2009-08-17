@@ -483,659 +483,731 @@
       <ns63:Exception description="" name="TooManyResultsFault" qname="ns88:TooManyResultsFault" xmlns:ns88="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types"/>
      </ns63:Exceptions>
     </ns63:Method>
+    <ns63:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns63:MethodType">
+     <ns63:Inputs>
+      <ns63:Input qName="ns89:Id" description="" isArray="true" name="id" xmlns:ns89="http://po.coppa.nci.nih.gov"/>
+     </ns63:Inputs>
+     <ns63:Output qName="ns90:HealthCareFacility" description="" isArray="true" xmlns:ns90="http://po.coppa.nci.nih.gov"/>
+     <ns63:Exceptions>
+      <ns63:Exception description="" name="NullifiedRoleFault" qname="ns91:NullifiedRoleFault" xmlns:ns91="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types"/>
+     </ns63:Exceptions>
+    </ns63:Method>
    </ns63:Methods>
-   <ns89:ResourcePropertiesList xsi:type="ns89:ResourcePropertiesListType" xmlns:ns89="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns92:ResourcePropertiesList xsi:type="ns92:ResourcePropertiesListType" xmlns:ns92="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="ClinicalResearchStaff" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff" packageName="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff" xsi:type="ns3:ServiceType">
-   <ns90:Methods xsi:type="ns90:MethodsType" xmlns:ns90="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns90:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns90:MethodType">
-     <ns90:Output qName="ns91:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns91="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns92:MethodSecurity xsi:type="ns92:MethodSecurity" xmlns:ns92="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns92:SecuritySetting xsi:type="ns92:SecuritySetting">None</ns92:SecuritySetting>
-      <ns92:MethodAuthorization xsi:type="ns92:MethodAuthorization">
-       <ns92:NoAuthorization xsi:type="ns92:NoAuthorization"/>
-      </ns92:MethodAuthorization>
-     </ns92:MethodSecurity>
-     <ns90:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns90:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns93:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns93="http://po.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="ns94:Id" description="" isArray="false" xmlns:ns94="http://po.coppa.nci.nih.gov"/>
-     <ns90:Exceptions>
-      <ns90:Exception description="" name="EntityValidationFault" qname="ns95:EntityValidationFault" xmlns:ns95="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
-     </ns90:Exceptions>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns96:Id" description="" isArray="false" name="id" xmlns:ns96="http://po.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="ns97:ClinicalResearchStaff" description="" isArray="false" xmlns:ns97="http://po.coppa.nci.nih.gov"/>
-     <ns90:Exceptions>
-      <ns90:Exception description="" name="NullifiedRoleFault" qname="ns98:NullifiedRoleFault" xmlns:ns98="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
-     </ns90:Exceptions>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns99:Id" description="" isArray="true" name="id" xmlns:ns99="http://po.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="ns100:ClinicalResearchStaff" description="" isArray="true" xmlns:ns100="http://po.coppa.nci.nih.gov"/>
-     <ns90:Exceptions>
-      <ns90:Exception description="" name="NullifiedRoleFault" qname="ns101:NullifiedRoleFault" xmlns:ns101="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
-     </ns90:Exceptions>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns102:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns102="http://po.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="ns103:ClinicalResearchStaff" description="" isArray="true" xmlns:ns103="http://po.coppa.nci.nih.gov"/>
-     <ns90:Exceptions>
-      <ns90:Exception description="" name="TooManyResultsFault" qname="ns104:TooManyResultsFault" xmlns:ns104="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
-     </ns90:Exceptions>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns105:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns105="http://po.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="void" description="" isArray="false"/>
-     <ns90:Exceptions>
-      <ns90:Exception description="" name="EntityValidationFault" qname="ns106:EntityValidationFault" xmlns:ns106="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
-     </ns90:Exceptions>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns107:Id" description="" isArray="false" name="targetId" xmlns:ns107="http://po.coppa.nci.nih.gov"/>
-      <ns90:Input qName="ns108:Cd" description="" isArray="false" name="statusCode" xmlns:ns108="http://po.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="void" description="" isArray="false"/>
-     <ns90:Exceptions>
-      <ns90:Exception description="" name="EntityValidationFault" qname="ns109:EntityValidationFault" xmlns:ns109="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
-     </ns90:Exceptions>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns110:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns110="http://po.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="ns111:StringMap" description="" isArray="false" xmlns:ns111="http://po.coppa.nci.nih.gov"/>
-     <ns90:Exceptions/>
-    </ns90:Method>
-    <ns90:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns90:MethodType">
-     <ns90:Inputs>
-      <ns90:Input qName="ns112:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns112="http://po.coppa.nci.nih.gov"/>
-      <ns90:Input qName="ns113:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns113="http://common.coppa.nci.nih.gov"/>
-     </ns90:Inputs>
-     <ns90:Output qName="ns114:ClinicalResearchStaff" description="" isArray="true" xmlns:ns114="http://po.coppa.nci.nih.gov"/>
-     <ns90:Exceptions>
-      <ns90:Exception description="" name="TooManyResultsFault" qname="ns115:TooManyResultsFault" xmlns:ns115="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
-     </ns90:Exceptions>
-    </ns90:Method>
-   </ns90:Methods>
-   <ns116:ResourcePropertiesList xsi:type="ns116:ResourcePropertiesListType" xmlns:ns116="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns93:Methods xsi:type="ns93:MethodsType" xmlns:ns93="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns93:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns93:MethodType">
+     <ns93:Output qName="ns94:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns94="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns95:MethodSecurity xsi:type="ns95:MethodSecurity" xmlns:ns95="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns95:SecuritySetting xsi:type="ns95:SecuritySetting">None</ns95:SecuritySetting>
+      <ns95:MethodAuthorization xsi:type="ns95:MethodAuthorization">
+       <ns95:NoAuthorization xsi:type="ns95:NoAuthorization"/>
+      </ns95:MethodAuthorization>
+     </ns95:MethodSecurity>
+     <ns93:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns93:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns96:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns96="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="ns97:Id" description="" isArray="false" xmlns:ns97="http://po.coppa.nci.nih.gov"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="EntityValidationFault" qname="ns98:EntityValidationFault" xmlns:ns98="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns99:Id" description="" isArray="false" name="id" xmlns:ns99="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="ns100:ClinicalResearchStaff" description="" isArray="false" xmlns:ns100="http://po.coppa.nci.nih.gov"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="NullifiedRoleFault" qname="ns101:NullifiedRoleFault" xmlns:ns101="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns102:Id" description="" isArray="true" name="id" xmlns:ns102="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="ns103:ClinicalResearchStaff" description="" isArray="true" xmlns:ns103="http://po.coppa.nci.nih.gov"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="NullifiedRoleFault" qname="ns104:NullifiedRoleFault" xmlns:ns104="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns105:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns105="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="ns106:ClinicalResearchStaff" description="" isArray="true" xmlns:ns106="http://po.coppa.nci.nih.gov"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="TooManyResultsFault" qname="ns107:TooManyResultsFault" xmlns:ns107="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns108:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns108="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="void" description="" isArray="false"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="EntityValidationFault" qname="ns109:EntityValidationFault" xmlns:ns109="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns110:Id" description="" isArray="false" name="targetId" xmlns:ns110="http://po.coppa.nci.nih.gov"/>
+      <ns93:Input qName="ns111:Cd" description="" isArray="false" name="statusCode" xmlns:ns111="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="void" description="" isArray="false"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="EntityValidationFault" qname="ns112:EntityValidationFault" xmlns:ns112="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns113:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns113="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="ns114:StringMap" description="" isArray="false" xmlns:ns114="http://po.coppa.nci.nih.gov"/>
+     <ns93:Exceptions/>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns115:ClinicalResearchStaff" description="" isArray="false" name="clinicalResearchStaff" xmlns:ns115="http://po.coppa.nci.nih.gov"/>
+      <ns93:Input qName="ns116:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns116="http://common.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="ns117:ClinicalResearchStaff" description="" isArray="true" xmlns:ns117="http://po.coppa.nci.nih.gov"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="TooManyResultsFault" qname="ns118:TooManyResultsFault" xmlns:ns118="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+    <ns93:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns93:MethodType">
+     <ns93:Inputs>
+      <ns93:Input qName="ns119:Id" description="" isArray="true" name="id" xmlns:ns119="http://po.coppa.nci.nih.gov"/>
+     </ns93:Inputs>
+     <ns93:Output qName="ns120:ClinicalResearchStaff" description="" isArray="true" xmlns:ns120="http://po.coppa.nci.nih.gov"/>
+     <ns93:Exceptions>
+      <ns93:Exception description="" name="NullifiedRoleFault" qname="ns121:NullifiedRoleFault" xmlns:ns121="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"/>
+     </ns93:Exceptions>
+    </ns93:Method>
+   </ns93:Methods>
+   <ns122:ResourcePropertiesList xsi:type="ns122:ResourcePropertiesListType" xmlns:ns122="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="HealthCareProvider" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider" packageName="gov.nih.nci.coppa.services.structuralroles.healthcareprovider" xsi:type="ns3:ServiceType">
-   <ns117:Methods xsi:type="ns117:MethodsType" xmlns:ns117="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns117:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns117:MethodType">
-     <ns117:Output qName="ns118:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns118="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns119:MethodSecurity xsi:type="ns119:MethodSecurity" xmlns:ns119="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns119:SecuritySetting xsi:type="ns119:SecuritySetting">None</ns119:SecuritySetting>
-      <ns119:MethodAuthorization xsi:type="ns119:MethodAuthorization">
-       <ns119:NoAuthorization xsi:type="ns119:NoAuthorization"/>
-      </ns119:MethodAuthorization>
-     </ns119:MethodSecurity>
-     <ns117:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns117:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns120:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns120="http://po.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="ns121:Id" description="" isArray="false" xmlns:ns121="http://po.coppa.nci.nih.gov"/>
-     <ns117:Exceptions>
-      <ns117:Exception description="" name="EntityValidationFault" qname="ns122:EntityValidationFault" xmlns:ns122="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
-     </ns117:Exceptions>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns123:Id" description="" isArray="false" name="id" xmlns:ns123="http://po.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="ns124:HealthCareProvider" description="" isArray="false" xmlns:ns124="http://po.coppa.nci.nih.gov"/>
-     <ns117:Exceptions>
-      <ns117:Exception description="" name="NullifiedRoleFault" qname="ns125:NullifiedRoleFault" xmlns:ns125="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
-     </ns117:Exceptions>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns126:Id" description="" isArray="true" name="id" xmlns:ns126="http://po.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="ns127:HealthCareProvider" description="" isArray="true" xmlns:ns127="http://po.coppa.nci.nih.gov"/>
-     <ns117:Exceptions>
-      <ns117:Exception description="" name="NullifiedRoleFault" qname="ns128:NullifiedRoleFault" xmlns:ns128="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
-     </ns117:Exceptions>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns129:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns129="http://po.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="ns130:HealthCareProvider" description="" isArray="true" xmlns:ns130="http://po.coppa.nci.nih.gov"/>
-     <ns117:Exceptions>
-      <ns117:Exception description="" name="TooManyResultsFault" qname="ns131:TooManyResultsFault" xmlns:ns131="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
-     </ns117:Exceptions>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns132:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns132="http://po.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="void" description="" isArray="false"/>
-     <ns117:Exceptions>
-      <ns117:Exception description="" name="EntityValidationFault" qname="ns133:EntityValidationFault" xmlns:ns133="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
-     </ns117:Exceptions>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns134:Id" description="" isArray="false" name="targetId" xmlns:ns134="http://po.coppa.nci.nih.gov"/>
-      <ns117:Input qName="ns135:Cd" description="" isArray="false" name="statusCode" xmlns:ns135="http://po.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="void" description="" isArray="false"/>
-     <ns117:Exceptions>
-      <ns117:Exception description="" name="EntityValidationFault" qname="ns136:EntityValidationFault" xmlns:ns136="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
-     </ns117:Exceptions>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns137:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns137="http://po.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="ns138:StringMap" description="" isArray="false" xmlns:ns138="http://po.coppa.nci.nih.gov"/>
-     <ns117:Exceptions/>
-    </ns117:Method>
-    <ns117:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns117:MethodType">
-     <ns117:Inputs>
-      <ns117:Input qName="ns139:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns139="http://po.coppa.nci.nih.gov"/>
-      <ns117:Input qName="ns140:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns140="http://common.coppa.nci.nih.gov"/>
-     </ns117:Inputs>
-     <ns117:Output qName="ns141:HealthCareProvider" description="" isArray="true" xmlns:ns141="http://po.coppa.nci.nih.gov"/>
-     <ns117:Exceptions>
-      <ns117:Exception description="" name="TooManyResultsFault" qname="ns142:TooManyResultsFault" xmlns:ns142="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
-     </ns117:Exceptions>
-    </ns117:Method>
-   </ns117:Methods>
-   <ns143:ResourcePropertiesList xsi:type="ns143:ResourcePropertiesListType" xmlns:ns143="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns123:Methods xsi:type="ns123:MethodsType" xmlns:ns123="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns123:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns123:MethodType">
+     <ns123:Output qName="ns124:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns124="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns125:MethodSecurity xsi:type="ns125:MethodSecurity" xmlns:ns125="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns125:SecuritySetting xsi:type="ns125:SecuritySetting">None</ns125:SecuritySetting>
+      <ns125:MethodAuthorization xsi:type="ns125:MethodAuthorization">
+       <ns125:NoAuthorization xsi:type="ns125:NoAuthorization"/>
+      </ns125:MethodAuthorization>
+     </ns125:MethodSecurity>
+     <ns123:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns123:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns126:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns126="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="ns127:Id" description="" isArray="false" xmlns:ns127="http://po.coppa.nci.nih.gov"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="EntityValidationFault" qname="ns128:EntityValidationFault" xmlns:ns128="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns129:Id" description="" isArray="false" name="id" xmlns:ns129="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="ns130:HealthCareProvider" description="" isArray="false" xmlns:ns130="http://po.coppa.nci.nih.gov"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="NullifiedRoleFault" qname="ns131:NullifiedRoleFault" xmlns:ns131="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns132:Id" description="" isArray="true" name="id" xmlns:ns132="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="ns133:HealthCareProvider" description="" isArray="true" xmlns:ns133="http://po.coppa.nci.nih.gov"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="NullifiedRoleFault" qname="ns134:NullifiedRoleFault" xmlns:ns134="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns135:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns135="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="ns136:HealthCareProvider" description="" isArray="true" xmlns:ns136="http://po.coppa.nci.nih.gov"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="TooManyResultsFault" qname="ns137:TooManyResultsFault" xmlns:ns137="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns138:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns138="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="void" description="" isArray="false"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="EntityValidationFault" qname="ns139:EntityValidationFault" xmlns:ns139="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns140:Id" description="" isArray="false" name="targetId" xmlns:ns140="http://po.coppa.nci.nih.gov"/>
+      <ns123:Input qName="ns141:Cd" description="" isArray="false" name="statusCode" xmlns:ns141="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="void" description="" isArray="false"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="EntityValidationFault" qname="ns142:EntityValidationFault" xmlns:ns142="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns143:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns143="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="ns144:StringMap" description="" isArray="false" xmlns:ns144="http://po.coppa.nci.nih.gov"/>
+     <ns123:Exceptions/>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns145:HealthCareProvider" description="" isArray="false" name="healthCareProvider" xmlns:ns145="http://po.coppa.nci.nih.gov"/>
+      <ns123:Input qName="ns146:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns146="http://common.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="ns147:HealthCareProvider" description="" isArray="true" xmlns:ns147="http://po.coppa.nci.nih.gov"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="TooManyResultsFault" qname="ns148:TooManyResultsFault" xmlns:ns148="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+    <ns123:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns123:MethodType">
+     <ns123:Inputs>
+      <ns123:Input qName="ns149:Id" description="" isArray="true" name="id" xmlns:ns149="http://po.coppa.nci.nih.gov"/>
+     </ns123:Inputs>
+     <ns123:Output qName="ns150:HealthCareProvider" description="" isArray="true" xmlns:ns150="http://po.coppa.nci.nih.gov"/>
+     <ns123:Exceptions>
+      <ns123:Exception description="" name="NullifiedRoleFault" qname="ns151:NullifiedRoleFault" xmlns:ns151="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types"/>
+     </ns123:Exceptions>
+    </ns123:Method>
+   </ns123:Methods>
+   <ns152:ResourcePropertiesList xsi:type="ns152:ResourcePropertiesListType" xmlns:ns152="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="IdentifiedOrganization" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedorganization" xsi:type="ns3:ServiceType">
-   <ns144:Methods xsi:type="ns144:MethodsType" xmlns:ns144="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns144:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns144:MethodType">
-     <ns144:Output qName="ns145:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns145="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns146:MethodSecurity xsi:type="ns146:MethodSecurity" xmlns:ns146="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns146:SecuritySetting xsi:type="ns146:SecuritySetting">None</ns146:SecuritySetting>
-      <ns146:MethodAuthorization xsi:type="ns146:MethodAuthorization">
-       <ns146:NoAuthorization xsi:type="ns146:NoAuthorization"/>
-      </ns146:MethodAuthorization>
-     </ns146:MethodSecurity>
-     <ns144:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns144:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns147:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns147="http://po.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="ns148:Id" description="" isArray="false" xmlns:ns148="http://po.coppa.nci.nih.gov"/>
-     <ns144:Exceptions>
-      <ns144:Exception description="" name="EntityValidationFault" qname="ns149:EntityValidationFault" xmlns:ns149="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
-     </ns144:Exceptions>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns150:Id" description="" isArray="false" name="id" xmlns:ns150="http://po.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="ns151:IdentifiedOrganization" description="" isArray="false" xmlns:ns151="http://po.coppa.nci.nih.gov"/>
-     <ns144:Exceptions>
-      <ns144:Exception description="" name="NullifiedRoleFault" qname="ns152:NullifiedRoleFault" xmlns:ns152="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
-     </ns144:Exceptions>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns153:Id" description="" isArray="true" name="id" xmlns:ns153="http://po.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="ns154:IdentifiedOrganization" description="" isArray="true" xmlns:ns154="http://po.coppa.nci.nih.gov"/>
-     <ns144:Exceptions>
-      <ns144:Exception description="" name="NullifiedRoleFault" qname="ns155:NullifiedRoleFault" xmlns:ns155="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
-     </ns144:Exceptions>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns156:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns156="http://po.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="ns157:IdentifiedOrganization" description="" isArray="true" xmlns:ns157="http://po.coppa.nci.nih.gov"/>
-     <ns144:Exceptions>
-      <ns144:Exception description="" name="TooManyResultsFault" qname="ns158:TooManyResultsFault" xmlns:ns158="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
-     </ns144:Exceptions>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns159:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns159="http://po.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="void" description="" isArray="false"/>
-     <ns144:Exceptions>
-      <ns144:Exception description="" name="EntityValidationFault" qname="ns160:EntityValidationFault" xmlns:ns160="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
-     </ns144:Exceptions>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns161:Id" description="" isArray="false" name="targetId" xmlns:ns161="http://po.coppa.nci.nih.gov"/>
-      <ns144:Input qName="ns162:Cd" description="" isArray="false" name="statusCode" xmlns:ns162="http://po.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="void" description="" isArray="false"/>
-     <ns144:Exceptions>
-      <ns144:Exception description="" name="EntityValidationFault" qname="ns163:EntityValidationFault" xmlns:ns163="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
-     </ns144:Exceptions>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns164:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns164="http://po.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="ns165:StringMap" description="" isArray="false" xmlns:ns165="http://po.coppa.nci.nih.gov"/>
-     <ns144:Exceptions/>
-    </ns144:Method>
-    <ns144:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns144:MethodType">
-     <ns144:Inputs>
-      <ns144:Input qName="ns166:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns166="http://po.coppa.nci.nih.gov"/>
-      <ns144:Input qName="ns167:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns167="http://common.coppa.nci.nih.gov"/>
-     </ns144:Inputs>
-     <ns144:Output qName="ns168:IdentifiedOrganization" description="" isArray="true" xmlns:ns168="http://po.coppa.nci.nih.gov"/>
-     <ns144:Exceptions>
-      <ns144:Exception description="" name="TooManyResultsFault" qname="ns169:TooManyResultsFault" xmlns:ns169="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
-     </ns144:Exceptions>
-    </ns144:Method>
-   </ns144:Methods>
-   <ns170:ResourcePropertiesList xsi:type="ns170:ResourcePropertiesListType" xmlns:ns170="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns153:Methods xsi:type="ns153:MethodsType" xmlns:ns153="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns153:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns153:MethodType">
+     <ns153:Output qName="ns154:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns154="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns155:MethodSecurity xsi:type="ns155:MethodSecurity" xmlns:ns155="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns155:SecuritySetting xsi:type="ns155:SecuritySetting">None</ns155:SecuritySetting>
+      <ns155:MethodAuthorization xsi:type="ns155:MethodAuthorization">
+       <ns155:NoAuthorization xsi:type="ns155:NoAuthorization"/>
+      </ns155:MethodAuthorization>
+     </ns155:MethodSecurity>
+     <ns153:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns153:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns156:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns156="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="ns157:Id" description="" isArray="false" xmlns:ns157="http://po.coppa.nci.nih.gov"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="EntityValidationFault" qname="ns158:EntityValidationFault" xmlns:ns158="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns159:Id" description="" isArray="false" name="id" xmlns:ns159="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="ns160:IdentifiedOrganization" description="" isArray="false" xmlns:ns160="http://po.coppa.nci.nih.gov"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="NullifiedRoleFault" qname="ns161:NullifiedRoleFault" xmlns:ns161="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns162:Id" description="" isArray="true" name="id" xmlns:ns162="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="ns163:IdentifiedOrganization" description="" isArray="true" xmlns:ns163="http://po.coppa.nci.nih.gov"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="NullifiedRoleFault" qname="ns164:NullifiedRoleFault" xmlns:ns164="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns165:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns165="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="ns166:IdentifiedOrganization" description="" isArray="true" xmlns:ns166="http://po.coppa.nci.nih.gov"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="TooManyResultsFault" qname="ns167:TooManyResultsFault" xmlns:ns167="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns168:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns168="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="void" description="" isArray="false"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="EntityValidationFault" qname="ns169:EntityValidationFault" xmlns:ns169="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns170:Id" description="" isArray="false" name="targetId" xmlns:ns170="http://po.coppa.nci.nih.gov"/>
+      <ns153:Input qName="ns171:Cd" description="" isArray="false" name="statusCode" xmlns:ns171="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="void" description="" isArray="false"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="EntityValidationFault" qname="ns172:EntityValidationFault" xmlns:ns172="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns173:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns173="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="ns174:StringMap" description="" isArray="false" xmlns:ns174="http://po.coppa.nci.nih.gov"/>
+     <ns153:Exceptions/>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns175:IdentifiedOrganization" description="" isArray="false" name="identifiedOrganization" xmlns:ns175="http://po.coppa.nci.nih.gov"/>
+      <ns153:Input qName="ns176:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns176="http://common.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="ns177:IdentifiedOrganization" description="" isArray="true" xmlns:ns177="http://po.coppa.nci.nih.gov"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="TooManyResultsFault" qname="ns178:TooManyResultsFault" xmlns:ns178="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+    <ns153:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns153:MethodType">
+     <ns153:Inputs>
+      <ns153:Input qName="ns179:Id" description="" isArray="true" name="id" xmlns:ns179="http://po.coppa.nci.nih.gov"/>
+     </ns153:Inputs>
+     <ns153:Output qName="ns180:IdentifiedOrganization" description="" isArray="true" xmlns:ns180="http://po.coppa.nci.nih.gov"/>
+     <ns153:Exceptions>
+      <ns153:Exception description="" name="NullifiedRoleFault" qname="ns181:NullifiedRoleFault" xmlns:ns181="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types"/>
+     </ns153:Exceptions>
+    </ns153:Method>
+   </ns153:Methods>
+   <ns182:ResourcePropertiesList xsi:type="ns182:ResourcePropertiesListType" xmlns:ns182="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="IdentifiedPerson" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson" packageName="gov.nih.nci.coppa.services.structuralroles.identifiedperson" xsi:type="ns3:ServiceType">
-   <ns171:Methods xsi:type="ns171:MethodsType" xmlns:ns171="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns171:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns171:MethodType">
-     <ns171:Output qName="ns172:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns172="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns173:MethodSecurity xsi:type="ns173:MethodSecurity" xmlns:ns173="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns173:SecuritySetting xsi:type="ns173:SecuritySetting">None</ns173:SecuritySetting>
-      <ns173:MethodAuthorization xsi:type="ns173:MethodAuthorization">
-       <ns173:NoAuthorization xsi:type="ns173:NoAuthorization"/>
-      </ns173:MethodAuthorization>
-     </ns173:MethodSecurity>
-     <ns171:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns171:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns174:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns174="http://po.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="ns175:Id" description="" isArray="false" xmlns:ns175="http://po.coppa.nci.nih.gov"/>
-     <ns171:Exceptions>
-      <ns171:Exception description="" name="EntityValidationFault" qname="ns176:EntityValidationFault" xmlns:ns176="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
-     </ns171:Exceptions>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns177:Id" description="" isArray="false" name="id" xmlns:ns177="http://po.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="ns178:IdentifiedPerson" description="" isArray="false" xmlns:ns178="http://po.coppa.nci.nih.gov"/>
-     <ns171:Exceptions>
-      <ns171:Exception description="" name="NullifiedRoleFault" qname="ns179:NullifiedRoleFault" xmlns:ns179="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
-     </ns171:Exceptions>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns180:Id" description="" isArray="true" name="id" xmlns:ns180="http://po.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="ns181:IdentifiedPerson" description="" isArray="true" xmlns:ns181="http://po.coppa.nci.nih.gov"/>
-     <ns171:Exceptions>
-      <ns171:Exception description="" name="NullifiedRoleFault" qname="ns182:NullifiedRoleFault" xmlns:ns182="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
-     </ns171:Exceptions>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns183:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns183="http://po.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="ns184:IdentifiedPerson" description="" isArray="true" xmlns:ns184="http://po.coppa.nci.nih.gov"/>
-     <ns171:Exceptions>
-      <ns171:Exception description="" name="TooManyResultsFault" qname="ns185:TooManyResultsFault" xmlns:ns185="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
-     </ns171:Exceptions>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns186:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns186="http://po.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="void" description="" isArray="false"/>
-     <ns171:Exceptions>
-      <ns171:Exception description="" name="EntityValidationFault" qname="ns187:EntityValidationFault" xmlns:ns187="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
-     </ns171:Exceptions>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns188:Id" description="" isArray="false" name="targetId" xmlns:ns188="http://po.coppa.nci.nih.gov"/>
-      <ns171:Input qName="ns189:Cd" description="" isArray="false" name="statusCode" xmlns:ns189="http://po.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="void" description="" isArray="false"/>
-     <ns171:Exceptions>
-      <ns171:Exception description="" name="EntityValidationFault" qname="ns190:EntityValidationFault" xmlns:ns190="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
-     </ns171:Exceptions>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns191:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns191="http://po.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="ns192:StringMap" description="" isArray="false" xmlns:ns192="http://po.coppa.nci.nih.gov"/>
-     <ns171:Exceptions/>
-    </ns171:Method>
-    <ns171:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns171:MethodType">
-     <ns171:Inputs>
-      <ns171:Input qName="ns193:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns193="http://po.coppa.nci.nih.gov"/>
-      <ns171:Input qName="ns194:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns194="http://common.coppa.nci.nih.gov"/>
-     </ns171:Inputs>
-     <ns171:Output qName="ns195:IdentifiedPerson" description="" isArray="true" xmlns:ns195="http://po.coppa.nci.nih.gov"/>
-     <ns171:Exceptions>
-      <ns171:Exception description="" name="TooManyResultsFault" qname="ns196:TooManyResultsFault" xmlns:ns196="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
-     </ns171:Exceptions>
-    </ns171:Method>
-   </ns171:Methods>
-   <ns197:ResourcePropertiesList xsi:type="ns197:ResourcePropertiesListType" xmlns:ns197="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns183:Methods xsi:type="ns183:MethodsType" xmlns:ns183="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns183:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns183:MethodType">
+     <ns183:Output qName="ns184:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns184="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns185:MethodSecurity xsi:type="ns185:MethodSecurity" xmlns:ns185="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns185:SecuritySetting xsi:type="ns185:SecuritySetting">None</ns185:SecuritySetting>
+      <ns185:MethodAuthorization xsi:type="ns185:MethodAuthorization">
+       <ns185:NoAuthorization xsi:type="ns185:NoAuthorization"/>
+      </ns185:MethodAuthorization>
+     </ns185:MethodSecurity>
+     <ns183:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns183:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns186:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns186="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns187:Id" description="" isArray="false" xmlns:ns187="http://po.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="EntityValidationFault" qname="ns188:EntityValidationFault" xmlns:ns188="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns189:Id" description="" isArray="false" name="id" xmlns:ns189="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns190:IdentifiedPerson" description="" isArray="false" xmlns:ns190="http://po.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="NullifiedRoleFault" qname="ns191:NullifiedRoleFault" xmlns:ns191="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns192:Id" description="" isArray="true" name="id" xmlns:ns192="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns193:IdentifiedPerson" description="" isArray="true" xmlns:ns193="http://po.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="NullifiedRoleFault" qname="ns194:NullifiedRoleFault" xmlns:ns194="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns195:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns195="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns196:IdentifiedPerson" description="" isArray="true" xmlns:ns196="http://po.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="TooManyResultsFault" qname="ns197:TooManyResultsFault" xmlns:ns197="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns198:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns198="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="void" description="" isArray="false"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="EntityValidationFault" qname="ns199:EntityValidationFault" xmlns:ns199="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns200:Id" description="" isArray="false" name="targetId" xmlns:ns200="http://po.coppa.nci.nih.gov"/>
+      <ns183:Input qName="ns201:Cd" description="" isArray="false" name="statusCode" xmlns:ns201="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="void" description="" isArray="false"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="EntityValidationFault" qname="ns202:EntityValidationFault" xmlns:ns202="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns203:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns203="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns204:StringMap" description="" isArray="false" xmlns:ns204="http://po.coppa.nci.nih.gov"/>
+     <ns183:Exceptions/>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns205:IdentifiedPerson" description="" isArray="false" name="identifiedPerson" xmlns:ns205="http://po.coppa.nci.nih.gov"/>
+      <ns183:Input qName="ns206:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns206="http://common.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns207:IdentifiedPerson" description="" isArray="true" xmlns:ns207="http://po.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="TooManyResultsFault" qname="ns208:TooManyResultsFault" xmlns:ns208="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns209:Id" description="" isArray="true" name="id" xmlns:ns209="http://po.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns210:IdentifiedPerson" description="" isArray="true" xmlns:ns210="http://po.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="NullifiedRoleFault" qname="ns211:NullifiedRoleFault" xmlns:ns211="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+   </ns183:Methods>
+   <ns212:ResourcePropertiesList xsi:type="ns212:ResourcePropertiesListType" xmlns:ns212="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="OrganizationalContact" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact" packageName="gov.nih.nci.coppa.services.structuralroles.organizationalcontact" xsi:type="ns3:ServiceType">
-   <ns198:Methods xsi:type="ns198:MethodsType" xmlns:ns198="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns198:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns198:MethodType">
-     <ns198:Output qName="ns199:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns199="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns200:MethodSecurity xsi:type="ns200:MethodSecurity" xmlns:ns200="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns200:SecuritySetting xsi:type="ns200:SecuritySetting">None</ns200:SecuritySetting>
-      <ns200:MethodAuthorization xsi:type="ns200:MethodAuthorization">
-       <ns200:NoAuthorization xsi:type="ns200:NoAuthorization"/>
-      </ns200:MethodAuthorization>
-     </ns200:MethodSecurity>
-     <ns198:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns198:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns201:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns201="http://po.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="ns202:Id" description="" isArray="false" xmlns:ns202="http://po.coppa.nci.nih.gov"/>
-     <ns198:Exceptions>
-      <ns198:Exception description="" name="EntityValidationFault" qname="ns203:EntityValidationFault" xmlns:ns203="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
-     </ns198:Exceptions>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns204:Id" description="" isArray="false" name="id" xmlns:ns204="http://po.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="ns205:OrganizationalContact" description="" isArray="false" xmlns:ns205="http://po.coppa.nci.nih.gov"/>
-     <ns198:Exceptions>
-      <ns198:Exception description="" name="NullifiedRoleFault" qname="ns206:NullifiedRoleFault" xmlns:ns206="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
-     </ns198:Exceptions>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns207:Id" description="" isArray="true" name="id" xmlns:ns207="http://po.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="ns208:OrganizationalContact" description="" isArray="true" xmlns:ns208="http://po.coppa.nci.nih.gov"/>
-     <ns198:Exceptions>
-      <ns198:Exception description="" name="NullifiedRoleFault" qname="ns209:NullifiedRoleFault" xmlns:ns209="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
-     </ns198:Exceptions>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns210:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns210="http://po.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="ns211:OrganizationalContact" description="" isArray="true" xmlns:ns211="http://po.coppa.nci.nih.gov"/>
-     <ns198:Exceptions>
-      <ns198:Exception description="" name="TooManyResultsFault" qname="ns212:TooManyResultsFault" xmlns:ns212="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
-     </ns198:Exceptions>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns213:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns213="http://po.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="void" description="" isArray="false"/>
-     <ns198:Exceptions>
-      <ns198:Exception description="" name="EntityValidationFault" qname="ns214:EntityValidationFault" xmlns:ns214="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
-     </ns198:Exceptions>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns215:Id" description="" isArray="false" name="targetId" xmlns:ns215="http://po.coppa.nci.nih.gov"/>
-      <ns198:Input qName="ns216:Cd" description="" isArray="false" name="statusCode" xmlns:ns216="http://po.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="void" description="" isArray="false"/>
-     <ns198:Exceptions>
-      <ns198:Exception description="" name="EntityValidationFault" qname="ns217:EntityValidationFault" xmlns:ns217="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
-     </ns198:Exceptions>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns218:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns218="http://po.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="ns219:StringMap" description="" isArray="false" xmlns:ns219="http://po.coppa.nci.nih.gov"/>
-     <ns198:Exceptions/>
-    </ns198:Method>
-    <ns198:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns198:MethodType">
-     <ns198:Inputs>
-      <ns198:Input qName="ns220:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns220="http://po.coppa.nci.nih.gov"/>
-      <ns198:Input qName="ns221:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns221="http://common.coppa.nci.nih.gov"/>
-     </ns198:Inputs>
-     <ns198:Output qName="ns222:OrganizationalContact" description="" isArray="true" xmlns:ns222="http://po.coppa.nci.nih.gov"/>
-     <ns198:Exceptions>
-      <ns198:Exception description="" name="TooManyResultsFault" qname="ns223:TooManyResultsFault" xmlns:ns223="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
-     </ns198:Exceptions>
-    </ns198:Method>
-   </ns198:Methods>
-   <ns224:ResourcePropertiesList xsi:type="ns224:ResourcePropertiesListType" xmlns:ns224="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns213:Methods xsi:type="ns213:MethodsType" xmlns:ns213="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns213:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns213:MethodType">
+     <ns213:Output qName="ns214:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns214="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns215:MethodSecurity xsi:type="ns215:MethodSecurity" xmlns:ns215="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns215:SecuritySetting xsi:type="ns215:SecuritySetting">None</ns215:SecuritySetting>
+      <ns215:MethodAuthorization xsi:type="ns215:MethodAuthorization">
+       <ns215:NoAuthorization xsi:type="ns215:NoAuthorization"/>
+      </ns215:MethodAuthorization>
+     </ns215:MethodSecurity>
+     <ns213:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns213:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns216:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns216="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="ns217:Id" description="" isArray="false" xmlns:ns217="http://po.coppa.nci.nih.gov"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="EntityValidationFault" qname="ns218:EntityValidationFault" xmlns:ns218="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns219:Id" description="" isArray="false" name="id" xmlns:ns219="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="ns220:OrganizationalContact" description="" isArray="false" xmlns:ns220="http://po.coppa.nci.nih.gov"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="NullifiedRoleFault" qname="ns221:NullifiedRoleFault" xmlns:ns221="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns222:Id" description="" isArray="true" name="id" xmlns:ns222="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="ns223:OrganizationalContact" description="" isArray="true" xmlns:ns223="http://po.coppa.nci.nih.gov"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="NullifiedRoleFault" qname="ns224:NullifiedRoleFault" xmlns:ns224="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns225:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns225="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="ns226:OrganizationalContact" description="" isArray="true" xmlns:ns226="http://po.coppa.nci.nih.gov"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="TooManyResultsFault" qname="ns227:TooManyResultsFault" xmlns:ns227="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns228:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns228="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="void" description="" isArray="false"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="EntityValidationFault" qname="ns229:EntityValidationFault" xmlns:ns229="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns230:Id" description="" isArray="false" name="targetId" xmlns:ns230="http://po.coppa.nci.nih.gov"/>
+      <ns213:Input qName="ns231:Cd" description="" isArray="false" name="statusCode" xmlns:ns231="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="void" description="" isArray="false"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="EntityValidationFault" qname="ns232:EntityValidationFault" xmlns:ns232="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns233:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns233="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="ns234:StringMap" description="" isArray="false" xmlns:ns234="http://po.coppa.nci.nih.gov"/>
+     <ns213:Exceptions/>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns235:OrganizationalContact" description="" isArray="false" name="organizationalContact" xmlns:ns235="http://po.coppa.nci.nih.gov"/>
+      <ns213:Input qName="ns236:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns236="http://common.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="ns237:OrganizationalContact" description="" isArray="true" xmlns:ns237="http://po.coppa.nci.nih.gov"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="TooManyResultsFault" qname="ns238:TooManyResultsFault" xmlns:ns238="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+    <ns213:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns213:MethodType">
+     <ns213:Inputs>
+      <ns213:Input qName="ns239:Id" description="" isArray="true" name="id" xmlns:ns239="http://po.coppa.nci.nih.gov"/>
+     </ns213:Inputs>
+     <ns213:Output qName="ns240:OrganizationalContact" description="" isArray="true" xmlns:ns240="http://po.coppa.nci.nih.gov"/>
+     <ns213:Exceptions>
+      <ns213:Exception description="" name="NullifiedRoleFault" qname="ns241:NullifiedRoleFault" xmlns:ns241="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types"/>
+     </ns213:Exceptions>
+    </ns213:Method>
+   </ns213:Methods>
+   <ns242:ResourcePropertiesList xsi:type="ns242:ResourcePropertiesListType" xmlns:ns242="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="OversightCommittee" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee" packageName="gov.nih.nci.coppa.services.structuralroles.oversightcommittee" xsi:type="ns3:ServiceType">
-   <ns225:Methods xsi:type="ns225:MethodsType" xmlns:ns225="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns225:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns225:MethodType">
-     <ns225:Output qName="ns226:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns226="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns227:MethodSecurity xsi:type="ns227:MethodSecurity" xmlns:ns227="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns227:SecuritySetting xsi:type="ns227:SecuritySetting">None</ns227:SecuritySetting>
-      <ns227:MethodAuthorization xsi:type="ns227:MethodAuthorization">
-       <ns227:NoAuthorization xsi:type="ns227:NoAuthorization"/>
-      </ns227:MethodAuthorization>
-     </ns227:MethodSecurity>
-     <ns225:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns225:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns228:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns228="http://po.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="ns229:Id" description="" isArray="false" xmlns:ns229="http://po.coppa.nci.nih.gov"/>
-     <ns225:Exceptions>
-      <ns225:Exception description="" name="EntityValidationFault" qname="ns230:EntityValidationFault" xmlns:ns230="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
-     </ns225:Exceptions>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns231:Id" description="" isArray="false" name="id" xmlns:ns231="http://po.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="ns232:OversightCommittee" description="" isArray="false" xmlns:ns232="http://po.coppa.nci.nih.gov"/>
-     <ns225:Exceptions>
-      <ns225:Exception description="" name="NullifiedRoleFault" qname="ns233:NullifiedRoleFault" xmlns:ns233="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
-     </ns225:Exceptions>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns234:Id" description="" isArray="true" name="id" xmlns:ns234="http://po.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="ns235:OversightCommittee" description="" isArray="true" xmlns:ns235="http://po.coppa.nci.nih.gov"/>
-     <ns225:Exceptions>
-      <ns225:Exception description="" name="NullifiedRoleFault" qname="ns236:NullifiedRoleFault" xmlns:ns236="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
-     </ns225:Exceptions>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns237:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns237="http://po.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="ns238:OversightCommittee" description="" isArray="true" xmlns:ns238="http://po.coppa.nci.nih.gov"/>
-     <ns225:Exceptions>
-      <ns225:Exception description="" name="TooManyResultsFault" qname="ns239:TooManyResultsFault" xmlns:ns239="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
-     </ns225:Exceptions>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns240:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns240="http://po.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="void" description="" isArray="false"/>
-     <ns225:Exceptions>
-      <ns225:Exception description="" name="EntityValidationFault" qname="ns241:EntityValidationFault" xmlns:ns241="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
-     </ns225:Exceptions>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns242:Id" description="" isArray="false" name="targetId" xmlns:ns242="http://po.coppa.nci.nih.gov"/>
-      <ns225:Input qName="ns243:Cd" description="" isArray="false" name="statusCode" xmlns:ns243="http://po.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="void" description="" isArray="false"/>
-     <ns225:Exceptions>
-      <ns225:Exception description="" name="EntityValidationFault" qname="ns244:EntityValidationFault" xmlns:ns244="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
-     </ns225:Exceptions>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns245:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns245="http://po.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="ns246:StringMap" description="" isArray="false" xmlns:ns246="http://po.coppa.nci.nih.gov"/>
-     <ns225:Exceptions/>
-    </ns225:Method>
-    <ns225:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns225:MethodType">
-     <ns225:Inputs>
-      <ns225:Input qName="ns247:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns247="http://po.coppa.nci.nih.gov"/>
-      <ns225:Input qName="ns248:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns248="http://common.coppa.nci.nih.gov"/>
-     </ns225:Inputs>
-     <ns225:Output qName="ns249:OversightCommittee" description="" isArray="true" xmlns:ns249="http://po.coppa.nci.nih.gov"/>
-     <ns225:Exceptions>
-      <ns225:Exception description="" name="TooManyResultsFault" qname="ns250:TooManyResultsFault" xmlns:ns250="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
-     </ns225:Exceptions>
-    </ns225:Method>
-   </ns225:Methods>
-   <ns251:ResourcePropertiesList xsi:type="ns251:ResourcePropertiesListType" xmlns:ns251="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns243:Methods xsi:type="ns243:MethodsType" xmlns:ns243="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns243:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns243:MethodType">
+     <ns243:Output qName="ns244:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns244="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns245:MethodSecurity xsi:type="ns245:MethodSecurity" xmlns:ns245="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns245:SecuritySetting xsi:type="ns245:SecuritySetting">None</ns245:SecuritySetting>
+      <ns245:MethodAuthorization xsi:type="ns245:MethodAuthorization">
+       <ns245:NoAuthorization xsi:type="ns245:NoAuthorization"/>
+      </ns245:MethodAuthorization>
+     </ns245:MethodSecurity>
+     <ns243:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns243:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns246:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns246="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="ns247:Id" description="" isArray="false" xmlns:ns247="http://po.coppa.nci.nih.gov"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="EntityValidationFault" qname="ns248:EntityValidationFault" xmlns:ns248="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns249:Id" description="" isArray="false" name="id" xmlns:ns249="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="ns250:OversightCommittee" description="" isArray="false" xmlns:ns250="http://po.coppa.nci.nih.gov"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="NullifiedRoleFault" qname="ns251:NullifiedRoleFault" xmlns:ns251="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns252:Id" description="" isArray="true" name="id" xmlns:ns252="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="ns253:OversightCommittee" description="" isArray="true" xmlns:ns253="http://po.coppa.nci.nih.gov"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="NullifiedRoleFault" qname="ns254:NullifiedRoleFault" xmlns:ns254="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns255:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns255="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="ns256:OversightCommittee" description="" isArray="true" xmlns:ns256="http://po.coppa.nci.nih.gov"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="TooManyResultsFault" qname="ns257:TooManyResultsFault" xmlns:ns257="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns258:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns258="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="void" description="" isArray="false"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="EntityValidationFault" qname="ns259:EntityValidationFault" xmlns:ns259="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns260:Id" description="" isArray="false" name="targetId" xmlns:ns260="http://po.coppa.nci.nih.gov"/>
+      <ns243:Input qName="ns261:Cd" description="" isArray="false" name="statusCode" xmlns:ns261="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="void" description="" isArray="false"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="EntityValidationFault" qname="ns262:EntityValidationFault" xmlns:ns262="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns263:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns263="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="ns264:StringMap" description="" isArray="false" xmlns:ns264="http://po.coppa.nci.nih.gov"/>
+     <ns243:Exceptions/>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns265:OversightCommittee" description="" isArray="false" name="oversightCommittee" xmlns:ns265="http://po.coppa.nci.nih.gov"/>
+      <ns243:Input qName="ns266:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns266="http://common.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="ns267:OversightCommittee" description="" isArray="true" xmlns:ns267="http://po.coppa.nci.nih.gov"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="TooManyResultsFault" qname="ns268:TooManyResultsFault" xmlns:ns268="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+    <ns243:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns243:MethodType">
+     <ns243:Inputs>
+      <ns243:Input qName="ns269:Id" description="" isArray="true" name="id" xmlns:ns269="http://po.coppa.nci.nih.gov"/>
+     </ns243:Inputs>
+     <ns243:Output qName="ns270:OversightCommittee" description="" isArray="true" xmlns:ns270="http://po.coppa.nci.nih.gov"/>
+     <ns243:Exceptions>
+      <ns243:Exception description="" name="NullifiedRoleFault" qname="ns271:NullifiedRoleFault" xmlns:ns271="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"/>
+     </ns243:Exceptions>
+    </ns243:Method>
+   </ns243:Methods>
+   <ns272:ResourcePropertiesList xsi:type="ns272:ResourcePropertiesListType" xmlns:ns272="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="ResearchOrganization" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization" packageName="gov.nih.nci.coppa.services.structuralroles.researchorganization" xsi:type="ns3:ServiceType">
-   <ns252:Methods xsi:type="ns252:MethodsType" xmlns:ns252="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns252:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns252:MethodType">
-     <ns252:Output qName="ns253:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns253="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns254:MethodSecurity xsi:type="ns254:MethodSecurity" xmlns:ns254="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns254:SecuritySetting xsi:type="ns254:SecuritySetting">None</ns254:SecuritySetting>
-      <ns254:MethodAuthorization xsi:type="ns254:MethodAuthorization">
-       <ns254:NoAuthorization xsi:type="ns254:NoAuthorization"/>
-      </ns254:MethodAuthorization>
-     </ns254:MethodSecurity>
-     <ns252:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns252:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns255:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns255="http://po.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="ns256:Id" description="" isArray="false" xmlns:ns256="http://po.coppa.nci.nih.gov"/>
-     <ns252:Exceptions>
-      <ns252:Exception description="" name="EntityValidationFault" qname="ns257:EntityValidationFault" xmlns:ns257="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
-     </ns252:Exceptions>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns258:Id" description="" isArray="false" name="id" xmlns:ns258="http://po.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="ns259:ResearchOrganization" description="" isArray="false" xmlns:ns259="http://po.coppa.nci.nih.gov"/>
-     <ns252:Exceptions>
-      <ns252:Exception description="" name="NullifiedRoleFault" qname="ns260:NullifiedRoleFault" xmlns:ns260="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
-     </ns252:Exceptions>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns261:Id" description="" isArray="true" name="id" xmlns:ns261="http://po.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="ns262:ResearchOrganization" description="" isArray="true" xmlns:ns262="http://po.coppa.nci.nih.gov"/>
-     <ns252:Exceptions>
-      <ns252:Exception description="" name="NullifiedRoleFault" qname="ns263:NullifiedRoleFault" xmlns:ns263="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
-     </ns252:Exceptions>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns264:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns264="http://po.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="ns265:ResearchOrganization" description="" isArray="true" xmlns:ns265="http://po.coppa.nci.nih.gov"/>
-     <ns252:Exceptions>
-      <ns252:Exception description="" name="TooManyResultsFault" qname="ns266:TooManyResultsFault" xmlns:ns266="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
-     </ns252:Exceptions>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns267:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns267="http://po.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="ns268:StringMap" description="" isArray="false" xmlns:ns268="http://po.coppa.nci.nih.gov"/>
-     <ns252:Exceptions/>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns269:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns269="http://po.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="void" description="" isArray="false"/>
-     <ns252:Exceptions>
-      <ns252:Exception description="" name="EntityValidationFault" qname="ns270:EntityValidationFault" xmlns:ns270="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
-     </ns252:Exceptions>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns271:Id" description="" isArray="false" name="targetId" xmlns:ns271="http://po.coppa.nci.nih.gov"/>
-      <ns252:Input qName="ns272:Cd" description="" isArray="false" name="statusCode" xmlns:ns272="http://po.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="void" description="" isArray="false"/>
-     <ns252:Exceptions>
-      <ns252:Exception description="" name="EntityValidationFault" qname="ns273:EntityValidationFault" xmlns:ns273="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
-     </ns252:Exceptions>
-    </ns252:Method>
-    <ns252:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns252:MethodType">
-     <ns252:Inputs>
-      <ns252:Input qName="ns274:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns274="http://po.coppa.nci.nih.gov"/>
-      <ns252:Input qName="ns275:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns275="http://common.coppa.nci.nih.gov"/>
-     </ns252:Inputs>
-     <ns252:Output qName="ns276:ResearchOrganization" description="" isArray="true" xmlns:ns276="http://po.coppa.nci.nih.gov"/>
-     <ns252:Exceptions>
-      <ns252:Exception description="" name="TooManyResultsFault" qname="ns277:TooManyResultsFault" xmlns:ns277="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
-     </ns252:Exceptions>
-    </ns252:Method>
-   </ns252:Methods>
-   <ns278:ResourcePropertiesList xsi:type="ns278:ResourcePropertiesListType" xmlns:ns278="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns273:Methods xsi:type="ns273:MethodsType" xmlns:ns273="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns273:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns273:MethodType">
+     <ns273:Output qName="ns274:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns274="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns275:MethodSecurity xsi:type="ns275:MethodSecurity" xmlns:ns275="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns275:SecuritySetting xsi:type="ns275:SecuritySetting">None</ns275:SecuritySetting>
+      <ns275:MethodAuthorization xsi:type="ns275:MethodAuthorization">
+       <ns275:NoAuthorization xsi:type="ns275:NoAuthorization"/>
+      </ns275:MethodAuthorization>
+     </ns275:MethodSecurity>
+     <ns273:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns273:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns276:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns276="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="ns277:Id" description="" isArray="false" xmlns:ns277="http://po.coppa.nci.nih.gov"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="EntityValidationFault" qname="ns278:EntityValidationFault" xmlns:ns278="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="getById" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns279:Id" description="" isArray="false" name="id" xmlns:ns279="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="ns280:ResearchOrganization" description="" isArray="false" xmlns:ns280="http://po.coppa.nci.nih.gov"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="NullifiedRoleFault" qname="ns281:NullifiedRoleFault" xmlns:ns281="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="getByIds" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns282:Id" description="" isArray="true" name="id" xmlns:ns282="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="ns283:ResearchOrganization" description="" isArray="true" xmlns:ns283="http://po.coppa.nci.nih.gov"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="NullifiedRoleFault" qname="ns284:NullifiedRoleFault" xmlns:ns284="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns285:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns285="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="ns286:ResearchOrganization" description="" isArray="true" xmlns:ns286="http://po.coppa.nci.nih.gov"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="TooManyResultsFault" qname="ns287:TooManyResultsFault" xmlns:ns287="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="validate" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns288:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns288="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="ns289:StringMap" description="" isArray="false" xmlns:ns289="http://po.coppa.nci.nih.gov"/>
+     <ns273:Exceptions/>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns290:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns290="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="void" description="" isArray="false"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="EntityValidationFault" qname="ns291:EntityValidationFault" xmlns:ns291="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="updateStatus" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns292:Id" description="" isArray="false" name="targetId" xmlns:ns292="http://po.coppa.nci.nih.gov"/>
+      <ns273:Input qName="ns293:Cd" description="" isArray="false" name="statusCode" xmlns:ns293="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="void" description="" isArray="false"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="EntityValidationFault" qname="ns294:EntityValidationFault" xmlns:ns294="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="query" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns295:ResearchOrganization" description="" isArray="false" name="researchOrganization" xmlns:ns295="http://po.coppa.nci.nih.gov"/>
+      <ns273:Input qName="ns296:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns296="http://common.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="ns297:ResearchOrganization" description="" isArray="true" xmlns:ns297="http://po.coppa.nci.nih.gov"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="TooManyResultsFault" qname="ns298:TooManyResultsFault" xmlns:ns298="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+    <ns273:Method description="" isImported="false" isProvided="false" name="getByPlayerIds" xsi:type="ns273:MethodType">
+     <ns273:Inputs>
+      <ns273:Input qName="ns299:Id" description="" isArray="true" name="id" xmlns:ns299="http://po.coppa.nci.nih.gov"/>
+     </ns273:Inputs>
+     <ns273:Output qName="ns300:ResearchOrganization" description="" isArray="true" xmlns:ns300="http://po.coppa.nci.nih.gov"/>
+     <ns273:Exceptions>
+      <ns273:Exception description="" name="NullifiedRoleFault" qname="ns301:NullifiedRoleFault" xmlns:ns301="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types"/>
+     </ns273:Exceptions>
+    </ns273:Method>
+   </ns273:Methods>
+   <ns302:ResourcePropertiesList xsi:type="ns302:ResourcePropertiesListType" xmlns:ns302="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns279:Extensions xsi:type="ns279:ExtensionsType" xmlns:ns279="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns279:Extension name="cagrid_metadata" version="1.3" xsi:type="ns279:ExtensionType"/>
- </ns279:Extensions>
+ <ns303:Extensions xsi:type="ns303:ExtensionsType" xmlns:ns303="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns303:Extension name="cagrid_metadata" version="1.3" xsi:type="ns303:ExtensionType"/>
+ </ns303:Extensions>
 </ns1:ServiceDescription>

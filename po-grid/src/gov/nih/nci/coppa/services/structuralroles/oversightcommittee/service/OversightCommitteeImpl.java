@@ -58,5 +58,9 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedO
       return impl.query(oversightCommittee, limitOffset);
   }
 
+  public gov.nih.nci.coppa.po.OversightCommittee[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+      return impl.getByPlayerIds(id);
+  }
+
 }
 

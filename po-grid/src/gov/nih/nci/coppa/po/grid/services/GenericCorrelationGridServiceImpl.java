@@ -122,6 +122,26 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
             throw FaultUtil.reThrowRemote(e);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public XML[] getByPlayerIds(Id[] pid) throws RemoteException {
+        try {
+            Ii[] iis = IdArrayTransformer.INSTANCE.toDto(pid);
+            List<DTO> dtos = getService().getCorrelationsByPlayerIds(iis);
+            List<XML> results = new ArrayList<XML>();
+            for (DTO dto : dtos) {
+                XML xml = (XML) getTransformer().toXml(dto);
+                results.add(xml);
+            }
+            XML[] array = results.toArray((XML[]) Array.newInstance(getXMLType(), results.size()));
+            return array;
+        } catch (Exception e) {
+            throw FaultUtil.reThrowRemote(e);
+        }
+    }
 
     /**
      * {@inheritDoc}

@@ -215,4 +215,16 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
   }
 
+  public gov.nih.nci.coppa.po.HealthCareFacility[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
+    return boxedResult.getHealthCareFacility();
+    }
+  }
+
 }
