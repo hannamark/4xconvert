@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,67 +76,60 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 17, 2009
  */
-public final class AccrualServiceLocator implements ServiceLocator {
-    private static final AccrualServiceLocator REG_REGISTRY = new AccrualServiceLocator();
-    private ServiceLocator serviceLocator;
+@Stateless
+public class SearchStudySiteBean implements SearchStudySiteService {
+    private static final long S1DUKE = 101L;
+    private static final long S1WAKE = 102L;
+    private static final long S2WAKE = 103L;
 
-    /**
-     * Constructor for the singleton instance.
-     */
-    private AccrualServiceLocator() {
-        serviceLocator = new JndiServiceLocator();
-    }
+    /** mock data. */
+    public static Map<Ii, List<SearchStudySiteResultDto>> dtos;
 
-    /**
-     * @return the regServiceLocator
-     */
-    public static AccrualServiceLocator getInstance() {
-        return REG_REGISTRY;
-    }
+    static {
+        dtos = new HashMap<Ii, List<SearchStudySiteResultDto>>();
+        List<SearchStudySiteResultDto> l = new ArrayList<SearchStudySiteResultDto>();
+        SearchStudySiteResultDto i = new SearchStudySiteResultDto();
+        i.setOrganizationName(StConverter.convertToSt("Duke"));
+        i.setStudySiteIi(IiConverter.convertToIi(S1DUKE));
+        l.add(i);
+        i = new SearchStudySiteResultDto();
+        i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
+        i.setStudySiteIi(IiConverter.convertToIi(S1WAKE));
+        l.add(i);
+        dtos.put(IiConverter.converToStudyProtocolIi(1L), l);
 
-    /**
-     * @return the serviceLocator
-     */
-    public ServiceLocator getServiceLocator() {
-        return serviceLocator;
-    }
-
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public void setServiceLocator(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SampleAccrualRemote getSampleAccrualService() {
-        return serviceLocator.getSampleAccrualService();
+        l = new ArrayList<SearchStudySiteResultDto>();
+        i = new SearchStudySiteResultDto();
+        i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
+        i.setStudySiteIi(IiConverter.convertToIi(S2WAKE));
+        l.add(i);
+        dtos.put(IiConverter.converToStudyProtocolIi(2L), l);
     }
 
     /**
      * {@inheritDoc}
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return serviceLocator.getSearchStudySiteService();
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIdentifier) throws RemoteException {
+        return dtos.get(studyProtocolIdentifier);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return serviceLocator.getSearchTrialService();
-    }
 }

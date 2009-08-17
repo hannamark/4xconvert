@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,67 +76,97 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.dto.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
+import java.io.Serializable;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 17, 2009
  */
-public final class AccrualServiceLocator implements ServiceLocator {
-    private static final AccrualServiceLocator REG_REGISTRY = new AccrualServiceLocator();
-    private ServiceLocator serviceLocator;
+public class SearchTrialResultDto implements Serializable {
+    private static final long serialVersionUID = -2671070053559012519L;
+
+    private Ii studyProtocolIdentifier;
+    private St assignedIdentifier;
+    private St leadOrgTrialIdentifier;
+    private St officialTitle;
+    private St leadOrgName;
+    private St principalInvestigator;
 
     /**
-     * Constructor for the singleton instance.
+     * @return the studyProtocolIdentifier
      */
-    private AccrualServiceLocator() {
-        serviceLocator = new JndiServiceLocator();
+    public Ii getStudyProtocolIdentifier() {
+        return studyProtocolIdentifier;
     }
-
     /**
-     * @return the regServiceLocator
+     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
      */
-    public static AccrualServiceLocator getInstance() {
-        return REG_REGISTRY;
+    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
+        this.studyProtocolIdentifier = studyProtocolIdentifier;
     }
-
     /**
-     * @return the serviceLocator
+     * @return the assignedIdentifier
      */
-    public ServiceLocator getServiceLocator() {
-        return serviceLocator;
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
     }
-
     /**
-     * @param serviceLocator the serviceLocator to set
+     * @param assignedIdentifier the assignedIdentifier to set
      */
-    public void setServiceLocator(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the leadOrgTrialIdentifier
      */
-    public SampleAccrualRemote getSampleAccrualService() {
-        return serviceLocator.getSampleAccrualService();
+    public St getLeadOrgTrialIdentifier() {
+        return leadOrgTrialIdentifier;
     }
-
     /**
-     * {@inheritDoc}
+     * @param leadOrgTrialIdentifier the leadOrgTrialIdentifier to set
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return serviceLocator.getSearchStudySiteService();
+    public void setLeadOrgTrialIdentifier(St leadOrgTrialIdentifier) {
+        this.leadOrgTrialIdentifier = leadOrgTrialIdentifier;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the officialTitle
      */
-    public SearchTrialService getSearchTrialService() {
-        return serviceLocator.getSearchTrialService();
+    public St getOfficialTitle() {
+        return officialTitle;
+    }
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(St officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+    /**
+     * @return the leadOrgName
+     */
+    public St getLeadOrgName() {
+        return leadOrgName;
+    }
+    /**
+     * @param leadOrgName the leadOrgName to set
+     */
+    public void setLeadOrgName(St leadOrgName) {
+        this.leadOrgName = leadOrgName;
+    }
+    /**
+     * @return the principalInvestigator
+     */
+    public St getPrincipalInvestigator() {
+        return principalInvestigator;
+    }
+    /**
+     * @param principalInvestigator the principalInvestigator to set
+     */
+    public void setPrincipalInvestigator(St principalInvestigator) {
+        this.principalInvestigator = principalInvestigator;
     }
 }

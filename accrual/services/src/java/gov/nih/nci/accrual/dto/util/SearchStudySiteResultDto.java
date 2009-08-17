@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,67 +76,46 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.dto.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
+import java.io.Serializable;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 17, 2009
  */
-public final class AccrualServiceLocator implements ServiceLocator {
-    private static final AccrualServiceLocator REG_REGISTRY = new AccrualServiceLocator();
-    private ServiceLocator serviceLocator;
+public class SearchStudySiteResultDto implements Serializable {
+
+    private static final long serialVersionUID = -669788071992093556L;
+
+    private Ii studySiteIi;
+    private St organizationName;
 
     /**
-     * Constructor for the singleton instance.
+     * @return the studySiteIi
      */
-    private AccrualServiceLocator() {
-        serviceLocator = new JndiServiceLocator();
+    public Ii getStudySiteIi() {
+        return studySiteIi;
     }
-
     /**
-     * @return the regServiceLocator
+     * @param studySiteIi the studySiteIi to set
      */
-    public static AccrualServiceLocator getInstance() {
-        return REG_REGISTRY;
+    public void setStudySiteIi(Ii studySiteIi) {
+        this.studySiteIi = studySiteIi;
     }
-
     /**
-     * @return the serviceLocator
+     * @return the organizationName
      */
-    public ServiceLocator getServiceLocator() {
-        return serviceLocator;
+    public St getOrganizationName() {
+        return organizationName;
     }
-
     /**
-     * @param serviceLocator the serviceLocator to set
+     * @param organizationName the organizationName to set
      */
-    public void setServiceLocator(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SampleAccrualRemote getSampleAccrualService() {
-        return serviceLocator.getSampleAccrualService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return serviceLocator.getSearchStudySiteService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return serviceLocator.getSearchTrialService();
+    public void setOrganizationName(St organizationName) {
+        this.organizationName = organizationName;
     }
 }

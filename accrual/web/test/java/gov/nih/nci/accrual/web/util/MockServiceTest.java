@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -78,65 +78,69 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialBean;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 17, 2009
  */
-public final class AccrualServiceLocator implements ServiceLocator {
-    private static final AccrualServiceLocator REG_REGISTRY = new AccrualServiceLocator();
-    private ServiceLocator serviceLocator;
+public class MockServiceTest {
 
-    /**
-     * Constructor for the singleton instance.
-     */
-    private AccrualServiceLocator() {
-        serviceLocator = new JndiServiceLocator();
+    @Before
+    public void initMockServiceLocator() {
+        AccrualServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
     }
 
-    /**
-     * @return the regServiceLocator
-     */
-    public static AccrualServiceLocator getInstance() {
-        return REG_REGISTRY;
+    @Test
+    public void searchTrial() throws Exception {
+        // get all
+        SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
+        SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
+        List<SearchTrialResultDto> r = service.search(crit);
+        assertEquals(SearchTrialBean.dtos.size(), r.size());
+
+        // get by lead org id
+        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE"));
+        r = service.search(crit);
+        assertEquals(1, r.size());
+        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("K"));
+        r = service.search(crit);
+        assertEquals(2, r.size());
+
+        // get by title
+        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(""));
+        crit.setOfficialTitle(StConverter.convertToSt("Phase IV"));
+        r = service.search(crit);
+        assertEquals(1, r.size());
+        crit.setOfficialTitle(StConverter.convertToSt("Phase III"));
+        r = service.search(crit);
+        assertTrue(r.isEmpty());
     }
 
-    /**
-     * @return the serviceLocator
-     */
-    public ServiceLocator getServiceLocator() {
-        return serviceLocator;
-    }
+    @Test
+    public void searchStudySite() throws Exception {
+        SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
+        Ii crit = IiConverter.converToStudyProtocolIi(1L);
+        List<SearchStudySiteResultDto> r = service.search(crit);
+        assertEquals(2, r.size());
 
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public void setServiceLocator(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SampleAccrualRemote getSampleAccrualService() {
-        return serviceLocator.getSampleAccrualService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return serviceLocator.getSearchStudySiteService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return serviceLocator.getSearchTrialService();
+        crit = IiConverter.converToStudyProtocolIi(2L);
+        r = service.search(crit);
+        assertEquals(1, r.size());
     }
 }

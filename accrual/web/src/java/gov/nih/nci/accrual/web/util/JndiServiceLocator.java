@@ -79,6 +79,8 @@
 package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.accrual.service.SampleAccrualRemote;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.JNDIUtil;
 
 /**
@@ -92,5 +94,19 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public SampleAccrualRemote getSampleAccrualService() {
         return (SampleAccrualRemote) JNDIUtil.lookup("accrual/SampleAccrualBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SearchStudySiteService getSearchStudySiteService() {
+        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SearchTrialService getSearchTrialService() {
+        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
     }
 }

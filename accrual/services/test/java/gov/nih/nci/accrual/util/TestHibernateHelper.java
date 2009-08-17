@@ -124,14 +124,14 @@ import gov.nih.nci.pa.domain.StudyObjective;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySubject;
 
 import org.hibernate.Session;
@@ -183,7 +183,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(Person.class).
         addAnnotatedClass(HealthCareProvider.class).
         addAnnotatedClass(StudyContact.class).
-        addAnnotatedClass(StudyParticipation.class).
+        addAnnotatedClass(StudySite.class).
         addAnnotatedClass(Country.class).
         addAnnotatedClass(RegulatoryAuthority.class).
         addAnnotatedClass(StudyRegulatoryAuthority.class).
@@ -191,7 +191,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(StudyResourcing.class).
         addAnnotatedClass(FundingMechanism.class).
         addAnnotatedClass(StudySiteAccrualStatus.class).
-        addAnnotatedClass(StudyParticipationContact.class).
+        addAnnotatedClass(StudySiteContact.class).
         addAnnotatedClass(OversightCommittee.class).
         addAnnotatedClass(Document.class).
         addAnnotatedClass(StudyRecruitmentStatus.class).

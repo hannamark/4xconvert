@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,67 +76,76 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 17, 2009
  */
-public final class AccrualServiceLocator implements ServiceLocator {
-    private static final AccrualServiceLocator REG_REGISTRY = new AccrualServiceLocator();
-    private ServiceLocator serviceLocator;
 
-    /**
-     * Constructor for the singleton instance.
-     */
-    private AccrualServiceLocator() {
-        serviceLocator = new JndiServiceLocator();
-    }
+@Stateless
+public class SearchTrialBean implements SearchTrialService {
 
-    /**
-     * @return the regServiceLocator
-     */
-    public static AccrualServiceLocator getInstance() {
-        return REG_REGISTRY;
-    }
+    /** mock data. */
+    public static List<SearchTrialResultDto> dtos;
 
-    /**
-     * @return the serviceLocator
-     */
-    public ServiceLocator getServiceLocator() {
-        return serviceLocator;
-    }
+    static {
+        dtos = new ArrayList<SearchTrialResultDto>();
+        SearchTrialResultDto r = new SearchTrialResultDto();
+        r.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(1L));
+        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00001"));
+        r.setLeadOrgName(StConverter.convertToSt("Duke"));
+        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE 001"));
+        r.setOfficialTitle(StConverter.convertToSt("Phase II study for Melanoma"));
+        r.setPrincipalInvestigator(StConverter.convertToSt("John Doe"));
+        dtos.add(r);
 
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public void setServiceLocator(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
+        r = new SearchTrialResultDto();
+        r.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(2L));
+        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00002"));
+        r.setLeadOrgName(StConverter.convertToSt("Wake Forest"));
+        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 001"));
+        r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
+        r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
+        dtos.add(r);
     }
 
     /**
      * {@inheritDoc}
      */
-    public SampleAccrualRemote getSampleAccrualService() {
-        return serviceLocator.getSampleAccrualService();
+    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria) throws RemoteException {
+        List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
+        for (SearchTrialResultDto dto : dtos) {
+            if (contains(dto.getAssignedIdentifier(), criteria.getAssignedIdentifier())
+                && contains(dto.getLeadOrgTrialIdentifier(), criteria.getLeadOrgTrialIdentifier())
+                && contains(dto.getOfficialTitle(), criteria.getOfficialTitle())) {
+                result.add(dto);
+            }
+        }
+        return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return serviceLocator.getSearchStudySiteService();
+    private boolean contains(St value, St crit) {
+        boolean result = true;
+        String c = StConverter.convertToString(crit);
+        String v = StConverter.convertToString(value);
+        if (!PAUtil.isEmpty(c) &&  !v.contains(c)) {
+            result = false;
+        }
+        return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return serviceLocator.getSearchTrialService();
-    }
 }

@@ -79,6 +79,8 @@
 package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.accrual.service.SampleAccrualRemote;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 
 /**
  * @author Hugh Reinhart
@@ -90,4 +92,13 @@ public interface ServiceLocator {
      * @return sample accrual service
      */
     SampleAccrualRemote getSampleAccrualService();
+
+    /**
+     * @return search trial service
+     */
+    SearchTrialService getSearchTrialService();
+    /**
+     * @return search study site service
+     */
+    SearchStudySiteService getSearchStudySiteService();
 }
