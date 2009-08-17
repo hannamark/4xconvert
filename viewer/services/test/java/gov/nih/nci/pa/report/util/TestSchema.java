@@ -81,7 +81,7 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -90,7 +90,7 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -117,7 +117,7 @@ public class TestSchema {
     public static List<StudyProtocol> studyProtocol;
     public static List<DocumentWorkflowStatus> documentWorkflowStatus;
     public static List<StudyMilestone> studyMilestone;
-    public static List<StudyParticipation> studyParticipation;
+    public static List<StudySite> studySite;
 
     private static boolean dataLoaded = false;
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
@@ -162,7 +162,7 @@ public class TestSchema {
         studyProtocol = new ArrayList<StudyProtocol>();
         documentWorkflowStatus = new ArrayList<DocumentWorkflowStatus>();
         studyMilestone = new ArrayList<StudyMilestone>();
-        studyParticipation = new ArrayList<StudyParticipation>();
+        studySite = new ArrayList<StudySite>();
 
         User usr = new User();
         usr.setLoginName("testUser");
@@ -242,16 +242,16 @@ public class TestSchema {
         studyMilestone.add(sm);
         addUpdObject(sm);
 
-        StudyParticipation spart = new StudyParticipation();
+        StudySite spart = new StudySite();
         spart.setDateLastCreated(new Date());
-        spart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
+        spart.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
         spart.setResearchOrganization(ro);
         spart.setLocalStudyProtocolIdentifier("local sp id");
         spart.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED);
         spart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         spart.setStudyProtocol(sp);
         spart.setUserLastCreated(usr.getLoginName());
-        studyParticipation.add(spart);
+        studySite.add(spart);
         addUpdObject(spart);
 
         dataLoaded = true;

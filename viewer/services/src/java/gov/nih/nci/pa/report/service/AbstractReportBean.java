@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractCriteriaDto;
 import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
@@ -78,14 +78,14 @@ public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, R
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
                       "select org.name, spart.local_sp_indentifier "
-                    + "from study_participation AS spart "
+                    + "from study_site AS spart "
                     + "  join research_organization AS ro ON (spart.research_organization_identifier = ro.identifier) "
                     + "  join organization AS org ON (ro.organization_identifier = org.identifier) "
                     + "where study_protocol_identifier = :SP_ID "
                     + "  and spart.functional_code = :LEAD_ORGANIZATION ");
             query = session.createSQLQuery(sql.toString());
             query.setParameter("SP_ID", studyProtocolIdentifier);
-            query.setParameter("LEAD_ORGANIZATION", StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getName());
+            query.setParameter("LEAD_ORGANIZATION", StudySiteFunctionalCode.LEAD_ORGANIZATION.getName());
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
             if (queryList.size() >= 1) {
