@@ -14,6 +14,8 @@
         </c:choose>
         <c:choose>
             <c:when test="${pageContext.request.remoteUser != null}">
+                 
+                 <!-- 
                  <c:choose>
                     <c:when test="${requestScope.topic == 'run_sample'}">
                        <li><a href="sample.action" class="selected">Sample Action</a></li> 
@@ -22,7 +24,7 @@
                        <li><a href="sample.action" >Sample Action</a></li>
                     </c:otherwise>
                 </c:choose>
-                
+                -->
                 <c:choose>
                     <c:when test="${requestScope.topic == 'list_protocols'}">
                        <li><a href="viewProtocol.action" class="selected">View Protocol</a></li> 
@@ -50,6 +52,8 @@
                     </c:otherwise>
                 </c:choose>
                 
+                <!-- 
+                
                  <li>Reporting</li> 
                 <c:choose>
                     <c:when test="${requestScope.topic == ''}">
@@ -68,7 +72,7 @@
                     </c:otherwise>
                 </c:choose>
                 
-                
+                -->
               <li><a href="/accrual/logout.action" >Log Out</a></li>
             </c:when>
             <c:otherwise>
