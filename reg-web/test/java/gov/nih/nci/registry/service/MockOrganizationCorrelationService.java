@@ -11,8 +11,8 @@ import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -160,17 +160,17 @@ public class MockOrganizationCorrelationService implements
      * @return
      * @throws PAException
      */
-    public List<Organization> getOrganizationByStudyParticipation(
+    public List<Organization> getOrganizationByStudySite(
             Long studyProtocolId,
-            StudyParticipationFunctionalCode functionalCode) throws PAException {
+            StudySiteFunctionalCode functionalCode) throws PAException {
         ArrayList<Organization> orgList = new ArrayList<Organization>();
 
-        StudyParticipationDTO criteria = new StudyParticipationDTO();
+        StudySiteDTO criteria = new StudySiteDTO();
         criteria.setFunctionalCode(CdConverter.convertToCd(functionalCode));
-        List<StudyParticipationDTO> spList = RegistryServiceLocator
-                .getStudyParticipationService().getByStudyProtocol(
+        List<StudySiteDTO> spList = RegistryServiceLocator
+                .getStudySiteService().getByStudyProtocol(
                         IiConverter.convertToIi(studyProtocolId), criteria);
-        for (StudyParticipationDTO sp : spList) {
+        for (StudySiteDTO sp : spList) {
             if (!PAUtil.isIiNull(sp.getHealthcareFacilityIi())) {
                 for (HealthCareFacility hcf : hcfList) {
                     if (hcf.getId().equals(

@@ -83,12 +83,12 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -184,10 +184,10 @@ public class JndiServiceLocator implements ServiceLocator {
 
 
     /**
-     * @return StudyParticipationService
+     * @return StudySiteService
      */
-    public StudyParticipationServiceRemote getStudyParticipationService() {
-        return (StudyParticipationServiceRemote) JNDIUtil.lookup("pa/StudyParticipationServiceBean/remote");
+    public StudySiteServiceRemote getStudySiteService() {
+        return (StudySiteServiceRemote) JNDIUtil.lookup("pa/StudySiteServiceBean/remote");
     }
 
     /**
@@ -293,11 +293,11 @@ public class JndiServiceLocator implements ServiceLocator {
     
     /**
      * @throws PAException e
-     * @return StudyParticipationContactServiceRemote
+     * @return StudySiteContactServiceRemote
      */    
-    public StudyParticipationContactServiceRemote getStudyParticipationContactService() throws PAException {
-        return (StudyParticipationContactServiceRemote) JNDIUtil.lookup(
-                    "pa/StudyParticipationContactServiceBean/remote");      
+    public StudySiteContactServiceRemote getStudySiteContactService() throws PAException {
+        return (StudySiteContactServiceRemote) JNDIUtil.lookup(
+                    "pa/StudySiteContactServiceBean/remote");      
     }
     
     /**

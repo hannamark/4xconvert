@@ -83,13 +83,14 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -102,7 +103,6 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 
 /**
  * Interface used to locate the services used by pa-web.
@@ -165,9 +165,9 @@ public interface ServiceLocator {
     ProtocolQueryServiceLocal getProtocolQueryService();
 
     /**
-     * @return StudyParticipationServiceRemote
+     * @return StudySiteServiceRemote
      */
-    StudyParticipationServiceRemote getStudyParticipationService();
+    StudySiteServiceRemote getStudySiteService();
 
     /**
      * @return StudySiteAccrualStatusServiceRemote
@@ -232,7 +232,7 @@ public interface ServiceLocator {
      * @throws PAException e
      * @return StudyParticipationContactServiceRemote
      */    
-    StudyParticipationContactServiceRemote getStudyParticipationContactService() throws PAException;
+    StudySiteContactServiceRemote getStudySiteContactService() throws PAException;
     
     /**
      * @throws PAException e

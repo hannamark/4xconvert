@@ -78,10 +78,10 @@
 */
 package gov.nih.nci.registry.dto;
 
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
 /**
- * Class for holding attributes for StudyParticipation DTO.
+ * Class for holding attributes for StudySite DTO.
  * @author Bala Nair
  */
 public class StudyParticipationWebDTO {
@@ -94,7 +94,7 @@ public class StudyParticipationWebDTO {
     /**
      * @param iso StudyResourcingDTO object
      */
-    public StudyParticipationWebDTO(StudyParticipationDTO iso) {
+    public StudyParticipationWebDTO(StudySiteDTO iso) {
         super();
         this.localProtocolIdentifier = iso.getLocalStudyProtocolIdentifier().getValue().toString();
         this.id = iso.getIdentifier().getExtension();

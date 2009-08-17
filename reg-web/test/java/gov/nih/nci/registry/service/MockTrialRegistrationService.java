@@ -10,8 +10,8 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -34,10 +34,10 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             OrganizationDTO leadOrganizationDTO,
             PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO,
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO,
-            StudyParticipationDTO nctIdentifierParticipationIdentifierDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            StudySiteDTO nctIdentifierSiteIdentifierDTO,
             StudyContactDTO studyContactDTO,
-            StudyParticipationContactDTO studyParticipationContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi) throws PAException {
@@ -56,10 +56,10 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             OrganizationDTO leadOrganizationDTO,
             PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO,
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO,
-            StudyParticipationDTO nctIdentifierParticipationIdentifierDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            StudySiteDTO nctIdentifierSiteIdentifierDTO,
             StudyContactDTO studyContactDTO,
-            StudyParticipationContactDTO studyParticipationContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi) throws PAException {

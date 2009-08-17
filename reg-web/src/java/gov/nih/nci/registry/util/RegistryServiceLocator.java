@@ -83,12 +83,12 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -221,10 +221,10 @@ public final class RegistryServiceLocator {
 
     /**
      * 
-     * @return StudyParticipationService
+     * @return StudySiteService
      */
-    public static StudyParticipationServiceRemote getStudyParticipationService() {
-        return getInstance().getServiceLocator().getStudyParticipationService();
+    public static StudySiteServiceRemote getStudySiteService() {
+        return getInstance().getServiceLocator().getStudySiteService();
     }
 
     /**
@@ -312,11 +312,11 @@ public final class RegistryServiceLocator {
     
     /**
      * @throws PAException e
-     * @return StudyParticipationContactServiceRemote
+     * @return StudyContactServiceRemote
      */    
-    public static StudyParticipationContactServiceRemote getStudyParticipationContactService() 
+    public static StudySiteContactServiceRemote getStudySiteContactService() 
         throws PAException {    
-        return getInstance().getServiceLocator().getStudyParticipationContactService();
+        return getInstance().getServiceLocator().getStudySiteContactService();
     }
     
     /**

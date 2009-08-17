@@ -87,14 +87,14 @@ import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -196,18 +196,18 @@ public class SearchTrialAction extends ActionSupport {
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
             // query the lead organization study participation site
-            StudyParticipationDTO leadParticipationDTO = getStudyParticipation(studyProtocolIi,
-                    StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
-            if (leadParticipationDTO != null) {
+            StudySiteDTO leadSiteDTO = getStudySite(studyProtocolIi,
+                    StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            if (leadSiteDTO != null) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
-                                                                    leadParticipationDTO);
+                                                                    leadSiteDTO);
             }            
             // query the NCT number
-            StudyParticipationDTO nctParticipationDTO = getStudyParticipation(studyProtocolIi,
-                                            StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
-            if (nctParticipationDTO != null) {
-                String nctNumber = StConverter.convertToString(nctParticipationDTO.getLocalStudyProtocolIdentifier());
+            StudySiteDTO nctSiteDTO = getStudySite(studyProtocolIi,
+                                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            if (nctSiteDTO != null) {
+                String nctNumber = StConverter.convertToString(nctSiteDTO.getLocalStudyProtocolIdentifier());
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_NCT_NUMBER, nctNumber);
             } 
             // retrieve responsible party info
@@ -431,18 +431,18 @@ public class SearchTrialAction extends ActionSupport {
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
             // query the lead organization study participation site
-            StudyParticipationDTO leadParticipationDTO = getStudyParticipation(studyProtocolIi,
-                    StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
-            if (leadParticipationDTO != null) {
+            StudySiteDTO leadSiteDTO = getStudySite(studyProtocolIi,
+                    StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            if (leadSiteDTO != null) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
-                                                                    leadParticipationDTO);
+                                                                    leadSiteDTO);
             }            
             // query the NCT number
-            StudyParticipationDTO nctParticipationDTO = getStudyParticipation(studyProtocolIi,
-                                            StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
-            if (nctParticipationDTO != null) {
-                String nctNumber = StConverter.convertToString(nctParticipationDTO.getLocalStudyProtocolIdentifier());
+            StudySiteDTO nctSiteDTO = getStudySite(studyProtocolIi,
+                                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            if (nctSiteDTO != null) {
+                String nctNumber = StConverter.convertToString(nctSiteDTO.getLocalStudyProtocolIdentifier());
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_NCT_NUMBER, nctNumber);
             }            
             
@@ -497,16 +497,16 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
     
-    private StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode)
+    private StudySiteDTO getStudySite(Ii studyProtocolIi , StudySiteFunctionalCode spCode)
     throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException(" StudyProtocol Ii is null");
         }
-        StudyParticipationDTO spDto = new StudyParticipationDTO();
+        StudySiteDTO spDto = new StudySiteDTO();
         Cd cd = CdConverter.convertToCd(spCode);
         spDto.setFunctionalCode(cd);
 
-        List<StudyParticipationDTO> spDtos = RegistryServiceLocator.getStudyParticipationService()
+        List<StudySiteDTO> spDtos = RegistryServiceLocator.getStudySiteService()
             .getByStudyProtocol(studyProtocolIi, spDto);
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos.get(0);
@@ -618,10 +618,10 @@ public class SearchTrialAction extends ActionSupport {
                 }
                 respPartyContactName = respPartyContact.getFullName();
             } else {
-                StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+                StudySiteContactDTO spart = new StudySiteContactDTO();
                 spart.setRoleCode(CdConverter.convertToCd(
-                        StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-                List<StudyParticipationContactDTO> spDtos = RegistryServiceLocator.getStudyParticipationContactService()
+                        StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+                List<StudySiteContactDTO> spDtos = RegistryServiceLocator.getStudySiteContactService()
                     .getByStudyProtocol(studyProtocolIi, spart);
                 if (spDtos != null && spDtos.size() > 0) {
                     spart = spDtos.get(0);
@@ -647,9 +647,9 @@ public class SearchTrialAction extends ActionSupport {
             }            
             
             Organization sponsor = null;
-            StudyParticipationDTO spart = new StudyParticipationDTO();
-            spart.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
-            List<StudyParticipationDTO> spDtos = RegistryServiceLocator.getStudyParticipationService()
+            StudySiteDTO spart = new StudySiteDTO();
+            spart.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+            List<StudySiteDTO> spDtos = RegistryServiceLocator.getStudySiteService()
                             .getByStudyProtocol(studyProtocolIi, spart);
             if (spDtos != null && spDtos.size() > 0) {
                 spart = spDtos.get(0);

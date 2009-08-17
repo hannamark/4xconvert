@@ -8,8 +8,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -38,8 +38,8 @@ import gov.nih.nci.registry.service.MockRegistryUserService;
 import gov.nih.nci.registry.service.MockStudyContactService;
 import gov.nih.nci.registry.service.MockStudyIndldeService;
 import gov.nih.nci.registry.service.MockStudyOverallStatusService;
-import gov.nih.nci.registry.service.MockStudyParticipationContactService;
-import gov.nih.nci.registry.service.MockStudyParticipationService;
+import gov.nih.nci.registry.service.MockStudySiteContactService;
+import gov.nih.nci.registry.service.MockStudySiteService;
 import gov.nih.nci.registry.service.MockStudyProtocolService;
 import gov.nih.nci.registry.service.MockStudyResourcingService;
 import gov.nih.nci.registry.service.MockTrialRegistrationService;
@@ -60,7 +60,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final TrialRegistrationServiceRemote  trialRegistrationService = new MockTrialRegistrationService();
     private final MailManagerServiceRemote mailManagerService = new MockMailManagerService();
     private final StudyIndldeServiceRemote  studyIndldeService = new MockStudyIndldeService();
-    private final StudyParticipationServiceRemote studyParticipationService = new MockStudyParticipationService();
+    private final StudySiteServiceRemote studySiteService = new MockStudySiteService();
     private final StudyResourcingServiceRemote studyResourcingService = new MockStudyResourcingService();
     private final PAOrganizationServiceRemote paOrganizationService = new MockPAOrganizationService();
     private final OrganizationEntityServiceRemote organizationEntityService = new MockOrganizationEntityService();
@@ -70,7 +70,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     private final OrganizationalContactCorrelationServiceRemote orgContactCorrelationService = new MockOrganizationalContactCorrelationService();
     private final StudyContactServiceRemote studyContactService = new MockStudyContactService();
-    private final StudyParticipationContactServiceRemote studyParticipationContactService = new MockStudyParticipationContactService();
+    private final StudySiteContactServiceRemote studySiteContactService = new MockStudySiteContactService();
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
     public DocumentServiceRemote getDocumentService() {
         return documentService;
@@ -149,13 +149,13 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return studyOverallStatusService;
     }
 
-    public StudyParticipationContactServiceRemote getStudyParticipationContactService()
+    public StudySiteContactServiceRemote getStudySiteContactService()
             throws PAException {
-        return studyParticipationContactService;
+        return studySiteContactService;
     }
 
-    public StudyParticipationServiceRemote getStudyParticipationService() {
-        return studyParticipationService;
+    public StudySiteServiceRemote getStudySiteService() {
+        return studySiteService;
     }
 
     public StudyProtocolServiceRemote getStudyProtocolService() {
