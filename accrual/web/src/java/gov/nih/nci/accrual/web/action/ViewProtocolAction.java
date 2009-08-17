@@ -76,6 +76,8 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import org.apache.struts2.ServletActionContext;
+
 /**
  * @author Rajani Kumar
  * @since  Aug 13, 2009
@@ -94,6 +96,11 @@ public class ViewProtocolAction extends AbstractAccrualAction {
     @Override
     public String execute() {
         String actionResult = "list_protocols";
+      //check if users accepted the disclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            return "show_Disclaimer_Page";
+        }
        
         return actionResult;
     }
