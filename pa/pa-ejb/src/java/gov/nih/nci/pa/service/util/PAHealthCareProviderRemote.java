@@ -105,7 +105,7 @@ public interface PAHealthCareProviderRemote {
      * @return List of personWebDTO
      * @throws PAException on error
      */
-    List<PaPersonDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException;
+    List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException;
     
    
     /**

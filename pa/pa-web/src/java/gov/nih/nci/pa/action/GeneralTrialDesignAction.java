@@ -91,11 +91,11 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -195,12 +195,12 @@ public class GeneralTrialDesignAction extends ActionSupport {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
-            updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
-                        StudyParticipationFunctionalCode.LEAD_ORGANIZATION) ,
+            updateStudySite(studyProtocolIi , CdConverter.convertToCd(
+                        StudySiteFunctionalCode.LEAD_ORGANIZATION) ,
                         gtdDTO.getLeadOrganizationIdentifier() ,
                         PAUtil.stringSetter(gtdDTO.getLocalProtocolIdentifier()));
-            updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
-                        StudyParticipationFunctionalCode.SPONSOR) ,
+            updateStudySite(studyProtocolIi , CdConverter.convertToCd(
+                        StudySiteFunctionalCode.SPONSOR) ,
                         gtdDTO.getSponsorIdentifier() , null);
             updateStudyContact(studyProtocolIi);
             removeSponsorContact(studyProtocolIi);
@@ -254,10 +254,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
             scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
         } else {
-            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+            StudySiteContactDTO spart = new StudySiteContactDTO();
             spart.setRoleCode(CdConverter.convertToCd(
-                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudyParticipationContactDTO> spDtos = PaRegistry.getStudyParticipationContactService()
+                    StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+            List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService()
                 .getByStudyProtocol(studyProtocolIi, spart);
             gtdDTO.setResponsiblePartyType(SPONSOR);
             if (spDtos != null && !spDtos.isEmpty()) {
@@ -297,9 +297,9 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
     }
     private void copySponsor(Ii studyProtocolIi) throws PAException {
-        StudyParticipationDTO spart = new StudyParticipationDTO();
-        spart.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
-        List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
+        StudySiteDTO spart = new StudySiteDTO();
+        spart.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                         .getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
@@ -313,8 +313,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
 
     private void copyNctNummber(Ii studyProtocolIi) throws PAException {
-        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi,
-                    StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
+        StudySiteDTO spDto = getStudySite(studyProtocolIi,
+                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
         if (spDto != null) {
             gtdDTO.setNctIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
         }
@@ -359,39 +359,39 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
         String poOrgid = getCtGocIdentifier();
         OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
-        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi ,
-                StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
+        StudySiteDTO spDto = getStudySite(studyProtocolIi ,
+                StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
 
         if (PAUtil.isNotEmpty(gtdDTO.getNctIdentifier())) {
             if (spDto == null) {
                 long roId = osb.createResearchOrganizationCorrelations(poOrgid);
-                spDto = new StudyParticipationDTO();
+                spDto = new StudySiteDTO();
                 spDto.setStudyProtocolIdentifier(studyProtocolIi);
                 spDto.setResearchOrganizationIi(IiConverter.convertToIi(poOrgid));
-                spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
+                spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
                 spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
                 spDto.setResearchOrganizationIi(IiConverter.convertToIi(roId));
-                PaRegistry.getStudyParticipationService().create(spDto);
+                PaRegistry.getStudySiteService().create(spDto);
             } else {
                 spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
                 spDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-                PaRegistry.getStudyParticipationService().update(spDto);
+                PaRegistry.getStudySiteService().update(spDto);
             }
         } else if (spDto != null) {
             // delete the record
-            PaRegistry.getStudyParticipationService().delete(spDto.getIdentifier());
+            PaRegistry.getStudySiteService().delete(spDto.getIdentifier());
         }
     }
-    private StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode)
+    private StudySiteDTO getStudySite(Ii studyProtocolIi , StudySiteFunctionalCode spCode)
     throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException(" StudyProtocol Ii is null");
         }
-        StudyParticipationDTO spDto = new StudyParticipationDTO();
+        StudySiteDTO spDto = new StudySiteDTO();
         Cd cd = CdConverter.convertToCd(spCode);
         spDto.setFunctionalCode(cd);
 
-        List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
             .getByStudyProtocol(studyProtocolIi, spDto);
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos.get(0);
@@ -403,31 +403,31 @@ public class GeneralTrialDesignAction extends ActionSupport {
         return null;
 
     }
-    private void updateStudyParticipation(Ii studyProtocolIi , Cd cd , String roId , String lpIdentifier)
+    private void updateStudySite(Ii studyProtocolIi , Cd cd , String roId , String lpIdentifier)
     throws PAException {
-        StudyParticipationDTO spDto = new StudyParticipationDTO();
+        StudySiteDTO spDto = new StudySiteDTO();
         spDto.setFunctionalCode(cd);
-        List<StudyParticipationDTO> srDtos = PaRegistry.getStudyParticipationService()
+        List<StudySiteDTO> srDtos = PaRegistry.getStudySiteService()
             .getByStudyProtocol(studyProtocolIi, spDto);
         OrganizationCorrelationServiceBean ocb = new OrganizationCorrelationServiceBean();
 
         if (srDtos != null && srDtos.size() > 1) {
-            throw new PAException(" StudyParticipation has more than one recrod is found for a "
+            throw new PAException(" StudySite has more than one recrod is found for a "
                     + " given Study Protocol id = " +  studyProtocolIi.getExtension());
         } else if (srDtos == null || srDtos.isEmpty()) {
-            spDto = new StudyParticipationDTO();
+            spDto = new StudySiteDTO();
             spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
             spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
             spDto.setStudyProtocolIdentifier(studyProtocolIi);
             spDto.setFunctionalCode(cd);
-            PaRegistry.getStudyParticipationService().create(spDto);
+            PaRegistry.getStudySiteService().create(spDto);
         } else {
             spDto = srDtos.get(0);
             spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
             spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
             // todo : currently hard coded to pending, will have to change later prob 2.2
             spDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-            PaRegistry.getStudyParticipationService().update(spDto);
+            PaRegistry.getStudySiteService().update(spDto);
         }
 
     }
@@ -532,14 +532,14 @@ public class GeneralTrialDesignAction extends ActionSupport {
             scDto = scDtos.get(0);
             PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
         } else {
-            // delete from Study Participation and it will delete study_participation contact
-            StudyParticipationDTO spart = new StudyParticipationDTO();
+            // delete from Study Site and it will delete study_site contact
+            StudySiteDTO spart = new StudySiteDTO();
             spart.setFunctionalCode(CdConverter.convertToCd(
-                  StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
-              List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
+                  StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
+              List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                   .getByStudyProtocol(studyProtocolIi, spart);
             if (spDtos != null && !spDtos.isEmpty()) {
-                PaRegistry.getStudyParticipationService().delete(spDtos.get(0).getIdentifier());
+                PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
             }
 
         }

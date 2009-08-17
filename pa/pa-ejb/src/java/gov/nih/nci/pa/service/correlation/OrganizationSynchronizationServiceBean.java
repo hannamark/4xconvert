@@ -88,7 +88,7 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -134,7 +134,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     private static CorrelationUtils cUtils = new CorrelationUtils();
     private SessionContext ejbContext;
     @EJB
-    StudyParticipationServiceLocal spsLocal = null;
+    StudySiteServiceLocal spsLocal = null;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
@@ -273,7 +273,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    dupRo = cUtils.getPAResearchOrganization(dupRo);
                    newRoleCode = dupRo.getStatusCode();
                    roCurrentIi = IiConverter.convertToPoResearchOrganizationIi(duplicateRoId.toString());
-                   replaceStudyParticipationIdentifiers(
+                   replaceStudySiteIdentifiers(
                            IiConverter.convertToPoResearchOrganizationIi(ro.getId().toString()),  roCurrentIi);     
                    ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                } else {
@@ -320,7 +320,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    dupOsc = cUtils.getPAOversightCommittee(dupOsc);
                    newRoleCode = dupOsc.getStatusCode();
                    hcfCurrentIi = IiConverter.convertToPoOversightCommitteeIi(duplicateOscId.toString());
-                   replaceStudyParticipationIdentifiers(
+                   replaceStudySiteIdentifiers(
                            IiConverter.convertToPoOversightCommitteeIi(osc.getId().toString()),  hcfCurrentIi);     
                    osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                } else {
@@ -367,7 +367,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    dupHcf = cUtils.getPAHealthCareFacility(dupHcf);
                    newRoleCode = dupHcf.getStatusCode();
                    hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());
-                   replaceStudyParticipationIdentifiers(
+                   replaceStudySiteIdentifiers(
                            IiConverter.convertToPoHealthCareFacilityIi(hcf.getId().toString()),  hcfCurrentIi);     
                    hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                } else {
@@ -386,25 +386,25 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
        }
    }
        
-   private void replaceStudyParticipationIdentifiers(final Ii from  , final Ii to) {
+   private void replaceStudySiteIdentifiers(final Ii from  , final Ii to) {
 
        String sql = null;
        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(from.getIdentifierName())) {    
-           sql = "update STUDY_PARTICIPATION set healthcare_facility_identifier = " + to.getExtension() 
+           sql = "update STUDY_SITE set healthcare_facility_identifier = " + to.getExtension() 
            + " where healthcare_facility_identifier = " + from.getExtension();
        }
        if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(from.getIdentifierName())) {
-           sql = "update STUDY_PARTICIPATION set research_organization_identifier = " + to.getExtension() 
+           sql = "update STUDY_SITE set research_organization_identifier = " + to.getExtension() 
            + " where research_organization_identifier = " + from.getExtension();
        }
        if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(from.getIdentifierName())) {    
-           sql = "update STUDY_PARTICIPATION set oversight_committee_identifier = " + to.getExtension() 
+           sql = "update STUDY_SITE set oversight_committee_identifier = " + to.getExtension() 
            + " where oversight_committee_identifier = " + from.getExtension();
        }
 
        int i = HibernateUtil.getCurrentSession().createSQLQuery(sql).executeUpdate();
        LOG.info("Sql for update " + sql);
-       LOG.info("total records got update in STUDY_PARTICIPATION IS " + i);  
+       LOG.info("total records got update in STUDY_SITE IS " + i);  
    }    
        
      

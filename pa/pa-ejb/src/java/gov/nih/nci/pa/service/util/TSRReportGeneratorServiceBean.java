@@ -98,8 +98,8 @@ import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
@@ -113,8 +113,8 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -140,8 +140,8 @@ import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -196,9 +196,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
     @EJB
-    StudyParticipationServiceLocal studyParticipationService = null;
+    StudySiteServiceLocal studySiteService = null;
     @EJB
-    StudyParticipationContactServiceLocal studyParticipationContactService = null;
+    StudySiteContactServiceLocal studySiteContactService = null;
     @EJB
     StudyContactServiceLocal studyContactService = null;
     @EJB
@@ -415,15 +415,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       throws PAException {
     appendTitle(html, appendBoldData("Participating Sites"));
     html.append(BR);
-     StudyParticipationDTO srDTO = new StudyParticipationDTO();
-     srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
-     List<StudyParticipationDTO> spList =
-         studyParticipationService.getByStudyProtocol(spDTO.getIdentifier(), srDTO);
-     //CorrelationUtils cUtils = new CorrelationUtils();
-     for (StudyParticipationDTO sp : spList) {
-
+     StudySiteDTO srDTO = new StudySiteDTO();
+     srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+     List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(spDTO.getIdentifier(), srDTO);
+     for (StudySiteDTO sp : spList) {
          StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
-         .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
+         .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
 
          Organization orgBo = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
                  IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
@@ -436,8 +433,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                    ssas.getStatusDate()).toString()) , true , true));
          }
          html.append(appendData("Target Accrual" , getData(sp.getTargetAccrualNumber(), true) , true , true));
-         List<StudyParticipationContactDTO> spcDTOs = 
-                         studyParticipationContactService.getByStudyParticipation(sp.getIdentifier());
+         List<StudySiteContactDTO> spcDTOs =  studySiteContactService.getByStudySite(sp.getIdentifier());
          createInvestigators(html, spcDTOs);
          createContact(html, spcDTOs);
          html.append(BR);
@@ -474,11 +470,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * @param spcDTOs the spc dt os
    * @throws PAException the PA exception
    */
-  private void createInvestigators(StringBuffer html, List<StudyParticipationContactDTO> spcDTOs)
+  private void createInvestigators(StringBuffer html, List<StudySiteContactDTO> spcDTOs)
   throws PAException {
     boolean first = true;
-    for (StudyParticipationContactDTO spcDTO : spcDTOs) {
-      if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
+    for (StudySiteContactDTO spcDTO : spcDTOs) {
+      if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
           equals(spcDTO.getRoleCode().getCode())) {
         continue;
       }
@@ -509,10 +505,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * @param spcDTOs the spc dt os
    * @throws PAException the PA exception
    */
-  private void createContact(StringBuffer html,  List<StudyParticipationContactDTO> spcDTOs)
+  private void createContact(StringBuffer html,  List<StudySiteContactDTO> spcDTOs)
   throws PAException {
-    for (StudyParticipationContactDTO spcDTO : spcDTOs) {
-        if (!StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
+    for (StudySiteContactDTO spcDTO : spcDTOs) {
+        if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
                 equals(spcDTO.getRoleCode().getCode())) {
             continue;
         }
@@ -866,18 +862,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       throws PAException {
     boolean first = true;
 
-    ArrayList<StudyParticipationDTO> criteriaList = new ArrayList<StudyParticipationDTO>();
-    for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
+    ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
+    for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
         if (cd.isCollaboratorCode()) {
-            StudyParticipationDTO searchCode = new StudyParticipationDTO();
+            StudySiteDTO searchCode = new StudySiteDTO();
             searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
             criteriaList.add(searchCode);
         }
     }
 
-    List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(studyProtocolIi, criteriaList);
-    for (StudyParticipationDTO sp : spList) {
-        //CorrelationUtils cUtils = new CorrelationUtils();
+    List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, criteriaList);
+    for (StudySiteDTO sp : spList) {
         Organization orgBo = correlationUtils.getPAOrganizationByPAResearchOrganizationId(
                 IiConverter.convertToLong(sp.getResearchOrganizationIi()));
         if (first) {
@@ -1022,8 +1017,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       if (b != null && b) {
       appendTitle(html, appendBoldData("Human Subject Safety"));
       html.append(BR);
-          List<StudyParticipationDTO> partList = studyParticipationService.getByStudyProtocol(spDto.getIdentifier());
-          for (StudyParticipationDTO part : partList) {
+          List<StudySiteDTO> partList = studySiteService.getByStudyProtocol(spDto.getIdentifier());
+          for (StudySiteDTO part : partList) {
               if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
                       part.getReviewBoardApprovalStatusCode().getCode())
                   || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
@@ -1131,24 +1126,23 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * @throws PAException the PA exception
    */
   private void appendSecondaryIdentifiers(StringBuffer html , StudyProtocolDTO studyProtocolDto) throws  PAException {
-      StudyParticipationDTO spartDTO = new StudyParticipationDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
-      List<StudyParticipationDTO> sParts = studyParticipationService
-          .getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
+      StudySiteDTO spartDTO = new StudySiteDTO();
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+      List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
      
       appendTitle(html, appendBoldData("Trial Identification"));
       html.append(BR);
       html.append(appendData("NCI Identifier" , studyProtocolDto.getAssignedIdentifier().getExtension() , true , true));
       if (!sParts.isEmpty()) {
-      for (StudyParticipationDTO spart : sParts) {
+      for (StudySiteDTO spart : sParts) {
           html.append(appendData("Lead Organization Identifier" , 
                   getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
           break;
       }
-      spartDTO = new StudyParticipationDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
-      sParts = studyParticipationService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
-      for (StudyParticipationDTO spart : sParts) {
+      spartDTO = new StudySiteDTO();
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+      sParts = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
+      for (StudySiteDTO spart : sParts) {
           html.append(appendData("NCT Number" ,
                   getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
           break;
@@ -1200,9 +1194,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private void appendOrgsAndPersons(StringBuffer html , Ii studyProtocolIi) throws PAException,
       NullifiedRoleException  {
       Organization sponsor = ocsr.getOrganizationByFunctionRole(
-              studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
+              studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
       Organization lead = ocsr.getOrganizationByFunctionRole(
-              studyProtocolIi, CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
+              studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
       Person leadPi = null;
       Person centralContact = null;
       StudyContactDTO scDto = new StudyContactDTO();
@@ -1261,20 +1255,20 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
           dset = scDto.getTelecomAddresses();
           resPartyContactName = rp.getFullName();
-          StudyParticipationDTO spartDTO = new StudyParticipationDTO();
+          StudySiteDTO spartDTO = new StudySiteDTO();
           spartDTO.setFunctionalCode(
-                  CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
-          List<StudyParticipationDTO> sParts = studyParticipationService.getByStudyProtocol(studyProtocolIi, spartDTO);
-          for (StudyParticipationDTO spart : sParts) {
+                  CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+          List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolIi, spartDTO);
+          for (StudySiteDTO spart : sParts) {
               sponsorResponsible = correlationUtils.getPAOrganizationByPAResearchOrganizationId(
                       Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
           }
           
       } else {
-          StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+          StudySiteContactDTO spart = new StudySiteContactDTO();
           spart.setRoleCode(CdConverter.convertToCd(
-                  StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-          List<StudyParticipationContactDTO> spDtos = studyParticipationContactService
+                  StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+          List<StudySiteContactDTO> spDtos = studySiteContactService
               .getByStudyProtocol(studyProtocolIi, spart);
           
           if (spDtos != null && !spDtos.isEmpty()) {
@@ -1285,10 +1279,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               
               dset = spDtos.get(0).getTelecomAddresses();
               
-              StudyParticipationDTO spDto = new StudyParticipationDTO();
-              spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
-              List<StudyParticipationDTO> spartDtos =
-                  studyParticipationService.getByStudyProtocol(studyProtocolIi, spDto);
+              StudySiteDTO spDto = new StudySiteDTO();
+              spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+              List<StudySiteDTO> spartDtos =
+                  studySiteService.getByStudyProtocol(studyProtocolIi, spDto);
               if (spartDtos != null && !spartDtos.isEmpty()) {
                   spDto = spartDtos.get(0);
                   sponsorResponsible = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(

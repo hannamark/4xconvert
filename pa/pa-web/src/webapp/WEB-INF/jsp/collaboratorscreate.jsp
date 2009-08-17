@@ -80,7 +80,7 @@ function loadDiv(orgid){
                 <tr>
                     <td class="label"><s:label for="functionalCode">Functional Role:</s:label><span class="required">*</span></td>
                     <s:set name="functionalCodeValues"
-                        value="@gov.nih.nci.pa.enums.StudyParticipationFunctionalCode@getCollaboratorDisplayNames()" />
+                        value="@gov.nih.nci.pa.enums.StudySiteFunctionalCode@getCollaboratorDisplayNames()" />
                     <td class="value" colspan="2"><s:select headerKey=""
                         headerValue="--Select--" name="functionalCode" list="#functionalCodeValues" /></td>
                 </tr>

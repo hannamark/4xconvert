@@ -86,7 +86,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -96,7 +96,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
@@ -143,7 +143,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     private static final int OVERALL_STATUS_INDEX = 3;
     private static final int PI_INDEX = 4;
     private static final int LEAD_ORG_INDEX = 5;
-    private static final int STUDY_PARTICIPATION_INDEX = 6;
+    private static final int STUDY_SITE_INDEX = 6;
 
     /**
      * gets a list StudyProtocl by criteria.
@@ -230,7 +230,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StudyMilestone studyMilestone;
         Organization organization = null;
         Person person = null;
-        StudyParticipation studyParticipation = null;
+        StudySite studySite = null;
         // array of objects for each row
         Object[] searchResult = null;
         try {
@@ -252,8 +252,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 person = (Person) searchResult[PI_INDEX];
                 // get the organization
                 organization = (Organization) searchResult[LEAD_ORG_INDEX];
-                // get the StudyParticipation
-                studyParticipation = (StudyParticipation) searchResult[STUDY_PARTICIPATION_INDEX];
+                // get the StudySite
+                studySite = (StudySite) searchResult[STUDY_SITE_INDEX];
 
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
@@ -290,7 +290,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
                         studyProtocolDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
                         studyProtocolDto.setAmendmentDate(studyProtocol.getAmendmentDate());
-                        //studyProtocolDto.setAmendmentReasonCode(studyProtocol.getAmendmentReasonCode());
                         studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.A);
                     } else {
                         studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.O);
@@ -301,25 +300,20 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     studyProtocolDto.setStudyMilestoneDate(studyMilestone.getMilestoneDate());
                 }
                 if (studyOverallStatus != null) {
-                    studyProtocolDto.setStudyStatusCode(studyOverallStatus
-                            .getStatusCode());
-                    studyProtocolDto.setStudyStatusDate(studyOverallStatus
-                            .getStatusDate());
+                    studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStatusCode());
+                    studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStatusDate());
                 }
                 if (organization != null) {
                     studyProtocolDto.setLeadOrganizationName(organization
                             .getName());
-                    studyProtocolDto
-                            .setLeadOrganizationId(organization.getId());
+                    studyProtocolDto.setLeadOrganizationId(organization.getId());
                 }
                 if (person != null) {
                     studyProtocolDto.setPiFullName(person.getFullName());
                     studyProtocolDto.setPiId(person.getId());
                 }
-                if (studyParticipation != null) {
-                    studyProtocolDto
-                            .setLocalStudyProtocolIdentifier(studyParticipation
-                                    .getLocalStudyProtocolIdentifier());
+                if (studySite != null) {
+                    studyProtocolDto.setLocalStudyProtocolIdentifier(studySite.getLocalStudyProtocolIdentifier());
                 }
                 // add to the list
                 studyProtocolDtos.add(studyProtocolDto);
@@ -481,7 +475,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sp.studyContacts as sc "
                             + "left outer join sc.clinicalResearchStaff as hcp "
                             + "left outer join hcp.person as per "
-                            + "left outer join sp.studyParticipations as sps  "
+                            + "left outer join sp.studySites as sps  "
                             + "left outer join sps.researchOrganization as ro "
                             + "left outer join ro.organization as org ");
 
@@ -632,7 +626,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                + " or sms.id is null ) ");
            }
            where.append(" and sps.functionalCode ='"
-                   + StudyParticipationFunctionalCode.LEAD_ORGANIZATION + "'");
+                   + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");
@@ -657,19 +651,19 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         // sub-query for searching trials by NCT number
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
                 where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 "
-                      + " left outer join sp1.studyParticipations as sps1 "
+                      + " left outer join sp1.studySites as sps1 "
                       + " where upper(sps1.localStudyProtocolIdentifier) like '%"
                                + studyProtocolQueryCriteria.getNctNumber()
                                        .toUpperCase().trim().replaceAll("'", "''") + "%'"
                                + " and sps1.functionalCode = '"
-                               + StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER + "')");
+                               + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "')");
            }
            // sub-query for searching trials by  Participating site
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOrganizationType())
                    && studyProtocolQueryCriteria.getOrganizationType().equalsIgnoreCase(
                            PAConstants.PARTICIPATING_SITE)) {
                where.append(" and sp.id in(select sp2.id from StudyProtocol as sp2  "
-                       + "left outer join sp2.studyParticipations as sps2  "
+                       + "left outer join sp2.studySites as sps2  "
                        + "left outer join sps2.healthCareFacility as hcf "
                        + "left outer join hcf.organization as site "
                        + " where site.id = " + studyProtocolQueryCriteria.getParticipatingSiteId() + ")");

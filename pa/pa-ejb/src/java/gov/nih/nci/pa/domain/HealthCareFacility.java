@@ -106,7 +106,7 @@ public class HealthCareFacility  extends StructuralRole {
 
     private static final long serialVersionUID = -5085371602155096105L;
     private Organization organization;
-    private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
+    private List<StudySite> studySites = new ArrayList<StudySite>();
 
     /**
      *
@@ -127,19 +127,19 @@ public class HealthCareFacility  extends StructuralRole {
     }
     /**
      *
-     * @return studyParticipations
+     * @return studySites
      */
     @OneToMany(mappedBy = "healthCareFacility")
-    public List<StudyParticipation> getStudyParticipations() {
-        return studyParticipations;
+    public List<StudySite> getStudySites() {
+        return studySites;
     }
 
     /**
      *
-     * @param studyParticipations studyParticipations
+     * @param studySites studySites
      */
-    public void setStudyParticipations(List<StudyParticipation> studyParticipations) {
-        this.studyParticipations = studyParticipations;
+    public void setStudySites(List<StudySite> studySites) {
+        this.studySites = studySites;
     }
 
 

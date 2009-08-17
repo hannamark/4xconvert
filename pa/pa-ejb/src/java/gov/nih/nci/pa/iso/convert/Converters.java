@@ -98,7 +98,7 @@ public class Converters {
     private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
     private static InterventionConverter intervention = new InterventionConverter();
     private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
+    private static StudySiteConverter sSite = new StudySiteConverter();
     private static DiseaseConverter diseaseConverter = new DiseaseConverter();
     private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
     private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
@@ -111,8 +111,8 @@ public class Converters {
     private static StudyOverallStatusConverter studyOverallStatusConverter = new StudyOverallStatusConverter();
     private static StudyRecruitmentStatusConverter studyRecruitmentStatusConverter =
         new StudyRecruitmentStatusConverter();
-    private static StudyParticipationContactConverter studyParticipationContactConverter =
-        new StudyParticipationContactConverter();
+    private static StudySiteContactConverter studySiteContactConverter =
+        new StudySiteContactConverter();
     private static StudyRelationshipConverter studyRelationshipConverter = new StudyRelationshipConverter();
     private static StudyRegulatoryAuthorityConverter studyRegulatoryAuthorityConverter =
                     new StudyRegulatoryAuthorityConverter();
@@ -147,8 +147,8 @@ public class Converters {
         if (clazz.equals(InterventionAlternateNameConverter.class)) {
             return (TYPE) intervAltName;
         }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return (TYPE) sParticipation;
+        if (clazz.equals(StudySiteConverter.class)) {
+            return (TYPE) sSite;
         }
         if (clazz.equals(DiseaseConverter.class)) {
             return (TYPE) diseaseConverter;
@@ -183,8 +183,8 @@ public class Converters {
         if (clazz.equals(StudyRecruitmentStatusConverter.class)) {
             return (TYPE) studyRecruitmentStatusConverter;
         }
-        if (clazz.equals(StudyParticipationContactConverter.class)) {
-            return (TYPE) studyParticipationContactConverter;
+        if (clazz.equals(StudySiteContactConverter.class)) {
+            return (TYPE) studySiteContactConverter;
         }
         if (clazz.equals(StudyRelationshipConverter.class)) {
             return (TYPE) studyRelationshipConverter;

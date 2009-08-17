@@ -45,8 +45,8 @@ public class EnumTest {
 		testMethods(StudyClassificationCode.class);
 		testMethods(StudyContactRoleCode.class);
 		testMethods(StudyModelCode.class);
-		testMethods(StudyParticipationContactRoleCode.class);
-		testMethods(StudyParticipationFunctionalCode.class);
+		testMethods(StudySiteContactRoleCode.class);
+		testMethods(StudySiteFunctionalCode.class);
 		testMethods(StudyTypeCode.class);
 		testMethods(SummaryFourFundingCategoryCode.class);
 		testMethods(TimePerspectiveCode.class);
@@ -284,17 +284,17 @@ public class EnumTest {
 		        assertEquals("OTHER", StudyModelCode.OTHER.getName());
 		        assertEquals("Other", StudyModelCode.OTHER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyParticipationContactRoleCode")){			
-			 String[] x = StudyParticipationContactRoleCode.getDisplayNames();
-		        assertEquals(StudyParticipationContactRoleCode.values().length, x.length);
-		        assertEquals("SUBMITTER", StudyParticipationContactRoleCode.SUBMITTER.getName());
-		        assertEquals("Submitter", StudyParticipationContactRoleCode.SUBMITTER.getCode());
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudySiteContactRoleCode")){			
+			 String[] x = StudySiteContactRoleCode.getDisplayNames();
+		        assertEquals(StudySiteContactRoleCode.values().length, x.length);
+		        assertEquals("SUBMITTER", StudySiteContactRoleCode.SUBMITTER.getName());
+		        assertEquals("Submitter", StudySiteContactRoleCode.SUBMITTER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyParticipationFunctionalCode")){			
-			 String[] x = StudyParticipationFunctionalCode.getDisplayNames();
-		        assertEquals(StudyParticipationFunctionalCode.values().length, x.length);
-		        assertEquals("SPONSOR", StudyParticipationFunctionalCode.SPONSOR.getName());
-		        assertEquals("Sponsor", StudyParticipationFunctionalCode.SPONSOR.getCode());
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudySiteFunctionalCode")){			
+			 String[] x = StudySiteFunctionalCode.getDisplayNames();
+		        assertEquals(StudySiteFunctionalCode.values().length, x.length);
+		        assertEquals("SPONSOR", StudySiteFunctionalCode.SPONSOR.getName());
+		        assertEquals("Sponsor", StudySiteFunctionalCode.SPONSOR.getCode());
 		}
 		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyTypeCode")){			
 			 String[] x = StudyTypeCode.getDisplayNames();

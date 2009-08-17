@@ -18,7 +18,7 @@ public class MockPAHealthCareProviderService implements PAHealthCareProviderRemo
         return null;
     }
 
-    public List<PaPersonDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException {
+    public List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException {
         PaPersonDTO paPersonDTO = new PaPersonDTO();
         paPersonDTO.setFullName("John Investigator");
         List <PaPersonDTO>ary = new ArrayList<PaPersonDTO>();

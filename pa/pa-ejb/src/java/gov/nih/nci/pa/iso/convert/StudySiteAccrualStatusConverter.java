@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -116,7 +116,7 @@ public class StudySiteAccrualStatusConverter {
         dto.setIdentifier(IiConverter.convertToStudySiteAccuralStatusIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-        dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
+        dto.setStudySiteIi(IiConverter.convertToIi(bo.getStudySite().getId()));
         return dto;
     }
 
@@ -134,20 +134,20 @@ public class StudySiteAccrualStatusConverter {
             LOG.error(errmsg);
             throw new PAException(errmsg);
         }
-        if (PAUtil.isIiNull(dto.getStudyParticipationIi())) {
-            String errmsg = " StudySiteAccrualStatus.studyParticipation cannot be null. ";
+        if (PAUtil.isIiNull(dto.getStudySiteIi())) {
+            String errmsg = " StudySiteAccrualStatus.studySite cannot be null. ";
             LOG.error(errmsg);
             throw new PAException(errmsg);
         }
 
-        StudyParticipation spBo = new StudyParticipation();
-        spBo.setId(IiConverter.convertToLong(dto.getStudyParticipationIi()));
+        StudySite spBo = new StudySite();
+        spBo.setId(IiConverter.convertToLong(dto.getStudySiteIi()));
 
         StudySiteAccrualStatus bo = new StudySiteAccrualStatus();
         bo.setDateLastUpdated(new Date());
         bo.setStatusCode(RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
-        bo.setStudyParticipation(spBo);
+        bo.setStudySite(spBo);
         return bo;
     }
 

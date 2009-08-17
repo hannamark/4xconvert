@@ -161,7 +161,7 @@ public class StudyProtocol extends AbstractEntity {
 
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
-    private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
+    private List<StudySite> studySites = new ArrayList<StudySite>();
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
@@ -615,19 +615,19 @@ public class StudyProtocol extends AbstractEntity {
 
     /**
      *
-     * @return studyParticipations
+     * @return studySites
      */
     @OneToMany(mappedBy = "studyProtocol")
-    public List<StudyParticipation> getStudyParticipations() {
-        return studyParticipations;
+    public List<StudySite> getStudySites() {
+        return studySites;
     }
 
     /**
      *
-     * @param studyParticipations studyParticipations
+     * @param studySites studySites
      */
-    public void setStudyParticipations(List<StudyParticipation> studyParticipations) {
-        this.studyParticipations = studyParticipations;
+    public void setStudySites(List<StudySite> studySites) {
+        this.studySites = studySites;
     }
 
     /**

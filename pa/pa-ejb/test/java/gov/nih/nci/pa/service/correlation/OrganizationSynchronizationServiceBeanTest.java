@@ -7,13 +7,13 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareFacilityTest;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationTest;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.StudyParticipationServiceBean;
-import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceBean;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -26,7 +26,7 @@ public class OrganizationSynchronizationServiceBeanTest {
 
     private OrganizationSynchronizationServiceBean bean = new OrganizationSynchronizationServiceBean();
     private OrganizationSynchronizationServiceRemote remoteEjb = bean;
-    StudyParticipationServiceLocal spsService = new StudyParticipationServiceBean();
+    StudySiteServiceLocal spsService = new StudySiteServiceBean();
     Long createdHcfId = null;
     Long createdSpsId = null;
 
@@ -123,11 +123,11 @@ public class OrganizationSynchronizationServiceBeanTest {
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
 
-        StudyParticipation create = StudyParticipationTest.createStudyParticipationObj(sp, hcf) ;
+        StudySite create = StudySiteTest.createStudySiteObj(sp, hcf) ;
         //create.setStatusCode(StatusCode.PENDING);
         TestSchema.addUpdObject(create);
         assertNotNull(create.getId());
-        StudyParticipation saved = (StudyParticipation) session.load(StudyParticipation.class, create.getId());
+        StudySite saved = (StudySite) session.load(StudySite.class, create.getId());
         createdSpsId = saved.getId();
     }
 

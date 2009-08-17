@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.dto;
 
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
 /**
  * @author Hong Gao
@@ -93,7 +93,7 @@ public class StudyParticipationWebDTO {
         /**
          * @param iso StudyResourcingDTO object
          */
-        public StudyParticipationWebDTO(StudyParticipationDTO iso) {
+        public StudyParticipationWebDTO(StudySiteDTO iso) {
             super();
             this.localProtocolIdentifier = iso.getLocalStudyProtocolIdentifier().getValue();
             this.id = iso.getIdentifier().getExtension();

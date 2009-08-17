@@ -124,8 +124,13 @@
             <comment>execute studyObjective.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyObjective.sql"/>
     </changeSet>
-	    <changeSet id="30" author="Vrushali">
-            <comment>execute pa-18746.sql</comment>
-            <sqlFile path="@db-upgrade.run.dir@/2.2/pa-18746.sql"/>
-    </changeSet>
+	<changeSet id="30" author="Vrushali">
+		<comment>execute pa-18746.sql</comment>
+		<sqlFile path="@db-upgrade.run.dir@/2.2/pa-18746.sql"/>
+	</changeSet>
+	<changeSet id="31" author="Naveen">
+		<comment>execute pa_dev_22858.sql</comment>
+		<sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_22858.sql"/>
+	</changeSet>
+
 </databaseChangeLog>

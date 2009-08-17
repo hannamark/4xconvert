@@ -146,7 +146,7 @@ public class StudySiteAccrualStatusServiceBean implements
         try {
             session = HibernateUtil.getCurrentSession();
           StudySiteAccrualStatusDTO current
-                    = getCurrentStudySiteAccrualStatusByStudyParticipation(dto.getStudyParticipationIi());
+                    = getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIi());
             RecruitmentStatusCode oldCode = null;
             Timestamp oldDate = null;
             if (current != null) {
@@ -189,19 +189,19 @@ public class StudySiteAccrualStatusServiceBean implements
 
     // Custom methods
     /**
-     * @param studyParticipationIi id of Participation
+     * @param studySiteIi id of Site
      * @return list StudySiteAccrualStatusDTO
      * @throws PAException on error
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
+    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi)
             throws PAException {
-        if (PAUtil.isIiNull(studyParticipationIi)) {
+        if (PAUtil.isIiNull(studySiteIi)) {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.info("Entering getStudySiteAccrualStatusByStudyParticipation");
+        LOG.info("Entering getStudySiteAccrualStatusByStudySite");
 
         Session session = null;
         List<StudySiteAccrualStatus> queryList = new ArrayList<StudySiteAccrualStatus>();
@@ -212,41 +212,41 @@ public class StudySiteAccrualStatusServiceBean implements
             // step 1: form the hql
             String hql = "select ssas "
                        + "from StudySiteAccrualStatus ssas "
-                       + "join ssas.studyParticipation sp "
-                       + "where sp.id = :studyParticipationId "
+                       + "join ssas.studySite sp "
+                       + "where sp.id = :studySiteId "
                        + "order by ssas.id ";
             LOG.info(" query StudySiteAccrualStatus = " + hql);
 
             // step 2: construct query object
             query = session.createQuery(hql);
-            query.setParameter("studyParticipationId", IiConverter.convertToLong(studyParticipationIi));
+            query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
 
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getStudyParticipationByCriteria ", hbe);
-            throw new PAException(" Hibernate exception in getStudyParticipationByCriteria ", hbe);
+            LOG.error(" Hibernate exception in getStudySiteByCriteria ", hbe);
+            throw new PAException(" Hibernate exception in getStudySiteByCriteria ", hbe);
         }
         ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();
         for (StudySiteAccrualStatus bo : queryList) {
             resultList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
         }
 
-        LOG.info("Leaving getStudySiteAccrualStatusByStudyParticipation, returning "
+        LOG.info("Leaving getStudySiteAccrualStatusByStudySite, returning "
                 + resultList.size() + " object(s).");
         return resultList;
     }
 
     /**
-     * @param studyParticipationIi Primary key assigned to a StudyProtocl.
+     * @param studySiteIi Primary key assigned to a StudyProtocl.
      * @return StudySiteAccrualStatusDTO Current status.
      * @throws PAException Exception.
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS) 
-    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(
-            Ii studyParticipationIi) throws PAException {
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(
+            Ii studySiteIi) throws PAException {
         List<StudySiteAccrualStatusDTO> ssasList =
-                this.getStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
+                this.getStudySiteAccrualStatusByStudySite(studySiteIi);
         StudySiteAccrualStatusDTO result = null;
         if (!ssasList.isEmpty()) {
             result = ssasList.get(ssasList.size() - 1);

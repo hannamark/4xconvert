@@ -96,22 +96,22 @@ import org.junit.Test;
 public class StudySiteAccrualStatusServiceBeanTest {
 
   private StudySiteAccrualStatusServiceRemote remoteEjb = new StudySiteAccrualStatusServiceBean();;
-  Ii studyParticipationId;
+  Ii studySiteId;
   @Before
   public void setUp() throws Exception {
     TestSchema.reset1();
     TestSchema.primeData();
-    studyParticipationId = IiConverter.convertToIi(TestSchema.studyParticipationIds.get(0));
+    studySiteId = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
   }
 
   @Test
   public void get() throws Exception {
     List<StudySiteAccrualStatusDTO> statusList =
-      remoteEjb.getStudySiteAccrualStatusByStudyParticipation(studyParticipationId);
+      remoteEjb.getStudySiteAccrualStatusByStudySite(studySiteId);
     assertEquals(1, statusList.size());
 
     StudySiteAccrualStatusDTO dto =
-      remoteEjb.getCurrentStudySiteAccrualStatusByStudyParticipation(statusList.get(0).getStudyParticipationIi());
+      remoteEjb.getCurrentStudySiteAccrualStatusByStudySite(statusList.get(0).getStudySiteIi());
     assertNotNull(dto);   
     
     StudySiteAccrualStatusDTO dto2 = null;
@@ -134,8 +134,8 @@ public class StudySiteAccrualStatusServiceBeanTest {
     StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
     dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
     dto.setStatusDate(TsConverter.convertToTs(new java.sql.Timestamp((new java.util.Date()).getTime())));
-    dto.setStudyParticipationIi(studyParticipationId);
+    dto.setStudySiteIi(studySiteId);
     remoteEjb.createStudySiteAccrualStatus(dto);
-    assertEquals(dto.getStudyParticipationIi(), studyParticipationId);
+    assertEquals(dto.getStudySiteIi(), studySiteId);
   }
 }

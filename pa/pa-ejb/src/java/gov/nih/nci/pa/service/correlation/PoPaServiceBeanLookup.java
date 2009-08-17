@@ -88,8 +88,8 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -118,19 +118,19 @@ public class PoPaServiceBeanLookup {
      * @return StudyProtocolServiceRemote
      * @throws PAException on error
      */
-    public static StudyParticipationServiceRemote
-        getStudyParticipationService() throws PAException {
-        return (StudyParticipationServiceRemote) JNDIUtil.lookup("/pa/StudyParticipationServiceBean/remote");
+    public static StudySiteServiceRemote
+        getStudySiteService() throws PAException {
+        return (StudySiteServiceRemote) JNDIUtil.lookup("/pa/StudySiteServiceBean/remote");
     } 
 
     /**
-     * @return StudyParticipationContactRemote
+     * @return StudySiteContactRemote
      * @throws PAException on error
      */
-    public static StudyParticipationContactServiceRemote
-        getStudyParticipationContactService() throws PAException {
-        return (StudyParticipationContactServiceRemote) 
-            JNDIUtil.lookup("/pa/StudyParticipationContactServiceBean/remote");
+    public static StudySiteContactServiceRemote
+        getStudySiteContactService() throws PAException {
+        return (StudySiteContactServiceRemote) 
+            JNDIUtil.lookup("/pa/StudySiteContactServiceBean/remote");
     } 
 
     /**

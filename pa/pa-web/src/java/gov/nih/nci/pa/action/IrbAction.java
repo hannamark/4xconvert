@@ -92,8 +92,8 @@ import gov.nih.nci.pa.dto.ContactWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -101,7 +101,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
@@ -130,7 +130,7 @@ import com.opensymphony.xwork2.Preparable;
 public class IrbAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1230909090L;
 
-    private StudyParticipationServiceRemote sPartService;
+    private StudySiteServiceRemote sPartService;
     private StudyProtocolServiceRemote sProtService;
     private OrganizationCorrelationServiceBean orgCorrService;
     private CorrelationUtils correlationUtils;
@@ -152,7 +152,7 @@ public class IrbAction extends ActionSupport implements Preparable {
      */
     public void prepare() throws Exception {
         sProtService = PaRegistry.getStudyProtocolService();
-        sPartService = PaRegistry.getStudyParticipationService();
+        sPartService = PaRegistry.getStudySiteService();
         orgCorrService = new OrganizationCorrelationServiceBean();
         correlationUtils = new CorrelationUtils();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
@@ -364,9 +364,9 @@ public class IrbAction extends ActionSupport implements Preparable {
         dto.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(false));
         sProtService.updateStudyProtocol(dto);
         
-        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
-        for (StudyParticipationDTO sp : spList) {
-             if (StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().equals(
+        List<StudySiteDTO> spList = sPartService.getByStudyProtocol(spIdIi);
+        for (StudySiteDTO sp : spList) {
+             if (StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().equals(
                     sp.getFunctionalCode().getCode())) {
                         sPartService.delete(sp.getIdentifier());
             }
@@ -374,23 +374,23 @@ public class IrbAction extends ActionSupport implements Preparable {
     }
 
     private void saveSubmissionRequired() throws Exception {
-        Ii sPartToUpdate = this.getStudyParticipationToUpdate();
+        Ii sPartToUpdate = this.getStudySiteToUpdate();
         String poOrgId = getCt().getId();
         if (PAUtil.isEmpty(poOrgId)) {
             throw new PAException("Board name must be set for '" + getApprovalStatus() + "'.  ");
         }
         
         Long oversightCommitteeId = orgCorrService.createOversightCommitteeCorrelations(poOrgId);
-        StudyParticipationDTO partDto  = null;
+        StudySiteDTO partDto  = null;
         boolean newFlag = false;
         if (sPartToUpdate != null) {
          partDto = sPartService.get(sPartToUpdate);
         } else {
             newFlag = true;
-            partDto = new StudyParticipationDTO();
+            partDto = new StudySiteDTO();
             partDto.setStudyProtocolIdentifier(spIdIi);
             partDto.setFunctionalCode(
-                    CdConverter.convertToCd(StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
+                    CdConverter.convertToCd(StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
         }
         partDto.setOversightCommitteeIi(IiConverter.convertToIi(oversightCommitteeId));
         partDto.setReviewBoardApprovalNumber(StConverter.convertToSt(getApprovalNumber()));
@@ -413,11 +413,11 @@ public class IrbAction extends ActionSupport implements Preparable {
         }
     
     
-    private Ii getStudyParticipationToUpdate() throws Exception {
+    private Ii getStudySiteToUpdate() throws Exception {
         Ii sPartToUpdate = null;
-        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIdIi);
-            for (StudyParticipationDTO sp : spList) {
-                if (StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().equals(
+        List<StudySiteDTO> spList = sPartService.getByStudyProtocol(spIdIi);
+            for (StudySiteDTO sp : spList) {
+                if (StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().equals(
                         sp.getFunctionalCode().getCode())) {
                     sPartToUpdate = sp.getIdentifier();
                 }
@@ -444,8 +444,8 @@ public class IrbAction extends ActionSupport implements Preparable {
             ct.setPhone(null);
             ct.setEmail(null);
            } else {
-            List<StudyParticipationDTO> partList = sPartService.getByStudyProtocol(spIdIi);
-            for (StudyParticipationDTO part : partList) {
+            List<StudySiteDTO> partList = sPartService.getByStudyProtocol(spIdIi);
+            for (StudySiteDTO part : partList) {
                 if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
                         part.getReviewBoardApprovalStatusCode().getCode())
                     || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(

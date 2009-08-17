@@ -11,14 +11,14 @@ import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationContact;
-import gov.nih.nci.pa.domain.StudyParticipationTest;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
@@ -35,7 +35,7 @@ public class PAOrganizationServiceTest {
     private PAOrganizationServiceRemote remoteEjb = bean;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(  ) throws Exception {
         TestSchema.reset();
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
@@ -51,16 +51,16 @@ public class PAOrganizationServiceTest {
         ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         ro.setIdentifier("abc");
         TestSchema.addUpdObject(ro);
-        StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
+        StudySite spc = StudySiteTest.createStudySiteObj(sp, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
         
         ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
         TestSchema.addUpdObject(crs);
-        StudyParticipationContact spcc = new StudyParticipationContact();
+        StudySiteContact spcc = new StudySiteContact();
         spcc.setClinicalResearchStaff(crs);
-        spcc.setRoleCode(StudyParticipationContactRoleCode.SUBMITTER);
-        spcc.setStudyParticipation(spc);
+        spcc.setRoleCode(StudySiteContactRoleCode.SUBMITTER);
+        spcc.setStudySite(spc);
         spcc.setStudyProtocol(sp);
         spcc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(spcc);

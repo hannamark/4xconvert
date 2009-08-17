@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 
 import java.util.List;
 
@@ -112,7 +112,7 @@ public class PaPersonDTO {
     /*
      * This field is used to further identify this person whether he is primary contact or not
      */
-    private StudyParticipationContactRoleCode roleName;
+    private StudySiteContactRoleCode roleName;
     private String telephone;
     /*
      * This is the PO ID
@@ -367,14 +367,14 @@ public class PaPersonDTO {
     /**
      * @return the roleName
      */
-    public StudyParticipationContactRoleCode getRoleName() {
+    public StudySiteContactRoleCode getRoleName() {
         return roleName;
     }
 
     /**
      * @param roleName the roleName to set
      */
-    public void setRoleName(StudyParticipationContactRoleCode roleName) {
+    public void setRoleName(StudySiteContactRoleCode roleName) {
         this.roleName = roleName;
     }
 

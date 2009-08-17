@@ -81,7 +81,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -128,8 +128,8 @@ public interface OrganizationCorrelationServiceRemote {
      * @return List org
      * @throws PAException e
      */
-    List<Organization> getOrganizationByStudyParticipation(Long studyProtocolId , 
-            StudyParticipationFunctionalCode functionalCode) throws PAException;
+    List<Organization> getOrganizationByStudySite(Long studyProtocolId , 
+            StudySiteFunctionalCode functionalCode) throws PAException;
 
     /**
      * 

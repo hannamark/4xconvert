@@ -89,7 +89,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -102,8 +102,8 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -184,9 +184,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     @EJB
     StratumGroupServiceLocal subGroupsService = null;
     @EJB
-    StudyParticipationServiceLocal studyParticipationService = null;
+    StudySiteServiceLocal studySiteService = null;
     @EJB
-    StudyParticipationContactServiceLocal studyParticipationContactService = null;
+    StudySiteContactServiceLocal studySiteContactService = null;
     @EJB
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
     @EJB
@@ -230,10 +230,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param leadOrganizationDTO Pead organization
      * @param principalInvestigatorDTO Principal Investigator
      * @param sponsorOrganizationDTO Sponsort Organization
-     * @param leadOrganizationParticipationIdentifierDTO local protocol identifier
-     * @param nctIdentifierParticipationIdentifierDTO nct Identifier
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param nctIdentifierSiteIdentifierDTO nct Identifier
      * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studyParticipationContactDTO phone and email info when sponsor is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
@@ -251,10 +251,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             OrganizationDTO leadOrganizationDTO ,
             PersonDTO principalInvestigatorDTO ,
             OrganizationDTO sponsorOrganizationDTO ,
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO ,
-            StudyParticipationDTO nctIdentifierParticipationIdentifierDTO ,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO ,
+            StudySiteDTO nctIdentifierSiteIdentifierDTO ,
             StudyContactDTO studyContactDTO ,
-            StudyParticipationContactDTO studyParticipationContactDTO ,
+            StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
             Ii responsiblePartyContactIi)
@@ -271,10 +271,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 leadOrganizationDTO ,
                 principalInvestigatorDTO ,
                 sponsorOrganizationDTO ,
-                leadOrganizationParticipationIdentifierDTO ,
-                nctIdentifierParticipationIdentifierDTO ,
+                leadOrganizationSiteIdentifierDTO ,
+                nctIdentifierSiteIdentifierDTO ,
                 studyContactDTO ,
-                studyParticipationContactDTO ,
+                studySiteContactDTO ,
                 summary4organizationDTO ,
                 summary4studyResourcingDTO ,
                 responsiblePartyContactIi, false);
@@ -301,10 +301,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param leadOrganizationDTO Pead organization
      * @param principalInvestigatorDTO Principal Investigator
      * @param sponsorOrganizationDTO Sponsort Organization
-     * @param leadOrganizationParticipationIdentifierDTO local protocol identifier
-     * @param nctIdentifierParticipationIdentifierDTO nct Identifier
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param nctIdentifierSiteIdentifierDTO nct Identifier
      * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studyParticipationContactDTO phone and email info when sponsor is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
@@ -322,10 +322,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             OrganizationDTO leadOrganizationDTO ,
             PersonDTO principalInvestigatorDTO ,
             OrganizationDTO sponsorOrganizationDTO ,
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO ,
-            StudyParticipationDTO nctIdentifierParticipationIdentifierDTO ,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO ,
+            StudySiteDTO nctIdentifierSiteIdentifierDTO ,
             StudyContactDTO studyContactDTO ,
-            StudyParticipationContactDTO studyParticipationContactDTO ,
+            StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
             Ii responsiblePartyContactIi)
@@ -344,16 +344,16 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     leadOrganizationDTO ,
                     principalInvestigatorDTO ,
                     sponsorOrganizationDTO ,
-                    leadOrganizationParticipationIdentifierDTO ,
-                    nctIdentifierParticipationIdentifierDTO ,
+                    leadOrganizationSiteIdentifierDTO ,
+                    nctIdentifierSiteIdentifierDTO ,
                     studyContactDTO ,
-                    studyParticipationContactDTO ,
+                    studySiteContactDTO ,
                     summary4organizationDTO ,
                     summary4studyResourcingDTO ,
                     responsiblePartyContactIi , true);
 
             deepCopy(fromStudyProtocolii , toStudyProtocolIi);
-            deepCopyParticipation(fromStudyProtocolii , toStudyProtocolIi);
+            deepCopySite(fromStudyProtocolii , toStudyProtocolIi);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -415,60 +415,60 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         return interventions;
 
     }
-    private void deepCopyParticipation(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+    private void deepCopySite(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
 
-        ArrayList<StudyParticipationDTO> criteriaList = null;
-        StudyParticipationDTO searchCode = null;
+        ArrayList<StudySiteDTO> criteriaList = null;
+        StudySiteDTO searchCode = null;
 
         // check for site related of IRB
-        criteriaList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
+        criteriaList = new ArrayList<StudySiteDTO>();
+        for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
             if (cd.isCollaboratorCode()) {
-                searchCode = new StudyParticipationDTO();
+                searchCode = new StudySiteDTO();
                 searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
                 criteriaList.add(searchCode);
             }
         }
-        searchCode = new StudyParticipationDTO();
-        searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
+        searchCode = new StudySiteDTO();
+        searchCode.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         criteriaList.add(searchCode);
         //IRB
-        searchCode = new StudyParticipationDTO();
-        searchCode.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode
+        searchCode = new StudySiteDTO();
+        searchCode.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode
                 .STUDY_OVERSIGHT_COMMITTEE));
         criteriaList.add(searchCode);
         
-        List<StudyParticipationDTO> dtos =  studyParticipationService.getByStudyProtocol(
+        List<StudySiteDTO> dtos =  studySiteService.getByStudyProtocol(
                 fromStudyProtocolIi , criteriaList);
-        StudyParticipationDTO newSpDto = null;
-        List<StudyParticipationContactDTO> spcDtos = null;
+        StudySiteDTO newSpDto = null;
+        List<StudySiteContactDTO> spcDtos = null;
         List<StudySiteAccrualStatusDTO> accDtos = null;
         Ii oldSpIi = null;
-        for (StudyParticipationDTO dto : dtos) {
+        for (StudySiteDTO dto : dtos) {
             oldSpIi = dto.getIdentifier();
             dto.setIdentifier(null);
             dto.setStudyProtocolIdentifier(toStudyProtocolIi);
             try {
-                newSpDto = studyParticipationService.create(dto);
+                newSpDto = studySiteService.create(dto);
             } catch (PADuplicateException pud) {
                 continue;
             }
 
-            if (StudyParticipationFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {
+            if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {
                 // create study contact
-                spcDtos = studyParticipationContactService.getByStudyParticipation(oldSpIi);
-                for (StudyParticipationContactDTO spcDto : spcDtos) {
+                spcDtos = studySiteContactService.getByStudySite(oldSpIi);
+                for (StudySiteContactDTO spcDto : spcDtos) {
                     spcDto.setIdentifier(null);
                     spcDto.setStudyProtocolIdentifier(toStudyProtocolIi);
-                    spcDto.setStudyParticipationIi(newSpDto.getIdentifier());
-                    studyParticipationContactService.create(spcDto);
+                    spcDto.setStudySiteIi(newSpDto.getIdentifier());
+                    studySiteContactService.create(spcDto);
                 }
 
                 // create study accrual status
-                accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudyParticipation(oldSpIi);
+                accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(oldSpIi);
                 for (StudySiteAccrualStatusDTO accDto : accDtos) {
                     accDto.setIdentifier(null);
-                    accDto.setStudyParticipationIi(newSpDto.getIdentifier());
+                    accDto.setStudySiteIi(newSpDto.getIdentifier());
                     studySiteAccrualStatusService.createStudySiteAccrualStatus(accDto);
                 }
             }
@@ -484,10 +484,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             OrganizationDTO leadOrganizationDTO ,
             PersonDTO principalInvestigatorDTO ,
             OrganizationDTO sponsorOrganizationDTO ,
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO ,
-            StudyParticipationDTO nctIdentifierDTO ,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO ,
+            StudySiteDTO nctIdentifierDTO ,
             StudyContactDTO studyContactDTO ,
-            StudyParticipationContactDTO studyParticipationContactDTO ,
+            StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
             Ii responsiblePartyContactIi , boolean isAmend)
@@ -501,8 +501,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 principalInvestigatorDTO,
                 sponsorOrganizationDTO,
                 studyContactDTO,
-                studyParticipationContactDTO,
-                leadOrganizationParticipationIdentifierDTO);
+                studySiteContactDTO,
+                leadOrganizationSiteIdentifierDTO);
 
         Ii oldIdentifier =  null;
         Ii studyProtocolIi = null;
@@ -561,16 +561,16 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
         createdocuments(studyProtocolIi , documentDTOs);
         createSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
-        createLeadOrganization(studyProtocolIi , leadOrganizationDTO , leadOrganizationParticipationIdentifierDTO);
+        createLeadOrganization(studyProtocolIi , leadOrganizationDTO , leadOrganizationSiteIdentifierDTO);
         createPrincipalInvestigator(studyProtocolIi , leadOrganizationDTO , principalInvestigatorDTO , studyTypeCode);
         createSponsor(studyProtocolIi , sponsorOrganizationDTO);
         if (studyContactDTO != null) {
             // pi is responsible
             createPIAsResponsibleParty(studyProtocolIi , leadOrganizationDTO ,
                     principalInvestigatorDTO , studyContactDTO);
-        } else if (studyParticipationContactDTO != null) {
+        } else if (studySiteContactDTO != null) {
             createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO, responsiblePartyContactIi,
-                    studyParticipationContactDTO);
+                    studySiteContactDTO);
         }
 
         createNCTidentifier(studyProtocolIi , nctIdentifierDTO);
@@ -584,20 +584,20 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
 //        dwsService.create(dwDto);
 //    }
 
-    private void createNCTidentifier(Ii studyProtocolIi , StudyParticipationDTO nctIdentifierDTO)
+    private void createNCTidentifier(Ii studyProtocolIi , StudySiteDTO nctIdentifierDTO)
     throws PAException {
         if (nctIdentifierDTO == null || nctIdentifierDTO.getLocalStudyProtocolIdentifier() == null
                 ||  PAUtil.isEmpty(nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue())) {
             return;
         }
-        StudyParticipationDTO spDto =  new StudyParticipationDTO();
+        StudySiteDTO spDto =  new StudySiteDTO();
         String poOrgId = ocsr.getCtGovPOIdentifier();
         long roId = ocsr.createResearchOrganizationCorrelations(poOrgId);
         spDto.setStudyProtocolIdentifier(studyProtocolIi);
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
         spDto.setLocalStudyProtocolIdentifier(nctIdentifierDTO.getLocalStudyProtocolIdentifier());
         spDto.setResearchOrganizationIi(IiConverter.convertToIi(roId));
-        studyParticipationService.create(spDto);
+        studySiteService.create(spDto);
     }
 
     private void createStudyRelationship(Ii newStudyProtocolIi , Ii oldStudyProtocolIi , StudyProtocolDTO spDto)
@@ -718,7 +718,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     
 
     private void createLeadOrganization(Ii studyProtocolIi , OrganizationDTO leadOrganizationDto ,
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO)
+            StudySiteDTO leadOrganizationSiteIdentifierDTO)
     throws PAException {
         String orgPoIdentifier = leadOrganizationDto.getIdentifier().getExtension();
         if (orgPoIdentifier  == null) {
@@ -727,7 +727,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         if (studyProtocolIi == null) {
             throw new PAException(PROTOCOL_ID_NULL);
         }
-        String localSpIdentifier = leadOrganizationParticipationIdentifierDTO
+        String localSpIdentifier = leadOrganizationSiteIdentifierDTO
             .getLocalStudyProtocolIdentifier().getValue();
         if (localSpIdentifier  == null) {
             throw new PAException("Local StudyProtocol Identifer is null");
@@ -739,14 +739,14 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
         Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
         
-        StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
+        StudySiteDTO studyPartDTO = new StudySiteDTO();
         studyPartDTO.setFunctionalCode(CdConverter
-                .convertStringToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode()));
+                .convertStringToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode()));
         studyPartDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localSpIdentifier));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-        studyPartDTO = studyParticipationService.create(studyPartDTO);
+        studyPartDTO = studySiteService.create(studyPartDTO);
       
     }
 
@@ -801,13 +801,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             throw new PAException(NO_PROTOCOL_FOUND + studyProtocolIi.getExtension());
         }
         Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
-        StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
+        StudySiteDTO studyPartDTO = new StudySiteDTO();
         studyPartDTO.setFunctionalCode(CdConverter
-                .convertStringToCd(StudyParticipationFunctionalCode.SPONSOR.getCode()));
+                .convertStringToCd(StudySiteFunctionalCode.SPONSOR.getCode()));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-        studyPartDTO = studyParticipationService.create(studyPartDTO);
+        studyPartDTO = studySiteService.create(studyPartDTO);
     }
 
     private void createPIAsResponsibleParty(Ii studyProtocolIi ,
@@ -828,9 +828,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private void createSponsorAsPrimaryContact(Ii studyProtocolIi ,
             OrganizationDTO sponsorOrganizationDto ,
             Ii responsiblePartyContactIi ,
-            StudyParticipationContactDTO studyParticipationContactDTO) throws PAException {
+            StudySiteContactDTO studySiteContactDTO) throws PAException {
 
-        DSet<Tel> dset = studyParticipationContactDTO.getTelecomAddresses();
+        DSet<Tel> dset = studySiteContactDTO.getTelecomAddresses();
         PAContactDTO contactDto = new PAContactDTO();
         contactDto.setOrganizationIdentifier(
                 IiConverter.convertToPoOrganizationIi(sponsorOrganizationDto.getIdentifier().getExtension()));
@@ -864,8 +864,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             PersonDTO principalInvestigatorDTO ,
             OrganizationDTO sponsorOrganizationDTO ,
             StudyContactDTO studyContactDTO ,
-            StudyParticipationContactDTO studyParticipationContactDTO ,
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO
+            StudySiteContactDTO studySiteContactDTO ,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO
             )
     throws PAException {
         StringBuffer sb = new StringBuffer();
@@ -876,11 +876,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         sb.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
         sb.append(principalInvestigatorDTO == null ? "Principal Investigator DTO cannot be null , " : "");
         sb.append(sponsorOrganizationDTO == null ? "Sponsor Organization DTO cannot be null , " : "");
-        if (studyContactDTO != null && studyParticipationContactDTO != null) {
-            sb.append("Either StudyContactDTO or studyParticipationContactDTO should be null ,");
+        if (studyContactDTO != null && studySiteContactDTO != null) {
+            sb.append("Either StudyContactDTO or studySiteContactDTO should be null ,");
         }
-        if (studyContactDTO == null && studyParticipationContactDTO == null) {
-            sb.append("Either StudyContactDTO or studyParticipationContactDTO should not be null ,");
+        if (studyContactDTO == null && studySiteContactDTO == null) {
+            sb.append("Either StudyContactDTO or studySiteContactDTO should not be null ,");
         }
 
         // validates for attributes
@@ -894,8 +894,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
                 ? "Primary Completion Datecannot be null , " : "");
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
-        if (leadOrganizationParticipationIdentifierDTO != null) {
-            sb.append(PAUtil.isStNull(leadOrganizationParticipationIdentifierDTO.getLocalStudyProtocolIdentifier())
+        if (leadOrganizationSiteIdentifierDTO != null) {
+            sb.append(PAUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier())
                     ? "Local StudyProtocol Identifier cannot be null , " : "");
         }
         sb.append(PAUtil.isIiNull(leadOrganizationDTO.getIdentifier()) ? "Lead Organization cannot be null , " : "");
@@ -909,10 +909,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             sb.append(DSetConverter.getFirstElement(studyContactDTO.getTelecomAddresses(), PAConstants.PHONE) == null
                     ? "Phone cannot be null , " : "");
         }
-        if (studyParticipationContactDTO != null) {
-            sb.append(DSetConverter.getFirstElement(studyParticipationContactDTO.getTelecomAddresses(),
+        if (studySiteContactDTO != null) {
+            sb.append(DSetConverter.getFirstElement(studySiteContactDTO.getTelecomAddresses(),
                     PAConstants.EMAIL) == null ? "Email cannot be null , " : "");
-            sb.append(DSetConverter.getFirstElement(studyParticipationContactDTO.getTelecomAddresses(),
+            sb.append(DSetConverter.getFirstElement(studySiteContactDTO.getTelecomAddresses(),
                     PAConstants.PHONE) == null  ? "Phone cannot be null , " : "");
 
         }

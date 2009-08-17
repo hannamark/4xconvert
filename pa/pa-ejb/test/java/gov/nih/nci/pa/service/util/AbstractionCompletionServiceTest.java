@@ -95,8 +95,8 @@ import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyContactTest;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationTest;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
@@ -123,10 +123,10 @@ import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceBean;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceBean;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceBean;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationServiceBean;
-import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceBean;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceBean;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceBean;
@@ -160,8 +160,8 @@ public class AbstractionCompletionServiceTest {
     StudyResourcingServiceLocal studyResourcingSrvBean = new StudyResourcingServiceBean();
     ArmServiceLocal armSrvBean = new ArmServiceBean();
     PlannedActivityServiceLocal plannedActSrvBean = new PlannedActivityServiceBean();
-    StudyParticipationServiceLocal studyPartSrvBean = new StudyParticipationServiceBean();
-    StudyParticipationContactServiceLocal studyPartContactSrvBean = new StudyParticipationContactServiceBean();
+    StudySiteServiceLocal studyPartSrvBean = new StudySiteServiceBean();
+    StudySiteContactServiceLocal studyPartContactSrvBean = new StudySiteContactServiceBean();
     StudyContactServiceLocal studyContactSrvBean = new StudyContactServiceBean();
     StudyOutcomeMeasureServiceLocal studyOutMeasSrvBean = new StudyOutcomeMeasureServiceBean();
     StudyRegulatoryAuthorityServiceLocal studyRegAuthSrvBean = new StudyRegulatoryAuthorityServiceBean();
@@ -175,7 +175,7 @@ public class AbstractionCompletionServiceTest {
     public void setUp() throws Exception {
         TestSchema.reset();
         bean.studyProtocolService = studyProtocolSrvBean;
-        bean.studyParticipationService = studyPartSrvBean;
+        bean.studySiteService = studyPartSrvBean;
         bean.studyRegulatoryAuthorityService = studyRegAuthSrvBean;
         bean.plannedActivityService = plannedActSrvBean;
         bean.studyOverallStatusService = studyOverallStatusSrvBean;
@@ -184,7 +184,7 @@ public class AbstractionCompletionServiceTest {
         bean.documentServiceLocal = docSrvBean;
         bean.studyOutcomeMeasureService = studyOutMeasSrvBean;
         bean.studyContactService = studyContactSrvBean;
-        bean.studyParticipationContactService = studyPartContactSrvBean;
+        bean.studySiteContactService = studyPartContactSrvBean;
         bean.armService = armSrvBean;
         bean.studyResourcingService = studyResourcingSrvBean;
         bean.studyDiseaseService = studyDiseaseSrvBean;
@@ -222,8 +222,8 @@ public class AbstractionCompletionServiceTest {
         ro.setOrganization(o);
         ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(ro);
-        StudyParticipation spc = StudyParticipationTest
-                .createStudyParticipationObj(sp, hcf);
+        StudySite spc = StudySiteTest
+                .createStudySiteObj(sp, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
         StudyRecruitmentStatus studyRecStatus = StudyRecruitmentStatusTest

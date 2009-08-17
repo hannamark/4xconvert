@@ -106,7 +106,7 @@ public class StudySiteAccrualStatus extends AbstractEntity {
 
     private RecruitmentStatusCode statusCode;
     private Timestamp statusDate;
-    private StudyParticipation studyParticipation;
+    private StudySite studySite;
 
 
     /**
@@ -142,19 +142,19 @@ public class StudySiteAccrualStatus extends AbstractEntity {
         this.statusDate = statusDate;
     }
     /**
-     * @return the studyParticipation
+     * @return the studySite
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PARTICIPATION_IDENTIFIER", updatable = false)
+    @JoinColumn(name = "STUDY_SITE_IDENTIFIER", updatable = false)
     @NotNull
-    public StudyParticipation getStudyParticipation() {
-        return studyParticipation;
+    public StudySite getStudySite() {
+        return studySite;
     }
     /**
-     * @param studyParticipation the studyParticipation to set
+     * @param studySite the studySite to set
      */
-    public void setStudyParticipation(StudyParticipation studyParticipation) {
-        this.studyParticipation = studyParticipation;
+    public void setStudySite(StudySite studySite) {
+        this.studySite = studySite;
     }
 
 }

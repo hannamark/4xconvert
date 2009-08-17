@@ -95,15 +95,15 @@ import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -213,10 +213,10 @@ public class TrialUtil {
             scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
         } else {
-            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+            StudySiteContactDTO spart = new StudySiteContactDTO();
             spart.setRoleCode(CdConverter.convertToCd(
-                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudyParticipationContactDTO> spDtos = PoPaServiceBeanLookup.getStudyParticipationContactService()
+                    StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+            List<StudySiteContactDTO> spDtos = PoPaServiceBeanLookup.getStudySiteContactService()
                 .getByStudyProtocol(studyProtocolIi, spart);
             trialDTO.setResponsiblePartyType(SPONSOR);
             if (spDtos != null && !spDtos.isEmpty()) {
@@ -264,9 +264,9 @@ public class TrialUtil {
      * @throws PAException ex
      */
     public void copySponsor(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        StudyParticipationDTO spart = new StudyParticipationDTO();
-        spart.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
-        List<StudyParticipationDTO> spDtos = PoPaServiceBeanLookup.getStudyParticipationService()
+        StudySiteDTO spart = new StudySiteDTO();
+        spart.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+        List<StudySiteDTO> spDtos = PoPaServiceBeanLookup.getStudySiteService()
             .getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
@@ -285,8 +285,8 @@ public class TrialUtil {
      * @throws PAException ex
      */
     public void copyNctNummber(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi,
-                    StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
+        StudySiteDTO spDto = getStudySite(studyProtocolIi,
+                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
         if (spDto != null) {
             trialDTO.setNctIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
         }
@@ -299,16 +299,16 @@ public class TrialUtil {
      * @return dto
      * @throws PAException ex
      */
-    public StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode)
+    public StudySiteDTO getStudySite(Ii studyProtocolIi , StudySiteFunctionalCode spCode)
     throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException(" StudyProtocol Ii is null");
         }
-        StudyParticipationDTO spDto = new StudyParticipationDTO();
+        StudySiteDTO spDto = new StudySiteDTO();
         Cd cd = CdConverter.convertToCd(spCode);
         spDto.setFunctionalCode(cd);
 
-        List<StudyParticipationDTO> spDtos = PoPaServiceBeanLookup.getStudyParticipationService()
+        List<StudySiteDTO> spDtos = PoPaServiceBeanLookup.getStudySiteService()
         .getByStudyProtocol(studyProtocolIi, spDto);
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos.get(0);
@@ -498,8 +498,8 @@ public class TrialUtil {
      * @param trialDTO dto
      * @return iso
      */
-    public StudyParticipationDTO convertToStudyParticipationDTO(TrialDTO trialDTO) {
-        StudyParticipationDTO isoDto = new StudyParticipationDTO();
+    public StudySiteDTO convertToStudySiteDTO(TrialDTO trialDTO) {
+        StudySiteDTO isoDto = new StudySiteDTO();
         isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLocalProtocolIdentifier()));
         return isoDto;
     }
@@ -508,8 +508,8 @@ public class TrialUtil {
      * @param trialDTO dto
      * @return iso
      */
-    public StudyParticipationDTO convertToNCTStudyParticipationDTO(TrialDTO trialDTO) {
-        StudyParticipationDTO isoDto = new StudyParticipationDTO();
+    public StudySiteDTO convertToNCTStudySiteDTO(TrialDTO trialDTO) {
+        StudySiteDTO isoDto = new StudySiteDTO();
         isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getNctIdentifier()));
         return isoDto;
     }
@@ -530,8 +530,8 @@ public class TrialUtil {
      * @param trialDTO dto
      * @return iso
      */
-   public StudyParticipationContactDTO convertToStudyParticipationContactDTO(TrialDTO trialDTO) {
-       StudyParticipationContactDTO iso = new StudyParticipationContactDTO();
+   public StudySiteContactDTO convertToStudySiteContactDTO(TrialDTO trialDTO) {
+       StudySiteContactDTO iso = new StudySiteContactDTO();
        iso.setTelecomAddresses(getTelecomAddress(trialDTO));
        return iso;
    }

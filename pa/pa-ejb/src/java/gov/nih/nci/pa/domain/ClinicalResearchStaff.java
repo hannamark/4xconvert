@@ -108,7 +108,7 @@ public class ClinicalResearchStaff  extends StructuralRole {
     private Person person;
     private Organization organization;
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
-    private List<StudyParticipationContact> studyPartContacts = new ArrayList<StudyParticipationContact>();
+    private List<StudySiteContact> studyPartContacts = new ArrayList<StudySiteContact>();
 
     /**
      *
@@ -166,13 +166,13 @@ public class ClinicalResearchStaff  extends StructuralRole {
      * @return the studyPartContacts
      */
     @OneToMany(mappedBy = "healthCareProvider")
-    public List<StudyParticipationContact> getStudyPartContacts() {
+    public List<StudySiteContact> getStudyPartContacts() {
         return studyPartContacts;
     }
     /**
      * @param studyPartContacts the studyPartContacts to set
      */
-    public void setStudyPartContacts(List<StudyParticipationContact> studyPartContacts) {
+    public void setStudyPartContacts(List<StudySiteContact> studyPartContacts) {
         this.studyPartContacts = studyPartContacts;
     }
 }

@@ -12,8 +12,8 @@ import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudyContactServiceBean;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceBean;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceBean;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -25,7 +25,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     private PersonSynchronizationServiceBean bean = new PersonSynchronizationServiceBean();
     private PersonSynchronizationServiceRemote remoteEjb = bean;
-    StudyParticipationContactServiceLocal spcService = new StudyParticipationContactServiceBean();
+    StudySiteContactServiceLocal spcService = new StudySiteContactServiceBean();
     StudyContactServiceLocal scService = new StudyContactServiceBean();
 
     Ii pid;

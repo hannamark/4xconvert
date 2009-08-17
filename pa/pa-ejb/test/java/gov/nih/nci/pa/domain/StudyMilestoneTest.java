@@ -117,7 +117,7 @@ public class StudyMilestoneTest {
     public void mergeTest() {
         StudyMilestone m = new StudyMilestone();
         StudyProtocol sp = new StudyProtocol();
-        sp.setId(TestSchema.studyParticipationIds.get(0));
+        sp.setId(TestSchema.studySiteIds.get(0));
         PlannedActivity pa = new PlannedActivity();
         pa.setId(TestSchema.plannedActivityIds.get(0));
         Date now = new Date();
@@ -149,14 +149,14 @@ public class StudyMilestoneTest {
     }
     @Test
     public void deleteTest() {
-        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyParticipationIds.get(0));
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studySiteIds.get(0));
         List<StudyMilestone> smList = sp.getStudyMilestones();
         int oldCount = smList.size();
         assertTrue(0 < oldCount);
         sess.delete(smList.get(0));
         sess.flush();
         sess.clear();
-        sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyParticipationIds.get(0));
+        sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studySiteIds.get(0));
         smList = sp.getStudyMilestones();
         assertEquals(oldCount - 1, smList.size());
     }

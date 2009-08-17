@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
+import gov.nih.nci.coppa.iso.Cd;
+
 /**
  * OrganizationFunctionalRoleDTO for transferring OrganizationFunctionalRole object .
  * @author Hugh Reinhart
@@ -88,4 +90,20 @@ package gov.nih.nci.pa.iso.dto;
  */
 public class OrganizationFunctionalRoleDTO extends FunctionalRoleDTO {
     private static final long serialVersionUID = 1234895624790L;
+    
+    private Cd functionalCode;
+    
+    /**
+     * @return the functionalCode
+     */
+    public Cd getFunctionalCode() {
+        return functionalCode;
+    }
+    /**
+     * @param functionalCode the functionalCode to set
+     */
+    public void setFunctionalCode(Cd functionalCode) {
+        this.functionalCode = functionalCode;
+    }
+    
 }

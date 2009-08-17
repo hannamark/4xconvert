@@ -92,8 +92,8 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -108,8 +108,8 @@ import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -128,8 +128,8 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
@@ -185,9 +185,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
     @EJB
-    StudyParticipationServiceLocal studyParticipationService = null;
+    StudySiteServiceLocal studySiteService = null;
     @EJB
-    StudyParticipationContactServiceLocal studyParticipationContactService = null;
+    StudySiteContactServiceLocal studySiteContactService = null;
     @EJB
     StudyContactServiceLocal studyContactService = null;
     @EJB
@@ -277,8 +277,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceInterventions(studyProtocolIi, abstractionList, abstractionWarnList);
     enforceTreatingSite(studyProtocolIi, abstractionList);
     enforceStudyContactNullification(studyProtocolIi, abstractionWarnList);
-    enforceStudyParticipationNullification(studyProtocolIi, abstractionWarnList);
-    enforceStudyParticipationContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
+    enforceStudySiteNullification(studyProtocolIi, abstractionWarnList);
+    enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
     enforceArmGroup(studyProtocolIi, studyProtocolDTO, abstractionList);
     enforceTrialFunding(studyProtocolIi, abstractionList);
     enforceDisease(studyProtocolIi, abstractionList);
@@ -329,76 +329,76 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       }
       
   }
-  private void enforceStudyParticipationNullification(
+  private void enforceStudySiteNullification(
           Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)  throws PAException {
       
-      List<StudyParticipationDTO> scDtos = studyParticipationService.getByStudyProtocol(studyProtocolIi);
+      List<StudySiteDTO> scDtos = studySiteService.getByStudyProtocol(studyProtocolIi);
      
       if (scDtos != null && !scDtos.isEmpty()) {
           
-      for (StudyParticipationDTO studyParticipationDTO : scDtos) {
+      for (StudySiteDTO studySiteDTO : scDtos) {
             
           if (StructuralRoleStatusCode.NULLIFIED.getCode().
-                  equalsIgnoreCase(studyParticipationDTO.getStatusCode().getCode())) {
+                  equalsIgnoreCase(studySiteDTO.getStatusCode().getCode())) {
                
-             if (StudyParticipationFunctionalCode.FUNDING_SOURCE.getCode().
-                     equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+             if (StudySiteFunctionalCode.FUNDING_SOURCE.getCode().
+                     equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                       
                  abstractionWarnList.add(createError("Warning", 
                                "Select Collaborators from Administrative Data menu.",
                                "Funding Source status has been set to nullified, " 
                                + "Please select another Funding Source")); 
                  }
-              if (StudyParticipationFunctionalCode.AGENT_SOURCE.getCode().
-                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+              if (StudySiteFunctionalCode.AGENT_SOURCE.getCode().
+                      equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                       
                   abstractionWarnList.add(createError("Warning", 
                                "Select Collaborators from Administrative Data menu.",
                                "Agent Source status has been set to nullified, " 
                                + "Please select another Agent Source")); 
                       }
-              if (StudyParticipationFunctionalCode.LABORATORY.getCode().
-                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+              if (StudySiteFunctionalCode.LABORATORY.getCode().
+                      equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                       
                   abstractionWarnList.add(createError("Warning", 
                                "Select Collaborators from Administrative Data menu.",
                                "Laboratory status has been set to nullified, " 
                                + "Please select another Laboratory")); 
                       }
-              if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().
-                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+              if (StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode().
+                      equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                       
                   abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Lead Organization status has been set to nullified, " 
                                + "Please select another Lead Organization")); 
                   }
-              if (StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR.getCode().
-                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+              if (StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR.getCode().
+                      equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                       
                   abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Responsible Party Sponsor status has been set to nullified, " 
                                + "Please select another Responsible Party Sponsor")); 
                       }
-              if (StudyParticipationFunctionalCode.SPONSOR.getCode().
-                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+              if (StudySiteFunctionalCode.SPONSOR.getCode().
+                      equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                       
                   abstractionWarnList.add(createError("Warning", 
                                "Select General Trial Details from Administrative Data menu.",
                                "Sponsor status has been set to nullified, " 
                                + "Please select another Sponsor")); 
                       } 
-              if (StudyParticipationFunctionalCode.TREATING_SITE.getCode().
-                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+              if (StudySiteFunctionalCode.TREATING_SITE.getCode().
+                      equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                      
                   abstractionWarnList.add(createError("Warning", 
                                "Select Participating Sites from Administrative Data menu.",
                                "Participating Site status has been set to nullified, " 
                                + "Please select another Participating Site")); 
                       }  
-              if (StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().
-                      equalsIgnoreCase(studyParticipationDTO.getFunctionalCode().getCode())) {
+              if (StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().
+                      equalsIgnoreCase(studySiteDTO.getFunctionalCode().getCode())) {
                       
                   abstractionWarnList.add(createError("Warning", 
                              "Select Human Subject Safety under Regulatory Information from Administrative Data menu.",
@@ -410,22 +410,22 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       }
   }
   
-   private void enforceStudyParticipationContactNullification(
+   private void enforceStudySiteContactNullification(
           Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList, 
           List<AbstractionCompletionDTO> abstractionList)  throws PAException {
       
-        List<StudyParticipationContactDTO> scDtos = 
-          studyParticipationContactService.getByStudyProtocol(studyProtocolIi);
+        List<StudySiteContactDTO> scDtos = 
+          studySiteContactService.getByStudyProtocol(studyProtocolIi);
       
       if (scDtos != null && !scDtos.isEmpty()) {
 
-        for (StudyParticipationContactDTO studyParticipationContactDTO : scDtos) {
+        for (StudySiteContactDTO studySiteContactDTO : scDtos) {
   
           if (StructuralRoleStatusCode.NULLIFIED.getCode().
-                  equalsIgnoreCase(studyParticipationContactDTO.getStatusCode().getCode())) {      
+                  equalsIgnoreCase(studySiteContactDTO.getStatusCode().getCode())) {      
              
-              if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode().
-                      equalsIgnoreCase(studyParticipationContactDTO.getRoleCode().getCode())) {
+              if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
+                      equalsIgnoreCase(studySiteContactDTO.getRoleCode().getCode())) {
           
                   abstractionWarnList.add(createError("Warning", 
                    "Select Contact tab under Participating Sites from Administrative Data menu.",
@@ -433,8 +433,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                    + "Please select another Primary Contact")); 
               }
               
-              if (StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().
-                      equalsIgnoreCase(studyParticipationContactDTO.getRoleCode().getCode())) {
+              if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().
+                      equalsIgnoreCase(studySiteContactDTO.getRoleCode().getCode())) {
           
                   abstractionWarnList.add(createError("Warning", 
                    "Select Investigators tab under Participating sites from Administrative Data menu.",
@@ -442,8 +442,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                    + "Please select another Investigator")); 
               }
               
-              if (StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT.getCode().
-                      equalsIgnoreCase(studyParticipationContactDTO.getRoleCode().getCode())) {
+              if (StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT.getCode().
+                      equalsIgnoreCase(studySiteContactDTO.getRoleCode().getCode())) {
           
                   abstractionList.add(createError("Error", 
                    "Select General Trial Details from Administrative Data menu.",
@@ -623,15 +623,15 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           + " from Administrative Data menu.", 
           "Review Board Approval Status is missing, Please complete Human Subject Review information."));
     }
-    StudyParticipationDTO srDTO = new StudyParticipationDTO();
-    srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
-    List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(spDto.getIdentifier(), srDTO);
+    StudySiteDTO srDTO = new StudySiteDTO();
+    srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
+    List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(spDto.getIdentifier(), srDTO);
        
     StudyOverallStatusDTO sos = studyOverallStatusService.getCurrentByStudyProtocol(spDto.getIdentifier());
     if (sos != null && !spList.isEmpty()) {
-        StudyParticipationDTO studyParticipation = spList.get(0);
+        StudySiteDTO studySite = spList.get(0);
         if (StudyStatusCode.IN_REVIEW.getCode().equalsIgnoreCase(sos.getStatusCode().getCode()) 
-                && !studyParticipation.getReviewBoardApprovalStatusCode().getCode()
+                && !studySite.getReviewBoardApprovalStatusCode().getCode()
                 .equals(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode())) {
             abstractionWarnList.add(createError("Warning", "Select Human Subject Safety under Regulatory Information",
                     "Data inconsistency: \'Submitted, pending\' value (Review Board Approval Status) " 
@@ -639,7 +639,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             
         }
         if (StudyStatusCode.DISAPPROVED.getCode().equalsIgnoreCase(sos.getStatusCode().getCode()) 
-                && !studyParticipation.getReviewBoardApprovalStatusCode().getCode()
+                && !studySite.getReviewBoardApprovalStatusCode().getCode()
                 .equals(ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode())) {
             abstractionWarnList.add(createError("Warning", "Select Human Subject Safety under Regulatory Information",
                     "Data inconsistency: \'Submitted, denied\' value (Review Board Approval Status) is "
@@ -653,9 +653,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   private void enforceRecruitmentStatus(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
   throws PAException {
       
-      StudyParticipationDTO srDTO = new StudyParticipationDTO();
-      srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
-      List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(studyProtocolIi, srDTO);
+      StudySiteDTO srDTO = new StudySiteDTO();
+      srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+      List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
      
     //check recruitment status
       StudyRecruitmentStatusDTO recruitmentStatusDto = 
@@ -664,11 +664,11 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
               equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
           boolean recruiting = false;
-          for (StudyParticipationDTO spartDto : spList) {
+          for (StudySiteDTO spartDto : spList) {
               List<StudySiteAccrualStatusDTO> studySiteList =  new ArrayList<StudySiteAccrualStatusDTO>();   
               studySiteList.
                   addAll(studySiteAccrualStatusServicLocal.
-                      getStudySiteAccrualStatusByStudyParticipation(spartDto.getIdentifier()));
+                      getStudySiteAccrualStatusByStudySite(spartDto.getIdentifier()));
           
               Long tmp = 1L;
               StudySiteAccrualStatusDTO latestDTO = null;
@@ -700,9 +700,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
   private void enforceTreatingSite(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
-    StudyParticipationDTO srDTO = new StudyParticipationDTO();
-    srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
-    List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(studyProtocolIi, srDTO);
+    StudySiteDTO srDTO = new StudySiteDTO();
+    srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+    List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
     if (spList == null || spList.isEmpty()) {
      abstractionList.add(createError("Error", "Select Participating Sites from "
           + " Administrative Data menu.",  "No Participating Sites exists for the trial."));
@@ -711,18 +711,18 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
    //check if central contact exits for the study
     boolean centralContactDefined = isCentralContactDefined(studyProtocolIi);
     
-    for (StudyParticipationDTO spartDto : spList) {
-      List<StudyParticipationContactDTO> spContactDtos =
-                studyParticipationContactService.getByStudyParticipation(spartDto.getIdentifier());
+    for (StudySiteDTO spartDto : spList) {
+      List<StudySiteContactDTO> spContactDtos =
+                studySiteContactService.getByStudySite(spartDto.getIdentifier());
         boolean piFound = false;
         boolean contactFound = false;
-        for (StudyParticipationContactDTO spContactDto : spContactDtos) {
-            if (StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
+        for (StudySiteContactDTO spContactDto : spContactDtos) {
+            if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
                         .equalsIgnoreCase(spContactDto.getRoleCode().getCode())
-                || StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getCode()
+                || StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode()
                         .equalsIgnoreCase(spContactDto.getRoleCode().getCode())) {
                 piFound = true;
-            } else if (StudyParticipationContactRoleCode.PRIMARY_CONTACT.getCode()
+            } else if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode()
                     .equalsIgnoreCase(spContactDto.getRoleCode().getCode())) {
                 contactFound = true;
             }
@@ -775,17 +775,17 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
   private void enforceCollaborator(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
-      ArrayList<StudyParticipationDTO> criteriaList = new ArrayList<StudyParticipationDTO>();
-      for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
+      ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
+      for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
           if (cd.isCollaboratorCode()) {
-              StudyParticipationDTO searchCode = new StudyParticipationDTO();
+              StudySiteDTO searchCode = new StudySiteDTO();
               searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
               criteriaList.add(searchCode);
           }
       }
-      List<StudyParticipationDTO> spList = studyParticipationService.getByStudyProtocol(studyProtocolIi, criteriaList);
+      List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, criteriaList);
       List<String> newspList = new ArrayList<String>(); 
-      for (StudyParticipationDTO spdto : spList) {
+      for (StudySiteDTO spdto : spList) {
           newspList.add(spdto.getFunctionalCode().getCode() + spdto.getResearchOrganizationIi().getExtension());
         }
       if (hasDuplicate(newspList)) {
@@ -798,19 +798,19 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
  * @return
  * @throws PAException
  */
-private Organization getPoOrg(StudyParticipationDTO spartDto)
+private Organization getPoOrg(StudySiteDTO spartDto)
         throws PAException {
     CorrelationUtils cUtils = new CorrelationUtils();
     Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(spartDto
             .getHealthcareFacilityIi()));
     return orgBo;
 }
-  private List<String> getPIForTreatingSite(List<StudyParticipationContactDTO> spContactDtos) {
+  private List<String> getPIForTreatingSite(List<StudySiteContactDTO> spContactDtos) {
       List<String> piList = new ArrayList<String>();
-      for (StudyParticipationContactDTO dto : spContactDtos) {
-          if (StudyParticipationContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
+      for (StudySiteContactDTO dto : spContactDtos) {
+          if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
                   .equalsIgnoreCase(dto.getRoleCode().getCode())
-          || StudyParticipationContactRoleCode.SUB_INVESTIGATOR.getCode()
+          || StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode()
                   .equalsIgnoreCase(dto.getRoleCode().getCode())) {
               piList.add(dto.getHealthCareProviderIi().getExtension() 
                       + dto.getClinicalResearchStaffIi().getExtension());
@@ -818,9 +818,9 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
       }
       return piList;
   }
-  private List<String> getTreatingSiteOrg(List<StudyParticipationDTO> spartList) {
+  private List<String> getTreatingSiteOrg(List<StudySiteDTO> spartList) {
       List<String> treatingSiteList = new ArrayList<String>();
-      for (StudyParticipationDTO spdto : spartList) {
+      for (StudySiteDTO spdto : spartList) {
         treatingSiteList.add(spdto.getHealthcareFacilityIi().getExtension());
       }
     return treatingSiteList;
@@ -1103,23 +1103,23 @@ private Organization getPoOrg(StudyParticipationDTO spartDto)
 
   private void enforceIdentifierLength(StudyProtocolDTO spDto, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
-      List<StudyParticipationDTO> sParts = new ArrayList<StudyParticipationDTO>();
-      StudyParticipationDTO spartDTO = new StudyParticipationDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
+      List<StudySiteDTO> sParts = new ArrayList<StudySiteDTO>();
+      StudySiteDTO spartDTO = new StudySiteDTO();
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
       sParts.add(spartDTO);
-      spartDTO = new StudyParticipationDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
+      spartDTO = new StudySiteDTO();
+      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
       sParts.add(spartDTO);
-      List<StudyParticipationDTO> dtos = studyParticipationService.getByStudyProtocol(spDto.getIdentifier(), sParts);
-        for (StudyParticipationDTO dto : dtos) {
+      List<StudySiteDTO> dtos = studySiteService.getByStudyProtocol(spDto.getIdentifier(), sParts);
+        for (StudySiteDTO dto : dtos) {
               if (PAUtil.isGreatenThan(dto.getLocalStudyProtocolIdentifier(),
                       PAAttributeMaxLen.LEN_30)) {
-                  if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.getCode().equals(
+                  if (StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode().equals(
                           dto.getFunctionalCode().getCode())) {
                       abstractionList.add(createError("Error" ,
                               "Select General Trial Details from Administrative Data menu." ,
                               "Lead Organization Trial Identifier  cannot be more than 30 characters"));
-                  } else if (StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equals(
+                  } else if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equals(
                           dto.getFunctionalCode().getCode())) {
                       abstractionList.add(createError("Error" ,
                               "Select General Trial Details from Administrative Data menu." ,

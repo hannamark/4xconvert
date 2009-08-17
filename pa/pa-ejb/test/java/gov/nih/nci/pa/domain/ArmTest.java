@@ -98,7 +98,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class ArmTest {
+public class ArmTest {  
     Session sess;
     
     @Before
@@ -111,7 +111,7 @@ public class ArmTest {
     public void saveTest() {
         Arm a = new Arm();
         StudyProtocol sp = new StudyProtocol();
-        sp.setId(TestSchema.studyParticipationIds.get(0));
+        sp.setId(TestSchema.studySiteIds.get(0));
         PlannedActivity pa = new PlannedActivity();
         pa.setId(TestSchema.plannedActivityIds.get(0));
         Date now = new Date();
@@ -163,14 +163,14 @@ public class ArmTest {
     }
     @Test
     public void deleteTest() {
-        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyParticipationIds.get(0));
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studySiteIds.get(0));
         List<Arm> armList = sp.getArms();
         int armCount = armList.size();
         assertTrue(0 < armCount);
         sess.delete(armList.get(0));
         sess.flush();
         sess.clear();
-        sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyParticipationIds.get(0));
+        sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studySiteIds.get(0));
         armList = sp.getArms();
         assertEquals(armCount - 1, armList.size());
     }

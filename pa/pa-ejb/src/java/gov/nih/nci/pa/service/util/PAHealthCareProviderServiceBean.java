@@ -80,7 +80,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.StudyParticipationContact;
+import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -123,15 +123,15 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PaPersonDTO> getPersonsByStudyParticpationId(Long id, String roleCd) throws PAException {
+    public List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException {
         LOG.debug("Entering  getPersonsByStudyParticpationId");
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
             List<Object> queryList = new ArrayList<Object>();
             Query query = null;
-            String queryStr = "select sp , spc , hcp , p from StudyParticipation as sp  "
-                    + " join sp.studyParticipationContacts as spc " + " join spc.clinicalResearchStaff as hcp "
+            String queryStr = "select sp , spc , hcp , p from StudySite as sp  "
+                    + " join sp.studySiteContacts as spc " + " join spc.clinicalResearchStaff as hcp "
                     + " join hcp.person as p " + " where sp.id = " + id + " and spc.roleCode = '" + roleCd + "'";
             query = session.createQuery(queryStr);
             queryList = query.list();
@@ -157,14 +157,14 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             personWebDTO.setFirstName(((Person) searchResult[THREE]).getFirstName());
             personWebDTO.setLastName(((Person) searchResult[THREE]).getLastName());
             personWebDTO.setMiddleName(((Person) searchResult[THREE]).getMiddleName());
-            personWebDTO.setId(((StudyParticipationContact) searchResult[1]).getId());
-            personWebDTO.setRoleName((((StudyParticipationContact) searchResult[1]).getRoleCode()));
-            personWebDTO.setTelephone((((StudyParticipationContact) searchResult[1]).getPhone()));
-            personWebDTO.setEmail((((StudyParticipationContact) searchResult[1]).getEmail()));
+            personWebDTO.setId(((StudySiteContact) searchResult[1]).getId());
+            personWebDTO.setRoleName((((StudySiteContact) searchResult[1]).getRoleCode()));
+            personWebDTO.setTelephone((((StudySiteContact) searchResult[1]).getPhone()));
+            personWebDTO.setEmail((((StudySiteContact) searchResult[1]).getEmail()));
             //personWebDTO.setSelectedPersId(Long.valueOf(((HealthCareProvider) searchResult[TWO]).getIdentifier()));
             personWebDTO.setSelectedPersId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
             personWebDTO.setPaPersonId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
-            personWebDTO.setStatusCode((((StudyParticipationContact) searchResult[1]).getStatusCode()));
+            personWebDTO.setStatusCode((((StudySiteContact) searchResult[1]).getStatusCode()));
             retList.add(personWebDTO);
         }
         return retList;
@@ -172,7 +172,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
 
     /**
      *
-     * @param id the study participation id
+     * @param id the study Site id
      * @return PersonWebDTO
      * @throws PAException on error
      */
@@ -188,7 +188,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             session = HibernateUtil.getCurrentSession();
             List<Object> queryList = new ArrayList<Object>();
             Query query = null;
-            String queryStr = "select spc , hcp from StudyParticipationContact as spc"
+            String queryStr = "select spc , hcp from StudySiteContact as spc"
                     + " join spc.clinicalResearchStaff as hcp"
                     + " where spc.id = " + id
                     + " and spc.roleCode <> 'STUDY_PRIMARY_CONTACT'";

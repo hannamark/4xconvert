@@ -105,10 +105,10 @@ import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceBean;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceBean;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceBean;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationServiceBean;
-import gov.nih.nci.pa.service.StudyParticipationServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceBean;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceBean;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
@@ -139,9 +139,9 @@ public class CTGovXmlGeneratorServiceTest {
     
     PlannedActivityServiceLocal plannedActivityService = new PlannedActivityServiceBean();
     
-    StudyParticipationServiceLocal studyParticipationService = new StudyParticipationServiceBean();
+    StudySiteServiceLocal studySiteService = new StudySiteServiceBean();
     
-    StudyParticipationContactServiceLocal studyParticipationContactService = new StudyParticipationContactServiceBean();
+    StudySiteContactServiceLocal studySiteContactService = new StudySiteContactServiceBean();
     
     StudyContactServiceLocal studyContactService = new StudyContactServiceBean();
     
@@ -174,10 +174,10 @@ public class CTGovXmlGeneratorServiceTest {
         bean.studyContactService = studyContactService;
         bean.studyDiseaseService = studyDiseaseService;
         bean.studyIndldeService=studyIndldeService;
-        bean.studyParticipationService=studyParticipationService;
+        bean.studySiteService=studySiteService;
         bean.studyOutcomeMeasureService=studyOutcomeMeasureService;
         bean.studyOverallStatusService=studyOverallStatusService;
-        bean.studyParticipationContactService=studyParticipationContactService;
+        bean.studySiteContactService=studySiteContactService;
         bean.studyRegulatoryAuthorityService=studyRegulatoryAuthorityService;
         bean.studySiteAccrualStatusService=studySiteAccrualStatusService;
         bean.regulatoryInformationService = regulatoryInformationService;

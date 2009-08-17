@@ -10,7 +10,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.service.MockCorrelationUtils;
@@ -130,7 +130,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
         ParticipatingOrganizationsTabWebDTO tab =new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(1L);
         sess.setAttribute("participatingOrganizationsTabs", tab);
-        action.setFunctionalCode(StudyParticipationFunctionalCode.TREATING_SITE.getCode());
+        action.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE.getCode());
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("facilitySave", action.facilityUpdate());

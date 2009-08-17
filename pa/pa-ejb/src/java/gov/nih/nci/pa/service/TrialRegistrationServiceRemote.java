@@ -84,8 +84,8 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -126,10 +126,10 @@ public interface TrialRegistrationServiceRemote {
      * @param leadOrganizationDTO Pead organization
      * @param principalInvestigatorDTO Principal Investigator 
      * @param sponsorOrganizationDTO Sponsort Organization
-     * @param leadOrganizationParticipationIdentifierDTO local protocol identifier
-     * @param nctIdentifierParticipationIdentifierDTO nct Identifier
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param nctIdentifierSiteIdentifierDTO nct Identifier
      * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studyParticipationContactDTO phone and email info when sponsor is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi Id of the person when sponsor is responsible
@@ -146,10 +146,10 @@ public interface TrialRegistrationServiceRemote {
             OrganizationDTO leadOrganizationDTO , 
             PersonDTO principalInvestigatorDTO , 
             OrganizationDTO sponsorOrganizationDTO , 
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO ,
-            StudyParticipationDTO nctIdentifierParticipationIdentifierDTO , 
+            StudySiteDTO leadOrganizationSiteIdentifierDTO ,
+            StudySiteDTO nctIdentifierSiteIdentifierDTO , 
             StudyContactDTO studyContactDTO , 
-            StudyParticipationContactDTO studyParticipationContactDTO ,
+            StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
             Ii responsiblePartyContactIi)
@@ -169,10 +169,10 @@ public interface TrialRegistrationServiceRemote {
      * @param leadOrganizationDTO Pead organization
      * @param principalInvestigatorDTO Principal Investigator 
      * @param sponsorOrganizationDTO Sponsort Organization
-     * @param leadOrganizationParticipationIdentifierDTO local protocol identifier
-     * @param nctIdentifierParticipationIdentifierDTO nct Identifier
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param nctIdentifierSiteIdentifierDTO nct Identifier
      * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studyParticipationContactDTO phone and email info when sponsor is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
@@ -189,10 +189,10 @@ public interface TrialRegistrationServiceRemote {
             OrganizationDTO leadOrganizationDTO , 
             PersonDTO principalInvestigatorDTO , 
             OrganizationDTO sponsorOrganizationDTO , 
-            StudyParticipationDTO leadOrganizationParticipationIdentifierDTO ,
-            StudyParticipationDTO nctIdentifierParticipationIdentifierDTO , 
+            StudySiteDTO leadOrganizationSiteIdentifierDTO ,
+            StudySiteDTO nctIdentifierSiteIdentifierDTO , 
             StudyContactDTO studyContactDTO , 
-            StudyParticipationContactDTO studyParticipationContactDTO ,
+            StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
             Ii responsiblePartyContactIi)

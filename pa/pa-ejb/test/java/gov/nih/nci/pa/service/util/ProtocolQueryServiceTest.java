@@ -95,8 +95,8 @@ import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyContactTest;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationTest;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -150,7 +150,7 @@ public class ProtocolQueryServiceTest {
         ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         ro.setIdentifier("abc");
         TestSchema.addUpdObject(ro);
-        StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
+        StudySite spc = StudySiteTest.createStudySiteObj(sp, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
     }

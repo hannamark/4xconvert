@@ -104,12 +104,12 @@ public class MockStudySiteAccrualStatusService implements
     }
 
     /**
-     * @param studyParticipationIi
+     * @param studySiteIi
      * @return
      * @throws PAException
      */
-    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(
-            Ii studyParticipationIi) throws PAException {
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(
+            Ii studySiteIi) throws PAException {
         StudySiteAccrualStatusDTO result = new StudySiteAccrualStatusDTO();
         return result;
     }
@@ -126,12 +126,12 @@ public class MockStudySiteAccrualStatusService implements
     }
 
     /**
-     * @param studyParticipationIi
+     * @param studySiteIi
      * @return
      * @throws PAException
      */
-    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(
-            Ii studyParticipationIi) throws PAException {
+    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(
+            Ii studySiteIi) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

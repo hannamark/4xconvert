@@ -96,8 +96,8 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -205,10 +205,10 @@ public class JndiServiceLocator implements ServiceLocator {
 
 
     /**
-     * @return StudyParticipationService
+     * @return StudySiteService
      */
-    public StudyParticipationServiceRemote getStudyParticipationService() {
-        return (StudyParticipationServiceRemote) JNDIUtil.lookup("pa/StudyParticipationServiceBean/remote");
+    public StudySiteServiceRemote getStudySiteService() {
+        return (StudySiteServiceRemote) JNDIUtil.lookup("pa/StudySiteServiceBean/remote");
     }
 
     /**
@@ -243,11 +243,11 @@ public class JndiServiceLocator implements ServiceLocator {
     }
     
     /**
-     * @return StudyParticipationService
+     * @return StudySiteService
      */
-    public StudyParticipationContactServiceRemote getStudyParticipationContactService() {
-        return (StudyParticipationContactServiceRemote) JNDIUtil.lookup(
-                                            "pa/StudyParticipationContactServiceBean/remote");
+    public StudySiteContactServiceRemote getStudySiteContactService() {
+        return (StudySiteContactServiceRemote) JNDIUtil.lookup(
+                                            "pa/StudySiteContactServiceBean/remote");
     }
 
     /**

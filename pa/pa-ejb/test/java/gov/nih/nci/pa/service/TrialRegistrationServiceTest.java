@@ -80,11 +80,11 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -110,8 +110,8 @@ public class TrialRegistrationServiceTest {
     ArmServiceLocal armService = new ArmServiceBean();  
     PlannedActivityServiceLocal plannedActivityService = new PlannedActivityServiceBean();
     StratumGroupServiceLocal subGroupsService = new StratumGroupServiceBean();
-    StudyParticipationServiceLocal studyParticipationService = new StudyParticipationServiceBean();
-    StudyParticipationContactServiceLocal studyParticipationContactService = new StudyParticipationContactServiceBean(); 
+    StudySiteServiceLocal studySiteService = new StudySiteServiceBean();
+    StudySiteContactServiceLocal studySiteContactService = new StudySiteContactServiceBean(); 
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusServiceBean();
     StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureServiceBean();
     StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityServiceBean();
@@ -127,8 +127,8 @@ public class TrialRegistrationServiceTest {
         bean.armService = armService;
         bean.plannedActivityService = plannedActivityService;
         bean.subGroupsService = subGroupsService;
-        bean.studyParticipationService = studyParticipationService;
-        bean.studyParticipationContactService = studyParticipationContactService;
+        bean.studySiteService = studySiteService;
+        bean.studySiteContactService = studySiteContactService;
         bean.studySiteAccrualStatusService = studySiteAccrualStatusService;
         bean.studyOutcomeMeasureService = studyOutcomeMeasureService;
         bean.studyRegulatoryAuthorityService = studyRegulatoryAuthorityService;
@@ -150,10 +150,9 @@ public class TrialRegistrationServiceTest {
         principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
         OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
         sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudyParticipationDTO spDto = new StudyParticipationDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORGANIZATION));
-        StudyParticipationDTO leadOrganizationParticipationIdentifierDTO  = 
-            studyParticipationService.getByStudyProtocol(spIi, spDto).get(0) ;
+        StudySiteDTO spDto = new StudySiteDTO();
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        StudySiteDTO leadOrganizationSiteIdentifierDTO  = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
 //        StudyContactDTO studyContactDTO = 
         assertEquals("","");
         

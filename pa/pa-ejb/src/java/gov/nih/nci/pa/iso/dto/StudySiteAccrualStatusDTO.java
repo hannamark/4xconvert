@@ -95,7 +95,7 @@ public class StudySiteAccrualStatusDTO extends BaseDTO {
     
     Cd statusCode;
     Ts statusDate;
-    Ii studyParticipationIi;
+    Ii studySiteIi;
     /**
      * @return the statusCode
      */
@@ -121,16 +121,16 @@ public class StudySiteAccrualStatusDTO extends BaseDTO {
         this.statusDate = statusDate;
     }
     /**
-     * @return the studyParticipationIi
+     * @return the studySiteIi
      */
-    public Ii getStudyParticipationIi() {
-        return studyParticipationIi;
+    public Ii getStudySiteIi() {
+        return studySiteIi;
     }
     /**
-     * @param studyParticipationIi the studyParticipationIi to set
+     * @param studySiteIi the studySiteIi to set
      */
-    public void setStudyParticipationIi(Ii studyParticipationIi) {
-        this.studyParticipationIi = studyParticipationIi;
+    public void setStudySiteIi(Ii studySiteIi) {
+        this.studySiteIi = studySiteIi;
     }
     
 }

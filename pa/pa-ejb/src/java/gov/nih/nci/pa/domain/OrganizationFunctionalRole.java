@@ -78,6 +78,11 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -90,5 +95,24 @@ import javax.persistence.MappedSuperclass;
 public abstract class OrganizationFunctionalRole extends FunctionalRole {
 
     private static final long serialVersionUID = -8121622197892901456L;
+    
+    private StudySiteFunctionalCode functionalCode;
 
+    /**
+    *
+    * @return functionalCode
+    */
+   @Column(name = "FUNCTIONAL_CODE")
+   @Enumerated(EnumType.STRING)
+   public StudySiteFunctionalCode getFunctionalCode() {
+       return functionalCode;
+   }
+   /**
+    *
+    * @param functionalCode functionalCode
+    */
+   public void setFunctionalCode(StudySiteFunctionalCode functionalCode) {
+       this.functionalCode = functionalCode;
+   }
+    
 }

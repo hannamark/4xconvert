@@ -85,13 +85,13 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -121,11 +121,11 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
     implements RolePaService<DTO> {
 
     /**
-     * Get list of StudyParticipations for a given protocol having
+     * Get list of StudySites for a given protocol having
      * functional codes from a list.
      * @param studyProtocolIi id of protocol
      * @param dtos List containing desired functional codes
-     * @return list StudyParticipationDTO
+     * @return list StudySiteDTO
      * @throws PAException on error
      */
     @SuppressWarnings({"PMD.ExcessiveMethodLength", "unchecked" })
@@ -159,18 +159,18 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
                         + StudyContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
                     appended = true;
                 }
-                if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipationContact")) {
+                if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
 
-                    StudyParticipationContactDTO spcDTO = (StudyParticipationContactDTO) crit;
+                    StudySiteContactDTO spcDTO = (StudySiteContactDTO) crit;
                     criteria.append("spart.roleCode = '"
-                        + StudyParticipationContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
+                        + StudySiteContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
                     appended = true;
                 }
-                if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipation")) {
+                if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
 
-                    StudyParticipationDTO spcDTO = (StudyParticipationDTO) crit;
+                    StudySiteDTO spcDTO = (StudySiteDTO) crit;
                     criteria.append("spart.functionalCode = '"
-                            + StudyParticipationFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
+                            + StudySiteFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
                     appended = true;
                 }
             }
@@ -201,7 +201,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
     }
 
     /**
-     * Get list of StudyParticipations for a given a given functional code.
+     * Get list of StudySites for a given a given functional code.
      * @param studyProtocolIi id of protocol
      * @param dto Object with the functional code criteria
      * @return list dtos
@@ -227,17 +227,17 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         try {
             session = HibernateUtil.getCurrentSession();
             StringBuffer hql = new StringBuffer("select sps from ");
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipation")) {
+            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
                   if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudyParticipation sps join sps.healthCareFacility as hcp where hcp.identifier = '" 
+                      hql.append(" StudySite sps join sps.healthCareFacility as hcp where hcp.identifier = '" 
                               + ii.getExtension() + "'");
                   }
                   if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudyParticipation sps join sps.researchOrganization as ro where ro.identifier = '" 
+                      hql.append(" StudySite sps join sps.researchOrganization as ro where ro.identifier = '" 
                               + ii.getExtension() + "'");
                   }
                   if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudyParticipation sps join sps.oversightCommittee as oc where oc.identifier = '" 
+                      hql.append(" StudySite sps join sps.oversightCommittee as oc where oc.identifier = '" 
                               + ii.getExtension() + "'");
                   }
             }
@@ -252,17 +252,17 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
                   }
 
             }
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyParticipationContact")) {
+            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
                 if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                    hql.append(" StudyParticipationContact sps join sps.clinicalResearchStaff as crs " 
+                    hql.append(" StudySiteContact sps join sps.clinicalResearchStaff as crs " 
                             + "where crs.identifier = '" + ii.getExtension() + "'");
                 }
                 if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                    hql.append(" StudyParticipationContact sps join sps.healthCareProvider as hcp " 
+                    hql.append(" StudySiteContact sps join sps.healthCareProvider as hcp " 
                             + "where hcp.identifier = '" + ii.getExtension() + "'");
                 }
                 if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                    hql.append(" StudyParticipationContact sps join sps.organizationalContact as oc " 
+                    hql.append(" StudySiteContact sps join sps.organizationalContact as oc " 
                             + " where oc.identifier = '" + ii.getExtension() + "'");
                 }
           }

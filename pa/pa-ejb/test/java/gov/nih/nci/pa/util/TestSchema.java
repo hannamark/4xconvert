@@ -135,8 +135,8 @@ import gov.nih.nci.pa.domain.StudyObjective;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationContact;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
@@ -163,8 +163,8 @@ import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 
@@ -188,8 +188,8 @@ import org.hibernate.cfg.Configuration;
 public class TestSchema {
         /** . **/
         public static ArrayList<Long> studyProtocolIds;
-        public static ArrayList<Long> studyParticipationIds;
-        public static ArrayList<Long> studyParticipationContactIds;
+        public static ArrayList<Long> studySiteIds;
+        public static ArrayList<Long> studySiteContactIds;
         public static ArrayList<Long> healthCareFacilityIds;
         public static ArrayList<Long> healthCareProviderIds;
         public static ArrayList<Long> clinicalResearchStaffIds;
@@ -216,7 +216,7 @@ public class TestSchema {
             addAnnotatedClass(Person.class).
             addAnnotatedClass(HealthCareProvider.class).
             addAnnotatedClass(StudyContact.class).
-            addAnnotatedClass(StudyParticipation.class).
+            addAnnotatedClass(StudySite.class).
             addAnnotatedClass(Country.class).
             addAnnotatedClass(RegulatoryAuthority.class).
             addAnnotatedClass(StudyRegulatoryAuthority.class).
@@ -224,7 +224,7 @@ public class TestSchema {
             addAnnotatedClass(StudyResourcing.class).
             addAnnotatedClass(FundingMechanism.class).
             addAnnotatedClass(StudySiteAccrualStatus.class).
-            addAnnotatedClass(StudyParticipationContact.class).
+            addAnnotatedClass(StudySiteContact.class).
             addAnnotatedClass(OversightCommittee.class).
             addAnnotatedClass(Document.class).
             addAnnotatedClass(StudyRecruitmentStatus.class).
@@ -318,8 +318,8 @@ public class TestSchema {
                     statement.executeUpdate("delete from STUDY_RECRUITMENT_STATUS");
                     statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
                     statement.executeUpdate("delete from STUDY_SITE_ACCRUAL_STATUS");
-                    statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT");
-                    statement.executeUpdate("delete from STUDY_PARTICIPATION");
+                    statement.executeUpdate("delete from STUDY_SITE_CONTACT");
+                    statement.executeUpdate("delete from STUDY_SITE");
                     statement.executeUpdate("delete from DOCUMENT");
                     statement.executeUpdate("delete from STUDY_RESOURCING");
                     statement.executeUpdate("delete from STRATUM_GROUP");
@@ -389,8 +389,8 @@ public class TestSchema {
          */
         public static void primeData() {
             studyProtocolIds = new ArrayList<Long>();
-            studyParticipationIds = new ArrayList<Long>();
-            studyParticipationContactIds = new ArrayList<Long>();
+            studySiteIds = new ArrayList<Long>();
+            studySiteContactIds = new ArrayList<Long>();
             healthCareFacilityIds = new ArrayList<Long>();
             healthCareProviderIds = new ArrayList<Long>();
             clinicalResearchStaffIds = new ArrayList<Long>();
@@ -462,15 +462,15 @@ public class TestSchema {
             addUpdObject(crs);
             clinicalResearchStaffIds.add(crs.getId());
 
-            StudyParticipation sPart = new StudyParticipation();
-            sPart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORGANIZATION);
+            StudySite sPart = new StudySite();
+            sPart.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
             sPart.setHealthCareFacility(hfc);
             sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
             sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
             sPart.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("6/1/2008"));
             sPart.setStudyProtocol(sp);
             addUpdObject(sPart);
-            studyParticipationIds.add(sPart.getId());
+            studySiteIds.add(sPart.getId());
 
             Country country = new Country();
             country.setAlpha2("ZZ");
@@ -479,7 +479,7 @@ public class TestSchema {
             country.setNumeric("67");
             addUpdObject(country);
 
-            StudyParticipationContact spc = new StudyParticipationContact();
+            StudySiteContact spc = new StudySiteContact();
             spc.setAddressLine("Address 1");
             spc.setCity("City");
             spc.setCountry(country);
@@ -488,17 +488,17 @@ public class TestSchema {
             spc.setDeliveryAddressLine("Del. Address 1");
             spc.setPostalCode("ZZZZZ");
             spc.setPrimaryIndicator(true);
-            spc.setRoleCode(StudyParticipationContactRoleCode.SUBMITTER);
+            spc.setRoleCode(StudySiteContactRoleCode.SUBMITTER);
             spc.setState("ZZ");
             spc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
             spc.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/15/2008"));
-            spc.setStudyParticipation(sPart);
+            spc.setStudySite(sPart);
             spc.setStudyProtocol(sp);
             spc.setHealthCareProvider(hcp);
             spc.setClinicalResearchStaff(crs);
 
             addUpdObject(spc);
-            studyParticipationContactIds.add(spc.getId());
+            studySiteContactIds.add(spc.getId());
 
 
             Document doc = new Document();
@@ -626,7 +626,7 @@ public class TestSchema {
             StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
             ssas.setStatusCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
             ssas.setStatusDate(new java.sql.Timestamp(new java.util.Date().getTime()));
-            ssas.setStudyParticipation(sPart);
+            ssas.setStudySite(sPart);
             addUpdObject(ssas);
 
             PlannedEligibilityCriterion pec = new PlannedEligibilityCriterion();

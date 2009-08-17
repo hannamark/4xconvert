@@ -13,13 +13,13 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationContact;
-import gov.nih.nci.pa.domain.StudyParticipationTest;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.util.TestSchema;
@@ -48,14 +48,14 @@ public class PaPersonDTOTest {
         TestSchema.addUpdObject(p);
         HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
         TestSchema.addUpdObject(hcf);
-        StudyParticipation spc = StudyParticipationTest.createStudyParticipationObj(sp, hcf);
+        StudySite spc = StudySiteTest.createStudySiteObj(sp, hcf);
         TestSchema.addUpdObject(spc);
         ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
         TestSchema.addUpdObject(crs);
-        StudyParticipationContact spcc = new StudyParticipationContact();
+        StudySiteContact spcc = new StudySiteContact();
         spcc.setClinicalResearchStaff(crs);
-        spcc.setRoleCode(StudyParticipationContactRoleCode.SUBMITTER);
-        spcc.setStudyParticipation(spc);
+        spcc.setRoleCode(StudySiteContactRoleCode.SUBMITTER);
+        spcc.setStudySite(spc);
         spcc.setStudyProtocol(sp);
         spcc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(spcc);
@@ -67,7 +67,7 @@ public class PaPersonDTOTest {
 	 */
 	@Test
 	public void testGetSet() throws Exception {
-		 List<PaPersonDTO> data = remoteEjb.getPersonsByStudyParticpationId(Long.valueOf(1),"SUBMITTER");
+		 List<PaPersonDTO> data = remoteEjb.getPersonsByStudySiteId(Long.valueOf(1),"SUBMITTER");
 		 data.get(0).setFirstName("TestFN");
 		 data.get(0).setLastName("TestLN");
 		 assertEquals("Testing first name failed","TestFN",data.get(0).getFirstName() );

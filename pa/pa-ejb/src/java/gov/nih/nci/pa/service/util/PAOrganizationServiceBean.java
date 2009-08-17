@@ -80,7 +80,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -218,19 +218,19 @@ public class PAOrganizationServiceBean implements
                 hql.append(
                         " Select o from Organization o  "
                       + " join o.researchOrganizations as ros "
-                      + " join ros.studyParticipations as sps "
+                      + " join ros.studySites as sps "
                       + " join sps.studyProtocol as sp "
                       + "  where sps.functionalCode = '"
-                      +   StudyParticipationFunctionalCode.LEAD_ORGANIZATION  + "'"
+                      +   StudySiteFunctionalCode.LEAD_ORGANIZATION  + "'"
                       +  " order by o.name");
             } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
                 hql.append(
                         " Select o from Organization o  "
                       + " join o.healthCareFacilities as hcf "
-                      + " join hcf.studyParticipations as sps "
+                      + " join hcf.studySites as sps "
                       + " join sps.studyProtocol as sp "
                       + "  where sps.functionalCode = '"
-                      +   StudyParticipationFunctionalCode.TREATING_SITE  + "'"
+                      +   StudySiteFunctionalCode.TREATING_SITE  + "'"
                       +  " order by o.name");
             }
             organizations =  session.createQuery(hql.toString()).list();

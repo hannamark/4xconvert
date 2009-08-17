@@ -296,17 +296,17 @@ public class IiConverter {
     /** The Constant STUDY_CONTACT_ROOT. */
     public static final String STUDY_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.5.1";
     
-    /** The Constant STUDY_PARTICIPATION_IDENTIFIER_NAME. */
-    public static final String STUDY_PARTICIPATION_IDENTIFIER_NAME = "Study Participation identifier";
+    /** The Constant STUDY_SITE_IDENTIFIER_NAME. */
+    public static final String STUDY_SITE_IDENTIFIER_NAME = "Study Site identifier";
     
-    /** The Constant STUDY_PARTICIPATION_ROOT. */
-    public static final String STUDY_PARTICIPATION_ROOT = "2.16.840.1.113883.3.26.4.5.2";
+    /** The Constant STUDY_SITE_ROOT. */
+    public static final String STUDY_SITE_ROOT = "2.16.840.1.113883.3.26.4.5.2";
     
-    /** The Constant STUDY_PARTICIPATION_CONTACT_IDENTIFIER_NAME. */
-    public static final String STUDY_PARTICIPATION_CONTACT_IDENTIFIER_NAME = "Study Participation Contact identifier";
+    /** The Constant STUDY_SITE_CONTACT_IDENTIFIER_NAME. */
+    public static final String STUDY_SITE_CONTACT_IDENTIFIER_NAME = "Study Site Contact identifier";
     
-    /** The Constant STUDY_PARTICIPATION_CONTACT_ROOT. */
-    public static final String STUDY_PARTICIPATION_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.5.3";
+    /** The Constant STUDY_SITE_CONTACT_ROOT. */
+    public static final String STUDY_SITE_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.5.3";
     
     
     /** The Constant STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME. */
@@ -722,30 +722,30 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study participation contact ii.
+     * Conver to study site contact ii.
      * 
      * @param id the id
      * 
      * @return the ii
      */
-    public static Ii convertToStudyParticipationContactIi(Long id) {
+    public static Ii convertToStudySiteContactIi(Long id) {
         Ii ii = convertToIi(id);
-        ii.setIdentifierName(STUDY_PARTICIPATION_CONTACT_IDENTIFIER_NAME);
-        ii.setRoot(STUDY_PARTICIPATION_CONTACT_ROOT);
+        ii.setIdentifierName(STUDY_SITE_CONTACT_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_SITE_CONTACT_ROOT);
         return ii;
     }
     
     /**
-     * Conver to study participation ii.
+     * Conver to study site ii.
      * 
      * @param id the id
      * 
      * @return the ii
      */
-    public static Ii converToStudyParticipationIi(Long id) {
+    public static Ii converToStudySiteIi(Long id) {
         Ii ii = convertToIi(id);
-        ii.setIdentifierName(STUDY_PARTICIPATION_IDENTIFIER_NAME);
-        ii.setRoot(STUDY_PARTICIPATION_ROOT);
+        ii.setIdentifierName(STUDY_SITE_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_SITE_ROOT);
         return ii;
     }
     

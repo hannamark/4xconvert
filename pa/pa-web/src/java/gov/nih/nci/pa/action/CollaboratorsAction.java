@@ -85,13 +85,13 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
@@ -131,7 +131,7 @@ public class CollaboratorsAction extends ActionSupport
     private static final String ACT_DELETE = "delete";
     private static final String ACT_CREATE = "create";
 
-    private StudyParticipationServiceRemote sPartService;
+    private StudySiteServiceRemote sPartService;
     private OrganizationCorrelationServiceBean ocService;
     CorrelationUtilsRemote cUtils;
     private List<CountryRegAuthorityDTO> countryRegDTO;
@@ -164,7 +164,7 @@ public class CollaboratorsAction extends ActionSupport
      * @throws Exception e
      */
     public void prepare() throws Exception {
-        sPartService = PaRegistry.getStudyParticipationService();
+        sPartService = PaRegistry.getStudySiteService();
         ocService = new OrganizationCorrelationServiceBean();
         cUtils = new CorrelationUtils();
 
@@ -217,9 +217,9 @@ public class CollaboratorsAction extends ActionSupport
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
         Long paOrgId = ocService.createResearchOrganizationCorrelations(poOrgId);
 
-        StudyParticipationDTO sp = new StudyParticipationDTO();
+        StudySiteDTO sp = new StudySiteDTO();
         sp.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-        sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.getByCode(functionalCode)));
+        sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.getByCode(functionalCode)));
         sp.setHealthcareFacilityIi(null);
         sp.setResearchOrganizationIi(IiConverter.convertToIi(paOrgId));
         sp.setIdentifier(null);
@@ -255,8 +255,8 @@ public class CollaboratorsAction extends ActionSupport
             setCurrentAction(ACT_EDIT);
             return ACT_EDIT;
         }
-        StudyParticipationDTO sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
-        sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.getByCode(functionalCode)));
+        StudySiteDTO sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
+        sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.getByCode(functionalCode)));
         try {
             sp = sPartService.update(sp);
         } catch (PAException e) {
@@ -274,7 +274,7 @@ public class CollaboratorsAction extends ActionSupport
      */
     public String edit() throws Exception {
         setCurrentAction(ACT_EDIT);
-        StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
+        StudySiteDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
         Organization editOrg = cUtils.getPAOrganizationByPAResearchOrganizationId(
                 IiConverter.convertToLong(spDto.getResearchOrganizationIi()));
         orgFromPO.setCity(editOrg.getCity());
@@ -310,17 +310,17 @@ public class CollaboratorsAction extends ActionSupport
     }
 
     private void loadForm() throws Exception {
-        ArrayList<StudyParticipationDTO> criteriaList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipationFunctionalCode cd : StudyParticipationFunctionalCode.values()) {
+        ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
+        for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
             if (cd.isCollaboratorCode()) {
-                StudyParticipationDTO searchCode = new StudyParticipationDTO();
+                StudySiteDTO searchCode = new StudySiteDTO();
                 searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
                 criteriaList.add(searchCode);
             }
         }
         organizationList = new ArrayList<PaOrganizationDTO>();
-        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi, criteriaList);
-        for (StudyParticipationDTO sp : spList) {
+        List<StudySiteDTO> spList = sPartService.getByStudyProtocol(spIi, criteriaList);
+        for (StudySiteDTO sp : spList) {
             Organization orgBo = cUtils.getPAOrganizationByPAResearchOrganizationId(
                     IiConverter.convertToLong(sp.getResearchOrganizationIi()));
             PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();

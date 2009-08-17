@@ -103,8 +103,8 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceBean;
@@ -134,7 +134,7 @@ import gov.nih.nci.service.MockStudyObjectiveService;
 import gov.nih.nci.service.MockStudyOnholdService;
 import gov.nih.nci.service.MockStudyOutcomeMeasureService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
-import gov.nih.nci.service.MockStudyParticipationService;
+import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.service.MockStudyProtocolService;
 import gov.nih.nci.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
@@ -154,7 +154,7 @@ public class MockServiceLocator implements ServiceLocator {
     
     private final StudyProtocolServiceRemote studyProtocolService = new MockStudyProtocolService();
     private final StudyOverallStatusServiceRemote studyOverallStatusService = new MockStudyOverallStatusService();
-    private final StudyParticipationServiceRemote studyParticipationService = new MockStudyParticipationService();
+    private final StudySiteServiceRemote studySiteService = new MockStudySiteService();
     private final StudySiteAccrualStatusServiceRemote studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
     private final InterventionServiceRemote interventionService = new MockInterventionService();
     private final InterventionAlternateNameServiceRemote interventionAlternateNameService = new MockInterventionAlternateNameService();
@@ -188,10 +188,10 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return StudyParticipationServiceRemote
+     * @return StudySiteServiceRemote
      */
-    public StudyParticipationServiceRemote getStudyParticipationService() {
-        return studyParticipationService;
+    public StudySiteServiceRemote getStudySiteService() {
+        return studySiteService;
     }
 
     /**
@@ -306,7 +306,7 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
 
-    public StudyParticipationContactServiceRemote getStudyParticipationContactService() {
+    public StudySiteContactServiceRemote getStudySiteContactService() {
         // TODO Auto-generated method stub
         return null;
     }

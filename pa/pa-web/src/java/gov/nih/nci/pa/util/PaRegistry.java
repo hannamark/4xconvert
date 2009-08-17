@@ -96,8 +96,8 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -242,10 +242,10 @@ public final class PaRegistry {
 
     /**
      * 
-     * @return StudyParticipationService
+     * @return StudySiteService
      */
-    public static StudyParticipationServiceRemote getStudyParticipationService() {
-        return getInstance().getServiceLocator().getStudyParticipationService();
+    public static StudySiteServiceRemote getStudySiteService() {
+        return getInstance().getServiceLocator().getStudySiteService();
     }
 
     /**
@@ -273,10 +273,10 @@ public final class PaRegistry {
 
     /**
      * 
-     * @return StudyParticipationService
+     * @return StudySiteService
      */
-    public static StudyParticipationContactServiceRemote getStudyParticipationContactService() {
-        return getInstance().getServiceLocator().getStudyParticipationContactService();
+    public static StudySiteContactServiceRemote getStudySiteContactService() {
+        return getInstance().getServiceLocator().getStudySiteContactService();
     }
     /**
      * 

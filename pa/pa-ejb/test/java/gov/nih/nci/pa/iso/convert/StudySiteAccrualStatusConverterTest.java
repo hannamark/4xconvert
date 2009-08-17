@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -105,12 +105,12 @@ public class StudySiteAccrualStatusConverterTest {
 
   @Test
   public void convertFromDomainToDTO() throws Exception {
-    StudyParticipation sp = (StudyParticipation) sess.load(StudyParticipation.class, TestSchema.studyParticipationIds.get(0));
+    StudySite sp = (StudySite) sess.load(StudySite.class, TestSchema.studySiteIds.get(0));
     StudySiteAccrualStatus bo = new StudySiteAccrualStatus();
     bo.setId(123L);
     bo.setStatusCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
     bo.setStatusDate(new java.sql.Timestamp((new java.util.Date()).getTime()));
-    bo.setStudyParticipation(sp);
+    bo.setStudySite(sp);
 
     StudySiteAccrualStatusDTO dto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
     assertStudySiteAccrualStatusConverter(bo, dto);
@@ -121,17 +121,17 @@ public class StudySiteAccrualStatusConverterTest {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
     assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
     assertEquals(bo.getStatusDate(), dto.getStatusDate().getValue());
-    assertEquals(bo.getStudyParticipation().getId(), IiConverter.convertToLong(dto.getStudyParticipationIi()));
+    assertEquals(bo.getStudySite().getId(), IiConverter.convertToLong(dto.getStudySiteIi()));
   }
 
   @Test
   public void convertFromDTOToDomain() throws Exception {
-    StudyParticipation sp = (StudyParticipation) sess.load(StudyParticipation.class, TestSchema.studyParticipationIds.get(0));
+    StudySite sp = (StudySite) sess.load(StudySite.class, TestSchema.studySiteIds.get(0));
     StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
     dto.setIdentifier(IiConverter.convertToStudySiteAccuralStatusIi((Long) null));
     dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
     dto.setStatusDate(TsConverter.convertToTs(new java.sql.Timestamp((new java.util.Date()).getTime())));
-    dto.setStudyParticipationIi(IiConverter.convertToIi(sp.getId()));
+    dto.setStudySiteIi(IiConverter.convertToIi(sp.getId()));
     assertEquals(dto.getIdentifier().getRoot(),"2.16.840.1.113883.3.26.4.5.4");
     
     StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);

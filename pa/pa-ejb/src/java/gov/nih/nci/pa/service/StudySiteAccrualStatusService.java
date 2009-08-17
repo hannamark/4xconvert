@@ -118,18 +118,18 @@ public interface StudySiteAccrualStatusService {
     
     // Custom methods
     /**
-     * @param studyParticipationIi id of Participation
+     * @param studySiteIi id of Site
      * @return list StudySiteAccrualStatusDTO   
      * @throws PAException on error 
      */
-    List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi) 
+    List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) 
             throws PAException;
     /**
-     * @param studyParticipationIi Primary key assigned to a StudyProtocl.
+     * @param studySiteIi Primary key assigned to a StudyProtocl.
      * @return StudySiteAccrualStatusDTO Current status.
      * @throws PAException Exception.
      */
-    StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi) 
+    StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi) 
             throws PAException;
 
 }

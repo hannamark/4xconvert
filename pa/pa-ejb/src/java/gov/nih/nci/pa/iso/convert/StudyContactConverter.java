@@ -101,7 +101,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Convert StudyParticipation domain to DTO.
+ * Convert StudySite domain to DTO.
  *
  * @author Bala Nair
  * @since 10/23/2008

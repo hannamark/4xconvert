@@ -91,7 +91,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -141,13 +141,13 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     private static final Logger LOG  = Logger.getLogger(PersonSynchronizationServiceBean.class);
     private static  CorrelationUtils cUtils = new CorrelationUtils();
     private static final String STUDY_CONTACT = "STUDY_CONTACT";
-    private static final String STUDY_PART_CONTACT = "STUDY_PARTICIPATION_CONTACT";
+    private static final String STUDY_SITE_CONTACT = "STUDY_SITE_CONTACT";
     
     private SessionContext ejbContext;
     @EJB
     StudyContactServiceLocal scLocal = null;
     @EJB
-    StudyParticipationContactServiceLocal spcLocal = null;
+    StudySiteContactServiceLocal spcLocal = null;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
@@ -295,7 +295,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     replaceStudyContactIdentifiers(
                             IiConverter.convertToPoClinicalResearchStaffIi(crs.getId().toString()), 
                             IiConverter.convertToPoClinicalResearchStaffIi(duplicateCrsId.toString()) , 
-                            STUDY_PART_CONTACT);
+                            STUDY_SITE_CONTACT);
                     // nullify the current 
                     crs.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                 } else {
@@ -352,7 +352,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                                 IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_CONTACT);
                     replaceStudyContactIdentifiers(
                             IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()), 
-                            IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_PART_CONTACT);
+                            IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_SITE_CONTACT);
                     // nullify the current 
                     hcp.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                 } else {
@@ -407,7 +407,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                   }
                   if (srIi != null) {
                       //nullified with Duplicate
-                      replaceStudyContactIdentifiers(ocIdentifier, srIi, STUDY_PART_CONTACT);
+                      replaceStudyContactIdentifiers(ocIdentifier, srIi, STUDY_SITE_CONTACT);
                   } else {
                     String poOrgId = oc.getOrganization().getIdentifier();
                     PersonDTO personDto = null;
@@ -439,7 +439,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                       replaceStudyContactIdentifiers(
                              IiConverter.convertToPoOrganizationalContactIi(oc.getId().toString()), 
                              IiConverter.convertToPoOrganizationalContactIi(duplicateOcId.toString()) ,
-                                    STUDY_PART_CONTACT);
+                                    STUDY_SITE_CONTACT);
                                 // nullify the current 
                       oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                   } else {

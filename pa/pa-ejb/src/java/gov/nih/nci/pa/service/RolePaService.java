@@ -92,7 +92,7 @@ import java.util.List;
 public interface RolePaService<DTO> extends StudyPaService<DTO> {
 
     /**
-     * Get list of participation for a given functional role code.
+     * Get list of Site for a given functional role code.
      * @param studyProtocolIi id of protocol
      * @param dto with the functional code criteria
      * @return list of objects
@@ -101,7 +101,7 @@ public interface RolePaService<DTO> extends StudyPaService<DTO> {
     List<DTO> getByStudyProtocol(Ii studyProtocolIi, DTO dto) throws PAException;
 
     /**
-     * Get list of participation for a given functional role code.
+     * Get list of site for a given functional role code.
      * @param studyProtocolIi id of protocol
      * @param dto with the functional code criteria
      * @return list of objects

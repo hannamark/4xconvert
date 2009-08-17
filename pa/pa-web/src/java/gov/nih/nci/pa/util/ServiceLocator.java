@@ -96,8 +96,8 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -187,9 +187,9 @@ public interface ServiceLocator {
     ProtocolQueryServiceLocal getProtocolQueryService();
     
     /**
-     * @return StudyParticipationServiceRemote
+     * @return StudySiteServiceRemote
      */
-    StudyParticipationServiceRemote getStudyParticipationService();
+    StudySiteServiceRemote getStudySiteService();
     
 
     /**
@@ -209,9 +209,9 @@ public interface ServiceLocator {
     
     /**
     *
-    * @return StudyParticipationContactServiceRemote
+    * @return StudySiteContactServiceRemote
     */    
-    StudyParticipationContactServiceRemote getStudyParticipationContactService();
+    StudySiteContactServiceRemote getStudySiteContactService();
     /**
      * @return PAHealthCareProviderRemote
      */    

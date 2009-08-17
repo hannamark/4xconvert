@@ -87,8 +87,8 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -373,34 +373,34 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException e
      */
     @SuppressWarnings({ "PMD.ConsecutiveLiteralAppends", "unchecked" })
-    public List<Organization> getOrganizationByStudyParticipation(Long studyProtocolId ,
-            StudyParticipationFunctionalCode functionalCode) throws PAException {
+    public List<Organization> getOrganizationByStudySite(Long studyProtocolId ,
+            StudySiteFunctionalCode functionalCode) throws PAException {
 
         Session session  = HibernateUtil.getCurrentSession();
         StringBuffer sb = new StringBuffer();
         sb.append("select org from Organization as org ");
-        if (StudyParticipationFunctionalCode.TREATING_SITE.equals(functionalCode)) {
+        if (StudySiteFunctionalCode.TREATING_SITE.equals(functionalCode)) {
             sb.append(" join org.healthCareFacilities as orgRole  ");
-        } else if (StudyParticipationFunctionalCode.COLLABORATORS.equals(functionalCode)) {
+        } else if (StudySiteFunctionalCode.COLLABORATORS.equals(functionalCode)) {
             sb.append(" join org.researchOrganizations as orgRole  ");
-        } else if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
+        } else if (StudySiteFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
             sb.append(" join org.healthCareFacilities as orgRole  ");
         }
 
         sb.append(" join org.researchOrganizations as orgRole  "
-                + " join orgRole.studyParticipations as sps "
+                + " join orgRole.studySites as sps "
                 + " join sps.studyProtocol as sp "
                 + " where 1 = 1 and sp.id = " + studyProtocolId);
-        if (StudyParticipationFunctionalCode.TREATING_SITE.equals(functionalCode)) {
-            sb.append(" and sps.functionalCode in ('" + StudyParticipationFunctionalCode.TREATING_SITE + "')");
-        } else if (StudyParticipationFunctionalCode.COLLABORATORS.equals(functionalCode)) {
+        if (StudySiteFunctionalCode.TREATING_SITE.equals(functionalCode)) {
+            sb.append(" and sps.functionalCode in ('" + StudySiteFunctionalCode.TREATING_SITE + "')");
+        } else if (StudySiteFunctionalCode.COLLABORATORS.equals(functionalCode)) {
             sb.append(" and sps.functionalCode in ("
-                    + "'" + StudyParticipationFunctionalCode.FUNDING_SOURCE + "',"
-                    + "'" + StudyParticipationFunctionalCode.LABORATORY + "',"
-                    + "'" + StudyParticipationFunctionalCode.AGENT_SOURCE + "')");
-        } else if (StudyParticipationFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
+                    + "'" + StudySiteFunctionalCode.FUNDING_SOURCE + "',"
+                    + "'" + StudySiteFunctionalCode.LABORATORY + "',"
+                    + "'" + StudySiteFunctionalCode.AGENT_SOURCE + "')");
+        } else if (StudySiteFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
             sb.append(" and sps.functionalCode in ('"
-                    + StudyParticipationFunctionalCode.LEAD_ORGANIZATION + "')");
+                    + StudySiteFunctionalCode.LEAD_ORGANIZATION + "')");
         }
         List<Organization> queryList = new ArrayList<Organization>();
         try {
@@ -438,9 +438,9 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      */
     public Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException {
 
-        StudyParticipationDTO spart = new StudyParticipationDTO();
+        StudySiteDTO spart = new StudySiteDTO();
         spart.setFunctionalCode(cd);
-        List<StudyParticipationDTO> spDtos = PoPaServiceBeanLookup.getStudyParticipationService()
+        List<StudySiteDTO> spDtos = PoPaServiceBeanLookup.getStudySiteService()
                         .getByStudyProtocol(studyProtocolIi, spart);
         Organization o = null;
         if (spDtos != null && !spDtos.isEmpty()) {
