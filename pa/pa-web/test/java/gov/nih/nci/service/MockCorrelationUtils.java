@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
@@ -194,11 +193,6 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
 
     public PAContactDTO getContactByPAOrganizationalContactId(
             Long paOrganizationalContactId) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Organization getPAOrganizationByIi(Ii isoIi) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
