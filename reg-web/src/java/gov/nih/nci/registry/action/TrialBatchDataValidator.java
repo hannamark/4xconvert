@@ -6,33 +6,36 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
-import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.dto.TrialFundingWebDTO;
+import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.BatchConstants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
+
 /**
  * 
  * @author Vrushali
@@ -47,7 +50,8 @@ public class TrialBatchDataValidator {
 
     private static final int AUS_STATE_CODE_LEN = 3;
     private static final int ORG_FIELD = 8;
-    
+    private static final String DELEMITOR = ";";
+
     /**
      * 
      * validate the submit trial form elements.
@@ -92,25 +96,27 @@ public class TrialBatchDataValidator {
                 && PAUtil.isEmpty(batchDto.getPrimaryPurposeOtherValueSp())) {
                 fieldErr.append("comment for Purpose is required.\n");
         }
-        // validate trial status and dates
-        if (PAUtil.isNotEmpty(batchDto.getCurrentTrialStatus())
-                && RegistryUtil.isValidDate(batchDto.getCurrentTrialStatusDate())
-                && PAUtil.isNotEmpty(batchDto.getPrimaryCompletionDateType())
-                && RegistryUtil.isValidDate(batchDto.getPrimaryCompletionDate())
-                && PAUtil.isNotEmpty(batchDto.getStudyStartDateType())
-                && RegistryUtil.isValidDate(batchDto.getStudyStartDate())) {
-            fieldErr.append(validateTrialDates(batchDto));
-        }
-        //validate grant 
-        if (!containsReqGrantInfo(batchDto.getNihGrantFundingMechanism(), batchDto.getNihGrantSrNumber(), 
-                batchDto.getNihGrantInstituteCode(), batchDto.getNihGrantNCIDivisionCode())) {
-            fieldErr.append("All Grant values are required.\n");
-        }
-      //validate the IND/IDE
+        //validate grant
+        fieldErr.append(validateGrantInfo(batchDto));
+        //validate the IND/IDE
         fieldErr.append(validateIndIde(batchDto));
         //validate the ValidValues for other
         fieldErr.append(validateListOfValues(batchDto));
+        //validate the Amendment info
+        fieldErr.append(validateAmendmentInfo(batchDto));
         return fieldErr.toString();
+    }
+    private StringBuffer validateGrantInfo(StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+      //validate grant 
+        List<TrialFundingWebDTO> dtoList = convertToGrantList(batchDto);
+        for (TrialFundingWebDTO webDto : dtoList) {
+            fieldErr.append(validate(webDto, ""));
+            if (!containsReqGrantInfo(webDto)) {
+                fieldErr.append("All Grant values are required.\n");
+            } 
+        }
+        return fieldErr;
     }
     /**
      * @param batchDto
@@ -136,56 +142,59 @@ public class TrialBatchDataValidator {
     private StringBuffer validateIndIde(StudyProtocolBatchDTO batchDto) {
         //validate the IND/IDE
         StringBuffer fieldErr = new StringBuffer();
-        if (!isIndIdeContainsAllInfo(batchDto)) {
-            fieldErr.append("All IND/IDE values are required.\n");
-        } else {
-            if (PAUtil.isNotEmpty(batchDto.getIndHasExpandedAccess()) 
-                && batchDto.getIndHasExpandedAccess().equalsIgnoreCase("True")
-                && PAUtil.isEmpty(batchDto.getIndExpandedAccessStatus())) {
-                    fieldErr.append("Expanded Access Status value is required.\n");
+        List<TrialIndIdeDTO> indDtoList = convertIndsToList(batchDto);
+        for (TrialIndIdeDTO indDto : indDtoList) {
+            if (!isIndIdeContainsAllInfo(indDto)) {
+                fieldErr.append("All IND/IDE values are required.\n");
+            } else {
+                if (PAUtil.isNotEmpty(indDto.getExpandedAccess()) 
+                        && indDto.getExpandedAccess().equalsIgnoreCase("True") 
+                        && PAUtil.isEmpty(indDto.getExpandedAccessType())) {
+                      fieldErr.append("Expanded Access Status value is required.\n");
+                }
+                if (PAUtil.isNotEmpty(indDto.getHolderType()) 
+                        && indDto.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode())
+                        && PAUtil.isEmpty(indDto.getProgramCode())) {
+                        fieldErr.append("NIH Institution value is required.\n");
+                }
+                if (PAUtil.isNotEmpty(indDto.getHolderType()) 
+                        && indDto.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode())
+                        && PAUtil.isEmpty(indDto.getProgramCode())) {
+                        fieldErr.append("NCI Division/Program Code value is required.\n");
+                }
             }
-            if (PAUtil.isNotEmpty(batchDto.getIndHolderType())
-                && batchDto.getIndHolderType().equalsIgnoreCase("NIH")
-                && PAUtil.isEmpty(batchDto.getIndNIHInstitution())) {
-                    fieldErr.append("NIH Institution value is required.\n");
+            //Validate List of values
+            if (PAUtil.isNotEmpty(indDto.getIndIde()) && null == IndldeTypeCode.getByCode(indDto.getIndIde())) {
+                fieldErr.append("Please enter valid value for IND/IDE.\n");
             }
-            if (PAUtil.isNotEmpty(batchDto.getIndHolderType())
-                && batchDto.getIndHolderType().equalsIgnoreCase("NCI")
-                && PAUtil.isEmpty(batchDto.getIndNCIDivision())) {
-                    fieldErr.append("NCI Division/Program Code value is required.\n");
+            if (PAUtil.isNotEmpty(indDto.getHolderType()) && null == HolderTypeCode.getByCode(indDto.getHolderType())) {
+                fieldErr.append("Please enter valid value for IND/IDE Holder Type.\n");
             }
-        }
-        //Validate List of values
-        if (PAUtil.isNotEmpty(batchDto.getIndType()) 
-                && null == IndldeTypeCode.getByCode(batchDto.getIndType())) {
-            fieldErr.append("Please enter valid value for IND/IDE.\n");
-        }
-        if (PAUtil.isNotEmpty(batchDto.getIndHolderType()) 
-                && null == HolderTypeCode.getByCode(batchDto.getIndHolderType())) {
-            fieldErr.append("Please enter valid value for IND/IDE Holder Type.\n");
-        }
-        if (PAUtil.isNotEmpty(batchDto.getIndGrantor()) 
-                && null == GrantorCode.getByCode(batchDto.getIndGrantor())) {
-            fieldErr.append("Please enter valid value for IND/IDE Grantor.\n");
-        }
-        if (PAUtil.isNotEmpty(batchDto.getIndType()) 
-                && batchDto.getIndType().equals("IDE")
-                && !batchDto.getIndGrantor().equals("CDRH")) {
-            fieldErr.append("IDE Grantor can have only CDRH value.\n");
-        }
-        if (PAUtil.isNotEmpty(batchDto.getIndExpandedAccessStatus())
-                && null == ExpandedAccessStatusCode.getByCode(batchDto.getIndExpandedAccessStatus())) {
-            fieldErr.append("Please enter valid value for IND/IDE Expanded Access Status.\n");
-        }
-        //validate NIH Institution values
-        if (PAUtil.isNotEmpty(batchDto.getIndNIHInstitution()) 
-                && null == NihInstituteCode.getByCode(batchDto.getIndNIHInstitution())) {
-            fieldErr.append("Please enter valid value for IND/IDE NIH Institution.\n");
-        }
-        //validate NCI Division values
-        if (PAUtil.isNotEmpty(batchDto.getIndNCIDivision()) 
-                && null == NciDivisionProgramCode.getByCode(batchDto.getIndNCIDivision())) {
-            fieldErr.append("Please enter valid value for IND/IDE NCI Division /Program.\n");
+            if (PAUtil.isNotEmpty(indDto.getGrantor()) && null == GrantorCode.getByCode(indDto.getGrantor())) {
+                fieldErr.append("Please enter valid value for IND/IDE Grantor.\n");
+            }
+            if (PAUtil.isNotEmpty(indDto.getIndIde()) && indDto.getIndIde().equals(IndldeTypeCode.IDE.getCode())
+                && !indDto.getGrantor().equals(GrantorCode.CDRH.getCode())) {
+                fieldErr.append("IDE Grantor can have only CDRH value.\n");
+            }
+            if (PAUtil.isNotEmpty(indDto.getExpandedAccessType()) 
+                    && null == ExpandedAccessStatusCode.getByCode(indDto.getExpandedAccessType())) {
+                fieldErr.append("Please enter valid value for IND/IDE Expanded Access Status.\n");
+            }
+            //validate NIH Institution values
+            if (PAUtil.isNotEmpty(indDto.getHolderType()) 
+                    && indDto.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode())
+                    && PAUtil.isNotEmpty(indDto.getProgramCode()) 
+                    && null == NihInstituteCode.getByCode(indDto.getProgramCode())) {
+                    fieldErr.append("Please enter valid value for IND/IDE NIH Institution.\n");
+            }
+            //validate NCI Division values
+            if (PAUtil.isNotEmpty(indDto.getHolderType()) 
+                    && indDto.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode())
+                && PAUtil.isNotEmpty(indDto.getProgramCode()) 
+                && null == NciDivisionProgramCode.getByCode(indDto.getProgramCode())) {
+                    fieldErr.append("Please enter valid value for IND/IDE NCI Division /Program.\n");
+            }
         }
         return fieldErr;
     }
@@ -205,15 +214,24 @@ public class TrialBatchDataValidator {
         }        
         if (PAUtil.isNotEmpty(batchDto.getParticipatinSiteDocumentFileName())
                 && !RegistryUtil.isValidFileType(batchDto.getParticipatinSiteDocumentFileName())) {
-                fieldErr.append("Participating Site Document - File type is not allowed \n");                
+                fieldErr.append("Participating Site Document - File type is not allowed. \n");                
         }        
         if (PAUtil.isNotEmpty(batchDto.getInformedConsentDocumentFileName())
                 && !RegistryUtil.isValidFileType(batchDto.getInformedConsentDocumentFileName())) {
-                fieldErr.append("Informed Consent Document - File type is not allowed \n");                
+                fieldErr.append("Informed Consent Document - File type is not allowed. \n");                
         }        
         if (PAUtil.isNotEmpty(batchDto.getOtherTrialRelDocumentFileName())
                 && !RegistryUtil.isValidFileType(batchDto.getOtherTrialRelDocumentFileName())) {
-               fieldErr.append("Other Trial Related Document - File type is not allowed \n");                
+               fieldErr.append("Other Trial Related Document - File type is not allowed. \n");                
+        }
+        //for amendments
+        if (PAUtil.isNotEmpty(batchDto.getProtocolHighlightDocFileName())
+                && !RegistryUtil.isValidFileType(batchDto.getProtocolHighlightDocFileName())) {
+                fieldErr.append("Protocol Highlight Document - File type is not allowed. \n");                
+        }        
+        if (PAUtil.isNotEmpty(batchDto.getChangeRequestDocFileName())
+                && !RegistryUtil.isValidFileType(batchDto.getChangeRequestDocFileName())) {
+               fieldErr.append("Change Request Document - File type is not allowed. \n");                
         }
      return fieldErr;
     }
@@ -224,7 +242,7 @@ public class TrialBatchDataValidator {
      */
     private StringBuffer validateListOfValues(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
-        if (null == StudyStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
+        if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
             fieldErr.append("Please enter valid value for Current Trial Status");
         }
         if (null != TrialStatusReasonCode.getByCode(batchDto.getCurrentTrialStatus())
@@ -293,83 +311,6 @@ public class TrialBatchDataValidator {
     /**
      * validate the submit trial dates.
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
-    private String validateTrialDates(StudyProtocolBatchDTO dto) {
-        StringBuffer errors = new StringBuffer();
-        
-
-        Timestamp statusDate = PAUtil.dateStringToTimestamp(dto.getCurrentTrialStatusDate());
-        Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-        Timestamp trialStartDate = PAUtil.dateStringToTimestamp(dto.getStudyStartDate());
-        Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(dto.getPrimaryCompletionDate());      
-        // Constraint/Rule: 22 Current Trial Status Date must be current or past.
-        if (currentTimeStamp.before(statusDate)) {
-                errors.append("Current Trial Status Date cannot be in the future.\n");                
-        }
-        // Constraint/Rule: 23 Trial Start Date must be current/past if 'actual' trial start date type 
-        // is selected and must be future if 'anticipated' trial start date type is selected. 
-        if (dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())
-                    && currentTimeStamp.before(trialStartDate)) {
-            errors.append("Actual Trial Start Date must be current or in past. \n");                
-        } else if (dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())
-                && currentTimeStamp.after(trialStartDate)) {
-            errors.append("Anticipated Start Date must be in future. \n");                
-        }          
-        //Constraint/Rule:24 Primary Completion Date must be current/past if 'actual' primary completion date type  
-        //is selected and must be future if 'anticipated'trial primary completion date type is selected. 
-        if (dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())
-                && currentTimeStamp.before(trialCompletionDate)) {
-            errors.append("Actual Primary Completion Date must be current or in past.\n");                
-        } else if (dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())
-                && currentTimeStamp.after(trialCompletionDate)) {
-            errors.append("Anticipated Primary Completion Date must be in future. \n");                
-        }          
-        // Constraint/Rule: 25 If Current Trial Status is 'Active', Trial Start Date must be the same as 
-        //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller 
-        //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.            
-        //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
-        if (TrialStatusCode.ACTIVE.getCode().equals(dto.getCurrentTrialStatus())
-                && (trialStartDate.after(statusDate) || !dto.getStudyStartDateType().equals(
-                         ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
-                errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
-                              + " and same as Current Trial Status Date.\n");
-        }
-        // Constraint/Rule: 26 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
-        //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 
-          if (TrialStatusCode.APPROVED.getCode().equals(dto.getCurrentTrialStatus())
-                  || TrialStatusCode.IN_REVIEW.getCode().equals(dto.getCurrentTrialStatus())) {
-              if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                errors.append("If Current Trial Status is Approved/In Review, Trial Start Date must be Anticipated.\n");
-              } 
-          } else if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-            errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
-          }
-          // Constraint/Rule: 27 If Current Trial Status is 'Completed', Primary Completion Date must be the 
-          // same as Current Trial Status Date and have 'actual' type.
-          if (TrialStatusCode.COMPLETE.getCode().equals(dto.getCurrentTrialStatus())
-                  && (!dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
-                    errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual ");
-          }            
-          // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed', 
-          // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type 
-          // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'.
-          if (TrialStatusCode.COMPLETE.getCode().equals(dto.getCurrentTrialStatus()) 
-              || TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(dto.getCurrentTrialStatus())) { 
-              if (!dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                    errors.append("If Current Trial Status is Complete or Administratively Complete, "
-                            + " Primary Completion Date must be  Actual.\n");
-              }
-          } else if (!dto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                        errors.append("Primary Completion Date  must be Anticipated for any other Current Trial"
-                            + " Status value besides Complete or Administratively Complete.\n");                  
-          }          
-          // Constraint/Rule:29 Trial Start Date must be same/smaller than Primary Completion Date. 
-          if (trialCompletionDate.before(trialStartDate)) {
-             errors.append("Trial Start Date must be same or earlier than Primary Completion Date.\n");                
-          }
-           
-        return errors.toString();
-    }
 
     /**
      * 
@@ -378,8 +319,11 @@ public class TrialBatchDataValidator {
      * @param icdCode
      * @return
      */
-    private boolean containsReqGrantInfo(String fundmc, String srNumber,
-            String icdCode, String divCode) {
+    private boolean containsReqGrantInfo(TrialFundingWebDTO grandDto) {
+            String fundmc = grandDto.getFundingMechanismCode();
+            String srNumber = grandDto.getSerialNumber();
+            String icdCode = grandDto.getNihInstitutionCode();
+            String divCode = grandDto.getNciDivisionProgramCode();
         int nullCount = 0;
         if (null == fundmc || fundmc.trim().length() < 1) {
             nullCount += 1;
@@ -581,21 +525,21 @@ public class TrialBatchDataValidator {
         }
         return fieldErr;
     }
-    private boolean isIndIdeContainsAllInfo(StudyProtocolBatchDTO dto) {
+    private boolean isIndIdeContainsAllInfo(TrialIndIdeDTO dto) {
         int nullCount = 0;
-        if (PAUtil.isEmpty(dto.getIndType())) {
+        if (PAUtil.isEmpty(dto.getIndIde())) {
             nullCount += 1;
         }
-       if (PAUtil.isEmpty(dto.getIndNumber())) {
+       if (PAUtil.isEmpty(dto.getNumber())) {
            nullCount += 1;
        }
-       if (PAUtil.isEmpty(dto.getIndGrantor())) {
+       if (PAUtil.isEmpty(dto.getGrantor())) {
            nullCount += 1;
        }
-       if (PAUtil.isEmpty(dto.getIndHolderType())) {
+       if (PAUtil.isEmpty(dto.getHolderType())) {
            nullCount += 1;
        }
-       if (PAUtil.isEmpty(dto.getIndHasExpandedAccess())) {
+       if (PAUtil.isEmpty(dto.getExpandedAccess())) {
            nullCount += 1;
        }
        LOG.info("null count in ind Ide" + nullCount);
@@ -634,5 +578,213 @@ public class TrialBatchDataValidator {
             LOG.error("error while validaing country.." + e.getMessage());
         }
     }
-
+    private StringBuffer validateAmendmentInfo(StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+        if (batchDto.getSubmissionType().equalsIgnoreCase("A")) {
+            if (PAUtil.isEmpty(batchDto.getAmendmentDate())) {
+                fieldErr.append("Amendment Date is required. \n");                
+            }
+            if (PAUtil.isEmpty(batchDto.getChangeRequestDocFileName())) {
+                   fieldErr.append("Change Request Document is required. \n");                
+            }
+            if (batchDto.getCurrentTrialStatus().equalsIgnoreCase("In Review")) {
+                fieldErr.append("To Amend Submission of pre-IRB approved study replace " 
+                  + " current trial status 'In-Review' with 'Approved'");
+            }
+        }
+        return fieldErr;
+    }
+    /**
+     * 
+     * @param dto d
+     * @return s
+     */
+    private boolean isMultipleIndIde(StudyProtocolBatchDTO dto) {
+        boolean isMultiple = false;
+        if (!isIndIdeEmpty(dto)) {
+            if (dto.getIndType().indexOf(DELEMITOR) == -1
+                && dto.getIndNumber().indexOf(DELEMITOR) == -1
+                && dto.getIndGrantor().indexOf(DELEMITOR) == -1
+                && dto.getIndHolderType().indexOf(DELEMITOR) == -1
+                && dto.getIndHasExpandedAccess().indexOf(DELEMITOR) == -1) {
+                isMultiple = false;
+            } else {
+                isMultiple = true;
+            }
+        }
+        return isMultiple;
+    }
+    /**
+     * 
+     * @param dto d
+     * @return list
+     */
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
+    public List<TrialIndIdeDTO> convertIndsToList(StudyProtocolBatchDTO dto) {
+        List<TrialIndIdeDTO> indIdeList = new ArrayList<TrialIndIdeDTO>();
+            if (isMultipleIndIde(dto)) {
+                Map <Integer, String> indTypeMap = covertToMap(dto.getIndType());
+                Map <Integer, String> indNumbereMap = covertToMap(dto.getIndNumber());
+                Map <Integer, String> indGrantorMap = covertToMap(dto.getIndGrantor());
+                Map <Integer, String> indHolderTypeMap = covertToMap(dto.getIndHolderType());
+                Map <Integer, String> indNIHInstitutionMap = covertToMap(dto.getIndNIHInstitution());
+                Map <Integer, String> indNCIDivisionMap = covertToMap(dto.getIndNCIDivision());
+                Map <Integer, String> indHasExpandedAccessMap = covertToMap(dto.getIndHasExpandedAccess());
+                Map <Integer, String> indHasExpandedAccessStatusMap = covertToMap(dto.getIndExpandedAccessStatus());
+                //get the map with highest size 
+                int maxSize = indTypeMap.size();
+                if (maxSize < indNumbereMap.size()) {
+                    maxSize = indNumbereMap.size();
+                }
+                if (maxSize < indGrantorMap.size()) {
+                    maxSize = indGrantorMap.size();
+                }
+                if (maxSize < indHolderTypeMap.size()) {
+                    maxSize = indHolderTypeMap.size();
+                }
+                if (maxSize < indNIHInstitutionMap.size()) {
+                    maxSize = indNIHInstitutionMap.size();
+                }
+                if (maxSize < indNCIDivisionMap.size()) {
+                    maxSize = indNCIDivisionMap.size();
+                }
+                if (maxSize < indHasExpandedAccessMap.size()) {
+                    maxSize = indHasExpandedAccessMap.size();
+                }
+                if (maxSize < indHasExpandedAccessStatusMap.size()) {
+                    maxSize = indHasExpandedAccessStatusMap.size();
+                }
+                for (int i = 0; i < maxSize; i++) {
+                    TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
+                    indldeDTO.setIndIde(indTypeMap.get(i));
+                    indldeDTO.setNumber(indNumbereMap.get(i));
+                    indldeDTO.setGrantor(indGrantorMap.get(i));
+                    indldeDTO.setHolderType(indHolderTypeMap.get(i));
+                    if (indldeDTO.getHolderType() != null) { 
+                        if (indldeDTO.getHolderType().equalsIgnoreCase("NIH")) {
+                            indldeDTO.setProgramCode(indNIHInstitutionMap.get(i));
+                        }
+                        if (indldeDTO.getHolderType().equalsIgnoreCase("NCI")) {
+                            indldeDTO.setProgramCode(indNCIDivisionMap.get(i));
+                        }
+                    }
+                    indldeDTO.setExpandedAccess(indHasExpandedAccessMap.get(i));
+                    indldeDTO.setExpandedAccessType(indHasExpandedAccessStatusMap.get(i));
+                    indIdeList.add(indldeDTO);
+                }
+            } else {
+                if (!isIndIdeEmpty(dto)) {
+                    TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
+                    indldeDTO.setIndIde(dto.getIndType());
+                    indldeDTO.setNumber(dto.getIndNumber());
+                    indldeDTO.setGrantor(dto.getIndGrantor());
+                    indldeDTO.setHolderType(dto.getIndHolderType());
+                    if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
+                        indldeDTO.setProgramCode(dto.getIndNIHInstitution());
+                    }
+                    if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
+                        indldeDTO.setProgramCode(dto.getIndNCIDivision());
+                    }
+                    indldeDTO.setExpandedAccess(dto.getIndHasExpandedAccess());
+                    indldeDTO.setExpandedAccessType(dto.getIndExpandedAccessStatus());
+                    indIdeList.add(indldeDTO);
+                }
+            }
+        return indIdeList;
+    }
+    private boolean isIndIdeEmpty(StudyProtocolBatchDTO dto) {
+        boolean retValue = true;
+        if (PAUtil.isNotEmpty(dto.getIndType()) && PAUtil.isNotEmpty(dto.getIndNumber())
+                && PAUtil.isNotEmpty(dto.getIndGrantor()) && PAUtil.isNotEmpty(dto.getIndHolderType())
+                && PAUtil.isNotEmpty(dto.getIndHasExpandedAccess())) {
+            retValue = false;
+        }
+        return retValue;
+    }
+    private Map<Integer, String> covertToMap(String commaSeparated) {
+        Map <Integer, String> map = new HashMap<Integer, String>();
+        Integer key = 0;
+        if (commaSeparated == null) {
+            map.put(key++ , "");
+            return map;
+        }
+        StringTokenizer tokenizer = new StringTokenizer(commaSeparated, DELEMITOR);
+        if (commaSeparated.startsWith(DELEMITOR)) {
+            map.put(key++ , "");
+        }
+        while (tokenizer.hasMoreTokens()) {
+            map.put(key++ , tokenizer.nextToken());
+        }
+        if (commaSeparated.endsWith(DELEMITOR)) {
+            map.put(key++ , "");
+        }
+        return map;
+    }
+    /**
+     * 
+     * @param dto batch
+     * @return dto
+     */
+    public List<TrialFundingWebDTO> convertToGrantList(StudyProtocolBatchDTO dto) {
+        List<TrialFundingWebDTO> grantList = new ArrayList<TrialFundingWebDTO>();
+        if (isMultipleGrant(dto)) {
+            Map <Integer, String> fundingMechanismCodeMap = covertToMap(dto.getNihGrantFundingMechanism());
+            Map <Integer, String> grantNCIDivisionCodeMap = covertToMap(dto.getNihGrantNCIDivisionCode());
+            Map <Integer, String> grantInstituteCodeMap = covertToMap(dto.getNihGrantInstituteCode());
+            Map <Integer, String> grantSrNumberMap = covertToMap(dto.getNihGrantSrNumber());
+            int maxSize = fundingMechanismCodeMap.size();
+            if (maxSize < grantNCIDivisionCodeMap.size()) {
+                maxSize = grantNCIDivisionCodeMap.size();
+            }
+            if (maxSize < grantInstituteCodeMap.size()) {
+                maxSize = grantInstituteCodeMap.size();
+            }
+            if (maxSize < grantSrNumberMap.size()) {
+                maxSize = grantSrNumberMap.size();
+            }
+            for (int i = 0; i < maxSize; i++) {
+                TrialFundingWebDTO fundingDTO = new TrialFundingWebDTO();
+                fundingDTO.setFundingMechanismCode(fundingMechanismCodeMap.get(i));
+                fundingDTO.setNciDivisionProgramCode(grantNCIDivisionCodeMap.get(i));
+                fundingDTO.setNihInstitutionCode(grantInstituteCodeMap.get(i));
+                fundingDTO.setSerialNumber(grantSrNumberMap.get(i));
+                grantList.add(fundingDTO);
+            }
+        } else {
+            if (!isGrantEmpty(dto)) {
+                TrialFundingWebDTO fundingDTO = new TrialFundingWebDTO();
+                fundingDTO.setFundingMechanismCode(dto.getNihGrantFundingMechanism());
+                fundingDTO.setNciDivisionProgramCode(dto.getNihGrantNCIDivisionCode());
+                fundingDTO.setNihInstitutionCode(dto.getNihGrantInstituteCode());
+                fundingDTO.setSerialNumber(dto.getNihGrantSrNumber());
+                grantList.add(fundingDTO);
+            }
+        }
+        return grantList;
+    }
+    private boolean isMultipleGrant(StudyProtocolBatchDTO dto) {
+        boolean isMultiple = false;
+        //if grant is Not empty then check if it has multiple values or not
+        if (!isGrantEmpty(dto)) {
+            if (dto.getNihGrantFundingMechanism().indexOf(DELEMITOR) == -1
+                    && dto.getNihGrantInstituteCode().indexOf(DELEMITOR) == -1
+                    && dto.getNihGrantSrNumber().indexOf(DELEMITOR) == -1
+                    && dto.getNihGrantNCIDivisionCode().indexOf(DELEMITOR) == -1) {
+                        isMultiple = false;
+                    } else {
+                        isMultiple = true;
+                    }
+        }
+        return isMultiple;
+    }
+    private boolean isGrantEmpty(StudyProtocolBatchDTO dto) {
+        boolean retVal = true;
+        if (PAUtil.isNotEmpty(dto.getNihGrantFundingMechanism()) 
+                && PAUtil.isNotEmpty(dto.getNihGrantNCIDivisionCode()) 
+                && PAUtil.isNotEmpty(dto.getNihGrantInstituteCode()) 
+                && PAUtil.isNotEmpty(dto.getNihGrantSrNumber())) {
+            retVal = false;
+        }
+         return retVal;   
+    }
 }

@@ -24,7 +24,7 @@
                 <li><a href="/registry/protected/disClaimerAction.action?actionName=searchTrial.action">Log In</a> to your account and</li> 
                 	<menu> 
                 		<li>Register clinical trials</li>
-                		<li>Register multiple trials at one time using a <a href="http://ctrp.nci.nih.gov/docs/CTRP_Registry_Batch_Upload_Template.xls"> batch upload template</a></li>
+                		<li>Register multiple trials at one time using a <a href="http://www.cancer.gov/content/files/CTRP_Registry_Batch_Upload_Template.xls"> batch upload template</a></li>
                 		<li>Search registered trials by Title, Phase, Trial Identifiers and Organizations</li>
                         </menu>                                               
             </ul>                    

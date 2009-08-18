@@ -5,6 +5,7 @@ package gov.nih.nci.registry.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -96,6 +97,11 @@ public class MockStudyOverallStatusService implements
             throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public void validate(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO) throws PAException {
+        // TODO Auto-generated method stub
     }
 
 }

@@ -84,6 +84,7 @@ public class BatchHelper implements Runnable {
      */
     public void run() {
         //String subject = "Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status";
+        final MailManager mailManager = new MailManager();
         try {
             // open a new Hibernate session and bind to the context
             HibernateUtil.getHibernateHelper().openAndBindSession();
@@ -94,6 +95,7 @@ public class BatchHelper implements Runnable {
             HashMap<String, String> map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
                     + File.separator, userName);
             //get the Failed and Sucess count and remove it from map so that reporting of each trial 
+
             String sucessCount = (String) map.get("Sucess Trial Count");
             map.remove("Sucess Trial Count");
             String failedCount = (String) map.get("Failed Trial Count");
@@ -114,13 +116,15 @@ public class BatchHelper implements Runnable {
             MessageFormat formatterBody = new MessageFormat(submissionMailBody);
             String emailBody =  formatterBody.format(params);
             
-            final MailManager mailManager = new MailManager();
+            
             // Send the batch upload report to the submitter
             mailManager.sendMailWithAattchement(userName, null, emailBody, emailSubject, attachFileName);
 
 
         } catch (Exception e) {
             LOG.error("Exception while processing batch" + e.getMessage());
+            mailManager.sendMail(userName, null, "Exception while processing batch",
+                    "Exception while processing batch");
         } finally {
             // unbind the  Hibernate session
             HibernateUtil.getHibernateHelper().unbindAndCleanupSession();

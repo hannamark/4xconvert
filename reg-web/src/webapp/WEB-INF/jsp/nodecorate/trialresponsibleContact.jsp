@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<span class="info">Select Either Personal Contact or Generic Contact</span>
 <table>
 <tr>
 <td><s:textfield label="Responsible Party Name" name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
@@ -13,7 +14,7 @@
 </td>
 </tr>
 </table>
-<span class="info">Required only if Responsible Party is Sponsor</span>
+
 <span class="formErrorMsg"> 
      <s:fielderror>
      <s:param>ResponsiblePartyNotSelected</s:param>

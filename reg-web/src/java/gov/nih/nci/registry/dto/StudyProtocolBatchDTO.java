@@ -129,9 +129,14 @@ public class StudyProtocolBatchDTO {
     private String informedConsentDocumentFileName;
     private String otherTrialRelDocumentFileName;
     
+    private String submissionType;
+    private String nciTrialIdentifier;
+    private String amendmentNumber;
+    private String amendmentDate;
+    private String changeRequestDocFileName;
+    private String protocolHighlightDocFileName;
+    
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
-    private static final int SERIAL_NUM_MIN = 5;
-    private static final int SERIAL_NUM_MAX  = 6;
     private static final int ORG_NAME_MAX_LENGTH = 160;
     private static final int PCTL = 200;
        
@@ -439,8 +444,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the nihGrantSrNumber
      */
-    @Length(message = "Serial number can be numeric with 5 or 6 digits.\n", max = SERIAL_NUM_MAX, min = SERIAL_NUM_MIN)
-    @Pattern(message = "Serial Number must be numeric.\n", regex = "^[0-9]+$")
+    @Pattern(message = "Serial Number must be numeric.\n", regex = "^[0-9;]+$")
     public String getNihGrantSrNumber() {
         return nihGrantSrNumber;
     }
@@ -1598,7 +1602,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the programCodeText
      */
-    @org.hibernate.validator.Length(message = "Program Code Text must be 200 characters max", max = PCTL)
+    @org.hibernate.validator.Length(message = "Program Code Text must be 2000 characters max", max = PCTL)
     public String getProgramCodeText() {
         return programCodeText;
     }
@@ -1609,5 +1613,95 @@ public class StudyProtocolBatchDTO {
     public void setProgramCodeText(String programCodeText) {
         this.programCodeText = programCodeText;
     }
+
+    /**
+     * @return the submissionType
+     */
+    @NotEmpty(message = "Submission Type is required.\n")
+    @Length(max = 1, message = "Submission Type must be single characters max.\n")
+    @Pattern(regex = "^[A|O]$", message = "Submission Type can be A or O.\n")
+    public String getSubmissionType() {
+        return submissionType;
+    }
+
+    /**
+     * @param submissionType the submissionType to set
+     */
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
+    }
+
+    /**
+     * @return the nciTrialIdentifier
+     */
+    @Pattern(regex = "^[N][C][I][-][0-9]{4}[-][0-9]{5}$", 
+            message = "NCI Trial Indentifier is not well formatted. It should follow the pattern NCI-2009-00001 \n.")
+    public String getNciTrialIdentifier() {
+        return nciTrialIdentifier;
+    }
+
+    /**
+     * @param nciTrialIdentifier the nciTrialIdentifier to set
+     */
+    public void setNciTrialIdentifier(String nciTrialIdentifier) {
+        this.nciTrialIdentifier = nciTrialIdentifier;
+    }
+
+    /**
+     * @return the amendmentNumber
+     */
+    public String getAmendmentNumber() {
+        return amendmentNumber;
+    }
+
+    /**
+     * @param amendmentNumber the amendmentNumber to set
+     */
+    public void setAmendmentNumber(String amendmentNumber) {
+        this.amendmentNumber = amendmentNumber;
+    }
+
+    /**
+     * @return the amendmentDate
+     */
+    public String getAmendmentDate() {
+        return amendmentDate;
+    }
+
+    /**
+     * @param amendmentDate the amendmentDate to set
+     */
+    public void setAmendmentDate(String amendmentDate) {
+        this.amendmentDate = amendmentDate;
+    }
+
+    /**
+     * @return the changeRequestDocFileName
+     */
+    public String getChangeRequestDocFileName() {
+        return changeRequestDocFileName;
+    }
+
+    /**
+     * @param changeRequestDocFileName the changeRequestDocFileName to set
+     */
+    public void setChangeRequestDocFileName(String changeRequestDocFileName) {
+        this.changeRequestDocFileName = changeRequestDocFileName;
+    }
+
+    /**
+     * @return the protocolHighlightDocFileName
+     */
+    public String getProtocolHighlightDocFileName() {
+        return protocolHighlightDocFileName;
+    }
+
+    /**
+     * @param protocolHighlightDocFileName the protocolHighlightDocFileName to set
+     */
+    public void setProtocolHighlightDocFileName(String protocolHighlightDocFileName) {
+        this.protocolHighlightDocFileName = protocolHighlightDocFileName;
+    }
+    
 
 }

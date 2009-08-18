@@ -1,5 +1,8 @@
 package gov.nih.nci.registry.dto;
 
+import org.hibernate.validator.Length;
+import org.hibernate.validator.Pattern;
+
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -16,6 +19,9 @@ public class TrialFundingWebDTO {
     private String nciDivisionProgramCode;
     private String serialNumber;
     private String rowId;
+    private static final int SERIAL_NUM_MIN = 5;
+    private static final int SERIAL_NUM_MAX  = 6;
+
     /**
      * @param iso StudyResourcingDTO object
      */
@@ -95,6 +101,8 @@ public class TrialFundingWebDTO {
     /**
      * @return serialNumber
      */
+    @Pattern(regex = "^[0-9]+$", message = "Serial Number must be numeric.\n")
+    @Length(message = "Serial number can be numeric with 5 or 6 digits.\n" , max = SERIAL_NUM_MAX, min = SERIAL_NUM_MIN)
     public String getSerialNumber() {
         return serialNumber;
     }

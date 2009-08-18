@@ -86,6 +86,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -108,8 +110,6 @@ import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
-import gov.nih.nci.registry.dto.TrialFundingWebDTO;
-import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -139,25 +139,25 @@ public class BatchCreateProtocols {
     private static final Logger LOG = Logger.getLogger(BatchCreateProtocols.class);
     private int sucessCount = 0;
     private int failedCount = 0;
+    private static final String FAILED = "Failed:";
     /**
      * 
      * @param dtoList list
      * @param folderPath path 
      * @param userName name
      * @return map
-     * @throws PAException ex
      */
     @SuppressWarnings({"PMD.LooseCoupling" })
     public HashMap<String, String> createProtocols(List<StudyProtocolBatchDTO> dtoList,
-            String folderPath, String userName)
-            throws PAException {
+            String folderPath, String userName) {
         LOG.info("Entering into createProtocols...having size of dtolist"
                 + dtoList.size());
-        if (dtoList == null || dtoList.size() < 1) {
-            throw new PAException("DTO list is Empty");
-        }
         HashMap<String, String> map = new HashMap<String, String>();
-
+        if (dtoList == null || dtoList.size() < 1) {
+            map.put("Failed Trial Count" , String.valueOf(failedCount));
+            map.put("Sucess Trial Count" , String.valueOf(sucessCount));
+            return map;
+        }
         Iterator iterator = dtoList.iterator();
         StringBuffer result = new StringBuffer();
         TrialBatchDataValidator validator = null;
@@ -173,7 +173,7 @@ public class BatchCreateProtocols {
                 if (null == result || result.length() < 1) {
                     result.append(buildProtocol(batchDto, folderPath , userName));    
                 } else {
-                    result.insert(0, "Failed:");
+                    result.insert(0, FAILED);
                     failedCount  += 1;
                 }
                 map.put(batchDto.getUniqueTrialId() , result.toString());
@@ -242,10 +242,10 @@ public class BatchCreateProtocols {
             //add doc to the dto
             trialDTO.setDocDtos(addDocDTOToList(dto, folderPath));
             //add ind
-            trialDTO.setIndIdeDtos(getIndIdeList(dto));
+            trialDTO.setIndIdeDtos(dataValidator.convertIndsToList(dto));
             //add grants
-            trialDTO.setFundingDtos(getGrantList(dto));
-            
+            trialDTO.setFundingDtos(dataValidator.convertToGrantList(dto));
+
             TrialUtil util = new TrialUtil();
             StudyProtocolDTO studyProtocolDTO = null;
             if (trialDTO.getTrialType().equals("Interventional")) {
@@ -281,13 +281,34 @@ public class BatchCreateProtocols {
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
-            
+            if (!PAUtil.isNotEmpty(trialDTO.getAssignedIdentifier())) {
             studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
             createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
                     nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
                     summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi);
+            } else {
+                //get the Identifier of study protocol by giving nci identifier
+                StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
+                viewCriteria.setNciIdentifier(trialDTO.getAssignedIdentifier());
+                List<StudyProtocolQueryDTO> listofDto = RegistryServiceLocator.getProtocolQueryService().
+                                            getStudyProtocolByCriteria(viewCriteria);
+                if (listofDto.isEmpty() || listofDto.size() > 1) {
+                    failedCount +=  1;
+                    protocolAssignedId = FAILED + "mutliple trial or no trial found for given NCI Trial Identifier.\n";
+                    return protocolAssignedId;
+                } else {
+                    trialDTO.setIdentifier(listofDto.get(0).getStudyProtocolId().toString());
+                }
+                studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
+                studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
+                amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                        studyResourcingDTOs, documentDTOs,
+                        leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
+                        nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
+                        summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi);
+            }
             //get the protocol
              protocolAssignedId = " Successfully Registered with NCI Identifier " 
                  + RegistryServiceLocator.getStudyProtocolService()
@@ -296,10 +317,10 @@ public class BatchCreateProtocols {
         } catch (PAException ex) {
             failedCount +=  1;
             LOG.error("buildprotocol exception-" + ex.getMessage());
-            protocolAssignedId = "Failed:" + ex.getMessage() + "\n";
+            protocolAssignedId = FAILED + ex.getMessage() + "\n";
         } catch (Exception exc) {
             failedCount +=  1;
-            protocolAssignedId = "Failed:" + exc.getMessage() + "\n";
+            protocolAssignedId = FAILED + exc.getMessage() + "\n";
             LOG.error("buildprotocol exception-" + exc.getMessage());
         }
         LOG.info("response " + protocolAssignedId);
@@ -331,6 +352,8 @@ public class BatchCreateProtocols {
         } else {
             trialDTO.setContactEmail(batchDTO.getSponsorContactEmail());
             trialDTO.setContactPhone(batchDTO.getSponsorContactPhone());
+            trialDTO.setResponsiblePersonName(batchDTO.getSponsorContactLName() 
+                    + batchDTO.getSponsorContactFName());
         }
         //if the Phase's value is not in allowed LOV then save phase as Other
         // and comments as the value of current phase
@@ -344,6 +367,9 @@ public class BatchCreateProtocols {
             }
         } 
         trialDTO.setProgramCodeText(batchDTO.getProgramCodeText());
+        trialDTO.setAssignedIdentifier(batchDTO.getNciTrialIdentifier());
+        trialDTO.setAmendmentDate(batchDTO.getAmendmentDate());
+        trialDTO.setLocalAmendmentNumber(batchDTO.getAmendmentNumber());
         return trialDTO;
     }
 
@@ -610,56 +636,6 @@ public class BatchCreateProtocols {
         LOG.info("leaving created person  with personId" + personId);
         return personId;
     }
-    private  List<TrialIndIdeDTO> getIndIdeList(StudyProtocolBatchDTO dto) throws PAException {
-        LOG.info("Entering getIndIdeList....");
-        List<TrialIndIdeDTO> indIdeList = new ArrayList<TrialIndIdeDTO>();
-        //check if the values are present..
-        if (!isIndIdeEmpty(dto)) {
-            TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
-            indldeDTO.setIndIde(dto.getIndType());
-            indldeDTO.setNumber(dto.getIndNumber());
-            indldeDTO.setGrantor(dto.getIndGrantor());
-            indldeDTO.setHolderType(dto.getIndHolderType());
-            if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
-                indldeDTO.setProgramCode(dto.getIndNIHInstitution());
-            }
-            if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
-                indldeDTO.setProgramCode(dto.getIndNCIDivision());
-            }
-            indldeDTO.setExpandedAccess(dto.getIndHasExpandedAccess());
-            indldeDTO.setExpandedAccessType(dto.getIndExpandedAccessStatus());
-            indIdeList.add(indldeDTO);
-        }
-        LOG.info("leaving getIndIdeList....");
-        return indIdeList;
-    }
-    private  List<TrialFundingWebDTO> getGrantList(StudyProtocolBatchDTO dto) throws PAException {
-        LOG.info("Entering getGrantList....");
-        List<TrialFundingWebDTO> grantList = new ArrayList<TrialFundingWebDTO>();
-        if (PAUtil.isNotEmpty(dto.getNihGrantFundingMechanism()) 
-                && PAUtil.isNotEmpty(dto.getNihGrantNCIDivisionCode())
-                && PAUtil.isNotEmpty(dto.getNihGrantInstituteCode())
-                && PAUtil.isNotEmpty(dto.getNihGrantSrNumber())) {
-            TrialFundingWebDTO fundingDTO = new TrialFundingWebDTO();
-            fundingDTO.setFundingMechanismCode(dto.getNihGrantFundingMechanism());
-            fundingDTO.setNciDivisionProgramCode(dto.getNihGrantNCIDivisionCode());
-            fundingDTO.setNihInstitutionCode(dto.getNihGrantInstituteCode());
-            fundingDTO.setSerialNumber(dto.getNihGrantSrNumber());
-            grantList.add(fundingDTO);
-       }
-        LOG.info("leaving getGrantList....");
-        return grantList;
-    }
-    private boolean isIndIdeEmpty(StudyProtocolBatchDTO dto) {
-        if (PAUtil.isNotEmpty(dto.getIndType()) 
-                && PAUtil.isNotEmpty(dto.getIndNumber())
-                && PAUtil.isNotEmpty(dto.getIndGrantor())
-                && PAUtil.isNotEmpty(dto.getIndHolderType())
-                && PAUtil.isNotEmpty(dto.getIndHasExpandedAccess())) {
-            return false;
-        }
-        return true;
-    }
     private List<TrialDocumentWebDTO> addDocDTOToList(StudyProtocolBatchDTO dto, String folderPath) throws IOException {
         TrialUtil util = new TrialUtil();
         File doc = new File(folderPath + dto.getProtcolDocumentFileName());
@@ -685,6 +661,18 @@ public class BatchCreateProtocols {
              docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), 
                      dto.getOtherTrialRelDocumentFileName(), doc));  
          }
+         if (PAUtil.isNotEmpty(dto.getProtocolHighlightDocFileName())) {
+             doc = new File(folderPath + dto.getProtocolHighlightDocFileName());
+             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), 
+                     dto.getProtocolHighlightDocFileName(), doc));  
+         }
+         if (PAUtil.isNotEmpty(dto.getChangeRequestDocFileName())) {
+             doc = new File(folderPath + dto.getChangeRequestDocFileName());
+             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), 
+                     dto.getChangeRequestDocFileName(), doc));  
+         }
+
+
         return docDTOList;
     }
 }

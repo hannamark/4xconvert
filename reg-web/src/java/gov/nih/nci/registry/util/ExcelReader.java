@@ -260,6 +260,13 @@ public class ExcelReader {
         case BatchConstants.INFORMED_CONSENT_DOC_FILE_NAME: 
             batchDto.setInformedConsentDocumentFileName(cellValue); break;
         case BatchConstants.OTHER_TRIAL_DOC_FILE_NAME: batchDto.setOtherTrialRelDocumentFileName(cellValue); break;
+        case BatchConstants.SUBMISSION_TYPE: batchDto.setSubmissionType(cellValue); break;
+        case BatchConstants.NCI_TRIAL_IDENTIFIER: batchDto.setNciTrialIdentifier(cellValue); break;
+        case BatchConstants.AMENDMENT_NUMBER: batchDto.setAmendmentNumber(cellValue); break;
+        case BatchConstants.AMENDMENT_DATE:batchDto.setAmendmentDate(cellValue); break;
+        case BatchConstants.PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME: batchDto.setProtocolHighlightDocFileName(cellValue); 
+            break;
+        case BatchConstants.CHANGE_MEMO_DOC_FILE_NAME:batchDto.setChangeRequestDocFileName(cellValue); break;
         default: throw new PAException(" Unknown coloumn #" + col + "to map ");
         }
         return batchDto;
