@@ -135,14 +135,14 @@ import gov.nih.nci.pa.domain.StudyObjective;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -201,6 +201,7 @@ public class TestSchema {
         public static ArrayList<Long> diseaseIds;
         public static ArrayList<Long> outcomeIds;
         public static ArrayList<Long> regAuthIds;
+        public static ArrayList<Long> personIds;
 
         static {
             Configuration config = new AnnotationConfiguration().
@@ -303,6 +304,7 @@ public class TestSchema {
                 Connection connection = session.connection();
                 try {
                     Statement statement = connection.createStatement();
+                    statement.executeUpdate("delete from patient");
                     statement.executeUpdate("delete from STUDY_ONHOLD");
                     statement.executeUpdate("delete from STUDY_RELATIONSHIP");
                     statement.executeUpdate("delete from STUDY_MILESTONE");
@@ -402,6 +404,7 @@ public class TestSchema {
             diseaseIds = new ArrayList<Long>();
             outcomeIds = new ArrayList<Long>();
             regAuthIds = new ArrayList<Long>();
+            personIds = new ArrayList<Long>();
 
             StudyProtocol sp = new StudyProtocol();
             sp.setOfficialTitle("cacncer for THOLA");
@@ -453,6 +456,7 @@ public class TestSchema {
             per.setFirstName("Joe");
             per.setLastName("the Clinician");
             addUpdObject(per);
+            personIds.add(per.getId());
 
             HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(per, org);
             addUpdObject(hcp);
