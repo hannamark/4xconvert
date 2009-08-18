@@ -135,9 +135,11 @@ function manageRespPartyLookUp(){
         </tr> 
          <c:choose>
          <c:when test="${gtdDTO.responsiblePartyType == 'sponsor'}">
+            
+
              <tr id="rpcid" >
                 <td scope="row" class="label">
-                    <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+                    <label for="responsiblepartycontact"> Responsible Party Personal Contact :</label> 
                 </td>               
                 <td class="value">
                     <div id="loadResponsibleContactField">

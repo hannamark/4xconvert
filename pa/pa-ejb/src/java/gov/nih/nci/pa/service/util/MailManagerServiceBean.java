@@ -328,10 +328,13 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.body");
-
+        String amendNumber = "";
+        if (spDTO.getAmendmentNumber() != null) {
+            amendNumber = spDTO.getAmendmentNumber();
+        }
         mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
         mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
-        mailBody = mailBody.replace("${amendmentNumber}", spDTO.getAmendmentNumber());
+        mailBody = mailBody.replace("${amendmentNumber}", amendNumber);
         mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
         mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
 

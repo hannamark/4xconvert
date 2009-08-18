@@ -100,7 +100,6 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,19 +179,26 @@ public class StudyOverallStatusAction extends ActionSupport implements
     public String update() {
         clearErrorsAndMessages();
 
-        boolean statusChanged;
         try {
-            statusChanged = enforceBusinessRules();
-            validateTrialDates();
-            if (hasActionErrors()) {
-                return Action.SUCCESS;
-            }
-            if (statusChanged) {
-                insertOrUpdateStudyOverallStatus();
-            }
-            if (!hasActionErrors()) {
-                updateStudyProtocol();
-            }
+            StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+            statusDto.setIdentifier(IiConverter.convertToIi((Long) null));
+            statusDto.setReasonText(StConverter.convertToSt(this.getStatusReason()));
+            statusDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
+            statusDto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
+            statusDto.setStudyProtocolIdentifier(spIdIi);
+            
+            StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+            studyProtocolDTO.setIdentifier(spIdIi);
+            studyProtocolDTO.setStartDateTypeCode(CdConverter.convertStringToCd(startDateType));
+            studyProtocolDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(startDate)));
+            studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(
+                    PAUtil.dateStringToTimestamp(completionDate)));
+            studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(completionDateType));
+            sosService.validate(statusDto, studyProtocolDTO);
+
+            insertOrUpdateStudyOverallStatus();
+            updateStudyProtocol();
+            
             if (!hasActionErrors()) {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
                 loadForm();
@@ -434,199 +440,4 @@ public class StudyOverallStatusAction extends ActionSupport implements
         }
     }
 
-    @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
-    private boolean enforceBusinessRules() throws PAException {
-        StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
-
-        Timestamp statusTimestamp = PAUtil.dateStringToTimestamp(statusDate);
-        Timestamp startTimestamp = PAUtil.dateStringToTimestamp(startDate);
-        Timestamp completionTimestamp = PAUtil.dateStringToTimestamp(completionDate);
-        StudyStatusCode oldCode = null;
-        Timestamp oldDate = null;
-        String oldReason = null;
-        StudyOverallStatusDTO sos = sosService.getCurrentByStudyProtocol(spIdIi);
-        if (sos != null) {
-            oldCode = StudyStatusCode.getByCode(CdConverter.convertCdToString(sos.getStatusCode()));
-            oldDate = TsConverter.convertToTimestamp(sos.getStatusDate());
-            oldReason = StConverter.convertToString(sos.getReasonText());
-        }
-        StudyOverallStatusDTO oldStatusDto = sosService.getCurrentByStudyProtocol(spIdIi);
-        boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);
-        boolean dateChanged = (oldDate == null) ? (statusTimestamp != null) : !oldDate.equals(statusTimestamp);
-        boolean reasonChanged = (oldReason == null) ? (statusReason != null) : !oldReason.equals(statusReason);
-        if (!codeChanged && !dateChanged && !reasonChanged) {
-            return false;
-        }
-        StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
-        .getSession().getAttribute(Constants.TRIAL_SUMMARY);
-        
-        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIdIi);
-            //original submission don't check status transition
-            if (!(spqDTO.getDocumentWorkflowStatusCode() != null 
-                    && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED") 
-            && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) //{ 
-             // enforce status transition rules (this must be first check per Tracker 17366
-                 && ((oldCode != null) && !oldCode.canTransitionTo(newCode))) {
-                    addActionError("Illegal study status transition from '" + oldCode.getCode()
-                            + "' to '" + newCode.getCode() + "'.  ");
-              //}
-            }
-        // enforce date rules related to status transitions
-        if ((startDateType != null) && (completionDateType != null)) {
-            if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
-                if (!startTimestamp.equals(statusTimestamp)) {
-                    addActionError("When transitioning from 'Approved' to 'Active' the trial start "
-                            + "date must be the same as the status date.");
-                }
-                if (!startDateType.equals(actualString)) {
-                    addActionError("When transitioning from 'Approved' to 'Active' "
-                            + "the trial start date must be 'Actual'.");
-                }
-            }
-            if (!StudyStatusCode.APPROVED.equals(newCode) && !StudyStatusCode.WITHDRAWN.equals(newCode)
-                    && !StudyStatusCode.IN_REVIEW.equals(newCode) && !StudyStatusCode.DISAPPROVED.equals(newCode)
-                    && startDateType.equals(anticipatedString)) {
-                addActionError("Trial start date can be 'Anticipated' only if the status is "
-                            + "'Approved' or 'Withdrawn'.");
-            }
-            if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.WITHDRAWN.equals(newCode)
-                    && !StudyStatusCode.IN_REVIEW.equals(newCode) && !StudyStatusCode.DISAPPROVED.equals(newCode)
-                    && startDateType.equals(actualString)) {
-                addActionError("Trial Start date type should be ‘Anticipated’ and Trial Start date "
-                            + "should be future date if Trial Status is changed from ‘Approved’ to ‘Withdrawn’.  ");
-            }
-            if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
-                if (completionDateType.equals(anticipatedString)) {
-                    addActionError("Primary Completion Date cannot be 'Anticipated' when "
-                            + "Current Trial Status is '" + newCode.getCode() + "'.");
-                }
-                if (completionTimestamp.before(TsConverter.convertToTimestamp(oldStatusDto.getStatusDate()))) {
-                    addActionError("Primary Completion Date must be the same or greater than "
-                            + "Current Trial Status Date when Current Trial Status is '" + newCode.getCode() + "'.");
-                }
-            } else {
-                if (!completionDateType.equals(anticipatedString)) {
-                    addActionError("Trial completion date must be 'Anticipated' when the status is "
-                            + "not 'Complete' or 'Administratively Complete'.");
-                }
-            }
-        }
-        return true;
-    }
-    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
-    private void validateTrialDates() {
-        // Constraint/Rule: 18 Current Trial Status Date must be current or past.
-            Timestamp userStatusDate = PAUtil.dateStringToTimestamp(statusDate);
-            Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-            if (currentTimeStamp.before(userStatusDate)) {
-                addActionError("Current Trial Status Date cannot be in the future.");                
-            }        
-        // Constraint/Rule: 19 Trial Start Date must be current/past if 'actual' trial start date type 
-        // is selected and must be future if 'anticipated' trial start date type is selected.
-            if (startDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                Timestamp trialStartDate = PAUtil.dateStringToTimestamp(startDate);
-                currentTimeStamp = new Timestamp((new Date()).getTime());
-                if (currentTimeStamp.before(trialStartDate)) {
-                    addActionError("Actual Trial Start Date must be current or in past.");                
-                }
-           } else if (startDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-              Timestamp trialStartDate = PAUtil.dateStringToTimestamp(startDate);
-              currentTimeStamp = new Timestamp((new Date()).getTime());
-              if (currentTimeStamp.after(trialStartDate)) {
-                  addActionError("Anticipated Start Date must be in future.");                
-              }
-            }          
-        // Constraint/Rule: 20 Primary Completion Date must be current/past if 'actual' 
-        // primary completion date type is selected and must be future if 'anticipated' 
-        // trial primary completion date type is selected.
-        if (PAUtil.isNotEmpty(completionDate) && PAUtil.isNotEmpty(completionDateType)) {
-            if (completionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                Timestamp userCompletionDate = PAUtil.dateStringToTimestamp(completionDate);
-                currentTimeStamp = new Timestamp((new Date()).getTime());
-                 if (currentTimeStamp.before(userCompletionDate)) {
-                     addActionError("Actual Primary Completion Date must be current or in past.");                
-                   }
-            } else if (completionDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                    Timestamp userCompletionDate = PAUtil.dateStringToTimestamp(completionDate);
-                    currentTimeStamp = new Timestamp((new Date()).getTime());
-                    if (currentTimeStamp.after(userCompletionDate)) {
-                        addActionError("Anticipated Primary Completion Date must be in future.");                
-                        }
-            }          
-        }        
-        // Constraint/Rule:  21 If Current Trial Status is 'Active', Trial Start Date must be the same as 
-        // Current Trial Status Date and have 'actual' type.
-        //pa2.0 release adding Trial Start date is smaller or same Current Trial Status Date
-        if (PAUtil.isNotEmpty(currentTrialStatus)
-            && PAUtil.isNotEmpty(statusDate)
-            && PAUtil.isNotEmpty(startDate)
-            && PAUtil.isNotEmpty(startDateType)
-            && StudyStatusCode.ACTIVE.getCode().equals(currentTrialStatus)) {
-              userStatusDate = PAUtil.dateStringToTimestamp(statusDate);
-              Timestamp trialStartDate = PAUtil.dateStringToTimestamp(startDate);
-              if (trialStartDate.after(userStatusDate) 
-                              || !startDateType.equals(
-                                  ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  addActionError("If Current Trial Status is Active, Trial Start Date must be Actual "
-                          + " and same as or smaller than Current Trial Status Date");
-              }                
-          }            
-        // Constraint/Rule: 22 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
-        //  Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 
-        if (PAUtil.isNotEmpty(currentTrialStatus)
-                         && PAUtil.isNotEmpty(startDateType)) {
-          if (StudyStatusCode.APPROVED.getCode().equals(currentTrialStatus)
-              || StudyStatusCode.IN_REVIEW.getCode().equals(currentTrialStatus)
-              || StudyStatusCode.DISAPPROVED.getCode().equals(currentTrialStatus)
-              || StudyStatusCode.WITHDRAWN.getCode().equals(currentTrialStatus)) {
-              if (!startDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                  addActionError("If Current Trial Status is " + currentTrialStatus   
-                          + " , Trial Start Date must be Anticipated");
-              }                
-          } else {
-              if (!startDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-              addActionError("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review");
-              }              
-          }
-        }        
-        // Constraint/Rule: 23 If Current Trial Status is 'Completed', Primary Completion Date must be the 
-        // same as Current Trial Status Date and have 'actual' type.
-        if (PAUtil.isNotEmpty(currentTrialStatus) && PAUtil.isNotEmpty(statusDate)
-            && PAUtil.isNotEmpty(completionDate) && PAUtil.isNotEmpty(completionDateType)
-            && StudyStatusCode.COMPLETE.getCode().equals(currentTrialStatus)) {
-                  userStatusDate = PAUtil.dateStringToTimestamp(statusDate);
-                  //Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(completionDate);
-                  if (!completionDateType.equals(
-                          ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                      addActionError("If Current Trial Status is Complete, Primary Completion Date must be Actual");
-              }                
-          }            
-        // Constraint/Rule: 24 If Current Trial Status is 'Completed' or 'Administratively Completed', 
-        // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type 
-        // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'. 
-        if (PAUtil.isNotEmpty(currentTrialStatus) && PAUtil.isNotEmpty(completionDateType)) {
-          if (StudyStatusCode.COMPLETE.getCode().equals(currentTrialStatus) 
-              || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(currentTrialStatus)) {
-              if (!completionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  addActionError("If Current Trial Status is Complete or Administratively Complete,"
-                          + " Primary Completion Date must be  Actual.");
-              }
-          } else {
-              if (PAUtil.isNotEmpty(completionDateType) && !completionDateType.equals(
-                  ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                  addActionError("Primary Completion Date  must be Anticipated for any other Current Trial "
-                          + "Status value besides Complete or Administratively Complete.");                  
-              }
-          }          
-        }        
-        // Constraint/Rule:25 Trial Start Date must be same/smaller than Primary Completion Date. 
-        if (PAUtil.isNotEmpty(startDate) && PAUtil.isNotEmpty(completionDate)) {
-            Timestamp trialStartDate = PAUtil.dateStringToTimestamp(startDate);
-            Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(completionDate);
-            if (trialCompletionDate.before(trialStartDate)) {
-              addActionError("Trial Start Date must be same or earlier than Primary Completion Date.");                
-            }
-        }   
-
-    }
 }

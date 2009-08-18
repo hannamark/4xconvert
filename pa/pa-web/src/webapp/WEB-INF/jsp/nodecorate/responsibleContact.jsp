@@ -1,4 +1,5 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<span class="info">Select Either Personal Contact or Generic Contact</span>
 <table>
 <tr>
 <td>

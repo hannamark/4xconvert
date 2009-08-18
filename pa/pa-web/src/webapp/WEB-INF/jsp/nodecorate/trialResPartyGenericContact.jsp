@@ -14,9 +14,8 @@
 </td>
 </tr>
 </table>
-<span class="info">Required only if Responsible Party is Sponsor</span>
 <span class="formErrorMsg"> 
      <s:fielderror>
-     <s:param>responsiblePersonName</s:param>
+     <s:param>gtdDTO.responsibleGenericContactName</s:param>
     </s:fielderror>                            
 </span>

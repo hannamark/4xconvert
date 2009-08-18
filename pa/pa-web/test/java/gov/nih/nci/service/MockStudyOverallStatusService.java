@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -193,6 +194,13 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
             throws PAException {
         // TODO Auto-generated method stub
         
+    }
+
+    public void validate(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO) throws PAException {
+        if(StudyStatusCode.APPROVED.getCode().equals(statusDto.getStatusCode().getCode())) {
+            throw new PAException("Illegal study status transition");
+        }
     }
 
 }

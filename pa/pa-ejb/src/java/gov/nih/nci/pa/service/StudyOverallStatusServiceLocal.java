@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import javax.ejb.Local;
 
@@ -91,5 +92,12 @@ import javax.ejb.Local;
  */
 @Local
 public interface StudyOverallStatusServiceLocal extends StudyPaService<StudyOverallStatusDTO> {
-
+    /**
+     * 
+     * @param statusDto dto
+     * @param studyProtocolDTO pdto
+     * @throws PAException e
+     */
+    void validate(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO) throws PAException;
 }

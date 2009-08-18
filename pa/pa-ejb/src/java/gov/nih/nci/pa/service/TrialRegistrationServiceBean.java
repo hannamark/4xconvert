@@ -86,15 +86,18 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -102,12 +105,12 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -199,6 +202,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyContactServiceRemote studyContactService = null;
     @EJB
     TSRReportGeneratorServiceRemote tsrReportService = null;
+    @EJB
+    DocumentWorkflowStatusServiceLocal docWrkFlowStatusService = null;
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifer is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
     
@@ -332,7 +337,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     throws PAException {
         Ii fromStudyProtocolii = null;
         Ii toStudyProtocolIi = null;
-
+        
         try {
             fromStudyProtocolii = studyProtocolDTO.getIdentifier();
             toStudyProtocolIi = createStudyProtocolObjs(
@@ -492,7 +497,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO ,
             Ii responsiblePartyContactIi , boolean isAmend)
     throws PAException {
-
+        validate(studyProtocolDTO, overallStatusDTO, isAmend);
         enforceBusinessRules(
                 studyProtocolDTO,
                 overallStatusDTO,
@@ -926,6 +931,41 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             throw new PAException("Validation Exception " + sb.toString());
         }
 
+    }
+    /**
+     * 
+     * @param studyProtocolDTO protocolDto
+     * @param overallStatusDTO statusDto
+     * @param isAmend amend
+     * @return 
+     * @throws PAException e
+     */
+    public void validate(StudyProtocolDTO studyProtocolDTO ,
+            StudyOverallStatusDTO overallStatusDTO, boolean isAmend) throws PAException {
+        StringBuffer errorMsg = new StringBuffer();
+        studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
+        if (isAmend) {
+            //make sure DocumentWorkflowStatusCode is ABSTRACTION_VERIFIED_NORESPONSE
+            //ABSTRACTION_VERIFIED_RESPONSE !statusCode.equals(StudyStatusCode.DISAPPROVED)
+            //get the documentWrkFlowstatus n status code
+            DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
+                    studyProtocolDTO.getIdentifier());
+            String dwfs = isoDocWrkStatus.getStatusCode().getCode();
+            
+            StudyOverallStatusDTO statusDTO = studyOverallStatusService.getCurrentByStudyProtocol(
+                    studyProtocolDTO.getIdentifier());
+            if (!(dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getDisplayName())
+                    || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getDisplayName()))) {
+                errorMsg.append("Trial with processing status 'Abstraction Verified No Response' or " 
+                        + " 'Abstraction Verified No Response' can be Amended.");
+            }
+            if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED)) {
+                errorMsg.append("Amendment to a Trial with Current Trial Status as 'Disapproved' is not allowed.");
+            }
+        }
+        if (errorMsg.length() > 0) {
+                throw new PAException("Validation Exception " + errorMsg);
+        }
     }
 
  }

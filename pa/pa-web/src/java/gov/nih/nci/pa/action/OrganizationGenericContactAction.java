@@ -109,17 +109,23 @@ import com.opensymphony.xwork2.Preparable;
  * @author Anupama Sharma
  * 
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({ "PMD.NPathComplexity", "PMD.CyclomaticComplexity" })
 public class OrganizationGenericContactAction extends ActionSupport implements Preparable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private List<PAOrganizationalContactDTO> orgContactList = new ArrayList<PAOrganizationalContactDTO>();
     private String title;
     private String orgContactId;
-
+    private static String failureMessage = "failureMessage";
+    
     /**
-     * @throws Exception on error
+     * 
      */
-    public void prepare() throws Exception {
-       
+    public void prepare() {
+     title = "";
+     orgContactId = "";
     }
     /**
      * 
@@ -148,9 +154,10 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             StringBuffer message = new StringBuffer();
             Iterator<String> i = getActionErrors().iterator();
             while (i.hasNext()) {
-                message.append(" - " + i.next().toString());
+                message.append(" - ");
+                message.append(i.next().toString());
             }
-            ServletActionContext.getRequest().setAttribute("failureMessage", message);
+            ServletActionContext.getRequest().setAttribute(failureMessage, message);
             return SUCCESS; 
         }
         try {
@@ -169,7 +176,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         } catch (Exception e) {
             LOG.error("Exception occured while getting organization contact : " + e);
             addActionError("Exception occured while getting organization contact : " + e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", 
+            ServletActionContext.getRequest().setAttribute(failureMessage, 
                     "Exception occured while getting organization contact : " + e.getMessage());
             return SUCCESS;
         }
@@ -179,6 +186,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
      * 
      * @return s
      */
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String create() {
         String email = ServletActionContext.getRequest().getParameter("email");
         String phone = ServletActionContext.getRequest().getParameter("phone");
@@ -202,9 +210,10 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             StringBuffer errMsg = new StringBuffer();
             Iterator<String> i = getActionErrors().iterator();
             while (i.hasNext()) {
-                errMsg.append(" - " + i.next().toString());
+                errMsg.append(" - ");
+                errMsg.append(i.next().toString());
             }
-            ServletActionContext.getRequest().setAttribute("failureMessage", errMsg.toString());
+            ServletActionContext.getRequest().setAttribute(failureMessage, errMsg.toString());
             return "create_org_contact_response";
         }
         try {
@@ -239,9 +248,9 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             convertFromISO(isoDtoList);
         } catch (Exception e) {
             LOG.error("Exception occured while creating organization contact : " + e);
-            addActionError("Exception occured while creating organization contact : " + e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", 
-                    "Exception occured while creating organization contact : " + e.getMessage());
+            addActionError("Exception occured while creating organization contact : " + e.getCause());
+            ServletActionContext.getRequest().setAttribute(failureMessage, 
+                    "Exception occured while creating organization contact : " + e.getCause());
             return "create_org_contact_response";
         }
         return "create_org_contact_response";

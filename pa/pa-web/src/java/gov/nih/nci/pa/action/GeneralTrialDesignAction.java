@@ -608,7 +608,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         return identifier;
 
     }
-
+    @SuppressWarnings({"PMD.CollapsibleIfStatements" })
     private void enforceBusinessRules() {
       if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
         addFieldError("gtdDTO.localProtocolIdentifier", getText("Organization Trial ID must be Entered"));
@@ -619,10 +619,14 @@ public class GeneralTrialDesignAction extends ActionSupport {
       if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
           addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
       }
-      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
-          addFieldError("responsiblePersonName",
-                  getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
+      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())) {
+          
+          if (PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier()) 
+              && PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
+              
+              addFieldError("gtdDTO.responsibleGenericContactName",
+                      getText("Please choose Either Personal Contact or Generic Contact "));
+          }
       }
       if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
           addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));

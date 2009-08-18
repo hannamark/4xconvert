@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,6 +103,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Expression;
 
 /**
  * @author Naveen Amiruddin
@@ -116,6 +118,7 @@ public class StudyRelationshipServiceBean extends
     implements StudyRelationshipServiceLocal , StudyRelationshipServiceRemote {
     //private final transient StudyRelationshipConverter srConverter = new StudyRelationshipConverter();
     private static final Logger LOG  = Logger.getLogger(StudyRelationshipServiceBean.class);
+    
    /**
     * {@inheritDoc}
     */
@@ -131,9 +134,17 @@ public class StudyRelationshipServiceBean extends
        try {
            session = HibernateUtil.getCurrentSession();
            StudyRelationship exampleDO = new StudyRelationship();
-           exampleDO.setId(IiConverter.convertToLong(dto.getIdentifier()));
-           Example example = Example.create(exampleDO);
-           Criteria criteria = session.createCriteria(StudyRelationship.class).add(example);
+           Criteria criteria = session.createCriteria(StudyRelationship.class);
+           if (!PAUtil.isIiNull(dto.getIdentifier())) {
+               exampleDO.setId(IiConverter.convertToLong(dto.getIdentifier()));
+               Example example = Example.create(exampleDO);
+               criteria.add(example);
+           }
+           if (!PAUtil.isIiNull(dto.getSourceStudyProtocolIdentifier())) {
+              criteria.createAlias("sourceStudyProtocol", "sp")
+                  .add(Expression.eq("sp.id", IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier())));
+
+           }
            int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
            criteria.setMaxResults(maxLimit);
            criteria.setFirstResult(pagingParams.getOffset());

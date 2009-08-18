@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import javax.ejb.Remote;
 
@@ -92,5 +93,13 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface StudyOverallStatusServiceRemote extends  StudyPaService<StudyOverallStatusDTO> {
+    /**
+     * 
+     * @param statusDto dto
+     * @param studyProtocolDTO pdto
+     * @throws PAException e
+     */
+    void validate(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO) throws PAException;
     
 }
