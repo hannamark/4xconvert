@@ -92,6 +92,7 @@ import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.CorrelationSortCriterion;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -118,7 +119,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * Generic superclass for correlation services.
- * 
+ *
  * @param <T> type
  * @param <CR> the CR type for T
  * @param <DTO> the dto type for T
@@ -143,17 +144,17 @@ public abstract class AbstractCorrelationServiceBean
     abstract IdConverter getIdConverter();
 
     /**
-     * @param max set the maximum 
+     * @param max set the maximum
      * @deprecated only for testing
      */
     @Deprecated
     public static void setMaxResultsReturnedLimit(int max) {
         maxResults = max;
     }
-    
+
     /**
      * Get the search criteria.
-     * 
+     *
      * @param example the example to search based off of.
      * @return the criteria
      */
@@ -163,7 +164,7 @@ public abstract class AbstractCorrelationServiceBean
 
     /**
      * TODO.
-     * 
+     *
      * @param dto dto
      * @return identifier
      * @throws EntityValidationException on error
@@ -274,7 +275,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateCorrelation(DTO proposedState) throws EntityValidationException {
-        Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
+        Long pId = IiDsetConverter.convertToId(proposedState.getIdentifier());
         T target = getLocalService().getById(pId);
         CR cr = newCR(target);
         copyIntoAbstractModel(proposedState, cr);

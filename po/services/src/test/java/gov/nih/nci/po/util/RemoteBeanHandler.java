@@ -58,9 +58,7 @@ public class RemoteBeanHandler implements InvocationHandler {
             // @todo bind name might be in annotation
             Object remotebean = Proxy.newProxyInstance(bean.getClass().getClassLoader(), remoteInterfaces, remoteHandler);
             return remotebean;
-        } else {
-            throw new Error(bean.getClass() + "has no remote interface");
         }
-
+        throw new Error(bean.getClass() + "has no remote interface");
     }
 }

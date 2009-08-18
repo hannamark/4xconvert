@@ -108,7 +108,7 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
      */
     @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable) {
+        if (entity instanceof Curatable<?, ?>) {
             Curatable<?, ?> c = (Curatable<?, ?>) entity;
             if (c.getStatusDate() == null) {
                 setStatusDate(propertyNames, state);
@@ -133,7 +133,7 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
     @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
             String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable && previousState != null) {
+        if (entity instanceof Curatable<?, ?> && previousState != null) {
             for (int i = 0; i < currentState.length; ++i) {
                 if (currentState[i] instanceof EntityStatus) {
                     EntityStatus newStatus = (EntityStatus) currentState[i];
@@ -144,10 +144,9 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
                     if (!oldStatus.canTransitionTo(newStatus)) {
                         throw new CallbackException(String.format("Illegal curation transition from %s to %s",
                                                                   oldStatus.name(), newStatus.name()));
-                    } else {
-                        setStatusDate(propertyNames, currentState);
-                        return true;
                     }
+                    setStatusDate(propertyNames, currentState);
+                    return true;
 
                 } else if (currentState[i] instanceof RoleStatus) {
                     RoleStatus newStatus = (RoleStatus) currentState[i];
@@ -158,10 +157,9 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
                     if (!oldStatus.canTransitionTo(newStatus)) {
                         throw new CallbackException(String.format("Illegal curation transition from %s to %s",
                                                                   oldStatus.name(), newStatus.name()));
-                    } else {
-                        setStatusDate(propertyNames, currentState);
-                        return true;
                     }
+                    setStatusDate(propertyNames, currentState);
+                    return true;
                 }
             }
         }

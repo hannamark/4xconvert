@@ -30,7 +30,6 @@ import java.util.Map;
  */
 public final class TransformerRegistry {
 
-    @SuppressWarnings("unchecked")
     private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
 
     static {

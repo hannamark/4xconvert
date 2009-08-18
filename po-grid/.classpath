@@ -96,7 +96,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.4.jar"/>
 	<classpathentry kind="lib" path="build/lib/po-services-3.0-SNAPSHOT-client.jar"/>
-	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.3-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.3-SNAPSHOT-tests.jar"/>
+	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.3.jar"/>
+	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.3-tests.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

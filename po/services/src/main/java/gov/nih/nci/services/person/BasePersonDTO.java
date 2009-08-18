@@ -85,7 +85,7 @@ package gov.nih.nci.services.person;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.EntityDto;
 
 
 /**
@@ -93,8 +93,8 @@ import gov.nih.nci.services.PoDto;
  *
  */
 @SuppressWarnings("PMD.AbstractNaming")
-public abstract class BasePersonDTO implements PoDto {
-    private static final long serialVersionUID = 1L;
+public abstract class BasePersonDTO implements EntityDto {
+    private static final long serialVersionUID = 2L;
 
     private EnPn name;
     private DSet<Tel> telecomAddress;

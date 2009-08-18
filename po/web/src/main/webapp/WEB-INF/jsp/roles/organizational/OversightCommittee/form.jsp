@@ -91,6 +91,12 @@
                 </div>
                 <input id="enableEnterSubmit" type="submit"/>
                 </s:form>
+                <c:if test="${!empty role.otherIdentifiers}">
+                    <label>Other IDs</label><br/>
+                    <c:forEach var="otherId" items="${role.otherIdentifiers}">
+                        ${otherId.identifierName}: ${otherId.extension}<br/>
+                    </c:forEach>
+                </c:if>
             </div>
         </div>
     </div>

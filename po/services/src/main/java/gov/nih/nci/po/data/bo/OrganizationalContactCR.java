@@ -310,6 +310,7 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     /**
      * {@inheritDoc}
      */
+    @Override
     @ManyToOne
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
@@ -321,6 +322,7 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     /**
      * {@inheritDoc}
      */
+    @Override
     @Length(max = LONG_COL_LENGTH)
     public String getTitle() {
         return super.getTitle();

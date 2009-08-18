@@ -126,8 +126,8 @@ public class EnPnConverter {
 
         for (Enxp part : parts) {
             validateCoppaConstraints(part);
-            String delimieter = extractDelimiter(previousPart, previousType, part);
-            processPart(part, person, delimieter);
+            String delimiter = extractDelimiter(previousPart, previousType, part);
+            processPart(part, person, delimiter);
             if (previousPart != null) {
                 previousType = previousPart.getType();
             }

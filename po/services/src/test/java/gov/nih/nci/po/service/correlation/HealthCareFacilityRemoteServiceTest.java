@@ -108,7 +108,7 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractEnhancedOrganiz
     protected HealthCareFacilityDTO getSampleDto() throws Exception {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         super.fillInFields(dto);
-        
+
         // re-gen a player org for next sample for uniqueness
         createAndSetOrganization();
         return dto;
@@ -141,17 +141,19 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractEnhancedOrganiz
         orgTest.createOrganization();
     }
 
+    @Override
     protected HealthCareFacilityDTO getEmptySearchCriteria() {
         return new HealthCareFacilityDTO();
     }
 
     @Override
     protected void modifySubClassSpecificFieldsForCorrelation2(HealthCareFacilityDTO correlation2) {
+
     }
 
     @Override
     protected void testSearchOnSubClassSpecificFields(HealthCareFacilityDTO correlation1, Ii id2,
             HealthCareFacilityDTO searchCriteria) throws NullifiedRoleException {
-        
+
     }
 }

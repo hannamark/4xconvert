@@ -123,10 +123,10 @@ public class MessageProducerBean implements MessageProducerLocal {
     private static Properties jndiProps;
     static final String USERNAME_PROPERTY = "jms.publisher.username";
     static final String PASSWORD_PROPERTY = "jms.publisher.password";
-    
+
     private final TopicConnectionFactory connectionFactory;
     private final Topic topic;
-    
+
     /**
      * Constructor to create the message publisher.
      * @throws NamingException on error
@@ -168,10 +168,10 @@ public class MessageProducerBean implements MessageProducerLocal {
     protected Topic getTopic(InitialContext ic) {
         return (Topic) JNDIUtil.lookup(ic, "/topic/" + MessageProducerBean.TOPIC_NAME);
     }
-    
+
     /**
      * Callback to modify the javax.jms.ObjectMessage message without weaving potentially complicated
-     * logic instead a simple method (using behavior injection). 
+     * logic instead a simple method (using behavior injection).
      * @author smatyas
      *
      */
@@ -187,13 +187,13 @@ public class MessageProducerBean implements MessageProducerLocal {
                 msg.setStringProperty(ANNOUNCEMENT_TYPE, UPDATE);
             }
         };
-    
+
     private static ObjectMessageAdjusterCallback msgCreate = new ObjectMessageAdjusterCallback() {
             public void adjust(ObjectMessage msg) throws JMSException {
                 msg.setStringProperty(ANNOUNCEMENT_TYPE, CREATE);
             }
         };
-    
+
     /**
      * {@inheritDoc}
      */
@@ -209,7 +209,7 @@ public class MessageProducerBean implements MessageProducerLocal {
     public void sendCreate(Class c, Curatable entity) throws JMSException {
         sendMessage(c, entity, msgCreate);
     }
-    
+
     @SuppressWarnings("unchecked")
     private void sendMessage(Class c, Curatable entity, ObjectMessageAdjusterCallback callback) throws JMSException {
         Ii ii = IdConverterRegistry.find(c).convertToIi(entity.getId());
@@ -228,9 +228,7 @@ public class MessageProducerBean implements MessageProducerLocal {
             session = connection.createSession(true, Session.SESSION_TRANSACTED);
             sender = session.createProducer(topic);
             ObjectMessage msg = session.createObjectMessage(o);
-            if (callback instanceof ObjectMessageAdjusterCallback) {
-                callback.adjust(msg);
-            }
+            callback.adjust(msg);
             sender.send(msg);
         } finally {
             close(sender);
@@ -268,7 +266,7 @@ public class MessageProducerBean implements MessageProducerLocal {
             }
         }
     }
-    
+
     /**
      * @return connection factor that is used.
      */

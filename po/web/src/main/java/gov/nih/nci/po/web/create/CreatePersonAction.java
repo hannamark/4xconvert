@@ -57,7 +57,7 @@ public class CreatePersonAction extends CuratePersonAction implements Preparable
         set.add(EntityStatus.ACTIVE);
         return set;
     }
-    
+
     /**
      * Method for pulling this value in struts xml.
      * @return the person id as a string.
@@ -65,9 +65,8 @@ public class CreatePersonAction extends CuratePersonAction implements Preparable
     public String getPersonId() {
         if (getPerson() != null && getPerson().getId() != null) {
             return this.getPerson().getId().toString();
-        } else {
-            return "";
         }
+        return "";
     }
-    
+
 }

@@ -101,19 +101,15 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractIdentifiedPersonDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedEntity"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @MappedSuperclass
 public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<Person> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="iso"
-     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$IdentifiedPersonIdConverter"
-     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Override
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })

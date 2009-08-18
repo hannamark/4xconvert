@@ -84,15 +84,15 @@ package gov.nih.nci.services.organization;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.EntityDto;
 
 /**
  * @author Scott Miller
  *
  */
 @SuppressWarnings("PMD.AbstractNaming")
-public abstract class BaseOrganizationDTO implements PoDto {
-    private static final long serialVersionUID = 1L;
+public abstract class BaseOrganizationDTO implements EntityDto {
+    private static final long serialVersionUID = 2L;
 
     private DSet<Tel> telecomAddress;
 

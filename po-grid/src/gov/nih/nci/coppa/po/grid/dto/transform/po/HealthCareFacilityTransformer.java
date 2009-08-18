@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
@@ -36,7 +37,7 @@ public final class HealthCareFacilityTransformer
             return null;
         }
         HealthCareFacilityDTO d = new HealthCareFacilityDTO();
-        d.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        d.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
         d.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
         d.setName(STTransformer.INSTANCE.toDto(input.getName()));
@@ -54,7 +55,7 @@ public final class HealthCareFacilityTransformer
             return null;
         }
         HealthCareFacility d = new HealthCareFacility();
-        d.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        d.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         d.setName(STTransformer.INSTANCE.toXml(input.getName()));

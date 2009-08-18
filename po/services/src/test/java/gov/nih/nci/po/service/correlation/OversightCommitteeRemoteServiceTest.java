@@ -97,6 +97,7 @@ import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -213,21 +214,23 @@ public class OversightCommitteeRemoteServiceTest extends AbstractOrganizationalR
         }
 
         // test search by primary id
-        searchCriteria.setIdentifier(new Ii());
-        searchCriteria.getIdentifier().setExtension(id1.getExtension());
-        searchCriteria.getIdentifier().setRoot(id1.getRoot());
-        searchCriteria.getIdentifier().setIdentifierName(id1.getIdentifierName());
-        searchCriteria.getIdentifier().setDisplayable(id1.getDisplayable());
-        searchCriteria.getIdentifier().setReliability(id1.getReliability());
-        searchCriteria.getIdentifier().setScope(id1.getScope());
+        Ii ii = new Ii();
+        ii.setExtension(id1.getExtension());
+        ii.setRoot(id1.getRoot());
+        ii.setIdentifierName(id1.getIdentifierName());
+        ii.setDisplayable(id1.getDisplayable());
+        ii.setReliability(id1.getReliability());
+        ii.setScope(id1.getScope());
+
+        searchCriteria.setIdentifier(IiConverter.convertToDsetIi(ii));
         List<OversightCommitteeDTO> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id1.getExtension());
 
-        searchCriteria.getIdentifier().setExtension(id2.getExtension());
+        searchCriteria.getIdentifier().getItem().iterator().next().setExtension(id2.getExtension());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         // search by status
         searchCriteria.setIdentifier(null);
@@ -243,33 +246,34 @@ public class OversightCommitteeRemoteServiceTest extends AbstractOrganizationalR
         searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id1.getExtension());
 
         searchCriteria.setPlayerIdentifier(correlation2.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         searchCriteria.setPlayerIdentifier(correlation2.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         // search by type code
         searchCriteria.setPlayerIdentifier(null);
         searchCriteria.setTypeCode(correlation1.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id1.getExtension());
 
         searchCriteria.setTypeCode(correlation2.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         testNullifiedRoleNotFoundInSearch(id2, searchCriteria, OversightCommittee.class);
     }
 
+    @Override
     protected OversightCommitteeDTO getEmptySearchCriteria() {
         return new OversightCommitteeDTO();
     }

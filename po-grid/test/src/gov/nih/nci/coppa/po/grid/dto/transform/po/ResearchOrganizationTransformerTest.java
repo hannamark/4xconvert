@@ -62,7 +62,7 @@ public class ResearchOrganizationTransformerTest extends
 
 
         ResearchOrganizationDTO dto = new ResearchOrganizationDTO ();
-        dto.setIdentifier(id);
+        dto.setIdentifier(IdTransformerTest.convertIdToDSetIi(id));
         dto.setPlayerIdentifier(player);
         dto.setStatus(new CDTransformerTest().makeDtoSimple());
         dto.setFundingMechanism(new CDTransformerTest().makeDtoSimple());
@@ -91,7 +91,7 @@ public class ResearchOrganizationTransformerTest extends
         assignedId.setExtension("456");
 
         ResearchOrganization xml = new ResearchOrganization();
-        xml.setIdentifier(id);
+        xml.setIdentifier(IdTransformerTest.convertIIToDSETII(id));
         xml.setPlayerIdentifier(player);
         xml.setStatus(new CDTransformerTest().makeXmlSimple());
         xml.setFundingMechanism(new CDTransformerTest().makeXmlSimple());
@@ -104,8 +104,9 @@ public class ResearchOrganizationTransformerTest extends
 
     @Override
     public void verifyDtoSimple(ResearchOrganizationDTO x) {
-        assertEquals(x.getIdentifier().getExtension(), "123");
-        assertEquals(x.getIdentifier().getIdentifierName(), Research_ORG_IDENTIFIER_NAME);
+        Ii ii = x.getIdentifier().getItem().iterator().next();
+        assertEquals(ii.getExtension(), "123");
+        assertEquals(ii.getIdentifierName(), Research_ORG_IDENTIFIER_NAME);
         assertEquals(x.getPlayerIdentifier().getExtension(), "346");
         assertEquals(x.getPlayerIdentifier().getIdentifierName(), PLAYER_NAME);
         new CDTransformerTest().verifyDtoSimple(x.getStatus());
@@ -116,8 +117,9 @@ public class ResearchOrganizationTransformerTest extends
 
     @Override
     public void verifyXmlSimple(ResearchOrganization x) {
-        assertEquals(x.getIdentifier().getExtension(), "123");
-        assertEquals(x.getIdentifier().getIdentifierName(),Research_ORG_IDENTIFIER_NAME);
+        II ii = x.getIdentifier().getItem().get(0);
+        assertEquals(ii.getExtension(), "123");
+        assertEquals(ii.getIdentifierName(),Research_ORG_IDENTIFIER_NAME);
         assertEquals(x.getPlayerIdentifier().getExtension(), "346");
         assertEquals(x.getPlayerIdentifier().getIdentifierName(), PLAYER_NAME);
         new CDTransformerTest().verifyXmlSimple(x.getStatus());

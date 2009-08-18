@@ -189,7 +189,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
 
         // check person id
         Ii expectedIi = new Ii();
-        expectedIi.setExtension("" + 2);
+        expectedIi.setExtension("2");
         expectedIi.setDisplayable(true);
         expectedIi.setScope(IdentifierScope.OBJ);
         expectedIi.setReliability(IdentifierReliability.ISS);
@@ -198,7 +198,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPlayerIdentifier()));
 
         // check org id
-        expectedIi.setExtension("" + 3);
+        expectedIi.setExtension("3");
         expectedIi.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.ORG_ROOT);
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.PhoneNotEmptyValidator;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniquePlayerScoper;
@@ -90,6 +91,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -100,9 +102,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
 
@@ -117,7 +122,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      class="gov.nih.nci.services.correlation.HealthCareProviderDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractHealthCareProvider"
  *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @Entity
 @RoleStatusChange
@@ -125,7 +130,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @UniquePlayerScoper(friendlyName = "Health Care Provider")
 @PhoneNotEmptyValidator.PhoneNotEmpty
 public class HealthCareProvider extends AbstractHealthCareProvider implements Correlation, PersonRole {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private Set<HealthCareProviderCR> changeRequests = new HashSet<HealthCareProviderCR>();
 
@@ -169,11 +174,6 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
 
     /**
      * {@inheritDoc}
-     *
-     * @xsnapshot.property match="iso"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$HealthCareProviderIdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Override
     @Id
@@ -308,5 +308,32 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @CollectionOfElements
+    @JoinTable(
+            name = "hcp_otheridentifier",
+            joinColumns = @JoinColumn(name = "hcp_id")
+    )
+    @ForeignKey(name = "HCP_OI_FK")
+    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "null_flavor"),
+            @Column(name = "displayable"),
+            @Column(name = "extension"),
+            @Column(name = "identifier_name"),
+            @Column(name = "reliability"),
+            @Column(name = "root"),
+            @Column(name = "scope")
+    })
+//    @ValidIi
+//    @NotEmptyIiExtension
+//    @NotEmptyIiRoot
+    public Set<Ii> getOtherIdentifiers() {
+        return super.getOtherIdentifiers();
     }
 }

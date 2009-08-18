@@ -97,6 +97,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
@@ -269,23 +270,25 @@ public class IdentifiedPersonRemoteServiceTest
         }
 
         // test search by primary id
-        searchCriteria.setIdentifier(new Ii());
-        searchCriteria.getIdentifier().setExtension(correlation1Id.getExtension());
-        searchCriteria.getIdentifier().setRoot(correlation1Id.getRoot());
-        searchCriteria.getIdentifier().setIdentifierName(correlation1Id.getIdentifierName());
-        searchCriteria.getIdentifier().setDisplayable(correlation1Id.getDisplayable());
-        searchCriteria.getIdentifier().setReliability(correlation1Id.getReliability());
-        searchCriteria.getIdentifier().setScope(correlation1Id.getScope());
+        Ii id = new Ii();
+        id.setExtension(correlation1Id.getExtension());
+        id.setRoot(correlation1Id.getRoot());
+        id.setIdentifierName(correlation1Id.getIdentifierName());
+        id.setDisplayable(correlation1Id.getDisplayable());
+        id.setReliability(correlation1Id.getReliability());
+        id.setScope(correlation1Id.getScope());
+
+        searchCriteria.setIdentifier(IiConverter.convertToDsetIi(id));
         List<IdentifiedPersonDTO> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), correlation1Id.getExtension());
 
-        searchCriteria.getIdentifier().setExtension(correlation2Id.getExtension());
+        searchCriteria.getIdentifier().getItem().iterator().next().setExtension(correlation2Id.getExtension());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), correlation2Id.getExtension());
 
-        searchCriteria.getIdentifier().setExtension("999");
+        searchCriteria.getIdentifier().getItem().iterator().next().setExtension("999");
         results = getCorrelationService().search(searchCriteria);
         assertEquals(0, results.size());
 
@@ -294,14 +297,14 @@ public class IdentifiedPersonRemoteServiceTest
         searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), correlation1Id.getExtension());
 
         // test search by scoper id
         searchCriteria.setPlayerIdentifier(null);
         searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), correlation2Id.getExtension());
 
         // test by assigned id
         searchCriteria.setScoperIdentifier(null);
@@ -313,14 +316,14 @@ public class IdentifiedPersonRemoteServiceTest
         searchCriteria.setAssignedId(correlation2.getAssignedId());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), correlation2Id.getExtension());
 
         // test by assigned id and scoper id
         searchCriteria.setAssignedId(correlation1.getAssignedId());
         searchCriteria.setScoperIdentifier(correlation1.getScoperIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals("1", results.get(0).getIdentifier().getExtension());
+        assertEquals("1", results.get(0).getIdentifier().getItem().iterator().next().getExtension());
 
         // test by invalid assigned id
         searchCriteria.getAssignedId().setExtension("invalid extension");
@@ -332,6 +335,7 @@ public class IdentifiedPersonRemoteServiceTest
         testNullifiedRoleNotFoundInSearch(correlation1Id, searchCriteria, IdentifiedPerson.class);
     }
 
+    @Override
     protected IdentifiedPersonDTO getEmptySearchCriteria() {
         return new IdentifiedPersonDTO();
     }

@@ -114,7 +114,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         getPublisher().sendCreate(getTypeArgument(), obj);
         return id;
     }
-    
+
     /**
      * {@inheritDoc}
      */

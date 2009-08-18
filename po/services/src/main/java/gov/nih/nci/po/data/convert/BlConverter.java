@@ -103,7 +103,7 @@ public class BlConverter extends AbstractXSnapshotConverter<Bl> {
     }
 
     /**
-     * Convert an Bl to a Boolean.
+     * Convert a Bl to a Boolean.
      * @param iso an BL.
      * @return a boolean.
      */
@@ -113,12 +113,11 @@ public class BlConverter extends AbstractXSnapshotConverter<Bl> {
         }
         if (iso.getNullFlavor() != null) {
             return null;
-        } else {
-            if (iso.getValue() == null) {
-                throw new IllegalArgumentException("nullFlavor or value must be set");
-            }
-            return iso.getValue();
         }
+        if (iso.getValue() == null) {
+            throw new IllegalArgumentException("nullFlavor or value must be set");
+        }
+        return iso.getValue();
     }
 
 }

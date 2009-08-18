@@ -198,33 +198,33 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         o.setStatusCode(EntityStatus.PENDING);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
-        
-        
+
+
         o.setStatusCode(EntityStatus.ACTIVE);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
-        
+
         o.setStatusCode(EntityStatus.NULLIFIED);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
-        
-        
+
+
         o.setStatusCode(EntityStatus.INACTIVE);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
-        
+
     }
     @Test
     public void messageSentRegardlessOfRoleStatus() throws Exception {
@@ -234,30 +234,30 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         o.setStatus(RoleStatus.PENDING);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
-        
-        
+
+
         o.setStatus(RoleStatus.ACTIVE);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
 
         o.setStatus(RoleStatus.NULLIFIED);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
 
-        
+
         o.setStatus(RoleStatus.SUSPENDED);
         mp.sendCreate(o.getClass(), o);
         assertMessageCreated(o, true, mp.getTopic());
-        
+
         mp.sendUpdate(o.getClass(), o);
         assertMessageCreated(o, false, mp.getTopic());
 

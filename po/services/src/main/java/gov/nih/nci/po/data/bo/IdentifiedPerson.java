@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniquePlayerScoperIdentifier;
@@ -89,17 +90,22 @@ import gov.nih.nci.po.util.UniquePlayerScoperIdentifier;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
@@ -110,7 +116,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      class="gov.nih.nci.services.correlation.IdentifiedPersonDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedPerson"
  *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @Entity
 @Table(appliesTo = "IdentifiedPerson", indexes = {
@@ -118,8 +124,9 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
                 columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
 @RoleStatusChange
 @UniquePlayerScoperIdentifier
+@SuppressWarnings("PMD.UselessOverridingMethod")
 public class IdentifiedPerson extends AbstractIdentifiedPerson implements Correlation {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private Set<IdentifiedPersonCR> changeRequests = new HashSet<IdentifiedPersonCR>();
 
@@ -171,5 +178,32 @@ public class IdentifiedPerson extends AbstractIdentifiedPerson implements Correl
     @Searchable
     public Long getId() {
         return super.getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @CollectionOfElements
+    @JoinTable(
+            name = "identifiedperson_otheridentifier",
+            joinColumns = @JoinColumn(name = "identifiedperson_id")
+    )
+    @ForeignKey(name = "IP_OI_FK")
+    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "null_flavor"),
+            @Column(name = "displayable"),
+            @Column(name = "extension"),
+            @Column(name = "identifier_name"),
+            @Column(name = "reliability"),
+            @Column(name = "root"),
+            @Column(name = "scope")
+    })
+//    @ValidIi
+//    @NotEmptyIiExtension
+//    @NotEmptyIiRoot
+    public Set<Ii> getOtherIdentifiers() {
+        return super.getOtherIdentifiers();
     }
 }

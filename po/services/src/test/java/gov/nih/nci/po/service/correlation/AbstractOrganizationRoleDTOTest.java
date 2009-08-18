@@ -146,7 +146,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         expectedIi.setDisplayable(true);
         expectedIi.setScope(IdentifierScope.OBJ);
         expectedIi.setReliability(IdentifierReliability.ISS);
-        expectedIi.setExtension("" + 2);
+        expectedIi.setExtension("2");
         expectedIi.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.ORG_ROOT);
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPlayerIdentifier()));
@@ -188,7 +188,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         orgTest.setUpData();
 
         long playerId = orgTest.createOrganization();
-        PoDto dto = (PoDto) getExampleTestClassDTO(playerId);
+        PoDto dto = getExampleTestClassDTO(playerId);
         AbstractOrganizationRole bo = (AbstractOrganizationRole) PoXsnapshotHelper.createModel(dto);
 
         assertEquals(1L, bo.getId().longValue());

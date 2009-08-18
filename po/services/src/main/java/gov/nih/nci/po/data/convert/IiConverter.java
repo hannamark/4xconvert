@@ -84,6 +84,7 @@
 
 package gov.nih.nci.po.data.convert;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
@@ -92,6 +93,7 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -147,13 +149,15 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
             }
             return convertHelper(returnClass, value);
         }
+
+        @SuppressWarnings("unchecked")
         private <TO> TO convertHelper(Class<TO> returnClass, Ii value) {
             if (value == null || value.getNullFlavor() != null) {
                 return null;
             }
-            
+
             enforcePoIsoConstraints(value);
-            
+
             Long id = Long.valueOf(value.getExtension());
             if (!rtIName.keySet().contains(value.getRoot())) {
                 throw new PoIsoConstraintException("The ii.root value is not allowed.");
@@ -233,5 +237,17 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
             throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
         }
         return PoRegistry.getOrganizationService().getById(id);
+    }
+
+    /**
+     * Converts a single Ii into a DSet containing only that Ii.
+     * @param value Ii to add
+     * @return DSet containing the given Ii
+     */
+    public static DSet<Ii> convertToDsetIi(Ii value) {
+        DSet<Ii> dset = new DSet<Ii>();
+        dset.setItem(new LinkedHashSet<Ii>());
+        dset.getItem().add(value);
+        return dset;
     }
 }

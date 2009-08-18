@@ -89,6 +89,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
@@ -126,7 +128,7 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
         ii.setReliability(IdentifierReliability.ISS);
         ii.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
         ii.setIdentifierName(IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
-        dto.setIdentifier(ii);
+        dto.setIdentifier(IiConverter.convertToDsetIi(ii));
 
         return dto;
     }
@@ -152,6 +154,7 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
         expectedIi.setReliability(IdentifierReliability.ISS);
         expectedIi.setIdentifierName(IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((ClinicalResearchStaffDTO) dto).getIdentifier()));
+        Ii actualIi = IiDsetConverter.convertToIi(((ClinicalResearchStaffDTO) dto).getIdentifier());
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
     }
 }

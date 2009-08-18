@@ -94,10 +94,11 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.correlation.NullifiedRoleInterceptorTest.TestInvocationContext;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
+import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
@@ -145,10 +146,10 @@ public class NullifiedEntityInterceptorTest {
         try {
             interceptor.checkForNullified(testContext);
             fail("Expected NullifiedEntityException for Ii.extension="
-                    + ((PoDto)testContext.returnValue).getIdentifier().getExtension());
+                    + ((EntityDto)testContext.returnValue).getIdentifier().getExtension());
         } catch (NullifiedEntityException e) {
-            assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
-            Ii duplicateIi = e.getNullifiedEntities().get(((PoDto)testContext.returnValue).getIdentifier());
+            assertTrue(e.getNullifiedEntities().containsKey(((EntityDto)testContext.returnValue).getIdentifier()));
+            Ii duplicateIi = e.getNullifiedEntities().get(((EntityDto)testContext.returnValue).getIdentifier());
             assertNotNull(duplicateIi);
             assertEquals(duplicateIi.getExtension(), o1.getId().toString());
         }
@@ -179,9 +180,9 @@ public class NullifiedEntityInterceptorTest {
             svcLocal.getById = p2;
             interceptor.checkForNullified(testContext);
             fail("Expected NullifiedEntityException for Ii.extension="
-                    + ((PoDto)testContext.returnValue).getIdentifier().getExtension());
+                    + ((EntityDto)testContext.returnValue).getIdentifier().getExtension());
         } catch (NullifiedEntityException e) {
-            Ii identifier = ((PoDto)testContext.returnValue).getIdentifier();
+            Ii identifier = ((EntityDto)testContext.returnValue).getIdentifier();
             assertTrue(e.getNullifiedEntities().containsKey(identifier));
             Ii duplicateIi = e.getNullifiedEntities().get(identifier);
             assertNotNull(duplicateIi);
@@ -248,15 +249,15 @@ public class NullifiedEntityInterceptorTest {
 
 
         Organization o1 = createOrganization(-1L, EntityStatus.PENDING, null);
-        ArrayList<PoDto> list = new ArrayList<PoDto>();
-        list.add(PoXsnapshotHelper.createSnapshot(o1));
+        ArrayList<EntityDto> list = new ArrayList<EntityDto>();
+        list.add((OrganizationDTO) PoXsnapshotHelper.createSnapshot(o1));
         testContext.returnValue = list;
         assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
 
 
         Organization o2  = createOrganization(1L, EntityStatus.NULLIFIED, o1);
-        list = new ArrayList<PoDto>();
-        PoDto o2dto = PoXsnapshotHelper.createSnapshot(o2);
+        list = new ArrayList<EntityDto>();
+        EntityDto o2dto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o2);
         list.add(o2dto);
         testContext.returnValue = list;
         try {

@@ -83,22 +83,12 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.FundingMechanism;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
-import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
-import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
@@ -106,8 +96,6 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import java.util.List;
-
-import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
 /**
  * Remote service test.
@@ -172,8 +160,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrgan
         assertEquals("B10", cr.getFundingMechanism().getCode());
     }
 
-
-
+    @Override
     protected ResearchOrganizationDTO getEmptySearchCriteria() {
         return new ResearchOrganizationDTO();
     }
@@ -187,14 +174,14 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrgan
         Cd fm = new Cd();
         fm.setCode(otherFM.getCode());
         correlation2.setFundingMechanism(fm);
-        
+
         ResearchOrganizationType other = new ResearchOrganizationType("AT", "Another Type");
         other.getFundingMechanisms().add(otherFM);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         Cd type = new Cd();
         type.setCode(other.getCode());
         correlation2.setTypeCode(type);
-        
+
     }
 
     @Override
@@ -202,7 +189,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrgan
             ResearchOrganizationDTO searchCriteria) throws NullifiedRoleException {
         Cd fm = new Cd();
         fm.setCode("BXX");
-        
+
         // test by FundingMechanism id
         searchCriteria.setPlayerIdentifier(null);
         searchCriteria.setFundingMechanism(fm);
@@ -216,6 +203,6 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrgan
         searchCriteria.setTypeCode(type );
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        
+
     }
 }

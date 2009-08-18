@@ -92,6 +92,8 @@ import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 
@@ -129,7 +131,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
         ii.setReliability(IdentifierReliability.ISS);
         ii.setRoot(IdConverter.OVERSIGHT_COMMITTEE_ROOT);
         ii.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        dto.setIdentifier(ii);
+        dto.setIdentifier(IiConverter.convertToDsetIi(ii));
         Cd type = new Cd();
         type.setCode("Ethics Committee");
         dto.setTypeCode(type);
@@ -161,7 +163,8 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
         expectedIi.setReliability(IdentifierReliability.ISS);
         expectedIi.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.OVERSIGHT_COMMITTEE_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((OversightCommitteeDTO) dto).getIdentifier()));
+        Ii actualIi = IiDsetConverter.convertToIi(((OversightCommitteeDTO) dto).getIdentifier());
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
     }
 
 }

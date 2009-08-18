@@ -37,13 +37,13 @@ public class FaultUtilTest {
         NullifiedEntityException cause = new NullifiedEntityException(map);
 
         RemoteException result = FaultUtil.reThrowRemote(cause);
-        
+
         assertTrue(result instanceof NullifiedEntityFault);
         NullifiedEntityFault fault = (NullifiedEntityFault) result;
         assertNotNull(fault.getNullifiedEntries());
         assertNotNull(fault.getNullifiedEntries().getEntry());
         assertEquals(1, fault.getNullifiedEntries().getEntry().length);
-        
+
         assertEquals(id.getExtension(), fault.getNullifiedEntries().getEntry()[0].getKey());
         assertEquals(duplicateOf.getExtension(), fault.getNullifiedEntries().getEntry()[0].getValue());
     }
@@ -65,13 +65,13 @@ public class FaultUtilTest {
         NullifiedRoleException cause = new NullifiedRoleException(map);
 
         RemoteException result = FaultUtil.reThrowRemote(cause);
-        
+
         assertTrue(result instanceof NullifiedRoleFault);
         NullifiedRoleFault fault = (NullifiedRoleFault) result;
         assertNotNull(fault.getNullifiedEntries());
         assertNotNull(fault.getNullifiedEntries().getEntry());
         assertEquals(1, fault.getNullifiedEntries().getEntry().length);
-        
+
         assertEquals(id.getExtension(), fault.getNullifiedEntries().getEntry()[0].getKey());
         assertEquals(duplicateOf.getExtension(), fault.getNullifiedEntries().getEntry()[0].getValue());
     }
@@ -87,15 +87,13 @@ public class FaultUtilTest {
     public void testReThrowRemote_RE() {
         RemoteException cause = new RemoteException();
         RemoteException result = FaultUtil.reThrowRemote(cause);
-        assertTrue(result instanceof RemoteException);
         assertSame(cause, result);
     }
-    
+
     @Test
     public void testReThrowRemote_Unknown() {
         RuntimeException cause = new RuntimeException("123");
         RemoteException result = FaultUtil.reThrowRemote(cause);
-        assertTrue(result instanceof RemoteException);
         assertEquals(cause, result.getCause());
     }
 

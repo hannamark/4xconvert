@@ -84,22 +84,13 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
 
-import java.util.Date;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -107,35 +98,16 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO"
- *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractRole"
+ *      serial-version-uid="2L"
  */
 @MappedSuperclass
-public abstract class AbstractOrganizationRole implements PersistentObject, PlayedRole<Organization> {
+public abstract class AbstractOrganizationRole extends AbstractRole implements PlayedRole<Organization> {
 
-    private static final long serialVersionUID = -8983758513489261005L;
+    private static final long serialVersionUID = 2L;
 
-    private Long id;
     private Organization player;
-    private RoleStatus status;
-    private RoleStatus priorStatus;
-    private Date statusDate;
 
-    /**
-     * @return the id
-     */
-    @Transient
-    @Searchable
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     /**
      * @return the player.  never null.
@@ -159,68 +131,4 @@ public abstract class AbstractOrganizationRole implements PersistentObject, Play
         this.player = player;
     }
 
-    /**
-     * @return the statusDate
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getStatusDate() {
-        return this.statusDate;
-    }
-
-    /**
-     * @param statusDate the statusDate to set
-     */
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
-
-    /**
-     * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Searchable
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
-    public RoleStatus getStatus() {
-        return this.status;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
-    }
-
-    @SuppressWarnings("unused")
-    private void setPriorAsString(String prior) {
-        if (prior != null) {
-            this.priorStatus = RoleStatus.valueOf(prior);
-        } else {
-            this.priorStatus = null;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Formula("status")
-    @SuppressWarnings("unused")
-    private String getPriorAsString() {
-        if (this.priorStatus != null) {
-            return this.priorStatus.name();
-        }
-        return null;
-    }
-
-    /**
-     * @return the prior curation status
-     */
-    @Transient
-    public RoleStatus getPriorStatus() {
-        return priorStatus;
-    }
 }

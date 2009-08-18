@@ -166,7 +166,7 @@ public class HealthCareProviderRemoteServiceTest
      */
     @Override
     protected void modifySubClassSpecificFieldsForCorrelation2(HealthCareProviderDTO correlation2) {
-        correlation2.getCertificateLicenseText().setValue(correlation2.getCertificateLicenseText().getValue()+ "2");
+        correlation2.getCertificateLicenseText().setValue(correlation2.getCertificateLicenseText().getValue() + "2");
     }
 
     /**
@@ -189,14 +189,15 @@ public class HealthCareProviderRemoteServiceTest
         List<HealthCareProviderDTO> results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
 
-        searchCriteria.getCertificateLicenseText().setValue(correlation1.getCertificateLicenseText().getValue().toUpperCase());
+        searchCriteria.getCertificateLicenseText().setValue(
+                correlation1.getCertificateLicenseText().getValue().toUpperCase());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
 
         searchCriteria.getCertificateLicenseText().setValue(correlation1.getCertificateLicenseText().getValue() + "2");
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         searchCriteria.getCertificateLicenseText().setValue("text 2dfjsd");
         results = getCorrelationService().search(searchCriteria);

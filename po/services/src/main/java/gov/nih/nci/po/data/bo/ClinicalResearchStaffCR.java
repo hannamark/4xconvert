@@ -219,6 +219,7 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     /**
      * {@inheritDoc}
      */
+    @Override
     @ManyToOne
     @NotNull
     @JoinColumn(name = "person_id")

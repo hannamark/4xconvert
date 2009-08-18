@@ -82,7 +82,8 @@
  */
 package gov.nih.nci.coppa.po.grid.client;
 
-import gov.nih.nci.coppa.po.BaseType;
+import gov.nih.nci.coppa.po.Correlation;
+import gov.nih.nci.coppa.po.Entity;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -102,7 +103,7 @@ public final class ClientUtils {
     /**
      * @param identifier the ISO II information
      */
-    public static void print(II identifier) {
+    public static void print(II... identifier) {
         System.out.println(ToStringBuilder.reflectionToString(identifier));
     }
 
@@ -118,18 +119,37 @@ public final class ClientUtils {
      * Displays search result messages.
      * @param results the values to inspect and display
      */
-    public static void handleSearchResults(BaseType[] results) {
+    public static void handleSearchResults(Entity... results) {
         if (results == null) {
             System.out.println("Search Results were null!");
         } else {
             System.out.println("Search Results Found: " + results.length);
-            for (BaseType org : results) {
-                print(org);
+            for (Entity entity : results) {
+                print(entity);
             }
         }
     }
 
-    private static void print(BaseType org) {
-        ClientUtils.print(org.getIdentifier());
+    /**
+     * Displays search result messages.
+     * @param results the values to inspect and display
+     */
+    public static void handleSearchResults(Correlation... results) {
+        if (results == null) {
+            System.out.println("Search Results were null!");
+        } else {
+            System.out.println("Search Results Found: " + results.length);
+            for (Correlation corr : results) {
+                print(corr);
+            }
+        }
+    }
+
+    private static void print(Entity entity) {
+        ClientUtils.print(entity.getIdentifier());
+    }
+
+    private static void print(Correlation corr) {
+        ClientUtils.print(corr.getIdentifier().getItem().toArray(new II[0]));
     }
 }

@@ -95,6 +95,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.RoleStatusConverter;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -202,14 +203,14 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     public void testSearch2() throws Exception {
         CorrelationService<T> correlationService = getCorrelationService();
         int max = 7;
-        AbstractCorrelationServiceBean.setMaxResultsReturnedLimit(max-2);
+        AbstractCorrelationServiceBean.setMaxResultsReturnedLimit(max - 2);
         for(int i = 0; i < max; i++) {
             T correlation1 = getSampleDto();
             Ii id1 = correlationService.createCorrelation(correlation1);
         }
         T sc = getEmptySearchCriteria();
         sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.PENDING));
-        
+
         List<T> results;
         //verify walking forward with a page size of 1
         LimitOffset page = new LimitOffset(1,-1);
@@ -222,44 +223,43 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         page.next();
         results = correlationService.search(sc, page);
         assertEquals(0, results.size());
-        
+
         //walk back to first record
         for (int j = 0 ; j < max; j++) {
             page.previous();
             results = correlationService.search(sc, page);
             assertEquals(1, results.size());
         }
-        //try to walk before first record, first record always returned 
+        //try to walk before first record, first record always returned
         page.previous();
         results = correlationService.search(sc, page);
         assertEquals(1, results.size());
-        
+
         //verify TooManyResultsException is thrown
         try {
             correlationService.search(sc, new LimitOffset(max, 0));
             fail();
         } catch (TooManyResultsException e) {
         }
-        
+
         //verify TooManyResultsException is thrown
         try {
             correlationService.search(sc, new LimitOffset(max-1, 0));
             fail();
         } catch (TooManyResultsException e) {
         }
-        
+
         //verify results are returned
         page = new LimitOffset(max-2, 0);
         results = correlationService.search(sc, page);
         assertEquals(page.getLimit(), results.size());
-        
+
         //verify results are returned
         page = new LimitOffset(max-3, 0);
         results = correlationService.search(sc, page);
         assertEquals(page.getLimit(), results.size());
-        
-    }   
 
+    }
 
     @Test
     public void updateCorrelation() throws Exception {
@@ -306,7 +306,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     }
 
     protected void testNullifiedRoleNotFoundInSearch(Ii id2, T searchCriteria, Class<?> clazz) {
-        searchCriteria.setIdentifier(id2);
+        searchCriteria.setIdentifier(IiConverter.convertToDsetIi(id2));
         List<T> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
 
@@ -316,8 +316,6 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         PoHibernateUtil.getCurrentSession().saveOrUpdate(role);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-
-        searchCriteria.setIdentifier(id2);
 
         results = getCorrelationService().search(searchCriteria);
         assertEquals(0, results.size());

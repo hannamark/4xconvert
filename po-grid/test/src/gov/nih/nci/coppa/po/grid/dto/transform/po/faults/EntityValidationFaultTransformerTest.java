@@ -22,7 +22,7 @@ public class EntityValidationFaultTransformerTest {
     @Test
     public void testToXml_ErrorsIsNull() throws DtoTransformException {
         EntityValidationFault fault = EntityValidationFaultTransformer.INSTANCE.toXml(new EntityValidationException((Map<String, String[]>) null));
-        
+
         assertNotNull(fault);
         assertNull(fault.getErrors());
     }
@@ -33,8 +33,8 @@ public class EntityValidationFaultTransformerTest {
         String[] values = {"456", "567"};
         Map<String, String[]> map = new HashMap<String, String[]>();
         map.put(key, values);
-        EntityValidationFault fault = EntityValidationFaultTransformer.INSTANCE.toXml(new EntityValidationException((Map<String, String[]>) map));
-        
+        EntityValidationFault fault = EntityValidationFaultTransformer.INSTANCE.toXml(new EntityValidationException(map));
+
         assertNotNull(fault);
         assertNotNull(fault.getErrors());
         assertEquals(1, fault.getErrors().getEntry().length);

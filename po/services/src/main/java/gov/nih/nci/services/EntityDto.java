@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,128 +80,23 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.services;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.UniqueOversightCommittee;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
-
-import com.fiveamsolutions.nci.commons.search.Searchable;
-
 
 /**
- * Oversight committee role class.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractOversightCommittee"
- *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="2L"
+ * Base DTO for entities.
+ * @author Steve Lustbader
  */
-@Entity
-@RoleStatusChange
-@UniqueOversightCommittee
-@SuppressWarnings("PMD.UselessOverridingMethod")
-public class OversightCommittee extends AbstractOversightCommittee implements Correlation {
-
-    private static final long serialVersionUID = 2L;
-
-    private Set<OversightCommitteeCR> changeRequests = new HashSet<OversightCommitteeCR>();
-
-    private OversightCommittee duplicateOf;
+public interface EntityDto extends PoDto {
+    /**
+     * @return the system assigned identifier
+     */
+    Ii getIdentifier();
 
     /**
-     * {@inheritDoc}
+     * @param identifier new identifier to set
      */
-    @OneToMany(mappedBy = "target")
-    @Where(clause = "processed = 'false'")
-    public Set<OversightCommitteeCR> getChangeRequests() {
-        return changeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setChangeRequests(Set<OversightCommitteeCR> changeRequests) {
-        this.changeRequests = changeRequests;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="duplicateOf"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOvCConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter$CorrelationIiConverter"
-     */
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "oco_duplicateof_idx")
-    @ForeignKey(name = "OCO_DUPLICATE_OCO_FK")
-    public OversightCommittee getDuplicateOf() {
-        return duplicateOf;
-    }
-
-    /**
-     * Set the object of which this is as a duplicate.
-     * @param duplicateOf object of which this is a duplicate
-     */
-    public void setDuplicateOf(OversightCommittee duplicateOf) {
-        this.duplicateOf = duplicateOf;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return super.getId();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @CollectionOfElements
-    @JoinTable(
-            name = "oco_otheridentifier",
-            joinColumns = @JoinColumn(name = "oco_id")
-    )
-    @ForeignKey(name = "OCO_OI_FK")
-    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
-    @Columns(columns = {
-            @Column(name = "null_flavor"),
-            @Column(name = "displayable"),
-            @Column(name = "extension"),
-            @Column(name = "identifier_name"),
-            @Column(name = "reliability"),
-            @Column(name = "root"),
-            @Column(name = "scope")
-    })
-//    @ValidIi
-//    @NotEmptyIiExtension
-//    @NotEmptyIiRoot
-    public Set<Ii> getOtherIdentifiers() {
-        return super.getOtherIdentifiers();
-    }
+    void setIdentifier(Ii identifier);
 
 }

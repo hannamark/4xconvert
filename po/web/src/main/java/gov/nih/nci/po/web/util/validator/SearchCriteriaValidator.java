@@ -21,7 +21,7 @@ public class SearchCriteriaValidator extends FieldValidatorSupport {
         String fieldName = getFieldName();
         Object value = getFieldValue(fieldName, object);
         stack.push(object);
-        if (value instanceof SearchCriteria) {
+        if (value instanceof SearchCriteria<?>) {
             SearchCriteria<?> sc = (SearchCriteria<?>) value;
             try {
                 sc.isValid();

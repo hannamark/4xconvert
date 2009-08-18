@@ -88,7 +88,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
@@ -129,7 +129,7 @@ public class HealthCareFacilityActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getOrganization());
     }
-    
+
     @Test
     public void testInput() {
         assertNull(action.getRootKey());
@@ -139,7 +139,7 @@ public class HealthCareFacilityActionTest extends AbstractPoTest {
         assertNotNull(action.getRootKey());
         assertTrue(action.getRootKey().startsWith("hcf"));
     }
-    
+
     @Test
     public void testInitialize() {
         action.initialize(action.getRole());
@@ -268,7 +268,7 @@ public class HealthCareFacilityActionTest extends AbstractPoTest {
 
     private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
         action.getRole().setId(1L);
-        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractOrganizationRole.class, "setPriorAsString",
+        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractRole.class, "setPriorAsString",
                 new Object[] { roleStatus.name() });
         assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
         assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));

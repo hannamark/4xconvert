@@ -104,9 +104,8 @@ public class PersonNameConverter {
             EnPn enpn = new EnPn();
             enpn.setNullFlavor(NullFlavor.NI);
             return enpn;
-        } else {
-            return PersonNameConverterUtil.convertToEnPn(person.getFirstName(), person.getMiddleName(),
-                    person.getLastName(), person.getPrefix(), person.getSuffix());
         }
+        return PersonNameConverterUtil.convertToEnPn(person.getFirstName(), person.getMiddleName(),
+                person.getLastName(), person.getPrefix(), person.getSuffix());
     }
 }

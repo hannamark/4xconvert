@@ -558,8 +558,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
     private void printHcpDataToDebugLog(HealthCareProviderDTO hcp) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("  ** HCP Data ** \n");
-            LOG.debug("\t hcp.id.extension: " + hcp.getIdentifier().getExtension());
-            LOG.debug("\t hcp.id.root: " + hcp.getIdentifier().getRoot());
+            LOG.debug("hcp identifiers: ");
+            for (Ii ii : hcp.getIdentifier().getItem()) {
+                LOG.debug("\t hcp.id.identifierName: " + ii.getIdentifierName());
+                LOG.debug("\t hcp.id.extension: " + ii.getExtension());
+                LOG.debug("\t hcp.id.root: " + ii.getRoot());
+            }
             LOG.debug("\t hcp.player.extension: " + hcp.getPlayerIdentifier().getExtension());
             LOG.debug("\t hcp.player.root: " + hcp.getPlayerIdentifier().getRoot());
             LOG.debug("\t hcp.scoper.extension: " + hcp.getScoperIdentifier().getExtension());
@@ -577,8 +581,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
     private void printCrsDataToDebugLog(ClinicalResearchStaffDTO crs) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("  ** CRS Data ** \n");
-            LOG.debug("\t crs.id.extension: " + crs.getIdentifier().getExtension());
-            LOG.debug("\t crs.id.root: " + crs.getIdentifier().getRoot());
+            LOG.debug("crs identifiers: ");
+            for (Ii ii : crs.getIdentifier().getItem()) {
+                LOG.debug("\t crs.id.identifierName: " + ii.getIdentifierName());
+                LOG.debug("\t crs.id.extension: " + ii.getExtension());
+                LOG.debug("\t crs.id.root: " + ii.getRoot());
+            }
             LOG.debug("\t crs.player.extension: " + crs.getPlayerIdentifier().getExtension());
             LOG.debug("\t crs.player.root: " + crs.getPlayerIdentifier().getRoot());
             LOG.debug("\t crs.scoper.extension: " + crs.getScoperIdentifier().getExtension());

@@ -1,9 +1,16 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.iso._21090.DSETII;
+import org.iso._21090.II;
 
 public class IdTransformerTest extends
     AbstractTransformerTestBase<IdTransformer , Id ,Ii> {
@@ -51,4 +58,22 @@ public class IdTransformerTest extends
         assertEquals(x.getIdentifierName(),IDENTIFIED_ORG_IDENTIFIER_NAME);
     }
 
+    /**
+     * Converts a single Ii into a DSet<Ii> containing just that Ii.
+     * @param id Ii to add to set
+     * @return DSet<Ii> containing the id
+     */
+    static DSet<Ii> convertIdToDSetIi(Ii id) {
+        Set<Ii> identifiers = new LinkedHashSet<Ii>();
+        identifiers.add(id);
+        DSet<Ii> identifier = new DSet<Ii>();
+        identifier.setItem(identifiers);
+        return identifier;
+    }
+
+    static DSETII convertIIToDSETII(II ii) {
+        DSETII identifier = new DSETII();
+        identifier.getItem().add(ii);
+        return identifier;
+    }
 }

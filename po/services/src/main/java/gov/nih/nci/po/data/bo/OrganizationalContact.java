@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.PhoneNotEmptyValidator;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RequiredOrganizationalContactTitleOrPerson;
@@ -93,6 +94,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -104,9 +106,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.Valid;
@@ -119,7 +124,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      class="gov.nih.nci.services.correlation.OrganizationalContactDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationalContact"
  *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @Entity
 @RoleStatusChange
@@ -130,7 +135,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @PhoneNotEmptyValidator.PhoneNotEmpty
 public class OrganizationalContact extends AbstractOrganizationalContact implements Correlation, PersonRole {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private Set<OrganizationalContactCR> changeRequests = new HashSet<OrganizationalContactCR>();
     private OrganizationalContact duplicateOf;
@@ -173,11 +178,6 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
 
     /**
      * {@inheritDoc}
-     *
-     * @xsnapshot.property match="iso"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *        snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrganizationalContactIdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Override
     @Id
@@ -352,6 +352,33 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getTitle() {
         return super.getTitle();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @CollectionOfElements
+    @JoinTable(
+            name = "orgcontact_otheridentifier",
+            joinColumns = @JoinColumn(name = "orgcontact_id")
+    )
+    @ForeignKey(name = "ORGCONTACT_OI_FK")
+    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "null_flavor"),
+            @Column(name = "displayable"),
+            @Column(name = "extension"),
+            @Column(name = "identifier_name"),
+            @Column(name = "reliability"),
+            @Column(name = "root"),
+            @Column(name = "scope")
+    })
+//    @ValidIi
+//    @NotEmptyIiExtension
+//    @NotEmptyIiRoot
+    public Set<Ii> getOtherIdentifiers() {
+        return super.getOtherIdentifiers();
     }
 
 }

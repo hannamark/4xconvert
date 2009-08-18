@@ -133,10 +133,8 @@ public class EjbInterceptorHandler implements InvocationHandler {
             EjbInterceptorHandler interceptorHandler = new EjbInterceptorHandler(bean);
             Object remotebean = Proxy.newProxyInstance(bean.getClass().getClassLoader(), remoteInterfaces, interceptorHandler);
             return remotebean;
-        } else {
-            throw new Error(bean.getClass() + "has no remote interface");
         }
-
+        throw new Error(bean.getClass() + "has no remote interface");
     }
 
     private static class DefaultContext implements InvocationContext {

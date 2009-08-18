@@ -82,10 +82,6 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
-
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
@@ -93,6 +89,10 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+
+import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.junit.Assert;
@@ -104,6 +104,7 @@ public class ResearchOrganizationCorrelationServiceTest
         super("ResearchOrganizationCR");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected ResearchOrganizationDTO makeCorrelation() throws Exception {
         ResearchOrganizationDTO dto = new ResearchOrganizationDTO();
@@ -111,22 +112,22 @@ public class ResearchOrganizationCorrelationServiceTest
         Cd fm = new Cd();
         fm.setCode("P30");
         dto.setFundingMechanism(fm);
-        
+
         Cd type = new Cd();
         type.setCode("CCR");
         dto.setTypeCode(type);
-        
+
         dto.setName(RemoteApiUtils.convertToSt("my name"));
-        
+
         DSet<Ad> addys = new DSet<Ad>();
         Set<Ad> set = new ListOrderedSet();
         addys.setItem(set);
         addys.getItem().add(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
         dto.setPostalAddress(addys);
-        
+
         dto.setTelecomAddress(new DSet<Tel>());
         dto.getTelecomAddress().setItem(new HashSet<Tel>());
-        
+
         TelPhone ph1 = new TelPhone();
         ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
         dto.getTelecomAddress().getItem().add(ph1);
@@ -143,7 +144,7 @@ public class ResearchOrganizationCorrelationServiceTest
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
         Assert.assertEquals("P30", dto.getFundingMechanism().getCode());
         Assert.assertEquals("CCR", dto.getTypeCode().getCode());
-        
+
         Assert.assertEquals("my name", dto.getName().getValue());
     }
 }

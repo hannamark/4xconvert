@@ -137,6 +137,7 @@ public abstract class AbstractHealthCareProvider extends AbstractPersonRole impl
     /**
      * {@inheritDoc}
      */
+    @Override
     @ManyToOne
     @NotNull
     @JoinColumn(name = "person_id")

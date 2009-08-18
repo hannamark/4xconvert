@@ -93,6 +93,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
@@ -145,7 +147,7 @@ public class Address implements Auditable, PersistentObject {
     public Address() {
       // Empty constructor.
     }
-    
+
     /**
      * Copy the data from a different address.
      * @param src the src address.
@@ -276,4 +278,21 @@ public class Address implements Auditable, PersistentObject {
     public void setCountry(Country country) {
         this.country = country;
     }
+
+    /**
+     * Checks if the contents of this Address are equal to the contents of another address, ignoring the ID.
+     * @param other other Address to compare against
+     * @return true if the contents are equal, false otherwise
+     */
+    public boolean contentEquals(Address other) {
+        return StringUtils.equals(this.getStreetAddressLine(), other.getStreetAddressLine())
+                && StringUtils.equals(this.getDeliveryAddressLine(), other.getDeliveryAddressLine())
+                && StringUtils.equals(this.getCityOrMunicipality(), other.getCityOrMunicipality())
+                && StringUtils.equals(this.getStateOrProvince(), other.getStateOrProvince())
+                && StringUtils.equals(this.getPostalCode(), other.getPostalCode())
+                && ((this.getCountry() == null && other.getCountry() == null)
+                        || (this.getCountry() != null && other.getCountry() != null
+                                && ObjectUtils.equals(this.getCountry().getId(), other.getCountry().getId())));
+    }
+
 }

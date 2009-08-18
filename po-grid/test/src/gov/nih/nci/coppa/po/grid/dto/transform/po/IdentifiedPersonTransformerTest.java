@@ -3,7 +3,6 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.IdentifiedPersonTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
@@ -66,7 +65,7 @@ public class IdentifiedPersonTransformerTest extends
 
         IdentifiedPersonDTO dto = new IdentifiedPersonDTO ();
         dto.setAssignedId(assignedId);
-        dto.setIdentifier(id);
+        dto.setIdentifier(IdTransformerTest.convertIdToDSetIi(id));
         dto.setPlayerIdentifier(player);
         dto.setStatus(new CDTransformerTest().makeDtoSimple());
         return dto;
@@ -91,7 +90,7 @@ public class IdentifiedPersonTransformerTest extends
 
         IdentifiedPerson xml = new IdentifiedPerson();
         xml.setAssignedId(assignedId);
-        xml.setIdentifier(id);
+        xml.setIdentifier(IdTransformerTest.convertIIToDSETII(id));
         xml.setPlayerIdentifier(player);
         xml.setStatus(new CDTransformerTest().makeXmlSimple());
         return xml;
@@ -99,8 +98,9 @@ public class IdentifiedPersonTransformerTest extends
 
     @Override
     public void verifyDtoSimple(IdentifiedPersonDTO x) {
-        assertEquals(x.getIdentifier().getExtension(), "123");
-        assertEquals(x.getIdentifier().getIdentifierName(),IDENTIFIED_PER_IDENTIFIER_NAME);
+        Ii ii = x.getIdentifier().getItem().iterator().next();
+        assertEquals(ii.getExtension(), "123");
+        assertEquals(ii.getIdentifierName(),IDENTIFIED_PER_IDENTIFIER_NAME);
         assertEquals(x.getAssignedId().getIdentifierName(),ASSIGNED_ID_NAME);
         new CDTransformerTest().verifyDtoSimple(x.getStatus());
 
@@ -108,8 +108,9 @@ public class IdentifiedPersonTransformerTest extends
 
     @Override
     public void verifyXmlSimple(IdentifiedPerson x) {
-        assertEquals(x.getIdentifier().getExtension(), "123");
-        assertEquals(x.getIdentifier().getIdentifierName(),IDENTIFIED_PER_IDENTIFIER_NAME);
+        II ii = x.getIdentifier().getItem().get(0);
+        assertEquals(ii.getExtension(), "123");
+        assertEquals(ii.getIdentifierName(),IDENTIFIED_PER_IDENTIFIER_NAME);
         assertEquals(x.getAssignedId().getIdentifierName(),ASSIGNED_ID_NAME);
         new CDTransformerTest().verifyXmlSimple(x.getStatus());
     }

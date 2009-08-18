@@ -85,6 +85,7 @@ package gov.nih.nci.services.correlation;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.services.CorrelationDto;
 
 import java.util.Collection;
@@ -154,7 +155,7 @@ public class NullifiedRoleInterceptor {
     private Entry<Ii, Ii> handle(CorrelationDto dto) {
         RoleStatus status = CdConverter.convertToRoleStatus(dto.getStatus());
         if (RoleStatus.NULLIFIED.equals(status)) {
-            return new UnmodifiableMapEntry(dto.getIdentifier(), dto.getDuplicateOf());
+            return new UnmodifiableMapEntry(IiDsetConverter.convertToIi(dto.getIdentifier()), dto.getDuplicateOf());
         }
         return null;
     }

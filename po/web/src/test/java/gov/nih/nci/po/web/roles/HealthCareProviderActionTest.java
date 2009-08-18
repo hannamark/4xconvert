@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.bo.Person;
@@ -166,7 +166,7 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
 
     private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
         action.getRole().setId(1L);
-        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractPersonRole.class, "setPriorAsString",
+        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractRole.class, "setPriorAsString",
                 new Object[] { roleStatus.name() });
         assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
         assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));

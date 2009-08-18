@@ -13,6 +13,8 @@ import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
@@ -71,7 +73,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         ii.setReliability(IdentifierReliability.ISS);
         ii.setRoot(IdConverter.ORGANIZATIONAL_CONTACT_ROOT);
         ii.setIdentifierName(IdConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
-        dto.setIdentifier(ii);
+        dto.setIdentifier(IiConverter.convertToDsetIi(ii));
 
         dto.setTypeCode(OrganizationalContactTypeConverter.convertToDsetOfCd(getTypes()));
 
@@ -127,7 +129,8 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         expectedIi.setIdentifierName(IdConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.ORGANIZATIONAL_CONTACT_ROOT);
         OrganizationalContactDTO organizationalContactDTO = (OrganizationalContactDTO) dto;
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, organizationalContactDTO.getIdentifier()));
+        Ii actualIi = IiDsetConverter.convertToIi(organizationalContactDTO.getIdentifier());
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
 
         //verify OrganizationalContact
         List<String> expectedValues = getCodeValues(getTypes());

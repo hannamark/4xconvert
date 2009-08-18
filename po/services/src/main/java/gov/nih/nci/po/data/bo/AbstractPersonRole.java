@@ -85,26 +85,19 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -112,17 +105,16 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @author Scott Miller
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractPersonRoleDTO"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractRole"
  *      extends="gov.nih.nci.services.correlation.AbstractBasePersonRoleDTO"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public abstract class AbstractPersonRole implements PersistentObject, Contactable, Mailable,
-        PlayedRole<Person>, ScopedRole {
+public abstract class AbstractPersonRole extends AbstractRole implements Contactable, Mailable, PlayedRole<Person>,
+        ScopedRole {
 
-    private static final long serialVersionUID = 1L;
-
-    private Long id;
+    private static final long serialVersionUID = 2L;
 
     private Person player;
     private Organization scoper;
@@ -133,25 +125,6 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
-    private RoleStatus status;
-    private RoleStatus priorStatus;
-    private Date statusDate;
-
-
-    /**
-     * @return the id
-     */
-    @Transient
-    public Long getId() {
-        return this.id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     /**
      * @return the person
@@ -288,71 +261,6 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
      */
     public void setTty(List<PhoneNumber> tty) {
         this.tty = tty;
-    }
-
-    /**
-     * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Searchable
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
-    public RoleStatus getStatus() {
-        return this.status;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Formula("status")
-    @SuppressWarnings("unused")
-    private String getPriorAsString() {
-        if (this.priorStatus != null) {
-            return this.priorStatus.name();
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unused")
-    private void setPriorAsString(String prior) {
-        if (prior != null) {
-            this.priorStatus = RoleStatus.valueOf(prior);
-        } else {
-            this.priorStatus = null;
-        }
-    }
-
-    /**
-     * @return the prior curation status
-     */
-    @Transient
-    public RoleStatus getPriorStatus() {
-        return priorStatus;
-    }
-
-    /**
-     * @return the statusDate
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getStatusDate() {
-        return this.statusDate;
-    }
-
-    /**
-     * @param statusDate the statusDate to set
-     */
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
     }
 
 }

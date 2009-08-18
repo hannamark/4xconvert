@@ -54,16 +54,25 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="BaseType" abstract="true">
+    <!--  At some point, we'll move Entities over to DSET_II, too, so we can recombine Entity and Correlation
+          back into one BaseType abstract type -->
+    <xs:complexType name="Entity" abstract="true">
         <xs:sequence>
             <xs:element name="identifier" type="ISO:II" />
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="Correlation" abstract="true">
+        <xs:sequence>
+            <xs:element name="identifier" type="ISO:DSET_II" />
+        </xs:sequence>
+    </xs:complexType>
+
+
     <xs:element name="Person">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Entity">
                     <xs:sequence>
                         <xs:element name="name" type="ISO:EN.PN">
                         </xs:element>
@@ -83,7 +92,7 @@
     <xs:element name="Organization">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Entity">
                     <xs:sequence>
                         <xs:element name="name" type="ISO:EN.ON">
                         </xs:element>
@@ -104,7 +113,7 @@
     <xs:element name="ClinicalResearchStaff">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A ClinicalResearchStaffDTO ...
@@ -129,7 +138,7 @@
     <xs:element name="HealthCareFacility">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A HealthCareFacilityDTO ...
@@ -153,7 +162,7 @@
     <xs:element name="HealthCareProvider">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A HealthCareProviderDTO ...
@@ -180,7 +189,7 @@
     <xs:element name="IdentifiedOrganization">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A IdentifiedOrganizationDTO ...
@@ -202,7 +211,7 @@
     <xs:element name="IdentifiedPerson">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A IdentifiedOrganizationDTO ...
@@ -224,7 +233,7 @@
     <xs:element name="OrganizationalContact">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A OrganizationalContactDTO ...
@@ -251,7 +260,7 @@
     <xs:element name="OversightCommittee">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A OversightCommitteeDTO ...
@@ -271,7 +280,7 @@
     <xs:element name="ResearchOrganization">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="COPPA-PO:BaseType">
+                <xs:extension base="COPPA-PO:Correlation">
                     <xs:annotation>
                         <xs:documentation>
                             A ResearchOrganizationDTO ...

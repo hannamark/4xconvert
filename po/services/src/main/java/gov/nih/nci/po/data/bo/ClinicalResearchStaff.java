@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.PhoneNotEmptyValidator;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RoleStatusChange;
@@ -91,6 +92,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -101,9 +103,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -116,7 +121,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      class="gov.nih.nci.services.correlation.ClinicalResearchStaffDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
  *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @Entity
 @RoleStatusChange
@@ -124,7 +129,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @UniquePlayerScoper(friendlyName = "Clinical Research Staff")
 @PhoneNotEmptyValidator.PhoneNotEmpty
 public class ClinicalResearchStaff extends AbstractPersonRole implements Correlation, PersonRole {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private Set<ClinicalResearchStaffCR> changeRequests = new HashSet<ClinicalResearchStaffCR>();
 
@@ -168,11 +173,6 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
 
     /**
      * {@inheritDoc}
-     *
-     * @xsnapshot.property match="iso"
-     *                 type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                 snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$ClinicalResearchStaffIdConverter"
-     *                 model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Override
     @Id
@@ -312,6 +312,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     /**
      * {@inheritDoc}
      */
+    @Override
     @ManyToOne
     @NotNull
     @JoinColumn(name = "person_id")
@@ -320,6 +321,33 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
         return super.getPlayer();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @CollectionOfElements
+    @JoinTable(
+            name = "crs_otheridentifier",
+            joinColumns = @JoinColumn(name = "crs_id")
+    )
+    @ForeignKey(name = "CRS_OI_FK")
+    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "null_flavor"),
+            @Column(name = "displayable"),
+            @Column(name = "extension"),
+            @Column(name = "identifier_name"),
+            @Column(name = "reliability"),
+            @Column(name = "root"),
+            @Column(name = "scope")
+    })
+//    @ValidIi
+//    @NotEmptyIiExtension
+//    @NotEmptyIiRoot
+    public Set<Ii> getOtherIdentifiers() {
+        return super.getOtherIdentifiers();
     }
 
 }

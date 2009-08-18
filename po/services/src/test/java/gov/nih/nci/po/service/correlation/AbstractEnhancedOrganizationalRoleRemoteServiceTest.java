@@ -21,12 +21,12 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
-import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.net.URI;
@@ -36,10 +36,10 @@ import java.util.List;
 
 import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
-public abstract 
+public abstract
     class AbstractEnhancedOrganizationalRoleRemoteServiceTest<T extends AbstractEnhancedOrganizationRoleDTO, CR extends CorrelationChangeRequest<?>>
     extends AbstractOrganizationalRoleRemoteServiceTest<T, CR> {
-    
+
 
     @SuppressWarnings("unchecked")
     protected void fillInFields(T dto) throws Exception {
@@ -107,7 +107,7 @@ public abstract
     }
 
     protected abstract void modifySubClassSpecificFieldsForCorrelation2(T correlation2);
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public void testSearch() throws Exception {
@@ -157,27 +157,29 @@ public abstract
         }
 
         // test search by primary id
-        searchCriteria.setIdentifier(new Ii());
-        searchCriteria.getIdentifier().setExtension(id1.getExtension());
-        searchCriteria.getIdentifier().setRoot(id1.getRoot());
-        searchCriteria.getIdentifier().setIdentifierName(id1.getIdentifierName());
-        searchCriteria.getIdentifier().setDisplayable(id1.getDisplayable());
-        searchCriteria.getIdentifier().setReliability(id1.getReliability());
-        searchCriteria.getIdentifier().setScope(id1.getScope());
+        Ii id = new Ii();
+        id.setExtension(id1.getExtension());
+        id.setRoot(id1.getRoot());
+        id.setIdentifierName(id1.getIdentifierName());
+        id.setDisplayable(id1.getDisplayable());
+        id.setReliability(id1.getReliability());
+        id.setScope(id1.getScope());
+
+        searchCriteria.setIdentifier(IiConverter.convertToDsetIi(id));
         List<T> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id1.getExtension());
 
-        searchCriteria.getIdentifier().setExtension(id2.getExtension());
+        searchCriteria.getIdentifier().getItem().iterator().next().setExtension(id2.getExtension());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         searchCriteria.setIdentifier(null);
         searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id1.getExtension());
 
         // test search by address
         Ad ad = (Ad) correlation2.getPostalAddress().getItem().iterator().next();
@@ -186,7 +188,7 @@ public abstract
         searchCriteria.getPostalAddress().setItem(Collections.singleton(ad));
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         // remove 1 part of address at a time making sure the search still works
         while (ad.getPart().size() > 1) {
@@ -202,7 +204,7 @@ public abstract
                 assertEquals(2, results.size());
             } else {
                 assertEquals(1, results.size());
-                assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+                assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
             }
         }
 
@@ -228,7 +230,7 @@ public abstract
 
                 results = getCorrelationService().search(searchCriteria);
                 assertEquals(1, results.size());
-                assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+                assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
                 part.setValue(part.getValue().substring(0, part.getValue().length() - 1).toUpperCase());
 
@@ -272,7 +274,7 @@ public abstract
             searchCriteria.getTelecomAddress().getItem().add(t);
             results = getCorrelationService().search(searchCriteria);
             assertEquals(1, results.size());
-            assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+            assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
             searchCriteria.getTelecomAddress().getItem().remove(t);
         }

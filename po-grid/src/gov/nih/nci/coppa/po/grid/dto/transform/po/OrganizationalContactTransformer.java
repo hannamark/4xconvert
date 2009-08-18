@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
@@ -31,7 +32,7 @@ public final class OrganizationalContactTransformer
             return null;
         }
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
-        dto.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        dto.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
         dto.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
         dto.setScoperIdentifier(IITransformer.INSTANCE.toDto(input.getScoperIdentifier()));
         dto.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
@@ -51,7 +52,7 @@ public final class OrganizationalContactTransformer
             return null;
         }
         OrganizationalContact xml = new OrganizationalContact();
-        xml.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        xml.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
         xml.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         xml.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
         xml.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));

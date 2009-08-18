@@ -133,12 +133,16 @@ public class NullifiedRoleInterceptorTest {
         try {
             interceptor.checkForNullified(testContext);
             fail("Expected NullifiedRoleException for Ii.extension="
-                    + ((PoDto) testContext.returnValue).getIdentifier().getExtension());
+                    + ((CorrelationDto) testContext.returnValue).getIdentifier().getItem().iterator().next()
+                            .getExtension());
         } catch (NullifiedRoleException e) {
-            assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
-            Ii duplicateIi = e.getNullifiedEntities().get(((PoDto)testContext.returnValue).getIdentifier());
+            assertTrue(e.getNullifiedEntities().containsKey(
+                    ((CorrelationDto) testContext.returnValue).getIdentifier().getItem().iterator().next()));
+            Ii duplicateIi =
+                    e.getNullifiedEntities().get(
+                            ((CorrelationDto) testContext.returnValue).getIdentifier().getItem().iterator().next());
             assertNotNull(duplicateIi);
-            assertEquals(duplicateIi.getExtension(), o1.getId().toString());            
+            assertEquals(duplicateIi.getExtension(), o1.getId().toString());
         }
     }
 
@@ -164,10 +168,13 @@ public class NullifiedRoleInterceptorTest {
             interceptor.checkForNullified(testContext);
             fail("Expected NullifiedRoleException");
         } catch (NullifiedRoleException e) {
-            assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
-            Ii duplicateIi = e.getNullifiedEntities().get(((PoDto)testContext.returnValue).getIdentifier());
+            assertTrue(e.getNullifiedEntities().containsKey(
+                    ((CorrelationDto) testContext.returnValue).getIdentifier().getItem().iterator().next()));
+            Ii duplicateIi =
+                    e.getNullifiedEntities().get(
+                            ((CorrelationDto) testContext.returnValue).getIdentifier().getItem().iterator().next());
             assertNotNull(duplicateIi);
-            assertEquals(duplicateIi.getExtension(), o1.getId().toString());            
+            assertEquals(duplicateIi.getExtension(), o1.getId().toString());
         }
     }
 

@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -83,125 +83,138 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.UniqueOversightCommittee;
+import gov.nih.nci.po.util.PoRegistry;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
+import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
-
 /**
- * Oversight committee role class.
- *
+ * Base class for all roles.
+ * @author Steve Lustbader
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractOversightCommittee"
- *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="2L"
+ *      class="gov.nih.nci.services.correlation.AbstractRoleDTO"
+ *      extends="gov.nih.nci.services.correlation.AbstractBaseRoleDTO"
+ *      serial-version-uid="1L"
  */
-@Entity
-@RoleStatusChange
-@UniqueOversightCommittee
-@SuppressWarnings("PMD.UselessOverridingMethod")
-public class OversightCommittee extends AbstractOversightCommittee implements Correlation {
+@MappedSuperclass
+public abstract class AbstractRole implements PersistentObject {
 
     private static final long serialVersionUID = 2L;
 
-    private Set<OversightCommitteeCR> changeRequests = new HashSet<OversightCommitteeCR>();
-
-    private OversightCommittee duplicateOf;
+    private Long id;
+    private RoleStatus status;
+    private RoleStatus priorStatus;
+    private Date statusDate;
+    private Set<Ii> otherIdentifiers = new HashSet<Ii>();
 
     /**
-     * {@inheritDoc}
+     * @return the id
      */
-    @OneToMany(mappedBy = "target")
-    @Where(clause = "processed = 'false'")
-    public Set<OversightCommitteeCR> getChangeRequests() {
-        return changeRequests;
+    @Transient
+    @Searchable
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getStatusDate() {
+        return this.statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    /**
+     * @return the status
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
+     */
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
+    public RoleStatus getStatus() {
+        return this.status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(RoleStatus status) {
+        this.status = status;
     }
 
     @SuppressWarnings("unused")
-    private void setChangeRequests(Set<OversightCommitteeCR> changeRequests) {
-        this.changeRequests = changeRequests;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="duplicateOf"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOvCConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter$CorrelationIiConverter"
-     */
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "oco_duplicateof_idx")
-    @ForeignKey(name = "OCO_DUPLICATE_OCO_FK")
-    public OversightCommittee getDuplicateOf() {
-        return duplicateOf;
-    }
-
-    /**
-     * Set the object of which this is as a duplicate.
-     * @param duplicateOf object of which this is a duplicate
-     */
-    public void setDuplicateOf(OversightCommittee duplicateOf) {
-        this.duplicateOf = duplicateOf;
+    private void setPriorAsString(String prior) {
+        if (prior != null) {
+            this.priorStatus = RoleStatus.valueOf(prior);
+        } else {
+            this.priorStatus = null;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return super.getId();
+    @Formula("status")
+    @SuppressWarnings("unused")
+    private String getPriorAsString() {
+        if (this.priorStatus != null) {
+            return this.priorStatus.name();
+        }
+        return null;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the prior curation status
      */
-    @Override
-    @CollectionOfElements
-    @JoinTable(
-            name = "oco_otheridentifier",
-            joinColumns = @JoinColumn(name = "oco_id")
-    )
-    @ForeignKey(name = "OCO_OI_FK")
-    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
-    @Columns(columns = {
-            @Column(name = "null_flavor"),
-            @Column(name = "displayable"),
-            @Column(name = "extension"),
-            @Column(name = "identifier_name"),
-            @Column(name = "reliability"),
-            @Column(name = "root"),
-            @Column(name = "scope")
-    })
-//    @ValidIi
-//    @NotEmptyIiExtension
-//    @NotEmptyIiRoot
+    @Transient
+    public RoleStatus getPriorStatus() {
+        return priorStatus;
+    }
+
+    /**
+     * @return the otherIdentifiers
+     */
+    @Transient
     public Set<Ii> getOtherIdentifiers() {
-        return super.getOtherIdentifiers();
+        return otherIdentifiers;
     }
 
+    /**
+     * @param otherIdentifiers the otherIdentifiers to set
+     */
+    public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
+        this.otherIdentifiers = otherIdentifiers;
+    }
 }

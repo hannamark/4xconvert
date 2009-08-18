@@ -14,7 +14,6 @@
       <title>Edit <s:text name="healthCareFacility"/></title>
    </c:if>
 </s:else>
-
 <%@include file="../../roleStatusOnChange_handleDuplicateOf.jsp" %>
 </head>
 <body>
@@ -40,21 +39,19 @@
         <%@ include file="../orgInfo.jsp" %>
         <div class="boxouter">
             <s:if test="%{isCreate}">
-                <s:set name="formAction"
-                    value="'roles/organizational/HealthCareFacility/add.action'" />
-                <h2><s:text name="healthCareFacility"/> Role Information</h2>
-            </s:if> <s:else>
-                <s:set name="formAction"
-                    value="'roles/organizational/HealthCareFacility/edit.action'" />
-                <h2><s:text name="healthCareFacility"/> Role Information</h2>
+                <s:set name="formAction" value="'roles/organizational/HealthCareFacility/add.action'" />
+            </s:if>
+            <s:else>
+                <s:set name="formAction" value="'roles/organizational/HealthCareFacility/edit.action'" />
             </s:else>
+            <h2><s:text name="healthCareFacility"/> Role Information</h2>
             <div class="box_white">
                 <s:actionerror/>
                 <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return isTelecomFieldsBlank() && confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
                 <s:hidden key="cr"/>
                 <s:hidden key="organization"/>
                 <s:hidden key="rootKey"/>
-                
+
                 <s:textfield
                     id="curateRoleForm.role.name"
                     label="%{getText('healthCareFacility.name')}" name="role.name" value="%{role.name}" maxlength="160" size="50"/>
@@ -85,7 +82,12 @@
 
                 <input id="enableEnterSubmit" type="submit"/>
                 </s:form>
-
+                <c:if test="${!empty role.otherIdentifiers}">
+                    <label>Other IDs</label><br/>
+                    <c:forEach var="otherId" items="${role.otherIdentifiers}">
+                        ${otherId.identifierName}: ${otherId.extension}<br/>
+                    </c:forEach>
+                </c:if>
             </div>
         </div>
        <div class="boxouter">

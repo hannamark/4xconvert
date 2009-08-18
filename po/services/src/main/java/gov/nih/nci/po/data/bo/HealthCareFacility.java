@@ -82,12 +82,14 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.RoleStatusChange;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -98,9 +100,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
 
@@ -113,7 +118,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole"
  *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @Entity
 @RoleStatusChange
@@ -124,14 +129,10 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     private static final String VALUE = "value";
     private static final String IDX = "idx";
 
-    private static final long serialVersionUID = -5965985190603758915L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="iso"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$HealthCareFacilityIdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Override
     @Id
@@ -179,8 +180,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     public void setDuplicateOf(HealthCareFacility duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -307,4 +307,32 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     public List<URL> getUrl() {
         return super.getUrl();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @CollectionOfElements
+    @JoinTable(
+            name = "hcf_otheridentifier",
+            joinColumns = @JoinColumn(name = "hcf_id")
+    )
+    @ForeignKey(name = "HCF_OI_FK")
+    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "null_flavor"),
+            @Column(name = "displayable"),
+            @Column(name = "extension"),
+            @Column(name = "identifier_name"),
+            @Column(name = "reliability"),
+            @Column(name = "root"),
+            @Column(name = "scope")
+    })
+//    @ValidIi
+//    @NotEmptyIiExtension
+//    @NotEmptyIiRoot
+    public Set<Ii> getOtherIdentifiers() {
+        return super.getOtherIdentifiers();
+    }
+
 }

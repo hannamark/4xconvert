@@ -84,16 +84,15 @@ package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.services.CorrelationDto;
 
 /**
  * @author Scott Miller
  *
  */
-public abstract class AbstractBasePersonRoleDTO implements CorrelationDto {
+public abstract class AbstractBasePersonRoleDTO extends AbstractRoleDTO {
 
-    private static final long serialVersionUID = 1L;
-    
+    private static final long serialVersionUID = 2L;
+
     private DSet<Tel> telecomAddress;
 
     /**

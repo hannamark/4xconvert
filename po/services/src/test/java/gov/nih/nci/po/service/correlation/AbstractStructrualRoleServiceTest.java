@@ -193,10 +193,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
     public void testSimpleCreateAndGet() throws Exception {
         T structuralRole = getSampleStructuralRole();
 
-        if (structuralRole instanceof CuratableRole) {
-            CuratableRole<?, ?> c = (CuratableRole<?, ?>) structuralRole;
-            assertNull(c.getStatusDate());
-        }
+        assertNull(((CuratableRole<?, ?>) structuralRole).getStatusDate());
 
         AbstractCuratableServiceBean<T> service = getService();
 
@@ -208,10 +205,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         T retrievedRole = service.getById(structuralRole.getId());
         verifyStructuralRole(structuralRole, retrievedRole);
 
-        if (retrievedRole instanceof CuratableRole) {
-            CuratableRole<?, ?> c = (CuratableRole<?, ?>) retrievedRole;
-            assertNotNull(c.getStatusDate());
-        }
+        assertNotNull(((CuratableRole<?, ?>) retrievedRole).getStatusDate());
     }
 
     @Test
@@ -237,7 +231,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         srs = service.getByIds(new Long[0]);
         assertEquals(0, srs.size());
     }
-    
+
     @Test
     public void testGetByPlayerIds() throws Exception {
         AbstractBaseServiceBean<T> service = getService();
@@ -245,7 +239,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         T sr1 = createSample();
 
         T sr2 = createSample();
-        
+
         T sr3 = createNullifiedSample();
         
         Long[] ids = null;
@@ -262,7 +256,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         } else {
             throw new Exception("Can't figure out what type of SR dealing with.");
         }
-        
+
         List<T> srs = service.getByPlayerIds(ids);
         assertEquals(2, srs.size());
 
@@ -298,9 +292,9 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (PlayedRole.class.isAssignableFrom(myType)) {
-            CuratableRole r = (CuratableRole) createSample();
+            CuratableRole<?, ?> r = createSample();
             assertEquals(RoleStatus.PENDING, r.getStatus());
-            CuratableEntity entity = ((PlayedRole<?>)r).getPlayer();
+            CuratableEntity<?, ?> entity = ((PlayedRole<?>)r).getPlayer();
             assertEquals(EntityStatus.PENDING, entity.getStatusCode());
             entity.setStatusCode(EntityStatus.NULLIFIED);
             if (entity instanceof Organization){
@@ -335,7 +329,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (PlayedRole.class.isAssignableFrom(myType)) {
             // make everything ACTIVE
-            CuratableRole<?, ?> r = (CuratableRole<?, ?>) createSample();
+            CuratableRole<?, ?> r = createSample();
             CuratableEntity<?, ?> player = ((PlayedRole<?>)r).getPlayer();
             player.setStatusCode(EntityStatus.ACTIVE);
             PoHibernateUtil.getCurrentSession().update(player);
@@ -347,7 +341,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
             PoHibernateUtil.getCurrentSession().update(r);
             PoHibernateUtil.getCurrentSession().flush();
 
-            CuratableEntity entity = ((PlayedRole<?>)r).getPlayer();
+            CuratableEntity<?, ?> entity = ((PlayedRole<?>)r).getPlayer();
             entity.setStatusCode(EntityStatus.INACTIVE);
             if (entity instanceof Organization){
                 locator.getOrganizationService().curate((Organization)entity);
@@ -363,7 +357,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (ScopedRole.class.isAssignableFrom(myType)) {
-            CuratableRole<?, ?> r = (CuratableRole<?, ?>) createSample();
+            CuratableRole<?, ?> r = createSample();
             assertEquals(RoleStatus.PENDING, r.getStatus());
             basicOrganization.setStatusCode(EntityStatus.NULLIFIED);
             locator.getOrganizationService().curate(basicOrganization);
@@ -377,7 +371,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (ScopedRole.class.isAssignableFrom(myType)) {
             // make everything ACTIVE
-            CuratableRole<?, ?> r = (CuratableRole<?, ?>) createSample();
+            CuratableRole<?, ?> r = createSample();
             basicOrganization.setStatusCode(EntityStatus.ACTIVE);
             PoHibernateUtil.getCurrentSession().update(basicOrganization);
             basicPerson.setStatusCode(EntityStatus.ACTIVE);

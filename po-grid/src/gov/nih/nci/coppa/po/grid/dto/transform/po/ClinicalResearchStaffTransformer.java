@@ -6,6 +6,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -30,7 +31,7 @@ public final class ClinicalResearchStaffTransformer
             return null;
         }
         ClinicalResearchStaffDTO d = new ClinicalResearchStaffDTO();
-        d.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        d.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
         d.setScoperIdentifier(IITransformer.INSTANCE.toDto(input.getScoperIdentifier()));
         d.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
@@ -49,7 +50,7 @@ public final class ClinicalResearchStaffTransformer
             return null;
         }
         ClinicalResearchStaff d = new ClinicalResearchStaff();
-        d.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        d.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         d.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
         d.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));

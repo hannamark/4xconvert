@@ -95,7 +95,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     public XML getById(Id id) throws RemoteException {
         try {
             Ii iiIso = IITransformer.INSTANCE.toDto(id);
-            DTO dto = (DTO) getService().getCorrelation(iiIso);
+            DTO dto = getService().getCorrelation(iiIso);
             XML result = (XML) getTransformer().toXml(dto);
             return result;
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
             throw FaultUtil.reThrowRemote(e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -146,7 +146,6 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public XML[] search(XML criteria) throws RemoteException {
         try {
             return this.query(criteria, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
@@ -196,7 +195,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
             throw FaultUtil.reThrowRemote(e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

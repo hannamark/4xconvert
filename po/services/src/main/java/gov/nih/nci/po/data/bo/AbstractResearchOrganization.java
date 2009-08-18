@@ -150,5 +150,4 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
     public void setTypeCode(ResearchOrganizationType type) {
         this.typeCode = type;
     }
-
 }

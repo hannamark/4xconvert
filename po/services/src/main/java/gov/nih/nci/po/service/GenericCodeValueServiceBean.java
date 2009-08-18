@@ -42,9 +42,8 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
             List<String> values = q.list();
             throw new IllegalArgumentException("allowed values for " + clz.getSimpleName()
                     + " are: " + values.toString());
-        } else {
-            return ret;
         }
+        return ret;
     }
     /**
      * {@inheritDoc}

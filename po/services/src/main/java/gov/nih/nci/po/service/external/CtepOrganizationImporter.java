@@ -102,6 +102,7 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -112,6 +113,7 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
@@ -122,6 +124,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class CtepOrganizationImporter extends CtepEntityImporter {
+    private static final String NULL_STRING = "null";
     private static final Logger LOG = Logger.getLogger(CtepOrganizationImporter.class);
     private static final String CTEP_EXTENSION = "CTEP";
 
@@ -175,7 +178,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         if (identifiedOrg == null) {
             return importOrganization(ctepOrgId);
         }
-            return identifiedOrg.getPlayer();
+        return identifiedOrg.getPlayer();
     }
 
     /**
@@ -200,8 +203,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                 return createCtepOrg(ctepOrg, assignedId);
             }
             return updateCtepOrg(ctepOrg, identifiedOrg, assignedId);
-        } catch (gov.nih.nci.common.exceptions.CTEPEntException e) {
-            // id not found in ctep, therefore we can safely inactivate the entity if it exists locally.
+        } catch (CTEPEntException e) {
+            // ID not found in ctep, therefore we can safely inactivate the entity if it exists locally.
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
             if (identifiedOrg != null) {
                 Organization org = identifiedOrg.getPlayer();
@@ -272,6 +275,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         if (hcf != null) {
             hcf.setPlayer(ctepOrg);
             hcf.setStatus(RoleStatus.ACTIVE);
+            hcf.getOtherIdentifiers().add(ctepOrgId);
             this.hcfService.curate(hcf);
         }
 
@@ -279,6 +283,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         if (ro != null) {
             ro.setPlayer(ctepOrg);
             ro.setStatus(RoleStatus.ACTIVE);
+            ro.getOtherIdentifiers().add(ctepOrgId);
             this.roService.curate(ro);
         }
 
@@ -290,8 +295,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         Organization org = identifiedOrg.getPlayer();
 
         // copy in new data in to the local org
-        copyCtepOrgToExistingOrg(ctepOrg, org);
-        this.orgService.curate(org);
+        if (copyCtepOrgToExistingOrg(ctepOrg, org)) {
+            this.orgService.curate(org);
+        }
 
         // Update the status of identified entity if needed
         if (!RoleStatus.ACTIVE.equals(identifiedOrg.getStatus())) {
@@ -346,7 +352,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private void updateHcfRole(Organization org, HealthCareFacility hcf) throws JMSException {
-        // handle HCF - ensure exactly 1 non null hcf exists if ctep has this as a hcf
+        // handle HCF - ensure exactly 1 non-null HCF exists if ctep has this as a hcf
         if (org.getHealthCareFacilities().isEmpty()) {
             hcf.setPlayer(org);
             hcf.setStatus(RoleStatus.ACTIVE);
@@ -373,16 +379,30 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return scoper;
     }
 
-    private void copyCtepOrgToExistingOrg(Organization ctepOrg, Organization org) {
+    /**
+     * @return true if data was different and therefore copied over, false if all data was already the same
+     */
+    private boolean copyCtepOrgToExistingOrg(Organization ctepOrg, Organization org) {
+        boolean change = false;
         // doing this here instead of a 'copy' method in the org itself because all
-        // of the relationships are not copied (change requests, roles, etc)  The org
-        // we are copying from is just the base fields.  Also, the org from ctep
+        // of the relationships are not copied (change requests, roles, etc) The org
+        // we are copying from is just the base fields. Also, the org from ctep
         // does not provide fax, phone, tty, url, so those fields are skipped.
-        org.setName(ctepOrg.getName());
-        org.getPostalAddress().copy(ctepOrg.getPostalAddress());
-        org.getEmail().clear();
-        org.getEmail().addAll(ctepOrg.getEmail());
+        if (!StringUtils.equals(org.getName(), ctepOrg.getName())) {
+            org.setName(ctepOrg.getName());
+            change = true;
+        }
+        if (!org.getPostalAddress().contentEquals(ctepOrg.getPostalAddress())) {
+            org.getPostalAddress().copy(ctepOrg.getPostalAddress());
+            change = true;
+        }
+        if (!areEmailListsEqual(org.getEmail(), ctepOrg.getEmail())) {
+            org.getEmail().clear();
+            org.getEmail().addAll(ctepOrg.getEmail());
+            change = true;
+        }
         org.setStatusCode(EntityStatus.ACTIVE);
+        return change;
     }
 
     private HealthCareFacility getCtepHealthCareFacility(Ii ctepOrgId) {
@@ -390,8 +410,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             HealthCareFacilityDTO hcfDto = getCtepOrgService().getHealthCareFacility(ctepOrgId);
             printHcf(hcfDto);
 
-            // null out the id and player id, as these are ctep's references to primary id - we will
-            // use our local objects instead of cteps.
+            // null out the id and player id, as these are CTEP's references to primary id - we will
+            // use our local objects instead of CTEP's.
             hcfDto.setIdentifier(null);
             hcfDto.setPlayerIdentifier(null);
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
@@ -402,11 +422,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     private void printHcf(HealthCareFacilityDTO hcfDto) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("hcf.ii.root: " + hcfDto.getIdentifier().getRoot());
-            LOG.debug("hcf.ii.extension: " + hcfDto.getIdentifier().getExtension());
+            LOG.debug("hcf identifiers: ");
+            printIdentifierSet(hcfDto, "hcf");
             LOG.debug("hcf.playerii.root: " + hcfDto.getPlayerIdentifier().getRoot());
             LOG.debug("hcf.playerii.extension: " + hcfDto.getPlayerIdentifier().getExtension());
-            LOG.debug("hcf.status: " + hcfDto.getStatus().getCode());
+            LOG.debug("hcf.status: " + (hcfDto.getStatus() != null ? hcfDto.getStatus().getCode() : NULL_STRING));
         }
     }
 
@@ -415,8 +435,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ResearchOrganizationDTO roDto = getCtepOrgService().getResearchOrganization(ctepOrgId);
             printRo(roDto);
 
-            // null out the id and player id, as these are ctep's references to primary id - we will
-            // use our local objects instead of cteps.
+            // null out the id and player id, as these are CTEP's references to primary id - we will
+            // use our local objects instead of CTEPs.
             roDto.setIdentifier(null);
             roDto.setPlayerIdentifier(null);
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
@@ -427,16 +447,26 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     private void printRo(ResearchOrganizationDTO dto) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("ro.ii.root: " + dto.getIdentifier().getRoot());
-            LOG.debug("ro.ii.extension: " + dto.getIdentifier().getExtension());
+            LOG.debug("ro identifiers: ");
+            printIdentifierSet(dto, "ro");
             LOG.debug("ro.playerii.root: " + dto.getPlayerIdentifier().getRoot());
             LOG.debug("ro.playerii.extension: " + dto.getPlayerIdentifier().getExtension());
-            LOG.debug("ro.status: " + dto.getStatus().getCode());
+            LOG.debug("ro.status: " + (dto.getStatus() != null ? dto.getStatus().getCode() : NULL_STRING));
             LOG.debug("ro.typeCode.code: " + dto.getTypeCode().getCode());
             St displayName = dto.getTypeCode().getDisplayName();
-            LOG.debug("ro.typeCode.displayName: " + ((displayName == null) ?  "null" : displayName.getValue()));
+            LOG.debug("ro.typeCode.displayName: " + ((displayName == null) ?  NULL_STRING : displayName.getValue()));
             Cd funding = dto.getFundingMechanism();
-            LOG.debug("ro.fundingMech: " + ((funding == null) ?  "null" : funding.getCode()));
+            LOG.debug("ro.fundingMech: " + ((funding == null) ?  NULL_STRING : funding.getCode()));
+        }
+    }
+
+    private void printIdentifierSet(CorrelationDto dto, String prefix) {
+        if (dto.getIdentifier() != null) {
+            for (Ii ii : dto.getIdentifier().getItem()) {
+                LOG.debug(prefix + ".ii.identifierName: " + ii.getIdentifierName());
+                LOG.debug(prefix + ".ii.extension: " + ii.getExtension());
+                LOG.debug(prefix + ".ii.root: " + ii.getRoot());
+            }
         }
     }
 }

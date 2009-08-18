@@ -116,11 +116,10 @@ public class StConverter extends AbstractXSnapshotConverter<St> {
         }
         if (iso.getNullFlavor() != null) {
             return null;
-        } else {
-            if (iso.getValue() == null || iso.getValue().length() == 0) {
-                throw new IllegalArgumentException("nullFlavor or value must be set");
-            }
-            return iso.getValue();
         }
+        if (iso.getValue() == null || iso.getValue().length() == 0) {
+            throw new IllegalArgumentException("nullFlavor or value must be set");
+        }
+        return iso.getValue();
     }
 }

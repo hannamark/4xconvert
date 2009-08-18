@@ -72,7 +72,7 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -152,6 +152,7 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public List<DTO> search(DTO dto, LimitOffset page) throws TooManyResultsException {
         try {
             List<DTO> results = getLocator().getService(type).search(dto, page);

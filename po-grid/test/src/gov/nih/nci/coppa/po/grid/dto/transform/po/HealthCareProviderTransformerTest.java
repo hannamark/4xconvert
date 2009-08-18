@@ -83,10 +83,8 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.HealthCareProvider;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareProviderTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
@@ -147,7 +145,7 @@ public class HealthCareProviderTransformerTest extends AbstractTransformerTestBa
         id.setRoot(HEALTH_CARE_PROVIDER_ROOT);
         id.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         id.setExtension(EXT);
-        hcpDto.setIdentifier(id);
+        hcpDto.setIdentifier(IdTransformerTest.convertIdToDSetIi(id));
 
         Ii player = new Ii();
         player.setRoot(PLAYER_ROOT);
@@ -180,7 +178,7 @@ public class HealthCareProviderTransformerTest extends AbstractTransformerTestBa
         id.setRoot(HEALTH_CARE_PROVIDER_ROOT);
         id.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         id.setExtension(EXT);
-        hcp.setIdentifier(id);
+        hcp.setIdentifier(IdTransformerTest.convertIIToDSETII(id));
 
         II player = new II();
         player.setRoot(PLAYER_ROOT);
@@ -205,11 +203,11 @@ public class HealthCareProviderTransformerTest extends AbstractTransformerTestBa
 
     @Override
     public void verifyDtoSimple(HealthCareProviderDTO x) {
-        assertNotNull(x);
+        Ii ii = x.getIdentifier().getItem().iterator().next();
         assertEquals(x.getCertificateLicenseText().getValue(), new STTransformerTest().makeDtoSimple().getValue());
-        assertEquals(x.getIdentifier().getRoot(), HEALTH_CARE_PROVIDER_ROOT);
-        assertEquals(x.getIdentifier().getIdentifierName(), HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
-        assertEquals(x.getIdentifier().getExtension(), EXT);
+        assertEquals(ii.getRoot(), HEALTH_CARE_PROVIDER_ROOT);
+        assertEquals(ii.getIdentifierName(), HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+        assertEquals(ii.getExtension(), EXT);
         assertEquals(x.getPlayerIdentifier().getRoot(), PLAYER_ROOT);
         assertEquals(x.getPlayerIdentifier().getIdentifierName(), PLAYER_NAME);
         assertEquals(x.getPlayerIdentifier().getExtension(), EXT);
@@ -221,11 +219,11 @@ public class HealthCareProviderTransformerTest extends AbstractTransformerTestBa
 
     @Override
     public void verifyXmlSimple(HealthCareProvider x) {
-        assertNotNull(x);
+        II ii = x.getIdentifier().getItem().get(0);
         assertEquals(x.getCertificateLicenseText().getValue(), new STTransformerTest().makeXmlSimple().getValue());
-        assertEquals(x.getIdentifier().getRoot(), HEALTH_CARE_PROVIDER_ROOT);
-        assertEquals(x.getIdentifier().getIdentifierName(), HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
-        assertEquals(x.getIdentifier().getExtension(), EXT);
+        assertEquals(ii.getRoot(), HEALTH_CARE_PROVIDER_ROOT);
+        assertEquals(ii.getIdentifierName(), HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+        assertEquals(ii.getExtension(), EXT);
         assertEquals(x.getPlayerIdentifier().getRoot(), PLAYER_ROOT);
         assertEquals(x.getPlayerIdentifier().getIdentifierName(), PLAYER_NAME);
         assertEquals(x.getPlayerIdentifier().getExtension(), EXT);

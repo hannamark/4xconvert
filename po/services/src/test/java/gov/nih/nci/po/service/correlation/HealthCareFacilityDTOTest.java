@@ -100,6 +100,8 @@ import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.po.data.convert.StConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.TelDSetConverter;
@@ -138,15 +140,17 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         hcf.getTty().add(new PhoneNumber("111-222-3333"));
         hcf.setUrl(new ArrayList<URL>());
         hcf.getUrl().add(new URL("http://www.google.com"));
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
+                                getDefaultCountry());
         hcf.setPostalAddresses(Collections.singleton(a));
         return hcf;
     }
 
     /**
      * {@inheritDoc}
-     * @throws URISyntaxException 
+     * @throws URISyntaxException
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) throws URISyntaxException {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
@@ -159,10 +163,10 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         ii.setReliability(IdentifierReliability.ISS);
         ii.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
         ii.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
-        dto.setIdentifier(ii);
-        
+        dto.setIdentifier(IiConverter.convertToDsetIi(ii));
+
         dto.setName(StringConverter.convertToSt("my name"));
-        
+
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
         TelEmail email = new TelEmail();
@@ -187,9 +191,11 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
 
         dto.setTelecomAddress(tels);
 
-        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(), getDefaultCountry().getName());
+        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+                                            "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(),
+                                            getDefaultCountry().getName());
         dto.setPostalAddress(new DSet<Ad>());
-        dto.getPostalAddress().setItem(Collections.singleton(ad));        
+        dto.getPostalAddress().setItem(Collections.singleton(ad));
         return dto;
     }
 
@@ -210,7 +216,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
     @Override
     protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
         HealthCareFacilityDTO hcf = (HealthCareFacilityDTO) dto;
-     // check id
+        // check id
         Ii expectedIi = new Ii();
         expectedIi.setExtension("" + 1);
         expectedIi.setDisplayable(true);
@@ -218,8 +224,9 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         expectedIi.setReliability(IdentifierReliability.ISS);
         expectedIi.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((HealthCareFacilityDTO) dto).getIdentifier()));
-        
+        Ii actualIi = IiDsetConverter.convertToIi(hcf.getIdentifier());
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
+
         assertEquals("my name", StConverter.convertToString(hcf.getName()));
         HealthCareFacility tmp = new HealthCareFacility();
         TelDSetConverter.convertToContactList(hcf.getTelecomAddress(), tmp);

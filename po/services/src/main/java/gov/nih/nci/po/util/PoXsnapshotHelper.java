@@ -4,11 +4,14 @@ import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
+import gov.nih.nci.services.correlation.AbstractRoleDTO;
 import gov.nih.nci.services.correlation.ExtendedEnhancedOrganizationRoleDTOHelper;
 import gov.nih.nci.services.correlation.ExtendedPersonRoleDTOHelper;
+import gov.nih.nci.services.correlation.ExtendedRoleDTOHelper;
 import gov.nih.nci.services.organization.AbstractOrganizationDTO;
 import gov.nih.nci.services.organization.ExtendedOrganizationDTOHelper;
 import gov.nih.nci.services.person.AbstractPersonDTO;
@@ -41,11 +44,11 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
     public static final String DEFAULT_ISO_SNAPSHOT_NAME = "iso";
 
     /** configured XSnapshotUtil for all conversions. */
-    private static final XSnapshotUtils PO_XSNASHOTUTILS;
+    private static final XSnapshotUtils PO_XSNAPSHOTUTILS;
     private static final PoXsnapshotHelper REGISTRY = new PoXsnapshotHelper();
 
     static {
-        PO_XSNASHOTUTILS = new XSnapshotUtils(REGISTRY);
+        PO_XSNAPSHOTUTILS = new XSnapshotUtils(REGISTRY);
     }
 
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
@@ -67,14 +70,19 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
             this.registerSnapshotClass(AbstractPerson.class, DEFAULT_ISO_SNAPSHOT_NAME, snapshotClass);
             this.registerHelper(snapshotClass, new ExtendedPersonDTOHelper());
 
+            snapshotClass = AbstractRoleDTO.class;
+            this.registerSnapshotClass(AbstractRole.class, DEFAULT_ISO_SNAPSHOT_NAME, snapshotClass);
+            this.registerHelper(snapshotClass, new ExtendedRoleDTOHelper());
+
             snapshotClass = AbstractPersonRoleDTO.class;
             this.registerSnapshotClass(AbstractPersonRole.class, DEFAULT_ISO_SNAPSHOT_NAME, snapshotClass);
             this.registerHelper(snapshotClass, new ExtendedPersonRoleDTOHelper());
-            
+
             snapshotClass = AbstractEnhancedOrganizationRoleDTO.class;
-            this.registerSnapshotClass(AbstractEnhancedOrganizationRole.class, DEFAULT_ISO_SNAPSHOT_NAME, 
+            this.registerSnapshotClass(AbstractEnhancedOrganizationRole.class, DEFAULT_ISO_SNAPSHOT_NAME,
                     snapshotClass);
             this.registerHelper(snapshotClass, new ExtendedEnhancedOrganizationRoleDTOHelper());
+
         } catch (ConfigurationException ex) {
             throw new RuntimeException("failed to init xsnapshot", ex);
         }
@@ -86,13 +94,13 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param modelCollection the collection of model objects to convert
      * @param destCollection a collection into which to put the snapshot objects
      * @param <BO> BO type
-     * @param <DTO> DTO type        *
+     * @param <DTO> DTO type
      * @return the collection containing the snapshot objects
      */
     @SuppressWarnings(UNCHECKED)
     public static <BO extends PersistentObject, DTO extends PoDto> Collection<DTO> createSnapshotCollection(
             Collection<BO> modelCollection, Collection<DTO> destCollection) {
-        return PO_XSNASHOTUTILS.createSnapshotCollection(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME, destCollection);
+        return PO_XSNAPSHOTUTILS.createSnapshotCollection(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME, destCollection);
     }
 
     /**
@@ -102,7 +110,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the list of snapshot objects
      */
     public static List createSnapshotList(Collection<?> modelCollection) {
-        return PO_XSNASHOTUTILS.createSnapshotList(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME);
+        return PO_XSNAPSHOTUTILS.createSnapshotList(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME);
     }
 
     /**
@@ -110,7 +118,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return a snapshot object
      */
     public static PoDto createSnapshot(PersistentObject model) {
-        return (PoDto) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_ISO_SNAPSHOT_NAME);
+        return (PoDto) PO_XSNAPSHOTUTILS.createSnapshot(model, DEFAULT_ISO_SNAPSHOT_NAME);
     }
 
     /**
@@ -125,7 +133,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
     @SuppressWarnings(UNCHECKED)
     public static <BO extends PersistentObject, DTO extends PoDto> Collection<DTO> createModelCollection(
             Collection<DTO> snapshotCollection, Collection<BO> destCollection) {
-        return PO_XSNASHOTUTILS.createModelCollection(snapshotCollection, destCollection);
+        return PO_XSNAPSHOTUTILS.createModelCollection(snapshotCollection, destCollection);
     }
 
     /**
@@ -137,9 +145,9 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the list of model objects
      */
     @SuppressWarnings(UNCHECKED)
-    public static  <BO extends PersistentObject, DTO extends PoDto>
-            List<BO> createModelList(Collection<DTO> snapshotCollection) {
-        return PO_XSNASHOTUTILS.createModelList(snapshotCollection);
+    public static <BO extends PersistentObject, DTO extends PoDto> List<BO> createModelList(
+            Collection<DTO> snapshotCollection) {
+        return PO_XSNAPSHOTUTILS.createModelList(snapshotCollection);
     }
 
     /**
@@ -149,7 +157,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return a model object
      */
     public static PersistentObject createModel(PoDto snapshot) {
-        return (PersistentObject) PO_XSNASHOTUTILS.createModel(snapshot);
+        return (PersistentObject) PO_XSNAPSHOTUTILS.createModel(snapshot);
     }
 
     /**
@@ -180,9 +188,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param modelClassForHelper the model class to search for the right helper by.
      */
     public static void copyIntoAbstractModel(PoDto snapshot, PersistentObject model, Class<?> modelClassForHelper) {
-        SnapshotHelper helper = REGISTRY.getHelperForModelClass(
-                modelClassForHelper,
-                DEFAULT_ISO_SNAPSHOT_NAME);
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(modelClassForHelper, DEFAULT_ISO_SNAPSHOT_NAME);
         helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
     }
 }

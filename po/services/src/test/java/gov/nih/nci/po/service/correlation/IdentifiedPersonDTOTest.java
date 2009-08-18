@@ -2,9 +2,6 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import javax.jms.JMSException;
-
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
@@ -14,6 +11,8 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
@@ -21,6 +20,8 @@ import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+
+import javax.jms.JMSException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
@@ -73,7 +74,8 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         assertEquals(STATUS.name().toLowerCase(), dto.getStatus().getCode());
         // check id
         Ii expectedIi1 = buildIdentifier(ID);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi1, (dto).getIdentifier()));
+        Ii actualIi = IiDsetConverter.convertToIi(dto.getIdentifier());
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi1, actualIi));
         assertTrue(EqualsBuilder.reflectionEquals(buildAssignedId(), dto.getAssignedId()));
     }
 
@@ -132,7 +134,8 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         IdentifiedPerson newBO = (IdentifiedPerson) PoXsnapshotHelper.createModel(dto);
         IdentifiedPersonDTO newDto = (IdentifiedPersonDTO) PoXsnapshotHelper.createSnapshot(newBO);
 
-        assertTrue(EqualsBuilder.reflectionEquals(dto.getIdentifier(), newDto.getIdentifier()));
+        assertTrue(EqualsBuilder.reflectionEquals(IiDsetConverter.convertToIi(dto.getIdentifier()),
+                IiDsetConverter.convertToIi(newDto.getIdentifier())));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getPlayerIdentifier(), newDto.getPlayerIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getScoperIdentifier(), newDto.getScoperIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getStatus(), newDto.getStatus()));
@@ -171,7 +174,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         status.setCode(STATUS.name().toLowerCase());
         dto.setStatus(status);
 
-        dto.setIdentifier(buildIdentifier(ID));
+        dto.setIdentifier(IiConverter.convertToDsetIi(buildIdentifier(ID)));
         dto.setAssignedId(buildAssignedId());
 
         return dto;
