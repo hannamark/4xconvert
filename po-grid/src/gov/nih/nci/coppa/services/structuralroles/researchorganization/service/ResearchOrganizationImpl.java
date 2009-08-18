@@ -57,7 +57,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(ResearchOrg
       return impl.query(researchOrganization, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.ResearchOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.ResearchOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
       return impl.getByPlayerIds(id);
   }
 

@@ -3,7 +3,9 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedOrganization;
+import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.common.IdentifiedOrganizationI;
 
 import java.rmi.RemoteException;
@@ -68,6 +70,8 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 			  getIdentifiedOrg(client);
 			  searchIdentifiedOrg(client);
 			  queryIdentifiedOrg(client);
+			  System.out.println("---- get by playerids---");
+			  getIdentifiedOrgsByPlayerIds(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -88,6 +92,27 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 	id.setExtension("597");
 	IdentifiedOrganization result = client.getById(id);
 	ClientUtils.handleResult(result);
+  }
+  
+  private static void getIdentifiedOrgsByPlayerIds(IdentifiedOrganizationClient client) {
+      Id id1 = new Id();
+      id1.setRoot(OrganizationClient.ORG_ROOT);
+      id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+      id1.setExtension("1847");
+      
+      Id id2 = new Id();
+      id2.setRoot(OrganizationClient.ORG_ROOT);
+      id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+      id2.setExtension("2119");
+      
+      try {
+          IdentifiedOrganization[] results = client.getByPlayerIds(new Id[] {id1, id2});
+          ClientUtils.handleSearchResults(results);
+      } catch (NullifiedRoleFault e) {
+          e.printStackTrace();
+      } catch (RemoteException e) {
+          e.printStackTrace();
+      }
   }
   
   private static void searchIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
@@ -115,18 +140,6 @@ private static IdentifiedOrganization createCriteria() {
       criteria.setStatus(statusCode);
     return criteria;
 }
-
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getByPlayerIds");
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequest();
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
-    return boxedResult.getIdentifiedOrganization();
-    }
-  }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
@@ -224,6 +237,18 @@ private static IdentifiedOrganization createCriteria() {
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getIdentifiedOrganization();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
     return boxedResult.getIdentifiedOrganization();
     }
   }

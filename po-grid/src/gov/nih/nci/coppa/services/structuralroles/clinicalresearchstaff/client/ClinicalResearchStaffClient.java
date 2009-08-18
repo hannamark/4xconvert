@@ -176,18 +176,6 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         }
     }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getByPlayerIds");
-    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest();
-    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
-    return boxedResult.getClinicalResearchStaff();
-    }
-  }
-
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
@@ -284,6 +272,18 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getClinicalResearchStaff();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
     return boxedResult.getClinicalResearchStaff();
     }
   }

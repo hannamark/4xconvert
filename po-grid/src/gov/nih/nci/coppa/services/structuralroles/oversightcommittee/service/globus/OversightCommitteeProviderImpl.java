@@ -26,12 +26,6 @@ public class OversightCommitteeProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse();
-    boxedResult.setOversightCommittee(impl.getByPlayerIds(params.getId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getOversightCommittee().getOversightCommittee()));
@@ -77,6 +71,12 @@ public class OversightCommitteeProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse();
     boxedResult.setOversightCommittee(impl.query(params.getOversightCommittee().getOversightCommittee(),params.getLimitOffset().getLimitOffset()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse();
+    boxedResult.setOversightCommittee(impl.getByPlayerIds(params.getId().getId()));
     return boxedResult;
   }
 

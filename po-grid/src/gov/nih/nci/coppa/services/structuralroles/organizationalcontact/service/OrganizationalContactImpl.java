@@ -67,7 +67,7 @@ public class OrganizationalContactImpl extends OrganizationalContactImplBase {
       return impl.query(organizationalContact, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.OrganizationalContact[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
       return impl.getByPlayerIds(id);
   }
 

@@ -56,7 +56,7 @@ public class HealthCareFacilityImpl extends HealthCareFacilityImplBase {
       return impl.query(healthCareFacility, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.HealthCareFacility[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.HealthCareFacility[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
       return impl.getByPlayerIds(id); 
   }
 

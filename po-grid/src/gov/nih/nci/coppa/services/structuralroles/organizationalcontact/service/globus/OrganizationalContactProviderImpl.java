@@ -26,12 +26,6 @@ public class OrganizationalContactProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse();
-    boxedResult.setOrganizationalContact(impl.getByPlayerIds(params.getId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getOrganizationalContact().getOrganizationalContact()));
@@ -77,6 +71,12 @@ public class OrganizationalContactProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse();
     boxedResult.setOrganizationalContact(impl.query(params.getOrganizationalContact().getOrganizationalContact(),params.getLimitOffset().getLimitOffset()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse();
+    boxedResult.setOrganizationalContact(impl.getByPlayerIds(params.getId().getId()));
     return boxedResult;
   }
 

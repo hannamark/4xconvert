@@ -57,7 +57,7 @@ public class IdentifiedOrganizationImpl extends IdentifiedOrganizationImplBase {
       return impl.query(identifiedOrganization, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
       return impl.getByPlayerIds(id);
   }
 

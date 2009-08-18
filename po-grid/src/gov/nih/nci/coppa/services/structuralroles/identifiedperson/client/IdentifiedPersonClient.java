@@ -3,7 +3,9 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedperson.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
+import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.structuralroles.identifiedperson.common.IdentifiedPersonI;
 
 import java.rmi.RemoteException;
@@ -68,6 +70,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
               getIdentifiedPerson(client);
               searchIdentifiedPerson(client);
               queryIdentifiedPerson(client);
+              getIdentifiedPersonsByPlayerIds(client);
             } else {
                 usage();
                 System.exit(1);
@@ -116,18 +119,27 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         criteria.setStatus(statusCode);
         return criteria;
     }
-
-  public gov.nih.nci.coppa.po.IdentifiedPerson[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getByPlayerIds");
-    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest();
-    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
-    return boxedResult.getIdentifiedPerson();
+    
+    private static void getIdentifiedPersonsByPlayerIds(IdentifiedPersonClient client) {
+        Id id1 = new Id();
+        id1.setRoot(PersonClient.PERSON_ROOT);
+        id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id1.setExtension("501");
+        
+        Id id2 = new Id();
+        id2.setRoot(PersonClient.PERSON_ROOT);
+        id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id2.setExtension("2153");
+        
+        try {
+            IdentifiedPerson[] results = client.getByPlayerIds(new Id[] {id1, id2});
+            ClientUtils.handleSearchResults(results);
+        } catch (NullifiedRoleFault e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
-  }
 
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
@@ -225,6 +237,18 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getIdentifiedPerson();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
     return boxedResult.getIdentifiedPerson();
     }
   }

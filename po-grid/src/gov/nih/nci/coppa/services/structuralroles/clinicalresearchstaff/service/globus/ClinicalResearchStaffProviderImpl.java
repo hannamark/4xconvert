@@ -26,12 +26,6 @@ public class ClinicalResearchStaffProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse();
-    boxedResult.setClinicalResearchStaff(impl.getByPlayerIds(params.getId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getClinicalResearchStaff().getClinicalResearchStaff()));
@@ -77,6 +71,12 @@ public class ClinicalResearchStaffProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse();
     boxedResult.setClinicalResearchStaff(impl.query(params.getClinicalResearchStaff().getClinicalResearchStaff(),params.getLimitOffset().getLimitOffset()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse();
+    boxedResult.setClinicalResearchStaff(impl.getByPlayerIds(params.getId().getId()));
     return boxedResult;
   }
 

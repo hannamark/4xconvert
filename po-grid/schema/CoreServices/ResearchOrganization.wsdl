@@ -341,7 +341,6 @@
     <operation name="getByPlayerIds">
       <input message="tns:GetByPlayerIdsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/GetByPlayerIdsRequest" />
       <output message="tns:GetByPlayerIdsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/GetByPlayerIdsResponse" />
-      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/NullifiedRoleFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

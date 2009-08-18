@@ -26,12 +26,6 @@ public class IdentifiedOrganizationProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse();
-    boxedResult.setIdentifiedOrganization(impl.getByPlayerIds(params.getId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateResponse create(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.CreateResponse();
     boxedResult.setId(impl.create(params.getIdentifiedOrganization().getIdentifiedOrganization()));
@@ -77,6 +71,12 @@ public class IdentifiedOrganizationProviderImpl{
     public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryResponse query(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.QueryResponse();
     boxedResult.setIdentifiedOrganization(impl.query(params.getIdentifiedOrganization().getIdentifiedOrganization(),params.getLimitOffset().getLimitOffset()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse();
+    boxedResult.setIdentifiedOrganization(impl.getByPlayerIds(params.getId().getId()));
     return boxedResult;
   }
 
