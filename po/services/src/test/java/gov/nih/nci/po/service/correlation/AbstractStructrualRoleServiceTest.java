@@ -246,14 +246,16 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
 
         T sr2 = createSample();
         
+        T sr3 = createNullifiedSample();
+        
         Long[] ids = null;
         if (sr1 instanceof AbstractPersonRole || sr1 instanceof AbstractIdentifiedPerson){
             ids = new Long[1];
             ids[0] = basicPerson.getId();
         } else if (sr2 instanceof AbstractOrganizationRole) {
             ids = new Long[2];
-            ids[0] = basicOrganization.getId() - 1;
-            ids[1] = basicOrganization.getId() - 2;
+            ids[0] = basicOrganization.getId() - 2;
+            ids[1] = basicOrganization.getId() - 3;
         } else if (sr2 instanceof AbstractIdentifiedOrganization) {
             ids = new Long[1];
             ids[0] = basicOrganization.getId();
@@ -280,6 +282,14 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         AbstractCuratableServiceBean<T> service = getService();
         T r = getSampleStructuralRole();
         service.create(r);
+        return r;
+    }
+    
+    protected T createNullifiedSample() throws Exception {
+        AbstractCuratableServiceBean<T> service = getService();
+        T r = createSample();
+        r.setStatus(RoleStatus.NULLIFIED);
+        service.update(r);
         return r;
     }
 

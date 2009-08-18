@@ -83,6 +83,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
@@ -199,7 +200,8 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         }
 
         Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()
-                + " obj where obj.player.id in (:ids_list)");
+                + " obj where obj.status != :roleStatus AND obj.player.id in (:ids_list)");
+        q.setParameter("roleStatus", RoleStatus.NULLIFIED);
         q.setParameterList("ids_list", pids);
         return q.list();
     }
