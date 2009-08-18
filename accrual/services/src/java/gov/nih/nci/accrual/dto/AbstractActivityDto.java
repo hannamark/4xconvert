@@ -80,9 +80,7 @@ package gov.nih.nci.accrual.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
@@ -94,8 +92,6 @@ public class AbstractActivityDto extends BaseDTO {
     private static final long serialVersionUID = 8158123295607300375L;
 
     private Cd categoryCode;
-    private Cd statusCode;
-    private Ivl<Ts> statusDateRange;
     private Cd subcategoryCode;
     private St textDescription;
     private Ii studyProtocolIdentifier;
@@ -111,30 +107,6 @@ public class AbstractActivityDto extends BaseDTO {
      */
     public void setCategoryCode(Cd categoryCode) {
         this.categoryCode = categoryCode;
-    }
-    /**
-     * @return the statusCode
-     */
-    public Cd getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(Cd statusCode) {
-        this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRange
-     */
-    public Ivl<Ts> getStatusDateRange() {
-        return statusDateRange;
-    }
-    /**
-     * @param statusDateRange the statusDateRange to set
-     */
-    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
-        this.statusDateRange = statusDateRange;
     }
     /**
      * @return the subcategoryCode

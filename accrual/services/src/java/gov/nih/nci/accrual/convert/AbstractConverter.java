@@ -78,8 +78,14 @@
 */
 package gov.nih.nci.accrual.convert;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -102,4 +108,27 @@ public abstract class AbstractConverter <DTO extends BaseDTO, BO extends Abstrac
      * @throws DataFormatException exception
      */
     public abstract DTO convertFromDomainToDto(BO bo) throws DataFormatException;
+
+    /**
+     * @param <T> type of object being referenced
+     * @param clazz the type of object
+     * @param pkey the id
+     * @return domain object
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractEntity> T  fKey(Class<T> clazz, Ii pkey) {
+        if (PAUtil.isIiNull(pkey)) {
+            return null;
+        }
+        T result = null;
+        if (clazz.equals(StudyProtocol.class)) {
+            result = (T) new StudyProtocol();
+        } else if (clazz.equals(PlannedActivity.class)) {
+            result = (T) new PlannedActivity();
+        } else if (clazz.equals(PerformedObservation.class)) {
+            result = (T) new PerformedObservation();
+        }
+        result.setId(IiConverter.convertToLong(pkey));
+        return result;
+    }
 }

@@ -80,12 +80,18 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.PlannedObservationResultConverter;
 import gov.nih.nci.accrual.dto.PlannedObservationResultDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.pa.domain.PlannedObservationResult;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
 public class PlannedObservationResultBean
         extends AbstractBaseAccrualBean<PlannedObservationResultDto
                 , PlannedObservationResult, PlannedObservationResultConverter>

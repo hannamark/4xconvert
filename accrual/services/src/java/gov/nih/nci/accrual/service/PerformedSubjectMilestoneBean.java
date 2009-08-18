@@ -80,12 +80,18 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.PerformedSubjectMilestoneConverter;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
 public class PerformedSubjectMilestoneBean
         extends AbstractBaseAccrualBean<PerformedSubjectMilestoneDto,
                 PerformedSubjectMilestone, PerformedSubjectMilestoneConverter>

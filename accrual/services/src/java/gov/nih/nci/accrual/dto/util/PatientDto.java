@@ -76,60 +76,112 @@
 *
 *
 */
-package gov.nih.nci.accrual.convert;
+package gov.nih.nci.accrual.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.pa.domain.PerformedObservation;
-import gov.nih.nci.pa.domain.PerformedObservationResult;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-
-import java.util.zip.DataFormatException;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 18, 2009
  */
-public class PerformedObservationResultConverter extends AbstractConverter
-        <PerformedObservationResultDto, PerformedObservationResult> {
+public class PatientDto extends BaseDTO {
+
+    private static final long serialVersionUID = -8768541762718262265L;
+
+    private St studyId;
+    private Ts birthDate;
+    private Cd gender;
+    private Cd race;
+    private Cd ethnicity;
+    private St zip;
+    private Ii countryId;
 
     /**
-     * {@inheritDoc}
+     * @return the studyId
      */
-    @Override
-    public PerformedObservationResultDto convertFromDomainToDto(PerformedObservationResult bo)
-            throws DataFormatException {
-        PerformedObservationResultDto dto = new PerformedObservationResultDto();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setPerformedActivityIdentifier(IiConverter.converToActivityIi(bo.getId()));
-        dto.setResultCode(StConverter.convertToSt(bo.getResultCode()));
-        dto.setResultCodeModifiedText(StConverter.convertToSt(bo.getResultCodeModifiedText()));
-        dto.setResultDateRange(IvlConverter.convertTs().convertToIvl(bo.getResultDateRangeLow(),
-                bo.getResultDateRangeHigh()));
-        dto.setResultIndicator(BlConverter.convertToBl(bo.getResultIndicator()));
-        dto.setResultText(StConverter.convertToSt(bo.getResultText()));
-        dto.setTypeCode(StConverter.convertToSt(bo.getTypeCode()));
-        return dto;
+    public St getStudyId() {
+        return studyId;
     }
-
     /**
-     * {@inheritDoc}
+     * @param studyId the studyId to set
      */
-    @Override
-    public PerformedObservationResult convertFromDtoToDomain(PerformedObservationResultDto dto)
-            throws DataFormatException {
-        PerformedObservationResult bo = new PerformedObservationResult();
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setPerformedObservation(fKey(PerformedObservation.class,
-                dto.getPerformedActivityIdentifier()));
-        bo.setResultCode(StConverter.convertToString(dto.getResultCode()));
-        bo.setResultDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getResultDateRange()));
-        bo.setResultDateRangeLow(IvlConverter.convertTs().convertLow(dto.getResultDateRange()));
-        bo.setResultIndicator(BlConverter.covertToBoolean(dto.getResultIndicator()));
-        bo.setResultText(StConverter.convertToString(dto.getResultText()));
-        bo.setTypeCode(StConverter.convertToString(dto.getTypeCode()));
-        return bo;
+    public void setStudyId(St studyId) {
+        this.studyId = studyId;
+    }
+    /**
+     * @return the birthDate
+     */
+    public Ts getBirthDate() {
+        return birthDate;
+    }
+    /**
+     * @param birthDate the birthDate to set
+     */
+    public void setBirthDate(Ts birthDate) {
+        this.birthDate = birthDate;
+    }
+    /**
+     * @return the gender
+     */
+    public Cd getGender() {
+        return gender;
+    }
+    /**
+     * @param gender the gender to set
+     */
+    public void setGender(Cd gender) {
+        this.gender = gender;
+    }
+    /**
+     * @return the race
+     */
+    public Cd getRace() {
+        return race;
+    }
+    /**
+     * @param race the race to set
+     */
+    public void setRace(Cd race) {
+        this.race = race;
+    }
+    /**
+     * @return the ethnicity
+     */
+    public Cd getEthnicity() {
+        return ethnicity;
+    }
+    /**
+     * @param ethnicity the ethnicity to set
+     */
+    public void setEthnicity(Cd ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+    /**
+     * @return the zip
+     */
+    public St getZip() {
+        return zip;
+    }
+    /**
+     * @param zip the zip to set
+     */
+    public void setZip(St zip) {
+        this.zip = zip;
+    }
+    /**
+     * @return the countryId
+     */
+    public Ii getCountryId() {
+        return countryId;
+    }
+    /**
+     * @param countryId the countryId to set
+     */
+    public void setCountryId(Ii countryId) {
+        this.countryId = countryId;
     }
 }

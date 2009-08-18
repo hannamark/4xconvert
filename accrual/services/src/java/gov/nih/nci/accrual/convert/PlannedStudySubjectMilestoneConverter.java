@@ -80,6 +80,12 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PlannedStudySubjectMilestoneDto;
 import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.util.zip.DataFormatException;
 
@@ -98,6 +104,11 @@ public class PlannedStudySubjectMilestoneConverter extends AbstractConverter
     public PlannedStudySubjectMilestoneDto convertFromDomainToDto(PlannedStudySubjectMilestone bo)
             throws DataFormatException {
         PlannedStudySubjectMilestoneDto dto = new PlannedStudySubjectMilestoneDto();
+        dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
+        dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         return dto;
     }
 
@@ -108,6 +119,11 @@ public class PlannedStudySubjectMilestoneConverter extends AbstractConverter
     public PlannedStudySubjectMilestone convertFromDtoToDomain(PlannedStudySubjectMilestoneDto dto)
             throws DataFormatException {
         PlannedStudySubjectMilestone bo = new PlannedStudySubjectMilestone();
+        bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setStudyProtocol(fKey(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
+        bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
+        bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         return bo;
     }
 }

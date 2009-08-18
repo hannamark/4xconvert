@@ -80,6 +80,14 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.util.zip.DataFormatException;
 
@@ -98,6 +106,15 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
     public PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo)
             throws DataFormatException {
         PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
+        dto.setActualDateRange(IvlConverter.convertTs().convertToIvl(bo.getActualDateRangeLow(),
+                bo.getActualDateRangeHigh()));
+        dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
+        dto.setIdentifier(IiConverter.converToActivityIi(bo.getId()));
+        dto.setInformedConsentDate(TsConverter.convertToTs(bo.getInformedConsentDate()));
+        dto.setReasonNotCompletedTypeOther(StConverter.convertToSt(bo.getReasonNotCompletedTypeOther()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
+        dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         return dto;
     }
 
@@ -108,6 +125,15 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
     public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto)
             throws DataFormatException {
         PerformedSubjectMilestone bo = new PerformedSubjectMilestone();
+        bo.setActualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getActualDateRange()));
+        bo.setActualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getActualDateRange()));
+        bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));
+        bo.setReasonNotCompletedTypeOther(StConverter.convertToString(dto.getReasonNotCompletedTypeOther()));
+        bo.setStudyProtocol(fKey(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
+        bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
+        bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         return bo;
     }
 }
