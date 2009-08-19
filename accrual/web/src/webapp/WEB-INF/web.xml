@@ -96,7 +96,6 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Submitter</role-name>
-            <role-name>AccrualAdmin</role-name>
         </auth-constraint>
     </security-constraint>
     
@@ -107,19 +106,9 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Submitter</role-name>
-            <role-name>AccrualAdmin</role-name>
         </auth-constraint>
     </security-constraint>
     
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>admin</web-resource-name>
-            <url-pattern>/admin/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>AccrualAdmin</role-name>
-        </auth-constraint>
-    </security-constraint>
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
@@ -128,10 +117,6 @@
         </form-login-config>
     </login-config>
 
-    <security-role>
-        <description>Role for accrual administrator.</description>
-        <role-name>AccrualAdmin</role-name>
-    </security-role>
     <security-role>
         <description>Role for users who have created an id through Protocol Registry</description>
         <role-name>Submitter</role-name>
