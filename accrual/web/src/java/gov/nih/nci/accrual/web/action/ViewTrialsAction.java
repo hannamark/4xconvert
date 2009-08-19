@@ -120,6 +120,40 @@ public class ViewTrialsAction extends AbstractAccrualAction {
        
        return actionResult;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+     public String search() {
+        String actionResult = "search_trials";
+      //check if users accepted the disclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            return "show_Disclaimer_Page";
+        }
+             
+       return actionResult;
+    }
+     
+     /**
+      * {@inheritDoc}
+      */
+       public String searchQuery() {
+         String actionResult = "list_trials";
+         try {
+         SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
+         listOfTrials = new ArrayList<SearchTrialResultDto>();
+         listOfTrials = service.search(criteria);
+         ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
+            
+         } catch (Exception e) {
+               addActionError(e.getLocalizedMessage());
+             return ERROR;
+         }
+        
+        return actionResult;
+     }
+    
     /**
      * 
      * @return listOfTrials
