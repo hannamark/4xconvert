@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<li class="stdnav"><div>NCI CTRP Viewer</div>
+<li class="stdnav"><div>NCI CTRP</div>
     <ul>
         <c:choose>
            <c:when test="${requestScope.topic == 'run_reports'}">
@@ -46,10 +46,10 @@
                 
                  <c:choose>
                     <c:when test="${requestScope.topic == 'search_trials'}">
-                       <li><a href="" class="selected">Search Trials</a></li> 
+                       <li><a href="viewTrialssearch.action" class="selected">Search Trials</a></li> 
                     </c:when>
                     <c:otherwise>
-                       <li><a href="" >Search Trials</a></li>
+                       <li><a href="viewTrialssearch.action" >Search Trials</a></li>
                     </c:otherwise>
                 </c:choose>
                 
