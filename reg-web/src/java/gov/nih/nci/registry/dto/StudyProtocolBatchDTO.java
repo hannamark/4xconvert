@@ -56,6 +56,9 @@ public class StudyProtocolBatchDTO {
     private String sponsorContactTTY;
     private String sponsorContactFax;
     private String sponsorContactUrl;
+    //generic contact
+    private String responsibleGenericContactName;
+    private String sponsorContactType;
     
     //lead org
     private String leadOrgName;
@@ -1701,6 +1704,37 @@ public class StudyProtocolBatchDTO {
      */
     public void setProtocolHighlightDocFileName(String protocolHighlightDocFileName) {
         this.protocolHighlightDocFileName = protocolHighlightDocFileName;
+    }
+
+    /**
+     * @return the responsibleGenericContactName
+     */
+    public String getResponsibleGenericContactName() {
+        return responsibleGenericContactName;
+    }
+
+    /**
+     * @param responsibleGenericContactName the responsibleGenericContactName to set
+     */
+    public void setResponsibleGenericContactName(
+            String responsibleGenericContactName) {
+        this.responsibleGenericContactName = responsibleGenericContactName;
+    }
+
+    /**
+     * @return the sponsorContactType
+     */
+    @Pattern(regex = "^[P][e][r][s][o][n][a][l]|[p][e][r][s][o][n][a][l]|[G][e][n][e][r][i][c]|[g][e][n][e][r][i][c]$",
+            message = "Submission Type can be Personal or Generic .\n")
+    public String getSponsorContactType() {
+        return sponsorContactType;
+    }
+
+    /**
+     * @param sponsorContactType the sponsorContactType to set
+     */
+    public void setSponsorContactType(String sponsorContactType) {
+        this.sponsorContactType = sponsorContactType;
     }
     
 

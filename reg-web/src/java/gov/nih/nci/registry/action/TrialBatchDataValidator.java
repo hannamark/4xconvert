@@ -300,10 +300,30 @@ public class TrialBatchDataValidator {
         if (PAUtil.isNotEmpty(batchDto.getResponsibleParty()) 
                 && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
             //check Sponsor contact info is provided or not
-            PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);
-            fieldErr.append(validate(sponsorContact, "Sponsor Contact's "));
-            fieldErr.append(validateCountryAndStateInfo(sponsorContact.getCountry(), dto.getState(),
-                    "Sponsor Contact's "));
+            //find if its Generic/Personal
+            if (PAUtil.isNotEmpty(batchDto.getSponsorContactType())) {
+                if (batchDto.getSponsorContactType().equalsIgnoreCase("Personal")) {
+                    PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);
+                    fieldErr.append(validate(sponsorContact, "Sponsor Contact's "));
+                    fieldErr.append(validateCountryAndStateInfo(sponsorContact.getCountry(), dto.getState(),
+                        "Sponsor Contact's "));
+                } 
+                if (batchDto.getSponsorContactType().equalsIgnoreCase("Generic")) {
+                  if (PAUtil.isEmpty(batchDto.getResponsibleGenericContactName())) {
+                      fieldErr.append("Title is required when Sponsor Contact Type is Generic .\n");      
+                  }
+                  if (PAUtil.isEmpty(batchDto.getSponsorContactEmail())) {
+                      fieldErr.append("Sponsor Contact Email is required.\n");      
+                  } else if (!PAUtil.isValidEmail(batchDto.getSponsorContactEmail())) {
+                      fieldErr.append("Sponsor Contact Email is not well formatted.\n");
+                  }
+                  if (PAUtil.isEmpty(batchDto.getSponsorContactPhone())) {
+                      fieldErr.append("Sponsor Contact Phone is required.\n");      
+                  }
+                }
+            } else {
+                fieldErr.append("Sponsor Contact Type is required.\n");
+            }
         }
         return fieldErr;
     }

@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -99,11 +100,13 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
@@ -114,6 +117,7 @@ import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -128,6 +132,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 /**
@@ -222,8 +227,14 @@ public class BatchCreateProtocols {
             //look up new Person or create if needed.
             Ii responsiblePersonId = null;
             if (dto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
-                PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(dto);
-                responsiblePersonId = lookUpPersons(sponsorPersonDto);
+                if (dto.getSponsorContactType().equalsIgnoreCase("Personal")) {
+                    PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(dto);
+                    responsiblePersonId = lookUpPersons(sponsorPersonDto);
+                } else {
+                    responsiblePersonId = getTitleIi(dto.getResponsibleGenericContactName(),
+                            dto.getSponsorContactEmail(), dto.getSponsorPhone(),
+                            sponsorIdIi);
+                }
             }
             //now only go ahead and create the Trial
             LOG.info("TrialType() " + dto.getTrialType());
@@ -326,6 +337,33 @@ public class BatchCreateProtocols {
         LOG.info("response " + protocolAssignedId);
         return protocolAssignedId;
     }
+    /*
+     * this method first look if title is there if not create new
+     */
+    private Ii getTitleIi(String responsibleGenericContactName,
+            String sponsorContactEmail, String sponsorPhone, Ii sponsorIdIi) 
+            throws PAException, URISyntaxException, EntityValidationException {
+            Ii responsibleIi = null;
+            OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
+            contactDTO.setScoperIdentifier(sponsorIdIi);
+            contactDTO.setTitle(StConverter.convertToSt(responsibleGenericContactName));
+            DSet<Cd> orgContactType = new DSet<Cd>();
+            Set<Cd> orgContactCd = new HashSet<Cd>();
+            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
+            orgContactType.setItem(orgContactCd);
+            DSet<Tel> list = getDSetTelList(sponsorContactEmail, sponsorPhone, "", "", "");
+            contactDTO.setTelecomAddress(list);
+            contactDTO.setTypeCode(orgContactType);
+            List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
+            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService().search(contactDTO);
+            if (isoDtoList.isEmpty()) {
+                //create the title
+                PoRegistry.getOrganizationalContactCorrelationService()
+                .createCorrelation(contactDTO);
+            }
+            responsibleIi = isoDtoList.get(0).getIdentifier();
+        return responsibleIi;
+    }
     private TrialDTO convertToTrialDTO(StudyProtocolBatchDTO batchDTO) {
         TrialDTO  trialDTO = new TrialDTO();
         trialDTO.setCompletionDate(batchDTO.getPrimaryCompletionDate());
@@ -352,8 +390,12 @@ public class BatchCreateProtocols {
         } else {
             trialDTO.setContactEmail(batchDTO.getSponsorContactEmail());
             trialDTO.setContactPhone(batchDTO.getSponsorContactPhone());
-            trialDTO.setResponsiblePersonName(batchDTO.getSponsorContactLName() 
+            if (batchDTO.getSponsorContactType().equalsIgnoreCase("Personal")) {
+                trialDTO.setResponsiblePersonName(batchDTO.getSponsorContactLName() 
                     + batchDTO.getSponsorContactFName());
+            } else {
+                trialDTO.setResponsibleGenericContactName(batchDTO.getResponsibleGenericContactName());
+            }
         }
         //if the Phase's value is not in allowed LOV then save phase as Other
         // and comments as the value of current phase
@@ -468,6 +510,32 @@ public class BatchCreateProtocols {
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress,
                 null, cityName, stateName, zipCode, countryName));
+        DSet<Tel> telco = getDSetTelList(email, phoneNumer, faxNumber,
+                ttyNumber, url);
+         orgDto.setTelecomAddress(telco);
+         Ii id = RegistryServiceLocator.getPoOrganizationEntityService()
+                    .createOrganization(orgDto);
+         List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
+            callConvert.add(RegistryServiceLocator
+                    .getPoOrganizationEntityService().getOrganization(id));
+         orgId = callConvert.get(0).getIdentifier();
+        
+        LOG.info("leaving Create Org with OrgId" + orgId.getExtension());
+        return orgId;
+    }
+
+    /**
+     * @param email
+     * @param phoneNumer
+     * @param faxNumber
+     * @param ttyNumber
+     * @param url
+     * @return
+     * @throws URISyntaxException
+     */
+    private DSet<Tel> getDSetTelList(String email, String phoneNumer,
+            String faxNumber, String ttyNumber, String url)
+            throws URISyntaxException {
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
 
@@ -494,16 +562,7 @@ public class BatchCreateProtocols {
          TelEmail telemail = new TelEmail();
          telemail.setValue(new URI("mailto:" + email));
          telco.getItem().add(telemail);
-         orgDto.setTelecomAddress(telco);
-         Ii id = RegistryServiceLocator.getPoOrganizationEntityService()
-                    .createOrganization(orgDto);
-         List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
-            callConvert.add(RegistryServiceLocator
-                    .getPoOrganizationEntityService().getOrganization(id));
-         orgId = callConvert.get(0).getIdentifier();
-        
-        LOG.info("leaving Create Org with OrgId" + orgId.getExtension());
-        return orgId;
+        return telco;
     }
     /**
      * 
@@ -604,31 +663,7 @@ public class BatchCreateProtocols {
         partFam.setValue(lastName);
         dto.getName().getPart().add(partFam);
 
-        DSet<Tel> list = new DSet<Tel>();
-        list.setItem(new HashSet<Tel>());
-        if (phone != null && phone.length() > 0) {
-             Tel t = new Tel();
-             t.setValue(new URI("tel", phone, null));
-             list.getItem().add(t);
-        }
-        if (fax != null && fax.length() > 0) {
-            Tel faxTel = new Tel();
-            faxTel.setValue(new URI("x-text-fax", fax, null));
-            list.getItem().add(faxTel);
-        }
-        if (tty != null && tty.length() > 0) {
-            Tel ttyTel = new Tel();
-            ttyTel.setValue(new URI("x-text-tel", tty, null));
-            list.getItem().add(ttyTel);
-        }
-        if (url != null && url.length() > 0) {
-            TelUrl telurl = new TelUrl();
-            telurl.setValue(new URI(url));
-            list.getItem().add(telurl);
-        }
-        TelEmail telemail = new TelEmail();
-        telemail.setValue(new URI("mailto:" + email));
-        list.getItem().add(telemail);
+        DSet<Tel> list = getDSetTelList(email, phone, fax, tty, url);
         dto.setTelecomAddress(list);
         dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
         personId = RegistryServiceLocator.getPoPersonEntityService().createPerson(dto);

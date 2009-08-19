@@ -62,168 +62,172 @@ public class BatchConstants {
     /** */
     public static final int RESPONSIBLE_PARTY = 25;
     /** */
-    public static final int SPONSOR_CONTACT_FIRST_NAME = 26;
+    public static final int SPONSOR_CONTACT_TYPE = 26;
     /** */
-    public static final int SPONSOR_CONTACT_MIDDLE_NAME = 27;
+    public static final int SPONSOR_CONTACT_TITLE = 27;
     /** */
-    public static final int SPONSOR_CONTACT_LAST_NAME = 28;
+    public static final int SPONSOR_CONTACT_FIRST_NAME = 28;
     /** */
-    public static final int SPONSOR_CONTACT_CTEP_PERSON_NO = 29;
+    public static final int SPONSOR_CONTACT_MIDDLE_NAME = 29;
     /** */
-    public static final int SPONSOR_CONTACT_STREET_ADDRESS = 30;
+    public static final int SPONSOR_CONTACT_LAST_NAME = 30;
     /** */
-    public static final int SPONSOR_CONTACT_CITY = 31;
+    public static final int SPONSOR_CONTACT_CTEP_PERSON_NO = 31;
     /** */
-    public static final int SPONSOR_CONTACT_STATE = 32;
+    public static final int SPONSOR_CONTACT_STREET_ADDRESS = 32;
     /** */
-    public static final int SPONSOR_CONTACT_ZIP = 33;
+    public static final int SPONSOR_CONTACT_CITY = 33;
     /** */
-    public static final int SPONSOR_CONTACT_COUNTRY = 34;
+    public static final int SPONSOR_CONTACT_STATE = 34;
     /** */
-    public static final int SPONSOR_CONTACT_EMAIL_ID = 35;
+    public static final int SPONSOR_CONTACT_ZIP = 35;
     /** */
-    public static final int SPONSOR_CONTACT_PHONE = 36;
+    public static final int SPONSOR_CONTACT_COUNTRY = 36;
     /** */
-    public static final int SPONSOR_CONTACT_TTY = 37;
+    public static final int SPONSOR_CONTACT_EMAIL_ID = 37;
     /** */
-    public static final int SPONSOR_CONTACT_FAX = 38;
+    public static final int SPONSOR_CONTACT_PHONE = 38;
     /** */
-    public static final int SPONSOR_CONTACT_URL = 39;
+    public static final int SPONSOR_CONTACT_TTY = 39;
     /** */
-    public static final int LEAD_ORG_NAME = 40;
+    public static final int SPONSOR_CONTACT_FAX = 40;
     /** */
-    public static final int LEAD_ORG_CTEP_IDENTIFIER = 41;
+    public static final int SPONSOR_CONTACT_URL = 41;
     /** */
-    public static final int LEAD_ORG_STREET_ADDRESS = 42;
+    public static final int LEAD_ORG_NAME = 42;
     /** */
-    public static final int LEAD_ORG_CITY = 43;
+    public static final int LEAD_ORG_CTEP_IDENTIFIER = 43;
     /** */
-    public static final int LEAD_ORG_STATE = 44;
+    public static final int LEAD_ORG_STREET_ADDRESS = 44;
     /** */
-    public static final int LEAD_ORG_ZIP = 45;
+    public static final int LEAD_ORG_CITY = 45;
     /** */
-    public static final int LEAD_ORG_COUNTRY = 46;
+    public static final int LEAD_ORG_STATE = 46;
     /** */
-    public static final int LEAD_ORG_EMAIL = 47;
+    public static final int LEAD_ORG_ZIP = 47;
     /** */
-    public static final int LEAD_ORG_PHONE = 48;
+    public static final int LEAD_ORG_COUNTRY = 48;
     /** */
-    public static final int LEAD_ORG_TTY = 49;
+    public static final int LEAD_ORG_EMAIL = 49;
     /** */
-    public static final int LEAD_ORG_FAX = 50;
+    public static final int LEAD_ORG_PHONE = 50;
     /** */
-    public static final int LEAD_ORG_URL = 51;
+    public static final int LEAD_ORG_TTY = 51;
     /** */
-    public static final int LEAD_ORG_TYPE = 52;
+    public static final int LEAD_ORG_FAX = 52;
     /** */
-    public static final int PI_FIRST_NAME = 53;
+    public static final int LEAD_ORG_URL = 53;
     /** */
-    public static final int PI_MIDDLE_NAME = 54;
+    public static final int LEAD_ORG_TYPE = 54;
     /** */
-    public static final int PI_LAST_NAME = 55;
+    public static final int PI_FIRST_NAME = 55;
     /** */
-    public static final int PI_PERSON_CTEP_PERSON_NUMBER = 56;
+    public static final int PI_MIDDLE_NAME = 56;
     /** */
-    public static final int PI_STREET_ADDRESS = 57;
+    public static final int PI_LAST_NAME = 57;
     /** */
-    public static final int PI_CITY = 58;
+    public static final int PI_PERSON_CTEP_PERSON_NUMBER = 58;
     /** */
-    public static final int PI_STATE = 59;
+    public static final int PI_STREET_ADDRESS = 59;
     /** */
-    public static final int PI_ZIP = 60;
+    public static final int PI_CITY = 60;
     /** */
-    public static final int PI_COUNTRY = 61;
+    public static final int PI_STATE = 61;
     /** */
-    public static final int PI_EMAIL = 62;
+    public static final int PI_ZIP = 62;
     /** */
-    public static final int PI_PHONE = 63;
+    public static final int PI_COUNTRY = 63;
     /** */
-    public static final int PI_TTY = 64;
+    public static final int PI_EMAIL = 64;
     /** */
-    public static final int PI_FAX = 65;
+    public static final int PI_PHONE = 65;
     /** */
-    public static final int PI_URL = 66;
+    public static final int PI_TTY = 66;
     /** */
-    public static final int S4_FUND_CAT = 67;
+    public static final int PI_FAX = 67;
     /** */
-    public static final int S4_FUND_ORG_NAME = 68;
+    public static final int PI_URL = 68;
     /** */
-    public static final int S4_FUND_ORG_CTEP_ORG_NO = 69;
+    public static final int S4_FUND_CAT = 69;
     /** */
-    public static final int S4_FUND_ORG_STREET_ADDRESS = 70;
+    public static final int S4_FUND_ORG_NAME = 70;
     /** */
-    public static final int S4_FUND_CITY = 71;
+    public static final int S4_FUND_ORG_CTEP_ORG_NO = 71;
     /** */
-    public static final int S4_FUND_STATE = 72;
+    public static final int S4_FUND_ORG_STREET_ADDRESS = 72;
     /** */
-    public static final int S4_FUND_ZIP = 73;
+    public static final int S4_FUND_CITY = 73;
     /** */
-    public static final int S4_FUND_COUNTRY = 74;
+    public static final int S4_FUND_STATE = 74;
     /** */
-    public static final int S4_FUND_EMAIL = 75;
+    public static final int S4_FUND_ZIP = 75;
     /** */
-    public static final int S4_FUND_PHONE = 76;
+    public static final int S4_FUND_COUNTRY = 76;
     /** */
-    public static final int S4_FUND_TTY = 77;
+    public static final int S4_FUND_EMAIL = 77;
     /** */
-    public static final int S4_FUND_FAX = 78;
+    public static final int S4_FUND_PHONE = 78;
     /** */
-    public static final int S4_FUND_URL = 79;
+    public static final int S4_FUND_TTY = 79;
     /** */
-    public static final int S4_PRG_CODE_TEXT = 80;
+    public static final int S4_FUND_FAX = 80;
+    /** */
+    public static final int S4_FUND_URL = 81;
+    /** */
+    public static final int S4_PRG_CODE_TEXT = 82;
     /** */
     
-    public static final int NIH_GRANT_FUND_MC = 81;
+    public static final int NIH_GRANT_FUND_MC = 83;
     /** */
-    public static final int NIH_GRANT_INSTITUTE_CODE = 82;
+    public static final int NIH_GRANT_INSTITUTE_CODE = 84;
     /** */
-    public static final int NIH_GRANT_SR_NO = 83;
+    public static final int NIH_GRANT_SR_NO = 85;
     /** */
-    public static final int NIH_GRANT_NCI_DIV_CODE = 84;
+    public static final int NIH_GRANT_NCI_DIV_CODE = 86;
     /** */
-    public static final int CURRENT_TRIAL_STATUS = 85;
+    public static final int CURRENT_TRIAL_STATUS = 87;
     /** */
-    public static final int REASON_FOR_STUDY_STOPPED = 86;
+    public static final int REASON_FOR_STUDY_STOPPED = 88;
     /** */
-    public static final int CURRENT_TRIAL_STATUS_DATE = 87;
+    public static final int CURRENT_TRIAL_STATUS_DATE = 89;
     /** */
-    public static final int STUDY_START_DATE = 88;
+    public static final int STUDY_START_DATE = 90;
     /** */
-    public static final int STUDY_START_DATE_TYPE = 89;
+    public static final int STUDY_START_DATE_TYPE = 91;
     /** */
-    public static final int PRIMARY_COMP_DATE = 90;
+    public static final int PRIMARY_COMP_DATE = 92;
     /** */
-    public static final int PRIMARY_COMP_DATE_TYPE = 91;
+    public static final int PRIMARY_COMP_DATE_TYPE = 93;
     /** */
-    public static final int IND_TYPE = 92;
+    public static final int IND_TYPE = 94;
     /** */
-    public static final int IND_NUMBER = 93;
+    public static final int IND_NUMBER = 95;
     /** */
-    public static final int IND_GRANTOR = 94;
+    public static final int IND_GRANTOR = 96;
     /** */
-    public static final int IND_HOLDER_TYPE = 95;
+    public static final int IND_HOLDER_TYPE = 97;
     /** */
-    public static final int IND_NIH_INSTITUTION = 96;
+    public static final int IND_NIH_INSTITUTION = 98;
     /** */
-    public static final int IND_NCI_DIV_CODE = 97;
+    public static final int IND_NCI_DIV_CODE = 99;
     /** */
-    public static final int IND_HAS_EXPANDED_ACCESS = 98;
+    public static final int IND_HAS_EXPANDED_ACCESS = 100;
     /** */
-    public static final int IND_EXPANED_ACCESS_STATUS = 99;
+    public static final int IND_EXPANED_ACCESS_STATUS = 101;
     /** */
-    public static final int PROTOCOL_DOC_FILE_NAME = 100;
+    public static final int PROTOCOL_DOC_FILE_NAME = 102;
     /** */
-    public static final int IRB_APPROVAL_DOC_FILE_NAME = 101;
+    public static final int IRB_APPROVAL_DOC_FILE_NAME = 103;
     /** */
-    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 102;
+    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 104;
     /** */
-    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 103;
+    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 105;
     /** */
-    public static final int OTHER_TRIAL_DOC_FILE_NAME = 104;
+    public static final int OTHER_TRIAL_DOC_FILE_NAME = 106;
     /** */
-    public static final int CHANGE_MEMO_DOC_FILE_NAME = 105;
+    public static final int CHANGE_MEMO_DOC_FILE_NAME = 107;
     /** */
-    public static final int PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME = 106;
+    public static final int PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME = 108;
     /** */
     public static final int COUNTRY_SIZE = 3;
     /** */

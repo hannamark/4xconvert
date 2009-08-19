@@ -267,6 +267,8 @@ public class ExcelReader {
         case BatchConstants.PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME: batchDto.setProtocolHighlightDocFileName(cellValue); 
             break;
         case BatchConstants.CHANGE_MEMO_DOC_FILE_NAME:batchDto.setChangeRequestDocFileName(cellValue); break;
+        case BatchConstants.SPONSOR_CONTACT_TYPE:batchDto.setSponsorContactType(cellValue); break;
+        case BatchConstants.SPONSOR_CONTACT_TITLE:batchDto.setResponsibleGenericContactName(cellValue); break;
         default: throw new PAException(" Unknown coloumn #" + col + "to map ");
         }
         return batchDto;
