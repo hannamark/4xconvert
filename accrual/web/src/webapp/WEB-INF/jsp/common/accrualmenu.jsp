@@ -24,7 +24,7 @@
                        <li><a href="sample.action" >Sample Action</a></li>
                     </c:otherwise>
                 </c:choose>
-                -->
+                
                 <c:choose>
                     <c:when test="${requestScope.topic == 'list_protocols'}">
                        <li><a href="viewProtocol.action" class="selected">View Protocol</a></li> 
@@ -33,7 +33,27 @@
                        <li><a href="viewProtocol.action" >View Protocol</a></li>
                     </c:otherwise>
                 </c:choose>
+                -->
                 
+                 <c:choose>
+                    <c:when test="${requestScope.topic == 'list_trials'}">
+                       <li><a href="viewTrials.action" class="selected">View Trials</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="viewTrials.action" >View Trials</a></li>
+                    </c:otherwise>
+                </c:choose>
+                
+                 <c:choose>
+                    <c:when test="${requestScope.topic == 'search_trials'}">
+                       <li><a href="" class="selected">Search Trials</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="" >Search Trials</a></li>
+                    </c:otherwise>
+                </c:choose>
+                
+                                
                  <li>Accrual Submission</li> 
                 <c:choose>
                     <c:when test="${requestScope.topic == ''}">
