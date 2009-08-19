@@ -84,9 +84,10 @@
             <result name="list_protocols">/WEB-INF/jsp/listProtocols.jsp</result>
         </action>
         
-        <action name="viewTrials" class="gov.nih.nci.accrual.web.action.ViewTrialsAction">
-        <interceptor-ref name="nci-commonsParams" />
+        <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction" method="{1}">
+            <interceptor-ref name="nci-commonsParams" />
             <result name="list_trials">/WEB-INF/jsp/listTrials.jsp</result>
+            <result name="search_trials">/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
          
     </package>
