@@ -74,4 +74,10 @@ public class OversightCommitteeProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse();
+    boxedResult.setOversightCommittee(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
 }

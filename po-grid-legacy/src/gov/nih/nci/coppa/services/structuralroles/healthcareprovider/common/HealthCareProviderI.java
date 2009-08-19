@@ -28,5 +28,7 @@ public interface HealthCareProviderI {
 
   public gov.nih.nci.coppa.po.HealthCareProvider[] query(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
 
+  public gov.nih.nci.coppa.po.HealthCareProvider[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException ;
+
 }
 

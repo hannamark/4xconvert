@@ -56,5 +56,9 @@ public class ClinicalResearchStaffImpl extends ClinicalResearchStaffImplBase {
       return impl.query(clinicalResearchStaff, limitOffset);
   }
 
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    return impl.getByPlayerIds(id);
+  }
+
 }
 

@@ -74,4 +74,10 @@ public class IdentifiedOrganizationProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByPlayerIdsResponse();
+    boxedResult.setIdentifiedOrganization(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
 }

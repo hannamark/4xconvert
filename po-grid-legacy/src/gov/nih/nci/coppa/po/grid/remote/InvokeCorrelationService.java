@@ -72,6 +72,21 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<DTO> getCorrelationsByPlayerIds(Ii[] pids) throws NullifiedRoleException {
+        try {
+            List<DTO> results = getLocator().getService(type).getCorrelationsByPlayerIds(pids);
+            return results;
+        } catch (NullifiedRoleException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
 
     /**
      * {@inheritDoc}

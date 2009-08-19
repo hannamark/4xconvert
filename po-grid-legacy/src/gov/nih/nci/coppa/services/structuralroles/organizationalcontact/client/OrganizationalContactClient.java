@@ -3,7 +3,9 @@ package gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.OrganizationalContact;
+import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.structuralroles.organizationalcontact.common.OrganizationalContactI;
 
 import java.rmi.RemoteException;
@@ -68,6 +70,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
               getOrgContact(client);
               searchOrgContact(client);
               queryOrgContact(client);
+              getOrganizationalContactsByPlayerIds(client);
             } else {
                 usage();
                 System.exit(1);
@@ -113,8 +116,29 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         criteria.setStatus(statusCode);
         return criteria;
     }
+    
+    private static void getOrganizationalContactsByPlayerIds(OrganizationalContactClient client) {
+        Id id1 = new Id();
+        id1.setRoot(PersonClient.PERSON_ROOT);
+        id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id1.setExtension("501");
+        
+        Id id2 = new Id();
+        id2.setRoot(PersonClient.PERSON_ROOT);
+        id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id2.setExtension("2153");
+        
+        try {
+            OrganizationalContact[] results = client.getByPlayerIds(new Id[] {id1, id2});
+            ClientUtils.handleSearchResults(results);
+        } catch (NullifiedRoleFault e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.CreateRequest();
@@ -210,6 +234,18 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getOrganizationalContact();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.OrganizationalContact[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
     return boxedResult.getOrganizationalContact();
     }
   }

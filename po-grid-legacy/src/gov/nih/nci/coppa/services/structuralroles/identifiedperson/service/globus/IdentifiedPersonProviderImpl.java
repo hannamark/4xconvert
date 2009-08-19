@@ -74,4 +74,10 @@ public class IdentifiedPersonProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse();
+    boxedResult.setIdentifiedPerson(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
 }

@@ -28,5 +28,7 @@ public interface ClinicalResearchStaffI {
 
   public gov.nih.nci.coppa.po.ClinicalResearchStaff[] query(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
 
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException ;
+
 }
 

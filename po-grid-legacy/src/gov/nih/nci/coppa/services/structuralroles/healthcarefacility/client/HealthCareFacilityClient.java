@@ -3,7 +3,9 @@ package gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
 import gov.nih.nci.coppa.services.structuralroles.healthcarefacility.common.HealthCareFacilityI;
 
 import java.rmi.RemoteException;
@@ -67,6 +69,8 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
               getHealthCareFacility(client);
               searchHealthCareFacility(client);
               queryHealthCareFacility(client);
+              System.out.println("-----getbyplayerids---");
+              getHealthCareFacilitysByPlayerIds(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -80,6 +84,27 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 			System.exit(1);
 		}
 	}
+	
+	private static void getHealthCareFacilitysByPlayerIds(HealthCareFacilityClient client) {
+        Id id1 = new Id();
+        id1.setRoot(OrganizationClient.ORG_ROOT);
+        id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+        id1.setExtension("1847");
+        
+        Id id2 = new Id();
+        id2.setRoot(OrganizationClient.ORG_ROOT);
+        id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+        id2.setExtension("2119");
+        
+        try {
+            HealthCareFacility[] results = client.getByPlayerIds(new Id[] {id1, id2});
+            ClientUtils.handleSearchResults(results);
+        } catch (NullifiedRoleFault e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 	
     private static void getHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
         Id id = new Id();
@@ -211,6 +236,18 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getHealthCareFacility();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.HealthCareFacility[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
     return boxedResult.getHealthCareFacility();
     }
   }

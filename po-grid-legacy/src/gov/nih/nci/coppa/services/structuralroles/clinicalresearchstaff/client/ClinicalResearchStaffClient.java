@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.po.ClinicalResearchStaff;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.common.ClinicalResearchStaffI;
 
 import java.rmi.RemoteException;
@@ -69,6 +70,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
               getClinicalResearchStaffs(client);
               searchClinicalResearchStaff(client);
               queryClinicalResearchStaff(client);
+              getClinicalResearchStaffsByPlayerIds(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -103,7 +105,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         Id id = new Id();
         id.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
         id.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
-        id.setExtension("616");
+        id.setExtension("5972");
         return id;
     }
     
@@ -113,10 +115,31 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         Id id2 = new Id();
         id2.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
         id2.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
-        id2.setExtension("4230");
+        id2.setExtension("5991");
         
         try {
             ClinicalResearchStaff[] results = client.getByIds(new Id[] {id, id2});
+            ClientUtils.handleSearchResults(results);
+        } catch (NullifiedRoleFault e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static void getClinicalResearchStaffsByPlayerIds(ClinicalResearchStaffClient client) {
+        Id id1 = new Id();
+        id1.setRoot(PersonClient.PERSON_ROOT);
+        id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id1.setExtension("501");
+        
+        Id id2 = new Id();
+        id2.setRoot(PersonClient.PERSON_ROOT);
+        id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
+        id2.setExtension("2153");
+        
+        try {
+            ClinicalResearchStaff[] results = client.getByPlayerIds(new Id[] {id1, id2});
             ClientUtils.handleSearchResults(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
@@ -249,6 +272,18 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getClinicalResearchStaff();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
     return boxedResult.getClinicalResearchStaff();
     }
   }

@@ -74,4 +74,10 @@ public class OrganizationalContactProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByPlayerIdsResponse();
+    boxedResult.setOrganizationalContact(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
 }

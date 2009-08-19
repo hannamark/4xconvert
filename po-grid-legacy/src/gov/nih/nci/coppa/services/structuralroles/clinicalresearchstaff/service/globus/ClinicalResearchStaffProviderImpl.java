@@ -74,4 +74,10 @@ public class ClinicalResearchStaffProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse getByPlayerIds(gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsRequest params) throws RemoteException {
+    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByPlayerIdsResponse();
+    boxedResult.setClinicalResearchStaff(impl.getByPlayerIds(params.getId().getId()));
+    return boxedResult;
+  }
+
 }

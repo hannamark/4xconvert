@@ -3,7 +3,9 @@ package gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.OversightCommittee;
+import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.common.OversightCommitteeI;
 
 import java.rmi.RemoteException;
@@ -68,6 +70,8 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
 			  getOversightCommittee(client);
 			  searchOversightCommittee(client);
 			  queryOversightCommittee(client);
+			  System.out.println("-----getbyplayerids---");
+			  getOversightCommitteesByPlayerIds(client);
 			} else {
 				usage();
 				System.exit(1);
@@ -90,6 +94,27 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
         OversightCommittee result = client.getById(id);
         ClientUtils.handleResult(result);
     }
+	
+	private static void getOversightCommitteesByPlayerIds(OversightCommitteeClient client) {
+	      Id id1 = new Id();
+	      id1.setRoot(OrganizationClient.ORG_ROOT);
+	      id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+	      id1.setExtension("1847");
+	      
+	      Id id2 = new Id();
+	      id2.setRoot(OrganizationClient.ORG_ROOT);
+	      id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+	      id2.setExtension("2119");
+	      
+	      try {
+	          OversightCommittee[] results = client.getByPlayerIds(new Id[] {id1, id2});
+	          ClientUtils.handleSearchResults(results);
+	      } catch (NullifiedRoleFault e) {
+	          e.printStackTrace();
+	      } catch (RemoteException e) {
+	          e.printStackTrace();
+	      }
+	  }
 
     private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
         OversightCommittee criteria = createCriteria();
@@ -213,6 +238,18 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getOversightCommittee();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.OversightCommittee[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
     return boxedResult.getOversightCommittee();
     }
   }

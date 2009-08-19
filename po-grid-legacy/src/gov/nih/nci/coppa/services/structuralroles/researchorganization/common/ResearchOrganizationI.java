@@ -28,5 +28,7 @@ public interface ResearchOrganizationI {
 
   public gov.nih.nci.coppa.po.ResearchOrganization[] query(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
 
+  public gov.nih.nci.coppa.po.ResearchOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException ;
+
 }
 
