@@ -89,6 +89,12 @@
             <result name="list_trials">/WEB-INF/jsp/listTrials.jsp</result>
             <result name="search_trials">/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
+        
+        <action name="participationSiteSelection" class="gov.nih.nci.accrual.web.action.ParticipationSiteSelectionAction">
+           <interceptor-ref name="nci-commonsParams" />
+            <result name="participation_site_selection">/WEB-INF/jsp/participationSiteSelection.jsp</result>
+           
+        </action>
          
     </package>
     
