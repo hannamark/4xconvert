@@ -101,7 +101,7 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  * @since 7/7/2009
  */
 public class AbstractAccrualActionTest {
-    protected static final String user = "joe@barngrill.com";
+    protected static final String TEST_USER = "joe@barngrill.com";
 
     @Before
     public void initMockServiceLocator() {
@@ -126,7 +126,7 @@ public class AbstractAccrualActionTest {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
-        request.setRemoteUser(user);
+        request.setRemoteUser(TEST_USER);
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
 

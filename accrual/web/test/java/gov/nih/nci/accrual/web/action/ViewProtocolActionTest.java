@@ -92,7 +92,7 @@ import com.mockrunner.mock.web.MockHttpSession;
 
 public class ViewProtocolActionTest extends AbstractAccrualActionTest {
 
-	private static String AR_LIST_PROTOCOLS = "list_protocols";
+	private static final String AR_LIST_PROTOCOLS = "list_protocols";
     
 	
     ViewProtocolAction action;
