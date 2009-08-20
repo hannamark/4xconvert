@@ -2,7 +2,10 @@
 <c:set var="topic" scope="request" value="participation_site_selection"/> 
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+
 <h1><fmt:message key="accrual.participation.site.selection.page.header"/></h1>
+   
+  <s:form> 
    <p>Click the drop-down box to select the participation site:</p>
    
     <table class="form">
@@ -13,9 +16,13 @@
           </label>
          </td>
          <td class="value">
-           
-           </td>
+             <c:if test="${listOfSites != null}">        
+            <s:select id="organizationName" list="listOfSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="site.organizationName" cssStyle="width:206px"/>
+             </c:if> 
+         </td>
       </tr> 
     
     </table>
+    </s:form>
+    
 </body>
