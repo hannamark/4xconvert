@@ -33,7 +33,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
         p.setFirstName("firstName");
         p.setLastName("lastName");
-        Email e = new Email("email@5amsolution.com");
+        Email e = new Email("email@example.com");
         p.getEmail().add(e);
         PoHibernateUtil.getCurrentSession().update(p);
 
@@ -87,7 +87,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         crst.setUpData();
         crst.testSimpleCreateAndGet();
         ClinicalResearchStaff c = (ClinicalResearchStaff) PoHibernateUtil.getCurrentSession().createCriteria(ClinicalResearchStaff.class).uniqueResult();
-        Email e2 = new Email("crs@5amsolutions.com");
+        Email e2 = new Email("crs@example.com");
         c.getEmail().add(e2);
         PoHibernateUtil.getCurrentSession().update(c);
 

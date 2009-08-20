@@ -161,7 +161,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         pr.getScoper().setId(3L);
         pr.setStatus(RoleStatus.ACTIVE);
         pr.setEmail(new ArrayList<Email>());
-        pr.getEmail().add(new Email("me@test.com"));
+        pr.getEmail().add(new Email("me@example.com"));
         pr.setPhone(new ArrayList<PhoneNumber>());
         pr.getPhone().add(new PhoneNumber("123-456-7890"));
         pr.setFax(new ArrayList<PhoneNumber>());
@@ -169,7 +169,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         pr.setTty(new ArrayList<PhoneNumber>());
         pr.getTty().add(new PhoneNumber("111-222-3333"));
         pr.setUrl(new ArrayList<URL>());
-        pr.getUrl().add(new URL("http://www.google.com"));
+        pr.getUrl().add(new URL("http://www.example.com"));
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry);
         pr.setPostalAddresses(Collections.singleton(a));
         return pr;
@@ -215,7 +215,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         for (Tel tel : dto.getTelecomAddress().getItem()) {
             String value = tel.getValue().toString();
             if (tel instanceof TelEmail) {
-                assertEquals("mailto:me@test.com", value);
+                assertEquals("mailto:me@example.com", value);
                 emailFound = true;
             } else if (tel instanceof TelPhone) {
                 if (value.startsWith("tel")) {
@@ -229,7 +229,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
                     ttyFound = true;
                 }
             } else if (tel instanceof TelUrl) {
-                assertEquals("http://www.google.com", value);
+                assertEquals("http://www.example.com", value);
                 urlFound = true;
             }
         }
@@ -285,7 +285,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
         TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:me@test.com"));
+        email.setValue(new URI("mailto:me@example.com"));
         tels.getItem().add(email);
 
         TelPhone phone = new TelPhone();
@@ -301,7 +301,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         tels.getItem().add(phone);
 
         TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.google.com"));
+        url.setValue(new URI("http://www.example.com"));
         tels.getItem().add(url);
 
         pr.setTelecomAddress(tels);
@@ -346,7 +346,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         assertEquals(RoleStatus.ACTIVE, bo.getStatus());
 
         assertEquals(1, bo.getEmail().size());
-        assertEquals("me@test.com", bo.getEmail().get(0).getValue());
+        assertEquals("me@example.com", bo.getEmail().get(0).getValue());
 
         assertEquals(1, bo.getPhone().size());
         assertEquals("111-222-3333", bo.getPhone().get(0).getValue());
@@ -355,7 +355,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         assertEquals(1, bo.getTty().size());
         assertEquals("333-222-3333", bo.getTty().get(0).getValue());
         assertEquals(1, bo.getUrl().size());
-        assertEquals("http://www.google.com", bo.getUrl().get(0).getValue());
+        assertEquals("http://www.example.com", bo.getUrl().get(0).getValue());
 
         assertEquals(1, bo.getPostalAddresses().size());
         Address a = bo.getPostalAddresses().iterator().next();

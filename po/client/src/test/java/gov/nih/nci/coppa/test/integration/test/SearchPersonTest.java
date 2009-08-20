@@ -10,7 +10,7 @@ package gov.nih.nci.coppa.test.integration.test;
 public class SearchPersonTest extends AbstractPoWebTest {
     private String lastName ="lastName" + Long.toString(System.currentTimeMillis());
     private String firstName = "Jakson";
-    private String email = "email@email.com";
+    private String email = "email@example.com";
     private String poId = null;
 
     public void testSearchPerson(){
@@ -18,7 +18,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
         openCreatePerson();
 
         createPerson("PENDING", "Dr", firstName, "L", lastName, "III",
-                getAddress(), email, "703-111-2345", "http://www.createperson.com", "703-111-1234");
+                getAddress(), email, "703-111-2345", "http://www.example.com", "703-111-1234");
         openSearchPerson();
         verifySearchForm();
         searchByName();

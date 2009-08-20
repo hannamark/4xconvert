@@ -95,7 +95,7 @@ import java.util.TreeSet;
  * For curation, the various statuses a Curatable element can be in. This enum captures the notion of allowed
  * transitions via the canTransitionTo and getAllowedTransitions methods. Each status can 'transition' to itself,
  * <em>and</em> as follows (Current state: list of allowed states):
- * 
+ *
  * <ul>
  * <li>NEW: CURATED, REJECTED
  * <li>REJECTED: CURATED
@@ -106,7 +106,7 @@ import java.util.TreeSet;
  */
 public enum EntityStatus {
     /**
-     * A new element that has not yet be curated.
+     * A new element that has not yet been curated.
      */
     PENDING,
 
@@ -161,7 +161,7 @@ public enum EntityStatus {
 
     /**
      * Helper method that indicates whether a transition to the new entity status is allowed.
-     * 
+     *
      * @param newStatus transition to status
      * @return whether the transition is allowed
      */

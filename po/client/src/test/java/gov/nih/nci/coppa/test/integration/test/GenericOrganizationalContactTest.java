@@ -93,8 +93,8 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
         clickAndWait("link=Manage Organizational Contact(s)");
         clickAndWaitButton("add_button");
         waitForTelecomFormsToLoad();
-        createGenericOrganizationalContact("PENDING", "", new String[] { "IRB" }, getAddress(), "gen@oc.com",
-                "", "123-123-1234", null, "http://www.genoc.com", false);
+        createGenericOrganizationalContact("PENDING", "", new String[] { "IRB" }, getAddress(), "gen@example.com",
+                "", "123-123-1234", null, "http://www.example.com/genoc", false);
         assertTrue("Title should be required", selenium.isTextPresent("Title or Affiliated Person must be set"));
         assertFalse("Phone number should not be required for pending roles", selenium
                 .isTextPresent("Phone number is required for this status."));
@@ -110,8 +110,8 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
 
         clickAndWaitButton("add_button");
         waitForTelecomFormsToLoad();
-        createGenericOrganizationalContact("ACTIVE", "Gen OC Title", new String[] { "IRB" }, null, "gen@oc.com",
-                "098-765-4321", "123-123-1234", null, "http://www.genoc.com", false);
+        createGenericOrganizationalContact("ACTIVE", "Gen OC Title", new String[] { "IRB" }, null, "gen@example.com",
+                "098-765-4321", "123-123-1234", null, "http://www.example.com/genoc", false);
         assertTrue(selenium
                 .isTextPresent("An Organizational Contact already exists with the same Title, please choose another"));
     }

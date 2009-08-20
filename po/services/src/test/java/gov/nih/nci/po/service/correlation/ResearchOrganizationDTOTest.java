@@ -143,7 +143,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         ro.setName("my name");
         fillInExampleOrgRoleFields(ro);
         ro.setEmail(new ArrayList<Email>());
-        ro.getEmail().add(new Email("me@test.com"));
+        ro.getEmail().add(new Email("me@example.com"));
         ro.setPhone(new ArrayList<PhoneNumber>());
         ro.getPhone().add(new PhoneNumber("123-456-7890"));
         ro.setFax(new ArrayList<PhoneNumber>());
@@ -151,7 +151,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         ro.setTty(new ArrayList<PhoneNumber>());
         ro.getTty().add(new PhoneNumber("111-222-3333"));
         ro.setUrl(new ArrayList<URL>());
-        ro.getUrl().add(new URL("http://www.google.com"));
+        ro.getUrl().add(new URL("http://www.example.com"));
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
                                 getDefaultCountry());
         ro.setPostalAddresses(Collections.singleton(a));
@@ -190,7 +190,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
         TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:me@test.com"));
+        email.setValue(new URI("mailto:me@example.com"));
         tels.getItem().add(email);
 
         TelPhone phone = new TelPhone();
@@ -206,7 +206,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         tels.getItem().add(phone);
 
         TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.google.com"));
+        url.setValue(new URI("http://www.example.com"));
         tels.getItem().add(url);
 
         dto.setTelecomAddress(tels);
@@ -229,7 +229,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         assertEquals("B09", bo.getFundingMechanism().getCode());
 
         assertEquals("my name", bo.getName());
-        assertEquals("me@test.com", bo.getEmail().get(0).getValue());
+        assertEquals("me@example.com", bo.getEmail().get(0).getValue());
     }
 
     /**
@@ -255,6 +255,6 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         assertEquals("my name", StConverter.convertToString(ro.getName()));
         HealthCareFacility tmp = new HealthCareFacility();
         TelDSetConverter.convertToContactList(ro.getTelecomAddress(), tmp);
-        assertEquals("me@test.com", tmp.getEmail().get(0).getValue());
+        assertEquals("me@example.com", tmp.getEmail().get(0).getValue());
     }
 }

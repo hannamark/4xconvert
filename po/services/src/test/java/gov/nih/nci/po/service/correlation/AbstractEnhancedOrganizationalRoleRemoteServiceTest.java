@@ -57,7 +57,7 @@ public abstract
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
         TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:me@test.com"));
+        email.setValue(new URI("mailto:me@example.com"));
         tels.getItem().add(email);
 
         TelPhone phone = new TelPhone();
@@ -73,7 +73,7 @@ public abstract
         tels.getItem().add(phone);
 
         TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.google.com"));
+        url.setValue(new URI("http://www.example.com"));
         tels.getItem().add(url);
 
         dto.setTelecomAddress(tels);

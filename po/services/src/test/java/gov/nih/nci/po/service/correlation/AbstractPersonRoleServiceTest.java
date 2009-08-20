@@ -1,10 +1,6 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
@@ -12,6 +8,9 @@ import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.EntityValidationException;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.junit.Test;
 
@@ -26,15 +25,15 @@ public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extend
         obj.setPlayer(obj2.getPlayer());
         //ensure scoper is same
         obj2.setScoper(obj.getScoper());
-        getService().create(obj);        
+        getService().create(obj);
         getService().create(obj2);
     }
-    
+
     protected void fillinPersonRoleFields(AbstractPersonRole pr) {
         pr.setPlayer(basicPerson);
         pr.setScoper(basicOrganization);
         pr.setEmail(new ArrayList<Email>());
-        pr.getEmail().add(new Email("me@test.com"));
+        pr.getEmail().add(new Email("me@example.com"));
         pr.setPhone(new ArrayList<PhoneNumber>());
         pr.getPhone().add(new PhoneNumber("123-456-7890"));
         pr.setFax(new ArrayList<PhoneNumber>());
@@ -42,7 +41,7 @@ public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extend
         pr.setTty(new ArrayList<PhoneNumber>());
         pr.getTty().add(new PhoneNumber("111-222-3333"));
         pr.setUrl(new ArrayList<URL>());
-        pr.getUrl().add(new URL("http://www.google.com"));
+        pr.getUrl().add(new URL("http://www.example.com"));
         Address mailingAddress = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
         pr.setPostalAddresses(new HashSet<Address>());
         pr.getPostalAddresses().add(mailingAddress);

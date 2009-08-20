@@ -179,7 +179,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertEquals("abc@example.com | Remove", selenium.getText("email-entry-1"));
 
         waitForElementById("emailEntry_value", 5);
-        selenium.type("emailEntry_value", "abc.com");
+        selenium.type("emailEntry_value", "example.com");
         selenium.click("email-add");
         waitForElementById("wwerr_emailEntry_value", 5);
         assertTrue(selenium.isTextPresent("Email Address is not a well-formed email address"));
@@ -274,7 +274,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertEquals("http://www.example.com | Remove", selenium.getText("url-entry-1"));
 
         waitForElementById("urlEntry_value", 5);
-        selenium.type("urlEntry_value", "abc.com");
+        selenium.type("urlEntry_value", "example.com");
         selenium.click("url-add");
         waitForElementById("wwerr_urlEntry_value", 5);
         assertTrue(selenium.isTextPresent("URL is not well formed"));
@@ -422,14 +422,14 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected String createPerson() {
         String lname = "lastName" + System.currentTimeMillis();
         createPerson("PENDING", "Dr", "Jakson", "L", lname, "III",
-                getAddress(), "sample@email.com", "703-111-2345", "http://www.createperson.com", "703-111-1234");
+                getAddress(), "sample@example.com", "703-111-2345", "http://www.example.com", "703-111-1234");
         return lname;
     }
 
     protected String createOrganization() {
         String name = "orgName" + System.currentTimeMillis();
-        createOrganization("ACTIVE", name, getAddress(), "sample@email.com", "703-111-2345",
-                "703-111-1234", null, "http://www.createorg.com");
+        createOrganization("ACTIVE", name, getAddress(), "sample@example.com", "703-111-2345",
+                "703-111-1234", null, "http://www.example.com");
         return name;
     }
 
@@ -437,7 +437,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         clickAndWait("link=Manage Clinical Research Staff(s)");
         verifyTrue(selenium.isTextPresent("Clinical Research Staff Information"));
     }
-    
+
     protected void accessManageHealthCareProviderScreen() {
         clickAndWait("link=Manage Health Care Provider(s)");
         verifyTrue(selenium.isTextPresent("Health Care Provider Information"));
@@ -456,13 +456,13 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.selectFrame("relative=parent");
         verifyEquals(orgName + " (" + orgId + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
     }
-    
+
     /**Use this to add postal addresses using the popup
-     * Verifies values exists somewhere on the page after the popup save button is pressed. 
-     * Unfortunately, we're unable to control the order the postalAdresses are display (backed by a HashSet) 
+     * Verifies values exists somewhere on the page after the popup save button is pressed.
+     * Unfortunately, we're unable to control the order the postalAdresses are display (backed by a HashSet)
      * so, we can only do verify the existence of text on the page.
-     * 
-     * *** SPECIFY UNIQUE VALUES ON THE PAGE 
+     *
+     * *** SPECIFY UNIQUE VALUES ON THE PAGE
      */
     protected void addPostalAddressUsingPopup(String street1, String street2, String city, String stateCode, String zip,
             String countryName, int totalNumberOfAddressesAfterAdd) {
@@ -471,15 +471,15 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 clickAndWaitButton("add_address");
                 selenium.selectFrame("popupFrame");
                 selenium.select("postalAddressForm.address.country", "label="+countryName);
-                //might need to wait for //div[@id=address.div_stateOrProvince] to reload 
+                //might need to wait for //div[@id=address.div_stateOrProvince] to reload
                 waitForElementById("address.stateOrProvince", 10);
-                
+
                 selenium.type("postalAddressForm_address_streetAddressLine", street1);
                 selenium.type("postalAddressForm_address_deliveryAddressLine", street2);
                 selenium.type("postalAddressForm_address_cityOrMunicipality", city);
                 if (selenium.isElementPresent("css=input[name=address.stateOrProvince]")){
                     selenium.type("address.stateOrProvince", stateCode);
-                    
+
                 } else if (selenium.isElementPresent("css=select[name=address.stateOrProvince]")) {
                     selenium.select("address.stateOrProvince", "value="+stateCode);
                 } else {
@@ -497,15 +497,15 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 selenium.isTextPresent(stateCode);
                 selenium.isTextPresent(zip);
                 selenium.isTextPresent(countryName);
-                
+
             }
 
     public enum ENTITYTYPE {
         person, organization;
     }
-    
+
     protected Ii createRemoteOrg(String orgName) throws EntityValidationException, NamingException, URISyntaxException, CurationException {
-        
+
         OrganizationDTO dto = new OrganizationDTO();
         dto.setName(RemoteApiUtils.convertToEnOn(orgName));
         dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
@@ -524,12 +524,12 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         dto.setIdentifier(id);
         return id;
     }
-    
+
     protected void savePersonAsActive(Ii id) {
         selenium.select("curateEntityForm.person.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
-    
+
 }

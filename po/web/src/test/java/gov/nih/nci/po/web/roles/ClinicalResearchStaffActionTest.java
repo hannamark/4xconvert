@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
 import gov.nih.nci.po.data.bo.Person;
@@ -15,8 +14,6 @@ import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceStub;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.util.PrivateAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +30,7 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.opensymphony.xwork2.Action;
 
-public class ClinicalResearchStaffActionTest extends AbstractPoTest {
+public class ClinicalResearchStaffActionTest extends AbstractRoleActionTest {
     private ClinicalResearchStaffAction action;
 
     @Before
@@ -158,18 +155,11 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
 
     @Test
     public void testGetAvailableStatusForEditForm() {
-        verifyAvailStatusForEditForm(RoleStatus.ACTIVE);
-        verifyAvailStatusForEditForm(RoleStatus.NULLIFIED);
-        verifyAvailStatusForEditForm(RoleStatus.PENDING);
-        verifyAvailStatusForEditForm(RoleStatus.SUSPENDED);
-    }
-
-    private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
-        action.getRole().setId(1L);
-        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractRole.class, "setPriorAsString",
-                new Object[] { roleStatus.name() });
-        assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
-        assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
+        ClinicalResearchStaff role = action.getRole();
+        verifyAvailStatusForEditForm(role, RoleStatus.ACTIVE);
+        verifyAvailStatusForEditForm(role, RoleStatus.NULLIFIED);
+        verifyAvailStatusForEditForm(role, RoleStatus.PENDING);
+        verifyAvailStatusForEditForm(role, RoleStatus.SUSPENDED);
     }
 
     @Test
@@ -266,6 +256,14 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
         assertNull(action.getRootKey());
         action.setRootKey("abc");
         assertNotNull(action.getRootKey());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    AbstractRoleAction<ClinicalResearchStaff, ClinicalResearchStaffCR, ClinicalResearchStaffServiceLocal> getAction() {
+        return action;
     }
 
 }

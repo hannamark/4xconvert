@@ -131,7 +131,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         hcf.setName("my name");
         fillInExampleOrgRoleFields(hcf);
         hcf.setEmail(new ArrayList<Email>());
-        hcf.getEmail().add(new Email("me@test.com"));
+        hcf.getEmail().add(new Email("me@example.com"));
         hcf.setPhone(new ArrayList<PhoneNumber>());
         hcf.getPhone().add(new PhoneNumber("123-456-7890"));
         hcf.setFax(new ArrayList<PhoneNumber>());
@@ -139,7 +139,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         hcf.setTty(new ArrayList<PhoneNumber>());
         hcf.getTty().add(new PhoneNumber("111-222-3333"));
         hcf.setUrl(new ArrayList<URL>());
-        hcf.getUrl().add(new URL("http://www.google.com"));
+        hcf.getUrl().add(new URL("http://www.example.com"));
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
                                 getDefaultCountry());
         hcf.setPostalAddresses(Collections.singleton(a));
@@ -170,7 +170,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
         TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:me@test.com"));
+        email.setValue(new URI("mailto:me@example.com"));
         tels.getItem().add(email);
 
         TelPhone phone = new TelPhone();
@@ -186,7 +186,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         tels.getItem().add(phone);
 
         TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.google.com"));
+        url.setValue(new URI("http://www.example.com"));
         tels.getItem().add(url);
 
         dto.setTelecomAddress(tels);
@@ -207,7 +207,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         HealthCareFacility hcf = (HealthCareFacility) or;
         // intentionally blank
         assertEquals("my name", hcf.getName());
-        assertEquals("me@test.com", hcf.getEmail().get(0).getValue());
+        assertEquals("me@example.com", hcf.getEmail().get(0).getValue());
     }
 
     /**
@@ -230,6 +230,6 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         assertEquals("my name", StConverter.convertToString(hcf.getName()));
         HealthCareFacility tmp = new HealthCareFacility();
         TelDSetConverter.convertToContactList(hcf.getTelecomAddress(), tmp);
-        assertEquals("me@test.com", tmp.getEmail().get(0).getValue());
+        assertEquals("me@example.com", tmp.getEmail().get(0).getValue());
     }
 }

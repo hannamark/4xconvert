@@ -88,7 +88,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
@@ -97,8 +96,6 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceStub;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.util.PrivateAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,7 +116,7 @@ import com.opensymphony.xwork2.Action;
  * @author Scott Miller
  *
  */
-public class HealthCareFacilityActionTest extends AbstractPoTest {
+public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
     private HealthCareFacilityAction action;
 
     @Before
@@ -260,18 +257,11 @@ public class HealthCareFacilityActionTest extends AbstractPoTest {
 
     @Test
     public void testGetAvailableStatusForEditForm() {
-        verifyAvailStatusForEditForm(RoleStatus.ACTIVE);
-        verifyAvailStatusForEditForm(RoleStatus.NULLIFIED);
-        verifyAvailStatusForEditForm(RoleStatus.PENDING);
-        verifyAvailStatusForEditForm(RoleStatus.SUSPENDED);
-    }
-
-    private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
-        action.getRole().setId(1L);
-        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractRole.class, "setPriorAsString",
-                new Object[] { roleStatus.name() });
-        assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
-        assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
+        HealthCareFacility role = action.getRole();
+        verifyAvailStatusForEditForm(role, RoleStatus.ACTIVE);
+        verifyAvailStatusForEditForm(role, RoleStatus.NULLIFIED);
+        verifyAvailStatusForEditForm(role, RoleStatus.PENDING);
+        verifyAvailStatusForEditForm(role, RoleStatus.SUSPENDED);
     }
 
     @Test
@@ -368,5 +358,13 @@ public class HealthCareFacilityActionTest extends AbstractPoTest {
         assertNull(action.getRootKey());
         action.setRootKey("abc");
         assertNotNull(action.getRootKey());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    AbstractRoleAction<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityServiceLocal> getAction() {
+        return action;
     }
 }
