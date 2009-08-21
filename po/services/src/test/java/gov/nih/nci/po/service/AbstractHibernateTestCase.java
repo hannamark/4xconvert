@@ -113,6 +113,7 @@ public abstract class AbstractHibernateTestCase {
 
     private static final Logger LOG = Logger.getLogger(AbstractHibernateTestCase.class);
     private static Configuration CFG;
+    private static SchemaExport SE;
     protected static SimpleNamingContextBuilder contextBuilder = new SimpleNamingContextBuilder();
     static {
         try {
@@ -170,7 +171,7 @@ public abstract class AbstractHibernateTestCase {
                 "select count(*) from " + Object.class.getName()).list();
         } catch (Exception e) {
             // counts unable to get, assume that this was because the schema has never been created before
-            SchemaExport se = new SchemaExport(getConfigurationForSchemaExport());
+            SchemaExport se = getSchemaExporter();
             se.create(false, true);
             counts = new ArrayList<Long>();
         }
@@ -182,14 +183,20 @@ public abstract class AbstractHibernateTestCase {
         tx.commit();
         for (Long count : counts) {
             if (count > 0) {
-                LOG.debug("DB contains data, dropping and readding.");
-                SchemaExport se = new SchemaExport(getConfigurationForSchemaExport());
+                SchemaExport se = getSchemaExporter();
                 se.drop(false, true);
                 se.create(false, true);
                 //new ConfigurationBeanLocal().reloadCountries();
                 break;
             }
         }
+    }
+
+    private SchemaExport getSchemaExporter() {
+        if (SE == null) {
+            SE = new SchemaExport(getConfigurationForSchemaExport());
+        }
+        return SE;
     }
 
     private Configuration getConfigurationForSchemaExport() {
