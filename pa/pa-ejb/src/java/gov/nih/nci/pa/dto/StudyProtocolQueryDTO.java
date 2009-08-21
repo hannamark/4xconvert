@@ -114,7 +114,8 @@ public class StudyProtocolQueryDTO implements Serializable {
     private StudyTypeCode studyTypeCode;
     private PhaseCode phaseCode;
     private String studyProtocolType;
-    private String action;
+    private String amend;
+    private String update;
     private String viewTSR;
     private String primaryPurpose;
     private String primaryPurposeOtherText;
@@ -352,21 +353,31 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setStudyProtocolType(String studyProtocolType) {
         this.studyProtocolType = studyProtocolType;
     }
+    
     /**
-     *
-     * @return action
+     * @return the amend
      */
-    public String getAction() {
-        return action;
+    public String getAmend() {
+        return amend;
     }
     /**
-     *
-     * @param action action
+     * @param amend the amend to set
      */
-    public void setAction(String action) {
-        this.action = action;
+    public void setAmend(String amend) {
+        this.amend = amend;
     }
-
+    /**
+     * @return the update
+     */
+    public String getUpdate() {
+        return update;
+    }
+    /**
+     * @param update the update to set
+     */
+    public void setUpdate(String update) {
+        this.update = update;
+    }
     /**
      *
      * @return tsr

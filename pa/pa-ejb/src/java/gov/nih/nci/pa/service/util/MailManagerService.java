@@ -134,4 +134,12 @@ public interface MailManagerService {
      * @throws PAException e
      */
     void sendAcceptEmail(Ii studyProtocolIi) throws PAException; 
+    
+    /**
+     * 
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    void sendUpdateNotificationMail(Ii studyProtocolIi) throws PAException;
+
 }

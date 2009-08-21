@@ -343,7 +343,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
                 mailBody);
 
         }
-
+    
     /**
      * send mail to submitter when amended trial is accepted by CTRO staff.
      * @param studyProtocolIi ii
@@ -524,4 +524,25 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
         }
         return doc;
     }
+    
+    /**
+     * Sends an email notifying the submitter that the protocol is updated in the system.
+     * @param studyProtocolIi ii
+     * @throws PAException ex
+     */
+    public void sendUpdateNotificationMail(Ii studyProtocolIi) throws PAException {
+
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+        .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+
+        String mailBody = lookUpTableService.getPropertyValue("trial.update.body");
+        mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
+        mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
+        mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
+        sendMail(spDTO.getUserLastCreated(),
+                lookUpTableService.getPropertyValue("trial.update.subject"),
+                mailBody);
+
+        }
+
 }

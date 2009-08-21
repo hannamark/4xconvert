@@ -113,6 +113,7 @@ public class TrialDescriptionAction extends ActionSupport {
     private static final long serialVersionUID = -263739685830642951L;
     private static final int PUBLIC_TITLE = 300;
     private static final int PUBLIC_DESCRIPTION = 5000;
+    private static final int OUTLINE_LEN = 12000;
     private static final String RESULT = "edit";
 
 
@@ -194,7 +195,7 @@ public class TrialDescriptionAction extends ActionSupport {
         spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefTitle(), PUBLIC_TITLE)));
         spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefSummary()
                    , PUBLIC_DESCRIPTION)));
-        spDTO.setScientificDescription(StConverter.convertToSt(PAUtil.stringSetter(getOutline())));
+        spDTO.setScientificDescription(StConverter.convertToSt(PAUtil.stringSetter(getOutline() , OUTLINE_LEN)));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
     private void getStudyObjectiveFromDB(Ii studyProtocolIi) throws PAException {

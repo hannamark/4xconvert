@@ -325,7 +325,7 @@ public class RegulatoryInformationAction extends ActionSupport {
     }
 
     /**
-     * @return the regIdAuthOrgList
+     * @return the regIdAuthOrgListget
      */
     public List<RegulatoryAuthOrgDTO> getRegIdAuthOrgList() {
         return regIdAuthOrgList;

@@ -84,10 +84,12 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -197,5 +199,56 @@ public interface TrialRegistrationServiceRemote {
             StudyResourcingDTO summary4studyResourcingDTO , 
             Ii responsiblePartyContactIi)
     throws PAException;
+
+
+
+    /**
+     * An action plan and execution of a pre-clinical for Updating an existing protocols.
+     * <ul>
+     * <li>
+     * </ul>
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param ssDto StudySiteDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTO IRB document
+     * @param leadOrgDTO lead organization
+     * @param principalInvestigatorDTO lead pi
+     * @param sponsorOrgDTO sponsor Organization DTO
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studyParticipationContactDTO StudySiteContactDTO 
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param studyRegAuthDTO updated studyRegAuthDTO
+     * @param collaborators list of updated collaborators
+     * @param participatingSites list of updated participating sites 
+     * @param pgCdUpdatedList list of StudySite DTOs with updated program code
+     * @throws PAException on error
+     */
+
+
+   void update(
+        StudyProtocolDTO studyProtocolDTO ,
+        StudyOverallStatusDTO overallStatusDTO ,
+        StudySiteDTO ssDto,
+        List<StudyIndldeDTO> studyIndldeDTOs ,
+        List<StudyResourcingDTO> studyResourcingDTOs ,
+        DocumentDTO documentDTO ,
+        OrganizationDTO leadOrgDTO ,
+        PersonDTO principalInvestigatorDTO, 
+        OrganizationDTO sponsorOrgDTO,
+        StudyContactDTO studyContactDTO ,
+        StudySiteContactDTO studyParticipationContactDTO, 
+        OrganizationDTO summary4organizationDTO ,
+        StudyResourcingDTO summary4studyResourcingDTO ,
+        Ii responsiblePartyContactIi, 
+        StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
+        List<StudySiteDTO> collaborators, 
+        List<StudySiteAccrualStatusDTO> participatingSites,
+        List<StudySiteDTO> pgCdUpdatedList)
+     throws PAException;
 
 }

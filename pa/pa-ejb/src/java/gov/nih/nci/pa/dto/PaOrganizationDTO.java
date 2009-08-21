@@ -88,6 +88,7 @@ import java.io.Serializable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
+@SuppressWarnings({"PMD.TooManyFields" })
 public class PaOrganizationDTO implements Serializable {
     /**
      * 
@@ -108,6 +109,22 @@ public class PaOrganizationDTO implements Serializable {
     private String investigator;
     private String primarycontact;
     private String status;
+    private String programCode;
+    
+    /**
+     * @return the programCode
+     */
+    public String getProgramCode() {
+        return programCode;
+    }
+
+    /**
+     * @param programCode the programCode to set
+     */
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
+    }
+
     /**
      * @return the id
      */

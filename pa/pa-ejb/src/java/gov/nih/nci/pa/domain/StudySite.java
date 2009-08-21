@@ -117,7 +117,21 @@ public class StudySite extends OrganizationFunctionalRole {
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
     private List<StudySiteContact> studySiteContacts;
     private String reviewBoardOrganizationalAffiliation;
+    private String programCode;
    
+    /**
+     * @return the programCode
+     */
+    @Column(name = "PROGRAM_CODE")
+    public String getProgramCode() {
+        return programCode;
+    }
+    /**
+     * @param programCode the programCode to set
+     */
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
+    }
     /**
      *
      * @return localStudyProtocolIdentifier
