@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 * 
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 * 
@@ -76,150 +76,94 @@
 * 
 * 
 */
-package gov.nih.nci.registry.util;
+package gov.nih.nci.registry.dto;
 
 /**
- *
- * @author gnaveh
+ * 
+ * @author Harsha
+ * @since 08/05/2008
+ * copyright NCI 2007.  All rights reserved.
+ * This code may not be used without the express written permission of the
+ * copyright holder, NCI.
  */
-public class Constants {
+public class RegulatoryAuthorityWebDTO {    
+    private String fdaRegulatedInterventionIndicator;  
+    private String section801Indicator;
+    private String delayedPostingIndicator;  
+    private String dataMonitoringIndicator;
+    private String trialOversgtAuthCountry;
+    private String trialOversgtAuthOrgName;
+    /**
+     * @return the trialOversgtAuthCountry
+     */
+    public String getTrialOversgtAuthCountry() {
+        return trialOversgtAuthCountry;
+    }
+    /**
+     * @param trialOversgtAuthCountry the trialOversgtAuthCountry to set
+     */
+    public void setTrialOversgtAuthCountry(String trialOversgtAuthCountry) {
+        this.trialOversgtAuthCountry = trialOversgtAuthCountry;
+    }
+    /**
+     * @return the trialOversgtAuthOrgName
+     */
+    public String getTrialOversgtAuthOrgName() {
+        return trialOversgtAuthOrgName;
+    }
+    /**
+     * @param trialOversgtAuthOrgName the trialOversgtAuthOrgName to set
+     */
+    public void setTrialOversgtAuthOrgName(String trialOversgtAuthOrgName) {
+        this.trialOversgtAuthOrgName = trialOversgtAuthOrgName;
+    }
 
-/**
- * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
-*/
-    public static final String USERNAME_REQ_ERROR = "User Name is required field";
-   /**
-    *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
-    */
-    public static final String PASSWORD_REQ_ERROR = "Password is required field";
-
-    /** logged user name is stored in session using loggerUserName variable . */
-    public static final String LOGGED_USER_NAME = "loggedUserName";
-
-    /** Trial Summary . */
-    public static final String TRIAL_SUMMARY = "trialSummary";
-
-    /** Study Protocol II. */
-    public static final String STUDY_PROTOCOL_II = "studyProtocolIi";
-
-    /** Funding Mechanism code. */
-    public static final String FUNDING_MECHANISM = "fundingMechanism";
-
-    /** nih Institute Code . */
-    public static final String NIH_INSTITUTE = "nihInstitute";
-
-    /** nih Institute Code . */
-    public static final String REQUEST_MESSAGE = "requestMessage";
-    
-    /** Funding list. */
-    public static final String TRIAL_FUNDING_LIST = "trialFundingList";
-
-    /** Trial Overall Status. */
-    public static final String TRIAL_OVERALL_STATUS = "trialOverallStatus";
-    
-    /** Study Participation. */
-    public static final String STUDY_PARTICIPATION = "studyParticipation";
-    
-    /** Study NCT Number. */
-    public static final String STUDY_NCT_NUMBER = "studyNCTNumber";
-    
-    /** Protocol Document. */
-    public static final String PROTOCOL_DOCUMENT = "protocolDocument";
-    
-    /** IRB Approval Document. */
-    public static final String IRB_APPROVAL = "irbApproval";
-    
-    /** IRB Approval Document. */
-    public static final String STUDY_INDIDE = "studyIndIde";
-    
-    /** My Account Page. */
-    public static final String MY_ACCOUNT = "myAccount";
-    
-    /** Register User Email Confirmation. */
-    public static final String CONFIRMATION = "confirmation";
-    
-    /** Register User Validation Error. */
-    public static final String REGISTER_USER_ERROR = "registerUserError";
-    
-    /** My Account Validation Error. */
-    public static final String MY_ACCOUNT_ERROR = "myAccountError";
-    
-    /** Application Error. */
-    public static final String APPLICATION_ERROR = "applicationError";
-    
-    /** minimum password length. */
-    public static final int MIN_PASSWORD_LENGTH = 6;
-    
-    /** Success Message . */
-    public static final String SUCCESS_MESSAGE = "successMessage";
-    
-    /** IndIde List . */
-    public static final String INDIDE_LIST = "indIdeList";
-    
-    /** IndIde Add List . */
-    public static final String INDIDE_ADD_LIST = "indIdeAddList";
-    
-    /** IndIde Add List . */
-    public static final String INDIDE_UPDATE_LIST = "indIdeUpdateList";
-    
-   /** Grant List . */
-    public static final String GRANT_LIST = "grantList";
-    
-    /** Grant Add List . */
-    public static final String GRANT_ADD_LIST = "grantAddList";
-    
-    /** Collaborators List . */
-    public static final String COLLABORATORS_LIST = "collaboratorsList";
-    
-    /** Participating sites List . */
-    public static final String PARTICIPATING_SITES_LIST = "participatingSitesList";
-    
-
-    /** Country List . */
-    public static final String COUNTRY_LIST = "countryList";
-    
-    /** Reg Auth org List . */
-    public static final String REG_AUTH_LIST = "regAuthList";
-    
-    /** Trial Type . */
-    public static final String TRIAL_TYPE = "trialType"; 
-    
-    /** Responsible Party . */
-    public static final String RESP_PARTY = "respParty";
-    
-    /** Sponsor . */
-    public static final String SPONSOR = "sponsor";
-    
-    /** Responsible Party Contact . */
-    public static final String RESP_PARTY_CONTACT = "respPartyContact";
-    
-    /** Responsible Party Phone . */
-    public static final String RESP_PARTY_PHONE = "respPartyPhone";
-    
-    /** Responsible Email Address . */
-    public static final String RESP_PARTY_EMAIL = "respPartyEmailAddr";
-    
-    /** minimum phone number length. */
-    public static final int MIN_PHONE_NUM_LENGTH = 7;
-    
-    /** TRIAL IDENTIFIER TYPE CODE - NCI. */
-    public static final String IDENTIFIER_TYPE_NCI = "NCI";
-    
-    /** TRIAL IDENTIFIER TYPE CODE - Lead Organization. */
-    public static final String IDENTIFIER_TYPE_LEAD_ORG = "Lead Organization";
-    
-    /** TRIAL IDENTIFIER TYPE CODE - NCT. */
-    public static final String IDENTIFIER_TYPE_NCT = "NCT";
-    
-    /** TRIAL TITLE - Max Length. */
-    public static final int TRIAL_TITLE_MAX_LENGTH = 4000;    
-    
-    /** Organization Type- Lead Organization. */
-    public static final String LEAD_ORGANIZATION = "Lead Organization";
-    
-    /** Organization Type- Participating Site. */
-    public static final String PARTICIPATING_SITE = "Participating Site";
-    
-    
-    
+    /**
+     * @return the fdaRegulatedInterventionIndicator
+     */
+    public String getFdaRegulatedInterventionIndicator() {
+        return fdaRegulatedInterventionIndicator;
+    }
+    /**
+     * @param fdaRegulatedInterventionIndicator the fdaRegulatedInterventionIndicator to set
+     */
+    public void setFdaRegulatedInterventionIndicator(String fdaRegulatedInterventionIndicator) {
+        this.fdaRegulatedInterventionIndicator = fdaRegulatedInterventionIndicator;
+    }
+    /**
+     * @return the section801Indicator
+     */
+    public String getSection801Indicator() {
+        return section801Indicator;
+    }
+    /**
+     * @param section801Indicator the section801Indicator to set
+     */
+    public void setSection801Indicator(String section801Indicator) {
+        this.section801Indicator = section801Indicator;
+    }
+    /**
+     * @return the delayedPostingIndicator
+     */
+    public String getDelayedPostingIndicator() {
+        return delayedPostingIndicator;
+    }
+    /**
+     * @param delayedPostingIndicator the delayedPostingIndicator to set
+     */
+    public void setDelayedPostingIndicator(String delayedPostingIndicator) {
+        this.delayedPostingIndicator = delayedPostingIndicator;
+    }
+    /**
+     * @return the dataMonitoringIndicator
+     */
+    public String getDataMonitoringIndicator() {
+        return dataMonitoringIndicator;
+    }
+    /**
+     * @param dataMonitoringIndicator the dataMonitoringIndicator to set
+     */
+    public void setDataMonitoringIndicator(String dataMonitoringIndicator) {
+        this.dataMonitoringIndicator = dataMonitoringIndicator;
+    }
 }

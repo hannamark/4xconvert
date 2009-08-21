@@ -229,9 +229,7 @@
 					<input type="button" id="addbtn" onclick="callAddIndIde();" value="Add IND/IDE" >
 				</td>
 			</tr>
-			<tr>
-			</tr>
-		</tbody>
+			</tbody>
 	
 
 </table>

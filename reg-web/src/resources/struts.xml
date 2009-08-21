@@ -11,7 +11,7 @@
 			<interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
 			<interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
 			<interceptor-stack name="methodValidationStack">
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception" /> 
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="params"/>
                 <interceptor-ref name="servletConfig" />
@@ -21,11 +21,11 @@
                 <interceptor-ref name="fileUpload"/>
                 <interceptor-ref name="params"/>
                 <interceptor-ref name="conversionError" />
-                <interceptor-ref name="validation">
-                    <param name="excludeMethods">input,back,cancel</param>
+                <interceptor-ref name="validation"> 
+                    <param name="excludeMethods">input,back,cancel,reviewUpdate</param>
                 </interceptor-ref>
                 <interceptor-ref name="workflow">
-                    <param name="excludeMethods">input,back,cancel</param>
+                    <param name="excludeMethods">input,back,cancel,reviewUpdate</param>
                 </interceptor-ref>
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
@@ -105,15 +105,35 @@
              <param name="trialAction">${trialAction}</param>
         </result>
         </action> 
+        <action name="updateTrial*" class="gov.nih.nci.registry.action.UpdateTrialAction" method="{1}">
+        <interceptor-ref name="methodValidationStack" />
+        <result name="success">/WEB-INF/jsp/updateTrial.jsp</result>
+        <result name="input">/WEB-INF/jsp/updateTrial.jsp</result>
+        <result name="error">/WEB-INF/jsp/updateTrial.jsp</result>
+        <result name="edit">/WEB-INF/jsp/updateTrial.jsp</result>
+        <result name="review">/WEB-INF/jsp/reviewUpdateTrial.jsp</result>
+        <result name="redirect_to_search" type="redirect-action">
+           <param name="actionName">searchTrial.action</param>
+             <param name="parse">true</param>
+             <param name="trialAction">${trialAction}</param>
+        </result>
+        </action>
+        <action name="ajaxgetAuthOrgs*" class="gov.nih.nci.registry.action.UpdateTrialAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/authorityname.jsp</result>
+        </action> 
     <action name="ajaxManageGrantsAction*" class="gov.nih.nci.registry.action.ManageGrantsAction" method="{1}"> 
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
         <result name="display_grants">/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp</result>
+         <result name="display_grants_add">/WEB-INF/jsp/nodecorate/addGrantForUpdate.jsp</result>
         <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
     </action>
+     
     <action name="ajaxManageIndIdeAction*" class="gov.nih.nci.registry.action.ManageIndIdeAction" method="{1}"> 
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
         <result name="display_ideind">/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp</result>
+        <result name="display_ideindadd">/WEB-INF/jsp/nodecorate/addForUpdateIdeIndIndicator.jsp</result>
         <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
+        
     </action>
     <action name="popup*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
 		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>

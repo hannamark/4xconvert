@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 * 
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 * 
@@ -76,150 +76,224 @@
 * 
 * 
 */
-package gov.nih.nci.registry.util;
+package gov.nih.nci.registry.dto;
+
+//import gov.nih.nci.coppa.iso.Bl;
+//import gov.nih.nci.coppa.iso.Cd;
+//import gov.nih.nci.coppa.iso.Ii;
+//import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+
 
 /**
+ * @author Hong Gao
  *
- * @author gnaveh
  */
-public class Constants {
+public class StudyIndldeWebDTO {
 
-/**
- * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
-*/
-    public static final String USERNAME_REQ_ERROR = "User Name is required field";
-   /**
-    *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
-    */
-    public static final String PASSWORD_REQ_ERROR = "Password is required field";
+    private String studyProtocolIi;
+    private String expandedAccessStatus;
+    private String expandedAccessIndicator;
+    private String indldeNumber;
+    private String indldeType;
+    private String programCode;
+    private String grantor;
+    private String holderType;
+    private String nihInstHolder;
+    private String nciDivProgHolder;
+    private String id;
 
-    /** logged user name is stored in session using loggerUserName variable . */
-    public static final String LOGGED_USER_NAME = "loggedUserName";
+    /**
+     * @param iso StudyResourcingDTO object
+     */
+    public StudyIndldeWebDTO(StudyIndldeDTO iso) {
+        super();
+          this.expandedAccessStatus = iso.getExpandedAccessStatusCode().getCode();
+          this.grantor = iso.getGrantorCode().getCode();
+          
+          if (iso.getExpandedAccessIndicator().getValue() != null) {
+            if (iso.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+              this.expandedAccessIndicator = "Yes";
+            } else {
+              this.expandedAccessIndicator = "No";
+            } 
+          }
+          //this.expandedAccessIndicator = iso.getExpandedAccessIndicator().getValue().toString();
+          this.indldeNumber = iso.getIndldeNumber().getValue();
+          this.indldeType = iso.getIndldeTypeCode().getCode();
+          this.holderType = iso.getHolderTypeCode().getCode();
+          this.nihInstHolder = iso.getNihInstHolderCode().getCode();
+          this.nciDivProgHolder = iso.getNciDivProgHolderCode().getCode();
+          if (this.nihInstHolder != null && !"".equals(this.nihInstHolder)) {
+              this.programCode = this.nciDivProgHolder;
+          } else {
+              this.programCode = this.nihInstHolder;
+          }
+              
+              
+          this.id = iso.getIdentifier().getExtension();
+    }
+    
+    /** .
+     *  Default Constructor
+     */
+    public StudyIndldeWebDTO() {
+        super();
+    }
 
-    /** Trial Summary . */
-    public static final String TRIAL_SUMMARY = "trialSummary";
+    /**
+     * @return the studyProtocolIi
+     */
+    public String getStudyProtocolIi() {
+        return studyProtocolIi;
+    }
 
-    /** Study Protocol II. */
-    public static final String STUDY_PROTOCOL_II = "studyProtocolIi";
+    /**
+     * @param studyProtocolIi the studyProtocolIi to set
+     */
+    public void setStudyProtocolIi(String studyProtocolIi) {
+        this.studyProtocolIi = studyProtocolIi;
+    }
 
-    /** Funding Mechanism code. */
-    public static final String FUNDING_MECHANISM = "fundingMechanism";
+    /**
+     * @return the expandedAccessStatus
+     */
+    public String getExpandedAccessStatus() {
+        return expandedAccessStatus;
+    }
 
-    /** nih Institute Code . */
-    public static final String NIH_INSTITUTE = "nihInstitute";
+    /**
+     * @param expandedAccessStatus the expandedAccessStatus to set
+     */
+    public void setExpandedAccessStatus(String expandedAccessStatus) {
+        this.expandedAccessStatus = expandedAccessStatus;
+    }
 
-    /** nih Institute Code . */
-    public static final String REQUEST_MESSAGE = "requestMessage";
-    
-    /** Funding list. */
-    public static final String TRIAL_FUNDING_LIST = "trialFundingList";
+    /**
+     * @return the expandedAccessIndicator
+     */
+    public String getExpandedAccessIndicator() {
+        return expandedAccessIndicator;
+    }
 
-    /** Trial Overall Status. */
-    public static final String TRIAL_OVERALL_STATUS = "trialOverallStatus";
-    
-    /** Study Participation. */
-    public static final String STUDY_PARTICIPATION = "studyParticipation";
-    
-    /** Study NCT Number. */
-    public static final String STUDY_NCT_NUMBER = "studyNCTNumber";
-    
-    /** Protocol Document. */
-    public static final String PROTOCOL_DOCUMENT = "protocolDocument";
-    
-    /** IRB Approval Document. */
-    public static final String IRB_APPROVAL = "irbApproval";
-    
-    /** IRB Approval Document. */
-    public static final String STUDY_INDIDE = "studyIndIde";
-    
-    /** My Account Page. */
-    public static final String MY_ACCOUNT = "myAccount";
-    
-    /** Register User Email Confirmation. */
-    public static final String CONFIRMATION = "confirmation";
-    
-    /** Register User Validation Error. */
-    public static final String REGISTER_USER_ERROR = "registerUserError";
-    
-    /** My Account Validation Error. */
-    public static final String MY_ACCOUNT_ERROR = "myAccountError";
-    
-    /** Application Error. */
-    public static final String APPLICATION_ERROR = "applicationError";
-    
-    /** minimum password length. */
-    public static final int MIN_PASSWORD_LENGTH = 6;
-    
-    /** Success Message . */
-    public static final String SUCCESS_MESSAGE = "successMessage";
-    
-    /** IndIde List . */
-    public static final String INDIDE_LIST = "indIdeList";
-    
-    /** IndIde Add List . */
-    public static final String INDIDE_ADD_LIST = "indIdeAddList";
-    
-    /** IndIde Add List . */
-    public static final String INDIDE_UPDATE_LIST = "indIdeUpdateList";
-    
-   /** Grant List . */
-    public static final String GRANT_LIST = "grantList";
-    
-    /** Grant Add List . */
-    public static final String GRANT_ADD_LIST = "grantAddList";
-    
-    /** Collaborators List . */
-    public static final String COLLABORATORS_LIST = "collaboratorsList";
-    
-    /** Participating sites List . */
-    public static final String PARTICIPATING_SITES_LIST = "participatingSitesList";
-    
+    /**
+     * @param expandedAccessIndicator the expandedAccessIndicator to set
+     */
+    public void setExpandedAccessIndicator(String expandedAccessIndicator) {
+        this.expandedAccessIndicator = expandedAccessIndicator;
+    }
 
-    /** Country List . */
-    public static final String COUNTRY_LIST = "countryList";
-    
-    /** Reg Auth org List . */
-    public static final String REG_AUTH_LIST = "regAuthList";
-    
-    /** Trial Type . */
-    public static final String TRIAL_TYPE = "trialType"; 
-    
-    /** Responsible Party . */
-    public static final String RESP_PARTY = "respParty";
-    
-    /** Sponsor . */
-    public static final String SPONSOR = "sponsor";
-    
-    /** Responsible Party Contact . */
-    public static final String RESP_PARTY_CONTACT = "respPartyContact";
-    
-    /** Responsible Party Phone . */
-    public static final String RESP_PARTY_PHONE = "respPartyPhone";
-    
-    /** Responsible Email Address . */
-    public static final String RESP_PARTY_EMAIL = "respPartyEmailAddr";
-    
-    /** minimum phone number length. */
-    public static final int MIN_PHONE_NUM_LENGTH = 7;
-    
-    /** TRIAL IDENTIFIER TYPE CODE - NCI. */
-    public static final String IDENTIFIER_TYPE_NCI = "NCI";
-    
-    /** TRIAL IDENTIFIER TYPE CODE - Lead Organization. */
-    public static final String IDENTIFIER_TYPE_LEAD_ORG = "Lead Organization";
-    
-    /** TRIAL IDENTIFIER TYPE CODE - NCT. */
-    public static final String IDENTIFIER_TYPE_NCT = "NCT";
-    
-    /** TRIAL TITLE - Max Length. */
-    public static final int TRIAL_TITLE_MAX_LENGTH = 4000;    
-    
-    /** Organization Type- Lead Organization. */
-    public static final String LEAD_ORGANIZATION = "Lead Organization";
-    
-    /** Organization Type- Participating Site. */
-    public static final String PARTICIPATING_SITE = "Participating Site";
-    
-    
-    
+    /**
+     * @return the indldeNumber
+     */
+    public String getIndldeNumber() {
+        return indldeNumber;
+    }
+
+    /**
+     * @param indldeNumber the indldeNumber to set
+     */
+    public void setIndldeNumber(String indldeNumber) {
+        this.indldeNumber = indldeNumber;
+    }
+
+    /**
+     * @return the indldeType
+     */
+    public String getIndldeType() {
+        return indldeType;
+    }
+
+    /**
+     * @param indldeType the indldeType to set
+     */
+    public void setIndldeType(String indldeType) {
+        this.indldeType = indldeType;
+    }
+
+    /**
+     * @return the programCode
+     */
+    public String getProgramCode() {
+        return programCode;
+    }
+
+    /**
+     * @param programCode the programCode to set
+     */
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
+    }
+
+    /**
+     * @return the grantor
+     */
+    public String getGrantor() {
+        return grantor;
+    }
+
+    /**
+     * @param grantor the grantor to set
+     */
+    public void setGrantor(String grantor) {
+        this.grantor = grantor;
+    }
+
+    /**
+     * @return the holderType
+     */
+    public String getHolderType() {
+        return holderType;
+    }
+
+    /**
+     * @param holderType the holderType to set
+     */
+    public void setHolderType(String holderType) {
+        this.holderType = holderType;
+    }
+
+    /**
+     * @return the nihInstHolder
+     */
+    public String getNihInstHolder() {
+        return nihInstHolder;
+    }
+
+    /**
+     * @param nihInstHolder the nihInstHolder to set
+     */
+    public void setNihInstHolder(String nihInstHolder) {
+        this.nihInstHolder = nihInstHolder;
+    }
+
+    /**
+     * @return the nciDivProgHolder
+     */
+    public String getNciDivProgHolder() {
+        return nciDivProgHolder;
+    }
+
+    /**
+     * @param nciDivProgHolder the nciDivProgHolder to set
+     */
+    public void setNciDivProgHolder(String nciDivProgHolder) {
+        this.nciDivProgHolder = nciDivProgHolder;
+    }
+
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }
+

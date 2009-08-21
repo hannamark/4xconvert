@@ -221,7 +221,10 @@ public class SearchTrialAction extends ActionSupport {
             StudyResourcingDTO resourcingDTO = RegistryServiceLocator.getStudyResourcingService()
                     .getsummary4ReportedResource(studyProtocolIi);
             // get the organzation name
-            if (resourcingDTO != null) {
+            if (resourcingDTO != null && resourcingDTO.
+                    getOrganizationIdentifier() != null && resourcingDTO.
+                    getOrganizationIdentifier().getExtension() != null && !resourcingDTO.
+                    getOrganizationIdentifier().getExtension().equals("")) {
                 Organization o = new CorrelationUtils().
                     getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
                             getOrganizationIdentifier().getExtension()), null);

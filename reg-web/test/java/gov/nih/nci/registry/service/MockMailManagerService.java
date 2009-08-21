@@ -67,5 +67,14 @@ public class MockMailManagerService implements MailManagerServiceRemote {
         // TODO Auto-generated method stub
         
     }
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendUpdateNotificationMail(gov.nih.nci.coppa.iso.Ii)
+     */
+    public void sendUpdateNotificationMail(Ii studyProtocolIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+
+    }
+
 
 }

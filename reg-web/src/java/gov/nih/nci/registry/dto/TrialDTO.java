@@ -3,6 +3,10 @@
  */
 package gov.nih.nci.registry.dto;
 
+import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +57,27 @@ public class TrialDTO {
     private String identifier;
     private String programCodeText;
     private String responsibleGenericContactName;
+    private String submissionNumber;
       
     private List<TrialFundingWebDTO> fundingDtos;
     private List<TrialDocumentWebDTO> docDtos;
     private List <TrialIndIdeDTO> indIdeDtos;
+    
+    //required for updating a trial
+    private List<PaOrganizationDTO> collaborators;
+    private List<PaOrganizationDTO> participatingSites;
+    private RegulatoryAuthorityWebDTO regulatoryAuthority;
+    private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
+    private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
+    private List <StudyIndldeWebDTO> indIdeUpdateDtos;
+    private List<TrialFundingWebDTO> fundingAddDtos;
+    private List <TrialIndIdeDTO> indIdeAddDtos;
+    private String lst = null;
+    private String selectedRegAuth = null;
+    private String programcodenihselectedvalue;
+    private String programcodenciselectedvalue;
+    private String studyProtocolId;
+    
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     /**
      * 
@@ -66,6 +87,14 @@ public class TrialDTO {
         fundingDtos = new ArrayList<TrialFundingWebDTO>();
         docDtos = new ArrayList<TrialDocumentWebDTO>();
         indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        
+        collaborators = new ArrayList<PaOrganizationDTO>();
+        participatingSites = new ArrayList<PaOrganizationDTO>();
+        regulatoryAuthority = new RegulatoryAuthorityWebDTO();
+        indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
+        fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
+        indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
+        
     }
     /**
      * @return the accrualReportingMethodCode
@@ -308,7 +337,7 @@ public class TrialDTO {
      */
     @NotEmpty (message = "error.submit.contactPhone")
     @org.hibernate.validator.Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
-            message = "error.register.invalidPhoneNumber")
+          message = "error.register.invalidPhoneNumber")
     public String getContactPhone() {
         return contactPhone;
     }
@@ -558,4 +587,173 @@ public class TrialDTO {
             String responsibleGenericContactName) {
         this.responsibleGenericContactName = responsibleGenericContactName;
     }
+    /**
+     * @return the collaborators
+     */
+    public List<PaOrganizationDTO> getCollaborators() {
+        return collaborators;
+    }
+    /**
+     * @param collaborators the collaborators to set
+     */
+    public void setCollaborators(List<PaOrganizationDTO> collaborators) {
+        this.collaborators = collaborators;
+    }
+    /**
+     * @return the participatingSites
+     */
+    public List<PaOrganizationDTO> getParticipatingSites() {
+        return participatingSites;
+    }
+    /**
+     * @param participatingSites the participatingSites to set
+     */
+    public void setParticipatingSites(List<PaOrganizationDTO> participatingSites) {
+        this.participatingSites = participatingSites;
+    }
+    /**
+     * @return the regulatoryAuthority
+     */
+    public RegulatoryAuthorityWebDTO getRegulatoryAuthority() {
+        return regulatoryAuthority;
+    }
+    /**
+     * @param regulatoryAuthority the regulatoryAuthority to set
+     */
+    public void setRegulatoryAuthority(RegulatoryAuthorityWebDTO regulatoryAuthority) {
+        this.regulatoryAuthority = regulatoryAuthority;
+    }
+    /**
+     * @return the countryList
+     */
+    public List<CountryRegAuthorityDTO> getCountryList() {
+        return countryList;
+    }
+    /**
+     * @param countryList the countryList to set
+     */
+    public void setCountryList(List<CountryRegAuthorityDTO> countryList) {
+        this.countryList = countryList;
+    }
+    /**
+     * @return the regIdAuthOrgList
+     */
+    public List<RegulatoryAuthOrgDTO> getRegIdAuthOrgList() {
+        return regIdAuthOrgList;
+    }
+    /**
+     * @param regIdAuthOrgList the regIdAuthOrgList to set
+     */
+    public void setRegIdAuthOrgList(List<RegulatoryAuthOrgDTO> regIdAuthOrgList) {
+        this.regIdAuthOrgList = regIdAuthOrgList;
+    }
+    /**
+     * @return the lst
+     */
+    public String getLst() {
+        return lst;
+    }
+    /**
+     * @param lst the lst to set
+     */
+    public void setLst(String lst) {
+        this.lst = lst;
+    }
+    /**
+     * @return the selectedRegAuth
+     */
+    public String getSelectedRegAuth() {
+        return selectedRegAuth;
+    }
+    /**
+     * @param selectedRegAuth the selectedRegAuth to set
+     */
+    public void setSelectedRegAuth(String selectedRegAuth) {
+        this.selectedRegAuth = selectedRegAuth;
+    }
+    /**
+     * @return the programcodenihselectedvalue
+     */
+    public String getProgramcodenihselectedvalue() {
+        return programcodenihselectedvalue;
+    }
+    /**
+     * @param programcodenihselectedvalue the programcodenihselectedvalue to set
+     */
+    public void setProgramcodenihselectedvalue(String programcodenihselectedvalue) {
+        this.programcodenihselectedvalue = programcodenihselectedvalue;
+    }
+    /**
+     * @return the programcodenciselectedvalue
+     */
+    public String getProgramcodenciselectedvalue() {
+        return programcodenciselectedvalue;
+    }
+    /**
+     * @param programcodenciselectedvalue the programcodenciselectedvalue to set
+     */
+    public void setProgramcodenciselectedvalue(String programcodenciselectedvalue) {
+        this.programcodenciselectedvalue = programcodenciselectedvalue;
+    }
+    /**
+     * @return the indIdeUpdateDtos
+     */
+    public List<StudyIndldeWebDTO> getIndIdeUpdateDtos() {
+        return indIdeUpdateDtos;
+    }
+    /**
+     * @param indIdeUpdateDtos the indIdeUpdateDtos to set
+     */
+    public void setIndIdeUpdateDtos(List<StudyIndldeWebDTO> indIdeUpdateDtos) {
+        this.indIdeUpdateDtos = indIdeUpdateDtos;
+    }
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
+    }
+    /**
+     * @return the fundingAddDtos
+     */
+    public List<TrialFundingWebDTO> getFundingAddDtos() {
+        return fundingAddDtos;
+    }
+    /**
+     * @param fundingAddDtos the fundingAddDtos to set
+     */
+    public void setFundingAddDtos(List<TrialFundingWebDTO> fundingAddDtos) {
+        this.fundingAddDtos = fundingAddDtos;
+    }
+    /**
+     * @return the indIdeAddDtos
+     */
+    public List<TrialIndIdeDTO> getIndIdeAddDtos() {
+        return indIdeAddDtos;
+    }
+    /**
+     * @param indIdeAddDtos the indIdeAddDtos to set
+     */
+    public void setIndIdeAddDtos(List<TrialIndIdeDTO> indIdeAddDtos) {
+        this.indIdeAddDtos = indIdeAddDtos;
+    }
+    /**
+     * @return the submissionNumber
+     */
+    public String getSubmissionNumber() {
+        return submissionNumber;
+    }
+    /**
+     * @param submissionNumber the submissionNumber to set
+     */
+    public void setSubmissionNumber(String submissionNumber) {
+        this.submissionNumber = submissionNumber;
+    }
+   
 }

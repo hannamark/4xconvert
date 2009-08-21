@@ -4,7 +4,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>    
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="register.user.page.title"/></title>   
+    <title><fmt:message key="disclaimer.page.title"/></title>   
     <s:head/>
 </head>
 

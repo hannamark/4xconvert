@@ -10,6 +10,8 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -68,5 +70,27 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
         }
         return IiConverter.convertToIi("3");
     }
+    public void update(
+            StudyProtocolDTO studyProtocolDTO ,
+            StudyOverallStatusDTO overallStatusDTO ,
+            StudySiteDTO ssDto,
+            List<StudyIndldeDTO> studyIndldeDTOs ,
+            List<StudyResourcingDTO> studyResourcingDTOs ,
+            DocumentDTO documentDTO ,
+            OrganizationDTO leadOrgDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrgDTO,
+            StudyContactDTO studyContactDTO ,
+            StudySiteContactDTO studyParticipationContactDTO, 
+            OrganizationDTO summary4organizationDTO ,
+            StudyResourcingDTO summary4studyResourcingDTO ,
+            Ii responsiblePartyContactIi, 
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
+            List<StudySiteDTO> collaborators, 
+            List<StudySiteAccrualStatusDTO> participatingSites,
+            List<StudySiteDTO> pgCdUpdatedList) throws PAException {
+       
+     }
+    
 
 }
