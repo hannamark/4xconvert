@@ -254,7 +254,6 @@ function checkFDADropDown(){
         row.style.display = '';
     }
         function loadDiv() {   
-        alert(document.getElementById('countries').value);
         var url = '/registry/protected/ajaxgetAuthOrgsgetRegAuthoritiesList.action?countryid='+document.getElementById('countries').value;
         var div = document.getElementById('loadAuthField');
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';         
