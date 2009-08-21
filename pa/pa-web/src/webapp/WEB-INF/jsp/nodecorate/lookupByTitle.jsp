@@ -26,7 +26,8 @@
     function loadDiv() {
         var title = document.getElementById("search_title").value;
         var orgId = document.getElementById("orgContactId").value;
-        var url = '/pa/protected/ajaxGenericContactdisplayTitleList.action?title='+title+'&orgGenericContactIdentifier='+orgId;
+        var type = document.getElementById("type").value;
+        var url = '/pa/protected/ajaxGenericContactdisplayTitleList.action?title='+title+'&orgGenericContactIdentifier='+orgId+'&type='+type;
         var div = document.getElementById('getTitles');        
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         ajaxCall(div, url);
@@ -53,7 +54,8 @@
         var phone = document.getElementById("phone").value;     
         var createtitle = document.getElementById("create_title").value;
         var orgId = document.getElementById("orgContactId").value;
-        var url = '/pa/protected/ajaxGenericContactcreate.action?title='+createtitle+'&orgGenericContactIdentifier='+orgId+'&email='+email+'&phone='+phone;
+        var type = document.getElementById("type").value;
+        var url = '/pa/protected/ajaxGenericContactcreate.action?title='+createtitle+'&orgGenericContactIdentifier='+orgId+'&email='+email+'&phone='+phone+'&type='+type;
         var div = document.getElementById('getTitles');        
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
         ajaxCall(div, url);    
@@ -79,6 +81,7 @@
 <div class="box">
 <s:form id="titles" name="titles" >
 <s:hidden name="orgContactId" id="orgContactId"></s:hidden>
+<s:hidden name="type" id="type"></s:hidden>
 <div id="searchTitleJsp">
     <jsp:include page="/WEB-INF/jsp/nodecorate/searchTitle.jsp"/>
 </div>

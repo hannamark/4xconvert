@@ -113,6 +113,7 @@ public class StudyContact extends PersonFunctionalRole {
     private Boolean primaryIndicator;
     private String phone;
     private String email;
+    private OrganizationalContact organizationalContact;
 
     /**
      * @return the phone
@@ -274,6 +275,20 @@ public class StudyContact extends PersonFunctionalRole {
      */
     public void setRoleCode(StudyContactRoleCode studyContactRoleCode) {
         this.roleCode = studyContactRoleCode;
+    }
+    /**
+     * @return the organizationalContact
+     */
+    @ManyToOne
+    @JoinColumn(name = "ORGANIZATIONAL_CONTACT_IDENTIFIER")
+    public OrganizationalContact getOrganizationalContact() {
+        return organizationalContact;
+    }
+    /**
+     * @param organizationalContact the organizationalContact to set
+     */
+    public void setOrganizationalContact(OrganizationalContact organizationalContact) {
+        this.organizationalContact = organizationalContact;
     }
 
 }

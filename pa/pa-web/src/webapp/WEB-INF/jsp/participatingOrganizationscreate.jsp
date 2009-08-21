@@ -62,10 +62,9 @@
 	    showPopWin('${lookupPersonsUrl}', 900, 400, '', 'Persons');
 	}	
 	function lookupcontactperson(){
-		var tel = document.getElementById('personContactWebDTO_telephone').value;
-		var email = document.getElementById('personContactWebDTO_email').value;
+		var tel = document.getElementById('personContactWebDTO.telephone').value;
+		var email = document.getElementById('personContactWebDTO.email').value;
 		var url = '${lookupContactPersonsUrl}?tel='+tel+'&email='+email;
-		
 	    showPopWin(url, 900, 400, '', 'Persons');
 	}
 	function loadDiv(orgid){
@@ -163,14 +162,16 @@
 	     });
 	    return false;		
 	}
-	function savePrimaryContact(){	
-		 var contactpersid = document.getElementById('personContactWebDTO_selectedPersId').value;
-		 var email = document.getElementById('personContactWebDTO_email').value;
-		 var tel = document.getElementById('personContactWebDTO_telephone').value;
+	function savePrimaryContact(){
+		 var contactpersid = document.getElementById('personContactWebDTO.selectedPersId').value;
+
+		 var email = document.getElementById('personContactWebDTO.email').value;
+		 var tel = document.getElementById('personContactWebDTO.telephone').value;
  		 var div = document.getElementById('showPrimaryContacts');   
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-	     var url = '/pa/protected/ajaxptpOrgsaveStudyParticipationContact.action?contactpersid='+contactpersid+"&tel="+tel+"&email="+email;
-	    	var aj = new Ajax.Updater(div, url, {
+	     var url = '/pa/protected/ajaxptpOrgsaveStudyParticipationPrimContact.action?contactpersid='+contactpersid+"&tel="+tel+"&email="+email;
+
+	     var aj = new Ajax.Updater(div, url, {
 	        asynchronous: true,
 	        method: 'get',
 	        evalScripts: false
@@ -178,11 +179,29 @@
 	    return false;
 	}
 	// do not remove these two callback methods!
-	function setpersid(persid){
-	}
+	function setpersid(persIdentifier,name,email,phone){
+        persid = persIdentifier;
+        selectedName = name;
+        contactMail = email;
+        contactPhone = phone;
+    }
 	function setorgid(orgid){
 	}
-		
+	function lookup4genericcontact(){ 
+	        var orgid = document.getElementById('editOrg.identifier').value;
+	        showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Site', 900, 400, createOrgGenericContactDiv, 'Select Generic Contact');
+	}
+	function createOrgGenericContactDiv() {
+		   document.getElementById('personContactWebDTO.firstName').value = '';
+		   document.getElementById('personContactWebDTO.middleName').value = '';
+		   document.getElementById('personContactWebDTO.lastName').value = '';
+	       document.getElementById("personContactWebDTO.email").value = contactMail;
+	       document.getElementById("personContactWebDTO.telephone").value = contactPhone; 
+	       document.getElementById("personContactWebDTO.title").value = selectedName;
+	       document.getElementById('personContactWebDTO.selectedPersId').value =  persid;   
+	            
+	}
+	
 </script>      
 </head>
 <body onload="setFocusToFirstControl();">
@@ -198,7 +217,6 @@
  <s:if test="hasActionErrors()">
     <div class="error_msg"><s:actionerror/></div>
     </s:if>
-  <s:hidden name="editOrg.identifier" id="editOrg.identifier" ></s:hidden>
 <h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>

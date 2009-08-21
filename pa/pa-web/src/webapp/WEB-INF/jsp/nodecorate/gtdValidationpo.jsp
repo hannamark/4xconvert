@@ -64,7 +64,7 @@ function createOrgGenericContactDiv() {
 }
 function lookup4loadresponsiblepartygenericcontact(){
 	var orgid = document.getElementById('sponsorIdentifier').value;
-    showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+    showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Responsible Party', 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function manageRespPartyLookUp(){
     if(document.getElementById('gtdDTO.responsiblePartyTypepi').checked==true) {

@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -109,7 +110,7 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 
 public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractConverter<StudyContactDTO, StudyContact> {
     /**
@@ -132,6 +133,9 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         }
         if (bo.getClinicalResearchStaff() != null) {
             dto.setClinicalResearchStaffIi(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
+        }
+        if (bo.getOrganizationalContact() != null) {
+            dto.setOrganizationalContactIi(IiConverter.convertToIi(bo.getOrganizationalContact().getId()));
         }
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setIdentifier(IiConverter.convertToStudyContactIi(bo.getId()));
@@ -175,6 +179,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         HealthCareProvider hfBo = null;
         ClinicalResearchStaff crs = null;
+        OrganizationalContact orgContact = null;
         if (dto.getIdentifier() != null) {
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
@@ -187,6 +192,11 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             crs = new ClinicalResearchStaff();
             crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
             bo.setClinicalResearchStaff(crs);
+        }
+        if (!PAUtil.isIiNull(dto.getOrganizationalContactIi())) {
+            orgContact = new OrganizationalContact();
+            orgContact.setId(IiConverter.convertToLong(dto.getOrganizationalContactIi()));
+            bo.setOrganizationalContact(orgContact);
         }
         if (dto.getStatusCode() == null) {
             bo.setStatusCode(FunctionalRoleStatusCode.PENDING);

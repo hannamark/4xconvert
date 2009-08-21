@@ -52,5 +52,5 @@
 		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
 		    </td>
 		</tr>
-
+    <s:hidden name="editOrg.identifier" id="editOrg.identifier" ></s:hidden>
 </table>

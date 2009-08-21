@@ -973,9 +973,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             
             StudyOverallStatusDTO statusDTO = studyOverallStatusService.getCurrentByStudyProtocol(
                     studyProtocolDTO.getIdentifier());
-            if (!(dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getDisplayName())
-                    || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getDisplayName()))) {
-                errorMsg.append("Trial with processing status Abstraction Verified No Response or " 
+            if (!(dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
+                    || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))) {
+                errorMsg.append("Trial with processing status Abstraction Verified Response or " 
                         + " Abstraction Verified No Response can be Amended.");
             }
             if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED)

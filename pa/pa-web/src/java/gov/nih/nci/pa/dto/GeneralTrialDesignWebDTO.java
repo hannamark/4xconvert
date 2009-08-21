@@ -132,6 +132,7 @@ public class GeneralTrialDesignWebDTO {
     private String studyProtocolId;
     private String programCodeText;
     private String responsibleGenericContactName;
+    private String centralContactTitle;
     /**
      * 
      * @return acronym acronym
@@ -686,6 +687,18 @@ public class GeneralTrialDesignWebDTO {
     public void setResponsibleGenericContactName(
             String responsibleGenericContactName) {
         this.responsibleGenericContactName = responsibleGenericContactName;
+    }
+    /**
+     * @return the centralContactTitle
+     */
+    public String getCentralContactTitle() {
+        return centralContactTitle;
+    }
+    /**
+     * @param centralContactTitle the centralContactTitle to set
+     */
+    public void setCentralContactTitle(String centralContactTitle) {
+        this.centralContactTitle = centralContactTitle;
     }
     
 }

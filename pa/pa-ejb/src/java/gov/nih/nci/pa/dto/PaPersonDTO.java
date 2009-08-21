@@ -108,6 +108,7 @@ public class PaPersonDTO {
     private String fax;
     private String url;
     private List<String> emailList;
+    private String title;
     
     /*
      * This field is used to further identify this person whether he is primary contact or not
@@ -459,6 +460,20 @@ public class PaPersonDTO {
      */
     public void setEmailList(List<String> emailList) {
         this.emailList = emailList;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     

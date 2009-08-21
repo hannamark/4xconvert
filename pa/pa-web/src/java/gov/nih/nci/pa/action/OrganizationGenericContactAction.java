@@ -119,7 +119,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
     private String title;
     private String orgContactId;
     private static String failureMessage = "failureMessage";
-    
+    private String type;
     /**
      * 
      */
@@ -133,6 +133,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
      */
     public String lookupByTitle() {
         orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
+        type = ServletActionContext.getRequest().getParameter("type");
         return SUCCESS;
     }
     /**
@@ -142,6 +143,8 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
     public String displayTitleList() {
         orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
         title = ServletActionContext.getRequest().getParameter("title");
+        type = ServletActionContext.getRequest().getParameter("type");
+        LOG.info("Type..........." +  type);
         if ((orgContactId != null && (orgContactId.equals("undefined") || orgContactId.equals("")))) {
             orgContactList = null;
             addActionError("Please select a Sponsor.");
@@ -166,7 +169,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             contactDTO.setTitle(StConverter.convertToSt(title));
             DSet<Cd> orgContactType = new DSet<Cd>();
             Set<Cd> orgContactCd = new HashSet<Cd>();
-            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
+            orgContactCd.add(CdConverter.convertStringToCd(type));
             orgContactType.setItem(orgContactCd);
             
             contactDTO.setTypeCode(orgContactType);
@@ -192,6 +195,8 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         String phone = ServletActionContext.getRequest().getParameter("phone");
         title = ServletActionContext.getRequest().getParameter("title");
         orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
+        type = ServletActionContext.getRequest().getParameter("type");
+        LOG.info("Type..........." +  type);
         if (PAUtil.isEmpty(orgContactId)) {
             addActionError("Sponsor is a required field");
         }
@@ -236,7 +241,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             
             DSet<Cd> orgContactType = new DSet<Cd>();
             Set<Cd> orgContactCd = new HashSet<Cd>();
-            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
+            orgContactCd.add(CdConverter.convertStringToCd(type));
             orgContactType.setItem(orgContactCd);
             
             contactDTO.setTypeCode(orgContactType);
@@ -315,6 +320,16 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
     public void setOrgContactId(String orgContactId) {
         this.orgContactId = orgContactId;
     }
-    
-
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 }

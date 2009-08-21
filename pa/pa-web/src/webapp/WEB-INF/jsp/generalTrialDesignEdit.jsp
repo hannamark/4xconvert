@@ -18,7 +18,7 @@
      <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
      <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
      <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
-
+<c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
 <!-- /po integration -->    
  <script type="text/javascript"> 
     var orgid;
@@ -60,12 +60,32 @@
     
     function loadCentralContactDiv() {
         var url = 'ajaxTrialValidationdisplayCentralContact.action?persId='+persid;
+        document.getElementById('gtdDTO.centralContactTitle').value = '';
+        document.getElementById('gtdDTO.centralContactIdentifier').value =  persid;
+        document.getElementById("gtdDTO.centralContactEmail").value = '';
+        document.getElementById("gtdDTO.centralContactPhone").value = '';
         var div = document.getElementById('loadCentralContactDiv');   
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
         callAjax(url, div);    
     }
+    function lookupGenericCentralContact(){
+        var orgid = document.getElementById('gtdDTO.leadOrganizationIdentifier').value;
+        showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Site', 900, 400, createGenericCentralContactDiv, 'Select Generic Contact');
+    }
+    function createGenericCentralContactDiv() {
+       document.getElementById('gtdDTO.centralContactName').value = '';
+       document.getElementById('gtdDTO.centralContactTitle').value = selectedName;
+       document.getElementById('gtdDTO.centralContactIdentifier').value =  persid;   
+       document.getElementById("gtdDTO.centralContactEmail").value = contactMail;
+       document.getElementById("gtdDTO.centralContactPhone").value = contactPhone;    
+    }
 
     function loadDiv(orgid){
+    	document.getElementById('gtdDTO.centralContactName').value = "";
+        document.getElementById('gtdDTO.centralContactTitle').value = "";
+        document.getElementById('gtdDTO.centralContactIdentifier').value =  "";   
+        document.getElementById("gtdDTO.centralContactEmail").value = "";
+        document.getElementById("gtdDTO.centralContactPhone").value = "";
     }
     function loadPersDiv(persid, func) {
     }
@@ -190,12 +210,32 @@
             </div>    
         </td>
       </tr>
+      <tr>
+    <td> OR    </td>
+    </tr>
+    <tr>
+    <td scope="row" class="label"><s:label for="Generic Contact">Generic Contact:</s:label></td>
+    <td>
+    <table> 
+        <tr>
+        <td><s:textfield label="Central Contact title" name="gtdDTO.centralContactTitle" id="gtdDTO.centralContactTitle" size="30"  
+            readonly="true" cssClass="readonly" cssStyle="width:200px"/>
+        </td>
+        <td>
+             <ul style="margin-top:-1px;"><li style="padding-left:0">
+            <a href="#" class="btn" onclick="lookupGenericCentralContact();" title="Opens a popup form to select Central Contact"/>
+            <span class="btn_img"><span class="person">Look Up Generic Contact</span></span></a></li></ul>
+        </td>
+      </tr>
+    </table>
+    </td>
+    </tr>
         <tr>
             <td scope="row" class="label">
                Email Address:
             </td>
             <td class="value">
-                <s:textfield name="gtdDTO.centralContactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail" maxlength="200" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>gtdDTO.centralContactEmail</s:param>
@@ -206,7 +246,7 @@
         <tr>
             <td scope="row" class="label">Phone Number:</td>
             <td class="value">
-                <s:textfield name="gtdDTO.centralContactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone" maxlength="200" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>gtdDTO.centralContactPhone</s:param>

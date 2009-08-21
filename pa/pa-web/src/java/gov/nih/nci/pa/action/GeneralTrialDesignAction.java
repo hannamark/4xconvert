@@ -84,19 +84,22 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -108,6 +111,7 @@ import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServic
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -116,7 +120,10 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -187,11 +194,15 @@ public class GeneralTrialDesignAction extends ActionSupport {
         save();
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        } catch (NullifiedEntityException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());        
+        } catch (NullifiedRoleException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
         return RESULT;
     }
 
-    private void save() throws PAException {
+    private void save() throws PAException, NullifiedEntityException, NullifiedRoleException {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
@@ -320,17 +331,26 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
     }
 
-    private void copyCentralContact(Ii studyProtocolIi) throws PAException {
+    private void copyCentralContact(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
         List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         if (srDtos != null && !srDtos.isEmpty()) {
             CorrelationUtils cUtils = new CorrelationUtils();
             scDto = srDtos.get(0);
-            Person p = cUtils.getPAPersonByPAClinicalResearchStaffId(
+            if (!PAUtil.isIiNull(scDto.getClinicalResearchStaffIi())) {
+                Person p = cUtils.getPAPersonByPAClinicalResearchStaffId(
                     Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
-            gtdDTO.setCentralContactIdentifier(p.getIdentifier());
-            gtdDTO.setCentralContactName(p.getFullName());
+            
+                gtdDTO.setCentralContactIdentifier(p.getIdentifier());
+                gtdDTO.setCentralContactName(p.getFullName());
+            }
+            if (!PAUtil.isIiNull(scDto.getOrganizationalContactIi())) {
+                PAContactDTO pcontact = cUtils.getContactByPAOrganizationalContactId(
+                    Long.valueOf(scDto.getOrganizationalContactIi().getExtension()));
+                gtdDTO.setCentralContactIdentifier(pcontact.getSrIdentifier().getExtension());
+                gtdDTO.setCentralContactTitle(pcontact.getTitle());
+            }
             DSet<Tel> dset = scDto.getTelecomAddresses();
             List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
@@ -459,14 +479,20 @@ public class GeneralTrialDesignAction extends ActionSupport {
         PaRegistry.getStudyContactService().update(scDto);
     }
 
-    private void createOrUpdateCentralContact(Ii studyProtocolIi) throws PAException {
+    private void createOrUpdateCentralContact(Ii studyProtocolIi) throws PAException,
+        NullifiedEntityException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setStudyProtocolIdentifier(studyProtocolIi);
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
         List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         if (srDtos != null && !srDtos.isEmpty()) {
             scDto = srDtos.get(0);
-            PaRegistry.getStudyContactService().update(createStudyContactObj(studyProtocolIi, scDto));
+            if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) { 
+                PaRegistry.getStudyContactService().update(createStudyContactObj(studyProtocolIi, scDto));
+            } else {
+                //this mean lead org is changed and not selected the central contact so delete 
+                PaRegistry.getStudyContactService().delete(scDto.getIdentifier());
+            }
         } else if (gtdDTO.getCentralContactIdentifier() != null && gtdDTO.getCentralContactIdentifier().length() > 0) {
             PaRegistry.getStudyContactService().create(createStudyContactObj(studyProtocolIi, scDto));
         }
@@ -494,6 +520,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
          gtdDTO.setCentralContactName("");
          gtdDTO.setCentralContactPhone("");
          gtdDTO.setCentralContactIdentifier("");
+         gtdDTO.setCentralContactTitle("");
 
 
     } catch (Exception e) {
@@ -504,13 +531,44 @@ public class GeneralTrialDesignAction extends ActionSupport {
       return RESULT;
     }
 
-    private StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO) throws PAException {
+    private StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO) 
+    throws PAException, NullifiedEntityException, NullifiedRoleException {
 
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
         String phone = gtdDTO.getCentralContactPhone().trim();
-        Long crs = crbb.createClinicalResearchStaffCorrelations(
-                gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getCentralContactIdentifier());
-        scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));
+        Ii selectedCenteralContactIi  = null;
+        if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
+            PersonDTO isoPerDTO = PoRegistry.getPersonEntityService().getPerson(
+                    IiConverter.convertToPoPersonIi(gtdDTO.getCentralContactIdentifier()));
+            if (isoPerDTO == null) {
+                selectedCenteralContactIi = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
+                  IiConverter.convertToPoOrganizationalContactIi(gtdDTO.getCentralContactIdentifier())).getIdentifier();
+            } else {
+                selectedCenteralContactIi = isoPerDTO.getIdentifier();
+            }
+        }
+        if (IiConverter.PERSON_ROOT.equalsIgnoreCase(selectedCenteralContactIi.getRoot())) {
+            //create crs only if contact is person 
+            Long crs = crbb.createClinicalResearchStaffCorrelations(
+                gtdDTO.getLeadOrganizationIdentifier(), selectedCenteralContactIi.getExtension());
+            scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));
+            scDTO.setOrganizationalContactIi(IiConverter.convertToIi(""));
+        }
+        if (IiConverter.ORGANIZATIONAL_CONTACT_ROOT.equalsIgnoreCase(selectedCenteralContactIi.getRoot())) {
+            //create crs only if contact is person 
+            PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
+            OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO , 
+            OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
+               PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
+        
+            PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
+            orgContacPaDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(
+                    gtdDTO.getLeadOrganizationIdentifier()));
+            orgContacPaDto.setIdentifier(selectedCenteralContactIi);
+            Long ocId = oc.create(orgContacPaDto);
+            scDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId));
+            scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(""));
+        }
         scDTO.setStudyProtocolIdentifier(studyProtocolIi);
         List<String> phones = new ArrayList<String>();
         phones.add(phone);
@@ -521,6 +579,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
         scDTO.setTelecomAddresses(dsetList);
         scDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+       
         return scDTO;
     }
 
@@ -608,7 +667,6 @@ public class GeneralTrialDesignAction extends ActionSupport {
         return identifier;
 
     }
-    @SuppressWarnings({"PMD.CollapsibleIfStatements" })
     private void enforceBusinessRules() {
       if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
         addFieldError("gtdDTO.localProtocolIdentifier", getText("Organization Trial ID must be Entered"));
@@ -619,14 +677,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
       if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
           addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
       }
-      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())) {
-          
-          if (PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier()) 
-              && PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
-              
-              addFieldError("gtdDTO.responsibleGenericContactName",
+      if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
+          addFieldError("gtdDTO.responsibleGenericContactName",
                       getText("Please choose Either Personal Contact or Generic Contact "));
-          }
       }
       if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
           addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
@@ -637,21 +691,22 @@ public class GeneralTrialDesignAction extends ActionSupport {
       if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
             addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
        }
-    if (PAUtil.isNotEmpty(gtdDTO.getCentralContactName()) || PAUtil.isNotEmpty(gtdDTO.getCentralContactPhone())
-    || PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail())) {
+      if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier()) || PAUtil.isNotEmpty(gtdDTO.getCentralContactPhone())
+      || PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail())) {
 
-    if (PAUtil.isEmpty(gtdDTO.getCentralContactName())) {
-      addFieldError("gtdDTO.centralContactName", getText("Central contact Name must be entered"));
-      }
-      if (PAUtil.isEmpty(gtdDTO.getCentralContactPhone())) {
-       addFieldError("gtdDTO.centralContactPhone", getText("Central Contact Phone must be Entered"));
-      }
-      if (PAUtil.isEmpty(gtdDTO.getCentralContactEmail())) {
-      addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email must be Entered"));
-      }
-      if (PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getCentralContactEmail())) {
-          addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email is not a valid format"));
-      }
+          if (PAUtil.isEmpty(gtdDTO.getCentralContactName()) && PAUtil.isEmpty(gtdDTO.getCentralContactTitle())) {
+              addFieldError("gtdDTO.centralContactName", getText("Central contact Name or Title must be entered"));
+          }
+          if (PAUtil.isEmpty(gtdDTO.getCentralContactPhone())) {
+           addFieldError("gtdDTO.centralContactPhone", getText("Central Contact Phone must be Entered"));
+          }
+          if (PAUtil.isEmpty(gtdDTO.getCentralContactEmail())) {
+          addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email must be Entered"));
+          }
+          if (PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail()) 
+                  && !PAUtil.isValidEmail(gtdDTO.getCentralContactEmail())) {
+              addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email is not a valid format"));
+          }
      }
     }
     /**

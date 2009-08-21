@@ -3,7 +3,7 @@
 	<tr>
 	    <td scope="row" class="label"><s:label for="editOrg.name">First Name:</s:label><span class="required">*</span></td>
 		<td class="value" style="width:250px">
-		<s:textfield name="personContactWebDTO.firstName" maxlength="80" size="80" cssStyle="width: 200px" disabled="disabled" readonly="true" />                            
+		<s:textfield name="personContactWebDTO.firstName" id="personContactWebDTO.firstName" maxlength="80" size="80" cssStyle="width: 200px" disabled="disabled" readonly="true" />                            
 		<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>personContactWebDTO.firstName</s:param>
@@ -19,16 +19,31 @@
 	<tr>
 	    <td scope="row" class="label"><s:label for="editOrg.city">Middle Name:</s:label></td>
 	    <td class="value" colspan="2">
-	        <s:textfield name="personContactWebDTO.middleName" maxlength="200" size="200" 
+	        <s:textfield name="personContactWebDTO.middleName" id="personContactWebDTO.middleName" maxlength="200" size="200" 
 	        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
 	    </td>
 	</tr>
 	<tr>
 	    <td scope="row" class="label"><s:label for="editOrg.countryName">Last Name:</s:label></td>
 	    <td class="value" colspan="2">
-	        <s:textfield name="personContactWebDTO.lastName" maxlength="200" size="200" 
+	        <s:textfield name="personContactWebDTO.lastName" id="personContactWebDTO.lastName" maxlength="200" size="200" 
 	        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
 	        </td>
 	</tr>
-	<s:hidden name="personContactWebDTO.selectedPersId"/>
+	<tr><td> OR    </td></tr>
+    <tr>
+    <td scope="row" class="label"><s:label for="Responsible Party Name">Generic Contact:</s:label></td>
+    <td><s:textfield label="Responsible Party Name" name="personContactWebDTO.title" id="personContactWebDTO.title" size="30"  
+        readonly="true" cssClass="readonly" cssStyle="width:200px"/>
+    </td>
+    <td class="value">
+        <ul style="margin-top:-5px;">              
+            <li style="padding-left:0">
+            <a href="#" class="btn" id="lookupbtn4RP" onclick="lookup4genericcontact();" title="Opens a popup form to select Site Contact"/><span class="btn_img">
+            <span class="person">Look Up Generic Contact</span></span></a>
+            </li>
+        </ul>
+    </td>
+    </tr>
+	<s:hidden name="personContactWebDTO.selectedPersId" id="personContactWebDTO.selectedPersId"/>
 </table>

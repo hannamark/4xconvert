@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 
 
@@ -100,7 +101,7 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     private Cd roleCode;
     private Ad postalAddress;
     private DSet<Tel> telecomAddresses;
-    
+    private Ii organizationalContactIi;
     /**
      * @return the postalAddress
      */
@@ -148,6 +149,18 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
      */
     public void setTelecomAddresses(DSet<Tel> telecomAddresses) {
         this.telecomAddresses = telecomAddresses;
+    }
+    /**
+     * @return the organizationalContactIi
+     */
+    public Ii getOrganizationalContactIi() {
+        return organizationalContactIi;
+    }
+    /**
+     * @param organizationalContactIi the organizationalContactIi to set
+     */
+    public void setOrganizationalContactIi(Ii organizationalContactIi) {
+        this.organizationalContactIi = organizationalContactIi;
     }
 
 

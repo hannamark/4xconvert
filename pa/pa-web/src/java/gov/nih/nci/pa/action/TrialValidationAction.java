@@ -362,7 +362,6 @@ public class TrialValidationAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
     }
-    @SuppressWarnings({"PMD.CollapsibleIfStatements" })
     private void enforceBusinessRules() {
         if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
             addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));
@@ -393,14 +392,10 @@ public class TrialValidationAction extends ActionSupport {
             addFieldError("gtdDTO.primaryPurposeOtherText",
                     getText("Primary Purpose Other other text must be entered"));
         }
-        if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())) {
-            
-                if (PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier()) 
-                    && PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
-                    
-                    addFieldError("gtdDTO.responsibleGenericContactName",
+        if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+                && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
+            addFieldError("gtdDTO.responsibleGenericContactName",
                             getText("Please choose Either Personal Contact or Generic Contact "));
-                }
         }
         if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
             addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
