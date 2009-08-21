@@ -84,6 +84,11 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareProviderTransformer;
@@ -144,10 +149,16 @@ public class HealthCareProviderTransformerTest extends AbstractTransformerTestBa
         hcpDto.setCertificateLicenseText(new STTransformerTest().makeDtoSimple());
 
         Ii id = new Ii();
+        id.setReliability(IdentifierReliability.ISS);
         id.setRoot(HEALTH_CARE_PROVIDER_ROOT);
         id.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         id.setExtension(EXT);
-        hcpDto.setIdentifier(id);
+        
+        DSet<Ii> dsetii = new DSet<Ii>();
+        dsetii.setItem(new HashSet<Ii>());
+        dsetii.getItem().add(id);
+        
+        hcpDto.setIdentifier(dsetii);
 
         Ii player = new Ii();
         player.setRoot(PLAYER_ROOT);
@@ -207,9 +218,10 @@ public class HealthCareProviderTransformerTest extends AbstractTransformerTestBa
     public void verifyDtoSimple(HealthCareProviderDTO x) {
         assertNotNull(x);
         assertEquals(x.getCertificateLicenseText().getValue(), new STTransformerTest().makeDtoSimple().getValue());
-        assertEquals(x.getIdentifier().getRoot(), HEALTH_CARE_PROVIDER_ROOT);
-        assertEquals(x.getIdentifier().getIdentifierName(), HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
-        assertEquals(x.getIdentifier().getExtension(), EXT);
+        Ii identifier = x.getIdentifier().getItem().iterator().next();
+        assertEquals(identifier.getRoot(), HEALTH_CARE_PROVIDER_ROOT);
+        assertEquals(identifier.getIdentifierName(), HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+        assertEquals(identifier.getExtension(), EXT);
         assertEquals(x.getPlayerIdentifier().getRoot(), PLAYER_ROOT);
         assertEquals(x.getPlayerIdentifier().getIdentifierName(), PLAYER_NAME);
         assertEquals(x.getPlayerIdentifier().getExtension(), EXT);

@@ -95,14 +95,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
   <property name="jboss-conf.dist.dir" value="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
 
+  <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+  <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+  <!-- Properties to control po-grid build   -->	
   <property name="po-grid.base.dir" location="${software.dir}/po-grid"/>
   <property name="po-grid.build.file" location="${po-grid.base.dir}/build.xml"/>
   <property name="po-grid.dir.target" value="wsrf.war" />
-  <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
-  <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
   <property name="po-grid.build.target" value="clean:deployJBoss"/>
   <property name="po-grid.artifact.dir" value="${po-grid.base.dir}/target" />
   <property name="po-grid.dist.dir" value="${dist.exploded.dir}/${po-grid.dist.relative.dir}"/>
+  <!-- Properties to control the po-grid-legacy build -->
+  <property name="po-grid-legacy.base.dir" location="${software.dir}/po-grid-legacy"/>
+  <property name="po-grid-legacy.build.file" location="${po-grid-legacy.base.dir}/build.xml"/>
+  <property name="po-grid-legacy.dir.target" value="wsrf.war" />
+  <property name="po-grid-legacy.build.target" value="clean:deployJBoss"/>
+  <property name="po-grid-legacy.artifact.dir" value="${po-grid-legacy.base.dir}/target" />
+  <property name="po-grid-legacy.dist.dir" value="${dist.exploded.dir}/${po-grid-legacy.dist.relative.dir}"/>
 
 
   <!-- Selenium settings -->
@@ -206,6 +214,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <delete dir="${dist.dir}"/>
     <delete dir="${temp.dir}"/>
     <delete dir="${po-grid.artifact.dir}"/>
+    <delete dir="${po-grid-legacy.artifact.dir}"/>
   </target>
 
   <target name="init" >
@@ -226,6 +235,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <mkdir dir="${pt.dir}"/>
     <mkdir dir="${po-grid.artifact.dir}"/>
     <mkdir dir="${po-grid.dist.dir}"/>
+    <mkdir dir="${po-grid-legacy.artifact.dir}"/>
+    <mkdir dir="${po-grid-legacy.dist.dir}"/>
     <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
 
@@ -276,7 +287,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     clean,
     init,
     build:po,
-    build:po-grid
+    build:po-grid,
+  	build:po-grid-legacy
     "/>
 
   <!-- First Maven Target -->
@@ -337,7 +349,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${po-grid.base.dir}" >
       <property name="project.name" value="${project.name}"/>
       <property name="jboss.dir" value="target"/>
-      <property name="jboss.serverinstance.name" value="${jboss.server.name.grid}"/>
+      <property name="jboss.serverinstance.name" value="${po-grid.jboss.server.name}"/>
       <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
       <property name="java.naming.provider.url.host" value="localhost"/>
       <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
@@ -347,11 +359,34 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </ant>
 
     <zip update="false" destfile="${po-grid.dist.dir}/${po-grid.artifact.file}">
-      <zipfileset dir="${po-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${po-grid.dir.target}/" />
+      <zipfileset dir="${po-grid.artifact.dir}/server/${po-grid.jboss.server.name}/deploy/${po-grid.dir.target}/" />
     </zip>
     <delete dir="${po-grid.artifact.dir}/server" />
   </target>
+  <!-- Build po-grid-legacy sub-project produces project level artifact -->
+  <target name="build:po-grid-legacy" depends="init" unless="exclude.po-grid-legacy">
+    <fail unless="jboss.server.hostname"/>
+    <fail unless="jboss.server.port"/>
 
+    <ant inheritAll="false" inheritRefs="false" antfile="${po-grid-legacy.build.file}"
+            target="${po-grid-legacy.build.target}"
+            dir="${po-grid-legacy.base.dir}" >
+      <property name="project.name" value="${project.name}"/>
+      <property name="jboss.dir" value="target"/>
+      <property name="jboss.serverinstance.name" value="${po-grid-legacy.jboss.server.name}"/>
+      <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
+      <property name="java.naming.provider.url.host" value="localhost"/>
+      <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
+      <property name="java.naming.security.principal" value="%%pogrid-legacy.jndi.principal%%"/>
+      <property name="java.naming.security.credentials" value="%%pogrid-legacy.jndi.credentials%%"/>
+      <property name="no.deployment.validation" value="true"/>
+    </ant>
+
+    <zip update="false" destfile="${po-grid-legacy.dist.dir}/${po-grid-legacy.artifact.file}">
+      <zipfileset dir="${po-grid-legacy.artifact.dir}/server/${po-grid-legacy.jboss.server.name}/deploy/${po-grid-legacy.dir.target}/" />
+    </zip>
+    <delete dir="${po-grid-legacy.artifact.dir}/server" />
+  </target>
 
   <macrodef name="maven">
     <attribute name="maven.profile.list"/>
@@ -463,6 +498,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <target name="dist:installer" depends="dist:installer:prep">
     <delete file="${dist.dir}/${po-ear.install.zip.file}"/>
     <delete file="${dist.dir}/${po-grid.install.zip.file}"/>
+    <delete file="${dist.dir}/${po-grid-legacy.install.zip.file}"/>
     <!-- Set environment name to external -->
     <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
     <obfuscate-properties-file
@@ -471,8 +507,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       optional.property.list="ldap.url,ldap.basedn"
       delete.property.list="exclude.jboss.backup"
       />
-    <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}"/>
-    <zip destfile="${dist.dir}/${po-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}" includes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid.install.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid-legacy.install.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid-legacy.dist.relative.dir}/**"/>
   </target>
 
   <!-- Copies install time resources into distribution tree -->
@@ -498,6 +535,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <target name="dist:upgrader" depends="dist:upgrader:prep">
     <delete file="${dist.dir}/${po-ear.upgrade.zip.file}"/>
     <delete file="${dist.dir}/${po-grid.upgrade.zip.file}"/>
+    <delete file="${dist.dir}/${po-grid-legacy.upgrade.zip.file}"/>
     <!-- Set environment name to external -->
     <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
 
@@ -513,8 +551,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       </fileset>
     </copy>
 
-    <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" includes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid-legacy.upgrade.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid-legacy.dist.relative.dir}/**"/>
   </target>
 
 
@@ -538,8 +577,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 
   <!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-  <target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
-    <!--
+  <target name="deploy:local:upgrade" depends="build:all,local:upgrade" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
+    
+  </target>
+  <target name="local:upgrade" depends="dist:upgrader:prep">
+  	<!--
     * Requires a database installation.
     * Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
     * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
@@ -551,6 +593,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       />
 
   </target>
+	
+	
   <macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
     <attribute name="ssh.user" default="${ssh.server.username}" />
     <attribute name="ssh.host" default="${ssh.server.hostname}" />
@@ -595,14 +639,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     dist:installer,
     remote:install
     ">
-    <deploy-files2
-      dist.file="${po-ear.install.zip.file}"
-      />
-    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
   </target>
 
 
-  <target name="remote:install" depends="remote:install:po-ear, remote:install:po-grid"/>
+  <target name="remote:install" depends="remote:install:po-ear, remote:install:po-grid, remote:install:po-grid-legacy"/>
   <target name="remote:install:po-ear">
     <deploy-files2
               dist.file="${po-ear.install.zip.file}"
@@ -626,6 +666,23 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       remoteSshKeyfile="${pogrid.ssh.key.file}"
       remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${install.target}" />
   </target>
+  <target name="remote:install:po-grid-legacy" unless="exclude.po-grid-legacy">
+    <!-- install po-grid only-->
+    <deploy-files2
+         ssh.user="${pogrid-legacy.ssh.server.username}"
+         ssh.host="${pogrid-legacy.ssh.server.hostname}"
+         ssh.port="${pogrid-legacy.ssh.port}"
+         ssh.key.file="${pogrid-legacy.ssh.key.file}"
+         remote.directory.property.name="pogrid.ssh.dir.temp"
+         dist.file="${po-grid-legacy.upgrade.zip.file}"
+         />
+    <remote-ssh
+      remoteSshUser="${pogrid-legacy.ssh.server.username}"
+      remoteSshHost="${pogrid-legacy.ssh.server.hostname}"
+      remoteSshPort="${pogrid-legacy.ssh.port}"
+      remoteSshKeyfile="${pogrid-legacy.ssh.key.file}"
+      remotesshcommand=". .bash_profile;cd ${pogrid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${install.target}" />
+  </target>
 
 
   <!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
@@ -637,7 +694,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     ">
   </target>
 
-  <target name="remote:upgrade" depends="remote:upgrade:po-ear,remote:upgrade:po-grid">
+  <target name="remote:upgrade" depends="remote:upgrade:po-ear,remote:upgrade:po-grid,remote:upgrade:po-grid-legacy">
   </target>
 
   <target name="remote:upgrade:po-ear">
@@ -645,7 +702,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <deploy-files2
              dist.file="${po-ear.upgrade.zip.file}"
              />
-    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true ${upgrade.target}" />
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true -Dexclude.po-grid-legacy=true ${upgrade.target}" />
   </target>
 
   <target name="remote:upgrade:po-grid" unless="exclude.po-grid">
@@ -663,7 +720,25 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
            remoteSshHost="${pogrid.ssh.server.hostname}"
             remoteSshPort="${pogrid.ssh.port}"
            remoteSshKeyfile="${pogrid.ssh.key.file}"
-           remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${upgrade.target}" />
+           remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.po-grid-legacy=true -Dexclude.database=true ${upgrade.target}" />
+  </target>
+
+  <target name="remote:upgrade:po-grid-legacy" unless="exclude.po-grid-legacy">
+    <!-- install po-grid only-->
+    <deploy-files2
+             ssh.user="${pogrid-legacy.ssh.server.username}"
+             ssh.host="${pogrid-legacy.ssh.server.hostname}"
+             ssh.port="${pogrid-legacy.ssh.port}"
+             ssh.key.file="${pogrid-legacy.ssh.key.file}"
+             remote.directory.property.name="pogrid-legacy.ssh.dir.temp"
+             dist.file="${po-grid-legacy.upgrade.zip.file}"
+             />
+    <remote-ssh
+           remoteSshUser="${pogrid-legacy.ssh.server.username}"
+           remoteSshHost="${pogrid-legacy.ssh.server.hostname}"
+            remoteSshPort="${pogrid-legacy.ssh.port}"
+           remoteSshKeyfile="${pogrid-legacy.ssh.key.file}"
+           remotesshcommand=". .bash_profile;cd ${pogrid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.po-grid=true -Dexclude.database=true ${upgrade.target}" />
   </target>
 
   <target name="usage" description="Explains how to use this build script">

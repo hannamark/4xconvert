@@ -1,13 +1,16 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.ClinicalResearchStaff;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.ClinicalResearchStaffTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+
+import java.util.HashSet;
 
 import org.iso._21090.II;
 
@@ -45,6 +48,7 @@ public class ClinicalResearchStaffTransformerTest  extends
 	@Override
 	public ClinicalResearchStaffDTO makeDtoSimple() {
 		Ii id = new Ii();
+		id.setReliability(IdentifierReliability.ISS);
 	    id.setRoot(CLINICAL_RESEARCH_STAFF_ROOT);
 	    id.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
 	    id.setExtension("123");
@@ -53,13 +57,17 @@ public class ClinicalResearchStaffTransformerTest  extends
 	    player.setIdentifierName(PLAYER_NAME);
 	    player.setExtension("346");
 	    
+	    DSet<Ii> dsetii = new DSet<Ii>();
+	    dsetii.setItem(new HashSet<Ii>());
+	    dsetii.getItem().add(id);
+	    
 	    Ii scoper = new Ii();
 	    scoper.setRoot(SCOPER_ROOT);
 	    scoper.setIdentifierName(SCOPER_NAME);
 	    scoper.setExtension("456");
 
 		ClinicalResearchStaffDTO crs_dto = new ClinicalResearchStaffDTO();
-		crs_dto.setIdentifier(id);
+		crs_dto.setIdentifier(dsetii);
 		crs_dto.setPlayerIdentifier(player);
 		crs_dto.setScoperIdentifier(scoper);
 		crs_dto.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
@@ -95,8 +103,9 @@ public class ClinicalResearchStaffTransformerTest  extends
 
 	@Override
 	public void verifyDtoSimple(ClinicalResearchStaffDTO x) {
-		assertEquals(x.getIdentifier().getExtension(), "123");
-		assertEquals(x.getIdentifier().getIdentifierName(),CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+		Ii identifier = x.getIdentifier().getItem().iterator().next();
+        assertEquals(identifier.getExtension(), "123");
+		assertEquals(identifier.getIdentifierName(),CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
 		assertEquals(x.getScoperIdentifier().getIdentifierName(),SCOPER_NAME);
 		assertEquals(x.getStatus().getCode(), new CDTransformerTest().makeDtoSimple().getCode());
 	}

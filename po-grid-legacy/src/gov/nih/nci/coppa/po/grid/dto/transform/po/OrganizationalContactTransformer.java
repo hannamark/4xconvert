@@ -31,7 +31,7 @@ public final class OrganizationalContactTransformer
             return null;
         }
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
-        dto.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        dto.setIdentifier(LegacyIITransformer.INSTANCE.toDto(input.getIdentifier()));
         dto.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
         dto.setScoperIdentifier(IITransformer.INSTANCE.toDto(input.getScoperIdentifier()));
         dto.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
@@ -51,7 +51,7 @@ public final class OrganizationalContactTransformer
             return null;
         }
         OrganizationalContact xml = new OrganizationalContact();
-        xml.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        xml.setIdentifier(LegacyIITransformer.INSTANCE.toXml(input.getIdentifier()));
         xml.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         xml.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
         xml.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));

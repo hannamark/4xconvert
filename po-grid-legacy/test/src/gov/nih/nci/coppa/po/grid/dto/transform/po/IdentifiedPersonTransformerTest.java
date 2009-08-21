@@ -1,6 +1,11 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdentifiedPersonTransformer;
@@ -50,9 +55,15 @@ public class IdentifiedPersonTransformerTest extends
     @Override
     public IdentifiedPersonDTO makeDtoSimple() {
         Ii id = new Ii();
+        id.setReliability(IdentifierReliability.ISS);
         id.setRoot(IDENTIFIED_PER_ROOT);
         id.setIdentifierName(IDENTIFIED_PER_IDENTIFIER_NAME);
         id.setExtension("123");
+        
+        DSet<Ii> dsetii = new DSet<Ii>();
+        dsetii.setItem(new HashSet<Ii>());
+        dsetii.getItem().add(id);
+
         Ii player = new Ii();
         player.setRoot(PLAYER_ROOT);
         player.setIdentifierName(PLAYER_NAME);
@@ -66,7 +77,7 @@ public class IdentifiedPersonTransformerTest extends
 
         IdentifiedPersonDTO dto = new IdentifiedPersonDTO ();
         dto.setAssignedId(assignedId);
-        dto.setIdentifier(id);
+        dto.setIdentifier(dsetii);
         dto.setPlayerIdentifier(player);
         dto.setStatus(new CDTransformerTest().makeDtoSimple());
         return dto;
@@ -99,8 +110,9 @@ public class IdentifiedPersonTransformerTest extends
 
     @Override
     public void verifyDtoSimple(IdentifiedPersonDTO x) {
-        assertEquals(x.getIdentifier().getExtension(), "123");
-        assertEquals(x.getIdentifier().getIdentifierName(),IDENTIFIED_PER_IDENTIFIER_NAME);
+        Ii identifier = x.getIdentifier().getItem().iterator().next();
+        assertEquals(identifier.getExtension(), "123");
+        assertEquals(identifier.getIdentifierName(),IDENTIFIED_PER_IDENTIFIER_NAME);
         assertEquals(x.getAssignedId().getIdentifierName(),ASSIGNED_ID_NAME);
         new CDTransformerTest().verifyDtoSimple(x.getStatus());
 

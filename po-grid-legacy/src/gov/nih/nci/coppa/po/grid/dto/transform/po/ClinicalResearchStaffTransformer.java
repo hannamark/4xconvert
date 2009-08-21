@@ -30,7 +30,7 @@ public final class ClinicalResearchStaffTransformer
             return null;
         }
         ClinicalResearchStaffDTO d = new ClinicalResearchStaffDTO();
-        d.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        d.setIdentifier(LegacyIITransformer.INSTANCE.toDto(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
         d.setScoperIdentifier(IITransformer.INSTANCE.toDto(input.getScoperIdentifier()));
         d.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
@@ -49,7 +49,7 @@ public final class ClinicalResearchStaffTransformer
             return null;
         }
         ClinicalResearchStaff d = new ClinicalResearchStaff();
-        d.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        d.setIdentifier(LegacyIITransformer.INSTANCE.toXml(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         d.setScoperIdentifier(IITransformer.INSTANCE.toXml(input.getScoperIdentifier()));
         d.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));

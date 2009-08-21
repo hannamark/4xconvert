@@ -28,7 +28,7 @@ public class OversightCommitteeTransformer
             return null;
         }
           OversightCommitteeDTO dto = new OversightCommitteeDTO();
-          dto.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+          dto.setIdentifier(LegacyIITransformer.INSTANCE.toDto(input.getIdentifier()));
           dto.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
           dto.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
           dto.setTypeCode(CDTransformer.INSTANCE.toDto(input.getTypeCode()));
@@ -44,7 +44,7 @@ public class OversightCommitteeTransformer
           return null;
           }
           OversightCommittee xml = new OversightCommittee();
-          xml.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+          xml.setIdentifier(LegacyIITransformer.INSTANCE.toXml(input.getIdentifier()));
           xml.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
           xml.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
           xml.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));

@@ -39,7 +39,7 @@ public final class ResearchOrganizationTransformer
             return null;
         }
        ResearchOrganizationDTO d = new ResearchOrganizationDTO();
-       d.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+       d.setIdentifier(LegacyIITransformer.INSTANCE.toDto(input.getIdentifier()));
        d.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
        d.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
        d.setFundingMechanism(CDTransformer.INSTANCE.toDto(input.getFundingMechanism()));
@@ -58,7 +58,7 @@ public final class ResearchOrganizationTransformer
             return null;
         }
         ResearchOrganization d = new ResearchOrganization();
-        d.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        d.setIdentifier(LegacyIITransformer.INSTANCE.toXml(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         d.setFundingMechanism(CDTransformer.INSTANCE.toXml(input.getFundingMechanism()));

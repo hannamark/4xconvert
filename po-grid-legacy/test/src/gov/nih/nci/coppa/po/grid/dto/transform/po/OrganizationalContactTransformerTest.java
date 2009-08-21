@@ -1,6 +1,11 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformer;
@@ -46,9 +51,14 @@ public class OrganizationalContactTransformerTest extends
 	@Override
 	public OrganizationalContactDTO makeDtoSimple() {
 		Ii id = new Ii();
+		id.setReliability(IdentifierReliability.ISS);
 	    id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
 	    id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
 	    id.setExtension("123");
+        
+        DSet<Ii> dsetii = new DSet<Ii>();
+        dsetii.setItem(new HashSet<Ii>());
+        dsetii.getItem().add(id);
 
 	    Ii player = new Ii();
 	    player.setRoot(PLAYER_ROOT);
@@ -61,7 +71,7 @@ public class OrganizationalContactTransformerTest extends
 	    scoper.setExtension("567");
 
 	    OrganizationalContactDTO dto = new OrganizationalContactDTO();
-	    dto.setIdentifier(id);
+	    dto.setIdentifier(dsetii);
 	    dto.setPlayerIdentifier(player);
 	    dto.setScoperIdentifier(scoper);
 	    dto.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
@@ -103,8 +113,9 @@ public class OrganizationalContactTransformerTest extends
 	@SuppressWarnings("unchecked")
     @Override
 	public void verifyDtoSimple(OrganizationalContactDTO x) {
-		assertEquals(x.getIdentifier().getExtension(), "123");
-		assertEquals(x.getIdentifier().getIdentifierName(),ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+        Ii identifier = x.getIdentifier().getItem().iterator().next();
+        assertEquals(identifier.getExtension(), "123");
+		assertEquals(identifier.getIdentifierName(),ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
 		assertEquals(x.getPlayerIdentifier().getIdentifierName(),PLAYER_NAME);
 		new CDTransformerTest().verifyDtoSimple(x.getStatus());
 		new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());

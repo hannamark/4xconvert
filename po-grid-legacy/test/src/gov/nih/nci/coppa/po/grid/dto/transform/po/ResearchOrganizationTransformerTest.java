@@ -1,6 +1,11 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.ResearchOrganization;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
@@ -47,9 +52,15 @@ public class ResearchOrganizationTransformerTest extends
     @Override
     public ResearchOrganizationDTO makeDtoSimple() {
         Ii id = new Ii();
+        id.setReliability(IdentifierReliability.ISS);
         id.setRoot(Research_ORG_ROOT);
         id.setIdentifierName(Research_ORG_IDENTIFIER_NAME);
         id.setExtension("123");
+        
+        DSet<Ii> dsetii = new DSet<Ii>();
+        dsetii.setItem(new HashSet<Ii>());
+        dsetii.getItem().add(id);
+        
         Ii player = new Ii();
         player.setRoot(PLAYER_ROOT);
         player.setIdentifierName(PLAYER_NAME);
@@ -62,7 +73,7 @@ public class ResearchOrganizationTransformerTest extends
 
 
         ResearchOrganizationDTO dto = new ResearchOrganizationDTO ();
-        dto.setIdentifier(id);
+        dto.setIdentifier(dsetii);
         dto.setPlayerIdentifier(player);
         dto.setStatus(new CDTransformerTest().makeDtoSimple());
         dto.setFundingMechanism(new CDTransformerTest().makeDtoSimple());
@@ -104,8 +115,9 @@ public class ResearchOrganizationTransformerTest extends
 
     @Override
     public void verifyDtoSimple(ResearchOrganizationDTO x) {
-        assertEquals(x.getIdentifier().getExtension(), "123");
-        assertEquals(x.getIdentifier().getIdentifierName(), Research_ORG_IDENTIFIER_NAME);
+        Ii identifier = x.getIdentifier().getItem().iterator().next();
+        assertEquals(identifier.getExtension(), "123");
+        assertEquals(identifier.getIdentifierName(), Research_ORG_IDENTIFIER_NAME);
         assertEquals(x.getPlayerIdentifier().getExtension(), "346");
         assertEquals(x.getPlayerIdentifier().getIdentifierName(), PLAYER_NAME);
         new CDTransformerTest().verifyDtoSimple(x.getStatus());

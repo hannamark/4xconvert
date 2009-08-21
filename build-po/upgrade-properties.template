@@ -23,6 +23,8 @@ app.log.smtp.to=changeme@example.com
 # URL to access the application, e.g. http://${jboss.server.hostname}:${jboss.server.port}/po-web
 # MAY NEED TO PROVIDE THE PUBLIC FRIENDLY NAME, e.g. https://trails.nci.nih.gov/po-web (hostname may be different)
 application.url=http://${jboss.server.hostname}:${jboss.server.port}/po-web
+pogrid.application.url=The URL to access the COPPA Grid Services. Example: http://${jboss.server.hostname}:${po-grid.jboss.server.port}/wsrf/services/cagrid/CoreServices
+pogrid-legacy.application.url=The URL to access the Legacy COPPA Grid Services. Example: http://${jboss.server.hostname}:${po-grid-legacy.jboss.server.port}/wsrf/services/cagrid/CoreServices
 
 ###########################
 ###  DATABASE SETTINGS  ###
@@ -51,10 +53,15 @@ database.url=jdbc:postgresql://${database.server}:${database.port}/${database.na
 jboss.home=
 # The hostname of the host OS (VM or domU) running JBoss (hosts and runs the application)
 jboss.server.hostname=
+
+#########
+# poear
+#########
+
 # The JNDI Port for the server instance within JBoss containing the application, e.g. jboss.server.jndi.port=1099
 jboss.server.jndi.port=
 # The JBoss Server instance name, the name of the directory user JBOSS_HOME/server/<SERVERINSTANCE>/...
-jboss.server.name=
+jboss.server.name=poear
 # The HTTP Port for the server instance within JBoss containing the application, e.g. jboss.server.port=8080
 jboss.server.port=
 # The JBoss MQ Port that our custom JBossMQ-related mbeans must bind to (JBossMQ using the Unified Invocation Layer. All communication uses one socket connection)
@@ -63,19 +70,42 @@ jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort=
 jboss.web.user=
 # The password to the access the jboss web console and jmx console. Example: blueprint123!. The user is admin.
 jboss.web.password=
+
+#########
+# pogrid
+#########
+
 # The JBoss Server instance name for the CoppaPO Grid Services ( JBOSS_HOME/server/<SERVERINSTANCE>/ )
-jboss.server.name.grid=
-# The JNDI Port for the server instance within JBoss containing the CoppaPO Grid Services, e.g. jboss.server.grid.jndi.port=1099
-jboss.server.grid.jndi.port=11299
-# The HTTP Port for the server instance within JBoss containing the CoppaPO Grid Services, e.g. jboss.server.grid.port=8080
-jboss.server.grid.port=19280
+po-grid.jboss.server.name=pogrid
+# The JNDI Port for the server instance within JBoss containing the CoppaPO Grid Services, e.g. po-grid.jboss.server.jndi.port=1099
+po-grid.jboss.server.jndi.port=11299
+# The HTTP Port for the server instance within JBoss containing the CoppaPO Grid Services, e.g. po-grid.jboss.server.port=8080
+po-grid.jboss.server.port=19280
 #used to allow the po-grid to make EJB3 calls via jndi
 pogrid.jndi.principal=ejbclient
 pogrid.jndi.credentials=pass
 
+pogrid.jboss.external.http.host=the external http hostname for the grid services, e.g. ctms-services-[dev|qa|int|stage|].nci.nih.gov
+pogrid.jboss.external.http.port=the external http port for the grid services, e.g. 80
 
-jboss.external.grid.http.host=the external http hostname for the grid services, e.g. ctms-services-[dev|qa|int|stage|].nci.nih.gov
-jboss.external.grid.http.port=the external http port for the grid services, e.g. 80
+#########
+# pogridlegacy
+#########
+
+# The JBoss Server instance name for the CoppaPO Legacy Grid Services ( JBOSS_HOME/server/<SERVERINSTANCE>/ )
+po-grid-legacy.jboss.server.name=pogridlegacy
+# The JNDI Port for the server instance within JBoss containing the CoppaPO Legacy Grid Services, e.g. po-grid-legacy.jboss.server.jndi.port=1099
+po-grid-legacy.jboss.server.jndi.port=11099
+# The HTTP Port for the server instance within JBoss containing the CoppaPO Legacy Grid Services, e.g. po-grid-legacy.jboss.server.port=8080
+po-grid-legacy.jboss.server.port=19080
+
+#used to allow the po-grid-legacy to make EJB3 calls via jndi
+pogrid-legacy.jndi.principal=ejbclient
+pogrid-legacy.jndi.credentials=pass
+
+pogrid-legacy.jboss.external.http.host=the external http hostname for the legacy grid services, e.g. ctms-services-[dev|qa|int|stage|].nci.nih.gov
+pogrid-legacy.jboss.external.http.port=the external http port for the legacy grid services, e.g. 80
+
 ##################################
 #  Grid Service registration URL #
 ##################################
@@ -149,4 +179,16 @@ validation.pre.port.list=${jboss.server.jndi.port},${jboss.server.port},${jboss.
 validation.post.http.list=${jboss.server.port}
 # DO NOT MODIFY
 validation.post.socket.list=${jboss.server.jndi.port},${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}
+# DO NOT MODIFY
+pogrid.validation.pre.port.list=${po-grid.jboss.server.rmi.port},${po-grid.jboss.server.jndi.port},${po-grid.jboss.service.rmiobject.port},${po-grid.jboss.jms.port},${po-grid.jboss.server.port},${po-grid.jboss.web.service.port}
+# DO NOT MODIFY
+pogrid.validation.post.http.list=${po-grid.jboss.server.port}
+# DO NOT MODIFY
+pogrid.validation.post.socket.list=${po-grid.jboss.server.jndi.port},${po-grid.jboss.service.rmiobject.port},${po-grid.jboss.jms.port},${po-grid.jboss.web.service.port}
+# DO NOT MODIFY
+pogrid-legacy.validation.pre.port.list=${po-grid-legacy.jboss.server.rmi.port},${po-grid-legacy.jboss.server.jndi.port},${po-grid-legacy.jboss.service.rmiobject.port},${po-grid-legacy.jboss.jms.port},${po-grid-legacy.jboss.server.port},${po-grid-legacy.jboss.web.service.port}
+# DO NOT MODIFY
+pogrid-legacy.validation.post.http.list=${po-grid-legacy.jboss.server.port}
+# DO NOT MODIFY
+pogrid-legacy.validation.post.socket.list=${po-grid-legacy.jboss.server.jndi.port},${po-grid-legacy.jboss.service.rmiobject.port},${po-grid-legacy.jboss.jms.port},${po-grid-legacy.jboss.web.service.port}
 

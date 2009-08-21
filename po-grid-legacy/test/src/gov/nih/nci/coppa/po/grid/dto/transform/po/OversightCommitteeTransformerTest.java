@@ -1,6 +1,11 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.OversightCommittee;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OversightCommitteeTransformer;
@@ -34,17 +39,22 @@ public class OversightCommitteeTransformerTest extends
 	@Override
 	public OversightCommitteeDTO makeDtoSimple() {
 		Ii id = new Ii();
+		id.setReliability(IdentifierReliability.ISS);
 	    id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
 	    id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
 	    id.setExtension("123");
-	    
+	       
+        DSet<Ii> dsetii = new DSet<Ii>();
+        dsetii.setItem(new HashSet<Ii>());
+        dsetii.getItem().add(id);
+
 	    Ii player = new Ii();
 	    player.setRoot(PLAYER_ROOT);
 	    player.setIdentifierName(PLAYER_NAME);
 	    player.setExtension("346");
 	   
 	    OversightCommitteeDTO dto = new OversightCommitteeDTO();
-	    dto.setIdentifier(id);
+	    dto.setIdentifier(dsetii);
 	    dto.setPlayerIdentifier(player);
 	    dto.setStatus(new CDTransformerTest().makeDtoSimple());
 	    dto.setTypeCode(new CDTransformerTest().makeDtoSimple());
@@ -73,8 +83,9 @@ public class OversightCommitteeTransformerTest extends
 
 	@Override
 	public void verifyDtoSimple(OversightCommitteeDTO x) {
-		assertEquals(x.getIdentifier().getExtension(), "123");
-		assertEquals(x.getIdentifier().getIdentifierName(),OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+        Ii identifier = x.getIdentifier().getItem().iterator().next();
+        assertEquals(identifier.getExtension(), "123");
+		assertEquals(identifier.getIdentifierName(),OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
 		new CDTransformerTest().verifyDtoSimple(x.getStatus());
 	}
 

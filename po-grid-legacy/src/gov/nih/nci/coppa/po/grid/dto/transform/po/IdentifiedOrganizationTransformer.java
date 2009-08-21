@@ -36,7 +36,7 @@ public final class IdentifiedOrganizationTransformer
             return null;
         }
        IdentifiedOrganizationDTO d = new IdentifiedOrganizationDTO();
-       d.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+       d.setIdentifier(LegacyIITransformer.INSTANCE.toDto(input.getIdentifier()));
        d.setPlayerIdentifier(IITransformer.INSTANCE.toDto(input.getPlayerIdentifier()));
        d.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
        d.setAssignedId(IITransformer.INSTANCE.toDto(input.getAssignedId()));
@@ -52,7 +52,7 @@ public final class IdentifiedOrganizationTransformer
             return null;
         }
         IdentifiedOrganization d = new IdentifiedOrganization();
-        d.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        d.setIdentifier(LegacyIITransformer.INSTANCE.toXml(input.getIdentifier()));
         d.setPlayerIdentifier(IITransformer.INSTANCE.toXml(input.getPlayerIdentifier()));
         d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         d.setAssignedId(IITransformer.INSTANCE.toXml(input.getAssignedId()));

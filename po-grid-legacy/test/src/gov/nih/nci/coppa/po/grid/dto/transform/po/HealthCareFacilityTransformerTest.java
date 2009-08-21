@@ -1,6 +1,11 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareFacilityTransformer;
@@ -38,6 +43,7 @@ public class HealthCareFacilityTransformerTest
 	@Override
 	public HealthCareFacilityDTO makeDtoSimple() {
 	    Ii id = new Ii();
+	    id.setReliability(IdentifierReliability.ISS);
 	    id.setRoot(HEALTH_CARE_FACILITY_ROOT);
 	    id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
 	    id.setExtension("123");
@@ -45,9 +51,13 @@ public class HealthCareFacilityTransformerTest
 	    player.setRoot(PLAYER_ROOT);
 	    player.setIdentifierName(PLAYER_NAME);
 	    player.setExtension("346");
+        
+        DSet<Ii> dsetii = new DSet<Ii>();
+        dsetii.setItem(new HashSet<Ii>());
+        dsetii.getItem().add(id);
 
 		HealthCareFacilityDTO hcf_dto = new HealthCareFacilityDTO();
-	    hcf_dto.setIdentifier(id);
+	    hcf_dto.setIdentifier(dsetii);
 	    hcf_dto.setPlayerIdentifier(player);
 		hcf_dto.setStatus(new CDTransformerTest().makeDtoSimple());
 		hcf_dto.setName(new STTransformerTest().makeDtoSimple());
@@ -79,8 +89,9 @@ public class HealthCareFacilityTransformerTest
 
 	@Override
 	public void verifyDtoSimple(HealthCareFacilityDTO x) {
-		assertEquals(x.getIdentifier().getExtension(), "123");
-		assertEquals(x.getIdentifier().getIdentifierName(),HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+	    Ii identifier = x.getIdentifier().getItem().iterator().next();
+		assertEquals(identifier.getExtension(), "123");
+		assertEquals(identifier.getIdentifierName(),HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
 		assertEquals(x.getStatus().getCode(), new CDTransformerTest().makeDtoSimple().getCode());
 		assertEquals(x.getName().getValue(), new STTransformerTest().makeDtoSimple().getValue());
 	}
