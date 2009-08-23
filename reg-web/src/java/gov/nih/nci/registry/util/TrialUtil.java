@@ -223,9 +223,7 @@ public class TrialUtil {
             .getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
-            Organization o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-
-                        Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+            Organization o = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             trialDTO.setSponsorName(o.getName());
             trialDTO.setSponsorIdentifier(o.getIdentifier());
         }
@@ -298,8 +296,7 @@ public class TrialUtil {
         if (srDTO.getOrganizationIdentifier() != null
                 && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
             CorrelationUtils cUtils = new CorrelationUtils();
-            Organization o = cUtils.getPAOrganizationByIndetifers(Long.valueOf(srDTO.getOrganizationIdentifier()
-                    .getExtension()), null);
+            Organization o = cUtils.getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
             trialDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
             trialDTO.setSummaryFourOrgName(o.getName());
         }
@@ -925,9 +922,10 @@ public class TrialUtil {
        CorrelationUtils cUtils = new CorrelationUtils();
        copy(spDTO, trialDTO);
        copy(spqDto, trialDTO);
-       copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null), trialDTO);
+       copyLO(cUtils.getPAOrganizationByIi(
+               IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
        //
-       copyPI(cUtils.getPAPersonByIndetifers(spqDto.getPiId(), null), trialDTO);
+       copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())), trialDTO);
        copyResponsibleParty(studyProtocolIi, trialDTO);
        copySponsor(studyProtocolIi, trialDTO);
        copyNctNummber(studyProtocolIi, trialDTO);
@@ -995,8 +993,7 @@ public class TrialUtil {
                                                .getByStudyProtocol(studyProtocolIi, criteriaList);
        for (StudySiteDTO sp : spList) {
            CorrelationUtils cUtils = new CorrelationUtils();
-           Organization orgBo = cUtils.getPAOrganizationByPAResearchOrganizationId(
-                   IiConverter.convertToLong(sp.getResearchOrganizationIi()));
+           Organization orgBo = cUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
            orgWebDTO.setName(orgBo.getName());
@@ -1029,8 +1026,7 @@ public class TrialUtil {
            StudySiteAccrualStatusDTO ssas = RegistryServiceLocator.getStudySiteAccrualStatusService()
                                               .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
            CorrelationUtils cUtils = new CorrelationUtils();
-           Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(sp
-                   .getHealthcareFacilityIi()));
+           Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
            orgWebDTO.setName(orgBo.getName());

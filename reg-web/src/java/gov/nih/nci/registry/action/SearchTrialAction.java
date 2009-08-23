@@ -226,8 +226,7 @@ public class SearchTrialAction extends ActionSupport {
                     getOrganizationIdentifier().getExtension() != null && !resourcingDTO.
                     getOrganizationIdentifier().getExtension().equals("")) {
                 Organization o = new CorrelationUtils().
-                    getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
-                            getOrganizationIdentifier().getExtension()), null);
+                    getPAOrganizationByIi(resourcingDTO.getOrganizationIdentifier());
                 ServletActionContext.getRequest().setAttribute("summaryFourSponsorName", o.getName());  
             }
 
@@ -466,8 +465,7 @@ public class SearchTrialAction extends ActionSupport {
             if (resourcingDTO != null && resourcingDTO.getOrganizationIdentifier() != null 
                          && resourcingDTO.getOrganizationIdentifier().getExtension() != null) {
                 Organization o = new CorrelationUtils().
-                    getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
-                            getOrganizationIdentifier().getExtension()), null);
+                    getPAOrganizationByIi(resourcingDTO.getOrganizationIdentifier());
                 ServletActionContext.getRequest().setAttribute("summaryFourSponsorName", o.getName());  
             }
 
@@ -613,8 +611,7 @@ public class SearchTrialAction extends ActionSupport {
             if (scDtos != null && scDtos.size() > 0) {
                 scDto = scDtos.get(0);
                 dset = scDto.getTelecomAddresses();
-                respPartyContact = cUtils.getPAPersonByPAClinicalResearchStaffId(
-                        Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
+                respPartyContact = cUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
                 if (respPartyContact != null) {
                     respParty = "PI";
 
@@ -656,8 +653,7 @@ public class SearchTrialAction extends ActionSupport {
                             .getByStudyProtocol(studyProtocolIi, spart);
             if (spDtos != null && spDtos.size() > 0) {
                 spart = spDtos.get(0);
-                sponsor = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-                            Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+                sponsor = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             }
             if (sponsor != null && respPartyContactName != null && !maskFields) {
                 ServletActionContext.getRequest().setAttribute(
