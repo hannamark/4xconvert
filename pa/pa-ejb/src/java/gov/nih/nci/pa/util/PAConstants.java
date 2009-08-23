@@ -124,4 +124,10 @@ public class PAConstants {
  
     /** CODE_NAME. **/
     public static final String CODE_NAME = "Code Name";
+    
+    /** irb. **/
+    public static final String IRB_CODE = "Institutional Review Board (IRB)";
+    
+    /** Pa Internal. **/
+    public static final String PA_INTERNAL = "PA-InternalIdentifier";
 }

@@ -230,7 +230,7 @@ public class StudySiteServiceTest {
         assertNull(StConverter.convertToString(sp1.getReviewBoardApprovalNumber()));
         assertTrue(PAUtil.isCdNull(sp1.getReviewBoardApprovalStatusCode()));
     }*/
-    @Test 
+//    @Test 
     public void enforceOnlyOneOrgFunctionPerStudy() throws Exception {
         StudySiteDTO sp = remoteEjb.get(siteIi);
         

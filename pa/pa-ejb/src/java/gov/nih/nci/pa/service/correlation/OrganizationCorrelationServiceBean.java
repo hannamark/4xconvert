@@ -96,6 +96,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -190,15 +191,13 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         if (paOrg == null) {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
 
         // Step 4 : Check of PA has hcf , if not create one
-        HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setIdentifier(hcfDTO.getIdentifier().getExtension());
-        hcf = corrUtils.getPAHealthCareFacility(hcf);
+        HealthCareFacility hcf = corrUtils.getStructuralRoleByIi(hcfDTO.getIdentifier());
         if (hcf == null) {
             // create a new crs
             hcf = new HealthCareFacility();
@@ -269,16 +268,14 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         if (paOrg == null) {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
 
 
         // Step 4 : Check of PA has hcf , if not create one
-        ResearchOrganization ro = new ResearchOrganization();
-        ro.setIdentifier(roDTO.getIdentifier().getExtension());
-        ro = corrUtils.getPAResearchOrganization(ro);
+        ResearchOrganization ro = corrUtils.getStructuralRoleByIi(roDTO.getIdentifier());
         if (ro == null) {
             // create a new crs
             ro = new ResearchOrganization();
@@ -320,6 +317,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
         List<OversightCommitteeDTO> ocDTOs = null;
         ocDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        ocDTO.setTypeCode(CdConverter.convertStringToCd(PAConstants.IRB_CODE));
         ocDTOs = PoRegistry.getOversightCommitteeCorrelationService().search(ocDTO);
         if (ocDTOs != null && ocDTOs.size() > 1) {
             throw new PAException("PO OversightCommitteeDTOs Correlation should not have more than 1.  ");
@@ -343,15 +341,13 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         if (paOrg == null) {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
 
         // Step 4 : Check of PA has oc , if not create one
-        OversightCommittee oc = new OversightCommittee();
-        oc.setIdentifier(ocDTO.getIdentifier().getExtension());
-        oc = corrUtils.getPAOversightCommittee(oc);
+        OversightCommittee oc = corrUtils.getStructuralRoleByIi(ocDTO.getIdentifier());
         if (oc == null) {
             // create a new oversight committee
             oc = new OversightCommittee();
@@ -445,8 +441,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         Organization o = null;
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
-            o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-                        Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+            o = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
         }
         return o;
     }

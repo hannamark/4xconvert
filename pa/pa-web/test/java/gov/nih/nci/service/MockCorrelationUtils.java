@@ -78,11 +78,13 @@
 */
 package gov.nih.nci.service;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 
@@ -92,58 +94,6 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
  */
 public class MockCorrelationUtils implements CorrelationUtilsRemote {
 
-    /**
-     * @param paIdentifer
-     * @param poIdentifer
-     * @return
-     * @throws PAException
-     */
-    public Organization getPAOrganizationByIndetifers(Long paIdentifer,
-            String poIdentifer) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @param paHealthCareFacilityId
-     * @return
-     * @throws PAException
-     */
-    public Organization getPAOrganizationByPAHealthCareFacilityId(
-            Long paHealthCareFacilityId) throws PAException {
-      for (HealthCareFacility hcf : MockOrganizationCorrelationService.hcfList) {
-          if (hcf.getId().equals(paHealthCareFacilityId)) {
-              return hcf.getOrganization();
-          }
-      }
-      throw new PAException("HealthCareFacility not found.");
-    }
-
-    /**
-     * @param paOversightCommitteeId
-     * @return
-     * @throws PAException
-     */
-    public Organization getPAOrganizationByPAOversightCommitteeId(
-            Long paOversightCommitteeId) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @param paResearchOrganizationId
-     * @return
-     * @throws PAException
-     */
-    public Organization getPAOrganizationByPAResearchOrganizationId(
-            Long paResearchOrganizationId) throws PAException {
-        Organization orgDto = new Organization();
-        orgDto.setCity("city");
-        orgDto.setCountryName("countryName");
-        orgDto.setName("name");
-        orgDto.setPostalCode("postalCode");
-        return orgDto;
-    }
 
     /**
      * @param oc
@@ -156,29 +106,6 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
         return null;
     }
 
-    /**
-     * @param paIdentifer
-     * @param poIdentifer
-     * @return
-     * @throws PAException
-     */
-    public Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer)
-            throws PAException {
-        Person dto = new Person();
-        dto.setIdentifier("2");
-        return dto;
-    }
-
-    /**
-     * @param paClinicalResearchStaffId
-     * @return
-     * @throws PAException
-     */
-    public Person getPAPersonByPAClinicalResearchStaffId(
-            Long paClinicalResearchStaffId) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     /**
      * @param paOrganizationalContactId
@@ -193,6 +120,35 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
 
     public PAContactDTO getContactByPAOrganizationalContactId(
             Long paOrganizationalContactId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Organization getPAOrganizationByIi(Ii isoIi) throws PAException {
+        Organization orgDto = new Organization();
+        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            for (HealthCareFacility hcf : MockOrganizationCorrelationService.hcfList) {
+                if (hcf.getIdentifier().equals(isoIi.getExtension())) {
+                    return hcf.getOrganization();
+                }
+            }
+        }
+        if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            orgDto.setCity("city");
+            orgDto.setCountryName("countryName");
+            orgDto.setName("name");
+            orgDto.setPostalCode("postalCode");
+        }
+        if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            orgDto.setCity("city");
+            orgDto.setCountryName("countryName");
+            orgDto.setName("name");
+            orgDto.setPostalCode("postalCode");
+        }
+        return orgDto;
+    }
+
+    public Person getPAPersonByIi(Ii isoIi) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

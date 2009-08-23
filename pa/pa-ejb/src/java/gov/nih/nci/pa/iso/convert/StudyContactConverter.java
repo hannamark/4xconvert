@@ -125,14 +125,15 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
 
         StudyContactDTO dto = new StudyContactDTO();
 
-        dto.setPrimaryIndicator(BlConverter.convertToBl(
-                    bo.getPrimaryIndicator()));
+        dto.setPrimaryIndicator(BlConverter.convertToBl(bo.getPrimaryIndicator()));
 
         if (bo.getHealthCareProvider() != null) {
-            dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getIdentifier()));
+            dto.setHealthCareProviderIi(
+                    IiConverter.convertToPoHealtcareProviderIi(bo.getHealthCareProvider().getIdentifier()));
         }
         if (bo.getClinicalResearchStaff() != null) {
-            dto.setClinicalResearchStaffIi(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
+            dto.setClinicalResearchStaffIi(IiConverter.convertToPoClinicalResearchStaffIi(
+                    bo.getClinicalResearchStaff().getIdentifier()));
         }
         if (bo.getOrganizationalContact() != null) {
             dto.setOrganizationalContactIi(IiConverter.convertToIi(bo.getOrganizationalContact().getId()));
@@ -185,12 +186,13 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         }
         if (!PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
             hfBo = new HealthCareProvider();
-            hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
+//            hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
+            hfBo.setId(getPaIdentifier(dto.getHealthCareProviderIi()));
             bo.setHealthCareProvider(hfBo);
         }
         if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
             crs = new ClinicalResearchStaff();
-            crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
+            crs.setId(getPaIdentifier(dto.getClinicalResearchStaffIi()));
             bo.setClinicalResearchStaff(crs);
         }
         if (!PAUtil.isIiNull(dto.getOrganizationalContactIi())) {

@@ -142,13 +142,16 @@ public class StudySiteContactConverter extends
             dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         }
         if (bo.getHealthCareProvider() != null) {
-            dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
+            dto.setHealthCareProviderIi(IiConverter.convertToPoHealtcareProviderIi(
+                    bo.getHealthCareProvider().getIdentifier()));
         }
         if (bo.getClinicalResearchStaff() != null) {
-            dto.setClinicalResearchStaffIi(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
+            dto.setClinicalResearchStaffIi(IiConverter.convertToPoClinicalResearchStaffIi(
+                    bo.getClinicalResearchStaff().getIdentifier()));
         }
         if (bo.getOrganizationalContact() != null) {
-            dto.setOrganizationalContactIi(IiConverter.convertToIi(bo.getOrganizationalContact().getId()));
+            dto.setOrganizationalContactIi(IiConverter.convertToPoOrganizationalContactIi(
+                    bo.getOrganizationalContact().getIdentifier()));
         }
 
         DSet<Tel> telAddresses = new DSet<Tel>();
@@ -201,19 +204,19 @@ public class StudySiteContactConverter extends
 
         if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
             ClinicalResearchStaff crs = new ClinicalResearchStaff();
-            crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
+            crs.setId(getPaIdentifier(dto.getClinicalResearchStaffIi()));
             bo.setClinicalResearchStaff(crs);
         }
 
         if (!PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
             HealthCareProvider healthCareProvider = new HealthCareProvider();
-            healthCareProvider.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
+            healthCareProvider.setId(getPaIdentifier(dto.getHealthCareProviderIi()));
             bo.setHealthCareProvider(healthCareProvider);
         }
         
         if (!PAUtil.isIiNull(dto.getOrganizationalContactIi())) {
             OrganizationalContact oc = new OrganizationalContact();
-            oc.setId(IiConverter.convertToLong(dto.getOrganizationalContactIi()));
+            oc.setId(getPaIdentifier(dto.getOrganizationalContactIi()));
             bo.setOrganizationalContact(oc);
         }
         

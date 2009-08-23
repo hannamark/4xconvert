@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.pa.util.PAConstants;
 
 
 
@@ -190,12 +191,17 @@ public class IiConverter {
     /** The identifier name for org ii's. */
     public static final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
 
+    /** The identifier name for org ii's. */
+    public static final String ORG_PA_IDENTIFIER_NAME = "NCI-Pa organization entity identifier";
+
     /** The ii root value for orgs. */
     public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
 
     /** The identifier name for person ii's. */
     public static final String PERSON_IDENTIFIER_NAME = "NCI person entity identifier";
 
+    /** The identifier name for person ii's. */
+    public static final String PERSON_PA_IDENTIFIER_NAME = "NCI-Pa person entity identifier";
     
     /** The ii root value for people. */
     public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
@@ -345,9 +351,7 @@ public class IiConverter {
     
     /**
      * Convert to ii.
-     * 
      * @param id id
-     * 
      * @return Ii ii
      */
     public static Ii convertToIi(Long id) {
@@ -356,16 +360,14 @@ public class IiConverter {
             ii.setNullFlavor(NullFlavor.NI);
         } else {
             ii.setExtension(id.toString());
-            //@todo : set others attributes of II;
+            ii.setIdentifierName(PAConstants.PA_INTERNAL);
         }
         return ii;
     }
     
     /**
      * Convert to ii.
-     * 
      * @param str string
-     * 
      * @return Ii
      */
     public static Ii convertToIi(String str) {
@@ -374,7 +376,7 @@ public class IiConverter {
             ii.setNullFlavor(NullFlavor.NI);
         } else {
             ii.setExtension(str);
-            //ii.setRoot("UID.for.nci.entity.organization");
+            ii.setIdentifierName(PAConstants.PA_INTERNAL);
         }
         return ii;
         
@@ -382,9 +384,7 @@ public class IiConverter {
     
     /**
      * Convert to long.
-     * 
      * @param ii ii
-     * 
      * @return long
      */
     public static Long convertToLong(Ii ii) {
@@ -399,9 +399,7 @@ public class IiConverter {
     
     /**
      * Convert to string.
-     * 
      * @param ii ii
-     * 
      * @return String str
      */
     public static String convertToString(Ii ii) {
@@ -417,9 +415,7 @@ public class IiConverter {
     
     /**
      * converts to StudyProtocol Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToStudyProtocolIi(Long id) {
@@ -431,9 +427,7 @@ public class IiConverter {
 
     /**
      * converts to StudyOutcomeMeasure Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToStudyOutcomeMeasureIi(Long id) {
@@ -445,9 +439,7 @@ public class IiConverter {
 
     /**
      * converts to StudyIndIde Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToStudyIndIdeIi(Long id) {
@@ -459,9 +451,7 @@ public class IiConverter {
 
     /**
      * converts to Arm Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToArmIi(Long id) {
@@ -473,9 +463,7 @@ public class IiConverter {
 
     /**
      * converts to StratumGroup Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToStratumGroupIi(Long id) {
@@ -487,9 +475,7 @@ public class IiConverter {
 
     /**
      * converts to StudyOverallStatus Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToStudyOverallStatusIi(Long id) {
@@ -501,9 +487,7 @@ public class IiConverter {
 
     /**
      * converts to Activity Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToActivityIi(Long id) {
@@ -515,9 +499,7 @@ public class IiConverter {
 
     /**
      * converts to StudyResourcing Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToStudyResourcingIi(Long id) {
@@ -529,9 +511,7 @@ public class IiConverter {
 
     /**
      * converts to Document Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToDocumentIi(Long id) {
@@ -543,9 +523,7 @@ public class IiConverter {
 
     /**
      * converts to Po Person Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToPoPersonIi(String id) {
@@ -556,10 +534,20 @@ public class IiConverter {
     }
     
     /**
-     * converts to Po Org Ii Ii.
-     * 
+     * converts to Po Person Ii.
      * @param id id
-     * 
+     * @return Ii
+     */
+    public static Ii convertToPaPersonIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(PERSON_PA_IDENTIFIER_NAME);
+        ii.setRoot(PERSON_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Po Org Ii Ii.
+     * @param id id
      * @return Ii
      */
     public static Ii convertToPoOrganizationIi(String id) {
@@ -571,9 +559,19 @@ public class IiConverter {
 
     /**
      * converts to Po Org Ii Ii.
-     * 
      * @param id id
-     * 
+     * @return Ii
+     */
+    public static Ii convertToPaOrganizationIi(long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(ORG_PA_IDENTIFIER_NAME);
+        ii.setRoot(ORG_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Po Org Ii Ii.
+     * @param id id
      * @return Ii
      */
     public static Ii convertToIdentifiedEntityIi(String id) {
@@ -585,9 +583,7 @@ public class IiConverter {
     
     /**
      * converts to Identified PO Org Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToIdentifiedOrgEntityIi(String id) {
@@ -598,9 +594,7 @@ public class IiConverter {
     
     /**
      * converts to Identified PO Person Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToIdentifiedPersonEntityIi(String id) {
@@ -611,9 +605,7 @@ public class IiConverter {
     
     /**
      * converts to Po Org contact  Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToPoOrganizationalContactIi(String id) {
@@ -625,9 +617,7 @@ public class IiConverter {
     
     /**
      * converts to Po crs contact  Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToPoClinicalResearchStaffIi(String id) {
@@ -639,9 +629,7 @@ public class IiConverter {
 
     /**
      * converts to Po crs contact  Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToPoHealtcareProviderIi(String id) {
@@ -653,9 +641,7 @@ public class IiConverter {
 
     /**
      * converts to Po crs contact  Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToPoHealthCareFacilityIi(String id) {
@@ -665,11 +651,10 @@ public class IiConverter {
         return ii;
     }
 
+
     /**
      * converts to Po Research Organization Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToPoResearchOrganizationIi(String id) {
@@ -679,11 +664,10 @@ public class IiConverter {
         return ii;
     }
     
+
     /**
      * converts to Po crs contact  Ii Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToPoOversightCommitteeIi(String id) {
@@ -695,9 +679,7 @@ public class IiConverter {
     
     /**
      * Conver to study relationship ii.
-     * 
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyRelationshipIi(Long id) {
@@ -708,10 +690,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study contact ii.
-     * 
+     * Convert to study contact ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyContactIi(Long id) {
@@ -722,10 +702,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study site contact ii.
-     * 
+     * Convert to study site contact ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudySiteContactIi(Long id) {
@@ -736,10 +714,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study site ii.
-     * 
+     * Convert to study site ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii converToStudySiteIi(Long id) {
@@ -750,10 +726,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study recruitment status ii.
-     * 
+     * Convert to study recruitment status ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyRecruitmentStatusIi(Long id) {
@@ -764,10 +738,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to regulatory authority ii.
-     * 
+     * Convert to regulatory authority ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyRegulatoryAuthorityIi(Long id) {
@@ -778,10 +750,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study disease ii.
-     * 
+     * Convert to study disease ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyDiseaseIi(Long id) {
@@ -793,9 +763,7 @@ public class IiConverter {
     
     /**
      * converts to Document Ii.
-     * 
      * @param id id
-     * 
      * @return Ii
      */
     public static Ii convertToDocumentWorkFlowStatusIi(Long id) {
@@ -806,10 +774,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study site accural status ii.
-     * 
+     * Convert to study site accural status ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudySiteAccuralStatusIi(Long id) {
@@ -820,10 +786,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to study on hold ii.
-     * 
+     * Convert to study on hold ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyOnHoldIi(Long id) {
@@ -834,10 +798,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to planned activity ii.
-     * 
+     * Convert to planned activity ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToPlannedActivityIi(Long id) {
@@ -847,10 +809,8 @@ public class IiConverter {
         return ii;
     }
     /**
-     * Conver to study Objective ii.
-     * 
+     * Convert to study Objective ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyObjectiveIi(Long id) {
@@ -860,10 +820,8 @@ public class IiConverter {
         return ii;
     }
     /**
-     * Conver to study Milestone ii.
-     * 
+     * Convert to study Milestone ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToStudyMilestoneIi(Long id) {
@@ -874,10 +832,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to regulatory authority ii.
-     * 
+     * Convert to regulatory authority ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToRegulatoryAuthorityIi(Long id) {
@@ -888,10 +844,8 @@ public class IiConverter {
     }
     
     /**
-     * Conver to regulatory authority ii.
-     * 
+     * Convert to Country authority ii.
      * @param id the id
-     * 
      * @return the ii
      */
     public static Ii convertToCountryIi(Long id) {

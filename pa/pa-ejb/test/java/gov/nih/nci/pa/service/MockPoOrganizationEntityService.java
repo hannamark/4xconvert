@@ -29,7 +29,7 @@ public class MockPoOrganizationEntityService implements
     static {
         orgDtoList = new ArrayList<OrganizationDTO>();
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToIi("abc"));
+        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
         dto.setPostalAddress(AddressConverterUtil.
@@ -39,7 +39,7 @@ public class MockPoOrganizationEntityService implements
         orgDtoList.add(dto);
         
         dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToIi("abc1"));
+        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("abc1"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
         dto.setPostalAddress(AddressConverterUtil.
@@ -49,7 +49,7 @@ public class MockPoOrganizationEntityService implements
         orgDtoList.add(dto);    
         
         dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToIi("1"));
+        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
         dto.setPostalAddress(AddressConverterUtil.
@@ -59,7 +59,7 @@ public class MockPoOrganizationEntityService implements
         orgDtoList.add(dto);
         
         dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToIi("584"));
+        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("584"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
         dto.setPostalAddress(AddressConverterUtil.
@@ -74,7 +74,7 @@ public class MockPoOrganizationEntityService implements
      */
     public Ii createOrganization(OrganizationDTO arg0)
             throws EntityValidationException {
-        return IiConverter.convertToIi("1");
+        return IiConverter.convertToPoOrganizationIi("1");
     }
 
     /* (non-Javadoc)

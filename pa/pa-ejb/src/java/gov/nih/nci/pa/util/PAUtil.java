@@ -119,12 +119,12 @@ public class PAUtil {
                 isNull = true;
             }
         }
-        try {
-            Long.valueOf(ii.getExtension());
-        } catch (NumberFormatException nfe) {
-            // if cannot be converted, consider as null
-            isNull = true;
-        }
+//        try {
+//            Long.valueOf(ii.getExtension());
+//        } catch (NumberFormatException nfe) {
+//            // if cannot be converted, consider as null
+//            isNull = true;
+//        }
         return isNull;
     }
 

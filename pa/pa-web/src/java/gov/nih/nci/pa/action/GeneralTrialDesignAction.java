@@ -168,8 +168,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
             copy(spDTO);
             copy(spqDto);
-            copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null));
-            copyPI(cUtils.getPAPersonByIndetifers(spqDto.getPiId(), null));
+            copyLO(cUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())));
+            copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())));
             copyResponsibleParty(studyProtocolIi);
             copySponsor(studyProtocolIi);
             copyCentralContact(studyProtocolIi);
@@ -314,9 +314,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                         .getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
-            Organization o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-
-                        Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+            Organization o = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             gtdDTO.setSponsorName(o.getName());
             gtdDTO.setSponsorIdentifier(o.getIdentifier());
         }
@@ -339,9 +337,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
             CorrelationUtils cUtils = new CorrelationUtils();
             scDto = srDtos.get(0);
             if (!PAUtil.isIiNull(scDto.getClinicalResearchStaffIi())) {
-                Person p = cUtils.getPAPersonByPAClinicalResearchStaffId(
-                    Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
-            
+                Person p = cUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());            
                 gtdDTO.setCentralContactIdentifier(p.getIdentifier());
                 gtdDTO.setCentralContactName(p.getFullName());
             }

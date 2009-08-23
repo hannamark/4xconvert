@@ -168,7 +168,7 @@ public class StudyResourcingTest {
         StudyResourcing sr = new StudyResourcing();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sr.setDateLastUpdated(now);
-        sr.setOrganizationIdentifier("po-001");
+        sr.setOrganizationIdentifier("1");
         sr.setStudyProtocol(sp);
         sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);

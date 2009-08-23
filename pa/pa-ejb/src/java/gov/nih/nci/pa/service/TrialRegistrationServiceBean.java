@@ -724,7 +724,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 throw new PAException("This Organization is no longer available instead use ", e);
             }
             // Step 3 : check for pa org, if not create one
-            Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null, orgPoIdentifier);
+            Organization paOrg = corrUtils.getPAOrganizationByIi(
+                    IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
             if (paOrg == null) {
                 paOrg = corrUtils.createPAOrganization(poOrg);
             }
@@ -1447,7 +1448,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
               throw new PAException("This Organization is no longer available instead use ", e);
           }
           // Step 3 : check for pa org, if not create one
-          Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null, orgPoIdentifier);
+          Organization paOrg = corrUtils.getPAOrganizationByIi(
+                  IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+          
           if (paOrg == null) {
               paOrg = corrUtils.createPAOrganization(poOrg);
           }

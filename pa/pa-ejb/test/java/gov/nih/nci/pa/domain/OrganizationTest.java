@@ -143,7 +143,7 @@ public class OrganizationTest   {
         create.setUserLastUpdated("abstractor");
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
-        create.setIdentifier("1");
+        create.setIdentifier("abc");
         create.setStatusCode(EntityStatusCode.PENDING);
         return create;
         

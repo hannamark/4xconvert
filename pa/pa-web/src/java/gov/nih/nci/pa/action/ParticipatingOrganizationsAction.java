@@ -330,8 +330,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public String edit() throws PAException {
         setCurrentAction("edit");
         StudySiteDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
-        editOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(spDto
-                .getHealthcareFacilityIi()));
+        editOrg = cUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
         orgFromPO.setCity(editOrg.getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
         orgFromPO.setName(editOrg.getName());
@@ -399,8 +398,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         for (StudySiteDTO sp : spList) {
             StudySiteAccrualStatusDTO ssas = ssasService
                     .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-            Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(sp
-                    .getHealthcareFacilityIi()));
+            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
             PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());

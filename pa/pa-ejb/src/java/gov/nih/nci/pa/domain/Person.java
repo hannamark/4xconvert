@@ -114,8 +114,10 @@ public class Person extends AbstractEntity {
 
     private List<HealthCareProvider> healthCareProviders = new ArrayList<HealthCareProvider>();
     private List<ClinicalResearchStaff> clinicalResearchStaffs = new ArrayList<ClinicalResearchStaff>();
+    private List<OrganizationalContact> organizationalContacts = new ArrayList<OrganizationalContact>();
     private List<Patient> patients = new ArrayList<Patient>();
 
+    private static final String PERSONS = "person";
     /**
      *
      * @return firstName first name
@@ -199,7 +201,7 @@ public class Person extends AbstractEntity {
      *
      * @return healthCareProviders healthCareProviders
      */
-    @OneToMany(mappedBy = "person")
+    @OneToMany(mappedBy = PERSONS)
     public List<HealthCareProvider> getHealthCareProviders() {
         return healthCareProviders;
     }
@@ -215,7 +217,7 @@ public class Person extends AbstractEntity {
      *
      * @return clinicalResearchStaffs clinicalResearchStaffs
      */
-    @OneToMany(mappedBy = "person")
+    @OneToMany(mappedBy = PERSONS)
     public List<ClinicalResearchStaff> getClinicalResearchStaffs() {
         return clinicalResearchStaffs;
     }
@@ -226,10 +228,27 @@ public class Person extends AbstractEntity {
     public void setClinicalResearchStaffs(List<ClinicalResearchStaff> clinicalResearchStaffs) {
         this.clinicalResearchStaffs = clinicalResearchStaffs;
     }
+
+    /**
+    *
+    * @return organizationalContacts organizationalContacts
+    */
+   @OneToMany(mappedBy = PERSONS)
+    public List<OrganizationalContact> getOrganizationalContacts() {
+        return organizationalContacts;
+    }
+   /**
+    * 
+    * @param organizationalContacts list of organizationalContacts
+    */
+    public void setOrganizationalContacts(
+            List<OrganizationalContact> organizationalContacts) {
+        this.organizationalContacts = organizationalContacts;
+    }
     /**
      * @return the patients
      */
-    @OneToMany(mappedBy = "person")
+    @OneToMany(mappedBy = PERSONS)
     public List<Patient> getPatients() {
         return patients;
     }

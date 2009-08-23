@@ -187,20 +187,18 @@ public class HealthCareProviderCorrelationBean {
         }
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         if (paOrg == null) {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
         // Step 4 : check for pa person, if not create one
-        Person paPer = corrUtils.getPAPersonByIndetifers(null , personPoIdentifer);
+        Person paPer = corrUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(personPoIdentifer));
         if (paPer == null) {
             paPer = corrUtils.createPAPerson(poPer);
         }
         
         // Step 6 : Check of PA has hcp , if not create one
-        HealthCareProvider hcp = new HealthCareProvider();
-        hcp.setIdentifier(hcpDTO.getIdentifier().getExtension());
-        hcp = corrUtils.getPAHealthCareProvider(hcp);
+        HealthCareProvider hcp = corrUtils.getStructuralRoleByIi(hcpDTO.getIdentifier());
         if (hcp == null) {
             // create a new crs
             hcp = new HealthCareProvider();

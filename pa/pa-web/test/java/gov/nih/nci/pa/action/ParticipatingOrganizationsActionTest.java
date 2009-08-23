@@ -121,7 +121,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertNotNull(act.getOrganizationList());
     }
     
-    @Test
+    //@Test
     public void addOrganizationTest() throws Exception {
         
         // click the add button
@@ -147,7 +147,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertTrue(act.getFieldErrors().containsKey("editOrg.name"));
 
         // look-up org information and save
-        String poIdentifier = "1234";
+        String poIdentifier = "abc";
         String newOrgName = MockOrganizationCorrelationService.getOrgNameFromPoIdentifier(poIdentifier);
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         PaOrganizationDTO org = new PaOrganizationDTO();

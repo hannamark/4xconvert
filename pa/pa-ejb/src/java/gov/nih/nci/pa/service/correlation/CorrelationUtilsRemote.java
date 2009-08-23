@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
@@ -93,22 +94,15 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
  *        holder, NCI.
  */
 public interface CorrelationUtilsRemote {
+
     /**
      * 
-     * @param poIdentifer id
-     * @param paIdentifer id
-     * @return Person
-     * @throws PAException e
+     * @param isoIi iso Identifier
+     * @return Organization
+     * @throws PAException on error
      */
-    Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer) throws PAException;
+    Person getPAPersonByIi(Ii isoIi) throws PAException;
     
-    /**
-     * @param paClinicalResearchStaffId id
-     * @return Person
-     * @throws PAException e
-     */
-    Person getPAPersonByPAClinicalResearchStaffId(Long paClinicalResearchStaffId) throws PAException;
-
     /**
      * @param paOrganizationalContactId id
      * @return long
@@ -118,34 +112,13 @@ public interface CorrelationUtilsRemote {
     PAContactDTO getContactByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException, 
         NullifiedRoleException;
 
+    
     /**
      * 
-     * @param paIdentifer id
-     * @param poIdentifer id
+     * @param isoIi iso Identifier
      * @return Organization
-     * @throws PAException e
+     * @throws PAException on error
      */
-    Organization getPAOrganizationByIndetifers(Long paIdentifer, String poIdentifer) throws PAException;
-    
-    /**
-     * @param paResearchOrganizationId id
-     * @return Organization
-     * @throws PAException e
-     */
-    Organization getPAOrganizationByPAResearchOrganizationId(Long paResearchOrganizationId) throws PAException;
-    
-    /**
-     * @param paHealthCareFacilityId id
-     * @return Organization
-     * @throws PAException e
-     */
-    Organization getPAOrganizationByPAHealthCareFacilityId(Long paHealthCareFacilityId) throws PAException;
-
-    /**
-     * @param paOversightCommitteeId id
-     * @return Organization
-     * @throws PAException e
-     */
-    Organization getPAOrganizationByPAOversightCommitteeId(Long paOversightCommitteeId) throws PAException;
+     Organization getPAOrganizationByIi(Ii isoIi) throws PAException;    
     
 }

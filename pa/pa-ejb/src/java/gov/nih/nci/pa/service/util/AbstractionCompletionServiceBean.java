@@ -793,19 +793,17 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
               + " Administrative Data menu.",  "Trial can not have a duplicate collaborator playing the same role."));
    }    
   }
-/**
- * @param spartDto
- * @return
- * @throws PAException
- */
-private Organization getPoOrg(StudySiteDTO spartDto)
-        throws PAException {
-    CorrelationUtils cUtils = new CorrelationUtils();
-    Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(IiConverter.convertToLong(spartDto
-            .getHealthcareFacilityIi()));
-    return orgBo;
-}
-  private List<String> getPIForTreatingSite(List<StudySiteContactDTO> spContactDtos) {
+    /**
+     * @param spartDto
+     * @return
+     * @throws PAException
+     */
+    private Organization getPoOrg(StudySiteDTO spartDto)
+            throws PAException {
+        return  new CorrelationUtils().getPAOrganizationByIi(spartDto.getHealthcareFacilityIi());
+    }
+
+    private List<String> getPIForTreatingSite(List<StudySiteContactDTO> spContactDtos) {
       List<String> piList = new ArrayList<String>();
       for (StudySiteContactDTO dto : spContactDtos) {
           if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
@@ -818,13 +816,14 @@ private Organization getPoOrg(StudySiteDTO spartDto)
       }
       return piList;
   }
-  private List<String> getTreatingSiteOrg(List<StudySiteDTO> spartList) {
-      List<String> treatingSiteList = new ArrayList<String>();
-      for (StudySiteDTO spdto : spartList) {
-        treatingSiteList.add(spdto.getHealthcareFacilityIi().getExtension());
-      }
-    return treatingSiteList;
-  }
+    
+    private List<String> getTreatingSiteOrg(List<StudySiteDTO> spartList) {
+        List<String> treatingSiteList = new ArrayList<String>();
+        for (StudySiteDTO spdto : spartList) {
+           treatingSiteList.add(spdto.getHealthcareFacilityIi().getExtension());
+        }
+       return treatingSiteList;
+    }
   
   private <T> boolean hasDuplicate(Collection<T> list) {
       Set<T> set = new HashSet<T>();    

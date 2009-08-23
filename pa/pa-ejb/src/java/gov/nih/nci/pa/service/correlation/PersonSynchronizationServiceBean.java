@@ -229,7 +229,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
     private void updatePerson(final Ii ii , final PersonDTO perDto) throws PAException {
         LOG.debug("Entering updatePerson");
-        Person paPer = cUtils.getPAPersonByIndetifers(null, ii.getExtension());
+        Person paPer = cUtils.getPAPersonByIi(ii);
 
         if (paPer != null) {
             Session session = null;
@@ -259,9 +259,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
     private void updateClinicalResearchStaff(final Ii crsIdentifier 
             , final ClinicalResearchStaffDTO crsDto) throws PAException {
-        ClinicalResearchStaff crs = new ClinicalResearchStaff();
-        crs.setIdentifier(crsIdentifier.getExtension());
-        crs = cUtils.getPAClinicalResearchStaff(crs);
+        ClinicalResearchStaff crs = cUtils.getStructuralRoleByIi(crsIdentifier);
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
         if (crs != null) {
@@ -273,8 +271,9 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 Long paOrgId = crs.getOrganization().getId();
                 Long paPerId = crs.getPerson().getId();
                 Long duplicateCrsId = null;
-                String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
-                String poPerId = cUtils.getPAPersonByIndetifers(paPerId, null).getIdentifier();
+                String poOrgId = cUtils.getPAOrganizationByIi(
+                        IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
+                String poPerId = cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(paPerId)).getIdentifier();
                 PersonDTO personDto = getPoPerson(poPerId);
                 OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                 if (personDto != null && organizationDto != null) {
@@ -285,7 +284,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                             organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
                     ClinicalResearchStaff dupCrs = new ClinicalResearchStaff();
                     dupCrs.setId(duplicateCrsId);
-                    dupCrs = cUtils.getPAClinicalResearchStaff(dupCrs);
+                    dupCrs = cUtils.getStructuralRole(dupCrs);
                     newRoleCode = dupCrs.getStatusCode();
                     // replace the old, with the new change identifiers
                     replaceStudyContactIdentifiers(
@@ -319,9 +318,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     
     private void updateHealthCareProvider(final Ii hcpIdentifier , 
             final HealthCareProviderDTO hcpDto) throws PAException {
-        HealthCareProvider hcp = new HealthCareProvider();
-        hcp.setIdentifier(hcpIdentifier.getExtension());
-        hcp = cUtils.getPAHealthCareProvider(hcp);
+        HealthCareProvider hcp = cUtils.getStructuralRoleByIi(hcpIdentifier);
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
         if (hcp != null) {
@@ -333,8 +330,9 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 Long paOrgId = hcp.getOrganization().getId();
                 Long paPerId = hcp.getPerson().getId();
                 Long duplicateHcpId = null;
-                String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
-                String poPerId = cUtils.getPAPersonByIndetifers(paPerId, null).getIdentifier();
+                String poOrgId = cUtils.getPAOrganizationByIi(
+                        IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
+                String poPerId = cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(paPerId)).getIdentifier();
                 PersonDTO personDto = getPoPerson(poPerId);
                 OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                 if (personDto != null && organizationDto != null) {
@@ -344,7 +342,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                             organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
                     HealthCareProvider dupHcp = new HealthCareProvider();
                     dupHcp.setId(duplicateHcpId);
-                    dupHcp = cUtils.getPAHealthCareProvider(dupHcp);
+                    dupHcp = cUtils.getStructuralRole(dupHcp);
                     newRoleCode = dupHcp.getStatusCode();
                     // replace the old, with the new change identifiers
                     replaceStudyContactIdentifiers(

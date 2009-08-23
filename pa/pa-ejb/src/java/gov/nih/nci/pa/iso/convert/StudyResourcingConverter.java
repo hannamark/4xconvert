@@ -108,7 +108,10 @@ public class StudyResourcingConverter {
     public static StudyResourcingDTO convertFromDomainToDTO(StudyResourcing studyResourcing) {
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
         srDTO.setIdentifier(IiConverter.convertToStudyResourcingIi(studyResourcing.getId()));
-        srDTO.setOrganizationIdentifier(IiConverter.convertToIi(studyResourcing.getOrganizationIdentifier()));
+        if (studyResourcing.getOrganizationIdentifier() != null) {
+            srDTO.setOrganizationIdentifier(IiConverter.convertToPaOrganizationIi(
+                    Long.valueOf(studyResourcing.getOrganizationIdentifier())));
+        }
         srDTO.setSummary4ReportedResourceIndicator(
                 BlConverter.convertToBl(studyResourcing.getSummary4ReportedResourceIndicator()));
         srDTO.setTypeCode(CdConverter.convertToCd(studyResourcing.getTypeCode()));

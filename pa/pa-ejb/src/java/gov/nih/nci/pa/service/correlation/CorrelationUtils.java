@@ -84,15 +84,12 @@ import gov.nih.nci.coppa.iso.AdxpCty;
 import gov.nih.nci.coppa.iso.AdxpSta;
 import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
-import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
-import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -103,21 +100,23 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Example;
 
 /**
  * A Service class for handing common methods for all correlations.
@@ -133,115 +132,39 @@ import org.hibernate.Session;
 public class CorrelationUtils implements CorrelationUtilsRemote {
     private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
 
-
     /**
-     *
-     * @param poIdentifer id
-     * @param paIdentifer id
-     * @return Person
-     * @throws PAException e
-     */
-    @SuppressWarnings("unchecked")
-    public Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
-        Person per = null;
-        if (poIdentifer == null && paIdentifer == null) {
-            LOG.error(" Atleast one identifier must be entered");
-            throw new PAException(" Atleast one identifier must be entered");
-        }
-        if (poIdentifer != null && paIdentifer != null) {
-            LOG.error(" Only one identifier must be entered");
-            throw new PAException(" Only one identifier must be entered");
-        }
-        Session session = null;
-        List<Person> queryList = new ArrayList<Person>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select per from Person per  where 1 = 1 ");
-        if (paIdentifer != null) {
-            hql.append(" and per.id = ").append(paIdentifer);
-        }
-        if (poIdentifer != null) {
-            hql.append(" and per.identifier = '").append(poIdentifer).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            query = session.createQuery(hql.toString());
-            queryList = query.list();
-            if (queryList.size() > 1) {
-                LOG.error(" Person  should not be more than 1 record for a Po Identifier = " + poIdentifer);
-                throw new PAException(" Person  should not be more than 1 " + "record for a Po Identifier = "
-                        + poIdentifer);
-            }
-        } catch (HibernateException hbe) {
-            throw new PAException(" Error while retrieving Organization for id = " + paIdentifer + " PO Identifier = "
-                    + poIdentifer, hbe);
-        } finally {
-            session.flush();
-        }
-        if (!queryList.isEmpty()) {
-            per = queryList.get(0);
-        }
-        return per;
-    }
-
-    /**
-     * @param paClinicalResearchStaffId id
-     * @return Person
-     * @throws PAException e
-     */
-    public Person getPAPersonByPAClinicalResearchStaffId(Long paClinicalResearchStaffId) throws PAException {
-        if (paClinicalResearchStaffId == null) {
-            LOG.error("Check the id value.  Null found.  ");
-            throw new PAException("Check the id value.  Null found.  ");
-        }
-        Person person = null;
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            ClinicalResearchStaff clinicalResearchStaff =
-                (ClinicalResearchStaff) session.get(ClinicalResearchStaff.class, paClinicalResearchStaffId);
-            if (clinicalResearchStaff == null) {
-                String errMsg = "Object not found using getPAPersonByPAClinicalResearchStaffId() for id = "
-                    + paClinicalResearchStaffId + ".  ";
-                LOG.error(errMsg);
-                throw new PAException(errMsg);
-            }
-            person = clinicalResearchStaff.getPerson();
-        } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
-            throw new PAException("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
-        }
-        return person;
-    }
-
-    /**
-     * @param paOrganizationalContactId id
+     * @param poOrganizationalContactId id
      * @return Person
      * @throws PAException e
      * @throws NullifiedRoleException ex
      */
-    public PAContactDTO getContactByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException,
+    public PAContactDTO getContactByPAOrganizationalContactId(Long poOrganizationalContactId) throws PAException,
         NullifiedRoleException {
-        if (paOrganizationalContactId == null) {
-            LOG.error("Check the id value.  Null found.  ");
-            throw new PAException("Check the id value.  Null found.  ");
+        if (poOrganizationalContactId == null) {
+            LOG.error("Po Organization Identifier is null ");
+            throw new PAException("Po Organization Identifier is null  ");
         }
         PAContactDTO returnDto = new PAContactDTO();
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            OrganizationalContact organizationalContact =
-                (OrganizationalContact) session.get(OrganizationalContact.class, paOrganizationalContactId);
-            if (organizationalContact == null) {
+            OrganizationalContact exampleBo  = new OrganizationalContact();
+            exampleBo.setIdentifier(poOrganizationalContactId.toString());
+            Example example = Example.create(exampleBo);
+            Criteria criteria = session.createCriteria(OrganizationalContact.class).add(example);
+            List<OrganizationalContact> ocs = criteria.list();
+            if (ocs.isEmpty()) {
                 String errMsg = "Object not found using getPAPersonByPAOrganizationalContactId() for id = "
-                    + paOrganizationalContactId + ".  ";
+                    + poOrganizationalContactId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
             }
-            if (organizationalContact.getStatusCode().getCode().equals(StructuralRoleStatusCode.NULLIFIED.getCode())) {
+            OrganizationalContact oc = ocs.get(0);
+
+            if (oc.getStatusCode().getCode().equals(StructuralRoleStatusCode.NULLIFIED.getCode())) {
                 returnDto.setTitle(StructuralRoleStatusCode.NULLIFIED.getDisplayName());
             } else {
-                Person paPerson = organizationalContact.getPerson();
+                Person paPerson = oc.getPerson();
                 if (paPerson != null) {
                     returnDto.setFullName(paPerson.getFullName());
                     returnDto.setPersonIdentifier(IiConverter.convertToIi(paPerson.getIdentifier()));
@@ -249,7 +172,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
                     //this means this is genericOrgContact
                     OrganizationalContactDTO isoDto = PoRegistry.getOrganizationalContactCorrelationService()
                         .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(
-                            organizationalContact.getIdentifier()));
+                                oc.getIdentifier()));
                     returnDto.setTitle(StConverter.convertToString(isoDto.getTitle()));
                     returnDto.setSrIdentifier(isoDto.getIdentifier());
                 }
@@ -261,432 +184,134 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         return returnDto;
     }
 
+
     /**
-     *
-     * @param paIdentifer id
-     * @param poIdentifer id
+     * 
+     * @param isoIi iso Identifier
      * @return Organization
-     * @throws PAException e
+     * @throws PAException on error
      */
-    @SuppressWarnings("unchecked")
-    public Organization getPAOrganizationByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
-        Organization org = null;
-        if (poIdentifer == null && paIdentifer == null) {
-            LOG.error(" Atleast one identifier must be entered");
-            throw new PAException(" Atleast one identifier must be entered");
+    public Organization getPAOrganizationByIi(Ii isoIi) throws PAException {
+        if (PAUtil.isIiNull(isoIi)) {
+            throw new PAException("orgStructuralRoleIi is null  ");
         }
-        if (poIdentifer != null && paIdentifer != null) {
-            LOG.error(" Only one identifier must be entered");
-            throw new PAException(" Only one identifier must be entered");
-        }
-        Session session = null;
-        List<Organization> queryList = new ArrayList<Organization>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select org from Organization org  where 1 = 1 ");
-        if (paIdentifer != null) {
-            hql.append(" and org.id = ").append(paIdentifer);
+        hql.append(" select org from Organization org ");
+        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append("join org.healthCareFacilities as role where role.identifier = '" + isoIi.getExtension() + "'"); 
+        } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("join org.researchOrganizations as role where role.identifier = '" 
+                    + isoIi.getExtension() + "'"); 
+        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append("join org.oversightCommittees as role where role.identifier = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append(" where org.identifier = '" + isoIi.getExtension() + "'"); 
+        } else if (IiConverter.ORG_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append(" where org.id = ").append(isoIi.getExtension());       
+        } else {
+            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
-        if (poIdentifer != null) {
-            hql.append(" and org.identifier = '").append(poIdentifer).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            query = session.createQuery(hql.toString());
-            queryList = query.list();
-            if (queryList.size() > 1) {
-                LOG.error(" Organization  should not be more than 1 record for a Po Identifier = " + poIdentifer);
-                throw new PAException(" Organization  should not be more than 1 " + "record for a Po Identifier = "
-                        + poIdentifer);
-            }
-        } catch (HibernateException hbe) {
-            throw new PAException(" Error while retrieving Organization for id = " + paIdentifer + " PO Identifier = "
-                    + poIdentifer, hbe);
-        } finally {
-            session.flush();
-        }
-        if (!queryList.isEmpty()) {
-            org = queryList.get(0);
-        }
-        return org;
-    }
 
-    /**
-     * @param paResearchOrganizationId id
-     * @return Organization
-     * @throws PAException e
-     */
-    public Organization getPAOrganizationByPAResearchOrganizationId(Long paResearchOrganizationId) throws PAException {
-        if (paResearchOrganizationId == null) {
-            LOG.error("Check the id value.  Null found.  ");
-            throw new PAException("Check the id value.  Null found.  ");
-        }
-        Organization organization = null;
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            ResearchOrganization researchOrg = (ResearchOrganization) session.get(ResearchOrganization.class,
-                    paResearchOrganizationId);
-            if (researchOrg == null) {
-                String errMsg = "Object not found using getPAOrganizationByPAResearchOrganizationId() for id = "
-                    + paResearchOrganizationId + ".  ";
-                LOG.error(errMsg);
-                throw new PAException(errMsg);
-            }
-            organization = researchOrg.getOrganization();
-        } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in  getPAOrganizationByPAResearchOrganizationId().  ", hbe);
-            throw new PAException("Hibernate exception in  getPAOrganizationByPAResearchOrganizationId().  ", hbe);
-        }
-        return organization;
-    }
-
-    /**
-     * @param paHealthCareFacilityId id
-     * @return Organization
-     * @throws PAException e
-     */
-    public Organization getPAOrganizationByPAHealthCareFacilityId(Long paHealthCareFacilityId) throws PAException {
-        if (paHealthCareFacilityId == null) {
-            LOG.error("Check the id value.  Null found.  ");
-            throw new PAException("Check the id value.  Null found.  ");
-        }
-        Organization organization = null;
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            HealthCareFacility healthCareFac = (HealthCareFacility) session.get(HealthCareFacility.class,
-                    paHealthCareFacilityId);
-            if (healthCareFac == null) {
-                String errMsg = "Object not found using getPAOrganizationByPAHealthCareFacilityId() for id = "
-                    + paHealthCareFacilityId + ".  ";
-                LOG.error(errMsg);
-                throw new PAException(errMsg);
-            }
-            organization = healthCareFac.getOrganization();
-        } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
-            throw new PAException("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
-        }
-        return organization;
-    }
-
-    /**
-     * @param paOversightCommitteeId id
-     * @return Organization
-     * @throws PAException e
-     */
-    public Organization getPAOrganizationByPAOversightCommitteeId(Long paOversightCommitteeId) throws PAException {
-        if (paOversightCommitteeId == null) {
-            LOG.error("Check the id value.  Null found.  ");
-            throw new PAException("Check the id value.  Null found.  ");
-        }
-        Organization organization = null;
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            OversightCommittee healthCareFac = (OversightCommittee) session.get(OversightCommittee.class,
-                    paOversightCommitteeId);
-            if (healthCareFac == null) {
-                String errMsg = "Object not found using getPAOrganizationByPAOversightCommitteeId() for id = "
-                    + paOversightCommitteeId + ".  ";
-                LOG.error(errMsg);
-                throw new PAException(errMsg);
-            }
-            organization = healthCareFac.getOrganization();
-        } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in getPAOrganizationByPAOversightCommitteeId().  ", hbe);
-            throw new PAException("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
-        }
-        return organization;
-    }
-
-    /**
-     *
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    @SuppressWarnings("unchecked")
-    HealthCareFacility getPAHealthCareFacility(HealthCareFacility hcf)
-    throws PAException {
-        if (hcf == null) {
-            LOG.error("HealthCareFacility Staff cannot be null");
-            throw new PAException("HealthCareFacility Staff cannot be null");
-        }
-        HealthCareFacility hcfOut = null;
-        Session session = null;
-        List<HealthCareFacility> queryList = new ArrayList<HealthCareFacility>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select hcf from HealthCareFacility hcf  "
-                + "join hcf.organization as org where 1 = 1 ");
-        if (hcf.getId() != null) {
-            hql.append(" and hcf.id = ").append(hcf.getId());
-        }
-        if (hcf.getOrganization() != null && hcf.getOrganization().getId() != null) {
-            hql.append(" and org.id = ").append(hcf.getOrganization().getId());
-        }
-        if (hcf.getIdentifier() != null) {
-            hql.append(" and hcf.identifier = '").append(hcf.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-
+        List<Organization> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         if (queryList.size() > 1) {
-            LOG.error(" HealthCareFacility should be more than 1 for any given criteria");
-            throw new PAException(" HealthCareFacility should be more than 1 for any given criteria");
-
+            throw new PAException("  Organization  should not be more than 1 record for a Po Identifier  " 
+                    + isoIi.getExtension() + isoIi.getIdentifierName());
         }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving HealthCareFacility" , hbe);
-        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
-    } finally {
-        session.flush();
+        return queryList.get(0);
+
     }
-
-    if (!queryList.isEmpty()) {
-        hcfOut = queryList.get(0);
-    }
-    return hcfOut;
-    }
-
-    /**
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    @SuppressWarnings("unchecked")
-    OversightCommittee getPAOversightCommittee(OversightCommittee oc) throws PAException {
-        if (oc == null) {
-            throw new PAException("OversightCommittee cannot be null.  ");
-        }
-        OversightCommittee ocOut = null;
-        Session session = null;
-        List<OversightCommittee> queryList = new ArrayList<OversightCommittee>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select oc from OversightCommittee oc  "
-                + "join oc.organization as org where 1 = 1 ");
-        if (oc.getId() != null) {
-            hql.append(" and oc.id = ").append(oc.getId());
-        }
-        if (oc.getOrganization() != null && oc.getOrganization().getId() != null) {
-            hql.append(" and org.id = ").append(oc.getOrganization().getId());
-        }
-        if (oc.getIdentifier() != null) {
-            hql.append(" and oc.identifier = '").append(oc.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-
-            query = session.createQuery(hql.toString());
-            queryList = query.list();
-
-            if (queryList.size() > 1) {
-                throw new PAException("Oversight committee count should not be more than 1 for any given criteria.  ");
-            }
-        }  catch (HibernateException hbe) {
-            throw new PAException(" Error while retrieving OversightCommittee.  " , hbe);
-        } finally {
-            session.flush();
-        }
-
-        if (!queryList.isEmpty()) {
-            ocOut = queryList.get(0);
-        }
-        return ocOut;
-    }
-
-    /**
-     *
-     * @param ro ro
-     * @return ro
-     * @throws PAException
-     */
-    @SuppressWarnings("unchecked")
-    ResearchOrganization getPAResearchOrganization(ResearchOrganization ro)
-    throws PAException {
-        if (ro == null) {
-            LOG.error("ResearchOrganization Staff cannot be null");
-            throw new PAException("ResearchOrganization Staff cannot be null");
-        }
-        ResearchOrganization roOut = null;
-        Session session = null;
-        List<ResearchOrganization> queryList = new ArrayList<ResearchOrganization>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select ro from ResearchOrganization ro  "
-                + "join ro.organization as org where 1 = 1 ");
-        if (ro.getId() != null) {
-            hql.append(" and ro.id = ").append(ro.getId());
-        }
-        if (ro.getOrganization() != null && ro.getOrganization().getId() != null) {
-            hql.append(" and org.id = ").append(ro.getOrganization().getId());
-        }
-        if (ro.getIdentifier() != null) {
-            hql.append(" and ro.identifier = '").append(ro.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-
-        if (queryList.size() > 1) {
-            LOG.error(" ResearchOrganization should be more than 1 for any given criteria");
-            throw new PAException(" ResearchOrganization should be more than 1 for any given criteria");
-
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving ResearchOrganization" , hbe);
-        throw new PAException(" Error while retrieving ResearchOrganization" , hbe);
-    } finally {
-        session.flush();
-    }
-
-    if (!queryList.isEmpty()) {
-        roOut = queryList.get(0);
-    }
-    return roOut;
-    }
-
-    /**
-     *
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    @SuppressWarnings("unchecked")
-    ClinicalResearchStaff getPAClinicalResearchStaff(ClinicalResearchStaff crs)
-    throws PAException {
-        if (crs == null) {
-            LOG.error("Clinicial Research Staff cannot be null");
-            throw new PAException("Clinicial Research Staff cannot be null");
-        }
-        if (crs.getPerson() != null && crs.getOrganization() == null
-            || crs.getPerson() == null && crs.getOrganization() != null) {
-            LOG.error("Both person and organization should be specified and it cannot be either");
-            throw new PAException("Both person and organization should be specified and it cannot be either");
-
-        }
-        ClinicalResearchStaff crsOut = null;
-        Session session = null;
-        List<ClinicalResearchStaff> queryList = new ArrayList<ClinicalResearchStaff>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select crs from ClinicalResearchStaff crs  "
-                + "join crs.person as per "
-                + "join crs.organization as org where 1 = 1 ");
-        if (crs.getId() != null) {
-            hql.append(" and crs.id = ").append(crs.getId());
-        }
-        if (crs.getPerson() != null && crs.getOrganization()  != null
-                && crs.getPerson().getId() != null && crs.getOrganization().getId() != null) {
-            hql.append(" and per.id = ").append(crs.getPerson().getId());
-            hql.append(" and org.id = ").append(crs.getOrganization().getId());
-        }
-        if (crs.getIdentifier() != null) {
-            hql.append(" and crs.identifier = '").append(crs.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-
-        if (queryList.size() > 1) {
-            LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-            throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
-        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
-    } finally {
-        session.flush();
-    }
-
-    if (!queryList.isEmpty()) {
-        crsOut = queryList.get(0);
-    }
-    return crsOut;
-    }
-
-    /**
-     *
-     * @param hcp HealthCareProvider
-     * @return  HealthCareProvider
-     * @throws PAException
-     */
-    @SuppressWarnings("unchecked")
-    HealthCareProvider getPAHealthCareProvider(HealthCareProvider hcp)
-    throws PAException {
-        if (hcp == null) {
-            LOG.error("HealthCareProvider  cannot be null");
-            throw new PAException("HealthCareProvider cannot be null");
-        }
-        if (hcp.getPerson() != null && hcp.getOrganization() == null
-                || hcp.getPerson() == null && hcp.getOrganization() != null) {
-            LOG.error("Both person and organization should be specified and it cannot be either");
-            throw new PAException("Both person and organization should be specified and it cannot be either");
-        }
-        HealthCareProvider hcpOut = null;
-        Session session = null;
-        List<HealthCareProvider> queryList = new ArrayList<HealthCareProvider>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select hcp from HealthCareProvider hcp  "
-                + "join hcp.person as per  "
-                + "join hcp.organization as org where 1 = 1 ");
-        if (hcp.getId() != null) {
-            hql.append(" and hcp.id = ").append(hcp.getId());
-        }
-        if (hcp.getPerson() != null && hcp.getPerson().getId() != null
-                && hcp.getOrganization() != null && hcp.getOrganization().getId() != null) {
-            hql.append(" and per.id = ").append(hcp.getPerson().getId());
-            hql.append(" and org.id = ").append(hcp.getOrganization().getId());
-        }
-        if (hcp.getIdentifier() != null) {
-            hql.append(" and hcp.identifier = '").append(hcp.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-
-        if (queryList.size() > 1) {
-            LOG.error("HealthCareProvider should not be more than 1 for any given criteria");
-            throw new PAException("HealthCareProvider should not be more than 1 for any given criteria");
-
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving HealthCareProvider" , hbe);
-        throw new PAException(" Error while retrieving HealthCareProvider" , hbe);
-    } finally {
-        session.flush();
-    }
-
-    if (!queryList.isEmpty()) {
-        hcpOut = queryList.get(0);
-    }
-    return hcpOut;
-    }
-
     
     /**
-     *
-     * @param poOrg po
-     * @return Organization o
-     * @throws PAException pe
+     * 
+     * @param isoIi iso Identifier
+     * @return Organization
+     * @throws PAException on error
      */
-    public Organization createPAOrganization(OrganizationDTO poOrg) throws PAException {
-        return createPAOrganization(convertPOToPAOrganization(poOrg));
+    public Person getPAPersonByIi(Ii isoIi) throws PAException {
+        if (PAUtil.isIiNull(isoIi)) {
+            throw new PAException("isoIi is null  ");
+        }
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select per from Person per ");
+        if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append("join per.clinicalResearchStaffs as role where role.identifier = '" 
+                    + isoIi.getExtension() + "'");
+        } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("join per.healthCareProviders as role where role.identifier = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.PERSON_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append(" where per.identifier = '" + isoIi.getExtension() + "'"); 
+        } else if (IiConverter.PERSON_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append(" where per.id = ").append(isoIi.getExtension()); 
+        } else {
+            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
+        }
+
+        List<Person> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+        if (queryList.size() > 1) {
+            throw new PAException(" Person  should not be more than 1 record for a Po Identifier = " 
+                    + isoIi.getExtension());
+        }
+        return queryList.get(0);
+
     }
+    /**
+     * 
+     * @param <T> any class extends {@link StructuralRole} 
+     * @param isoIi iso identitifier
+     * @return StucturalRole class for an correspondong iso ii
+     * @throws PAException on error
+     */
+
+    public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
+        
+        StringBuffer hql = new StringBuffer("select role from ");
+        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append("HealthCareFacility role where role.identifier = '" + isoIi.getExtension() + "'"); 
+        } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("ResearchOrganization role where role.identifier = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append("OversightCommittee role where role.identifier = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append("ClinicalResearchStaff role where role.identifier = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");   
+        } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");   
+        } else {
+            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());            
+        }
+        List<T> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+        T sr = null;
+        if (queryList.size() > 1) {
+            throw new PAException(" More than 1 structural role found for a given identifier "
+                        + isoIi.getIdentifierName() + " " + isoIi.getExtension());
+        }
+
+        if (!queryList.isEmpty()) { 
+            sr = queryList.get(0);
+        }
+        
+        return sr;
+    }
+    
+    /**
+    *
+    * @param poOrg po
+    * @return Organization o
+    * @throws PAException pe
+    */
+   public Organization createPAOrganization(OrganizationDTO poOrg) throws PAException {
+       return createPAOrganization(convertPOToPAOrganization(poOrg));
+   }
+
+   
+    <T extends StructuralRole> T getStructuralRole(T sr) throws PAException {
+        
+        Session s = HibernateUtil.getCurrentSession();
+        s.load(sr, sr.getId());
+        return sr;
+    }
+    
 
     Organization convertPOToPAOrganization(OrganizationDTO poOrg) throws PAException {
         if (poOrg == null) {
@@ -895,4 +520,5 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         return person;
     }
 
+    
 }

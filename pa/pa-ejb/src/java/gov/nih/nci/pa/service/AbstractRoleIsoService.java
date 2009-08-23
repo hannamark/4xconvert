@@ -290,4 +290,5 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         return returnStatusCode;
     }
     
+
 }

@@ -174,8 +174,9 @@ public class TrialValidationAction extends ActionSupport {
             CorrelationUtils cUtils = new CorrelationUtils();
             copy(spDTO);
             copy(spqDto);
-            copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null));
-            copyPI(cUtils.getPAPersonByIndetifers(spqDto.getPiId(), null));
+            copyLO(cUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
+                    spqDto.getLeadOrganizationId())));
+            copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())));
             copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
             copyResponsibleParty(studyProtocolIi);
             copySponsor(studyProtocolIi);
@@ -414,7 +415,7 @@ public class TrialValidationAction extends ActionSupport {
         CorrelationUtils cUtils = new CorrelationUtils();
         Long orgId = null;
         if (PAUtil.isNotEmpty(poIdentifer)) {
-            Organization org = cUtils.getPAOrganizationByIndetifers(null, poIdentifer);
+            Organization org = cUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(poIdentifer));
             if (org == null) {
                 OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
                 OrganizationDTO oDto;
@@ -480,8 +481,7 @@ public class TrialValidationAction extends ActionSupport {
         if (srDTO.getOrganizationIdentifier() != null
                 && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
             CorrelationUtils cUtils = new CorrelationUtils();
-            Organization o = cUtils.getPAOrganizationByIndetifers(Long.valueOf(srDTO.getOrganizationIdentifier()
-                    .getExtension()), null);
+            Organization o = cUtils.getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
             gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
             gtdDTO.setSummaryFourOrgName(o.getName());
         }
@@ -545,8 +545,7 @@ public class TrialValidationAction extends ActionSupport {
                 studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
-            Organization o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(Long.valueOf(spart
-                    .getResearchOrganizationIi().getExtension()));
+            Organization o = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             gtdDTO.setSponsorName(o.getName());
             gtdDTO.setSponsorIdentifier(o.getIdentifier());
         }

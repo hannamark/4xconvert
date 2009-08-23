@@ -218,7 +218,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
    private void updateOrganization(final Ii ii , final OrganizationDTO orgDto) throws PAException {
        LOG.debug("Entering updateOrganization");
-       Organization paOrg = cUtils.getPAOrganizationByIndetifers(null, ii.getExtension());
+       Organization paOrg = cUtils.getPAOrganizationByIi(ii);
 
        if (paOrg != null) {
            Session session = null;
@@ -251,9 +251,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
    private void updateResearchOrganization(final Ii roIdentifier , final ResearchOrganizationDTO roDto) 
    throws PAException {
        Session session = null;
-       ResearchOrganization ro = new ResearchOrganization();
-       ro.setIdentifier(roIdentifier.getExtension());
-       ro = cUtils.getPAResearchOrganization(ro);
+       ResearchOrganization ro = cUtils.getStructuralRoleByIi(roIdentifier);
        StructuralRoleStatusCode newRoleCode = null;
        Ii roCurrentIi = roIdentifier;
        if (ro != null) {
@@ -262,7 +260,8 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                // this is a nullified scenario .....
                // check if it does have an valid organization 
                Long paOrgId = ro.getOrganization().getId();
-               String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+               String poOrgId = cUtils.getPAOrganizationByIi(IiConverter.
+                           convertToPaOrganizationIi(paOrgId)).getIdentifier();
                OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                if (organizationDto != null) {
                    OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
@@ -270,7 +269,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                            organizationDto.getIdentifier().getExtension());
                    ResearchOrganization dupRo = new ResearchOrganization();
                    dupRo.setId(duplicateRoId);
-                   dupRo = cUtils.getPAResearchOrganization(dupRo);
+                   dupRo = cUtils.getStructuralRole(dupRo);
                    newRoleCode = dupRo.getStatusCode();
                    roCurrentIi = IiConverter.convertToPoResearchOrganizationIi(duplicateRoId.toString());
                    replaceStudySiteIdentifiers(
@@ -295,9 +294,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
    private void updateOversightCommittee(final Ii oscIdentifier , final OversightCommitteeDTO oscDto) 
    throws PAException {
        Session session = null;
-       OversightCommittee osc = new OversightCommittee();
-       osc.setIdentifier(oscIdentifier.getExtension());
-       osc = cUtils.getPAOversightCommittee(osc);
+       OversightCommittee osc = cUtils.getStructuralRoleByIi(oscIdentifier);
        StructuralRoleStatusCode newRoleCode = null;
        Ii hcfCurrentIi = oscIdentifier;
        if (osc != null) {
@@ -307,7 +304,8 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                // check if it does have an valid organization 
                Long paOrgId = osc.getOrganization().getId();
                
-               String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+               String poOrgId = cUtils.getPAOrganizationByIi(
+                           IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
                OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                
                if (organizationDto != null) {
@@ -317,7 +315,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    
                    OversightCommittee dupOsc = new OversightCommittee();
                    dupOsc.setId(duplicateOscId);
-                   dupOsc = cUtils.getPAOversightCommittee(dupOsc);
+                   dupOsc = cUtils.getStructuralRole(dupOsc);
                    newRoleCode = dupOsc.getStatusCode();
                    hcfCurrentIi = IiConverter.convertToPoOversightCommitteeIi(duplicateOscId.toString());
                    replaceStudySiteIdentifiers(
@@ -342,9 +340,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
    private void updateHealthCareFacility(final Ii hcfIdentifier , final HealthCareFacilityDTO hcfDto) 
    throws PAException {
        Session session = null;
-       HealthCareFacility hcf = new HealthCareFacility();
-       hcf.setIdentifier(hcfIdentifier.getExtension());
-       hcf = cUtils.getPAHealthCareFacility(hcf);
+       HealthCareFacility hcf = cUtils.getStructuralRoleByIi(hcfIdentifier);
        StructuralRoleStatusCode newRoleCode = null;
        Ii hcfCurrentIi = hcfIdentifier;
        if (hcf != null) {
@@ -354,7 +350,8 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                // check if it does have an valid organization 
                Long paOrgId = hcf.getOrganization().getId();
                
-               String poOrgId = cUtils.getPAOrganizationByIndetifers(paOrgId, null).getIdentifier();
+               String poOrgId = cUtils.getPAOrganizationByIi(
+                       IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
                OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                
                if (organizationDto != null) {
@@ -364,7 +361,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                    
                    HealthCareFacility dupHcf = new HealthCareFacility();
                    dupHcf.setId(duplicateHcfId);
-                   dupHcf = cUtils.getPAHealthCareFacility(dupHcf);
+                   dupHcf = cUtils.getStructuralRole(dupHcf);
                    newRoleCode = dupHcf.getStatusCode();
                    hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());
                    replaceStudySiteIdentifiers(

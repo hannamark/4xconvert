@@ -461,8 +461,7 @@ public class IrbAction extends ActionSupport implements Preparable {
                   if (PAUtil.isIiNull(part.getOversightCommitteeIi())) {
                       loadOrg(null);
                   } else {
-                      Organization paOrg = correlationUtils.getPAOrganizationByPAOversightCommitteeId(
-                              IiConverter.convertToLong(part.getOversightCommitteeIi()));
+                      Organization paOrg = correlationUtils.getPAOrganizationByIi(part.getOversightCommitteeIi());
                       loadOrg(paOrg.getIdentifier());
                   }
                }

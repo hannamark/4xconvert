@@ -195,13 +195,13 @@ public class StudySiteServiceBean
         return dto;
     }
 
-    private Long getOrganizationId(StudySiteDTO dto) {
+    private String getOrganizationId(StudySiteDTO dto) {
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
             return (PAUtil.isIiNull(dto.getResearchOrganizationIi())
-                    ? IiConverter.convertToLong(dto.getOversightCommitteeIi())
-                    : IiConverter.convertToLong(dto.getResearchOrganizationIi()));
+                    ? IiConverter.convertToString(dto.getOversightCommitteeIi())
+                    : IiConverter.convertToString(dto.getResearchOrganizationIi()));
         } else {
-            return (IiConverter.convertToLong(dto.getHealthcareFacilityIi()));
+            return (IiConverter.convertToString(dto.getHealthcareFacilityIi()));
         }
     }
 
@@ -210,7 +210,7 @@ public class StudySiteServiceBean
     }
 
     private void enforceNoDuplicate(StudySiteDTO dto) throws PAException {
-        Long newOrgId = getOrganizationId(dto);
+        String newOrgId = getOrganizationId(dto);
         String newFunction = getFunctionalCode(dto);
         List<StudySiteDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         for (StudySiteDTO sp : spList) {

@@ -270,9 +270,7 @@ public class TrialUtil {
             .getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
-            Organization o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-
-                        Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+            Organization o = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             trialDTO.setSponsorName(o.getName());
             trialDTO.setSponsorIdentifier(o.getIdentifier());
         }
@@ -336,8 +334,7 @@ public class TrialUtil {
         if (srDTO.getOrganizationIdentifier() != null
                 && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
             CorrelationUtils cUtils = new CorrelationUtils();
-            Organization o = cUtils.getPAOrganizationByIndetifers(Long.valueOf(srDTO.getOrganizationIdentifier()
-                    .getExtension()), null);
+            Organization o = cUtils.getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
             trialDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
             trialDTO.setSummaryFourOrgName(o.getName());
         }

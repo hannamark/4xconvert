@@ -126,15 +126,14 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
             srPoIi = poDtos.get(0).getIdentifier();
         }         
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null 
-                , dto.getOrganizationIdentifier().getExtension());
+        Organization paOrg = corrUtils.getPAOrganizationByIi(dto.getOrganizationIdentifier());
         if (paOrg == null) {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
         Person paPer = null;
         if (dto.getPersonIdentifier() != null) {
         // Step 4 : check for pa person, if not create one
-            paPer = corrUtils.getPAPersonByIndetifers(null , dto.getPersonIdentifier().getExtension());
+            paPer = corrUtils.getPAPersonByIi(dto.getPersonIdentifier());
             if (paPer == null) {
                 paPer = corrUtils.createPAPerson(poPer);
             }

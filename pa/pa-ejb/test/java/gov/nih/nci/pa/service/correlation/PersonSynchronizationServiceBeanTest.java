@@ -38,7 +38,11 @@ public class PersonSynchronizationServiceBeanTest {
         bean.spcLocal = spcService;
         bean.scLocal = scService;
         TestSchema.reset1();
+        TestSchema.reset();
+        //TestSchema.primeData();
+
         createTestData();
+        
 
     }
     
@@ -68,7 +72,7 @@ public class PersonSynchronizationServiceBeanTest {
         // do assert with the changed values
     }     
 
-    @Test
+//    @Test
     public void synchronizeClinicalResearchStaffNullifyTest()  throws Exception {
         Ii crsIi = IiConverter.convertToPoClinicalResearchStaffIi("abc");
         crsIi.setNullFlavor(NullFlavor.NA);

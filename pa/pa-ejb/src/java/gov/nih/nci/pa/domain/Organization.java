@@ -115,6 +115,7 @@ public class Organization extends AbstractEntity {
     private EntityStatusCode statusCode;
     private List<HealthCareFacility> healthCareFacilities = new ArrayList<HealthCareFacility>();
     private List<ResearchOrganization> researchOrganizations = new ArrayList<ResearchOrganization>();
+    private List<OversightCommittee> oversightCommittees = new ArrayList<OversightCommittee>();
 
     /**
      * @return the name
@@ -263,6 +264,25 @@ public class Organization extends AbstractEntity {
             List<ResearchOrganization> researchOrganizations) {
         this.researchOrganizations = researchOrganizations;
     }
+
+    /**
+     * 
+     * @return oversightCommittees
+     */
+    @OneToMany(mappedBy = "organization")
+    public List<OversightCommittee> getOversightCommittees() {
+        return oversightCommittees;
+    }
+
+    /**
+     * 
+     * @param oversightCommittees oversightCommittees
+     */
+    public void setOversightCommittees(List<OversightCommittee> oversightCommittees) {
+        this.oversightCommittees = oversightCommittees;
+    }
+    
+    
 
 
 }

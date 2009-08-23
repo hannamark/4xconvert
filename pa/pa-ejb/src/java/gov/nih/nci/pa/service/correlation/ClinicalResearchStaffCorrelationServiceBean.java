@@ -181,20 +181,18 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         if (paOrg == null) {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
         // Step 4 : check for pa person, if not create one
-        Person paPer = corrUtils.getPAPersonByIndetifers(null , personPoIdentifer);
+        Person paPer = corrUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(personPoIdentifer));
         if (paPer == null) {
             paPer = corrUtils.createPAPerson(poPer);
         }
         
         // Step 6 : Check of PA has crs , if not create one
-        ClinicalResearchStaff crs = new ClinicalResearchStaff();
-        crs.setIdentifier(crsDTO.getIdentifier().getExtension());
-        crs = corrUtils.getPAClinicalResearchStaff(crs);
+        ClinicalResearchStaff crs = corrUtils.getStructuralRoleByIi(crsDTO.getIdentifier());
         if (crs == null) {
             // create a new crs
             crs = new ClinicalResearchStaff();

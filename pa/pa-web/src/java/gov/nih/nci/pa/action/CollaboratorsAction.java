@@ -275,8 +275,7 @@ public class CollaboratorsAction extends ActionSupport
     public String edit() throws Exception {
         setCurrentAction(ACT_EDIT);
         StudySiteDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
-        Organization editOrg = cUtils.getPAOrganizationByPAResearchOrganizationId(
-                IiConverter.convertToLong(spDto.getResearchOrganizationIi()));
+        Organization editOrg = cUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
         orgFromPO.setCity(editOrg.getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
         orgFromPO.setName(editOrg.getName());
@@ -321,8 +320,7 @@ public class CollaboratorsAction extends ActionSupport
         organizationList = new ArrayList<PaOrganizationDTO>();
         List<StudySiteDTO> spList = sPartService.getByStudyProtocol(spIi, criteriaList);
         for (StudySiteDTO sp : spList) {
-            Organization orgBo = cUtils.getPAOrganizationByPAResearchOrganizationId(
-                    IiConverter.convertToLong(sp.getResearchOrganizationIi()));
+            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
             PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());

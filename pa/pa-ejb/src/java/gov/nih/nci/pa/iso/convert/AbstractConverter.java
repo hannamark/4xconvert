@@ -78,9 +78,14 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * @author Hugh Reinhart
@@ -103,4 +108,27 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
      * @throws PAException exception
      */
     public abstract DTO convertFromDomainToDto(BO bo) throws PAException;
+    
+    /** this method get the equivalent pa identifier for a given po identifier. 
+     * 
+     * @param poIdentifier
+     * @return ii
+     * @throws PAException 
+     */
+    Long getPaIdentifier(Ii poIdentifier) throws PAException {
+        if (PAUtil.isIiNull(poIdentifier)) {
+            return null;
+        }
+        if (PAConstants.PA_INTERNAL.equals(poIdentifier.getIdentifierName())) {
+            return Long.valueOf(poIdentifier.getExtension());
+        }
+        CorrelationUtils cu = new CorrelationUtils();
+        StructuralRole sr = cu.getStructuralRoleByIi(poIdentifier);
+        if (sr == null) {
+            // no strucural role exist in PA, create a new one 
+            throw new PAException(" Not yet implemented, This scenario will not happen ");     
+        } else {
+            return sr.getId();
+        }
+    }
 }

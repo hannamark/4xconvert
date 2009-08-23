@@ -148,8 +148,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
         try {
             StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.TRIAL_SUMMARY);
-            //cUtils = new CorrelationUtils();
-            Person userInfo = cUtils.getPAPersonByIndetifers(studyProtocolQueryDTO.getPiId(), null);
+            Person userInfo = cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO.getPiId()));
             PersonDTO poPerson = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.convertToPoPersonIi(userInfo.getIdentifier()));
             persWebDTO = EnPnConverter.convertToPaPersonDTO(poPerson);

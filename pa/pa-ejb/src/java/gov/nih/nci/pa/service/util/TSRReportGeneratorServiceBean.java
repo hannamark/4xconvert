@@ -422,8 +422,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
          StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
          .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
 
-         Organization orgBo = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
-                 IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
+         Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
 
          html.append(appendData("Facility Name" , orgBo.getName() , true , true));
          html.append(appendData("Location" , getLocation(orgBo), true , true));
@@ -488,8 +487,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         appendTDAndData(html, appendTRBold("Role"));
         html.append(TR_E);
       }
-      Person p = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
-          Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
+      Person p = correlationUtils.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
       html.append(TR_B);
       appendTDAndData(html, p.getFirstName());
       appendTDAndData(html, p.getLastName());
@@ -514,8 +512,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         }
         List<String> phones = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "PHONE");
         List<String> emails = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "EMAIL");
-        Person p = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
-                Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
+        Person p = correlationUtils.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
         html.append(appendData("Contact" , p.getFirstName() + " " + p.getLastName() , true , true));
         if (phones != null && !phones.isEmpty()) {
           html.append(appendData("Phone" , phones.get(0) , true , true));
@@ -873,8 +870,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
     List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, criteriaList);
     for (StudySiteDTO sp : spList) {
-        Organization orgBo = correlationUtils.getPAOrganizationByPAResearchOrganizationId(
-                IiConverter.convertToLong(sp.getResearchOrganizationIi()));
+        Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
         if (first) {
           first = false;
           appendTitle(html, appendBoldData("Collaborators"));
@@ -1032,8 +1028,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                       true),  true , true));
                   html.append(appendData("Board Approval Number" ,
                           getInfo(part.getReviewBoardApprovalNumber() , true) ,    true , true));
-                  Organization paOrg = correlationUtils.getPAOrganizationByPAOversightCommitteeId(
-                          IiConverter.convertToLong(part.getOversightCommitteeIi()));
+                  Organization paOrg = correlationUtils.getPAOrganizationByIi(part.getOversightCommitteeIi());
                   if (paOrg != null) {
                       OrganizationDTO poOrg = null;
                       try {
@@ -1206,8 +1201,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       html.append(appendData("Lead Organization" , lead.getName(), true , true));
       html.append(BR).append(BR);
       for (StudyContactDTO pi : scDtos) {
-          leadPi = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
-                  Long.valueOf(pi.getClinicalResearchStaffIi().getExtension()));
+          leadPi = correlationUtils.getPAPersonByIi(pi.getClinicalResearchStaffIi());
           html.append(appendData("Principal Investigator" , leadPi.getFullName(), false , true));
           html.append(BR);
           html.append(appendData("Affliated with" , lead.getName(), false, true));
@@ -1221,8 +1215,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       List<String> emails = null;
       List<String> phones = null;
       for (StudyContactDTO cc : scDtos) {
-          centralContact = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
-                  Long.valueOf(cc.getClinicalResearchStaffIi().getExtension()));
+          centralContact = correlationUtils.getPAPersonByIi(cc.getClinicalResearchStaffIi());
           html.append(DL_B  + DT_B);
           html.append(appendData("Central Contact" , centralContact.getFullName() , false , true));
           html.append(DT_E);
@@ -1251,8 +1244,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       Organization sponsorResponsible = null;
       if (scDtos != null && !scDtos.isEmpty()) {
           scDto = scDtos.get(0);
-          rp = correlationUtils.getPAPersonByPAClinicalResearchStaffId(
-                  Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
+          rp = correlationUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
           dset = scDto.getTelecomAddresses();
           resPartyContactName = rp.getFullName();
           StudySiteDTO spartDTO = new StudySiteDTO();
@@ -1260,8 +1252,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
           List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolIi, spartDTO);
           for (StudySiteDTO spart : sParts) {
-              sponsorResponsible = correlationUtils.getPAOrganizationByPAResearchOrganizationId(
-                      Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+              sponsorResponsible = correlationUtils.getPAOrganizationByIi(spart.getResearchOrganizationIi());
           }
           
       } else {
@@ -1285,8 +1276,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                   studySiteService.getByStudyProtocol(studyProtocolIi, spDto);
               if (spartDtos != null && !spartDtos.isEmpty()) {
                   spDto = spartDtos.get(0);
-                  sponsorResponsible = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-                              Long.valueOf(spDto.getResearchOrganizationIi().getExtension()));
+                  sponsorResponsible = new CorrelationUtils().getPAOrganizationByIi(spDto.getResearchOrganizationIi());
               }
 
           }

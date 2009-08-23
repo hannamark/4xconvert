@@ -120,13 +120,16 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
         StudySiteDTO dto = new StudySiteDTO();
         dto.setFunctionalCode(CdConverter.convertToCd(bo.getFunctionalCode()));
         if (bo.getHealthCareFacility() != null) {
-            dto.setHealthcareFacilityIi(IiConverter.convertToIi(bo.getHealthCareFacility().getId()));
+            dto.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi(
+                    bo.getHealthCareFacility().getIdentifier()));
         }
         if (bo.getResearchOrganization() != null) {
-            dto.setResearchOrganizationIi(IiConverter.convertToIi(bo.getResearchOrganization().getId()));
+            dto.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi(
+                    bo.getResearchOrganization().getIdentifier()));
         }
         if (bo.getOversightCommittee() != null) {
-            dto.setOversightCommitteeIi(IiConverter.convertToIi(bo.getOversightCommittee().getId()));
+            dto.setOversightCommitteeIi(IiConverter.convertToPoOversightCommitteeIi(
+                    bo.getOversightCommittee().getIdentifier()));
         }
         dto.setIdentifier(IiConverter.converToStudySiteIi(bo.getId()));
         dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(bo.getLocalStudyProtocolIdentifier()));
@@ -159,19 +162,22 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
         HealthCareFacility hfBo = null;
         if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
             hfBo = new HealthCareFacility();
-            hfBo.setId(IiConverter.convertToLong(dto.getHealthcareFacilityIi()));
+//            hfBo.setId(IiConverter.convertToLong(dto.getHealthcareFacilityIi()));
+            hfBo.setId(getPaIdentifier(dto.getHealthcareFacilityIi()));
         }
 
         ResearchOrganization roBo = null;
         if (!PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
             roBo = new ResearchOrganization();
-            roBo.setId(IiConverter.convertToLong(dto.getResearchOrganizationIi()));
+//            roBo.setId(IiConverter.convertToLong(dto.getResearchOrganizationIi()));
+            roBo.setId(getPaIdentifier(dto.getResearchOrganizationIi()));
         }
         
         OversightCommittee ocBo = null;
         if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
             ocBo = new OversightCommittee();
-            ocBo.setId(IiConverter.convertToLong(dto.getOversightCommitteeIi()));
+//            ocBo.setId(IiConverter.convertToLong(dto.getOversightCommitteeIi()));
+            ocBo.setId(getPaIdentifier(dto.getOversightCommitteeIi()));
         }
 
         StudySite bo = new StudySite();

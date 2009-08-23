@@ -479,8 +479,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         List<StudyContactDTO> scDTOs = studyContactService.getByStudyProtocol(studyProtocolIi , scDto);
         CorrelationUtils  cUtils = new CorrelationUtils();
         for (StudyContactDTO scDTO : scDTOs) {
-            Person p  = cUtils.getPAPersonByPAClinicalResearchStaffId(
-                    Long.valueOf(scDTO.getClinicalResearchStaffIi().getExtension()));
+            Person p  = cUtils.getPAPersonByIi(scDTO.getClinicalResearchStaffIi());
             Element overallContact = doc.createElement("overall_contact");
             appendElement(overallContact, createElement(FIRST_NAME, p.getFirstName() , doc));
             appendElement(overallContact, createElement(LAST_NAME, p.getLastName() , doc));
@@ -511,8 +510,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         CorrelationUtils  cUtils = new CorrelationUtils();
         for (StudyContactDTO scDTO : scDTOs) {
             if (StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode().equals(scDTO.getRoleCode().getCode())) {
-                Person p  = cUtils.getPAPersonByPAClinicalResearchStaffId(
-                                Long.valueOf(scDTO.getClinicalResearchStaffIi().getExtension()));
+                Person p  = cUtils.getPAPersonByIi(scDTO.getClinicalResearchStaffIi());
                 Element overallofficial = doc.createElement("overall_official");
                 appendElement(overallofficial, createElement(FIRST_NAME, p.getFirstName() , doc));
                 appendElement(overallofficial, createElement(LAST_NAME, p.getLastName() , doc));
@@ -525,8 +523,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                                 studySiteService.getByStudyProtocol(studyProtocolIi, spartDTO);
 
                 for (StudySiteDTO spart : sParts) {
-                    Organization o = cUtils.getPAOrganizationByPAResearchOrganizationId(
-                            Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+                    Organization o = cUtils.getPAOrganizationByIi(spart.getResearchOrganizationIi());
                     appendElement(overallofficial , createElement("affiliation" , o.getName() , doc));
                     break;
                 }
@@ -602,8 +599,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 appendElement(irbInfo , createElement("approval_number" ,
                         spart.getReviewBoardApprovalNumber() , doc));
                 
-                Organization paOrg = cUtils.getPAOrganizationByPAOversightCommitteeId(
-                        IiConverter.convertToLong(spart.getOversightCommitteeIi()));
+                Organization paOrg = cUtils.getPAOrganizationByIi(spart.getOversightCommitteeIi());
                 if (paOrg != null) {
                     OrganizationDTO poOrg = null;
                     try {
@@ -1025,16 +1021,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         if (scDtos != null && !scDtos.isEmpty()) {
             scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
-            person = cUtils.getPAPersonByPAClinicalResearchStaffId(
-                    Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
+            person = cUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
             resPartyContactName = person.getFullName();
             StudySiteDTO spartDTO = new StudySiteDTO();
             spartDTO.setFunctionalCode(
                     CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
             List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolIi, spartDTO);
             for (StudySiteDTO spart : sParts) {
-                sponsor = cUtils.getPAOrganizationByPAResearchOrganizationId(
-                        Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+                sponsor = cUtils.getPAOrganizationByIi(spart.getResearchOrganizationIi());
             }
 
         } else {
@@ -1055,8 +1049,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             List<StudySiteDTO> spDtos = studySiteService.getByStudyProtocol(studyProtocolIi, spDto);
             if (spDtos != null && !spDtos.isEmpty()) {
                 spDto = spDtos.get(0);
-                sponsor = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
-                            Long.valueOf(spDto.getResearchOrganizationIi().getExtension()));
+                sponsor = new CorrelationUtils().getPAOrganizationByIi(spDto.getResearchOrganizationIi());
             }
 
         }
@@ -1085,8 +1078,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         CorrelationUtils cUtils = new CorrelationUtils();
         Element lead = doc.createElement("lead_sponsor");
         for (StudySiteDTO sp : spList) {
-            Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(
-                    IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
+            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
             appendElement(lead ,
                     createElement("agency" , orgBo.getName() , PAAttributeMaxLen.LEN_160, doc));
             break;
@@ -1126,8 +1118,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
                                               .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
         
-            Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(
-                    IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
+            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
 
             appendElement(facility , createElement("name" , orgBo.getName() , doc));
             appendElement(address , createElement("city" , orgBo.getCity() , doc));
@@ -1155,8 +1146,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     equals(spcDTO.getRoleCode().getCode())) {
                 continue;
             }
-            Person p = corr.getPAPersonByPAClinicalResearchStaffId(
-                    Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
+            Person p = corr.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
             Element investigator = doc.createElement("investigator");
             appendElement(investigator , createElement(FIRST_NAME , p.getFirstName() , doc));
             appendElement(investigator , createElement("middle_name" , p.getMiddleName() ,
@@ -1180,8 +1170,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
             List<String> phones = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "EMAIL");
-            Person p = corr.getPAPersonByPAClinicalResearchStaffId(
-                    Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
+            Person p = corr.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
             Element contact = doc.createElement("contact");
             appendElement(contact , createElement(FIRST_NAME , p.getFirstName() , doc));
             appendElement(contact , createElement("middle_name" , p.getMiddleName() ,
