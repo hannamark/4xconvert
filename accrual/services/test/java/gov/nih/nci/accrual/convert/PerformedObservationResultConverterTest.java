@@ -73,45 +73,46 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.convert;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
+import gov.nih.nci.pa.domain.PerformedObservationResult;
 
-import org.junit.Before;
 import org.junit.Test;
-
-import com.opensymphony.xwork2.Action;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 24, 2009
  */
-public class SampleActionTest extends AbstractAccrualActionTest {
+public class PerformedObservationResultConverterTest extends AbstractConverterTest {
 
-    SampleAction action;
-
-    @Before
-    public void initAction() {
-        action = new SampleAction();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @Test
-    public void executeTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-    }
+    public void conversionTest() throws Exception {
+        PerformedObservationResultDto dto = new PerformedObservationResultDto();
+        dto.setIdentifier(iiVal);
+        dto.setPerformedActivityIdentifier(iiVal);
+        dto.setResultCode(stVal);
+        dto.setResultDateRange(ivlVal);
+        dto.setResultIndicator(blVal);
+        dto.setResultText(stVal);
+        dto.setTypeCode(stVal);
 
-    @Test
-    public void getResultTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-
-        // user enters value
-        action.setEnteredValue("2");
-
-        // user presses "Get square" button
-        assertEquals(Action.SUCCESS, action.getResult());
-        assertEquals("4", action.getResultValue());
+        PerformedObservationResult bo = Converters.get(PerformedObservationResultConverter.class).convertFromDtoToDomain(dto);
+        PerformedObservationResultDto r = Converters.get(PerformedObservationResultConverter.class).convertFromDomainToDto(bo);
+        assertTrue(iiTest(r.getIdentifier()));
+        assertTrue(iiTest(r.getPerformedActivityIdentifier()));
+        assertTrue(stTest(r.getTypeCode()));
+        assertTrue(ivlTest(r.getResultDateRange()));
+        assertTrue(blTest(r.getResultIndicator()));
+        assertTrue(stTest(r.getResultText()));
+        assertTrue(stTest(r.getTypeCode()));
     }
 }

@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -117,13 +116,6 @@ public final class AccrualServiceLocator implements ServiceLocator {
      */
     public void setServiceLocator(ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SampleAccrualRemote getSampleAccrualService() {
-        return serviceLocator.getSampleAccrualService();
     }
 
     /**

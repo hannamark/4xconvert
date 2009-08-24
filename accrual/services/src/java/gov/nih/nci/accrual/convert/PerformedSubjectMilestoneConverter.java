@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -127,12 +128,16 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
         PerformedSubjectMilestone bo = new PerformedSubjectMilestone();
         bo.setActualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getActualDateRange()));
         bo.setActualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getActualDateRange()));
-        bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
+        if (!PAUtil.isCdNull(dto.getCategoryCode())) {
+            bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
+        }
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));
         bo.setReasonNotCompletedTypeOther(StConverter.convertToString(dto.getReasonNotCompletedTypeOther()));
-        bo.setStudyProtocol(fKey(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
-        bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
+        bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
+        if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
+            bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
+        }
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         return bo;
     }

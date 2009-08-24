@@ -73,36 +73,69 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.sql.Timestamp;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 24, 2009
  */
-public class SampleAccrualServiceTest extends AbstractServiceTest {
+public abstract class AbstractConverterTest {
+    private static Timestamp low = PAUtil.dateStringToTimestamp("1/1/2000");
+    private static Timestamp high = PAUtil.dateStringToTimestamp("6/30/2009");
 
-    SampleAccrualRemote bean;
+    protected static Ii iiVal = IiConverter.convertToIi(2L);
+    protected static St stVal = StConverter.convertToSt("test");
+    protected static Ts tsVal = TsConverter.convertToTs(low);
+    protected static Ivl<Ts> ivlVal = IvlConverter.convertTs().convertToIvl(low, high);
+    protected static Bl blVal = BlConverter.convertToBl(true);
+    protected static Cd cdVal = null;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        bean = new SampleAccrualBean();
-        super.setUp();
+    protected boolean iiTest(Ii ii) {
+        return IiConverter.convertToLong(ii).equals(2L);
     }
 
-    @Test
-    public void ccdc() throws Exception {
-        St result = bean.getEpochNameByIi(IiConverter.convertToIi(TestSchema.epochs.get(0).getIdentifier()));
-        assertEquals(TestSchema.epochs.get(0).getName(), StConverter.convertToString(result));
+    protected boolean stTest(St st) {
+        return StConverter.convertToString(st).equals("test");
     }
+
+    protected boolean tsTest(Ts ts) {
+        return low.equals(TsConverter.convertToTimestamp(ts));
+    }
+
+    protected boolean ivlTest(Ivl<Ts> ivl) {
+        return low.equals(IvlConverter.convertTs().convertLow(ivl))
+                && high.equals(IvlConverter.convertTs().convertHigh(ivl));
+    }
+
+    protected boolean blTest(Bl bl) {
+        return BlConverter.covertToBoolean(bl).equals(true);
+    }
+
+    protected boolean cdTest(Cd cd) {
+        return PAUtil.isCdNull(cd);
+    }
+
+    /**
+     * Convert iso dto to domain object and back.  Test all attributes.
+     * @throws Exception exception
+     */
+    public abstract void conversionTest() throws Exception;
 }

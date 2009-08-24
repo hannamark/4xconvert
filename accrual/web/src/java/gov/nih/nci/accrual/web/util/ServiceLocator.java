@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -87,11 +86,6 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
  * @since 4/13/2009
  */
 public interface ServiceLocator {
-
-    /**
-     * @return sample accrual service
-     */
-    SampleAccrualRemote getSampleAccrualService();
 
     /**
      * @return search trial service

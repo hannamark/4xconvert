@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.domain.Epoch;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
@@ -154,9 +153,6 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
      */
     public TestHibernateHelper() {
         configuration = new AnnotationConfiguration().
-
-        // temp
-        addAnnotatedClass(Epoch.class).
 
         // Accrual classes
         addAnnotatedClass(ObservationResult.class).

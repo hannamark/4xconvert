@@ -73,34 +73,49 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.St;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.PlannedObservationResultDto;
+import gov.nih.nci.pa.domain.PlannedObservationResult;
 
-import java.rmi.RemoteException;
-
-import javax.ejb.Remote;
-
+import org.junit.Test;
 /**
  * @author Hugh Reinhart
- * @since 07/28/2009
+ * @since Aug 24, 2009
  */
-@Remote
-public interface SampleAccrualRemote {
-    /**
-     * @param integer iso value
-     * @return string iso result
-     * @throws RemoteException exception.
-     */
-    St getSquare(Int integer) throws RemoteException;
+public class PlannedObservationResultConverterTest extends AbstractConverterTest {
 
     /**
-     * @param ii index of object
-     * @return preferred name of disease
-     * @throws RemoteException exception.
+     * {@inheritDoc}
      */
-    St getEpochNameByIi(Ii ii) throws RemoteException;
+    @Override
+    @Test
+    public void conversionTest() throws Exception {
+        PlannedObservationResultDto dto = new PlannedObservationResultDto();
+        dto.setIdentifier(iiVal);
+        dto.setPlannedActivityIdentifier(iiVal);
+        dto.setResultCode(stVal);
+        dto.setResultCodeModifiedText(stVal);
+        dto.setResultDateRange(ivlVal);
+        dto.setResultIndicator(blVal);
+        dto.setResultText(stVal);
+        dto.setTypeCode(stVal);
+
+        PlannedObservationResult bo = Converters.get(PlannedObservationResultConverter.class).convertFromDtoToDomain(dto);
+        PlannedObservationResultDto r = Converters.get(PlannedObservationResultConverter.class).convertFromDomainToDto(bo);
+
+        assertTrue(iiTest(r.getIdentifier()));
+        assertTrue(iiTest(r.getPlannedActivityIdentifier()));
+        assertTrue(stTest(r.getResultCode()));
+        assertTrue(stTest(r.getResultCodeModifiedText()));
+        assertTrue(ivlTest(r.getResultDateRange()));
+        assertTrue(blTest(r.getResultIndicator()));
+        assertTrue(stTest(r.getResultText()));
+        assertTrue(stTest(r.getTypeCode()));
+    }
+
 }

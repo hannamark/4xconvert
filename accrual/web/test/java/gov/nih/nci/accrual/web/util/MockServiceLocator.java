@@ -76,8 +76,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.SampleAccrualBean;
-import gov.nih.nci.accrual.service.SampleAccrualRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialBean;
@@ -88,13 +86,9 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
  * @since 7/7/2009
  */
 public class MockServiceLocator implements ServiceLocator{
-    private final SampleAccrualRemote sampleAccrual = new SampleAccrualBean();
     private final SearchTrialService searchTrial = new SearchTrialBean();
     private final SearchStudySiteService searchStudySite = new SearchStudySiteBean();
 
-    public SampleAccrualRemote getSampleAccrualService() {
-        return sampleAccrual;
-    }
     /**
      * {@inheritDoc}
      */

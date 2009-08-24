@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.domain.Epoch;
 import gov.nih.nci.pa.domain.PlannedObservationResult;
 
 import java.sql.Timestamp;
@@ -92,7 +91,6 @@ import org.hibernate.Transaction;
 * @since 08/07/2009
 */
 public class TestSchema {
-    public static List<Epoch> epochs;
     public static List<PlannedObservationResult> plannedObservationResults;
 
     private static boolean dataLoaded = false;
@@ -131,14 +129,7 @@ public class TestSchema {
     }
 
     public static void primeData() {
-        epochs = new ArrayList<Epoch>();
         plannedObservationResults = new ArrayList<PlannedObservationResult>();
-
-        Epoch ep = new Epoch();
-        ep.setName("epoch 1");
-        ep.setStudyProtocolIdentifier(1L);
-        addUpdObject(ep);
-        epochs.add(ep);
 
         PlannedObservationResult por = new PlannedObservationResult();
         por.setResultCode("resultCode");

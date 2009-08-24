@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.coppa.iso.St;
 
 /**
  * @author Hugh Reinhart
@@ -87,33 +86,4 @@ import gov.nih.nci.coppa.iso.St;
 public class PlannedAdministrativeActivityDto extends AbstractActivityDto {
 
     private static final long serialVersionUID = -4706314189648290706L;
-
-    private St name;
-    private St alternateName;
-
-    /**
-     * @return the name
-     */
-    public St getName() {
-        return name;
-    }
-    /**
-     * @param name the name to set
-     */
-    public void setName(St name) {
-        this.name = name;
-    }
-    /**
-     * @return the alternateName
-     */
-    public St getAlternateName() {
-        return alternateName;
-    }
-    /**
-     * @param alternateName the alternateName to set
-     */
-    public void setAlternateName(St alternateName) {
-        this.alternateName = alternateName;
-    }
-
 }

@@ -73,59 +73,55 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.domain;
+package gov.nih.nci.accrual.convert;
 
-import java.io.Serializable;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 24, 2009
  */
-@Entity
-@Table(name = "EPOCH")
-public class Epoch extends AbstractAccrualEntity implements Serializable {
-
-    private static final long serialVersionUID = -8834467244963656920L;
-
-    private Long studyProtocolIdentifier;
-    private String name;
+public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTest {
 
     /**
-     * @return the studyProtocolIdentifier
+     * {@inheritDoc}
      */
-    @Column(name = "STUDY_PROTOCOL_IDENTIFIER")
-    @NotNull
-    public Long getStudyProtocolIdentifier() {
-        return studyProtocolIdentifier;
+    @Override
+    @Test
+    public void conversionTest() throws Exception {
+        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
+        dto.setActualDateRange(ivlVal);
+//        dto.setCategoryCode(cdVal);
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
+        dto.setIdentifier(iiVal);
+        dto.setInformedConsentDate(tsVal);
+        dto.setReasonNotCompletedTypeOther(stVal);
+        dto.setStudyProtocolIdentifier(iiVal);
+        dto.setSubcategoryCode(cdVal);
+        dto.setTextDescription(stVal);
+
+        PerformedSubjectMilestone bo = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
+        PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
+
+        assertTrue(ivlTest(r.getActualDateRange()));
+//        assertTrue(cdTest(r.getCategoryCode()));
+        assertEquals(ActivityCategoryCode.INTERVENTION.getCode(), CdConverter.convertCdToString(r.getCategoryCode()));
+        assertTrue(iiTest(r.getIdentifier()));
+        assertTrue(tsTest(r.getInformedConsentDate()));
+        assertTrue(stTest(r.getReasonNotCompletedTypeOther()));
+        assertTrue(iiTest(r.getStudyProtocolIdentifier()));
+        assertTrue(cdTest(r.getSubcategoryCode()));
+        assertTrue(stTest(r.getTextDescription()));
     }
-    /**
-     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
-     */
-    public void setStudyProtocolIdentifier(Long studyProtocolIdentifier) {
-        this.studyProtocolIdentifier = studyProtocolIdentifier;
-    }
-    /**
-     * @return the name
-     */
-    @Column(name = "NAME")
-    @Length(max = DEFAULT_MAX)
-    @NotNull
-    public String getName() {
-        return name;
-    }
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+
 }

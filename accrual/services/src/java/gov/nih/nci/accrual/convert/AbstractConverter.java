@@ -116,7 +116,7 @@ public abstract class AbstractConverter <DTO extends BaseDTO, BO extends Abstrac
      * @return domain object
      */
     @SuppressWarnings("unchecked")
-    public <T extends AbstractEntity> T  fKey(Class<T> clazz, Ii pkey) {
+    public <T extends AbstractEntity> T  fKeySetter(Class<T> clazz, Ii pkey) {
         if (PAUtil.isIiNull(pkey)) {
             return null;
         }

@@ -78,10 +78,6 @@
 */
 package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.pa.domain.PerformedObservationResult;
-import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
-import gov.nih.nci.pa.domain.PlannedObservationResult;
-import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
@@ -99,22 +95,22 @@ public class Converters {
 
     /**
      * @param clazz class
-     * @param <TYPE> the converter type to get
+     * @param <CONV> the converter type to get
      * @return converter
      */
     @SuppressWarnings("unchecked")
-    public static <TYPE extends AbstractConverter> TYPE get(Class<TYPE> clazz) {
-        if (clazz.equals(PlannedObservationResult.class)) {
-            return (TYPE) plannedObservationResultConverter;
+    public static <CONV extends AbstractConverter> CONV get(Class<CONV> clazz) {
+        if (clazz.equals(PlannedObservationResultConverter.class)) {
+            return (CONV) plannedObservationResultConverter;
         }
-        if (clazz.equals(PerformedObservationResult.class)) {
-            return (TYPE) performedObservationResultConverter;
+        if (clazz.equals(PerformedObservationResultConverter.class)) {
+            return (CONV) performedObservationResultConverter;
         }
-        if (clazz.equals(PerformedSubjectMilestone.class)) {
-            return (TYPE) performedSubjectMilestoneConverter;
+        if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
+            return (CONV) performedSubjectMilestoneConverter;
         }
-        if (clazz.equals(PlannedStudySubjectMilestone.class)) {
-            return (TYPE) plannedStudySubjectMilestoneConverter;
+        if (clazz.equals(PlannedStudySubjectMilestoneConverter.class)) {
+            return (CONV) plannedStudySubjectMilestoneConverter;
         }
         return null;
     }

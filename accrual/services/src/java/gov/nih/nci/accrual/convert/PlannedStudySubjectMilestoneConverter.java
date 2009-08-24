@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -93,7 +94,6 @@ import java.util.zip.DataFormatException;
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-@SuppressWarnings("PMD")
 public class PlannedStudySubjectMilestoneConverter extends AbstractConverter
         <PlannedStudySubjectMilestoneDto, PlannedStudySubjectMilestone> {
 
@@ -119,10 +119,14 @@ public class PlannedStudySubjectMilestoneConverter extends AbstractConverter
     public PlannedStudySubjectMilestone convertFromDtoToDomain(PlannedStudySubjectMilestoneDto dto)
             throws DataFormatException {
         PlannedStudySubjectMilestone bo = new PlannedStudySubjectMilestone();
-        bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
+        if (!PAUtil.isCdNull(dto.getCategoryCode())) {
+            bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
+        }
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setStudyProtocol(fKey(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
-        bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
+        bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
+        if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
+            bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
+        }
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         return bo;
     }

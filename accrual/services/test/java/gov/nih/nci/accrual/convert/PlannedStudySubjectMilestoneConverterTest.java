@@ -73,67 +73,43 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.domain.Epoch;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.PlannedStudySubjectMilestoneDto;
+import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
 
-import java.rmi.RemoteException;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-
+import org.junit.Test;
 /**
-* @author Hugh Reinhart
-* @since 7/28/2009
-*/
-@Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class SampleAccrualBean implements SampleAccrualRemote {
+ * @author Hugh Reinhart
+ * @since Aug 24, 2009
+ */
+public class PlannedStudySubjectMilestoneConverterTest extends AbstractConverterTest {
 
     /**
      * {@inheritDoc}
      */
-    public St getSquare(Int integer) throws RemoteException {
-        Integer value = IntConverter.convertToInteger(integer);
-        return StConverter.convertToSt(((Integer) (value * value)).toString());
+    @Override
+    @Test
+    public void conversionTest() throws Exception {
+        PlannedStudySubjectMilestoneDto dto = new PlannedStudySubjectMilestoneDto();
+        dto.setCategoryCode(cdVal);
+        dto.setIdentifier(iiVal);
+        dto.setStudyProtocolIdentifier(iiVal);
+        dto.setSubcategoryCode(cdVal);
+        dto.setTextDescription(stVal);
+
+        PlannedStudySubjectMilestone bo = Converters.get(PlannedStudySubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
+        PlannedStudySubjectMilestoneDto r = Converters.get(PlannedStudySubjectMilestoneConverter.class).convertFromDomainToDto(bo);
+
+        assertTrue(cdTest(r.getCategoryCode()));
+        assertTrue(iiTest(r.getIdentifier()));
+        assertTrue(iiTest(r.getStudyProtocolIdentifier()));
+        assertTrue(cdTest(r.getSubcategoryCode()));
+        assertTrue(stTest(r.getTextDescription()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public St getEpochNameByIi(Ii ii) throws RemoteException {
-        String result = "";
-        try {
-            Session session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "FROM Epoch AS ep "
-                       + "WHERE ep.identifier = :id ";
-            query = session.createQuery(hql);
-            query.setParameter("id", IiConverter.convertToLong(ii));
-            @SuppressWarnings("unchecked")
-            List<Epoch> queryList = query.list();
-            if (queryList.size() > 0) {
-                result = queryList.get(0).getName();
-            } else {
-                result = "not found";
-            }
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in " + this.getClass(), hbe);
-        }
-        return StConverter.convertToSt(result);
-    }
 }

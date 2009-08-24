@@ -122,7 +122,7 @@ public class PerformedObservationResultConverter extends AbstractConverter
             throws DataFormatException {
         PerformedObservationResult bo = new PerformedObservationResult();
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setPerformedObservation(fKey(PerformedObservation.class,
+        bo.setPerformedObservation(fKeySetter(PerformedObservation.class,
                 dto.getPerformedActivityIdentifier()));
         bo.setResultCode(StConverter.convertToString(dto.getResultCode()));
         bo.setResultDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getResultDateRange()));
