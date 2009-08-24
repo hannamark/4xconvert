@@ -19,11 +19,8 @@ function viewParticipationSite(pId) {
    <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results" 
            decorator="gov.nih.nci.accrual.web.decorator.AccrualDisplayTagDecorator"  sort="list" pagesize="10" id="row" name="listOfTrials" requestURI="viewTrials.action" export="false"> 
    
-      <display:column sortable="true" headerScope="col" scope="row" >
-            <a href="#" onclick="viewParticipationSite('${row.studyProtocolIdentifier}');">Select</a>
-      </display:column>
-        <display:column titleKey="accrual.list.trials.protocolNumber" property="assignedIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
-      <display:column titleKey="accrual.list.trials.protocolTitle" property="officialTitle" sortable="true" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.trials.protocolNumber" property="assignedIdentifier" sortable="true"  href="participationSiteSelection.action" paramId="studyProtocolId" paramProperty="studyProtocolIdentifier" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.trials.protocolTitle" property="officialTitle" sortable="true" headerClass="sortable" headerScope="col"/>
      <display:column titleKey="accrual.list.trials.trialStatus"  sortable="true" headerClass="sortable" headerScope="col"/>
    </display:table>
 </body>
