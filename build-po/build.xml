@@ -507,9 +507,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       optional.property.list="ldap.url,ldap.basedn"
       delete.property.list="exclude.jboss.backup"
       />
-    <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}" includes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid.install.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid-legacy.install.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid-legacy.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid.dist.relative.dir}/**, ${po-grid-legacy.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-legacy.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid-legacy.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid.dist.relative.dir}/**"/>
   </target>
 
   <!-- Copies install time resources into distribution tree -->
@@ -551,9 +551,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       </fileset>
     </copy>
 
-    <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" includes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid-legacy.upgrade.zip.file}" basedir="${dist.exploded.dir}" includes="${po-grid-legacy.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid.dist.relative.dir}/**, ${po-grid-legacy.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-legacy.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid-legacy.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid.dist.relative.dir}/**"/>
   </target>
 
 
