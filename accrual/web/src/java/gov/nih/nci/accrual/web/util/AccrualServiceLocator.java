@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.accrual.service.util.ProtocolQueryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -86,9 +87,9 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
  * @author Hugh Reinhart
  * @since 4/13/2009
  */
-public final class AccrualServiceLocator implements ServiceLocator {
-    private static final AccrualServiceLocator REG_REGISTRY = new AccrualServiceLocator();
-    private ServiceLocator serviceLocator;
+public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
+    private static final AccrualServiceLocator ACC_REGISTRY = new AccrualServiceLocator();
+    private ServiceLocatorAccInterface serviceLocator;
 
     /**
      * Constructor for the singleton instance.
@@ -98,23 +99,23 @@ public final class AccrualServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return the regServiceLocator
+     * @return the accrualServiceLocator
      */
     public static AccrualServiceLocator getInstance() {
-        return REG_REGISTRY;
+        return ACC_REGISTRY;
     }
 
     /**
      * @return the serviceLocator
      */
-    public ServiceLocator getServiceLocator() {
+    public ServiceLocatorAccInterface getServiceLocator() {
         return serviceLocator;
     }
 
     /**
      * @param serviceLocator the serviceLocator to set
      */
-    public void setServiceLocator(ServiceLocator serviceLocator) {
+    public void setServiceLocator(ServiceLocatorAccInterface serviceLocator) {
         this.serviceLocator = serviceLocator;
     }
 
@@ -130,5 +131,12 @@ public final class AccrualServiceLocator implements ServiceLocator {
      */
     public SearchTrialService getSearchTrialService() {
         return serviceLocator.getSearchTrialService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ProtocolQueryService getProtocolQueryService() {
+        return serviceLocator.getProtocolQueryService();
     }
 }

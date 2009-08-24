@@ -73,42 +73,35 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.service.util.ProtocolQueryService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialBean;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.util.ProtocolQueryResultDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.rmi.RemoteException;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 24, 2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
-    private final SearchTrialService searchTrial = new SearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new SearchStudySiteBean();
+public class ProtocolQueryBean implements ProtocolQueryService {
 
     /**
      * {@inheritDoc}
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
+    public ProtocolQueryResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException {
+        ProtocolQueryResultDto result = new ProtocolQueryResultDto();
+        result.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00054"));
+        result.setLeadOrgLocalSpIdentifier(StConverter.convertToSt("SP0001"));
+        result.setLeadOrgName(StConverter.convertToSt("Duke"));
+        result.setOfficialTitle(StConverter.convertToSt(
+                "Phase II Study of the Efficacy and Toxicity of CAMPATH-1H in the Therapy of Adult T-Cell Leukemia"));
+        result.setPrincipalInvestigatorName(StConverter.convertToSt("John Doe"));
+        return result;
     }
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public ProtocolQueryService getProtocolQueryService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 
 }

@@ -73,42 +73,85 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.dto.util;
 
-import gov.nih.nci.accrual.service.util.ProtocolQueryService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialBean;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.coppa.iso.St;
+
+import java.io.Serializable;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 24, 2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
-    private final SearchTrialService searchTrial = new SearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new SearchStudySiteBean();
+public class ProtocolQueryResultDto implements Serializable {
+    private static final long serialVersionUID = 2713080022522316273L;
 
+    private St assignedIdentifier;
+    private St officialTitle;
+    private St leadOrgLocalSpIdentifier;
+    private St leadOrgName;
+    private St principalInvestigatorName;
     /**
-     * {@inheritDoc}
+     * @return the assignedIdentifier
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
     }
     /**
-     * {@inheritDoc}
+     * @param assignedIdentifier the assignedIdentifier to set
      */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
     }
     /**
-     * {@inheritDoc}
+     * @return the officialTitle
      */
-    public ProtocolQueryService getProtocolQueryService() {
-        // TODO Auto-generated method stub
-        return null;
+    public St getOfficialTitle() {
+        return officialTitle;
     }
-
-
+    /**
+     * @param officialTitle the officialTitle to set
+     */
+    public void setOfficialTitle(St officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+    /**
+     * @return the leadOrgLocalSpIdentifier
+     */
+    public St getLeadOrgLocalSpIdentifier() {
+        return leadOrgLocalSpIdentifier;
+    }
+    /**
+     * @param leadOrgLocalSpIdentifier the leadOrgLocalSpIdentifier to set
+     */
+    public void setLeadOrgLocalSpIdentifier(St leadOrgLocalSpIdentifier) {
+        this.leadOrgLocalSpIdentifier = leadOrgLocalSpIdentifier;
+    }
+    /**
+     * @return the leadOrgName
+     */
+    public St getLeadOrgName() {
+        return leadOrgName;
+    }
+    /**
+     * @param leadOrgName the leadOrgName to set
+     */
+    public void setLeadOrgName(St leadOrgName) {
+        this.leadOrgName = leadOrgName;
+    }
+    /**
+     * @return the principalInvestigatorName
+     */
+    public St getPrincipalInvestigatorName() {
+        return principalInvestigatorName;
+    }
+    /**
+     * @param principalInvestigatorName the principalInvestigatorName to set
+     */
+    public void setPrincipalInvestigatorName(St principalInvestigatorName) {
+        this.principalInvestigatorName = principalInvestigatorName;
+    }
 }
