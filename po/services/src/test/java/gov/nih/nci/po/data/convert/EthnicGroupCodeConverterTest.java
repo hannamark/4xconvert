@@ -41,40 +41,40 @@ public class EthnicGroupCodeConverterTest {
     @Test
     public void testConvertToStatusEnum() {
         Cd iso = null;
-        PersonEthnicGroup result = EthnicGroupCodeConverter.convertToEthnicEnum(iso);
+        PersonEthnicGroup result = EthnicGroupCodeConverter.convertToEthnicGroupEnum(iso);
         assertNull(result);
 
         iso = new Cd();
         try {
-            EthnicGroupCodeConverter.convertToEthnicEnum(iso);
+            EthnicGroupCodeConverter.convertToEthnicGroupEnum(iso);
             fail();
         } catch(PoIsoConstraintException x) {
         }
 
         iso.setNullFlavor(NullFlavor.NI);
 
-        result = EthnicGroupCodeConverter.convertToEthnicEnum(iso);
+        result = EthnicGroupCodeConverter.convertToEthnicGroupEnum(iso);
         assertNull(result);
 
 
         iso = new Cd();
         iso.setCode("foo");
         try {
-            EthnicGroupCodeConverter.convertToEthnicEnum(iso);
+            EthnicGroupCodeConverter.convertToEthnicGroupEnum(iso);
             fail();
         } catch(PoIsoConstraintException x) {
         }
 
         iso.setCode("hispanic_or_latino");
         PersonEthnicGroup expResult = PersonEthnicGroup.HISPANIC_OR_LATINO;
-        result = EthnicGroupCodeConverter.convertToEthnicEnum(iso);
+        result = EthnicGroupCodeConverter.convertToEthnicGroupEnum(iso);
         assertEquals(expResult, result);
 
         //case insensitive mapping
         iso.setCode("Hispanic_or_latinO");
         assertFalse(EthnicGroupCodeConverter.STATUS_MAP.containsKey(iso.getCode()));
         expResult = PersonEthnicGroup.HISPANIC_OR_LATINO;
-        result = EthnicGroupCodeConverter.convertToEthnicEnum(iso);
+        result = EthnicGroupCodeConverter.convertToEthnicGroupEnum(iso);
         assertEquals(expResult, result);
     }
 
