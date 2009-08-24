@@ -77,12 +77,13 @@
 package gov.nih.nci.accrual.web.decorator;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-
 import org.displaytag.decorator.TableDecorator;
+
 
 
 /**
@@ -91,7 +92,7 @@ import org.displaytag.decorator.TableDecorator;
  */
 public class AccrualDisplayTagDecorator extends TableDecorator {
    
-
+    
     /**
      * 
      * @return studyProtocolIdentifier as a String
