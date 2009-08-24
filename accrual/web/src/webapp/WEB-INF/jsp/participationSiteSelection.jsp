@@ -16,9 +16,9 @@
           </label>
          </td>
          <td class="value">
-             <c:if test="${listOfSites != null}">        
+                
             <s:select id="organizationName" list="listOfSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="site.organizationName" cssStyle="width:206px"/>
-             </c:if> 
+           
          </td>
       </tr> 
     

@@ -77,9 +77,10 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
+//import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.util.ArrayList;
@@ -115,9 +116,15 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
         studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
-        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-        listOfSites = service.search(studyProtocolIi);
-        ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
+       // Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+        //listOfSites = service.search(studyProtocolIi);
+        listOfSites = service.search(IiConverter.converToStudyProtocolIi(1L));
+        if (listOfSites != null)  {
+         ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
+        } else {
+        ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
+        }
+        
            
         } catch (Exception e) {
               addActionError(e.getLocalizedMessage());
