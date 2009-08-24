@@ -138,7 +138,8 @@
                 <td>
                  <s:div id="show%{#indidestats.index}" cssStyle="display:''">
                        <s:select id="expanded_status_update" headerKey="" headerValue="-Select-" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessStatus" value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessStatus}" list="#expandedAccessStatusCodeValues" />
-                  </s:div>     
+                  </s:div> 
+                   <s:hidden  name="indIdeUpdateDtos[%{#indidestats.index}].id" value="%{id}"/>     
                   </td> 
                </tr> 
                

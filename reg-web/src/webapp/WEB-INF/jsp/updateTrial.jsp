@@ -28,7 +28,7 @@
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocol"/>
-<c:url value="/protected/ajaxorganizationGenericContactdisplayTitleList.action" var="lookupOrgGenericContactsUrl"/>
+<c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
 
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
@@ -841,6 +841,7 @@ function toggledisplay2 (it) {
               <th colspan="2">Participating Sites</th>
          </tr>
          <tr> <td>
+         <s:if test="participatingSites != null" >
           <table class="form">
          <tbody> 
                     <tr>
@@ -877,6 +878,7 @@ function toggledisplay2 (it) {
                       
                 </tbody>   
          </table> 
+         </s:if>
           <span class="formErrorMsg"> 
                               <s:fielderror>
                               <s:param>participatingsite.recStatus</s:param>
@@ -897,6 +899,7 @@ function toggledisplay2 (it) {
              <th colspan="2" >Collaborators</th>
           </tr>
          <tr><td>
+         <s:if test="collaborators != null" > 
           <table class="form">
            <tbody> 
                     <tr>
@@ -924,6 +927,7 @@ function toggledisplay2 (it) {
                 </tbody>   
            
         </table>
+        </s:if>
         <span class="formErrorMsg"> 
                               <s:fielderror>
                               <s:param>collaborator.functionalCode</s:param>

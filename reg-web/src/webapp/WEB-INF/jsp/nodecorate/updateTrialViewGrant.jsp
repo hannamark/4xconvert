@@ -55,6 +55,7 @@
                                    <s:param>nciDivisionProgramCode</s:param>
                                   </s:fielderror>                            
                                 </span>
+                                <s:hidden  name="fundingDtos[%{#fundstats.index}].id" value="%{id}"/>      
                             </td>
                            </tr>
                       </s:iterator>

@@ -323,7 +323,7 @@ var winprint=window.open("","",sOption);
      </table>
      </c:if>
      <c:if test="${trialDTO.indIdeUpdateDtos != null && fn:length(trialDTO.indIdeUpdateDtos) > 0}">
-       <h3>FDA IND/IDE Information for applicable trials</h3>  
+       <div class="box">
        <h3>Updated FDA IND/IDE </h3> 
        <display:table class="data" sort="list"  uid="row"  name="${trialDTO.indIdeUpdateDtos}">
         <display:column title="IndIde Type" property="indldeType"  headerClass="sortable" style="width:75px" />
@@ -333,59 +333,64 @@ var winprint=window.open("","",sOption);
         <display:column title="Program Code" property="programCode"  headerClass="sortable" style="width:75px"/>
         <display:column title="Expanded Access" property="expandedAccessIndicator"  headerClass="sortable" style="width:75px"/>
         <display:column title="Expanded Access Type" property="expandedAccessStatus"  headerClass="sortable" style="width:75px"/>
-     </display:table>
-      
+        </display:table>
+      </div>
      </c:if>
       <c:if test="${trialDTO.indIdeAddDtos != null && fn:length(trialDTO.indIdeAddDtos) > 0}">  
-      <h3>Added FDA IND/IDE </h3> 
-       <display:table class="data" sort="list"  uid="row"  name="${trialDTO.indIdeAddDtos}">
-        <display:column title="IndIde Type" property="indIde"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Number" property="number"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Grantor" property="grantor"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Holder" property="holderType"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Program Code" property="programCode"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable" style="width:75px" />
-     </display:table>
+       <div class="box">  
+         <h3>Added FDA IND/IDE </h3> 
+         <display:table class="data" sort="list"  uid="row"  name="${trialDTO.indIdeAddDtos}">
+         <display:column title="IndIde Type" property="indIde"  headerClass="sortable" style="width:75px"/>
+         <display:column title="Number" property="number"  headerClass="sortable" style="width:75px"/>
+         <display:column title="Grantor" property="grantor"  headerClass="sortable" style="width:75px"/>
+         <display:column title="Holder" property="holderType"  headerClass="sortable" style="width:75px"/>
+         <display:column title="Program Code" property="programCode"  headerClass="sortable" style="width:75px"/>
+         <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
+         <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable" style="width:75px" />
+         </display:table>
+       </div>  
      </c:if>
      <c:if test="${trialDTO.fundingDtos != null && fn:length(trialDTO.fundingDtos) > 0}">  
         <div class="box">                                   
-        <h3>Grant Information for applicable trials</h3> 
         <h3>Updated Grant Information </h3> 
         <display:table class="data" sort="list"  uid="row"  name="${trialDTO.fundingDtos}" >
-    <display:column title="Funding Mechanism Type" property="fundingMechanismCode"  headerClass="sortable" style="width:75px"/>
-    <display:column title="Institute Code" property="nihInstitutionCode"  headerClass="sortable" style="width:75px"/>
-    <display:column title="Serial Number" property="serialNumber"  headerClass="sortable" style="width:75px"/>
-    <display:column title="NIH Division Program Code" property="nciDivisionProgramCode"  headerClass="sortable" style="width:75px"/>
-   </display:table>
+        <display:column title="Funding Mechanism Type" property="fundingMechanismCode"  headerClass="sortable" style="width:75px"/>
+        <display:column title="Institute Code" property="nihInstitutionCode"  headerClass="sortable" style="width:75px"/>
+        <display:column title="Serial Number" property="serialNumber"  headerClass="sortable" style="width:75px"/>  
+        <display:column title="NIH Division Program Code" property="nciDivisionProgramCode"  headerClass="sortable" style="width:75px"/>
+        </display:table>
+      </div>  
      </c:if>
-     <c:if test="${trialDTO.fundingAddDtos != null && fn:length(trialDTO.fundingAddDtos) > 0}">  
-     <h3>Added Grant Information </h3> 
-    <display:table class="data" sort="list"  uid="row"  name="${trialDTO.fundingAddDtos}" >
-    <display:column title="Funding Mechanism Type" property="fundingMechanismCode"  headerClass="sortable" style="width:75px"/>
-    <display:column title="Institute Code" property="nihInstitutionCode"  headerClass="sortable" style="width:75px"/>
-    <display:column title="Serial Number" property="serialNumber"  headerClass="sortable" style="width:75px"/>
-    <display:column title="NIH Division Program Code" property="nciDivisionProgramCode"  headerClass="sortable" style="width:75px"/>
-   </display:table>
+     <c:if test="${trialDTO.fundingAddDtos != null && fn:length(trialDTO.fundingAddDtos) > 0}">
+     <div class="box">  
+       <h3>Added Grant Information </h3> 
+        <display:table class="data" sort="list"  uid="row"  name="${trialDTO.fundingAddDtos}" >
+        <display:column title="Funding Mechanism Type" property="fundingMechanismCode"  headerClass="sortable" style="width:75px"/>
+        <display:column title="Institute Code" property="nihInstitutionCode"  headerClass="sortable" style="width:75px"/>
+        <display:column title="Serial Number" property="serialNumber"  headerClass="sortable" style="width:75px"/>
+        <display:column title="NIH Division Program Code" property="nciDivisionProgramCode"  headerClass="sortable" style="width:75px"/>
+        </display:table>
+     </div>   
      </c:if>
      <c:if test="${trialDTO.collaborators != null && fn:length(trialDTO.collaborators) > 0}"> 
-     <h3>Colaborators </h3>  
+      <div class="box">        
+       <h3>Colaborators </h3>  
        <display:table class="data" sort="list"  uid="row"  name="${trialDTO.collaborators}" >
-    <display:column title="Collaborator" property="name"  headerClass="sortable"/>
-    <display:column title="Functional Role" property="functionalRole"  headerClass="sortable"/>
-    
-   </display:table>
-        
+       <display:column title="Collaborator" property="name"  headerClass="sortable"/>
+       <display:column title="Functional Role" property="functionalRole"  headerClass="sortable"/>
+        </display:table>
+      </div>  
      </c:if>
-      <c:if test="${trialDTO.participatingSites != null && fn:length(trialDTO.participatingSites) > 0}"> 
-      <h3>Participating sites </h3>  
-       <display:table class="data" sort="list"  uid="row"  name="${trialDTO.participatingSites}" >
-    <display:column title="Site" property="name"  headerClass="sortable"/>
-    <display:column title="Recruitment Status" property="recruitmentStatus"  headerClass="sortable"/>
-    <display:column title="Date" property="recruitmentStatusDate"  headerClass="sortable"/>
-    <display:column title="Program Code" property="programCode"  headerClass="sortable"/>
-   
-    </display:table>
+      <c:if test="${trialDTO.participatingSites != null && fn:length(trialDTO.participatingSites) > 0}">
+        <div class="box">
+         <h3>Participating sites </h3>  
+         <display:table class="data" sort="list"  uid="row"  name="${trialDTO.participatingSites}" >
+         <display:column title="Site" property="name"  headerClass="sortable"/>
+         <display:column title="Recruitment Status" property="recruitmentStatus"  headerClass="sortable"/>
+         <display:column title="Date" property="recruitmentStatusDate"  headerClass="sortable"/>
+         <display:column title="Program Code" property="programCode"  headerClass="sortable"/>
+         </display:table>
+       </div>  
     </c:if>
     <c:if test="${fn:length(trialDTO.docDtos) >0}">          
             <div class="box">

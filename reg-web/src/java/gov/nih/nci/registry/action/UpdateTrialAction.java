@@ -667,7 +667,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
       if (trialDTO.getRegIdAuthOrgList() != null && !trialDTO.getRegIdAuthOrgList().isEmpty()) {
        setRegIdAuthOrgList(trialDTO.getRegIdAuthOrgList());
       }
-      if (trialDTO.getRegulatoryAuthority() == null) {
+      if (trialDTO.getRegulatoryAuthority() != null) {
           setRegulatoryAuthority(trialDTO.getRegulatoryAuthority());
       }
       if (trialDTO.getSelectedRegAuth() != null) {
@@ -676,10 +676,19 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
       if (trialDTO.getLst() != null) {
           setLst(trialDTO.getLst());
       } 
-      setIndIdeAddDtos(trialDTO.getIndIdeAddDtos());
-      setIndIdeUpdateDtos(trialDTO.getIndIdeUpdateDtos());
-      setFundingAddDtos(trialDTO.getFundingAddDtos());
-      setFundingDtos(trialDTO.getFundingDtos());
+      if (trialDTO.getIndIdeUpdateDtos() != null && !trialDTO.getIndIdeUpdateDtos().isEmpty()) {
+          setIndIdeUpdateDtos(trialDTO.getIndIdeUpdateDtos());
+      }    
+      
+      if (trialDTO.getFundingDtos() != null && !trialDTO.getFundingDtos().isEmpty()) {
+          setFundingDtos(trialDTO.getFundingDtos());
+      } 
+      if (trialDTO.getIndIdeAddDtos() != null && !trialDTO.getIndIdeAddDtos().isEmpty()) {
+       setIndIdeAddDtos(trialDTO.getIndIdeAddDtos());
+      }
+      if (trialDTO.getFundingAddDtos() != null && !trialDTO.getFundingAddDtos().isEmpty()) {
+       setFundingAddDtos(trialDTO.getFundingAddDtos());
+      } 
    }
   
  /**
@@ -728,7 +737,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 setCountryList(countriesList);
             }
        
-            List<RegulatoryAuthOrgDTO> regAuthList = (List<RegulatoryAuthOrgDTO>) ServletActionContext.getRequest()
+          List<RegulatoryAuthOrgDTO> regAuthList = (List<RegulatoryAuthOrgDTO>) ServletActionContext.getRequest()
                 .getSession().getAttribute(Constants.REG_AUTH_LIST);
             if (regAuthList != null) {
                 trialDTO.setRegIdAuthOrgList(regAuthList);
@@ -887,7 +896,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             //updated
             if (trialDTO.getIndIdeUpdateDtos() != null && trialDTO.getIndIdeUpdateDtos().size() > 0) {
                 for (StudyIndldeWebDTO webdto : trialDTO.getIndIdeUpdateDtos()) {
-                    studyIndldeDTOList.add(convetToIndIdeWebDTO(webdto));
+                    studyIndldeDTOList.add(convetToIndIdeWebDTO(webdto, studyProtocolIi));
                 }
             } 
             //newly added
@@ -1049,7 +1058,10 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 defaultVal.setName("-Select Country-");
                 regIdAuthOrgList.add(defaultVal);
             }
-
+            if (!regIdAuthOrgList.isEmpty()) {
+               ServletActionContext.getRequest().getSession().setAttribute(Constants.REG_AUTH_LIST,
+                       regIdAuthOrgList);
+           }
         } catch (PAException e) {
             return SUCCESS;
         }
@@ -1085,13 +1097,12 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
    * 
    * @return the study indlde dto
    */
-  private StudyIndldeDTO convetToIndIdeWebDTO(StudyIndldeWebDTO indldeWebDTO) {
+  private StudyIndldeDTO convetToIndIdeWebDTO(StudyIndldeWebDTO indldeWebDTO, Ii studyProtocolIi) {
       StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
       studyIndldeDTO.setIdentifier(IiConverter.convertToStudyIndIdeIi(
-                                  Long.getLong(indldeWebDTO.getId())));
+                                  Long.valueOf(indldeWebDTO.getId())));
       
-      studyIndldeDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-                                                  Long.getLong(indldeWebDTO.getStudyProtocolIi())));
+      studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
       if (indldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
           studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
           studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
@@ -1125,8 +1136,11 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
    * 
    * @return the study resourcing dto
    */
-  private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi) {
+  private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi) 
+  throws PAException {
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
+      studyResoureDTO = RegistryServiceLocator.getStudyResourcingService().getStudyResourceByID(
+              IiConverter.convertToIi(Long.valueOf(trialFundingWebDTO.getId())));
       studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getFundingMechanismCode()));
@@ -1135,7 +1149,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
       studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getNihInstitutionCode()));
       studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
-      studyResoureDTO.setIdentifier(IiConverter.convertToStudyResourcingIi(Long.getLong(trialFundingWebDTO.getId())));
       return studyResoureDTO;
   }
   
