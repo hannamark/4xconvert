@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -98,6 +99,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -179,11 +181,11 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                 Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
                 hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                LOG.error("Validation exception during get ClinicalResearchStaff " , e);
-                throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
+                throw new PAException("NullifiedRoleException exception during get ClinicalResearchStaff " , e);
             } catch (EntityValidationException e) {
-                LOG.error("Validation exception during create ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
+            } catch (CurationException e) {
+                throw new PAException("CurationException during create ClinicalResearchStaff " , e);
             }
         } else {
             hcfDTO = hcfDTOs.get(0);
@@ -197,12 +199,12 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
 
         // Step 4 : Check of PA has hcf , if not create one
-        HealthCareFacility hcf = corrUtils.getStructuralRoleByIi(hcfDTO.getIdentifier());
+        HealthCareFacility hcf = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(hcfDTO.getIdentifier()));
         if (hcf == null) {
             // create a new crs
             hcf = new HealthCareFacility();
             hcf.setOrganization(paOrg);
-            hcf.setIdentifier(hcfDTO.getIdentifier().getExtension());
+            hcf.setIdentifier(DSetConverter.convertToIi(hcfDTO.getIdentifier()).getExtension());
             hcf.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcfDTO.getStatus()));
             corrUtils.createPADomain(hcf);
         }
@@ -256,11 +258,11 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                 Ii ii = PoRegistry.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
                 roDTO = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                LOG.error("Validation exception during get ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
             } catch (EntityValidationException e) {
-                LOG.error("Validation exception during create ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
+            } catch (CurationException e) {
+                throw new PAException("Curation exception during create ClinicalResearchStaff " , e);
             }
         } else {
             roDTO = roDTOs.get(0);
@@ -275,12 +277,12 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
 
         // Step 4 : Check of PA has hcf , if not create one
-        ResearchOrganization ro = corrUtils.getStructuralRoleByIi(roDTO.getIdentifier());
+        ResearchOrganization ro = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(roDTO.getIdentifier()));
         if (ro == null) {
             // create a new crs
             ro = new ResearchOrganization();
             ro.setOrganization(paOrg);
-            ro.setIdentifier(roDTO.getIdentifier().getExtension());
+            ro.setIdentifier(DSetConverter.convertToIi(roDTO.getIdentifier()).getExtension());
             ro.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(roDTO.getStatus()));
             corrUtils.createPADomain(ro);
         }
@@ -347,12 +349,12 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
 
         // Step 4 : Check of PA has oc , if not create one
-        OversightCommittee oc = corrUtils.getStructuralRoleByIi(ocDTO.getIdentifier());
+        OversightCommittee oc = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(ocDTO.getIdentifier()));
         if (oc == null) {
             // create a new oversight committee
             oc = new OversightCommittee();
             oc.setOrganization(paOrg);
-            oc.setIdentifier(ocDTO.getIdentifier().getExtension());
+            oc.setIdentifier(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension());
             oc.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
             corrUtils.createPADomain(oc);
         }
@@ -478,6 +480,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                 Ii ii = PoRegistry.getOrganizationEntityService().createOrganization(poOrgDto);
                 identifier = ii.getExtension();
             } catch (EntityValidationException e) {
+                throw new PAException(e);
+            } catch (CurationException e) {
                 throw new PAException(e);
             }
 

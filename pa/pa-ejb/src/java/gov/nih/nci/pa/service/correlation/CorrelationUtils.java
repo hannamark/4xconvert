@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -174,7 +175,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
                         .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(
                                 oc.getIdentifier()));
                     returnDto.setTitle(StConverter.convertToString(isoDto.getTitle()));
-                    returnDto.setSrIdentifier(isoDto.getIdentifier());
+                    returnDto.setSrIdentifier(DSetConverter.convertToIi(isoDto.getIdentifier()));
                 }
             }
         } catch (HibernateException hbe) {

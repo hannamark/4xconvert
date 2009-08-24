@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -30,7 +31,7 @@ public class MockPoOversightCommitteeCorrelationService implements OversightComm
             throw new NullifiedRoleException(nullifiedEntities);
         }
         OversightCommitteeDTO oc = new OversightCommitteeDTO();
-        oc.setIdentifier(Ii);
+        oc.setIdentifier(DSetConverter.convertIiToDset(Ii));
         oc.setPlayerIdentifier(IiConverter.convertToPoOversightCommitteeIi("1"));
         oc.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return oc;
@@ -66,6 +67,12 @@ public class MockPoOversightCommitteeCorrelationService implements OversightComm
 
     public List<OversightCommitteeDTO> search(OversightCommitteeDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<OversightCommitteeDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -861,8 +861,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             PersonDTO isoPerDTO = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.convertToPoPersonIi(persId));
             if (isoPerDTO == null) {
-                selectedPersTOIi = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
+                    DSet<Ii> iiDset = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
                         IiConverter.convertToPoOrganizationalContactIi(persId)).getIdentifier();
+                    selectedPersTOIi = DSetConverter.convertToIi(iiDset);
             } else {
                 selectedPersTOIi = isoPerDTO.getIdentifier();
             }

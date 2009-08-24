@@ -118,6 +118,7 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -198,11 +199,13 @@ public class GeneralTrialDesignAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());        
         } catch (NullifiedRoleException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        } catch (CurationException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());        
         }
         return RESULT;
     }
 
-    private void save() throws PAException, NullifiedEntityException, NullifiedRoleException {
+    private void save() throws PAException, NullifiedEntityException, NullifiedRoleException, CurationException {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             updateStudyProtocol(studyProtocolIi);
@@ -371,7 +374,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
 
-    private void updateNctNumber(Ii studyProtocolIi) throws PAException {
+    private void updateNctNumber(Ii studyProtocolIi) throws PAException, CurationException {
 
         String poOrgid = getCtGocIdentifier();
         OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
@@ -537,8 +540,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
             PersonDTO isoPerDTO = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.convertToPoPersonIi(gtdDTO.getCentralContactIdentifier()));
             if (isoPerDTO == null) {
-                selectedCenteralContactIi = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
-                  IiConverter.convertToPoOrganizationalContactIi(gtdDTO.getCentralContactIdentifier())).getIdentifier();
+                    DSet<Ii> iiDset = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
+                  IiConverter.convertToPoOrganizationalContactIi(
+                          gtdDTO.getCentralContactIdentifier())).getIdentifier();
+                    selectedCenteralContactIi = DSetConverter.convertToIi(iiDset);  
             } else {
                 selectedCenteralContactIi = isoPerDTO.getIdentifier();
             }
@@ -625,7 +630,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
     }
 
-    private String getCtGocIdentifier() throws  PAException {
+    private String getCtGocIdentifier() throws  PAException, CurationException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
         poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
         List<OrganizationDTO> poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto);

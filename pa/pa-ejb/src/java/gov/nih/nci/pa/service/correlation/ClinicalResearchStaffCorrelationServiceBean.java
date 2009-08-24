@@ -82,10 +82,12 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -170,11 +172,11 @@ public class ClinicalResearchStaffCorrelationServiceBean {
                 Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
                 crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                LOG.error("Validation exception during get ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
             } catch (EntityValidationException e) {
-                LOG.error("Validation exception during create ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
+            } catch (CurationException e) {
+                throw new PAException("CurationException exception during get ClinicalResearchStaff " , e);
             } 
         } else {
             crsDTO = crsDTOs.get(0);
@@ -192,13 +194,13 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }
         
         // Step 6 : Check of PA has crs , if not create one
-        ClinicalResearchStaff crs = corrUtils.getStructuralRoleByIi(crsDTO.getIdentifier());
+        ClinicalResearchStaff crs = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(crsDTO.getIdentifier()));
         if (crs == null) {
             // create a new crs
             crs = new ClinicalResearchStaff();
             crs.setPerson(paPer);
             crs.setOrganization(paOrg);
-            crs.setIdentifier(crsDTO.getIdentifier().getExtension());
+            crs.setIdentifier(DSetConverter.convertToIi(crsDTO.getIdentifier()).getExtension());
             crs.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(crsDTO.getStatus()));
             createPAClinicalResearchStaff(crs);
         }

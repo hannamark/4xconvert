@@ -268,7 +268,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         PAOrganizationalContactDTO dto = null;
         for (OrganizationalContactDTO isoDto : isoDtoList) {
             dto = new PAOrganizationalContactDTO();
-            dto.setIdentifier(isoDto.getIdentifier());
+            dto.setIdentifier(DSetConverter.convertToIi(isoDto.getIdentifier()));
             dto.setTitle(StConverter.convertToString(isoDto.getTitle()));
             //dto.setTypeCode(typeCode)
             dto.setEmails(DSetConverter.convertDSetToList(isoDto.getTelecomAddress(), "EMAIL"));

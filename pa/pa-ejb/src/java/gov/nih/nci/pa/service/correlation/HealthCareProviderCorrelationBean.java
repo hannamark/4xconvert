@@ -82,10 +82,12 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -176,11 +178,11 @@ public class HealthCareProviderCorrelationBean {
                 Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
                 hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                LOG.error("Validation exception during for HealthCareProvider " , e);
                 throw new PAException("Validation exception during get HealthCareProvider " , e);
             } catch (EntityValidationException e) {
-                LOG.error("Validation exception during create HealthCareProvider " , e);
                 throw new PAException("Validation exception during create HealthCareProvider " , e);
+            } catch (CurationException e) {
+                throw new PAException("Curation exception during create HealthCareProvider " , e);
             } 
         } else {
             hcpDTO = hcpDTOs.get(0);
@@ -198,13 +200,13 @@ public class HealthCareProviderCorrelationBean {
         }
         
         // Step 6 : Check of PA has hcp , if not create one
-        HealthCareProvider hcp = corrUtils.getStructuralRoleByIi(hcpDTO.getIdentifier());
+        HealthCareProvider hcp = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(hcpDTO.getIdentifier()));
         if (hcp == null) {
             // create a new crs
             hcp = new HealthCareProvider();
             hcp.setPerson(paPer);
             hcp.setOrganization(paOrg);
-            hcp.setIdentifier(hcpDTO.getIdentifier().getExtension());
+            hcp.setIdentifier(DSetConverter.convertToIi(hcpDTO.getIdentifier()).getExtension());
             hcp.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcpDTO.getStatus()));
             createPAHealthCareProvider(hcp);
         }

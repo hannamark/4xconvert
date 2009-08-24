@@ -45,7 +45,7 @@ public class MockPoClinicalResearchStaffCorrelationService implements
             throw new NullifiedRoleException(nullifiedEntities);
         }
         ClinicalResearchStaffDTO crs = new ClinicalResearchStaffDTO();
-        crs.setIdentifier(ii);
+        crs.setIdentifier(null);
         crs.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
         crs.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         crs.setStatus(CdConverter.convertStringToCd("ACTIVE"));
@@ -97,6 +97,12 @@ public class MockPoClinicalResearchStaffCorrelationService implements
 
     public List<ClinicalResearchStaffDTO> search(ClinicalResearchStaffDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<ClinicalResearchStaffDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }

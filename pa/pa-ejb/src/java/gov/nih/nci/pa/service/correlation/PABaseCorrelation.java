@@ -8,10 +8,12 @@ import gov.nih.nci.pa.dto.PACorrelationDTO;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.iso.convert.AbstractPoConverter;
 import gov.nih.nci.pa.iso.convert.POConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
@@ -121,9 +123,11 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
                 srPoIi = corrService.createCorrelation(cDto);
             } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during  structural role creation" , e);
+            } catch (CurationException e) {
+                throw new PAException("Curation exception during  structural role creation" , e);            
             } 
         } else {
-            srPoIi = poDtos.get(0).getIdentifier();
+            srPoIi = DSetConverter.convertToIi(poDtos.get(0).getIdentifier());
         }         
         // Step 3 : check for pa org, if not create one
         Organization paOrg = corrUtils.getPAOrganizationByIi(dto.getOrganizationIdentifier());

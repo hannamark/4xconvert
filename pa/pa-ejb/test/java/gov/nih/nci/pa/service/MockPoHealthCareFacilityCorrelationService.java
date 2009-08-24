@@ -6,6 +6,7 @@ import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -32,7 +33,7 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
             throw new NullifiedRoleException(nullifiedEntities);
         }
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
-        hcf.setIdentifier(ii);
+        hcf.setIdentifier(null);
         hcf.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("584"));
         hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return hcf;
@@ -47,7 +48,7 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
     public List<HealthCareFacilityDTO> search(HealthCareFacilityDTO hcfDto) {
         List<HealthCareFacilityDTO> ar = new ArrayList<HealthCareFacilityDTO>();
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
-        hcf.setIdentifier(IiConverter.convertToPoHealthCareFacilityIi("1"));
+        hcf.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthCareFacilityIi("1")));
         hcf.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));       
         ar.add(hcf);
@@ -73,6 +74,12 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
 
     public List<HealthCareFacilityDTO> search(HealthCareFacilityDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<HealthCareFacilityDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }

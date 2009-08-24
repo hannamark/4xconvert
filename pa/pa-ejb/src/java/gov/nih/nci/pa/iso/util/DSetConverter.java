@@ -80,6 +80,8 @@ package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
@@ -103,6 +105,10 @@ import java.util.Set;
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 
 public class DSetConverter {
+
+    /** The base ii root value. */
+    public static final String BASE_ROOT = "2.16.840.1.113883.3.26.4";
+    
     /**
      * @param dsetList list of DSets
      * @param type denoting email, telephone, fax, url, etc.,
@@ -238,6 +244,43 @@ public class DSetConverter {
             tel =  tels.get(0);
         }
         return tel;
+    }
+
+
+    /**
+     * Extract the internal identifier from the set of identifiers.
+     * @param identifier set of identifiers
+     * @return internal identifier
+     */
+    public static Ii convertToIi(DSet<Ii> identifier) {
+        if (identifier != null) {
+            Set<Ii> iis = identifier.getItem();
+            for (Ii ii : iis) {
+                // Since PO only assigns one ID, our identifier will be the only ISS with our root
+                if (IdentifierReliability.ISS == ii.getReliability()
+                        && ii.getRoot().startsWith(BASE_ROOT)) {
+                    return ii;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Extract the internal identifier from the set of identifiers.
+     * @param identifier set of identifiers
+     * @return internal identifier
+     */
+    public static DSet<Ii> convertIiToDset(Ii identifier) {
+        
+        DSet<Ii> dSet = null;
+        if (identifier != null) {
+            dSet = new DSet<Ii>();
+            Set<Ii> iiSet = new HashSet<Ii>();
+            iiSet.add(identifier);
+            dSet.setItem(iiSet);
+        }
+        return dSet;
     }
 
 }

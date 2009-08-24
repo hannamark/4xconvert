@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MockPoResearchOrganizationCorrelationService implements ResearchOrganizationCorrelationServiceRemote {
+public class MockPoResearchOrganizationCorrelationService implements ResearchOrganizationCorrelationServiceRemote { 
+    
 
     public Ii createCorrelation(ResearchOrganizationDTO arg0)
             throws EntityValidationException {
@@ -29,7 +30,7 @@ public class MockPoResearchOrganizationCorrelationService implements ResearchOrg
             throw new NullifiedRoleException(nullifiedEntities);
         }
         ResearchOrganizationDTO ro = new ResearchOrganizationDTO();
-        ro.setIdentifier(ii);
+        ro.setIdentifier(null);
         ro.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         ro.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return ro;
@@ -65,6 +66,12 @@ public class MockPoResearchOrganizationCorrelationService implements ResearchOrg
 
     public List<ResearchOrganizationDTO> search(ResearchOrganizationDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<ResearchOrganizationDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }

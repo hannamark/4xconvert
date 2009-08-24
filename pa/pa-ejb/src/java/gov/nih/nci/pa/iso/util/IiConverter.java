@@ -253,8 +253,7 @@ public class IiConverter {
 
     /** The ii root value. */
     public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
-    
-    /** The identifier name for. */
+       /** The identifier name for. */
     public static final String STUDY_REGULATORY_AUTHORITY_IDENTIFIER_NAME = "Study Regulatory authority identifier";
 
     /** The ii root value. */
@@ -348,6 +347,7 @@ public class IiConverter {
     /** The ii root value. */
     public static final String COUNTRY_ROOT = "2.16.840.1.113883.3.26.4.4.18";
 
+
     
     /**
      * Convert to ii.
@@ -364,6 +364,7 @@ public class IiConverter {
         }
         return ii;
     }
+    
     
     /**
      * Convert to ii.

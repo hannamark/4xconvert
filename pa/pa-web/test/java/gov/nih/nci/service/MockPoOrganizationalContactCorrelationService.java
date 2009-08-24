@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -45,7 +46,7 @@ public class MockPoOrganizationalContactCorrelationService implements
             throw new NullifiedRoleException(nullifiedEntities);
         }
         OrganizationalContactDTO oc = new OrganizationalContactDTO();
-        oc.setIdentifier(ii);
+        oc.setIdentifier(DSetConverter.convertIiToDset(ii));
         oc.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
         oc.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         oc.setStatus(CdConverter.convertStringToCd("ACTIVE"));
@@ -97,6 +98,12 @@ public class MockPoOrganizationalContactCorrelationService implements
 
     public List<OrganizationalContactDTO> search(OrganizationalContactDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<OrganizationalContactDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }
