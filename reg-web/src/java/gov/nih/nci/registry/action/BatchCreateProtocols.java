@@ -101,12 +101,14 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
@@ -342,7 +344,7 @@ public class BatchCreateProtocols {
      */
     private Ii getTitleIi(String responsibleGenericContactName,
             String sponsorContactEmail, String sponsorPhone, Ii sponsorIdIi) 
-            throws PAException, URISyntaxException, EntityValidationException {
+            throws PAException, URISyntaxException, EntityValidationException, CurationException {
             Ii responsibleIi = null;
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
             contactDTO.setScoperIdentifier(sponsorIdIi);
@@ -361,7 +363,8 @@ public class BatchCreateProtocols {
                 PoRegistry.getOrganizationalContactCorrelationService()
                 .createCorrelation(contactDTO);
             }
-            responsibleIi = isoDtoList.get(0).getIdentifier();
+            
+            responsibleIi = DSetConverter.convertToIi(isoDtoList.get(0).getIdentifier());
         return responsibleIi;
     }
     private TrialDTO convertToTrialDTO(StudyProtocolBatchDTO batchDTO) {
@@ -429,9 +432,10 @@ public class BatchCreateProtocols {
      * @throws EntityValidationException 
      * @throws URISyntaxException 
      * @throws NullifiedEntityException 
+     * @throws CurationException 
      */
     private Ii lookUpOrgs(OrganizationBatchDTO batchDto) throws PAException,
-        NullifiedEntityException, URISyntaxException, EntityValidationException {
+        NullifiedEntityException, URISyntaxException, EntityValidationException, CurationException {
         LOG.info("Entering lookup Org ...");
         Ii orgId = null;
          
@@ -483,10 +487,12 @@ public class BatchCreateProtocols {
      * @throws URISyntaxException 
      * @throws EntityValidationException 
      * @throws NullifiedEntityException 
+     * @throws CurationException 
      */
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private Ii createOrganization(OrganizationBatchDTO batchDto)
-            throws PAException, URISyntaxException, EntityValidationException, NullifiedEntityException {
+            throws PAException, URISyntaxException, EntityValidationException, NullifiedEntityException, 
+        CurationException {
         LOG.info("Entering Create Org ..");
         OrganizationDTO orgDto = new OrganizationDTO();
         Ii orgId = null;
@@ -571,9 +577,10 @@ public class BatchCreateProtocols {
      * @throws PAException ex
      * @throws EntityValidationException 
      * @throws URISyntaxException 
+     * @throws CurationException 
      */
     private Ii lookUpPersons(PersonBatchDTO batchDto) throws PAException,
-        URISyntaxException, EntityValidationException {
+        URISyntaxException, EntityValidationException, CurationException {
         LOG.info("Entering Look up person...");
         Ii personId = null;
         String firstName = batchDto.getFirstName();
@@ -621,10 +628,11 @@ public class BatchCreateProtocols {
      * @throws PAException ex 
      * @throws URISyntaxException 
      * @throws EntityValidationException 
+     * @throws CurationException 
      */
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private Ii createPerson(PersonBatchDTO batchDto) throws PAException, 
-        URISyntaxException, EntityValidationException  {
+        URISyntaxException, EntityValidationException, CurationException  {
         LOG.info("Entering created person  ...");
         Ii personId = null; 
         String firstName = batchDto.getFirstName();

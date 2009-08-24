@@ -28,7 +28,7 @@ public class MockIdentifiedPersonCorrelationService implements
     static {
         personList = new ArrayList<IdentifiedPersonDTO>();
         IdentifiedPersonDTO dto = new IdentifiedPersonDTO();
-        dto.setIdentifier(IiConverter.convertToIi("1"));
+        dto.setIdentifier(null);
         dto.setPlayerIdentifier(IiConverter.convertToIi("2"));
         dto.setScoperIdentifier(IiConverter.convertToIi("1"));
         dto.setAssignedId(IiConverter.convertToIi("1"));
@@ -103,6 +103,12 @@ public class MockIdentifiedPersonCorrelationService implements
 
     public List<IdentifiedPersonDTO> search(IdentifiedPersonDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<IdentifiedPersonDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }

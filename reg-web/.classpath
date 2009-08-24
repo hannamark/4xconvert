@@ -68,7 +68,7 @@
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-logging-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.2.2.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-1.2.4.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-2.2.0rc1.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-3.0-milestone1.jar"/>
     <classpathentry combineaccessrules="false" kind="src" path="/pa"/>
     <classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -444,6 +445,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             handleError(e.getMessage());
         } catch (EntityValidationException e) {
             handleError(e.getMessage());
+        } catch (CurationException e) {
+            handleError(e.getMessage());
         } catch (PAException e) {
             handleError(e.getMessage());
         }
@@ -590,6 +593,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
         } catch (URISyntaxException e) {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
+        } catch (CurationException e) {
+            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);        
         }
         return PERS_CREATE_RESPONSE;
     }

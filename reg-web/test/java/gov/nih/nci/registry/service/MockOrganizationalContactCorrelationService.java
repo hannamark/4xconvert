@@ -28,12 +28,12 @@ public class MockOrganizationalContactCorrelationService implements
         list = new ArrayList<OrganizationalContactDTO>();
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
         dto.setPlayerIdentifier(IiConverter.convertToIi("2"));
-        dto.setIdentifier(IiConverter.convertToIi("1"));
+        dto.setIdentifier(null);
         dto.setScoperIdentifier(IiConverter.convertToIi("1"));
         list.add(dto);
         dto = new OrganizationalContactDTO();
         dto.setPlayerIdentifier(IiConverter.convertToIi("3"));
-        dto.setIdentifier(IiConverter.convertToIi("2"));
+        dto.setIdentifier(null);
         dto.setScoperIdentifier(IiConverter.convertToIi("2"));
         list.add(dto);
     }
@@ -104,6 +104,12 @@ public class MockOrganizationalContactCorrelationService implements
 
     public List<OrganizationalContactDTO> search(OrganizationalContactDTO arg0,
             LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<OrganizationalContactDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }
