@@ -1108,12 +1108,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       //update NCT identifier
       updateNCTIdentifier(ssDto);
       
-      //update studyOverallStatus
-      if (PAUtil.isIiNull(overallStatusDTO.getIdentifier())) {
-          studyOverallStatusService.create(overallStatusDTO);
-      } else {
-          studyOverallStatusService.update(overallStatusDTO);
-      }
       //create or update IndIdes
       createUpdateIndIdes(studyIndldeDTOs);
       
@@ -1127,16 +1121,29 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       //create or update StudySiteContactDTO
        createUpdateResponsibleParty(studyContactDTO, studyParticipationContactDTO, responsiblePartyContactIi,
                                   studyProtocolDTO, principalInvestigatorDTO, leadOrgDTO, sponsorOrgDTO);
-      // update summary4
+      
+       // update summary4
       updateSummary4ResourcingDTO(summary4organizationDTO , summary4studyResourcingDTO);
+      
       //update collaborators
       updateCollaborators(collaborators);
+      
       //update participating sites
       updateParticipatingSites(participatingSites);
+      
       //update studysitedtos with program code changes
       updateStudySiteProgramCodeChanges(pgCdUpdatedList);
+      
       //update Regulatory athority
       updateStudyRegAuth(studyRegAuthDTO);
+      
+      //update studyOverallStatus
+      if (PAUtil.isIiNull(overallStatusDTO.getIdentifier())) {
+          studyOverallStatusService.create(overallStatusDTO);
+      } else {
+          studyOverallStatusService.update(overallStatusDTO);
+      }
+      
   }
   
   
@@ -1164,14 +1171,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
               errorMsg.append("Only Trials with processing status Accepted or Abstracted or  " 
                       + " Abstraction Verified No Response or  " 
                       + " Abstraction Verified No Response can be Updated.");
-          }
-          if (overallStatusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED)) {
+     }
+     if (overallStatusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED)) {
               errorMsg.append("Update to a Trial with Current Trial Status as 'Disapproved' is not allowed.");
-          }
-      
-      if (errorMsg.length() > 0) {
+     }
+     if (errorMsg.length() > 0) {
               throw new PAException("Validation Exception " + errorMsg);
-      }
+     }
   }
   
   
@@ -1256,39 +1262,39 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
   private void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO) 
   throws PAException {
      
-      if (studyIndldeDTOs != null  && !studyIndldeDTOs.isEmpty()) {
-               for (int i = 0; i < studyIndldeDTOs.size(); i++) {
-                     StudyIndldeDTO sp = (StudyIndldeDTO) studyIndldeDTOs.get(i);
-                 for (int j = ++i; j < studyIndldeDTOs.size(); j++) {
-                    StudyIndldeDTO newType = (StudyIndldeDTO) studyIndldeDTOs.get(j);        
-                     boolean sameType = newType.getIndldeTypeCode().getCode().equals(sp.getIndldeTypeCode().getCode());
-                     boolean sameNumber = newType.getIndldeNumber().getValue().equals(sp.getIndldeNumber().getValue());
-                     boolean sameGrantor = newType.getGrantorCode().getCode().equals(sp.getGrantorCode().getCode());
-                    if (sameType && sameNumber && sameGrantor) {
-                          throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
-                    }
+     if (studyIndldeDTOs != null  && !studyIndldeDTOs.isEmpty()) {
+       for (int i = 0; i < studyIndldeDTOs.size(); i++) {
+          StudyIndldeDTO sp = (StudyIndldeDTO) studyIndldeDTOs.get(i);
+          for (int j = ++i; j < studyIndldeDTOs.size(); j++) {
+               StudyIndldeDTO newType = (StudyIndldeDTO) studyIndldeDTOs.get(j);        
+               boolean sameType = newType.getIndldeTypeCode().getCode().equals(sp.getIndldeTypeCode().getCode());
+               boolean sameNumber = newType.getIndldeNumber().getValue().equals(sp.getIndldeNumber().getValue());
+               boolean sameGrantor = newType.getGrantorCode().getCode().equals(sp.getGrantorCode().getCode());
+               if (sameType && sameNumber && sameGrantor) {
+                     throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
                }
-           }
-           if (!BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator())) {
+            }
+       }
+       if (!BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator())) {
                new PAException("FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.");
-           }
-         }  
-     }
+       }
+     }  
+   }
   @SuppressWarnings("unchecked")
   private void enforceNoDuplicateGrants(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
      
       if (studyResourcingDTOs != null  && !studyResourcingDTOs.isEmpty()) {
-           for (int i = 0; i < studyResourcingDTOs.size(); i++) {
+         for (int i = 0; i < studyResourcingDTOs.size(); i++) {
                StudyResourcingDTO sp = (StudyResourcingDTO) studyResourcingDTOs.get(i);
-               for (int j = ++i; j < studyResourcingDTOs.size(); j++) {
-                   StudyResourcingDTO newType = (StudyResourcingDTO) studyResourcingDTOs.get(j);
-                     boolean sameFundingMech = newType.getFundingMechanismCode().getCode().
+             for (int j = ++i; j < studyResourcingDTOs.size(); j++) {
+                StudyResourcingDTO newType = (StudyResourcingDTO) studyResourcingDTOs.get(j);
+                  boolean sameFundingMech = newType.getFundingMechanismCode().getCode().
                                                  equals(sp.getFundingMechanismCode().getCode());
-                     boolean sameNih = newType.getNihInstitutionCode().getCode().
+                  boolean sameNih = newType.getNihInstitutionCode().getCode().
                                          equals(sp.getNihInstitutionCode().getCode());
-                     boolean sameNci = newType.getNciDivisionProgramCode().getCode().
+                  boolean sameNci = newType.getNciDivisionProgramCode().getCode().
                                              equals(sp.getNciDivisionProgramCode().getCode());
-                     boolean sameSerial = newType.getSerialNumber().getValue().
+                  boolean sameSerial = newType.getSerialNumber().getValue().
                                              equals(sp.getSerialNumber().getValue());
                     if (sameFundingMech && sameNih && sameNci && sameSerial) {
                           throw new PADuplicateException("Duplicates Grants are not allowed.");
@@ -1345,27 +1351,27 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
               equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
           boolean recruiting = false;
-             StudySiteAccrualStatusDTO latestDTO = null;
-              List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
-               for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
-                  Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
-                  //base condition if one of the newly changed status is recruiting ;then break
-                  if (latestId == null) {
-                      if (RecruitmentStatusCode.RECRUITING.getCode().
+          StudySiteAccrualStatusDTO latestDTO = null;
+          List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
+          for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
+              Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
+              //base condition if one of the newly changed status is recruiting ;then break
+              if (latestId == null) {
+                 if (RecruitmentStatusCode.RECRUITING.getCode().
                           equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
                           recruiting = true;
                           break;
-                      } else if (!RecruitmentStatusCode.RECRUITING.getCode().
+                 } else if (!RecruitmentStatusCode.RECRUITING.getCode().
                           equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
                       continue;
-                    }
-                  } else {
+                 }
+              } else {
                       participatingSitesOld = new ArrayList<StudySiteAccrualStatusDTO>();
                       participatingSitesOld.add(studySiteAccuralStatus);
-                  }
+              }
               
-               }
-               if (participatingSitesOld != null && !participatingSitesOld.isEmpty()) { 
+           }
+           if (participatingSitesOld != null && !participatingSitesOld.isEmpty()) { 
                //else sort the old statuses and the get the latest
                Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
                    public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
@@ -1389,20 +1395,20 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
    
   private void createUpdateIndIdes(List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
       for (StudyIndldeDTO studyIndldeDTO : studyIndldeDTOs) {
-          if (!PAUtil.isIiNull(studyIndldeDTO.getIdentifier())) {
-              studyIndldeService.update(studyIndldeDTO);
-          } else {
+          if (PAUtil.isIiNull(studyIndldeDTO.getIdentifier())) {
               studyIndldeService.create(studyIndldeDTO);
+          } else {
+              studyIndldeService.update(studyIndldeDTO);
           }
        }
    } 
   
   private void createUpdateGrants(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
       for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
-          if (!PAUtil.isIiNull(studyResourcingDTO.getIdentifier())) {
-              studyResourcingService.updateStudyResourcing(studyResourcingDTO);
-          } else {
+          if (PAUtil.isIiNull(studyResourcingDTO.getIdentifier())) {
               studyResourcingService.createStudyResourcing(studyResourcingDTO);
+          } else {
+              studyResourcingService.updateStudyResourcing(studyResourcingDTO);
           }
        }
    } 
@@ -1415,15 +1421,17 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
               studySiteService.update(sdto);
       }
    } 
+  
   private void updateParticipatingSites(List<StudySiteAccrualStatusDTO> participatingSites) throws PAException {
       for (StudySiteAccrualStatusDTO sdto : participatingSites) {
           studySiteAccrualStatusService.createStudySiteAccrualStatus(sdto);
       }
    }
+  
   private void  updateStudySiteProgramCodeChanges(List<StudySiteDTO> pgCdUpdatedList) throws PAException {
       for (StudySiteDTO sdto : pgCdUpdatedList) {
           studySiteService.update(sdto);
-  }
+       }
   }
   
   private void updateSummary4ResourcingDTO(OrganizationDTO organizationDto ,
