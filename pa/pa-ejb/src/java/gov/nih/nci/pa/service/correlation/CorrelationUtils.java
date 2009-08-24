@@ -197,6 +197,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             throw new PAException("orgStructuralRoleIi is null  ");
         }
         StringBuffer hql = new StringBuffer();
+        Organization org = null;
         hql.append(" select org from Organization org ");
         if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
             hql.append("join org.healthCareFacilities as role where role.identifier = '" + isoIi.getExtension() + "'"); 
@@ -218,7 +219,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             throw new PAException("  Organization  should not be more than 1 record for a Po Identifier  " 
                     + isoIi.getExtension() + isoIi.getIdentifierName());
         }
-        return queryList.get(0);
+        if (!queryList.isEmpty()) {
+            org = queryList.get(0);
+        }
+        return org;
 
     }
     
