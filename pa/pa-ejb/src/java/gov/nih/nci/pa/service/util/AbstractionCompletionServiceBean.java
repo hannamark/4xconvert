@@ -450,6 +450,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                    "Responsible Party Sponsor Contact status has been set to nullified, " 
                    + "Please select another Responsible Party Sponsor Contact")); 
               }
+              if (StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode().
+                      equalsIgnoreCase(studySiteContactDTO.getRoleCode().getCode())) {
+          
+                  abstractionWarnList.add(createError("Warning", 
+                   "Select Investigators tab under Participating sites from Administrative Data menu.",
+                   "Sub Investigator status has been set to nullified, " 
+                   + "Please select another Sub Investigator")); 
+              }
              }
         }  
       }   
