@@ -236,6 +236,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         if (PAUtil.isIiNull(isoIi)) {
             throw new PAException("isoIi is null  ");
         }
+        Person per = null;
         StringBuffer hql = new StringBuffer();
         hql.append(" select per from Person per ");
         if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
@@ -256,7 +257,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             throw new PAException(" Person  should not be more than 1 record for a Po Identifier = " 
                     + isoIi.getExtension());
         }
-        return queryList.get(0);
+        if (!queryList.isEmpty()) {
+            per = queryList.get(0);
+        }        
+        return per;
 
     }
     /**
