@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -92,9 +93,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.Valid;
 
 
@@ -243,6 +247,42 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @Override
     public List<PhoneNumber> getTty() {
         return super.getTty();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @CollectionOfElements
+    @JoinTable(
+            name = "personcr_ethnicgroup",
+            joinColumns = @JoinColumn(name = "per_cr_id")
+    )
+    @ForeignKey(name = "PER_CR_EG_FK")
+    @Type(type = "gov.nih.nci.po.data.bo.PersonEthnicGroup")
+    @Columns(columns = {
+            @Column(name = "ETHNIC_GROUP")
+    })
+    @Override
+    public Set<PersonEthnicGroup> getEthnicGroupCode() {
+        return super.getEthnicGroupCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @CollectionOfElements
+    @JoinTable(
+            name = "personcr_race",
+            joinColumns = @JoinColumn(name = "per_cr_id")
+    )
+    @ForeignKey(name = "PER_CR_RACE_FK")
+    @Type(type = "gov.nih.nci.po.data.bo.PersonRace")
+    @Columns(columns = {
+            @Column(name = "RACE")
+    })
+    @Override
+    public Set<PersonRace> getRaceCode() {
+        return super.getRaceCode();
     }
 
     /**

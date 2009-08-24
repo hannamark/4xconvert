@@ -87,7 +87,9 @@ import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -145,6 +147,10 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
     private Date statusDate;
+    private PersonSex sexCode;
+    private Set<PersonRace> raceCode = new HashSet<PersonRace>();
+    private Set<PersonEthnicGroup> ethnicGroupCode = new HashSet<PersonEthnicGroup>();
+    private Date birthDate;
 
 
 
@@ -366,6 +372,34 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public void setStatusCode(EntityStatus newStatus) {
         this.statusCode = newStatus;
     }
+    
+    /**
+     * @param newSexCode the sex of this person record
+     */
+    public void setSexCode(PersonSex newSexCode) {
+        this.sexCode = newSexCode;
+    }
+    
+    /**
+     * @param newRaceCodes the races of this person record
+     */
+    public void setRaceCode(Set<PersonRace> newRaceCodes) {
+        this.raceCode = newRaceCodes;
+    }
+    
+    /**
+     * @param newEthnicCodes the ethnicity of this person record
+     */
+    public void setEthnicGroupCode(Set<PersonEthnicGroup> newEthnicCodes) {
+        this.ethnicGroupCode = newEthnicCodes;
+    }
+    
+    /**
+     * @param newBirthDate the birth date of this person record
+     */
+    public void setBirthDate(Date newBirthDate) {
+        this.birthDate = newBirthDate;
+    }
 
     /**
      * {@inheritDoc}
@@ -380,6 +414,53 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public EntityStatus getStatusCode() {
         return this.statusCode;
+    }
+    
+    /**
+     * @return the sex code
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$CdConverter"
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SEX")
+    @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "sex")
+    public PersonSex getSexCode() {
+        return this.sexCode;
+    }
+    
+    /**
+     * @return the race code
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$DSetConverter"
+     */
+    @Transient
+    public Set<PersonRace> getRaceCode() {
+        return this.raceCode;
+    }
+    
+    /**
+     * @return the ethnic code
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.EthnicGroupCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.EthnicGroupCodeConverter$DSetConverter"
+     */
+    @Transient
+    public Set<PersonEthnicGroup> getEthnicGroupCode() {
+        return this.ethnicGroupCode;
+    }
+    
+    /**
+     * @return name birthDate
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ts"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.DateConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.TsConverter"
+     */
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "birthDate")
+    public Date getBirthDate() {
+        return this.birthDate;
     }
 
     /**

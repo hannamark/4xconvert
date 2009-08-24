@@ -97,9 +97,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
 
@@ -245,6 +248,42 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {
         return super.getTty();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @CollectionOfElements
+    @JoinTable(
+            name = "person_ethnicgroup",
+            joinColumns = @JoinColumn(name = "person_id")
+    )
+    @ForeignKey(name = "PER_EG_FK")
+    @Type(type = "gov.nih.nci.po.data.bo.PersonEthnicGroup")
+    @Columns(columns = {
+            @Column(name = "ETHNIC_GROUP")
+    })
+    @Override
+    public Set<PersonEthnicGroup> getEthnicGroupCode() {
+        return super.getEthnicGroupCode();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @CollectionOfElements
+    @JoinTable(
+            name = "person_race",
+            joinColumns = @JoinColumn(name = "person_id")
+    )
+    @ForeignKey(name = "PER_RACE_FK")
+    @Type(type = "gov.nih.nci.po.data.bo.PersonRace")
+    @Columns(columns = {
+            @Column(name = "RACE")
+    })
+    @Override
+    public Set<PersonRace> getRaceCode() {
+        return super.getRaceCode();
     }
 
     /**

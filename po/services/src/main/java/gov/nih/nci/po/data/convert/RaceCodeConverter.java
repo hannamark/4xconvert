@@ -80,67 +80,141 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package gov.nih.nci.po.data.convert;
 
+
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.CodeValue;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.po.data.bo.PersonRace;
+import gov.nih.nci.services.PoIsoConstraintException;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
+import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
+import org.apache.commons.lang.StringUtils;
+
 
 /**
- * @author Scott Miller
- * 
+ * Utility class for converting between BO and ISO types.
+ *
+ * @author mshestopalov
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+public final class RaceCodeConverter {
 
     /**
-     * {@inheritDoc}
+     * Bidirectional map status codes.
+     * <table border="1">
+     * <tr><th>Key(String)</th><th>Value(PersonRace)</th/></tr>
+     * <tr><td>"white"</td><td>{@link PersonRace#WHITE}</td></tr>
+     * <tr><td>"black_or_african_american"</td><td>{@link PersonRace#BLACK_OR_AFRICAN_AMERICAN}</td></tr>
+     * <tr><td>"asian"</td><td>{@link PersonRace#ASIAN}</td></tr>
+     * <tr><td>"american_indian_or_alaska_native"</td>
+     * <td>{@link PersonRace#AMERICAN_INDIAN_OR_ALASKA_NATIVE}</td></tr>
+     * <tr><td>"native_hawaiian_or_other_islander"</td>
+     * <td>{@link PersonRace#NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER}</td></tr>
+     <tr><td>"not_reported"</td><td>{@link PersonRace#NOT_REPORTED}</td></tr>
+     * <tr><td>"unknown"</td><td>{@link PersonRace#UNKNOWN}</td></tr>
+     * </table>
      */
-    @Override
+    public static final BidiMap STATUS_MAP;
+    static {
+        DualHashBidiMap map = new DualHashBidiMap();
+        for (PersonRace es : PersonRace.values()) {
+            map.put(es.name().toLowerCase(), es);
+        }
+        STATUS_MAP = UnmodifiableBidiMap.decorate(map);
+    }
+
+    /**
+     * convert {@link PersonRace} to other types.
+     */
     @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
+    public static class EnumConverter extends AbstractXSnapshotConverter<Set<PersonRace>> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, Set<PersonRace> value) {
+            if (returnClass != DSet.class) {
+                throw new UnsupportedOperationException(returnClass.getName());
+            }
+            
+            DSet<Cd> cds = new DSet<Cd>();
+            cds.setItem(new HashSet<Cd>());
+
+            if (CollectionUtils.isEmpty(value)) {
+                return (TO) cds;
+            }
+            for (PersonRace race : value) {
+                Cd cd = convertToCd(race);
+                cds.getItem().add(cd);
+            }
+
+            return (TO) cds;
+
+        }
+    }
+    /**
+     * @param iso a status code
+     * @return best guess of <code>iso</code>'s ISO equivalent.
+     */
+    public static PersonRace convertToRaceEnum(Cd iso) {
+        if (iso == null) {
             return null;
         }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (CodeValue.class.isAssignableFrom(returnClass)) {        
-            return (TO) convertToCodeValue((Class<? extends CodeValue>) returnClass, value);
+
+        if (iso.getNullFlavor() != null) {
+            return null;
         }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
-    
-    private static <CV extends CodeValue> CV convertToCodeValue(Class<CV> type, Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(type, value.getCode());
+        String code = iso.getCode();
+        if (StringUtils.isBlank(code)) {
+            throw new PoIsoConstraintException("code must be set");
+        }
+        PersonRace cs = (PersonRace) STATUS_MAP.get(code.toLowerCase(Locale.getDefault()));
+        if (cs == null) {
+            throw new PoIsoConstraintException("unsupported code " + cs);
+        }
+        return cs;
     }
 
     /**
-     * Convert a Role status code into an emun.
-     * 
-     * @param value the code.
-     * @return the enum.
+     * @param cs PO entity status.
+     * @return best guess of <code>cs</code>'s ISO equivalent.
      */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
+    public static Cd convertToCd(PersonRace cs) {
+        return CdConverter.convertToCd(cs, STATUS_MAP);
     }
     
     /**
-     * @param cs PO entity.
-     * @param map map of enum values.
-     * @return best guess of <code>cs</code>'s ISO equivalent.
+     * Converter for DSet.
      */
-    public static Cd convertToCd(Object cs, BidiMap map) {
-        Cd iso = new Cd();
-        if (cs == null) {
-            iso.setNullFlavor(NullFlavor.NI);
-        } else {
-            String code = (String) map.getKey(cs);
-            iso.setCode(code);
+    public static class DSetConverter extends AbstractXSnapshotConverter<DSet<Cd>> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, DSet<Cd> value) {
+            if (returnClass != Set.class) {
+                throw new UnsupportedOperationException(returnClass.getName());
+            }
+        
+            if (value == null || value.getItem() == null) {
+                return null;
+            }
+            Set<PersonRace> race = new HashSet<PersonRace>();
+            for (Cd cd : value.getItem()) {
+                race.add(convertToRaceEnum(cd));
+            }
+            return (TO) race;
         }
-        return iso;
+
     }
 }

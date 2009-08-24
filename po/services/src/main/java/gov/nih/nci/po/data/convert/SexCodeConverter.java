@@ -80,67 +80,108 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package gov.nih.nci.po.data.convert;
 
+
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.CodeValue;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.data.bo.PersonSex;
+import gov.nih.nci.services.PoIsoConstraintException;
+
+import java.util.Locale;
 
 import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
+import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
+import org.apache.commons.lang.StringUtils;
+
 
 /**
- * @author Scott Miller
- * 
+ * Utility class for converting between BO and ISO types.
+ *
+ * @author mshestopalov
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+public final class SexCodeConverter {
 
     /**
-     * {@inheritDoc}
+     * Bidirectional map status codes.
+     * <table border="1">
+     * <tr><th>Key(String)</th><th>Value(PersonSex)</th/></tr>
+     * <tr><td>"male"</td><td>{@link PersonSex#MALE}</td></tr>
+     * <tr><td>"female"</td><td>{@link PersonSex#FEMALE}</td></tr>
+     * <tr><td>"unknown"</td><td>{@link PersonSex#UNKNOWN}</td></tr>
+     * </table>
      */
-    @Override
+    public static final BidiMap STATUS_MAP;
+    static {
+        DualHashBidiMap map = new DualHashBidiMap();
+        for (PersonSex es : PersonSex.values()) {
+            map.put(es.name().toLowerCase(), es);
+        }
+        STATUS_MAP = UnmodifiableBidiMap.decorate(map);
+    }
+
+    /**
+     * convert {@link Cd} to other types.
+     */
     @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
+    public static class CdConverter extends AbstractXSnapshotConverter<Cd> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, Cd value) {
+            if (returnClass == PersonSex.class) {
+                return (TO) convertToStatusEnum(value);
+            }
+            throw new UnsupportedOperationException(returnClass.getName());
+        }
+    }
+
+    /**
+     * convert {@link PersonSex} to other types.
+     */
+    @SuppressWarnings("unchecked")
+    public static class EnumConverter extends AbstractXSnapshotConverter<PersonSex> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, PersonSex value) {
+            if (returnClass == Cd.class) {
+                return (TO) convertToCd(value);
+            }
+            throw new UnsupportedOperationException(returnClass.getName());
+        }
+    }
+    /**
+     * @param iso a status code
+     * @return best guess of <code>iso</code>'s ISO equivalent.
+     */
+    public static PersonSex convertToStatusEnum(Cd iso) {
+        if (iso == null) {
             return null;
         }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (CodeValue.class.isAssignableFrom(returnClass)) {        
-            return (TO) convertToCodeValue((Class<? extends CodeValue>) returnClass, value);
+
+        if (iso.getNullFlavor() != null) {
+            return null;
         }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
-    
-    private static <CV extends CodeValue> CV convertToCodeValue(Class<CV> type, Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(type, value.getCode());
+        String code = iso.getCode();
+        if (StringUtils.isBlank(code)) {
+            throw new PoIsoConstraintException("code must be set");
+        }
+        PersonSex cs = (PersonSex) STATUS_MAP.get(code.toLowerCase(Locale.getDefault()));
+        if (cs == null) {
+            throw new PoIsoConstraintException("unsupported code " + cs);
+        }
+        return cs;
     }
 
     /**
-     * Convert a Role status code into an emun.
-     * 
-     * @param value the code.
-     * @return the enum.
-     */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
-    }
-    
-    /**
-     * @param cs PO entity.
-     * @param map map of enum values.
+     * @param cs PO entity status.
      * @return best guess of <code>cs</code>'s ISO equivalent.
      */
-    public static Cd convertToCd(Object cs, BidiMap map) {
-        Cd iso = new Cd();
-        if (cs == null) {
-            iso.setNullFlavor(NullFlavor.NI);
-        } else {
-            String code = (String) map.getKey(cs);
-            iso.setCode(code);
-        }
-        return iso;
+    public static Cd convertToCd(PersonSex cs) {
+        return gov.nih.nci.po.data.convert.CdConverter.convertToCd(cs, STATUS_MAP);
     }
 }

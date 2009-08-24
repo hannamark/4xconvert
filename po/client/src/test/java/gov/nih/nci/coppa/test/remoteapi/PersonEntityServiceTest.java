@@ -97,6 +97,7 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
@@ -104,6 +105,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -155,6 +157,68 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             personId = getPersonService().createPerson(dto);
             assertNotNull(personId);
             assertNotNull(personId.getExtension());
+        } catch (EntityValidationException e) {
+            fail(e.getErrorMessages());
+        }
+    }
+    
+    @Test
+    public void createWithBioCodes() throws Exception {
+        
+        try {
+            PersonDTO dto = new PersonDTO();
+            dto.setName(new EnPn());
+            Enxp part = new Enxp(EntityNamePartType.GIV);
+            part.setValue(ENXP_GIV);
+            dto.getName().getPart().add(part);
+            part = new Enxp(EntityNamePartType.FAM);
+            part.setValue(ENXP_FAM);
+            dto.getName().getPart().add(part);
+            dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", "WY", "zip", "USA"));
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            dto.setTelecomAddress(telco);
+
+            TelEmail email = new TelEmail();
+            email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
+            dto.getTelecomAddress().getItem().add(email);
+
+            TelUrl url = new TelUrl();
+            url.setValue(new URI(DEFAULT_URL));
+            dto.getTelecomAddress().getItem().add(url);
+            
+            Cd sexCode = new Cd();
+            sexCode.setCode("MALE");
+            dto.setSexCode(sexCode);
+            
+            Cd raceCode = new Cd();
+            raceCode.setCode("white");
+            DSet<Cd> raceCodes = new DSet<Cd>();
+            raceCodes.setItem(new HashSet<Cd>());
+            raceCodes.getItem().add(raceCode);
+            Cd raceCode2 = new Cd();
+            raceCode2.setCode("black_or_african_american");
+            raceCodes.getItem().add(raceCode2);
+            dto.setRaceCode(raceCodes);
+            
+            Cd ethnicCode = new Cd();
+            ethnicCode.setCode("hispanic_or_latino");
+            DSet<Cd> ethnicCodes = new DSet<Cd>();
+            ethnicCodes.setItem(new HashSet<Cd>());
+            ethnicCodes.getItem().add(ethnicCode);
+            Cd ethnicCode2 = new Cd();
+            ethnicCode2.setCode("not_hispanic_or_latino");
+            ethnicCodes.getItem().add(ethnicCode2);
+            dto.setEthnicGroupCode(ethnicCodes);
+            
+            Ts birthDate = new Ts();
+            SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
+            birthDate.setValue(sdf.parse("09/28/1980"));
+            dto.setBirthDate(birthDate);      
+           
+            Ii p = getPersonService().createPerson(dto);
+            assertNotNull(p);
+            assertNotNull(p.getExtension());
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }

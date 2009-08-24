@@ -80,67 +80,136 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package gov.nih.nci.po.data.convert;
 
+
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.CodeValue;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.po.data.bo.PersonEthnicGroup;
+import gov.nih.nci.services.PoIsoConstraintException;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
+import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
+import org.apache.commons.lang.StringUtils;
+
 
 /**
- * @author Scott Miller
- * 
+ * Utility class for converting between BO and ISO types.
+ *
+ * @author mshestopalov
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+public final class EthnicGroupCodeConverter {
 
     /**
-     * {@inheritDoc}
+     * Bidirectional map status codes.
+     * <table border="1">
+     * <tr><th>Key(String)</th><th>Value(PersonEthnic)</th/></tr>
+     * <tr><td>"hispanic_or_latino"</td><td>{@link PersonEthnicGroup#HISPANIC_OR_LATINO}</td></tr>
+     * <tr><td>"not_hispanic_or_latino"</td><td>{@link PersonEthnicGroup#NOT_HISPANIC_OR_LATINO}</td></tr>
+     * <tr><td>"not_reported"</td><td>{@link PersonEthnicGroup#NOT_REPORTED}</td></tr>
+     * <tr><td>"unknown"</td><td>{@link PersonEthnicGroup#UNKNOWN}</td></tr>
+     * </table>
      */
-    @Override
+    public static final BidiMap STATUS_MAP;
+    static {
+        DualHashBidiMap map = new DualHashBidiMap();
+        for (PersonEthnicGroup es : PersonEthnicGroup.values()) {
+            map.put(es.name().toLowerCase(), es);
+        }
+        STATUS_MAP = UnmodifiableBidiMap.decorate(map);
+    }
+
+    /**
+     * convert {@link PersonEthnicGroup} to other types.
+     */
     @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
+    public static class EnumConverter extends AbstractXSnapshotConverter<Set<PersonEthnicGroup>> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, Set<PersonEthnicGroup> value) {
+            if (returnClass != DSet.class) {
+                throw new UnsupportedOperationException(returnClass.getName());
+            }
+            
+            DSet<Cd> cds = new DSet<Cd>();
+            cds.setItem(new HashSet<Cd>());
+
+            if (CollectionUtils.isEmpty(value)) {
+                return (TO) cds;
+            }
+            for (PersonEthnicGroup ethnic : value) {
+                Cd cd = convertToCd(ethnic);
+                cds.getItem().add(cd);
+            }
+
+            return (TO) cds;
+
+        }
+    }
+    /**
+     * @param iso a status code
+     * @return best guess of <code>iso</code>'s ISO equivalent.
+     */
+    public static PersonEthnicGroup convertToEthnicGroupEnum(Cd iso) {
+        if (iso == null) {
             return null;
         }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (CodeValue.class.isAssignableFrom(returnClass)) {        
-            return (TO) convertToCodeValue((Class<? extends CodeValue>) returnClass, value);
+
+        if (iso.getNullFlavor() != null) {
+            return null;
         }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
-    
-    private static <CV extends CodeValue> CV convertToCodeValue(Class<CV> type, Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(type, value.getCode());
+        String code = iso.getCode();
+        if (StringUtils.isBlank(code)) {
+            throw new PoIsoConstraintException("code must be set");
+        }
+        PersonEthnicGroup cs = (PersonEthnicGroup) STATUS_MAP.get(code.toLowerCase(Locale.getDefault()));
+        if (cs == null) {
+            throw new PoIsoConstraintException("unsupported code " + cs);
+        }
+        return cs;
     }
 
     /**
-     * Convert a Role status code into an emun.
-     * 
-     * @param value the code.
-     * @return the enum.
+     * @param cs PO entity status.
+     * @return best guess of <code>cs</code>'s ISO equivalent.
      */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
+    public static Cd convertToCd(PersonEthnicGroup cs) {
+        return CdConverter.convertToCd(cs, STATUS_MAP);
     }
     
     /**
-     * @param cs PO entity.
-     * @param map map of enum values.
-     * @return best guess of <code>cs</code>'s ISO equivalent.
+     * Converter for DSet.
      */
-    public static Cd convertToCd(Object cs, BidiMap map) {
-        Cd iso = new Cd();
-        if (cs == null) {
-            iso.setNullFlavor(NullFlavor.NI);
-        } else {
-            String code = (String) map.getKey(cs);
-            iso.setCode(code);
+    public static class DSetConverter extends AbstractXSnapshotConverter<DSet<Cd>> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, DSet<Cd> value) {
+            if (returnClass != Set.class) {
+                throw new UnsupportedOperationException(returnClass.getName());
+            }
+        
+            if (value == null || value.getItem() == null) {
+                return null;
+            }
+            Set<PersonEthnicGroup> ethnics = new HashSet<PersonEthnicGroup>();
+            for (Cd cd : value.getItem()) {
+                ethnics.add(convertToEthnicGroupEnum(cd));
+            }
+            return (TO) ethnics;
         }
-        return iso;
+
     }
 }

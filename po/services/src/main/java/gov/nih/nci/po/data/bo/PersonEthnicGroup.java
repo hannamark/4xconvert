@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The po-app
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This po-app Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the po-app Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the po-app Software; (ii) distribute and
+ * have distributed to and by third parties the po-app Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,67 +80,40 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.CodeValue;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
-
-import org.apache.commons.collections.BidiMap;
 
 /**
- * @author Scott Miller
- * 
+ * This enum captures the race of the person.
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+public enum PersonEthnicGroup {
+    /**
+     * HISPANIC_OR_LATINO.
+     */
+    HISPANIC_OR_LATINO,
 
     /**
-     * {@inheritDoc}
+     * NOT_HISPANIC_OR_LATINO.
      */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
-            return null;
-        }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (CodeValue.class.isAssignableFrom(returnClass)) {        
-            return (TO) convertToCodeValue((Class<? extends CodeValue>) returnClass, value);
-        }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
+    NOT_HISPANIC_OR_LATINO,
     
-    private static <CV extends CodeValue> CV convertToCodeValue(Class<CV> type, Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(type, value.getCode());
-    }
+    /**
+     * NOT_REPORTED.
+     */
+    NOT_REPORTED,
+    
+    /**
+     * Unknown.
+     */
+    UNKNOWN;
+
 
     /**
-     * Convert a Role status code into an emun.
-     * 
-     * @param value the code.
-     * @return the enum.
+     * default constructor.
      */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
+    PersonEthnicGroup() {
+        // do nothing
     }
-    
-    /**
-     * @param cs PO entity.
-     * @param map map of enum values.
-     * @return best guess of <code>cs</code>'s ISO equivalent.
-     */
-    public static Cd convertToCd(Object cs, BidiMap map) {
-        Cd iso = new Cd();
-        if (cs == null) {
-            iso.setNullFlavor(NullFlavor.NI);
-        } else {
-            String code = (String) map.getKey(cs);
-            iso.setCode(code);
-        }
-        return iso;
-    }
+
+
 }

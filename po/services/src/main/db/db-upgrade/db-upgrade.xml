@@ -36,4 +36,8 @@
        <comment>Upgrade for PO-1199 - set of otherIdentifiers on correlations</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1199.sql"/>
     </changeSet>
+    <changeSet id="PO-1213" author="slustbader">
+       <comment>Upgrade for PO-1213 - adding person props sex, race, ethnic codes, birthdatw</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1213.sql"/>
+    </changeSet>
 </databaseChangeLog>

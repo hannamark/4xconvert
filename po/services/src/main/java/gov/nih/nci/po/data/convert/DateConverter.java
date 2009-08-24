@@ -80,67 +80,47 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.CodeValue;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.coppa.iso.Ts;
 
-import org.apache.commons.collections.BidiMap;
+import java.util.Date;
 
 /**
- * @author Scott Miller
- * 
+ * Converter for Ts to Date.
+ * @author mshestopalov
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+public class DateConverter extends AbstractXSnapshotConverter<Date> {
 
     /**
      * {@inheritDoc}
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
-            return null;
+    public <TO> TO convert(Class<TO> returnClass, Date value) {
+        if (returnClass == Ts.class) {
+            return (TO) convertToTs(value);
         }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (CodeValue.class.isAssignableFrom(returnClass)) {        
-            return (TO) convertToCodeValue((Class<? extends CodeValue>) returnClass, value);
-        }
+
         throw new UnsupportedOperationException(returnClass.getName());
     }
-    
-    private static <CV extends CodeValue> CV convertToCodeValue(Class<CV> type, Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(type, value.getCode());
-    }
+
 
     /**
-     * Convert a Role status code into an emun.
-     * 
-     * @param value the code.
-     * @return the enum.
+     *
+     * @param value a date.
+     * @return an iso TS
      */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
-    }
-    
-    /**
-     * @param cs PO entity.
-     * @param map map of enum values.
-     * @return best guess of <code>cs</code>'s ISO equivalent.
-     */
-    public static Cd convertToCd(Object cs, BidiMap map) {
-        Cd iso = new Cd();
-        if (cs == null) {
+    public static Ts convertToTs(Date value) {
+        Ts iso = new Ts();
+        if (value == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
-            String code = (String) map.getKey(cs);
-            iso.setCode(code);
+            iso.setValue(value);
         }
         return iso;
     }
+
 }
