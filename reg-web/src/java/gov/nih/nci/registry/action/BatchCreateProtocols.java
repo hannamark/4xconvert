@@ -234,7 +234,7 @@ public class BatchCreateProtocols {
                     responsiblePersonId = lookUpPersons(sponsorPersonDto);
                 } else {
                     responsiblePersonId = getTitleIi(dto.getResponsibleGenericContactName(),
-                            dto.getSponsorContactEmail(), dto.getSponsorPhone(),
+                            dto.getSponsorContactEmail(), dto.getSponsorContactPhone(),
                             sponsorIdIi);
                 }
             }
@@ -360,11 +360,11 @@ public class BatchCreateProtocols {
             isoDtoList = PoRegistry.getOrganizationalContactCorrelationService().search(contactDTO);
             if (isoDtoList.isEmpty()) {
                 //create the title
-                PoRegistry.getOrganizationalContactCorrelationService()
+                responsibleIi = PoRegistry.getOrganizationalContactCorrelationService()
                 .createCorrelation(contactDTO);
+            } else {
+                responsibleIi = DSetConverter.convertToIi(isoDtoList.get(0).getIdentifier());
             }
-            
-            responsibleIi = DSetConverter.convertToIi(isoDtoList.get(0).getIdentifier());
         return responsibleIi;
     }
     private TrialDTO convertToTrialDTO(StudyProtocolBatchDTO batchDTO) {
