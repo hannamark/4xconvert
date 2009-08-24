@@ -81,19 +81,17 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -131,7 +129,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
     @EJB
        StudyProtocolServiceLocal studyProtocolService = null;
     @EJB
-    ProtocolQueryServiceLocal spqService = null;
+    DocumentWorkflowStatusServiceLocal dwsService = null;
     /**
      * @return log4j Logger
      */
@@ -162,10 +160,13 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-
             // enforce business rules
            StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
-            StudyStatusCode oldCode = null;
+           if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier())) {
+               //this means no change in update 
+               return oldStatus;   
+              } 
+           StudyStatusCode oldCode = null;
             Timestamp oldDate = null;
 
             if (oldStatus != null) {
@@ -274,14 +275,13 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
      */
     private boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto,
             Ii studyProtocolIi) throws PAException {
-        StudyProtocolQueryDTO spqDTO = spqService.getTrialSummaryByStudyProtocolId(
-                IiConverter.convertToLong(studyProtocolIi));
+        DocumentWorkflowStatusDTO dwsDTO = dwsService.getCurrentByStudyProtocol(studyProtocolIi);
         StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         boolean statusOrDateChanged = true;
         //original submission
-        if (spqDTO.getDocumentWorkflowStatusCode() != null 
-                && spqDTO.getDocumentWorkflowStatusCode().getCode().
-                    equalsIgnoreCase(DocumentWorkflowStatusCode.SUBMITTED.getCode()) 
+        if (dwsDTO.getStatusCode().getCode() != null 
+                && DocumentWorkflowStatusCode.SUBMITTED.getCode().
+                    equalsIgnoreCase(dwsDTO.getStatusCode().getCode()) 
                 && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
             statusOrDateChanged = false;
         }
@@ -435,7 +435,7 @@ extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, Study
                 && (trialStartDate.after(statusDate) || !studyStartDateType.equals(
                          ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
                 errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
-                              + " and same as Current Trial Status Date.\n");
+                              + " and same as or smaller than Current Trial Status Date.\n");
         }
         // Constraint/Rule: 26 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
         //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 

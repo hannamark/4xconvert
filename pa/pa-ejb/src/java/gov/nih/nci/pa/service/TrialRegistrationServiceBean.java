@@ -1159,8 +1159,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                   studyProtocolDTO.getIdentifier());
           String dwfs = isoDocWrkStatus.getStatusCode().getCode();
           
-           if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED.getDisplayName())
-                  || dwfs.equals(DocumentWorkflowStatusCode.REJECTED.getDisplayName())) {
+           if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED.getCode())
+                  || dwfs.equals(DocumentWorkflowStatusCode.REJECTED.getCode())) {
               errorMsg.append("Only Trials with processing status Accepted or Abstracted or  " 
                       + " Abstraction Verified No Response or  " 
                       + " Abstraction Verified No Response can be Updated.");
