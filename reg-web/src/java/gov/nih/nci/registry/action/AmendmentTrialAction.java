@@ -97,6 +97,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 }
                 Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
                 TrialUtil util = new TrialUtil();
+                trialDTO = new TrialDTO();
                 util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
                 TrialValidator.addSessionAttributes(trialDTO);
 
