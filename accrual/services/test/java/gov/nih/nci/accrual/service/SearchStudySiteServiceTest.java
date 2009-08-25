@@ -73,30 +73,44 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.util.List;
 
 import org.junit.Before;
-
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 25, 2009
  */
-public class AbstractServiceTest {
+public class SearchStudySiteServiceTest extends AbstractServiceTest {
+    SearchStudySiteService bean;
 
-    protected static final St BST = StConverter.convertToSt("ASLDKFJAaldfjks");
-    protected static final Ii BII = IiConverter.convertToIi(-1L);
-
+    @Override
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
+        bean = new SearchStudySiteBean();
+        super.setUp();
     }
 
+    @Test
+    public void search() throws Exception {
+        List<SearchStudySiteResultDto> rList = bean.search(
+                IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        assertEquals(1, rList.size());
+
+        rList = bean.search(BII);
+        assertEquals(0, rList.size());
+    }
 }

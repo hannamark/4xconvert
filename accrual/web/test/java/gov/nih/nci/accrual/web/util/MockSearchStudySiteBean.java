@@ -73,30 +73,60 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
-import org.junit.Before;
-
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 25, 2009
  */
-public class AbstractServiceTest {
+public class MockSearchStudySiteBean implements SearchStudySiteService {
+    private static final long S1DUKE = 101L;
+    private static final long S1WAKE = 102L;
+    private static final long S2WAKE = 103L;
 
-    protected static final St BST = StConverter.convertToSt("ASLDKFJAaldfjks");
-    protected static final Ii BII = IiConverter.convertToIi(-1L);
+    /** mock data. */
+    public static Map<Ii, List<SearchStudySiteResultDto>> dtos;
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
+    static {
+        dtos = new HashMap<Ii, List<SearchStudySiteResultDto>>();
+        List<SearchStudySiteResultDto> l = new ArrayList<SearchStudySiteResultDto>();
+        SearchStudySiteResultDto i = new SearchStudySiteResultDto();
+        i.setOrganizationName(StConverter.convertToSt("Duke"));
+        i.setStudySiteIi(IiConverter.convertToIi(S1DUKE));
+        l.add(i);
+        i = new SearchStudySiteResultDto();
+        i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
+        i.setStudySiteIi(IiConverter.convertToIi(S1WAKE));
+        l.add(i);
+        dtos.put(IiConverter.converToStudyProtocolIi(1L), l);
+
+        l = new ArrayList<SearchStudySiteResultDto>();
+        i = new SearchStudySiteResultDto();
+        i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
+        i.setStudySiteIi(IiConverter.convertToIi(S2WAKE));
+        l.add(i);
+        dtos.put(IiConverter.converToStudyProtocolIi(2L), l);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException {
+        return dtos.get(studyProtocolIi);
+    }
 }

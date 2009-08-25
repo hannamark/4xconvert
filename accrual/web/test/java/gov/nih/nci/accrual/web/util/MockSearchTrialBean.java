@@ -76,16 +76,13 @@
 *
 *
 */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -93,48 +90,48 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
-import javax.ejb.Stateless;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 17, 2009
+ * @since Aug 25, 2009
  */
+public class MockSearchTrialBean implements SearchTrialService {
 
-@Stateless
-public class SearchTrialBean implements SearchTrialService {
+    /** mock data. */
+    public static List<SearchTrialResultDto> dtos;
 
-    private static final int SP_IDENTIFIER_IDX = 0;
-    private static final int ORG_NAME_IDX = 1;
-    private static final int SS_IDENTIFIER = 2;
-    private static final int SP_TITLE_IDX = 3;
-    private static final int SP_ID_IDX = 4;
-    private static final int PERSON_IDX = 5;
+    static {
+        dtos = new ArrayList<SearchTrialResultDto>();
+        SearchTrialResultDto r = new SearchTrialResultDto();
+        r.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(1L));
+        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00001"));
+        r.setLeadOrgName(StConverter.convertToSt("Duke"));
+        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE 001"));
+        r.setOfficialTitle(StConverter.convertToSt("Phase II study for Melanoma"));
+        r.setPrincipalInvestigator(StConverter.convertToSt("John Doe"));
+        dtos.add(r);
+
+        r = new SearchTrialResultDto();
+        r.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(2L));
+        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00002"));
+        r.setLeadOrgName(StConverter.convertToSt("Wake Forest"));
+        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 001"));
+        r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
+        r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
+        dtos.add(r);
+    }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria) throws RemoteException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = generateStudyProtocolQuery(criteria);
-            query = session.createQuery(hql);
-            List<Object> queryList = query.list();
-            for (Object id : queryList) {
-                result.add(getTrialSummaryByStudyProtocolIi(IiConverter.converToStudyProtocolIi((Long) id)));
+        for (SearchTrialResultDto dto : dtos) {
+            if (contains(dto.getAssignedIdentifier(), criteria.getAssignedIdentifier())
+                && contains(dto.getLeadOrgTrialIdentifier(), criteria.getLeadOrgTrialIdentifier())
+                && contains(dto.getOfficialTitle(), criteria.getOfficialTitle())) {
+                result.add(dto);
             }
-        } catch (HibernateException hbe) {
-            throw new RemoteException(
-                    "Hibernate exception in SearchTrialBean.search().", hbe);
         }
         return result;
     }
@@ -142,85 +139,24 @@ public class SearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException {
-        SearchTrialResultDto result = new SearchTrialResultDto();
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql =
-                " select sp.identifier, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, sp.id, per "
-                + "from StudyProtocol as sp "
-                + "left outer join sp.studyContacts as sc "
-                + "left outer join sc.clinicalResearchStaff as hcp "
-                + "left outer join hcp.person as per "
-                + "left outer join sp.studySites as ss  "
-                + "left outer join ss.researchOrganization as ro "
-                + "left outer join ro.organization as org "
-                + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
-                + "  and (ss.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "' "
-                + "       or ss.functionalCode is null) "
-                + "  and (sc.roleCode ='" + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' "
-                + "       or sc.roleCode is null) ";
-            query = session.createQuery(hql);
-            List<Object> queryList = query.list();
-            if (queryList.size() < 1) {
-                throw new RemoteException("Trial not found in SearchTrialBean.getTrialSummaryByStudyProtocolIi().");
+        SearchTrialResultDto result = null;
+        for (SearchTrialResultDto dto : dtos) {
+            if (IiConverter.convertToLong(studyProtocolIi).equals(IiConverter.convertToLong(
+                    dto.getStudyProtocolIdentifier()))) {
+                result = dto;
             }
-            Object[] qArr = (Object[]) queryList.get(0);
-            result.setAssignedIdentifier(StConverter.convertToSt((String) qArr[SP_IDENTIFIER_IDX]));
-            result.setLeadOrgName(StConverter.convertToSt((String) qArr[ORG_NAME_IDX]));
-            result.setLeadOrgTrialIdentifier(StConverter.convertToSt((String) qArr[SS_IDENTIFIER]));
-            result.setOfficialTitle(StConverter.convertToSt((String) qArr[SP_TITLE_IDX]));
-            result.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi((Long) qArr[SP_ID_IDX]));
-            Person person = (Person) qArr[PERSON_IDX];
-            result.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
-        } catch (HibernateException hbe) {
-            throw new RemoteException(
-                    "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
         }
         return result;
     }
 
-    private String generateStudyProtocolQuery(SearchTrialCriteriaDto criteria) throws RemoteException {
-        StringBuffer hql = new StringBuffer();
-        try {
-            hql.append("select distinct sp.id "
-                            + "from StudyProtocol as sp "
-                            + "left outer join sp.studySites as sps ");
-            hql.append(generateWhereClause(criteria));
-        } catch (Exception e) {
-            throw new RemoteException("Exception thrown in SearchTrialBean.generateStudyProtocolQuery().", e);
+    private boolean contains(St value, St crit) {
+        boolean result = true;
+        String c = StConverter.convertToString(crit);
+        String v = StConverter.convertToString(value);
+        if (!PAUtil.isEmpty(c) &&  !v.contains(c)) {
+            result = false;
         }
-        return hql.toString();
-    }
-
-    private String generateWhereClause(SearchTrialCriteriaDto criteria) throws RemoteException {
-        String assignedIdentifier = StConverter.convertToString(criteria.getAssignedIdentifier());
-        String leadOrgTrialIdentifier = StConverter.convertToString(criteria.getLeadOrgTrialIdentifier());
-        String officialTitle = StConverter.convertToString(criteria.getOfficialTitle());
-        StringBuffer where = new StringBuffer();
-
-        try {
-            where.append("where sp.statusCode = '" + ActStatusCode.ACTIVE.name() + "' ");
-            if (PAUtil.isNotEmpty(assignedIdentifier)) {
-                where.append(" and upper(sp.identifier)  like '%"
-                        + assignedIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''")
-                        + "%'");
-            }
-            if (PAUtil.isNotEmpty(officialTitle)) {
-                where.append(" and upper(sp.officialTitle)  like '%"
-                        + officialTitle.toUpperCase(Locale.US).trim().replaceAll("'", "''")
-                        + "%'");
-            }
-            if (PAUtil.isNotEmpty(leadOrgTrialIdentifier)) {
-                where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
-                                + leadOrgTrialIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''") + "%'");
-            }
-        } catch (Exception e) {
-            throw new RemoteException("Exception thrown in SearchTrialBean.generateWhereClause().", e);
-        }
-        return where.toString();
+        return result;
     }
 }

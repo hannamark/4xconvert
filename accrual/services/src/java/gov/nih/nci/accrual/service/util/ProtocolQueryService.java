@@ -89,6 +89,7 @@ import javax.ejb.Remote;
  * @author Hugh Reinhart
  * @since Aug 24, 2009
  */
+@Deprecated
 @Remote
 public interface ProtocolQueryService {
     /**

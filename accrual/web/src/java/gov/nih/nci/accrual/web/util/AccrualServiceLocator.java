@@ -136,6 +136,7 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
+    @Deprecated
     public ProtocolQueryService getProtocolQueryService() {
         return serviceLocator.getProtocolQueryService();
     }

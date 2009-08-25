@@ -73,30 +73,80 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.service.util.SearchTrialBean;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
-import org.junit.Before;
+import java.rmi.RemoteException;
 
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Aug 25, 2009
  */
-public class AbstractServiceTest {
+public class SearchTrialServiceTest extends AbstractServiceTest {
+    SearchTrialService bean;
 
-    protected static final St BST = StConverter.convertToSt("ASLDKFJAaldfjks");
-    protected static final Ii BII = IiConverter.convertToIi(-1L);
-
+    @Override
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
+        bean = new SearchTrialBean();
+        super.setUp();
+    }
+
+    @Test
+    public void search() throws Exception {
+        bean.search(new SearchTrialCriteriaDto());
+        assertEquals(TestSchema.studyProtocols.size() - TestSchema.inactiveStudyProtocolCount,
+                bean.search(new SearchTrialCriteriaDto()).size());
+
+        // get by assigned identifier
+        SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
+        crit.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocols.get(2).getIdentifier()));
+        assertEquals(1, bean.search(crit).size());
+        crit.setAssignedIdentifier(BST);
+        assertEquals(0, bean.search(crit).size());
+
+        // get by title
+        crit = new SearchTrialCriteriaDto();
+        crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
+        assertEquals(1, bean.search(crit).size());
+        crit.setOfficialTitle(BST);
+        assertEquals(0, bean.search(crit).size());
+
+        // get by title
+        crit = new SearchTrialCriteriaDto();
+        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
+        assertEquals(1, bean.search(crit).size());
+        crit.setLeadOrgTrialIdentifier(BST);
+        assertEquals(0, bean.search(crit).size());
+    }
+
+    @Test
+    public void getTrialSummaryByStudyProtocolIi() throws Exception {
+        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        assertNotNull(result);
+
+        try {
+            bean.getTrialSummaryByStudyProtocolIi(BII);
+            fail();
+        } catch (RemoteException e) {
+            // expected behavior
+        }
     }
 
 }

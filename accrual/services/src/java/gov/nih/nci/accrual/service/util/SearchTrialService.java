@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.coppa.iso.Ii;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -98,4 +99,10 @@ public interface SearchTrialService {
      * @throws RemoteException exception
      */
     List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria) throws RemoteException;
+    /**
+     * @param studyProtocolIi protocol id
+     * @return ProtocolQueryResultDto
+     * @throws RemoteException on error
+     */
+    SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException;
 }

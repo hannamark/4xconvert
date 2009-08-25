@@ -76,11 +76,16 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.pa.domain.PlannedObservationResult;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.util.PAUtil;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -91,13 +96,15 @@ import org.hibernate.Transaction;
 * @since 08/07/2009
 */
 public class TestSchema {
-    public static List<PlannedObservationResult> plannedObservationResults;
+    public static int inactiveStudyProtocolCount = 0;
+    public static List<StudyProtocol> studyProtocols = new ArrayList<StudyProtocol>();
+    public static List<StudySite> studySites = new ArrayList<StudySite>();
 
     private static boolean dataLoaded = false;
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
     /**
-     *
+     *  Reset the schema.
      */
     public static void reset() {
         AccrualHibernateUtil.testHelper = testHelper;
@@ -122,28 +129,71 @@ public class TestSchema {
      * @param <T> t
      * @param oList o
      */
-    public static <T> void addUpdObjects(ArrayList<T> oList) {
+    public static <T> void addUpdObjects(List<T> oList) {
         for (T obj : oList) {
             addUpdObject(obj);
         }
     }
 
     public static void primeData() {
-        plannedObservationResults = new ArrayList<PlannedObservationResult>();
 
-        PlannedObservationResult por = new PlannedObservationResult();
-        por.setResultCode("resultCode");
-        por.setResultCodeModifiedText("resultCodeModifiedText");
-        por.setResultDateRangeLow(new Timestamp(new Date().getTime()));
-        por.setResultDateRangeHigh(new Timestamp(new Date().getTime()));
-        por.setResultIndicator(true);
-        por.setResultText("resultText");
-        por.setTypeCode("typeCode");
-        addUpdObject(por);
-        plannedObservationResults.add(por);
+        StudyProtocol sp = new StudyProtocol();
+        sp.setOfficialTitle("Phase II study for Melanoma");
+        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setIdentifier("NCI-2009-00001");
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        addUpdObject(sp);
+        studyProtocols.add(sp);
+
+        sp = new StudyProtocol();
+        sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
+        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setIdentifier("NCI-2009-00002");
+        sp.setStatusCode(ActStatusCode.INACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        addUpdObject(sp);
+        studyProtocols.add(sp);
+        inactiveStudyProtocolCount++;
+
+        sp = new StudyProtocol();
+        sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
+        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setIdentifier("NCI-2009-00002");
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(2));
+        addUpdObject(sp);
+        studyProtocols.add(sp);
+
+        StudySite ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("Local SP 001");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(ss);
+        studySites.add(ss);
+
+        ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("Local SP 001");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(ss);
+        studySites.add(ss);
 
         dataLoaded = true;
-
     }
 
 }

@@ -79,17 +79,21 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -97,39 +101,38 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class SearchStudySiteBean implements SearchStudySiteService {
-    private static final long S1DUKE = 101L;
-    private static final long S1WAKE = 102L;
-    private static final long S2WAKE = 103L;
-
-    /** mock data. */
-    public static Map<Ii, List<SearchStudySiteResultDto>> dtos;
-
-    static {
-        dtos = new HashMap<Ii, List<SearchStudySiteResultDto>>();
-        List<SearchStudySiteResultDto> l = new ArrayList<SearchStudySiteResultDto>();
-        SearchStudySiteResultDto i = new SearchStudySiteResultDto();
-        i.setOrganizationName(StConverter.convertToSt("Duke"));
-        i.setStudySiteIi(IiConverter.convertToIi(S1DUKE));
-        l.add(i);
-        i = new SearchStudySiteResultDto();
-        i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
-        i.setStudySiteIi(IiConverter.convertToIi(S1WAKE));
-        l.add(i);
-        dtos.put(IiConverter.converToStudyProtocolIi(1L), l);
-
-        l = new ArrayList<SearchStudySiteResultDto>();
-        i = new SearchStudySiteResultDto();
-        i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
-        i.setStudySiteIi(IiConverter.convertToIi(S2WAKE));
-        l.add(i);
-        dtos.put(IiConverter.converToStudyProtocolIi(2L), l);
-    }
 
     /**
      * {@inheritDoc}
      */
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIdentifier) throws RemoteException {
-        return dtos.get(studyProtocolIdentifier);
+    @SuppressWarnings("unchecked")
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException {
+        List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
+        Session session = null;
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = " select ss.id, org.name "
+                + "from StudyProtocol as sp "
+                + "join sp.studySites as ss "
+                + "left outer join ss.researchOrganization as ro "
+                + "left outer join ro.organization as org "
+                + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
+                + "  and ss.functionalCode ='" + StudySiteFunctionalCode.TREATING_SITE + "' ";
+            query = session.createQuery(hql);
+            List<Object> queryList = query.list();
+            for (Object qArr : queryList) {
+                Object[] site = (Object[]) qArr;
+                SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
+                dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
+                result.add(dto);
+            }
+        } catch (HibernateException hbe) {
+            throw new RemoteException(
+                    "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
+        }
+        return result;
     }
 
 }
