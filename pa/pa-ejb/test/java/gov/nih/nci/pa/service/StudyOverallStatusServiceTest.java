@@ -104,14 +104,20 @@ import org.junit.Test;
  *
  */
 public class StudyOverallStatusServiceTest {
-    private StudyOverallStatusServiceRemote remoteEjb = new StudyOverallStatusServiceBean();
+    private StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
+    private StudyOverallStatusServiceRemote remoteEjb = bean;
+    private final DocumentWorkflowStatusServiceBean dws = new DocumentWorkflowStatusServiceBean();
+    private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
     Ii pid;
     
     @Before
     public void setUp() throws Exception {
+        bean.dwsService = dws;
+        bean.studyProtocolService = sps;
         TestSchema.reset1();
         TestSchema.primeData();
         pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        
     }    
     
     @Test
@@ -133,6 +139,7 @@ public class StudyOverallStatusServiceTest {
         try {
             dto.setIdentifier(IiConverter.convertToIi((Long) null)); 
             dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
+            dto.setStudyProtocolIdentifier(pid);
             remoteEjb.create(dto);
             fail("StudyOverallStatus transitions must follow business rules.");
         } catch (PAException e) {
@@ -141,6 +148,7 @@ public class StudyOverallStatusServiceTest {
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
+        dto.setStudyProtocolIdentifier(pid);
         remoteEjb.create(dto);
         
         StudyOverallStatusDTO result = 
