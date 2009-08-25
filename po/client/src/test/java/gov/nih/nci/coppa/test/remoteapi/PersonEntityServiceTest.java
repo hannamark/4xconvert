@@ -164,8 +164,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
     
     @Test
     public void createWithBioCodes() throws Exception {
-        
-        try {
+       
             PersonDTO dto = new PersonDTO();
             dto.setName(new EnPn());
             Enxp part = new Enxp(EntityNamePartType.GIV);
@@ -219,9 +218,13 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             Ii p = getPersonService().createPerson(dto);
             assertNotNull(p);
             assertNotNull(p.getExtension());
-        } catch (EntityValidationException e) {
-            fail(e.getErrorMessages());
-        }
+            PersonDTO perDto = getPersonService().getPerson(p);
+            assertEquals("male", perDto.getSexCode().getCode());
+            assertEquals("09/28/1980", sdf.format(perDto.getBirthDate().getValue())); 
+            assertEquals(2, perDto.getEthnicGroupCode().getItem().size());
+            assertEquals(2, perDto.getRaceCode().getItem().size());
+            assertEquals(2, perDto.getEthnicGroupCode().getItem().size());
+           
     }
 
     @Test

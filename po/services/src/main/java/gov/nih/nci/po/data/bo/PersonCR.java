@@ -87,6 +87,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -98,7 +100,6 @@ import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.Type;
 import org.hibernate.validator.Valid;
 
 
@@ -252,13 +253,13 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     /**
      * {@inheritDoc}
      */
+    @Enumerated(EnumType.STRING)
     @CollectionOfElements
     @JoinTable(
             name = "personcr_ethnicgroup",
             joinColumns = @JoinColumn(name = "per_cr_id")
     )
     @ForeignKey(name = "PER_CR_EG_FK")
-    @Type(type = "gov.nih.nci.po.data.bo.PersonEthnicGroup")
     @Columns(columns = {
             @Column(name = "ETHNIC_GROUP")
     })
@@ -270,13 +271,13 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     /**
      * {@inheritDoc}
      */
+    @Enumerated(EnumType.STRING)
     @CollectionOfElements
     @JoinTable(
             name = "personcr_race",
             joinColumns = @JoinColumn(name = "per_cr_id")
     )
     @ForeignKey(name = "PER_CR_RACE_FK")
-    @Type(type = "gov.nih.nci.po.data.bo.PersonRace")
     @Columns(columns = {
             @Column(name = "RACE")
     })
