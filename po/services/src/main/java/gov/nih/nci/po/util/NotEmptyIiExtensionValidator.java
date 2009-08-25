@@ -3,19 +3,16 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
-import org.hibernate.validator.PropertyConstraint;
-import org.hibernate.validator.Validator;
 
 /**
- * Check the non emptyness of the element.
- * 
+ * Checks that the Ii extension has been set.
+ *
  */
-public class NotEmptyIiExtensionValidator implements Validator<NotEmptyIiExtension>, PropertyConstraint, Serializable {
+public class NotEmptyIiExtensionValidator extends AbstractIiValidator<NotEmptyIiExtension> {
     private static final long serialVersionUID = 1L;
     private String columnName;
 
@@ -29,16 +26,8 @@ public class NotEmptyIiExtensionValidator implements Validator<NotEmptyIiExtensi
     /**
      * {@inheritDoc}
      */
-    public boolean isValid(Object value) {
-        if (value == null) {
-            return false;
-        }
-        if (!(value instanceof Ii)) {
-            return false;
-        }
-
-        Ii ii = (Ii) value;
-
+    @Override
+    boolean validate(Ii ii) {
         return new NotEmptyValidator().isValid(ii.getExtension());
     }
 

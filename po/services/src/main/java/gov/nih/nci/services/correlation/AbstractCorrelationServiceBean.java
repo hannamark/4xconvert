@@ -163,7 +163,7 @@ public abstract class AbstractCorrelationServiceBean
     }
 
     /**
-     * TODO.
+     * Create a new correlation.
      *
      * @param dto dto
      * @return identifier
@@ -207,7 +207,7 @@ public abstract class AbstractCorrelationServiceBean
         List<T> hcps = getLocalService().getByIds(longIds.toArray(new Long[longIds.size()]));
         return PoXsnapshotHelper.createSnapshotList(hcps);
     }
-    
+
     /**
      * {@inheritDoc}
      */

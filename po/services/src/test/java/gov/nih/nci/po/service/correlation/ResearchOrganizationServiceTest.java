@@ -117,10 +117,10 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
 
     @Override
     ResearchOrganization getSampleStructuralRole() {
-        ResearchOrganization oc = new ResearchOrganization();
-        oc.setPlayer(basicOrganization);
-        oc.setTypeCode(sampleType);
-        oc.setFundingMechanism(fm);
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setPlayer(basicOrganization);
+        ro.setTypeCode(sampleType);
+        ro.setFundingMechanism(fm);
 
         try {
             // re-gen new Player Org
@@ -129,7 +129,7 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
             throw new RuntimeException(ex);
         }
 
-        return oc;
+        return ro;
     }
 
     @Override
@@ -188,4 +188,5 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
         Map<String, String[]> errors = EjbTestHelper.getResearchOrganizationServiceBean().validate(ro);
         assertEquals(1, errors.size());
     }
+
 }

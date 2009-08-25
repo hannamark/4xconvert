@@ -3,19 +3,15 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
-import org.hibernate.validator.PropertyConstraint;
-import org.hibernate.validator.Validator;
 
 /**
- * Check the non emptyness of the element.
- * 
+ * Checks that the Ii root has been set.
  */
-public class NotEmptyIiRootValidator implements Validator<NotEmptyIiRoot>, PropertyConstraint, Serializable {
+public class NotEmptyIiRootValidator extends AbstractIiValidator<NotEmptyIiRoot> {
     private static final long serialVersionUID = 1L;
     private String columnName;
 
@@ -29,16 +25,8 @@ public class NotEmptyIiRootValidator implements Validator<NotEmptyIiRoot>, Prope
     /**
      * {@inheritDoc}
      */
-    public boolean isValid(Object value) {
-        if (value == null) {
-            return false;
-        }
-        if (!(value instanceof Ii)) {
-            return false;
-        }
-
-        Ii ii = (Ii) value;
-
+    @Override
+    boolean validate(Ii ii) {
         return new NotEmptyValidator().isValid(ii.getRoot());
     }
 

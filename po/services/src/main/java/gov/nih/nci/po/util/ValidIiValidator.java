@@ -84,17 +84,13 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 
-import java.io.Serializable;
-
 import org.hibernate.mapping.Property;
-import org.hibernate.validator.PropertyConstraint;
-import org.hibernate.validator.Validator;
 
 
 /**
  * Checks ISO conformance of the element.
  */
-public class ValidIiValidator implements Validator<ValidIi>, PropertyConstraint, Serializable {
+public class ValidIiValidator extends AbstractIiValidator<ValidIi> {
 
     private static final long serialVersionUID = -7752244855993073221L;
 
@@ -108,16 +104,8 @@ public class ValidIiValidator implements Validator<ValidIi>, PropertyConstraint,
     /**
      * {@inheritDoc}
      */
-    public boolean isValid(Object value) {
-        if (value == null) {
-            return false;
-        }
-        if (!(value instanceof Ii)) {
-            return false;
-        }
-
-        Ii ii = (Ii) value;
-
+    @Override
+    boolean validate(Ii ii) {
         if (ii.getNullFlavor() == null) {
             // If Ii is not null, root must be set
             return ii.getRoot() != null;

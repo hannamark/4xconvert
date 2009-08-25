@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 
+
 /**
  * Curation interface for Roles.
  *
@@ -102,9 +103,10 @@ public interface CuratableRole<BO extends Correlation, CR extends CorrelationCha
      * @param status the role's status
      */
     void setStatus(RoleStatus status);
-    
+
     /**
      * @return the role's prior status
      */
     RoleStatus getPriorStatus();
+
 }

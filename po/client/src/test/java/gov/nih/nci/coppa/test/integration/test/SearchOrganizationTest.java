@@ -84,7 +84,6 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
     private void setPoId(int row) {
         if (poId == null) {
             poId = selenium.getText("//table[@id='row']/tbody/tr[" + row+ "]/td[1]");
-            System.out.println("po id = " + selenium.getTable("row."+row+".0"));
         }
     }
 

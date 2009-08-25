@@ -85,10 +85,13 @@ package gov.nih.nci.po.service.correlation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization;
 import gov.nih.nci.po.data.bo.AbstractIdentifiedPerson;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
@@ -112,7 +115,11 @@ import gov.nih.nci.po.util.TestServiceLocator;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
 
@@ -241,7 +248,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         T sr2 = createSample();
 
         T sr3 = createNullifiedSample();
-        
+
         Long[] ids = null;
         if (sr1 instanceof AbstractPersonRole || sr1 instanceof AbstractIdentifiedPerson){
             ids = new Long[1];
@@ -278,7 +285,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         service.create(r);
         return r;
     }
-    
+
     protected T createNullifiedSample() throws Exception {
         AbstractCuratableServiceBean<T> service = getService();
         T r = createSample();
@@ -396,4 +403,106 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         PoHibernateUtil.getCurrentSession().flush();
         basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testOtherIdentifiersValidator() throws Exception {
+        AbstractCuratableServiceBean<T> service = getService();
+
+        T sr = createSample();
+        // verify that the empty set will pass validation
+        Map<String, String[]> errors = service.validate(sr);
+        assertEquals(0, errors.size());
+
+        String[] errorStrings = null;
+
+        if (sr instanceof AbstractRole) {
+            AbstractRole abstractRole = (AbstractRole) sr;
+            abstractRole.setOtherIdentifiers(null);
+            errors = service.validate(sr);
+            assertEquals(1, errors.size());
+            errorStrings = errors.get("otherIdentifiers");
+            assertEquals(3, errorStrings.length);
+            assertEquals("Invalid Ii per ISO OCL constraints.", errorStrings[0]);
+            assertEquals("Extension must be set", errorStrings[1]);
+            assertEquals("Root must be set", errorStrings[2]);
+
+            Set nonIiSet = new HashSet();
+            Ii ii = new Ii();
+            ii.setExtension("1234");
+            ii.setRoot("5678");
+            nonIiSet.add(ii);
+            nonIiSet.add("Not an II");
+            abstractRole.setOtherIdentifiers(nonIiSet);
+            errors = service.validate(sr);
+            assertEquals(1, errors.size());
+            errorStrings = errors.get("otherIdentifiers");
+            assertEquals(3, errorStrings.length);
+            assertEquals("Invalid Ii per ISO OCL constraints.", errorStrings[0]);
+            assertEquals("Extension must be set", errorStrings[1]);
+            assertEquals("Root must be set", errorStrings[2]);
+
+            abstractRole.setOtherIdentifiers(new LinkedHashSet<Ii>());
+        }
+
+        Ii otherIi = new Ii();
+        sr.getOtherIdentifiers().add(otherIi);
+        errors = service.validate(sr);
+        assertEquals(1, errors.size());
+        errorStrings = errors.get("otherIdentifiers");
+        assertEquals(3, errorStrings.length);
+        assertEquals("Invalid Ii per ISO OCL constraints.", errorStrings[0]);
+        assertEquals("Extension must be set", errorStrings[1]);
+        assertEquals("Root must be set", errorStrings[2]);
+
+        otherIi.setNullFlavor(NullFlavor.NI);
+        errors = service.validate(sr);
+        assertEquals(1, errors.size());
+        errorStrings = errors.get("otherIdentifiers");
+        assertEquals(2, errorStrings.length);
+        assertEquals("Extension must be set", errorStrings[0]);
+        assertEquals("Root must be set", errorStrings[1]);
+
+        otherIi.setRoot("1234");
+        errors = service.validate(sr);
+        assertEquals(1, errors.size());
+        errorStrings = errors.get("otherIdentifiers");
+        assertEquals(2, errorStrings.length);
+        assertEquals("Invalid Ii per ISO OCL constraints.", errorStrings[0]);
+        assertEquals("Extension must be set", errorStrings[1]);
+
+        otherIi.setNullFlavor(null);
+        otherIi.setRoot("1234");
+        errors = service.validate(sr);
+        assertEquals(1, errors.size());
+        errorStrings = errors.get("otherIdentifiers");
+        assertEquals(1, errorStrings.length);
+        assertEquals("Extension must be set", errorStrings[0]);
+
+        otherIi.setExtension("1234");
+        otherIi.setRoot(null);
+        errors = service.validate(sr);
+        assertEquals(1, errors.size());
+        errorStrings = errors.get("otherIdentifiers");
+        assertEquals(2, errorStrings.length);
+        assertEquals("Invalid Ii per ISO OCL constraints.", errorStrings[0]);
+        assertEquals("Root must be set", errorStrings[1]);
+
+        otherIi.setExtension("1234");
+        otherIi.setRoot("5678");
+        errors = service.validate(sr);
+        assertEquals(0, errors.size());
+
+        // add an invalid Ii in addition to the valid Ii
+        Ii anotherIi = new Ii();
+        sr.getOtherIdentifiers().add(anotherIi);
+        errors = service.validate(sr);
+        assertEquals(1, errors.size());
+        errorStrings = errors.get("otherIdentifiers");
+        assertEquals(3, errorStrings.length);
+        assertEquals("Invalid Ii per ISO OCL constraints.", errorStrings[0]);
+        assertEquals("Extension must be set", errorStrings[1]);
+        assertEquals("Root must be set", errorStrings[2]);
+    }
+
 }

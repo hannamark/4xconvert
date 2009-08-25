@@ -80,29 +80,63 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.util;
+
+import gov.nih.nci.coppa.iso.Ii;
+
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.hibernate.validator.PropertyConstraint;
+import org.hibernate.validator.Validator;
 
 /**
- *
- * @param <C> the afected correlation type.
- * @author gax
+ * Base class to validate either a single Ii or the individual Iis within a Collection&lt;Ii&gt;.  An empty collection
+ * is considered valid.
+ * @author Steve Lustbader
+ * @param <VA> type of validator annotation
  */
-public interface CorrelationChangeRequest<C extends Correlation> extends ChangeRequest<C> {
+public abstract class AbstractIiValidator<VA extends Annotation> implements Validator<VA>,
+        PropertyConstraint, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
-     * the id setter.
-     *
-     * @param id the id
+     * {@inheritDoc}
      */
-    void setId(Long id);
+    public final boolean isValid(Object value) {
+        if (value == null) {
+            return false;
+        }
+        if (!(value instanceof Ii) && !(value instanceof Collection<?>)) {
+            return false;
+        }
+
+        if (value instanceof Ii) {
+            Ii ii = (Ii) value;
+            return validate(ii);
+        }
+        return validateCollection(value);
+    }
+
+    private boolean validateCollection(Object value) {
+        Iterator<?> iter = ((Collection<?>) value).iterator();
+        while (iter.hasNext()) {
+            Object nextValue = iter.next();
+            if (!(nextValue instanceof Ii) || !validate((Ii) nextValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
-     * @return the curration status
+     * Validate an Ii.
+     * @param ii Ii to validate
+     * @return true if the Ii is valid according to some criteria
      */
-    RoleStatus getStatus();
+    abstract boolean validate(Ii ii);
 
-    /**
-     * @param status the Correlation's status code.
-     */
-    void setStatus(RoleStatus status);
 }

@@ -83,12 +83,15 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.NotEmptyIiExtension;
+import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PhoneNotEmptyValidator;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RequiredOrganizationalContactTitleOrPerson;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniqueOrganizationalContactTitleScoper;
 import gov.nih.nci.po.util.UniquePlayerScoperPlayerOptional;
+import gov.nih.nci.po.util.ValidIi;
 
 import java.util.HashSet;
 import java.util.List;
@@ -374,9 +377,9 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
             @Column(name = "root"),
             @Column(name = "scope")
     })
-//    @ValidIi
-//    @NotEmptyIiExtension
-//    @NotEmptyIiRoot
+    @ValidIi
+    @NotEmptyIiExtension
+    @NotEmptyIiRoot
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }
