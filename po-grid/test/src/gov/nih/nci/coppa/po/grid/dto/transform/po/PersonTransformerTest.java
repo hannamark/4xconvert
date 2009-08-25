@@ -3,12 +3,13 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Person;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENPNTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.services.person.PersonDTO;
 
 import org.iso._21090.II;
@@ -37,6 +38,10 @@ AbstractTransformerTestBase <PersonTransformer, Person, PersonDTO> {
 		dto.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
 		dto.setPostalAddress(new ADTransformerTest().makeDtoSimple());
 		dto.setName(new ENPNTransformerTest().makeDtoSimple());
+		dto.setSexCode(new CDTransformerTest().makeDtoSimple());
+		dto.setRaceCode(new DSETCDTransformerTest().makeDtoSimple());
+		dto.setEthnicGroupCode(new DSETCDTransformerTest().makeDtoSimple());
+        dto.setBirthDate(new TSTransformerTest().makeDtoSimple());
 		return dto;
 	}
 
@@ -53,6 +58,10 @@ AbstractTransformerTestBase <PersonTransformer, Person, PersonDTO> {
        xml.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
        xml.setPostalAddress(new ADTransformerTest().makeXmlSimple());
        xml.setName(new ENPNTransformerTest().makeXmlSimple());
+       xml.setSexCode(new CDTransformerTest().makeXmlSimple());
+       xml.setRaceCode(new DSETCDTransformerTest().makeXmlSimple());
+       xml.setEthnicGroupCode(new DSETCDTransformerTest().makeXmlSimple());
+       xml.setBirthDate(new TSTransformerTest().makeXmlSimple());
        return xml;
 	}
 
@@ -64,6 +73,10 @@ AbstractTransformerTestBase <PersonTransformer, Person, PersonDTO> {
 		new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
 		new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
 		new ENPNTransformerTest().verifyDtoSimple(x.getName());
+		new CDTransformerTest().verifyDtoSimple(x.getSexCode());
+		new DSETCDTransformerTest().verifyDtoSimple(x.getRaceCode());
+		new DSETCDTransformerTest().verifyDtoSimple(x.getEthnicGroupCode());
+		new TSTransformerTest().verifyDtoSimple(x.getBirthDate());
 	}
 
 	@Override
@@ -74,6 +87,10 @@ AbstractTransformerTestBase <PersonTransformer, Person, PersonDTO> {
 		new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
 		new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());
 		new ENPNTransformerTest().verifyXmlSimple(x.getName());
+		new CDTransformerTest().verifyXmlSimple(x.getSexCode());
+        new DSETCDTransformerTest().verifyXmlSimple(x.getRaceCode());
+        new DSETCDTransformerTest().verifyXmlSimple(x.getEthnicGroupCode());
+        new TSTransformerTest().verifyXmlSimple(x.getBirthDate());
 	}
 
 }

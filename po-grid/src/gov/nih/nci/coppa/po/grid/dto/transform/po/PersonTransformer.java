@@ -6,9 +6,11 @@ import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.services.person.PersonDTO;
 
 /**
@@ -28,6 +30,7 @@ public final class PersonTransformer
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Person toXml(PersonDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
@@ -38,6 +41,10 @@ public final class PersonTransformer
         d.setPostalAddress(ADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         d.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
         d.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
+        d.setBirthDate(TSTransformer.INSTANCE.toXml(input.getBirthDate()));
+        d.setSexCode(CDTransformer.INSTANCE.toXml(input.getSexCode()));
+        d.setRaceCode(DSETCDTransformer.INSTANCE.toXml(input.getRaceCode()));
+        d.setEthnicGroupCode(DSETCDTransformer.INSTANCE.toXml(input.getEthnicGroupCode()));
         return d;
     }
 
@@ -54,6 +61,10 @@ public final class PersonTransformer
         d.setPostalAddress(ADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         d.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
         d.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
+        d.setBirthDate(TSTransformer.INSTANCE.toDto(input.getBirthDate()));
+        d.setSexCode(CDTransformer.INSTANCE.toDto(input.getSexCode()));
+        d.setRaceCode(DSETCDTransformer.INSTANCE.toDto(input.getRaceCode()));
+        d.setEthnicGroupCode(DSETCDTransformer.INSTANCE.toDto(input.getEthnicGroupCode()));
         return d;
     }
 

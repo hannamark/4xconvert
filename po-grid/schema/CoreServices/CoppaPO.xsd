@@ -83,6 +83,10 @@
                         <xs:element name="telecomAddress"
                             type="ISO:DSET_TEL">
                         </xs:element>
+                        <xs:element name="raceCode" type="ISO:DSET_CD" />
+                        <xs:element name="sexCode" type="ISO:CD" />
+                        <xs:element name="ethnicGroupCode" type="ISO:DSET_CD" />
+                        <xs:element name="birthDate" type="ISO:TS" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
