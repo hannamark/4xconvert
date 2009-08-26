@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -89,12 +91,15 @@ import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -108,18 +113,27 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+
 /**
 * @author Hugh Reinhart
 * @since 1/15/2009
 */
 @Stateless
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({"PMD" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyMilestoneServiceBean
         extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
         implements StudyMilestoneServiceRemote, StudyMilestoneServicelocal {
 
+    private static final Logger LOG  = Logger.getLogger(StudyMilestoneServiceBean.class);
     DocumentWorkflowStatusServiceRemote documentWorkflowStatusService = null;
     StudyProtocolServiceRemote studyProtocolService = null;
 
@@ -585,4 +599,64 @@ public class StudyMilestoneServiceBean
         }
         return canTransition;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
+            TooManyResultsException {
+        if (dto == null) {
+            LOG.error(" StudyMilestoneDTO should not be null ");
+            throw new PAException(" StudyMilestoneDTO should not be null ");
+        }
+        LOG.info("Entering search");
+        Session session = null;
+        List<StudyMilestone> studyMilestoneList = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            
+            DetachedCriteria maxId = DetachedCriteria.forClass(StudyMilestone.class, "sm2")
+                                                     .setProjection(Property.forName("id").max())
+                                                     .add(Restrictions.eq("milestoneCode", MilestoneCode.
+                                                           getByCode(dto.getMilestoneCode().getCode())))
+                                                     .add(Property.forName("sm1.studyProtocol")
+                                                                    .eqProperty("sm2.studyProtocol"));
+        
+            Criteria criteria = session.createCriteria(StudyMilestone.class, "sm1")
+                                       .add(Property.forName("sm1.id").in(maxId));
+                                       
+            int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+            criteria.setMaxResults(maxLimit);
+            criteria.setFirstResult(pagingParams.getOffset());
+            studyMilestoneList = criteria.list();
+           
+            
+           } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while retrieving StudyMilestone for dto = " + hbe);
+            throw new PAException(" Hibernate exception while retrieving " + "StudyMilestone for dto = " + hbe);
+        }
+
+        if (studyMilestoneList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
+        }
+        List<StudyMilestoneDTO> studyMilestoneDTOList = convertFromDomainToDTO(studyMilestoneList);
+        LOG.info("Leaving search");
+        return studyMilestoneDTOList;
+    }
+    
+    private List<StudyMilestoneDTO> convertFromDomainToDTO(List<StudyMilestone> studyMilestoneList) throws PAException {
+        List<StudyMilestoneDTO> studyMilestoneDTOList = null;
+        if (studyMilestoneList != null) {
+            studyMilestoneDTOList = new ArrayList<StudyMilestoneDTO>();
+            for (StudyMilestone sp : studyMilestoneList) {
+                 
+                StudyMilestoneDTO studyMilestoneDTO = get(IiConverter.convertToStudyMilestoneIi(sp.getId()));
+                studyMilestoneDTOList.add(studyMilestoneDTO);
+            }
+        }
+        return studyMilestoneDTOList;
+    }
+
 }

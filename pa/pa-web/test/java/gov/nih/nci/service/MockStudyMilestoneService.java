@@ -4,8 +4,11 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -95,5 +98,13 @@ public class MockStudyMilestoneService implements StudyMilestoneServiceRemote {
         // TODO Auto-generated method stub
         return null;
     }
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.BasePaService#update(java.lang.Object)
+     */
+    public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
+    TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+}
 
 }

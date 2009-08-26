@@ -20,5 +20,18 @@
 	                  </activation-config-property>          
 	      </activation-config>
            </message-driven>
+           
+          <session>
+            <ejb-name>pa-ejb.jar#StudyMilestoneTasksServiceRemote</ejb-name>
+            <remote>gov.nih.nci.pa.service.StudyMilestoneTasksServiceRemote</remote>
+            <ejb-class>gov.nih.nci.pa.service.StudyMilestoneTasksServiceBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+            </session>
+           
        </enterprise-beans>
+       
    </ejb-jar>
+
+ 
+   

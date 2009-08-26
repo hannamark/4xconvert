@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+ 
 <jboss-web>
     <security-domain>java:/jaas/pa</security-domain>
-</jboss-web>
+    <ejb-local-ref>
+        <ejb-ref-name>pa/StudyMilestoneTasksServiceBean/local</ejb-ref-name>
+        <local-jndi-name>pa/StudyMilestoneTasksServiceBean/localHome</local-jndi-name>
+    </ejb-local-ref> 
+</jboss-web> 

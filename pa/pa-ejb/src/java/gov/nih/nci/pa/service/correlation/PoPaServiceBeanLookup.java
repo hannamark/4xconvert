@@ -86,6 +86,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
+import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
@@ -250,5 +251,11 @@ public class PoPaServiceBeanLookup {
         return (MailManagerServiceRemote)
         JNDIUtil.lookup("pa/MailManagerServiceBean/remote");
       }
-   
+    /**
+     * @return StudyMilestoneServicelocal
+     */
+    public static StudyMilestoneServiceRemote getStudyMilestoneService() {
+        return (StudyMilestoneServiceRemote) JNDIUtil.lookup("pa/StudyMilestoneServiceBean/remote");
+    }
+
 }

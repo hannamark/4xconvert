@@ -120,6 +120,8 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceBean;
+import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
@@ -173,6 +175,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final StudyObjectiveServiceRemote studyObjectiveService = new MockStudyObjectiveService();
     private final RegulatoryAuthorityServiceRemote regulatoryAuthorityService = new RegulatoryAuthorityServiceBean();
     private final StratumGroupServiceRemote stratumGroupService = new StratumGroupServiceBean();
+    private final StudyMilestoneTasksServiceLocal studyMilestoneTasksService = new StudyMilestoneTasksServiceBean();
     /**
      * @return mock service
      */
@@ -460,6 +463,13 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public StratumGroupServiceRemote getStratumGroupService() {
         return stratumGroupService;
+    }
+
+    /**
+     * @return the studyMilestoneTasksService
+     */
+    public StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService() {
+        return studyMilestoneTasksService;
     }
 
    

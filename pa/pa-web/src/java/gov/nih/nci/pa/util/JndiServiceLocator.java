@@ -113,6 +113,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 
 
@@ -376,6 +377,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public StudyObjectiveServiceRemote getStudyObjectiveService() {
         return (StudyObjectiveServiceRemote) JNDIUtil.lookup("/pa/StudyObjectiveServiceBean/remote");
+    }
+    /**
+     * @return StudyMilestoneService
+     */
+    public StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService() {
+        return (StudyMilestoneTasksServiceLocal) JNDIUtil.lookup("/pa/StudyMilestoneTasksServiceBean/local");
     }
    
 }

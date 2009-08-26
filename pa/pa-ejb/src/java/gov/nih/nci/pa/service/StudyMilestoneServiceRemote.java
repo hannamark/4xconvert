@@ -78,6 +78,12 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+
+import java.util.List;
+
 import javax.ejb.Remote;
 
 /**
@@ -90,4 +96,20 @@ import javax.ejb.Remote;
 */
 @Remote
 public interface StudyMilestoneServiceRemote extends StudyMilestoneService {
+    
+    
+    /**
+     * This method is an extension of the existing search method. The key difference being the support for paginated
+     * results (similar to SQL LIMIT OFFSET queries).
+     * @see #search(StudyMilestoneDTO) for general search behavior
+     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
+     * @param dto the dto 
+     * @param pagingParams the settings for control pagination of results
+     * @return the study protocol 
+     * @throws PAException the PA exception
+     * @throws TooManyResultsException when the system's limit is exceeded
+     */
+    List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) 
+        throws PAException, TooManyResultsException;
+
 }

@@ -113,6 +113,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 
 
@@ -314,6 +315,10 @@ public interface ServiceLocator {
      */
     StudyObjectiveServiceRemote getStudyObjectiveService();
     
-    
+    /**
+     * @return StudyMilestoneTasksService
+     */
+    StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService();
+ 
 }
 
