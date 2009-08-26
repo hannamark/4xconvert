@@ -219,6 +219,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     RegulatoryInformationServiceRemote regulatoryInfoBean = null;
     @EJB
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
+    @EJB
+    StudyObjectiveServiceRemote studyObjectiveService = null;
     
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifer is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
@@ -393,6 +395,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         plannedActivityService.copyPlannedEligibilityStudyCriterions(fromStudyProtocolIi, toStudyProtocolIi);
         studyOutcomeMeasureService.copy(fromStudyProtocolIi, toStudyProtocolIi);
         studyRegulatoryAuthorityService.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        studyObjectiveService.copy(fromStudyProtocolIi, toStudyProtocolIi);
     }
 
     private void copyPlannedActivityArmArmInterventions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi)
@@ -1094,7 +1097,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       //enforce business rules for update
        enforceBusinessRulesForUpdate(studyProtocolDTO ,
                                      overallStatusDTO ,
-                                     documentDTO ,
                                      studyContactDTO ,
                                      studyParticipationContactDTO ,
                                      studyIndldeDTOs ,
@@ -1203,7 +1205,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
   private void enforceBusinessRulesForUpdate(
           StudyProtocolDTO studyProtocolDTO ,
           StudyOverallStatusDTO overallStatusDTO ,
-          DocumentDTO documentDTOs ,
           StudyContactDTO studyContactDTO ,
           StudySiteContactDTO studySiteContactDTO ,
           List<StudyIndldeDTO> studyIndldeDTOs ,
@@ -1214,7 +1215,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       // validate of null objects
       sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
       sb.append(overallStatusDTO == null ? "Study OverallStatus DTO cannot be null , " : "");
-      sb.append(documentDTOs == null ? "Document DTO's cannot be null , " : "");
       if (studyContactDTO != null && studySiteContactDTO != null) {
           sb.append("Either StudyContactDTO or studySiteContactDTO should be null ,");
       }
@@ -1414,7 +1414,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
    } 
   
   private void createUpdateDocument(DocumentDTO documentDTO) throws PAException {
-       documentService.update(documentDTO);
+       if (documentDTO != null) {
+          documentService.update(documentDTO);
+       }
     } 
   private void updateCollaborators(List<StudySiteDTO> collaborators) throws PAException {
       for (StudySiteDTO sdto : collaborators) {
