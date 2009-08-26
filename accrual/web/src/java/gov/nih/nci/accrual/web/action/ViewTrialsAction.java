@@ -110,12 +110,16 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         try {
         SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
         listOfTrials = new ArrayList<SearchTrialResultDto>();
+        //criteria.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocols.get(2).getIdentifier()));
+       // criteria.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
+ // criteria.setLeadOrgTrialIdentifier(StConverter.
+        //convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
         listOfTrials = service.search(criteria);
         ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
            
         } catch (Exception e) {
               addActionError(e.getLocalizedMessage());
-            return ERROR;
+            return "ERROR";
         }
        
        return actionResult;
