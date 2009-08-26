@@ -155,7 +155,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             Criteria criteria = session.createCriteria(OrganizationalContact.class).add(example);
             List<OrganizationalContact> ocs = criteria.list();
             if (ocs.isEmpty()) {
-                String errMsg = "Object not found using getPAPersonByPAOrganizationalContactId() for id = "
+                String errMsg = "Object not found using getContactByPAOrganizationalContactId() for id = "
                     + poOrganizationalContactId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
@@ -285,7 +285,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");   
         } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");   
+            hql.append("OrganizationalContact role where role.identifier = '" + isoIi.getExtension() + "'");   
         } else {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());            
         }

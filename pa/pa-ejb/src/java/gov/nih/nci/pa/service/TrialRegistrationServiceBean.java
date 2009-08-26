@@ -974,20 +974,24 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
                     studyProtocolDTO.getIdentifier());
             String dwfs = isoDocWrkStatus.getStatusCode().getCode();
-            
+            String userCreated = StConverter.convertToString(
+                    studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier()).getUserLastCreated());
+            if (!userCreated.equalsIgnoreCase(StConverter.convertToString(studyProtocolDTO.getUserLastCreated()))) {
+                errorMsg.append("Amendment to Trial can be submitted by the submitter of the original Trial.\n");
+            }
             StudyOverallStatusDTO statusDTO = studyOverallStatusService.getCurrentByStudyProtocol(
                     studyProtocolDTO.getIdentifier());
             if (!(dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
                     || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))) {
                 errorMsg.append("Trial with processing status Abstraction Verified Response or " 
-                        + " Abstraction Verified No Response can be Amended.");
+                        + " Abstraction Verified No Response can be Amended.\n");
             }
             if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED)
                  || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)
                  || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.WITHDRAWN)
                  || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.COMPLETE)) {
                 errorMsg.append("Amendment to a Trial with Current Trial Status as Disapproved or" 
-                        + " Withdrawn or Complete or Administratively Complete is not allowed.");
+                        + " Withdrawn or Complete or Administratively Complete is not allowed.\n");
             }
         }
         if (errorMsg.length() > 0) {

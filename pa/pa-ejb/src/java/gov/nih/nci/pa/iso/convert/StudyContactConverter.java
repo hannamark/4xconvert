@@ -136,7 +136,8 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
                     bo.getClinicalResearchStaff().getIdentifier()));
         }
         if (bo.getOrganizationalContact() != null) {
-            dto.setOrganizationalContactIi(IiConverter.convertToIi(bo.getOrganizationalContact().getId()));
+            dto.setOrganizationalContactIi(IiConverter.convertToPoOrganizationalContactIi(
+                    bo.getOrganizationalContact().getIdentifier()));
         }
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setIdentifier(IiConverter.convertToStudyContactIi(bo.getId()));
@@ -197,7 +198,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         }
         if (!PAUtil.isIiNull(dto.getOrganizationalContactIi())) {
             orgContact = new OrganizationalContact();
-            orgContact.setId(IiConverter.convertToLong(dto.getOrganizationalContactIi()));
+            orgContact.setId(getPaIdentifier(dto.getOrganizationalContactIi()));
             bo.setOrganizationalContact(orgContact);
         }
         if (dto.getStatusCode() == null) {

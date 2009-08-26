@@ -462,11 +462,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             //check if primary contact is title
             if (primInvresults.isEmpty()) {
                 StudySiteContactDTO siteConDto = new StudySiteContactDTO();
-                List<StudySiteContactDTO> siteContactDtos = PaRegistry.getStudySiteContactService()
-                    .getByStudySite(sp.getIdentifier());
+                List<StudySiteContactDTO> siteContactDtos = sPartContactService.getByStudySite(sp.getIdentifier());
                 for (StudySiteContactDTO cDto : siteContactDtos) {
-                    if (StudySiteContactRoleCode.PRIMARY_CONTACT.getDisplayName().
-                            equalsIgnoreCase(StConverter.convertToString(cDto.getRoleCode().getDisplayName()))) {
+                    if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
+                            equalsIgnoreCase(cDto.getRoleCode().getCode())) {
                         siteConDto = cDto;
                     }
                 }
@@ -631,11 +630,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             personContactWebDTO = resultsList.get(0);
         } else {
            StudySiteContactDTO siteConDto = new StudySiteContactDTO();
-           List<StudySiteContactDTO> siteContactDtos = PaRegistry.getStudySiteContactService()
-               .getByStudySite(IiConverter.convertToIi(orgsTabWebDTO.getStudyParticipationId()));
+           List<StudySiteContactDTO> siteContactDtos = sPartContactService.getByStudySite(
+                   IiConverter.convertToIi(orgsTabWebDTO.getStudyParticipationId()));
            for (StudySiteContactDTO cDto : siteContactDtos) {
-               if (StudySiteContactRoleCode.PRIMARY_CONTACT.getDisplayName().
-                       equalsIgnoreCase(StConverter.convertToString(cDto.getRoleCode().getDisplayName()))) {
+               if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
+                       equalsIgnoreCase(cDto.getRoleCode().getCode())) {
                    siteConDto = cDto;
                }
            }
@@ -798,12 +797,17 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             list = DSetConverter.convertListToDSet(telList, "PHONE", list);
             participationContactDTO.setTelecomAddresses(list);
             // if a old record exists delete it and create a new one
-            List<PaPersonDTO> resultsList = PaRegistry.getPAHealthCareProviderService()
-                    .getPersonsByStudySiteId(orgsTabWebDTO.getStudyParticipationId(),
-                            StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
-            if (!resultsList.isEmpty()) {
-                Long idToDelete = (resultsList.get(0)).getId();
-                sPartContactService.delete(IiConverter.convertToIi(idToDelete));
+            StudySiteContactDTO siteConDto = new StudySiteContactDTO();
+            List<StudySiteContactDTO> siteContactDtos = sPartContactService.getByStudySite(
+                    IiConverter.convertToIi(orgsTabWebDTO.getStudyParticipationId()));
+            for (StudySiteContactDTO cDto : siteContactDtos) {
+                if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
+                        equalsIgnoreCase(cDto.getRoleCode().getCode())) {
+                    siteConDto = cDto;
+                }
+            }
+            if (siteConDto != null && siteConDto.getIdentifier() != null) {
+                sPartContactService.delete(siteConDto.getIdentifier());
             }
             sPartContactService.create(participationContactDTO);
         }
@@ -867,7 +871,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             } else {
                 selectedPersTOIi = isoPerDTO.getIdentifier();
             }
+            
             createStudyParticationContactRecord(tab, true, roleCode, selectedPersTOIi);
+            
             //refesh
             getStudyParticipationPrimContact();
         } catch (PAException e) {
@@ -878,7 +884,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         return DISPLAY_PRIM_CONTACTS;
     }
-
     /**
      * @return the result
      * @throws PAException

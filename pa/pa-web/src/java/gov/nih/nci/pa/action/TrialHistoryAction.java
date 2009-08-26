@@ -233,17 +233,19 @@ ServletResponseAware {
                 (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
 
         StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
+        toSearchspDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier());
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
-        spDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+        toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
         try {
-            List<StudyProtocolDTO> activeList = studyProtocolSvc.search(spDTO, limit);
+            List<StudyProtocolDTO> activeList = studyProtocolSvc.search(toSearchspDTO, limit);
             if (activeList != null && !activeList.isEmpty()) {
                 spList.addAll(activeList);
             }
             
-            spDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
-            List<StudyProtocolDTO> inactiveList = studyProtocolSvc.search(spDTO, limit);
+            toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+            List<StudyProtocolDTO> inactiveList = studyProtocolSvc.search(toSearchspDTO, limit);
             if (inactiveList != null && !inactiveList.isEmpty()) {
                 spList.addAll(inactiveList);
             }
