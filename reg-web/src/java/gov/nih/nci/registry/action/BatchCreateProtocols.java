@@ -315,6 +315,7 @@ public class BatchCreateProtocols {
                     trialDTO.setIdentifier(listofDto.get(0).getStudyProtocolId().toString());
                 }
                 studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
+                studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
                 studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
                 amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                         studyResourcingDTOs, documentDTOs,
@@ -699,23 +700,26 @@ public class BatchCreateProtocols {
             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
                     dto.getParticipatinSiteDocumentFileName(), doc));
          }
-         if (PAUtil.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
-             doc = new File(folderPath + dto.getOtherTrialRelDocumentFileName());
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), 
+        //for Amendment Other document type will be skipped.
+        if (PAUtil.isEmpty(dto.getAmendmentDate()) && PAUtil.isEmpty(dto.getNciTrialIdentifier())
+                && PAUtil.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
+                doc = new File(folderPath + dto.getOtherTrialRelDocumentFileName());
+                docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), 
                      dto.getOtherTrialRelDocumentFileName(), doc));  
-         }
-         if (PAUtil.isNotEmpty(dto.getProtocolHighlightDocFileName())) {
-             doc = new File(folderPath + dto.getProtocolHighlightDocFileName());
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), 
-                     dto.getProtocolHighlightDocFileName(), doc));  
-         }
-         if (PAUtil.isNotEmpty(dto.getChangeRequestDocFileName())) {
-             doc = new File(folderPath + dto.getChangeRequestDocFileName());
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), 
-                     dto.getChangeRequestDocFileName(), doc));  
-         }
-
-
+        }
+        //original submission will not have amendment date so protocol Highlighted doc and change memo will be skipped.
+        if (PAUtil.isNotEmpty(dto.getAmendmentDate()) && PAUtil.isNotEmpty(dto.getNciTrialIdentifier())) {
+             if (PAUtil.isNotEmpty(dto.getProtocolHighlightDocFileName())) {
+                 doc = new File(folderPath + dto.getProtocolHighlightDocFileName());
+                 docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), 
+                         dto.getProtocolHighlightDocFileName(), doc));  
+             }
+             if (PAUtil.isNotEmpty(dto.getChangeRequestDocFileName())) {
+                 doc = new File(folderPath + dto.getChangeRequestDocFileName());
+                 docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), 
+                         dto.getChangeRequestDocFileName(), doc));  
+             }
+        }
         return docDTOList;
     }
 }
