@@ -133,9 +133,12 @@
                 <path refid="compile.classpath"/> 
             </classpath>
         </javac>
+        <fail unless="hibernate.dialect" message="Property hibernate.dialect not set.  Check build.properties file."/>
+        <fail unless="accrual.jnp.url" message="Property accrual.jnp.url not set.  Check build.properties file."/>
         <copy todir="${services.build.outputDir}">
             <filterset>
                 <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
+                <filter token="accrual.jnp.url" value="${accrual.jnp.url}"/>
             </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>
