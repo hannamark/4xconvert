@@ -77,10 +77,11 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-//import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.util.ArrayList;
@@ -99,6 +100,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 2140334334691287118L;
     private List<SearchStudySiteResultDto> listOfSites = null;
     private SearchStudySiteResultDto site = new SearchStudySiteResultDto();
+    private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
     
     /**
@@ -114,21 +116,36 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         }
         try {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
+        SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
         studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
-       // Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-        //listOfSites = service.search(studyProtocolIi);
-        listOfSites = service.search(IiConverter.converToStudyProtocolIi(1L));
+     
+        //cannot convert studyProtocolId to Long: getting NumberFormatException
+        //Long spid = IiConverter.convertToLong(studyProtocolId);
+        //converToStudyProtocolIi requires Long
+        //Ii studyProtocolIi = IiConverter.converToStudyProtocolIi(spid);
+        // listOfSites = service.search(studyProtocolIi);
+        
+        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+        Long spid = Long.getLong(studyProtocolIi.getRoot());
+        Ii spidIi = IiConverter.converToStudyProtocolIi(spid);
+        listOfSites = service.search(spidIi);
+        
         if (listOfSites != null)  {
          ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
         } else {
         ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
         }
         
+       trialSummary = trialService.getTrialSummaryByStudyProtocolIi(studyProtocolIi);
+        
+     // put an entry in the session
+     ServletActionContext.getRequest().setAttribute("trialSummary", trialSummary);
+        
            
         } catch (Exception e) {
               addActionError(e.getLocalizedMessage());
-            return ERROR;
+           // return "ERROR";
         }
        
        return actionResult;
@@ -173,6 +190,19 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
      public void setSite(SearchStudySiteResultDto site) {
         this.site = site;
      }
+     /**
+      * 
+      * @return trialSummary
+      */
+     public SearchTrialResultDto getTrialSummary() {
+       return trialSummary;
+      }
 
- 
+     /**
+      * 
+      * @param trialSummary SearchTrialResultDto
+      */
+     public void setTrialSummary(SearchTrialResultDto trialSummary) {
+        this.trialSummary = trialSummary;
+      }
 }
