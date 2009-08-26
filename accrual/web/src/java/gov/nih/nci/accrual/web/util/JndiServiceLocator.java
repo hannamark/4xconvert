@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.util.ProtocolQueryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.JNDIUtil;
@@ -101,12 +100,5 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      */
     public SearchTrialService getSearchTrialService() {
         return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ProtocolQueryService getProtocolQueryService() {
-        return (ProtocolQueryService) JNDIUtil.lookup("accrual/ProtocolQueryBean/remote");
     }
 }

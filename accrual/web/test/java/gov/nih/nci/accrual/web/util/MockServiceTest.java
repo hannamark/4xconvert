@@ -79,13 +79,10 @@
 package gov.nih.nci.accrual.web.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.util.ProtocolQueryResultDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.util.ProtocolQueryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.coppa.iso.Ii;
@@ -144,12 +141,5 @@ public class MockServiceTest {
         crit = IiConverter.converToStudyProtocolIi(2L);
         r = service.search(crit);
         assertEquals(1, r.size());
-    }
-
-    @Test
-    public void protocolQuery() throws Exception {
-        ProtocolQueryService service = AccrualServiceLocator.getInstance().getProtocolQueryService();
-        ProtocolQueryResultDto result = service.getTrialSummaryByStudyProtocolIi(null);
-        assertNotNull(result);
     }
 }

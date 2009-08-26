@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.util.ProtocolQueryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -96,8 +95,4 @@ public interface ServiceLocatorAccInterface {
      * @return search study site service
      */
     SearchStudySiteService getSearchStudySiteService();
-    /**
-     * @return protocol query service
-     */
-    ProtocolQueryService getProtocolQueryService();
 }

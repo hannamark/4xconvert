@@ -89,6 +89,8 @@ import java.rmi.RemoteException;
  */
 public class PatientBean implements PatientService {
 
+//    private static final Logger LOG  = Logger.getLogger(PatientBean.class);
+
     /**
      * {@inheritDoc}
      */
@@ -113,4 +115,13 @@ public class PatientBean implements PatientService {
         return null;
     }
 
+    /**
+     * @param orgPoIdentifier x
+     * @param personPoIdentifer x
+     * @return x
+     * @throws RemoteException x
+     */
+    public Long createPatientCorrelations(String orgPoIdentifier, String personPoIdentifer) throws RemoteException {
+      return null;
+    }
 }

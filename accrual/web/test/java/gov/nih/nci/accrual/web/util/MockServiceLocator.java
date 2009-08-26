@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.util.ProtocolQueryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -87,7 +86,6 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final SearchTrialService searchTrial = new MockSearchTrialBean();
     private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
-    private final ProtocolQueryService protocolQuery = new MockProtocolQueryBean();
 
     /**
      * {@inheritDoc}
@@ -101,12 +99,4 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     public SearchTrialService getSearchTrialService() {
         return searchTrial;
     }
-    /**
-     * {@inheritDoc}
-     */
-    public ProtocolQueryService getProtocolQueryService() {
-        return protocolQuery;
-    }
-
-
 }

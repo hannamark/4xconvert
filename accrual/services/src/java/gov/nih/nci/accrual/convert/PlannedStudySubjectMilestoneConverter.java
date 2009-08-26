@@ -106,7 +106,8 @@ public class PlannedStudySubjectMilestoneConverter extends AbstractConverter
         PlannedStudySubjectMilestoneDto dto = new PlannedStudySubjectMilestoneDto();
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(
+                bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         return dto;

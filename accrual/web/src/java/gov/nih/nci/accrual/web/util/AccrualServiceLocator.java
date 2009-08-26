@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.util.ProtocolQueryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -131,13 +130,5 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public SearchTrialService getSearchTrialService() {
         return serviceLocator.getSearchTrialService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    public ProtocolQueryService getProtocolQueryService() {
-        return serviceLocator.getProtocolQueryService();
     }
 }

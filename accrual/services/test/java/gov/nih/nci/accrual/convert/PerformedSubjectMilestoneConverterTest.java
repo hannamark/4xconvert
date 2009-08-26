@@ -81,8 +81,11 @@ package gov.nih.nci.accrual.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 import org.junit.Test;
@@ -101,8 +104,7 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
     public void conversionTest() throws Exception {
         PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
         dto.setActualDateRange(ivlVal);
-//        dto.setCategoryCode(cdVal);
-        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
+        dto.setCategoryCode(cdVal);
         dto.setIdentifier(iiVal);
         dto.setInformedConsentDate(tsVal);
         dto.setReasonNotCompletedTypeOther(stVal);
@@ -114,8 +116,7 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
         PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
 
         assertTrue(ivlTest(r.getActualDateRange()));
-//        assertTrue(cdTest(r.getCategoryCode()));
-        assertEquals(ActivityCategoryCode.INTERVENTION.getCode(), CdConverter.convertCdToString(r.getCategoryCode()));
+        assertTrue(cdTest(r.getCategoryCode()));
         assertTrue(iiTest(r.getIdentifier()));
         assertTrue(tsTest(r.getInformedConsentDate()));
         assertTrue(stTest(r.getReasonNotCompletedTypeOther()));
@@ -123,5 +124,19 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
         assertTrue(cdTest(r.getSubcategoryCode()));
         assertTrue(stTest(r.getTextDescription()));
     }
+
+    @Test
+    public void enumCodesTest() throws Exception {
+        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
+        dto.setActualDateRange(new Ivl<Ts>());
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
+        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.OTHER));
+
+        PerformedSubjectMilestone bo = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
+        PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
+
+        assertEquals(ActivityCategoryCode.INTERVENTION.getCode(), CdConverter.convertCdToString(r.getCategoryCode()));
+        assertEquals(ActivitySubcategoryCode.OTHER.getCode(), CdConverter.convertCdToString(r.getSubcategoryCode()));
+     }
 
 }

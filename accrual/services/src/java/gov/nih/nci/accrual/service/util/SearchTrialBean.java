@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Person;
@@ -96,6 +97,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -107,6 +109,7 @@ import org.hibernate.Session;
  */
 
 @Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
 public class SearchTrialBean implements SearchTrialService {
 
     private static final int SP_IDENTIFIER_IDX = 0;

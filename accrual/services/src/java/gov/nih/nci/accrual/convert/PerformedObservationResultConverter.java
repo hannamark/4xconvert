@@ -103,7 +103,8 @@ public class PerformedObservationResultConverter extends AbstractConverter
             throws DataFormatException {
         PerformedObservationResultDto dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setPerformedActivityIdentifier(IiConverter.converToActivityIi(bo.getId()));
+        dto.setPerformedActivityIdentifier(IiConverter.converToActivityIi(
+                bo.getPerformedObservation() == null ? null : bo.getPerformedObservation().getId()));
         dto.setResultCode(StConverter.convertToSt(bo.getResultCode()));
         dto.setResultCodeModifiedText(StConverter.convertToSt(bo.getResultCodeModifiedText()));
         dto.setResultDateRange(IvlConverter.convertTs().convertToIvl(bo.getResultDateRangeLow(),

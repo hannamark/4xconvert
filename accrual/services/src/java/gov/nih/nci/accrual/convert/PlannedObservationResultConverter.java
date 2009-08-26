@@ -103,7 +103,8 @@ public class PlannedObservationResultConverter extends AbstractConverter
     public PlannedObservationResultDto convertFromDomainToDto(PlannedObservationResult bo) throws DataFormatException {
         PlannedObservationResultDto dto = new PlannedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setPlannedActivityIdentifier(IiConverter.converToActivityIi(bo.getPlannedActivity().getId()));
+        dto.setPlannedActivityIdentifier(IiConverter.converToActivityIi(
+                bo.getPlannedActivity() == null ? null : bo.getPlannedActivity().getId()));
         dto.setResultCode(StConverter.convertToSt(bo.getResultCode()));
         dto.setResultCodeModifiedText(StConverter.convertToSt(bo.getResultCodeModifiedText()));
         dto.setResultDateRange(IvlConverter.convertTs().convertToIvl(bo.getResultDateRangeLow(),

@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -90,6 +91,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -100,6 +102,7 @@ import org.hibernate.Session;
  * @since Aug 17, 2009
  */
 @Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
 public class SearchStudySiteBean implements SearchStudySiteService {
 
     /**
