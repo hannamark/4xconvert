@@ -105,7 +105,7 @@ public class StudySiteDTO extends OrganizationFunctionalRoleDTO {
     private Ts reviewBoardApprovalDate;
     private Int targetAccrualNumber;
     private St reviewBoardOrganizationalAffiliation;
-    private St programCode;
+    private St programCodeText;
     /**
      * @return the healthcareFacilityIi
      */
@@ -216,16 +216,16 @@ public class StudySiteDTO extends OrganizationFunctionalRoleDTO {
         this.reviewBoardOrganizationalAffiliation = reviewBoardOrganizationalAffiliation;
     }
     /**
-     * @return the programCode
+     * @return the programCodeText
      */
-    public St getProgramCode() {
-        return programCode;
+    public St getProgramCodeText() {
+        return programCodeText;
     }
     /**
-     * @param programCode the programCode to set
+     * @param programCodeText the programCodeText to set
      */
-    public void setProgramCode(St programCode) {
-        this.programCode = programCode;
+    public void setProgramCodeText(St programCodeText) {
+        this.programCodeText = programCodeText;
     }
     
 }

@@ -117,20 +117,20 @@ public class StudySite extends OrganizationFunctionalRole {
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
     private List<StudySiteContact> studySiteContacts;
     private String reviewBoardOrganizationalAffiliation;
-    private String programCode;
+    private String programCodeText;
    
     /**
      * @return the programCode
      */
-    @Column(name = "PROGRAM_CODE")
-    public String getProgramCode() {
-        return programCode;
+    @Column(name = "PROGRAM_CODE_TEXT")
+    public String getProgramCodeText() {
+        return programCodeText;
     }
     /**
      * @param programCode the programCode to set
      */
-    public void setProgramCode(String programCode) {
-        this.programCode = programCode;
+    public void setProgramCodeText(String programCode) {
+        this.programCodeText = programCode;
     }
     /**
      *

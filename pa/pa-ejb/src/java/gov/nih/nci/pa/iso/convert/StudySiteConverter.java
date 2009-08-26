@@ -143,7 +143,7 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
         dto.setStatusDateRange(
                 IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
-        dto.setProgramCode(StConverter.convertToSt(bo.getProgramCode()));
+        dto.setProgramCodeText(StConverter.convertToSt(bo.getProgramCodeText()));
         return dto;
     }
 
@@ -201,7 +201,7 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
             bo.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
                     dto.getReviewBoardApprovalStatusCode().getCode()));
         }
-        bo.setProgramCode(StConverter.convertToString(dto.getProgramCode()));
+        bo.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
         return bo;
     }
 
