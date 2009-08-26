@@ -704,16 +704,18 @@ public class TrialUtil {
        List<DocumentDTO> docs = RegistryServiceLocator.getDocumentService().
                                    getDocumentsByStudyProtocol(studyProtocolIi);
        DocumentDTO docToUpdate = null;
-       for (DocumentDTO doc : docs) {
-           if (DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode().equals(
+       if (docList != null && !docList.isEmpty()) {  
+        for (DocumentDTO doc : docs) {
+         if (DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode().equals(
                        CdConverter.convertCdToString(doc.getTypeCode()))) {
-               docToUpdate = doc;
-               break;
-           }
-       }  
-       TrialDocumentWebDTO dto = docList.get(0);
-       docToUpdate.setFileName(StConverter.convertToSt(dto.getFileName()));
-       docToUpdate.setText(EdConverter.convertToEd(dto.getText()));
+            docToUpdate = doc;
+            break;
+         }
+        }  
+        TrialDocumentWebDTO dto = docList.get(0);
+        docToUpdate.setFileName(StConverter.convertToSt(dto.getFileName()));
+        docToUpdate.setText(EdConverter.convertToEd(dto.getText()));
+       }
        return docToUpdate;
    }
    /**
@@ -1030,7 +1032,7 @@ public class TrialUtil {
            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
            orgWebDTO.setName(orgBo.getName());
-           orgWebDTO.setProgramCode(StConverter.convertToString(sp.getProgramCode()));
+           orgWebDTO.setProgramCode(StConverter.convertToString(sp.getProgramCodeText()));
            orgWebDTO.setNciNumber(orgBo.getIdentifier());
            if (ssas == null || ssas.getStatusCode() == null || ssas.getStatusDate() == null) {
                orgWebDTO.setRecruitmentStatus("unknown");

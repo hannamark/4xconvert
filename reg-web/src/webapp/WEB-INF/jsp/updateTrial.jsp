@@ -289,7 +289,7 @@ function toggledisplay2 (it) {
             <div class="error_msg"><s:actionerror/></div>
         </s:if>
         <s:else>
-            <s:actionerror/>
+            <s:actionerror/>           
         </s:else>
    <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
    <s:hidden name="trialDTO.phaseCode" id="trialDTO.phaseCode"/>
@@ -836,13 +836,13 @@ function toggledisplay2 (it) {
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>          
         <tr><td>  
-        <table class="data2">
+       <s:if test="participatingSites.size > 0" >
+       <table class="data2">
          <tr>
               <th colspan="2">Participating Sites</th>
          </tr>
          <tr> <td>
-         <s:if test="participatingSites != null" >
-          <table class="form">
+         <table class="form">
          <tbody> 
                     <tr>
                         <th>Site</th>
@@ -878,7 +878,7 @@ function toggledisplay2 (it) {
                       
                 </tbody>   
          </table> 
-         </s:if>
+       
           <span class="formErrorMsg"> 
                               <s:fielderror>
                               <s:param>participatingsite.recStatus</s:param>
@@ -889,18 +889,19 @@ function toggledisplay2 (it) {
                               <s:param>participatingsite.recStatusDate</s:param>
                               </s:fielderror>                            
                         </span>
-         </td></tr></table>   
+         </td></tr></table> 
+         </s:if>
             <tr>
               <td colspan="2" class="space">&nbsp;</td>
            </tr>
-        <tr><td>      
+        <tr><td>    
+         <s:if test="collaborators.size > 0" > 
         <table class="data2">
          <tr>
              <th colspan="2" >Collaborators</th>
           </tr>
          <tr><td>
-         <s:if test="collaborators != null" > 
-          <table class="form">
+           <table class="form">
            <tbody> 
                     <tr>
                         <th>Collaborator</th>
@@ -927,14 +928,14 @@ function toggledisplay2 (it) {
                 </tbody>   
            
         </table>
-        </s:if>
+        
         <span class="formErrorMsg"> 
                               <s:fielderror>
                               <s:param>collaborator.functionalCode</s:param>
                               </s:fielderror>                            
                         </span>
         </td></tr></table>
-       
+       </s:if>
         <table class="data2">
          <tr>
              <th colspan="2" >IRB Approval</th>
@@ -946,17 +947,11 @@ function toggledisplay2 (it) {
               <td scope="row" class="label">
               <label for="updateTrial_irbApproval">
                      <fmt:message key="update.trial.irbApproval"/>
-                     <span class="required">*</span>
               </label>
              </td>
              <td class="value">
                  <s:file name="irbApproval" id="irbApproval" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.irbApprovalFileName</s:param>
-                   </s:fielderror>                            
-                 </span>
-               </td>         
+             </td>         
          </tr>         
       </table>
       <p>

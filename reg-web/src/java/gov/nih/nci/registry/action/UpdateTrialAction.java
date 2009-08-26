@@ -982,9 +982,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 }
             }
         }
-        //validate the docs
-        validateDocuments();
-        //Add other validation rules
+         //Add other validation rules
         //Regulatory information validation
         if (PAUtil.isEmpty(getSelectedRegAuth())) {
             addFieldError("regulatory.oversight.auth.name", "Select the Oversight authority organization name");
@@ -1028,20 +1026,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         }
     }
    
-     /**
-      * Validate documents.
-      */
-     private void validateDocuments() {
-        TrialValidator  validator = new TrialValidator();
-        Map<String, String> err = new HashMap<String, String>();
-        
-        err = validator.validateDcoument(irbApprovalFileName, irbApproval, "trialDTO.irbApprovalFileName",
-                "error.submit.irbApproval");
-        addErrors(err);
-        
-    }
-
-    
     /**
      * Gets the reg authorities list.
      * 
@@ -1258,7 +1242,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
       List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
       for (PaOrganizationDTO dto : ps) {
           StudySiteDTO sp = RegistryServiceLocator.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
-          sp.setProgramCode(StConverter.convertToSt(dto.getProgramCode()));
+          sp.setProgramCodeText(StConverter.convertToSt(dto.getProgramCode()));
           ssDTO.add(sp);
       }
        return ssDTO;
