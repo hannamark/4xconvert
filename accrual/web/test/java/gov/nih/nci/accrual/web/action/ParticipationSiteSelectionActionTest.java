@@ -79,13 +79,10 @@ package gov.nih.nci.accrual.web.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-
-import java.util.ArrayList;
-
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
+
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
 
@@ -96,7 +93,7 @@ import com.mockrunner.mock.web.MockHttpSession;
 public class ParticipationSiteSelectionActionTest extends AbstractAccrualActionTest {
 
 	private static final String AR_PARTICIPATION_SITE_SELECTION = "participation_site_selection";
-	   
+	
 	
 	ParticipationSiteSelectionAction action;
 
@@ -116,8 +113,9 @@ public class ParticipationSiteSelectionActionTest extends AbstractAccrualActionT
         String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         assertNotNull(strDisclaimer);
         assertEquals("accept", strDisclaimer);
-    	// show participation site selection
+       // show participation site selection
         assertEquals(AR_PARTICIPATION_SITE_SELECTION, action.execute());
+        
     }
     
     @Test
