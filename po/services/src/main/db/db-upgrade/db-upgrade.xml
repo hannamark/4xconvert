@@ -40,4 +40,8 @@
        <comment>Upgrade for PO-1213 - adding person props sex, race, ethnic codes, birthdatw</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1213.sql"/>
     </changeSet>
+    <changeSet id="PO-1229" author="slustbader">
+       <comment>Upgrade for PO-1229 - add CTEP ID to structural role otherIdentifiers</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1229.sql"/>
+    </changeSet>
 </databaseChangeLog>
