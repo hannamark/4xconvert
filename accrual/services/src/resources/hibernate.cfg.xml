@@ -65,8 +65,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.MessageLogAudit" />
         <mapping class="gov.nih.nci.pa.domain.StudyObjective"/>
 
-        <mapping class="gov.nih.nci.accrual.domain.Epoch" />
-
         <mapping class="gov.nih.nci.pa.domain.ObservationResult" />
         <mapping class="gov.nih.nci.pa.domain.Patient" />
         <mapping class="gov.nih.nci.pa.domain.PerformedActivity" />
