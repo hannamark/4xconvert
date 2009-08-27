@@ -73,187 +73,44 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.action;
-
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultWebDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.struts2.ServletActionContext;
-
+package gov.nih.nci.accrual.dto.util;
 
 /**
  * @author Rajani Kumar
- * @since  Aug 20, 2009
+ * @since  Aug 27, 2009
  */
-public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
+public class SearchStudySiteResultWebDto {
+
    
-
-    private static final long serialVersionUID = 2140334334691287118L;
-    private List<SearchStudySiteResultDto> listOfSites = null;
-    private SearchStudySiteResultDto site = new SearchStudySiteResultDto();
-    private List<SearchStudySiteResultWebDto> listOfStudySites = null;
-    private SearchStudySiteResultWebDto webDto = new SearchStudySiteResultWebDto();
-    private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
-    private String studyProtocolId = null;
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String execute() {
-        String actionResult = "participation_site_selection";
-      //check if users accepted the disclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
-            return "show_Disclaimer_Page";
-        }
-        try {
-        SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
-        SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
-        listOfSites = new ArrayList<SearchStudySiteResultDto>();
-        studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
-        Ii spid = IiConverter.convertToIi(studyProtocolId);
-        listOfSites = service.search(spid);
-        if (listOfSites != null) {
-          copyToWebDto(listOfSites);
-        }
-        
-       /* if (listOfSites != null)  {
-         ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
-        } else {
-        ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
-        }*/
-        
-        if (listOfStudySites != null)  {
-            ServletActionContext.getRequest().setAttribute("listOfSites", listOfStudySites);
-           } else {
-           ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultWebDto>());
-           }
-      
-       trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
-        
-     // put an entry in the session
-          ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-        
-           
-        } catch (Exception e) {
-              addActionError(e.getLocalizedMessage());
-           // return "ERROR";
-        }
-       
-       return actionResult;
-    }
-    
-    
-    private void copyToWebDto(List<SearchStudySiteResultDto> listOfSites2) {
-       listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
-      for (SearchStudySiteResultDto site2 : listOfSites2) {
-          webDto = new SearchStudySiteResultWebDto();  
-          webDto.setOrganizationName(site2.getOrganizationName().getValue());
-            listOfStudySites.add(webDto);
-    
-      }
-    }
-    
-    /**
-     * 
-     * @return listOfSites
-     */
-    public List<SearchStudySiteResultDto> getListOfSites() {
-         return listOfSites;
-    }
-    
-    /**
-     * 
-     * @param listOfSites List
-     */
-    public void setListOfSites(List<SearchStudySiteResultDto> listOfSites) {
-         this.listOfSites = listOfSites;
-    }
-    /**
-     * 
-     * @return listOfStudySites
-     */
-    public List<SearchStudySiteResultWebDto> getListOfStudySites() {
-      return listOfStudySites;
-    }
-    /**
-     * 
-     * @param listOfStudySites List
-     */
-
-    public void setListOfStudySites(
-        List<SearchStudySiteResultWebDto> listOfStudySites) {
-        this.listOfStudySites = listOfStudySites;
-    }
-    /**
-     * 
-     * @return studyProtocolId
-     */
-    public String getStudyProtocolId() {
-       return studyProtocolId;
-     }
+    private static final long serialVersionUID = 9217852541654491265L;
+    private String studySiteIi;
+    private String organizationName;
 
     /**
-     * 
-     * @param studyProtocolId String
+     * @return the studySiteIi
      */
-    public void setStudyProtocolId(String studyProtocolId) {
-      this.studyProtocolId = studyProtocolId;
+    public String getStudySiteIi() {
+        return studySiteIi;
     }
     /**
-     * 
-     * @return site
+     * @param studySiteIi the studySiteIi to set
      */
-    public SearchStudySiteResultDto getSite() {
-      return site;
+    public void setStudySiteIi(String studySiteIi) {
+        this.studySiteIi = studySiteIi;
     }
-
     /**
-     * 
-     * @param site SearchStudySiteResultDto
+     * @return the organizationName
      */
-     public void setSite(SearchStudySiteResultDto site) {
-        this.site = site;
-     }
-     /**
-      * 
-      * @return webDto
-      */
-     public SearchStudySiteResultWebDto getWebDto() {
-       return webDto;
-     }
-
-     /**
-      * 
-      * @param webDto SearchStudySiteResultWebDto
-      */
-     public void setWebDto(SearchStudySiteResultWebDto webDto) {
-       this.webDto = webDto;
-     }
-
-     /**
-      * 
-      * @return trialSummary
-      */
-     public SearchTrialResultDto getTrialSummary() {
-       return trialSummary;
-      }
-
-     /**
-      * 
-      * @param trialSummary SearchTrialResultDto
-      */
-     public void setTrialSummary(SearchTrialResultDto trialSummary) {
-        this.trialSummary = trialSummary;
-      }
+    public String getOrganizationName() {
+        return organizationName;
+    }
+    /**
+     * @param organizationName the organizationName to set
+     */
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 }
