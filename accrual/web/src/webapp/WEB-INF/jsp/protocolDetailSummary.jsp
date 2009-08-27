@@ -16,11 +16,11 @@
             <div class="float33_first">
                 <div class="row">
                     <span class="label"> <fmt:message key="accrual.trialSummary.lead.organization.trialID"/></span> 
-                    <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgTrialIdentifier}"/></span>
+                    <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgTrialIdentifier.extension}"/></span>
                 </div>
                 <div class="row">
                     <span class="label"><fmt:message key="accrual.trialSummary.lead.organization"/></span> 
-                    <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgName}"/></span>
+                    <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgName.extension}"/></span>
                 </div>
                
             </div>
@@ -28,7 +28,7 @@
             <div class="float33">
                 <div class="row">
                     <span class="label"><fmt:message key="accrual.trialSummary.principal.investigator"/></span> 
-                    <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator}"/></span>
+                    <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator.extension}"/></span>
                 </div>
                
             </div>

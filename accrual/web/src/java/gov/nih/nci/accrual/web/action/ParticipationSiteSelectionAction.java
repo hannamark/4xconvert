@@ -119,28 +119,19 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
         studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
-     
-        //cannot convert studyProtocolId to Long: getting NumberFormatException
-        //Long spid = IiConverter.convertToLong(studyProtocolId);
-        //converToStudyProtocolIi requires Long
-        //Ii studyProtocolIi = IiConverter.converToStudyProtocolIi(spid);
-        // listOfSites = service.search(studyProtocolIi);
-        
-        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-        Long spid = Long.getLong(studyProtocolIi.getRoot());
-        Ii spidIi = IiConverter.converToStudyProtocolIi(spid);
-        listOfSites = service.search(spidIi);
+        Ii spid = IiConverter.convertToIi(studyProtocolId);
+        listOfSites = service.search(spid);
         
         if (listOfSites != null)  {
          ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
         } else {
         ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
         }
-        
-       trialSummary = trialService.getTrialSummaryByStudyProtocolIi(studyProtocolIi);
+      
+       trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
         
      // put an entry in the session
-     ServletActionContext.getRequest().setAttribute("trialSummary", trialSummary);
+          ServletActionContext.getRequest().setAttribute("trialSummary", trialSummary);
         
            
         } catch (Exception e) {
