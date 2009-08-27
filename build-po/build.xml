@@ -97,7 +97,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
   <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
   <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-  <!-- Properties to control po-grid build   -->	
+  <!-- Properties to control po-grid build   -->
   <property name="po-grid.base.dir" location="${software.dir}/po-grid"/>
   <property name="po-grid.build.file" location="${po-grid.base.dir}/build.xml"/>
   <property name="po-grid.dir.target" value="wsrf.war" />
@@ -288,7 +288,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     init,
     build:po,
     build:po-grid,
-  	build:po-grid-legacy
+    build:po-grid-legacy
     "/>
 
   <!-- First Maven Target -->
@@ -578,10 +578,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
   <!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
   <target name="deploy:local:upgrade" depends="build:all,local:upgrade" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
-    
+
   </target>
   <target name="local:upgrade" depends="dist:upgrader:prep">
-  	<!--
+    <!--
     * Requires a database installation.
     * Will use the target from install.xml specified in ${upgrade.target} (defaults to install unless passed in on command line).
     * Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install, if you want properties to be used at install time they must be included in a proeprties file.
@@ -593,8 +593,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       />
 
   </target>
-	
-	
+
+
   <macrodef name="deploy-files2" description="Macro for deploying and extracting distrution to server">
     <attribute name="ssh.user" default="${ssh.server.username}" />
     <attribute name="ssh.host" default="${ssh.server.hostname}" />
@@ -667,13 +667,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-ear=true -Dexclude.database=true ${install.target}" />
   </target>
   <target name="remote:install:po-grid-legacy" unless="exclude.po-grid-legacy">
-    <!-- install po-grid only-->
+    <!-- install po-grid-legacy only-->
     <deploy-files2
          ssh.user="${pogrid-legacy.ssh.server.username}"
          ssh.host="${pogrid-legacy.ssh.server.hostname}"
          ssh.port="${pogrid-legacy.ssh.port}"
          ssh.key.file="${pogrid-legacy.ssh.key.file}"
-         remote.directory.property.name="pogrid.ssh.dir.temp"
+         remote.directory.property.name="pogrid-legacy.ssh.dir.temp"
          dist.file="${po-grid-legacy.upgrade.zip.file}"
          />
     <remote-ssh
