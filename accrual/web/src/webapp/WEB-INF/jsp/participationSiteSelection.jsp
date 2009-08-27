@@ -17,7 +17,8 @@
          </td>
          <td class="value">
                 
-            <s:select id="organizationName" list="listOfSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="organizationName.extension" cssStyle="width:206px"/>
+            <s:select id="organizationName" list="listOfSites" headerKey="" 
+            headerValue="--Select--"  cssStyle="width:206px"/>
            
          </td>
       </tr> 

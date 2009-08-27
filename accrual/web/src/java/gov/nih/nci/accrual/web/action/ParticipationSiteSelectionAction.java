@@ -131,7 +131,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
        trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
         
      // put an entry in the session
-          ServletActionContext.getRequest().setAttribute("trialSummary", trialSummary);
+          ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
         
            
         } catch (Exception e) {
