@@ -79,7 +79,9 @@ package gov.nih.nci.accrual.web.action;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.web.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.web.util.MockServiceLocator;
+import gov.nih.nci.accrual.web.util.PaServiceLocator;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
@@ -106,6 +108,7 @@ public class AbstractAccrualActionTest {
     @Before
     public void initMockServiceLocator() {
         AccrualServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
+        PaServiceLocator.getInstance().setServiceLocator(new MockPaServiceLocator());
     }
 
     /**

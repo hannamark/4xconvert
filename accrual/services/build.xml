@@ -135,10 +135,14 @@
         </javac>
         <fail unless="hibernate.dialect" message="Property hibernate.dialect not set.  Check build.properties file."/>
         <fail unless="accrual.jnp.url" message="Property accrual.jnp.url not set.  Check build.properties file."/>
+        <fail unless="pa.jnp.url" message="Property pa.jnp.url not set.  Check build.properties file."/>
+        <fail unless="po.jnp.url" message="Property po.jnp.url not set.  Check build.properties file."/>
         <copy todir="${services.build.outputDir}">
             <filterset>
                 <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
                 <filter token="accrual.jnp.url" value="${accrual.jnp.url}"/>
+                <filter token="pa.jnp.url" value="${pa.jnp.url}"/>
+                <filter token="po.jnp.url" value="${po.jnp.url}"/>
             </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>

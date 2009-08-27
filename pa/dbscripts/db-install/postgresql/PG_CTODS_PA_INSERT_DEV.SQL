@@ -4,10 +4,10 @@ DELETE FROM organization
 ;
 DELETE FROM person
 ;
-INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE )  
-    values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001','InterventionalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED');
-INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE )  
-    values ( 2, 'NCI-2008-00002','Observation-NCI-2008-00001','ObservationalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED');
+INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE, status_code)  
+    values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001','InterventionalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED', 'ACTIVE');
+INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE, status_code)  
+    values ( 2, 'NCI-2008-00002','Observation-NCI-2008-00001','ObservationalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED', 'ACTIVE');
 
 
 
@@ -79,18 +79,62 @@ insert into healthcare_facility (identifier, assigned_identifier, organization_i
 values (6, 'PO006', 1, current_timestamp, 'po' ,'ACTIVE') 
 ;
 
+---- research_organization
+
+insert into research_organization (identifier, assigned_identifier, organization_identifier, date_last_updated, user_last_updated ,status_code) 
+values (1, 'PO001', 1, current_timestamp, 'po' ,'ACTIVE') 
+;
+
+insert into research_organization (identifier, assigned_identifier, organization_identifier, date_last_updated, user_last_updated,status_code) 
+values (2, 'PO002', 2, current_timestamp, 'po' ,'ACTIVE') 
+;
+
+insert into research_organization (identifier, assigned_identifier, organization_identifier, date_last_updated, user_last_updated ,status_code) 
+values (3, 'PO003', 3, current_timestamp, 'po' ,'ACTIVE') 
+;
+
+insert into research_organization (identifier, assigned_identifier, organization_identifier, date_last_updated, user_last_updated ,status_code) 
+values (4, 'PO004', 3, current_timestamp, 'po' ,'ACTIVE') 
+;
+
+insert into research_organization (identifier, assigned_identifier, organization_identifier, date_last_updated, user_last_updated ,status_code) 
+values (5, 'PO005', 2, current_timestamp, 'po' ,'ACTIVE') 
+;
+insert into research_organization (identifier, assigned_identifier, organization_identifier, date_last_updated, user_last_updated ,status_code) 
+values (6, 'PO006', 1, current_timestamp, 'po' ,'ACTIVE') 
+;
 
 
-insert into study_participation 
-       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier ,status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+
+insert into study_site 
+       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, research_organization_identifier ,status_code, status_date_range_low, date_last_updated, user_last_updated ) 
 values (1,'LEAD_ORGANIZATION','CALGB-88612-A443',1, 1, 'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
 ;
  
-insert into study_participation 
-       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier , status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+insert into study_site 
+       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, research_organization_identifier , status_code, status_date_range_low, date_last_updated, user_last_updated ) 
 values (2,'LEAD_ORGANIZATION','CCG-09032-A443',2 ,2,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
 ;
 
+insert into study_site 
+       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier ,status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+values (3,'TREATING_SITE','CALGB-88612-A443',1, 1, 'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
+;
+ 
+insert into study_site 
+       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier , status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+values (4,'TREATING_SITE','CCG-09032-A443',2 ,2,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' )
+; 
+
+insert into study_site 
+       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier ,status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+values (5,'TREATING_SITE','CALGB-88612-A443',1, 2, 'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
+;
+ 
+insert into study_site 
+       (identifier, functional_code, local_sp_indentifier, study_protocol_identifier, healthcare_facility_identifier , status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+values (6,'TREATING_SITE','CCG-09032-A443',2 ,1,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
+;
 
 
 ------ person -----------------

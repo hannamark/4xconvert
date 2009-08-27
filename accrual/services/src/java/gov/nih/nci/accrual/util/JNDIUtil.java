@@ -96,15 +96,24 @@ import org.apache.log4j.Logger;
 public final class JNDIUtil {
 
     private static final Logger LOG = Logger.getLogger(JNDIUtil.class);
-    private static final String RESOURCE_NAME = "jndi.properties";
+    private static final String ACCRUAL_RESOURCE_NAME = "jndi.properties";
+    private static final String PA_RESOURCE_NAME = "pa.jndi.properties";
+    private static final String PO_RESOURCE_NAME = "po.jndi.properties";
 
     private static JNDIUtil theInstance = new JNDIUtil();
-    private final InitialContext context;
+    private final InitialContext accContext;
+    private final InitialContext paContext;
+    private final InitialContext poContext;
+
     //private final InitialContext contextRemote;
     private JNDIUtil() {
         try {
-            Properties props = getProperties();
-            context = new InitialContext(props);
+            Properties props = getProperties(ACCRUAL_RESOURCE_NAME);
+            accContext = new InitialContext(props);
+            props = getProperties(PA_RESOURCE_NAME);
+            paContext = new InitialContext(props);
+            props = getProperties(PO_RESOURCE_NAME);
+            poContext = new InitialContext(props);
             //contextRemote = new InitialContext(props);
         } catch (Exception e) {
             LOG.error("Unable to initialize the JNDI Util.", e);
@@ -113,24 +122,43 @@ public final class JNDIUtil {
     }
 
     /**
+     * @param resourceName name of jndi.properties file
      * @return jndi (& jms) properties
-     * @throws IOException
-     *             on class load error
+     * @throws IOException on class load error
      */
-    public static Properties getProperties() throws IOException {
+    public static Properties getProperties(String resourceName) throws IOException {
         Properties props = new Properties();
-        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
+        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(resourceName));
         return props;
     }
 
     /**
-     * @param name
-     *            name to lookup
+     * Call this method to access accrual services.
+     * @param name name to lookup
      * @return object in default context with given name
      */
     public static Object lookup(String name) {
-        return lookup(theInstance.context, name);
+        return lookup(theInstance.accContext, name);
     }
+
+    /**
+     * Call this method to access pa services.
+     * @param name name to lookup
+     * @return object in default context with given name
+     */
+    public static Object lookupPa(String name) {
+        return lookup(theInstance.paContext, name);
+    }
+
+    /**
+     * Call this method to access accrual services.
+     * @param name name to lookup
+     * @return object in default context with given name
+     */
+    public static Object lookupPo(String name) {
+        return lookup(theInstance.poContext, name);
+    }
+
     /**
      * @param ctx
      *            context

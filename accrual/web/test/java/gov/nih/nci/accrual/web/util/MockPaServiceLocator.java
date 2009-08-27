@@ -73,6 +73,8 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.web.util;
 
@@ -81,15 +83,25 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since Aug 27, 2009
  */
-public interface ServiceLocatorPaInterface {
+public class MockPaServiceLocator implements ServiceLocatorPaInterface {
+
+    private final StudyDiseaseServiceRemote studyDisease = new MockPaStudyDiseaseBean();
+    private final DiseaseServiceRemote disease = new MockPaDiseaseBean();
+
     /**
-     * @return StudyDisease service
+     * {@inheritDoc}
      */
-    StudyDiseaseServiceRemote getStudyDiseaseService();
+    public DiseaseServiceRemote getDiseaseService() {
+        return disease;
+    }
+
     /**
-     * @return Disease service
+     * {@inheritDoc}
      */
-    DiseaseServiceRemote getDiseaseService();
+    public StudyDiseaseServiceRemote getStudyDiseaseService() {
+        return studyDisease;
+    }
+
 }

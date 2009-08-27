@@ -73,23 +73,99 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since Aug 27, 2009
  */
-public interface ServiceLocatorPaInterface {
+public class MockPaStudyDiseaseBean implements StudyDiseaseServiceRemote {
+
+    /** mock data. */
+    public static List<StudyDiseaseDTO> dtos;
+
+    static {
+        dtos = new ArrayList<StudyDiseaseDTO>();
+        StudyDiseaseDTO r = new StudyDiseaseDTO();
+        r.setIdentifier(IiConverter.convertToIi(1L));
+        r.setDiseaseIdentifier(IiConverter.convertToIi(1L));
+        r.setLeadDiseaseIndicator(BlConverter.convertToBl(true));
+        dtos.add(r);
+        r = new StudyDiseaseDTO();
+        r.setIdentifier(IiConverter.convertToIi(2L));
+        r.setDiseaseIdentifier(IiConverter.convertToIi(2L));
+        r.setLeadDiseaseIndicator(BlConverter.convertToBl(false));
+        dtos.add(r);
+    }
+
     /**
-     * @return StudyDisease service
+     * {@inheritDoc}
      */
-    StudyDiseaseServiceRemote getStudyDiseaseService();
+    public List<StudyDiseaseDTO> getByStudyProtocol(Ii ii) throws PAException {
+        for (StudyDiseaseDTO dto : dtos) {
+            dto.setStudyProtocolIdentifier(ii);
+        }
+        return dtos;
+    }
+
     /**
-     * @return Disease service
+     * {@inheritDoc}
      */
-    DiseaseServiceRemote getDiseaseService();
+    public List<StudyDiseaseDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyDiseaseDTO get(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

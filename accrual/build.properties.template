@@ -1,6 +1,6 @@
 accrual.jnp.url=jnp://localhost:1099
-pa.jnp.url=jnp://localhost:1099
-po.jnp.url=jnp://localhost:1099
+pa.jnp.url=jnp://localhost:11299
+po.jnp.url=jnp://localhost:21499
 csm.db.username=pauser
 csm.db.password=pauser
 csm.jdbc.url=jdbc:postgresql://localhost:5432/ctods_pa

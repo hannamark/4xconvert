@@ -78,10 +78,56 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+
 /**
  * @author Hugh Reinhart
  * @since Aug 24, 2009
  */
-public class PaServiceLocator implements ServiceLocatorPaInterface {
+public final class PaServiceLocator implements ServiceLocatorPaInterface {
+    private static final PaServiceLocator PA_REGISTRY = new PaServiceLocator();
+    private ServiceLocatorPaInterface serviceLocator;
 
+    /**
+     * Constructor for the singleton instance.
+     */
+    private PaServiceLocator() {
+        serviceLocator = new PaJndiServiceLocator();
+    }
+
+    /**
+     * @return the accrualServiceLocator
+     */
+    public static PaServiceLocator getInstance() {
+        return PA_REGISTRY;
+    }
+
+    /**
+     * @return the serviceLocator
+     */
+    public ServiceLocatorPaInterface getServiceLocator() {
+        return serviceLocator;
+    }
+
+    /**
+     * @param serviceLocator the serviceLocator to set
+     */
+    public void setServiceLocator(ServiceLocatorPaInterface serviceLocator) {
+        this.serviceLocator = serviceLocator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DiseaseServiceRemote getDiseaseService() {
+         return serviceLocator.getDiseaseService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyDiseaseServiceRemote getStudyDiseaseService() {
+        return serviceLocator.getStudyDiseaseService();
+    }
 }
