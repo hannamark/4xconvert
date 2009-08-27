@@ -473,16 +473,23 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
     }
 
-    private  void createOverallContact(Ii studyProtocolIi , Document doc , Element root) throws PAException {
+    private  void createOverallContact(Ii studyProtocolIi , Document doc , Element root) 
+        throws PAException,  NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
         List<StudyContactDTO> scDTOs = studyContactService.getByStudyProtocol(studyProtocolIi , scDto);
         CorrelationUtils  cUtils = new CorrelationUtils();
         for (StudyContactDTO scDTO : scDTOs) {
-            Person p  = cUtils.getPAPersonByIi(scDTO.getClinicalResearchStaffIi());
             Element overallContact = doc.createElement("overall_contact");
-            appendElement(overallContact, createElement(FIRST_NAME, p.getFirstName() , doc));
-            appendElement(overallContact, createElement(LAST_NAME, p.getLastName() , doc));
+            if (scDTO.getClinicalResearchStaffIi() == null && scDTO.getOrganizationalContactIi() != null) {
+                PAContactDTO paCDto =  cUtils.getContactByPAOrganizationalContactId((
+                        Long.valueOf(scDTO.getOrganizationalContactIi().getExtension())));
+                appendElement(overallContact, createElement("title", paCDto.getTitle() , doc));
+            } else if (scDTO.getClinicalResearchStaffIi() != null) {
+                Person p  = cUtils.getPAPersonByIi(scDTO.getClinicalResearchStaffIi());
+                appendElement(overallContact, createElement(FIRST_NAME, p.getFirstName() , doc));
+                appendElement(overallContact, createElement(LAST_NAME, p.getLastName() , doc));
+            }
             DSet<Tel> dset = scDTO.getTelecomAddresses();
             if (dset != null) {
                 List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");

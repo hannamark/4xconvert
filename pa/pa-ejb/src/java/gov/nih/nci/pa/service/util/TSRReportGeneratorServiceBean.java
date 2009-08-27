@@ -1193,7 +1193,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       Organization lead = ocsr.getOrganizationByFunctionRole(
               studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
       Person leadPi = null;
-      Person centralContact = null;
+      
       StudyContactDTO scDto = new StudyContactDTO();
       scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
       List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolIi, scDto);
@@ -1215,9 +1215,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       List<String> emails = null;
       List<String> phones = null;
       for (StudyContactDTO cc : scDtos) {
-          centralContact = correlationUtils.getPAPersonByIi(cc.getClinicalResearchStaffIi());
+          String centralContactName = "";
+          if (cc.getClinicalResearchStaffIi() != null) {
+              centralContactName = correlationUtils.getPAPersonByIi(cc.getClinicalResearchStaffIi()).getFullName();
+          } else if (cc.getOrganizationalContactIi() != null) {
+              PAContactDTO paCDto =  correlationUtils.getContactByPAOrganizationalContactId((
+                      Long.valueOf(cc.getOrganizationalContactIi().getExtension())));
+              centralContactName = paCDto.getTitle();
+          }
           html.append(DL_B  + DT_B);
-          html.append(appendData("Central Contact" , centralContact.getFullName() , false , true));
+          html.append(appendData("Central Contact" , centralContactName , false , true));
           html.append(DT_E);
           dset = cc.getTelecomAddresses();
           emails = DSetConverter.convertDSetToList(dset, "EMAIL");
