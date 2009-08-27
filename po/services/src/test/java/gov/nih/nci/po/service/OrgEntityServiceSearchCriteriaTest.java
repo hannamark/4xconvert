@@ -195,27 +195,24 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
         yesCrit.getCriteria().getEmail().add(new Email(null));
         yesCrit.getCriteria().getEmail().add(new Email("a"));
         query = yesCrit.getQuery("", false);
-        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
-                + "gov.nih.nci.po.data.bo.Email obj_email "
-                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  (  lower( obj_email.value) like :emailvalue0  )  ) ",
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj join obj.email obj_email "
+                + "WHERE  (  (  lower( obj_email.value) like :emailvalue0  )  ) ",
                 query.getQueryString());
 
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
         yesCrit.getCriteria().getEmail().add(new Email(""));
         yesCrit.getCriteria().getEmail().add(new Email("a"));
         query = yesCrit.getQuery("", false);
-        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
-                + "gov.nih.nci.po.data.bo.Email obj_email "
-                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  (  lower( obj_email.value) like :emailvalue0  )  ) ",
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj join obj.email obj_email "
+                + "WHERE  (  (  lower( obj_email.value) like :emailvalue0  )  ) ",
                 query.getQueryString());
 
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
         yesCrit.getCriteria().getEmail().add(new Email("a"));
         yesCrit.getCriteria().getEmail().add(new Email("b"));
         query = yesCrit.getQuery("", false);
-        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
-                + "gov.nih.nci.po.data.bo.Email obj_email "
-                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  (  lower( obj_email.value) like :emailvalue0  OR  lower( obj_email.value) like :emailvalue1  )  ) ",
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj join obj.email obj_email "
+                + "WHERE  (  (  lower( obj_email.value) like :emailvalue0  OR  lower( obj_email.value) like :emailvalue1  )  ) ",
                 query.getQueryString());
 
     }

@@ -115,7 +115,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
 
     /**
      * {@inheritDoc}
-     * @throws JMSException 
+     * @throws JMSException
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

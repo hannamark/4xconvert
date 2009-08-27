@@ -349,6 +349,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @ValidIi
     @NotEmptyIiExtension
     @NotEmptyIiRoot
+    @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }

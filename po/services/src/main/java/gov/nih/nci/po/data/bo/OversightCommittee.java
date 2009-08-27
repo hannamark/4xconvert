@@ -203,6 +203,7 @@ public class OversightCommittee extends AbstractOversightCommittee implements Co
     @ValidIi
     @NotEmptyIiExtension
     @NotEmptyIiRoot
+    @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }

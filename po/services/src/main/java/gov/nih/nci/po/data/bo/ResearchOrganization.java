@@ -342,9 +342,9 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @ValidIi
     @NotEmptyIiExtension
     @NotEmptyIiRoot
+    @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }
-
 }
 

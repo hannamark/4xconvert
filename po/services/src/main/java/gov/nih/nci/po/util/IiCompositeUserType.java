@@ -328,7 +328,7 @@ public class IiCompositeUserType implements CompositeUserType {
     }
 
     /**
-     * when both 'nullFlavor' and 'extension' are null when incodeing a null Ii into columns.
+     * when both 'nullFlavor' and 'extension' are null when encoding a null Ii into columns.
      */
     private static void checkValidState(Ii ii) {
         if (ii.getNullFlavor() == null && ii.getExtension() == null) {
