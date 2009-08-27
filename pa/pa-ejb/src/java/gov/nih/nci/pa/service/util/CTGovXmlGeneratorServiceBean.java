@@ -1111,7 +1111,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         return collaborator;
     }
 
-    private void createLocation(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
+    private void createLocation(StudyProtocolDTO spDTO , Document doc , Element root) 
+        throws PAException, NullifiedRoleException {
 
         StudySiteDTO srDTO = new StudySiteDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
@@ -1167,7 +1168,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     private static void createContact(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
-    throws PAException {
+    throws PAException, NullifiedRoleException {
         CorrelationUtils corr = new CorrelationUtils();
         for (StudySiteContactDTO spcDTO : spcDTOs) {
 
@@ -1177,12 +1178,18 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
             List<String> phones = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "EMAIL");
-            Person p = corr.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
             Element contact = doc.createElement("contact");
-            appendElement(contact , createElement(FIRST_NAME , p.getFirstName() , doc));
-            appendElement(contact , createElement("middle_name" , p.getMiddleName() ,
+            if (spcDTO.getClinicalResearchStaffIi() != null) {
+                Person p = corr.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
+                appendElement(contact , createElement(FIRST_NAME , p.getFirstName() , doc));
+                appendElement(contact , createElement("middle_name" , p.getMiddleName() ,
                     PAAttributeMaxLen.LEN_2 , doc));
-            appendElement(contact , createElement(LAST_NAME , p.getLastName() , doc));
+                appendElement(contact , createElement(LAST_NAME , p.getLastName() , doc));
+            } else if (spcDTO.getOrganizationalContactIi() != null) {
+                PAContactDTO paCDto =  corr.getContactByPAOrganizationalContactId((
+                        Long.valueOf(spcDTO.getOrganizationalContactIi().getExtension())));
+                appendElement(contact , createElement("Title" , paCDto.getTitle() , doc));
+            }
             if (phones != null && !phones.isEmpty()) {
                 appendElement(contact , createElement(PHONE , phones.get(0) , PAAttributeMaxLen.LEN_30 , doc));
             }

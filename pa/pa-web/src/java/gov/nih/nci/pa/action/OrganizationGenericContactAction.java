@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.net.URI;
@@ -96,6 +97,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
@@ -221,6 +223,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             ServletActionContext.getRequest().setAttribute(failureMessage, errMsg.toString());
             return "create_org_contact_response";
         }
+        String strException = "Exception occured while creating organization contact : ";
         try {
                 
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
@@ -251,11 +254,18 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             isoDtoList = PoRegistry.getOrganizationalContactCorrelationService()
                 .search(contactDTO);
             convertFromISO(isoDtoList);
+        } catch (EntityValidationException e) {
+            String errMsg = "";
+            Map<String, String[]> errMap = ((EntityValidationException) e).getErrors();
+            errMsg = PAUtil.getErrorMsg(errMap);   
+            addActionError(strException + errMsg);
+            ServletActionContext.getRequest().setAttribute("failureMessage", 
+                    strException + errMsg);
         } catch (Exception e) {
-            LOG.error("Exception occured while creating organization contact : " + e);
-            addActionError("Exception occured while creating organization contact : " + e.getCause());
-            ServletActionContext.getRequest().setAttribute(failureMessage, 
-                    "Exception occured while creating organization contact : " + e.getCause());
+            LOG.error(strException + e);
+            addActionError(strException + e.getMessage());
+            ServletActionContext.getRequest().setAttribute("failureMessage", 
+                    strException + e.getMessage());
             return "create_org_contact_response";
         }
         return "create_org_contact_response";

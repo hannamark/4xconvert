@@ -113,12 +113,12 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -140,12 +140,12 @@ import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
-import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -368,7 +368,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           appendHumanSubjectSafety(htmldata , spDTO);
           appendIdeIde(htmldata , spDTO);
           appendNihGrants(htmldata , spDTO);
-          appendSummary4(studyProtocolIi, htmldata);
+          appendSummary4(spDTO, htmldata);
           appendCollaborators(studyProtocolIi, htmldata);
           appendDisease(studyProtocolIi, htmldata);
           appendTrialDesign(htmldata, spDTO);
@@ -410,9 +410,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * @param html the html
    * @param spDTO the sp dto
    * @throws PAException the PA exception
+ * @throws NullifiedRoleException 
    */
   private void appendParticipatingSites(StringBuffer html, StudyProtocolDTO spDTO)
-      throws PAException {
+      throws PAException, NullifiedRoleException {
     appendTitle(html, appendBoldData("Participating Sites"));
     html.append(BR);
      StudySiteDTO srDTO = new StudySiteDTO();
@@ -502,9 +503,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    * @param html the html
    * @param spcDTOs the spc dt os
    * @throws PAException the PA exception
+ * @throws NullifiedRoleException 
+ * @throws  
    */
   private void createContact(StringBuffer html,  List<StudySiteContactDTO> spcDTOs)
-  throws PAException {
+  throws PAException, NullifiedRoleException {
     for (StudySiteContactDTO spcDTO : spcDTOs) {
         if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
                 equals(spcDTO.getRoleCode().getCode())) {
@@ -512,8 +515,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         }
         List<String> phones = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "PHONE");
         List<String> emails = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "EMAIL");
-        Person p = correlationUtils.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
-        html.append(appendData("Contact" , p.getFirstName() + " " + p.getLastName() , true , true));
+        if (spcDTO.getClinicalResearchStaffIi() != null) {
+            Person p = correlationUtils.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
+            html.append(appendData("Contact" , p.getFirstName() + " " + p.getLastName() , true , true));
+        } else if (spcDTO.getOrganizationalContactIi() != null) {
+            PAContactDTO paCDto =  correlationUtils.getContactByPAOrganizationalContactId((
+                    Long.valueOf(spcDTO.getOrganizationalContactIi().getExtension())));
+            html.append(appendData("Contact" , paCDto.getTitle(), true , true));
+        }
         if (phones != null && !phones.isEmpty()) {
           html.append(appendData("Phone" , phones.get(0) , true , true));
         }
@@ -891,16 +900,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   /**
    * Append summary4.
    * 
-   * @param studyProtocolIi the study protocol ii
+   * @param spDTO the study protocol ii
    * @param html the html
    * 
    * @throws PAException the PA exception
    */
-  private void appendSummary4(Ii studyProtocolIi, StringBuffer html)
+  private void appendSummary4(StudyProtocolDTO spDTO, StringBuffer html)
       throws PAException {
     appendTitle(html, appendBoldData("Summary 4 Information"));
     html.append(BR);
-    StudyResourcingDTO studyResourcingDTO = studyResourcingService.getsummary4ReportedResource(studyProtocolIi);
+    StudyResourcingDTO studyResourcingDTO = studyResourcingService.getsummary4ReportedResource(spDTO.getIdentifier());
     if (studyResourcingDTO != null) {
     html.append(appendData("Funding Category", getData(studyResourcingDTO.getTypeCode(), true), true , true));
     }
@@ -915,6 +924,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
          html.append(appendData("Funding Sponsor/Source", org.getName(), true , true));
      } else {
          html.append(appendData("Funding Sponsor/Source", "", true , true)); 
+     }
+     if (spDTO.getProgramCodeText().getValue() != null) {
+         html.append(appendData("Program Code Text", spDTO.getProgramCodeText().getValue(), true , true));
      }
   }
 

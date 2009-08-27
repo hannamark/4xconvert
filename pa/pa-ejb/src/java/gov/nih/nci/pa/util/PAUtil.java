@@ -90,8 +90,12 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -502,6 +506,28 @@ public class PAUtil {
             ext = identifier.getExtension();
         }
         return ext;
+    }
+    /**
+     * @param errMap error map
+     * @return str
+     */
+    public static String getErrorMsg(Map<String, String[]> errMap) {
+        TreeSet<String> orderedKeys = new TreeSet<String>(errMap.keySet());
+        StringBuffer errMsg = new StringBuffer();
+        for (Iterator<String> iterator = orderedKeys.iterator(); iterator.hasNext();) {
+            String key = iterator.next();
+            errMsg.append(Arrays.deepToString(errMap.get(key)));
+            if (iterator.hasNext()) {
+                errMsg.append('\n');
+            }
+        }
+        String strMsg = "";
+        if (errMsg.length() > 1) {
+            strMsg =  errMsg.toString();
+            strMsg = strMsg.replace('[', ' ');
+            strMsg = strMsg.replace(']', ' ');
+        }
+        return strMsg;
     }
 
 }
