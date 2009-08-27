@@ -141,7 +141,8 @@ import org.apache.log4j.Logger;
  * @author Vrushali
  * 
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength", 
+    "PMD.ExcessiveMethodLength" })
 public class BatchCreateProtocols {
     private static final Logger LOG = Logger.getLogger(BatchCreateProtocols.class);
     private int sucessCount = 0;
@@ -200,7 +201,6 @@ public class BatchCreateProtocols {
      * @return protocol Id
      * @throws PAException ex
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private String buildProtocol(StudyProtocolBatchDTO dto , String folderPath , String userName)  {
 
         Ii studyProtocolIi = null;
@@ -413,9 +413,11 @@ public class BatchCreateProtocols {
             }
         } 
         trialDTO.setProgramCodeText(batchDTO.getProgramCodeText());
-        trialDTO.setAssignedIdentifier(batchDTO.getNciTrialIdentifier());
-        trialDTO.setAmendmentDate(batchDTO.getAmendmentDate());
-        trialDTO.setLocalAmendmentNumber(batchDTO.getAmendmentNumber());
+        if (batchDTO.getSubmissionType().equalsIgnoreCase("A")) {
+            trialDTO.setAssignedIdentifier(batchDTO.getNciTrialIdentifier());
+            trialDTO.setAmendmentDate(batchDTO.getAmendmentDate());
+            trialDTO.setLocalAmendmentNumber(batchDTO.getAmendmentNumber());
+        }
         return trialDTO;
     }
 
@@ -490,7 +492,6 @@ public class BatchCreateProtocols {
      * @throws NullifiedEntityException 
      * @throws CurationException 
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private Ii createOrganization(OrganizationBatchDTO batchDto)
             throws PAException, URISyntaxException, EntityValidationException, NullifiedEntityException, 
         CurationException {
@@ -631,7 +632,6 @@ public class BatchCreateProtocols {
      * @throws EntityValidationException 
      * @throws CurationException 
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private Ii createPerson(PersonBatchDTO batchDto) throws PAException, 
         URISyntaxException, EntityValidationException, CurationException  {
         LOG.info("Entering created person  ...");

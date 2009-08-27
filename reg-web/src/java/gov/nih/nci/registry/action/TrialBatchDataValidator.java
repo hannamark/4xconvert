@@ -24,7 +24,9 @@ import gov.nih.nci.registry.util.BatchConstants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -603,6 +605,11 @@ public class TrialBatchDataValidator {
         if (batchDto.getSubmissionType().equalsIgnoreCase("A")) {
             if (PAUtil.isEmpty(batchDto.getAmendmentDate())) {
                 fieldErr.append("Amendment Date is required. \n");                
+            } else {
+                Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+                if (currentTimeStamp.before(PAUtil.dateStringToTimestamp(batchDto.getAmendmentDate()))) {
+                    fieldErr.append("Amendment Date cannot be in the future.\n");                
+                }
             }
             if (PAUtil.isEmpty(batchDto.getChangeRequestDocFileName())) {
                    fieldErr.append("Change Request Document is required. \n");                

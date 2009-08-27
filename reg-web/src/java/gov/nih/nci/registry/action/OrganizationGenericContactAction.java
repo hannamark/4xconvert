@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
@@ -96,6 +97,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
@@ -111,6 +113,10 @@ import com.opensymphony.xwork2.Preparable;
  */
 @SuppressWarnings("PMD")
 public class OrganizationGenericContactAction extends ActionSupport implements Preparable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private List<PAOrganizationalContactDTO> orgContactList = new ArrayList<PAOrganizationalContactDTO>();
     private String title;
     private String orgContactId;
@@ -242,13 +248,21 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             convertFromISO(isoDtoList);
         } catch (Exception e) {
             LOG.error("Exception occured while creating organization contact : " + e);
-            addActionError("Exception occured while creating organization contact : " + e.getMessage());
+            String errMsg = "";
+            if (e instanceof EntityValidationException) {
+                Map<String, String[]> errMap = ((EntityValidationException) e).getErrors();
+                errMsg = PAUtil.getErrorMsg(errMap);
+            } else {
+                errMsg = e.getMessage();
+            }
+            addActionError("Exception occured while creating organization contact : " + errMsg);
             ServletActionContext.getRequest().setAttribute("failureMessage", 
-                    "Exception occured while creating organization contact : " + e.getMessage());
+                    "Exception occured while creating organization contact : " + errMsg);
             return "create_org_contact_response";
         }
         return "create_org_contact_response";
     }
+   
 
     /**
      * @param isoDtoList
