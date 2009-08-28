@@ -169,7 +169,8 @@
                target="1.5" 
                verbose="false" 
                fork="false" 
-               source="1.5">
+               source="1.5"
+               encoding="Cp1252">
             <src>
                 <pathelement location="${pa-ejb.build.srcDir.0}"/>
             </src>
