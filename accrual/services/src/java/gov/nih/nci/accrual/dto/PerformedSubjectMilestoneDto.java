@@ -156,19 +156,17 @@
 */
 package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-public class PerformedSubjectMilestoneDto extends PerformedAdministrativeActivityDto {
+public class PerformedSubjectMilestoneDto extends PerformedActivityDto {
 
     private static final long serialVersionUID = -6242622585942263421L;
 
     private Ts informedConsentDate;
-    private St reasonNotCompletedTypeOther;
 
     /**
      * @return the informedConsentDate
@@ -181,17 +179,5 @@ public class PerformedSubjectMilestoneDto extends PerformedAdministrativeActivit
      */
     public void setInformedConsentDate(Ts informedConsentDate) {
         this.informedConsentDate = informedConsentDate;
-    }
-    /**
-     * @return the reasonNotCompletedTypeOther
-     */
-    public St getReasonNotCompletedTypeOther() {
-        return reasonNotCompletedTypeOther;
-    }
-    /**
-     * @param reasonNotCompletedTypeOther the reasonNotCompletedTypeOther to set
-     */
-    public void setReasonNotCompletedTypeOther(St reasonNotCompletedTypeOther) {
-        this.reasonNotCompletedTypeOther = reasonNotCompletedTypeOther;
     }
 }

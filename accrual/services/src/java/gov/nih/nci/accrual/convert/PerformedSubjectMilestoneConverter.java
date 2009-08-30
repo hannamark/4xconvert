@@ -112,7 +112,6 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
         dto.setIdentifier(IiConverter.converToActivityIi(bo.getId()));
         dto.setInformedConsentDate(TsConverter.convertToTs(bo.getInformedConsentDate()));
-        dto.setReasonNotCompletedTypeOther(StConverter.convertToSt(bo.getReasonNotCompletedTypeOther()));
         dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(
                 bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
@@ -134,7 +133,6 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
         }
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));
-        bo.setReasonNotCompletedTypeOther(StConverter.convertToString(dto.getReasonNotCompletedTypeOther()));
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
         if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
             bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));

@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,37 +76,80 @@
 *
 *
 */
-package gov.nih.nci.pa.domain;
 
+package gov.nih.nci.accrual.service;
+
+import gov.nih.nci.accrual.convert.AbstractConverter;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 29, 2009
+ * @param <DTO> iso dto class
+ * @param <BO> domain class
+ * @param <CONVERTER> converter
  */
-@Entity
-public class PerformedObservation extends PerformedActivity {
-
-    private static final long serialVersionUID = -7669023715188869583L;
-
-    private List<PerformedObservationResult> performedObservationResult = new ArrayList<PerformedObservationResult>();
+public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO extends AbstractEntity,
+            CONVERTER extends AbstractConverter<DTO, BO>>
+        extends AbstractBaseAccrualBean<DTO, BO, CONVERTER>
+        implements BaseAccrualStudyService<DTO> {
 
     /**
-     * @return the performedObservationResult
+     * {@inheritDoc}
      */
-    @OneToMany(mappedBy = "performedObservation")
-    public List<PerformedObservationResult> getPerformedObservationResult() {
-        return performedObservationResult;
-    }
-    /**
-     * @param performedObservationResult the performedObservationResult to set
-     */
-    public void setPerformedObservationResult(List<PerformedObservationResult> performedObservationResult) {
-        this.performedObservationResult = performedObservationResult;
-    }
+    @SuppressWarnings("unchecked")
+    public List<DTO> getByStudyProtocol(Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called getByStudyProtocol() with Ii == null.");
+        }
+        getLogger().info("Entering getByStudyProtocol().  ");
 
+        Session session = null;
+        List<BO> queryList = new ArrayList<BO>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+
+            // step 1: form the hql
+            String hql = "select alias "
+                       + "from " + getTypeArgument().getName() + " alias "
+                       + "join alias.studyProtocol sp "
+                       + "where sp.id = :studyProtocolId "
+                       + "order by alias.id ";
+            getLogger().info("query " +  getTypeArgument().getName() + " = " + hql + ".");
+
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+
+            // step 3: query the result
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
+        }
+        ArrayList<DTO> resultList = new ArrayList<DTO>();
+        for (BO bo : queryList) {
+            try {
+                resultList.add(convertFromDomainToDto(bo));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
+            }
+        }
+        getLogger().info("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).  ");
+        return resultList;
+    }
 }

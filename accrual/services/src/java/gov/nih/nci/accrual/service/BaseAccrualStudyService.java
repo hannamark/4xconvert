@@ -76,46 +76,24 @@
 *
 *
 */
-package gov.nih.nci.accrual.convert;
 
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.PlannedObservationResultDto;
-import gov.nih.nci.pa.domain.PlannedObservationResult;
+package gov.nih.nci.accrual.service;
 
-import org.junit.Test;
+import gov.nih.nci.coppa.iso.Ii;
+
+import java.rmi.RemoteException;
+import java.util.List;
+
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since Aug 29, 2009
+ * @param <DTO> iso dto class
  */
-public class PlannedObservationResultConverterTest extends AbstractConverterTest {
-
+public interface BaseAccrualStudyService<DTO> extends BaseAccrualService<DTO> {
     /**
-     * {@inheritDoc}
+     * @param ii studyProtocol index
+     * @return list of dto's
+     * @throws RemoteException exception
      */
-    @Override
-    @Test
-    public void conversionTest() throws Exception {
-        PlannedObservationResultDto dto = new PlannedObservationResultDto();
-        dto.setIdentifier(iiVal);
-        dto.setPlannedActivityIdentifier(iiVal);
-        dto.setResultCode(stVal);
-        dto.setResultCodeModifiedText(stVal);
-        dto.setResultDateRange(ivlVal);
-        dto.setResultIndicator(blVal);
-        dto.setResultText(stVal);
-        dto.setTypeCode(stVal);
-
-        PlannedObservationResult bo = Converters.get(PlannedObservationResultConverter.class).convertFromDtoToDomain(dto);
-        PlannedObservationResultDto r = Converters.get(PlannedObservationResultConverter.class).convertFromDomainToDto(bo);
-
-        assertTrue(iiTest(r.getIdentifier()));
-        assertTrue(iiTest(r.getPlannedActivityIdentifier()));
-        assertTrue(stTest(r.getResultCode()));
-        assertTrue(stTest(r.getResultCodeModifiedText()));
-        assertTrue(ivlTest(r.getResultDateRange()));
-        assertTrue(blTest(r.getResultIndicator()));
-        assertTrue(stTest(r.getResultText()));
-        assertTrue(stTest(r.getTypeCode()));
-    }
-
+    List<DTO> getByStudyProtocol(Ii ii) throws RemoteException;
 }

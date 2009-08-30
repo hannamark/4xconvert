@@ -76,14 +76,74 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto;
 
+package gov.nih.nci.pa.enums;
+
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-public class PlannedAdministrativeActivityDto extends AbstractActivityDto {
+public enum PendingCompletedCode implements CodedEnum<String> {
 
-    private static final long serialVersionUID = -4706314189648290706L;
+    /** Pending. */
+    PENDING("Pending"),
+    /** Completed. */
+    COMPLETED("Completed");
+
+    private String code;
+    /**
+     *
+     * @param code
+     */
+    private PendingCompletedCode(String code) {
+        this.code = code;
+        register(this);
+    }
+    /**
+     * @return code code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     *@return String DisplayName
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     *
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     *
+     * @param code code
+     * @return PendingCompletedCode
+     */
+    public static PendingCompletedCode getByCode(String code) {
+        return getByClassAndCode(PendingCompletedCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[]  getDisplayNames() {
+        PendingCompletedCode[] l = PendingCompletedCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
+
 }

@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,17 +76,94 @@
 *
 *
 */
-package gov.nih.nci.pa.domain;
 
-import javax.persistence.Entity;
+package gov.nih.nci.pa.enums;
+
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 28, 2009
  */
-@Entity
-public class PlannedAdministrativeActivity extends PlannedActivity {
+public enum PaymentMethodCode  implements CodedEnum<String> {
 
-    private static final long serialVersionUID = -6810720090587085972L;
+    /** Private Insurance. */
+    PRIVATE("Private Insurance"),
+    /** Medicare. */
+    MEDICARE("Medicare"),
+    /** Medicare and Private Insurance. */
+    MEDICARE_AND_PRIVATE("Medicare and Private Insurance"),
+    /** Medicaid. */
+    MEDICAID("Medicaid"),
+    /** Medicaid and Medicare. */
+    MEDICAID_AND_MEDICARE("Medicaid and Medicare"),
+    /** Military or Veterans Sponsored, Not Otherwise Specified (NOS). */
+    MILITARY_OR_VETERANS("Military or Veterans Sponsored, Not Otherwise Specified (NOS)"),
+    /** Military Sponsored (including CHAMPUS or TRICARE). */
+    MILITARY("Military Sponsored (including CHAMPUS or TRICARE)"),
+    /** Veterans Sponsored. */
+    VETERANS("Veterans Sponsored"),
+    /** Self pay (no insurance). */
+    SELF("Self pay (no insurance)"),
+    /** No means of payment (no insurance). */
+    NO_MEANS_OF_PAYMENT("No means of payment (no insurance)"),
+    /** Other. */
+    OTHER("Other"),
+    /** Unknown. */
+    UNKNOWN("Unknown");
+
+    private String code;
+    /**
+     *
+     * @param code
+     */
+    private PaymentMethodCode(String code) {
+        this.code = code;
+        register(this);
+    }
+    /**
+     * @return code code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     *@return String DisplayName
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     *
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     *
+     * @param code code
+     * @return PaymentMethodCode
+     */
+    public static PaymentMethodCode getByCode(String code) {
+        return getByClassAndCode(PaymentMethodCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[]  getDisplayNames() {
+        PaymentMethodCode[] l = PaymentMethodCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
 
 }

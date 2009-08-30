@@ -79,8 +79,6 @@
 package gov.nih.nci.accrual.dto.util;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
@@ -92,25 +90,46 @@ public class PatientDto extends BaseDTO {
 
     private static final long serialVersionUID = -8768541762718262265L;
 
-    private St studyId;
+    private Cd raceCode;
+    private Cd genderCode;
+    private Cd ethnicCode;
     private Ts birthDate;
-    private Cd gender;
-    private Cd race;
-    private Cd ethnicity;
-    private St zip;
-    private Ii countryId;
 
     /**
-     * @return the studyId
+     * @return the raceCode
      */
-    public St getStudyId() {
-        return studyId;
+    public Cd getRaceCode() {
+        return raceCode;
     }
     /**
-     * @param studyId the studyId to set
+     * @param raceCode the raceCode to set
      */
-    public void setStudyId(St studyId) {
-        this.studyId = studyId;
+    public void setRaceCode(Cd raceCode) {
+        this.raceCode = raceCode;
+    }
+    /**
+     * @return the genderCode
+     */
+    public Cd getGenderCode() {
+        return genderCode;
+    }
+    /**
+     * @param genderCode the genderCode to set
+     */
+    public void setGenderCode(Cd genderCode) {
+        this.genderCode = genderCode;
+    }
+    /**
+     * @return the ethnicCode
+     */
+    public Cd getEthnicCode() {
+        return ethnicCode;
+    }
+    /**
+     * @param ethnicCode the ethnicCode to set
+     */
+    public void setEthnicCode(Cd ethnicCode) {
+        this.ethnicCode = ethnicCode;
     }
     /**
      * @return the birthDate
@@ -123,65 +142,5 @@ public class PatientDto extends BaseDTO {
      */
     public void setBirthDate(Ts birthDate) {
         this.birthDate = birthDate;
-    }
-    /**
-     * @return the gender
-     */
-    public Cd getGender() {
-        return gender;
-    }
-    /**
-     * @param gender the gender to set
-     */
-    public void setGender(Cd gender) {
-        this.gender = gender;
-    }
-    /**
-     * @return the race
-     */
-    public Cd getRace() {
-        return race;
-    }
-    /**
-     * @param race the race to set
-     */
-    public void setRace(Cd race) {
-        this.race = race;
-    }
-    /**
-     * @return the ethnicity
-     */
-    public Cd getEthnicity() {
-        return ethnicity;
-    }
-    /**
-     * @param ethnicity the ethnicity to set
-     */
-    public void setEthnicity(Cd ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-    /**
-     * @return the zip
-     */
-    public St getZip() {
-        return zip;
-    }
-    /**
-     * @param zip the zip to set
-     */
-    public void setZip(St zip) {
-        this.zip = zip;
-    }
-    /**
-     * @return the countryId
-     */
-    public Ii getCountryId() {
-        return countryId;
-    }
-    /**
-     * @param countryId the countryId to set
-     */
-    public void setCountryId(Ii countryId) {
-        this.countryId = countryId;
     }
 }

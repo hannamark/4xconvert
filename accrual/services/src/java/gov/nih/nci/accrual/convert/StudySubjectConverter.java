@@ -76,18 +76,55 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
+package gov.nih.nci.accrual.convert;
 
-import javax.ejb.Remote;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.zip.DataFormatException;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 28, 2009
  */
-@Remote
-public interface PerformedObservationResultService
-        extends BaseAccrualService<PerformedObservationResultDto> {
+public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, StudySubject> {
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubjectDto convertFromDomainToDto(StudySubject bo) throws DataFormatException {
+        StudySubjectDto dto = new StudySubjectDto();
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setPatientIdentifier(IiConverter.convertToIi(bo.getPatient().getId()));
+        dto.setPaymentMethodCode(CdConverter.convertToCd(bo.getPaymentMethodCode()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudySiteIdentifier(IiConverter.convertToIi(
+                bo.getStudySite() == null ? null : bo.getStudySite().getId()));
+        return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubject convertFromDtoToDomain(StudySubjectDto dto) throws DataFormatException {
+        StudySubject bo = new StudySubject();
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setPatient(fKeySetter(Patient.class, dto.getPatientIdentifier()));
+        if (!PAUtil.isCdNull(dto.getPaymentMethodCode())) {
+            bo.setPaymentMethodCode(PaymentMethodCode.getByCode(dto.getPaymentMethodCode().getCode()));
+        }
+        bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
+        bo.setStudySite(fKeySetter(StudySite.class, dto.getStudySiteIdentifier()));
+        return bo;
+    }
 }

@@ -76,18 +76,20 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.convert;
 
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.PlannedStudySubjectMilestoneDto;
-import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.pa.domain.Patient;
 
 import org.junit.Test;
+
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since Aug 28, 2009
  */
-public class PlannedStudySubjectMilestoneConverterTest extends AbstractConverterTest {
+public class PatientConverterTest extends AbstractConverterTest {
 
     /**
      * {@inheritDoc}
@@ -95,21 +97,21 @@ public class PlannedStudySubjectMilestoneConverterTest extends AbstractConverter
     @Override
     @Test
     public void conversionTest() throws Exception {
-        PlannedStudySubjectMilestoneDto dto = new PlannedStudySubjectMilestoneDto();
-        dto.setCategoryCode(cdVal);
+        PatientDto dto = new PatientDto();
+        dto.setBirthDate(tsVal);
+        dto.setEthnicCode(cdVal);
+        dto.setGenderCode(cdVal);
         dto.setIdentifier(iiVal);
-        dto.setStudyProtocolIdentifier(iiVal);
-        dto.setSubcategoryCode(cdVal);
-        dto.setTextDescription(stVal);
+        dto.setRaceCode(cdVal);
 
-        PlannedStudySubjectMilestone bo = Converters.get(PlannedStudySubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
-        PlannedStudySubjectMilestoneDto r = Converters.get(PlannedStudySubjectMilestoneConverter.class).convertFromDomainToDto(bo);
+        Patient bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
+        PatientDto r = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
 
-        assertTrue(cdTest(r.getCategoryCode()));
+        assertTrue(tsTest(r.getBirthDate()));
+        assertTrue(cdTest(r.getEthnicCode()));
+        assertTrue(cdTest(r.getGenderCode()));
         assertTrue(iiTest(r.getIdentifier()));
-        assertTrue(iiTest(r.getStudyProtocolIdentifier()));
-        assertTrue(cdTest(r.getSubcategoryCode()));
-        assertTrue(stTest(r.getTextDescription()));
+        assertTrue(cdTest(r.getRaceCode()));
     }
 
 }

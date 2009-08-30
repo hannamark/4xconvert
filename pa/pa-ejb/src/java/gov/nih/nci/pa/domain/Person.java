@@ -115,7 +115,6 @@ public class Person extends AbstractEntity {
     private List<HealthCareProvider> healthCareProviders = new ArrayList<HealthCareProvider>();
     private List<ClinicalResearchStaff> clinicalResearchStaffs = new ArrayList<ClinicalResearchStaff>();
     private List<OrganizationalContact> organizationalContacts = new ArrayList<OrganizationalContact>();
-    private List<Patient> patients = new ArrayList<Patient>();
 
     private static final String PERSONS = "person";
     /**
@@ -238,27 +237,13 @@ public class Person extends AbstractEntity {
         return organizationalContacts;
     }
    /**
-    * 
+    *
     * @param organizationalContacts list of organizationalContacts
     */
     public void setOrganizationalContacts(
             List<OrganizationalContact> organizationalContacts) {
         this.organizationalContacts = organizationalContacts;
     }
-    /**
-     * @return the patients
-     */
-    @OneToMany(mappedBy = PERSONS)
-    public List<Patient> getPatients() {
-        return patients;
-    }
-    /**
-     * @param patients the patients to set
-     */
-    public void setPatients(List<Patient> patients) {
-        this.patients = patients;
-    }
-
     /**
      *
      * @return fullName

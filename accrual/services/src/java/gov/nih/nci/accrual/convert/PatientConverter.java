@@ -76,82 +76,57 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto.util;
 
-import gov.nih.nci.coppa.iso.St;
+package gov.nih.nci.accrual.convert;
 
-import java.io.Serializable;
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.zip.DataFormatException;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since Aug 28, 2009
  */
-public class ProtocolQueryResultDto implements Serializable {
-    private static final long serialVersionUID = 2713080022522316273L;
+public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
 
-    private St assignedIdentifier;
-    private St officialTitle;
-    private St leadOrgLocalSpIdentifier;
-    private St leadOrgName;
-    private St principalInvestigatorName;
     /**
-     * @return the assignedIdentifier
+     * {@inheritDoc}
      */
-    public St getAssignedIdentifier() {
-        return assignedIdentifier;
+    @Override
+    public PatientDto convertFromDomainToDto(Patient bo) throws DataFormatException {
+        PatientDto dto = new PatientDto();
+        dto.setBirthDate(TsConverter.convertToTs(bo.getBirthDate()));
+        dto.setEthnicCode(CdConverter.convertToCd(bo.getEthnicCode()));
+        dto.setGenderCode(CdConverter.convertToCd(bo.getSexCode()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        return dto;
     }
+
     /**
-     * @param assignedIdentifier the assignedIdentifier to set
+     * {@inheritDoc}
      */
-    public void setAssignedIdentifier(St assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
-    }
-    /**
-     * @return the officialTitle
-     */
-    public St getOfficialTitle() {
-        return officialTitle;
-    }
-    /**
-     * @param officialTitle the officialTitle to set
-     */
-    public void setOfficialTitle(St officialTitle) {
-        this.officialTitle = officialTitle;
-    }
-    /**
-     * @return the leadOrgLocalSpIdentifier
-     */
-    public St getLeadOrgLocalSpIdentifier() {
-        return leadOrgLocalSpIdentifier;
-    }
-    /**
-     * @param leadOrgLocalSpIdentifier the leadOrgLocalSpIdentifier to set
-     */
-    public void setLeadOrgLocalSpIdentifier(St leadOrgLocalSpIdentifier) {
-        this.leadOrgLocalSpIdentifier = leadOrgLocalSpIdentifier;
-    }
-    /**
-     * @return the leadOrgName
-     */
-    public St getLeadOrgName() {
-        return leadOrgName;
-    }
-    /**
-     * @param leadOrgName the leadOrgName to set
-     */
-    public void setLeadOrgName(St leadOrgName) {
-        this.leadOrgName = leadOrgName;
-    }
-    /**
-     * @return the principalInvestigatorName
-     */
-    public St getPrincipalInvestigatorName() {
-        return principalInvestigatorName;
-    }
-    /**
-     * @param principalInvestigatorName the principalInvestigatorName to set
-     */
-    public void setPrincipalInvestigatorName(St principalInvestigatorName) {
-        this.principalInvestigatorName = principalInvestigatorName;
+    @Override
+    public Patient convertFromDtoToDomain(PatientDto dto) throws DataFormatException {
+        Patient bo = new Patient();
+        bo.setBirthDate(TsConverter.convertToTimestamp(dto.getBirthDate()));
+        if (!PAUtil.isCdNull(dto.getEthnicCode())) {
+            bo.setEthnicCode(PatientEthnicityCode.getByCode(dto.getEthnicCode().getCode()));
+        }
+        if (!PAUtil.isCdNull(dto.getGenderCode())) {
+            bo.setSexCode(PatientGenderCode.getByCode(dto.getGenderCode().getCode()));
+        }
+        if (!PAUtil.isCdNull(dto.getRaceCode())) {
+            bo.setRaceCode(PatientRaceCode.getByCode(dto.getRaceCode().getCode()));
+        }
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        return bo;
     }
 }

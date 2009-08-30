@@ -78,10 +78,25 @@
 */
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.accrual.convert.Converters;
+import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.zip.DataFormatException;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -89,39 +104,95 @@ import java.rmi.RemoteException;
  */
 public class PatientBean implements PatientService {
 
-//    private static final Logger LOG  = Logger.getLogger(PatientBean.class);
+    private static final Logger LOG  = Logger.getLogger(PatientBean.class);
+    private SessionContext ejbContext;
+
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+        ejbContext = ctx;
+    }
 
     /**
      * {@inheritDoc}
      */
     public PatientDto create(PatientDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            throw new RemoteException("Update method should be used to modify existing.");
+        }
+        return createOrUpdate(dto);
     }
 
     /**
      * {@inheritDoc}
      */
     public PatientDto get(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called get() with Ii == null.");
+        }
+        Patient bo = null;
+        PatientDto resultDto = null;
+        Session session = null;
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            bo = (Patient) session.get(Patient.class, IiConverter.convertToLong(ii));
+            if (bo == null) {
+                LOG.error("Object not found using get() for id = "
+                        + IiConverter.convertToString(ii) + ".");
+                return resultDto;
+            }
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in get().", hbe);
+        }
+        try {
+            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
+        } catch (DataFormatException e) {
+            throw new RemoteException("Iso conversion exception in get().", e);
+        }
+        return resultDto;
     }
 
     /**
      * {@inheritDoc}
      */
     public PatientDto update(PatientDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        if (PAUtil.isIiNull(dto.getIdentifier())) {
+            throw new RemoteException("Create method should be used to create new.");
+        }
+        return createOrUpdate(dto);
     }
 
-    /**
-     * @param orgPoIdentifier x
-     * @param personPoIdentifer x
-     * @return x
-     * @throws RemoteException x
-     */
-    public Long createPatientCorrelations(String orgPoIdentifier, String personPoIdentifer) throws RemoteException {
-      return null;
+    private PatientDto createOrUpdate(PatientDto dto) throws RemoteException {
+        Patient bo = null;
+        try {
+            bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
+        } catch (DataFormatException e) {
+            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
+        }
+        PatientDto resultDto = null;
+        Session session = null;
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
+            bo.setDateLastUpdated(new Date());
+            if (PAUtil.isIiNull(dto.getIdentifier())) {
+                bo.setUserLastCreated(bo.getUserLastUpdated());
+                bo.setDateLastCreated(bo.getDateLastUpdated());
+            } else {
+                Patient oldBo = (Patient) session.get(Patient.class, IiConverter.convertToLong(dto.getIdentifier()));
+                bo.setDateLastCreated(oldBo.getDateLastCreated());
+                bo.setUserLastCreated(oldBo.getUserLastCreated());
+                session.evict(oldBo);
+            }
+            bo = (Patient) session.merge(bo);
+            session.flush();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in createOrUpdate().", hbe);
+        }
+        try {
+            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
+        } catch (DataFormatException e) {
+            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
+        }
+        return resultDto;
     }
 }

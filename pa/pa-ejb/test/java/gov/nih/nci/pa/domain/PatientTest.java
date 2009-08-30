@@ -125,12 +125,12 @@ public class PatientTest {
         p.setDateLastCreated(new Date());
         p.setDateLastUpdated(new Date());
         p.setId(null);
-        p.setIdentifier("identifier");
+        p.setIdentifier("po identifier");
 
         Person pers = new Person();
         pers.setId(TestSchema.personIds.get(0));
 
-        p.setPerson(pers);
+        p.setPersonIdentifier("po person identifier");
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         p.setUserLastCreated("user");

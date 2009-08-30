@@ -99,7 +99,6 @@ import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NIHinstitute;
-import gov.nih.nci.pa.domain.ObservationResult;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
@@ -109,16 +108,11 @@ import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedAdministrativeActivity;
-import gov.nih.nci.pa.domain.PerformedObservation;
-import gov.nih.nci.pa.domain.PerformedObservationResult;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
-import gov.nih.nci.pa.domain.PlannedAdministrativeActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
-import gov.nih.nci.pa.domain.PlannedObservationResult;
-import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -144,6 +138,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -254,17 +249,12 @@ public class TestSchema {
             addAnnotatedClass(StudyObjective.class).
 
             // Accrual classes
-            addAnnotatedClass(ObservationResult.class).
             addAnnotatedClass(Patient.class).
             addAnnotatedClass(PerformedActivity.class).
             addAnnotatedClass(PerformedAdministrativeActivity.class).
-            addAnnotatedClass(PerformedObservation.class).
-            addAnnotatedClass(PerformedObservationResult.class).
             addAnnotatedClass(PerformedSubjectMilestone.class).
-            addAnnotatedClass(PlannedAdministrativeActivity.class).
-            addAnnotatedClass(PlannedObservationResult.class).
-            addAnnotatedClass(PlannedStudySubjectMilestone.class).
             addAnnotatedClass(StudySubject.class).
+            addAnnotatedClass(Submission.class).
 
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
@@ -304,6 +294,7 @@ public class TestSchema {
                 Connection connection = session.connection();
                 try {
                     Statement statement = connection.createStatement();
+                    statement.executeUpdate("delete from study_subject");
                     statement.executeUpdate("delete from patient");
                     statement.executeUpdate("delete from STUDY_ONHOLD");
                     statement.executeUpdate("delete from STUDY_RELATIONSHIP");

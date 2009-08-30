@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.domain;
 
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
@@ -89,4 +92,19 @@ public class PerformedSubjectMilestone extends PerformedAdministrativeActivity {
 
     private static final long serialVersionUID = 552072830898807202L;
 
+    private Timestamp informedConsentDate;
+
+    /**
+     * @return the informedConsentDate
+     */
+    @Column(name = "informed_consent_date")
+    public Timestamp getInformedConsentDate() {
+        return informedConsentDate;
+    }
+    /**
+     * @param informedConsentDate the informedConsentDate to set
+     */
+    public void setInformedConsentDate(Timestamp informedConsentDate) {
+        this.informedConsentDate = informedConsentDate;
+    }
 }

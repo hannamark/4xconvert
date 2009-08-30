@@ -76,14 +76,101 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.dto;
+
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
+
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-public class PerformedAdministrativeActivityDto extends PerformedActivityDto {
+public class SubmissionDto extends BaseDTO {
+    private static final long serialVersionUID = 5221603553357385670L;
 
-    private static final long serialVersionUID = 5332663937750126272L;
+    private Ii studyProtocolIdentifier;
+    private Ts cutOffDate;
+    private St description;
+    private St label;
+    private Cd statusCode;
+    private Ivl<Ts> statusDateRange;
 
+    /**
+     * @return the studyProtocolIdentifier
+     */
+    public Ii getStudyProtocolIdentifier() {
+        return studyProtocolIdentifier;
+    }
+    /**
+     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
+     */
+    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
+        this.studyProtocolIdentifier = studyProtocolIdentifier;
+    }
+    /**
+     * @return the cutOffDate
+     */
+    public Ts getCutOffDate() {
+        return cutOffDate;
+    }
+    /**
+     * @param cutOffDate the cutOffDate to set
+     */
+    public void setCutOffDate(Ts cutOffDate) {
+        this.cutOffDate = cutOffDate;
+    }
+    /**
+     * @return the description
+     */
+    public St getDescription() {
+        return description;
+    }
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(St description) {
+        this.description = description;
+    }
+    /**
+     * @return the label
+     */
+    public St getLabel() {
+        return label;
+    }
+    /**
+     * @param label the label to set
+     */
+    public void setLabel(St label) {
+        this.label = label;
+    }
+    /**
+     * @return the statusCode
+     */
+    public Cd getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(Cd statusCode) {
+        this.statusCode = statusCode;
+    }
+    /**
+     * @return the statusDateRange
+     */
+    public Ivl<Ts> getStatusDateRange() {
+        return statusDateRange;
+    }
+    /**
+     * @param statusDateRange the statusDateRange to set
+     */
+    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
+        this.statusDateRange = statusDateRange;
+    }
 }

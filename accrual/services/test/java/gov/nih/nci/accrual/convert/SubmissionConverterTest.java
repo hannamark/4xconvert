@@ -76,59 +76,45 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.dto.PlannedStudySubjectMilestoneDto;
-import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.pa.domain.Submission;
 
-import java.util.zip.DataFormatException;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-public class PlannedStudySubjectMilestoneConverter extends AbstractConverter
-        <PlannedStudySubjectMilestoneDto, PlannedStudySubjectMilestone> {
+public class SubmissionConverterTest extends AbstractConverterTest {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PlannedStudySubjectMilestoneDto convertFromDomainToDto(PlannedStudySubjectMilestone bo)
-            throws DataFormatException {
-        PlannedStudySubjectMilestoneDto dto = new PlannedStudySubjectMilestoneDto();
-        dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(
-                bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
-        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
-        dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
-        return dto;
-    }
+    @Test
+    public void conversionTest() throws Exception {
+        SubmissionDto dto = new SubmissionDto();
+        dto.setIdentifier(iiVal);
+        dto.setStudyProtocolIdentifier(iiVal);
+        dto.setCutOffDate(tsVal);
+        dto.setDescription(stVal);
+        dto.setLabel(stVal);
+        dto.setStatusCode(cdVal);
+        dto.setStatusDateRange(ivlVal);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PlannedStudySubjectMilestone convertFromDtoToDomain(PlannedStudySubjectMilestoneDto dto)
-            throws DataFormatException {
-        PlannedStudySubjectMilestone bo = new PlannedStudySubjectMilestone();
-        if (!PAUtil.isCdNull(dto.getCategoryCode())) {
-            bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
-        }
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
-        if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
-            bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
-        }
-        bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
-        return bo;
+        Submission bo = Converters.get(SubmissionConverter.class).convertFromDtoToDomain(dto);
+        SubmissionDto r = Converters.get(SubmissionConverter.class).convertFromDomainToDto(bo);
+
+        assertTrue(iiTest(r.getIdentifier()));
+        assertTrue(iiTest(r.getStudyProtocolIdentifier()));
+        assertTrue(tsTest(r.getCutOffDate()));
+        assertTrue(stTest(r.getDescription()));
+        assertTrue(stTest(r.getLabel()));
+        assertTrue(cdTest(r.getStatusCode()));
+        assertTrue(ivlTest(r.getStatusDateRange()));
     }
 }

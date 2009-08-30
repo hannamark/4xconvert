@@ -101,6 +101,7 @@ import org.hibernate.validator.Length;
 @Table(name = "DISEASE")
 public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingCode> {
     private static final long serialVersionUID = 1276767890L;
+    private static final String DISEASE_STR = "disease";
 
     private String diseaseCode;
     private String ntTermIdentifier;
@@ -108,6 +109,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     private String menuDisplayName;
 
     private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
+    private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
     private List<DiseaseAltername> diseaseAlternames = new ArrayList<DiseaseAltername>();
     private List<DiseaseParent> diseaseParents = new ArrayList<DiseaseParent>();
     private List<DiseaseParent> diseaseChildren = new ArrayList<DiseaseParent>();
@@ -171,7 +173,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     /**
      * @return the studyDiseases
      */
-    @OneToMany(mappedBy = "disease")
+    @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudyDisease> getStudyDiseases() {
         return studyDiseases;
@@ -183,9 +185,22 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
         this.studyDiseases = studyDiseases;
     }
     /**
+     * @return the studySubjects
+     */
+    @OneToMany(mappedBy = DISEASE_STR)
+    public List<StudySubject> getStudySubjects() {
+        return studySubjects;
+    }
+    /**
+     * @param studySubjects the studySubjects to set
+     */
+    public void setStudySubjects(List<StudySubject> studySubjects) {
+        this.studySubjects = studySubjects;
+    }
+    /**
      * @return the diseaseAlternames
      */
-    @OneToMany(mappedBy = "disease")
+    @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<DiseaseAltername> getDiseaseAlternames() {
         return diseaseAlternames;
@@ -199,7 +214,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     /**
      * @return the diseaseParents
      */
-    @OneToMany(mappedBy = "disease")
+    @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<DiseaseParent> getDiseaseParents() {
         return diseaseParents;

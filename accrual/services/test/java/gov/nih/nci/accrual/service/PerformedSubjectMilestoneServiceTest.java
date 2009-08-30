@@ -76,31 +76,41 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.coppa.iso.Ii;
+package gov.nih.nci.accrual.service;
+
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-public class PlannedObservationResultDto extends ObservationResultDto {
+public class PerformedSubjectMilestoneServiceTest
+        extends AbstractServiceTest<PerformedSubjectMilestoneService> {
 
-    private static final long serialVersionUID = 3726838469216142561L;
-
-    private Ii plannedActivityIdentifier;
-
-    /**
-     * @return the plannedActivityIdentifier
-     */
-    public Ii getPlannedActivityIdentifier() {
-        return plannedActivityIdentifier;
+    @Override
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        bean = new PerformedSubjectMilestoneBean();
     }
 
-    /**
-     * @param plannedActivityIdentifier the plannedActivityIdentifier to set
-     */
-    public void setPlannedActivityIdentifier(Ii plannedActivityIdentifier) {
-        this.plannedActivityIdentifier = plannedActivityIdentifier;
+    @Test
+    public void get() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void create() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void update() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void getByStudyProtocol() throws Exception {
+        assertTrue(true);
     }
 }

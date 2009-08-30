@@ -78,7 +78,12 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -96,20 +101,23 @@ public class StudySubject extends Subject {
 
     private static final long serialVersionUID = -6946617177385690791L;
 
-    private String paymentMethodCode;
+    private PaymentMethodCode paymentMethodCode;
     private Patient patient;
-    private Arm arm;
+    private StudySite studySite;
+    private Disease disease;
 
     /**
      * @return the paymentMethodCode
      */
-    public String getPaymentMethodCode() {
+    @Column(name = "payment_method_code")
+    @Enumerated(EnumType.STRING)
+    public PaymentMethodCode getPaymentMethodCode() {
         return paymentMethodCode;
     }
     /**
      * @param paymentMethodCode the paymentMethodCode to set
      */
-    public void setPaymentMethodCode(String paymentMethodCode) {
+    public void setPaymentMethodCode(PaymentMethodCode paymentMethodCode) {
         this.paymentMethodCode = paymentMethodCode;
     }
     /**
@@ -128,18 +136,32 @@ public class StudySubject extends Subject {
         this.patient = patient;
     }
     /**
-     * @return the arm
+     * @return the studySite
      */
     @ManyToOne
-    @JoinColumn(name = "arm_identifier", updatable = false)
-    public Arm getArm() {
-        return arm;
+    @JoinColumn(name = "study_site_identifier", updatable = false)
+    public StudySite getStudySite() {
+        return studySite;
     }
     /**
-     * @param arm the arm to set
+     * @param studySite the studySite to set
      */
 
-    public void setArm(Arm arm) {
-        this.arm = arm;
+    public void setStudySite(StudySite studySite) {
+        this.studySite = studySite;
+    }
+    /**
+     * @return the disease
+     */
+    @ManyToOne
+    @JoinColumn(name = "disease_identifier", updatable = false)
+    public Disease getDisease() {
+        return disease;
+    }
+    /**
+     * @param disease the disease to set
+     */
+    public void setDisease(Disease disease) {
+        this.disease = disease;
     }
 }

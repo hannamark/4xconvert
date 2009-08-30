@@ -76,98 +76,114 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.dto.BaseDTO;
+package gov.nih.nci.pa.domain;
+
+import gov.nih.nci.pa.enums.PendingCompletedCode;
+
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
+
+
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-public class ObservationResultDto extends BaseDTO {
+@Entity
+@Table(name = "submission")
+public class Submission extends AbstractStudyEntity {
+    private static final long serialVersionUID = -7575618820609877824L;
 
-    private static final long serialVersionUID = 4272049275963235308L;
+    private String label;
+    private String description;
+    private Timestamp cutOffDate;
+    private PendingCompletedCode statusCode;
+    private Timestamp statusDateRangeLow;
+    private Timestamp statusDateRangeHigh;
 
-    private St resultCode;
-    private St resultCodeModifiedText;
-    private Ivl<Ts> resultDateRange;
-    private Bl resultIndicator;
-    private St resultText;
-    private St typeCode;
     /**
-     * @return the resultCode
+     * @return the label
      */
-    public St getResultCode() {
-        return resultCode;
+    @Column(name = "label")
+    public String getLabel() {
+        return label;
     }
     /**
-     * @param resultCode the resultCode to set
+     * @param label the label to set
      */
-    public void setResultCode(St resultCode) {
-        this.resultCode = resultCode;
+    public void setLabel(String label) {
+        this.label = label;
     }
     /**
-     * @return the resultCodeModifiedText
+     * @return the description
      */
-    public St getResultCodeModifiedText() {
-        return resultCodeModifiedText;
+    @Column(name = "description")
+    public String getDescription() {
+        return description;
     }
     /**
-     * @param resultCodeModifiedText the resultCodeModifiedText to set
+     * @param description the description to set
      */
-    public void setResultCodeModifiedText(St resultCodeModifiedText) {
-        this.resultCodeModifiedText = resultCodeModifiedText;
+    public void setDescription(String description) {
+        this.description = description;
     }
     /**
-     * @return the resultDateRange
+     * @return the cutOffDate
      */
-    public Ivl<Ts> getResultDateRange() {
-        return resultDateRange;
+    @Column(name = "cut_off_date")
+    public Timestamp getCutOffDate() {
+        return cutOffDate;
     }
     /**
-     * @param resultDateRange the resultDateRange to set
+     * @param cutOffDate the cutOffDate to set
      */
-    public void setResultDateRange(Ivl<Ts> resultDateRange) {
-        this.resultDateRange = resultDateRange;
+    public void setCutOffDate(Timestamp cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
     /**
-     * @return the resultIndicator
+     * @return the statusDateRangeLow
      */
-    public Bl getResultIndicator() {
-        return resultIndicator;
+    @Column(name = "status_date_range_low")
+    public Timestamp getStatusDateRangeLow() {
+        return statusDateRangeLow;
     }
     /**
-     * @param resultIndicator the resultIndicator to set
+     * @param statusDateRangeLow the statusDateRangeLow to set
      */
-    public void setResultIndicator(Bl resultIndicator) {
-        this.resultIndicator = resultIndicator;
+    public void setStatusDateRangeLow(Timestamp statusDateRangeLow) {
+        this.statusDateRangeLow = statusDateRangeLow;
     }
     /**
-     * @return the resultText
+     * @return the statusDateRangeHigh
      */
-    public St getResultText() {
-        return resultText;
+    @Column(name = "status_date_range_high")
+    public Timestamp getStatusDateRangeHigh() {
+        return statusDateRangeHigh;
     }
     /**
-     * @param resultText the resultText to set
+     * @param statusDateRangeHigh the statusDateRangeHigh to set
      */
-    public void setResultText(St resultText) {
-        this.resultText = resultText;
+    public void setStatusDateRangeHigh(Timestamp statusDateRangeHigh) {
+        this.statusDateRangeHigh = statusDateRangeHigh;
     }
     /**
-     * @return the typeCode
+     * @return the statusCode
      */
-    public St getTypeCode() {
-        return typeCode;
+    @Column(name = "status_code")
+    @Enumerated(EnumType.STRING)
+    public PendingCompletedCode getStatusCode() {
+        return statusCode;
     }
     /**
-     * @param typeCode the typeCode to set
+     * @param statusCode the statusCode to set
      */
-    public void setTypeCode(St typeCode) {
-        this.typeCode = typeCode;
+    public void setStatusCode(PendingCompletedCode statusCode) {
+        this.statusCode = statusCode;
     }
 }

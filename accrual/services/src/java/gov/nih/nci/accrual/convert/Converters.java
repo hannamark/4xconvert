@@ -84,14 +84,11 @@ package gov.nih.nci.accrual.convert;
  */
 public class Converters {
 
-    private static PlannedObservationResultConverter
-            plannedObservationResultConverter = new PlannedObservationResultConverter();
-    private static PerformedObservationResultConverter
-            performedObservationResultConverter = new PerformedObservationResultConverter();
     private static PerformedSubjectMilestoneConverter
             performedSubjectMilestoneConverter = new PerformedSubjectMilestoneConverter();
-    private static PlannedStudySubjectMilestoneConverter
-            plannedStudySubjectMilestoneConverter = new PlannedStudySubjectMilestoneConverter();
+    private static StudySubjectConverter studySubjectConverter = new StudySubjectConverter();
+    private static PatientConverter patientConverter = new PatientConverter();
+    private static SubmissionConverter submissionConverter = new SubmissionConverter();
 
     /**
      * @param clazz class
@@ -100,17 +97,14 @@ public class Converters {
      */
     @SuppressWarnings("unchecked")
     public static <CONV extends AbstractConverter> CONV get(Class<CONV> clazz) {
-        if (clazz.equals(PlannedObservationResultConverter.class)) {
-            return (CONV) plannedObservationResultConverter;
-        }
-        if (clazz.equals(PerformedObservationResultConverter.class)) {
-            return (CONV) performedObservationResultConverter;
-        }
         if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
             return (CONV) performedSubjectMilestoneConverter;
-        }
-        if (clazz.equals(PlannedStudySubjectMilestoneConverter.class)) {
-            return (CONV) plannedStudySubjectMilestoneConverter;
+        } else if (clazz.equals(StudySubjectConverter.class)) {
+            return (CONV) studySubjectConverter;
+        } else if (clazz.equals(PatientConverter.class)) {
+            return (CONV) patientConverter;
+        } else if (clazz.equals(SubmissionConverter.class)) {
+            return (CONV) submissionConverter;
         }
         return null;
     }

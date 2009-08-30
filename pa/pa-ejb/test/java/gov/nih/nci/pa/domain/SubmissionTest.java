@@ -76,31 +76,84 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.coppa.iso.Ii;
+package gov.nih.nci.pa.domain;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.util.TestSchema;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-public class PerformedObservationResultDto extends ObservationResultDto {
-
-    private static final long serialVersionUID = 3118713415256634700L;
-
-    private Ii performedActivityIdentifier;
-
-    /**
-     * @return the performedActivityIdentifier
-     */
-    public Ii getPerformedActivityIdentifier() {
-        return performedActivityIdentifier;
+public class SubmissionTest {
+    @Before
+    public void setUp() {
+        TestSchema.reset1();
+        TestSchema.primeData();
     }
 
-    /**
-     * @param performedActivityIdentifier the performedActivityIdentifier to set
-     */
-    public void setPerformedActivityIdentifier(Ii performedActivityIdentifier) {
-        this.performedActivityIdentifier = performedActivityIdentifier;
+    @Test
+    public void create() {
+        Submission p = createSubmissionObj();
+        TestSchema.addUpdObject(p);
+        assertNotNull(p.getId());
+    }
+
+    @Test
+    public void update() {
+        Submission ss = createSubmissionObj();
+        TestSchema.addUpdObject(ss);
+        Serializable id = ss.getId();
+        ss.setLabel("new label");
+        TestSchema.addUpdObject(ss);
+        Submission result = (Submission) TestSchema.getSession().load(Submission.class, id);
+        assertEquals("new label", result.getLabel());
+    }
+
+    @Test
+    public void getByStudyProtocol() {
+        Submission p = createSubmissionObj();
+        TestSchema.addUpdObject(p);
+        Serializable id = p.getId();
+        assertNotNull(p.getId());
+        TestSchema.getSession().clear();
+
+        StudyProtocol sp = (StudyProtocol) TestSchema.getSession().load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        List<Submission> sss = sp.getSubmissions();
+        boolean bFound = false;
+        for (Submission ss : sss) {
+            if (ss.getId().equals(id)) {
+                bFound = true;
+            }
+        }
+        assertTrue(bFound);
+    }
+
+    public static Submission createSubmissionObj() {
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(TestSchema.studyProtocolIds.get(0));
+        Submission ss = new Submission();
+        ss.setStudyProtocol(sp);
+        ss.setId(null);
+        ss.setCutOffDate(new Timestamp(new Date().getTime()));
+        ss.setDescription("description");
+        ss.setLabel("label");
+        ss.setStatusCode(PendingCompletedCode.PENDING);
+        ss.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ss.setStatusDateRangeHigh(new Timestamp(new Date().getTime()));
+        ss.setId(null);
+        return ss;
     }
 }

@@ -76,60 +76,18 @@
 *
 *
 */
-package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.dto.PlannedObservationResultDto;
-import gov.nih.nci.pa.domain.PlannedActivity;
-import gov.nih.nci.pa.domain.PlannedObservationResult;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+package gov.nih.nci.accrual.service;
 
-import java.util.zip.DataFormatException;
+import gov.nih.nci.accrual.dto.SubmissionDto;
+
+import javax.ejb.Remote;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
- */
-@SuppressWarnings("PMD")
-public class PlannedObservationResultConverter extends AbstractConverter
-        <PlannedObservationResultDto, PlannedObservationResult> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PlannedObservationResultDto convertFromDomainToDto(PlannedObservationResult bo) throws DataFormatException {
-        PlannedObservationResultDto dto = new PlannedObservationResultDto();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setPlannedActivityIdentifier(IiConverter.converToActivityIi(
-                bo.getPlannedActivity() == null ? null : bo.getPlannedActivity().getId()));
-        dto.setResultCode(StConverter.convertToSt(bo.getResultCode()));
-        dto.setResultCodeModifiedText(StConverter.convertToSt(bo.getResultCodeModifiedText()));
-        dto.setResultDateRange(IvlConverter.convertTs().convertToIvl(bo.getResultDateRangeLow(),
-                bo.getResultDateRangeHigh()));
-        dto.setResultIndicator(BlConverter.convertToBl(bo.getResultIndicator()));
-        dto.setResultText(StConverter.convertToSt(bo.getResultText()));
-        dto.setTypeCode(StConverter.convertToSt(bo.getTypeCode()));
-        return dto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PlannedObservationResult convertFromDtoToDomain(PlannedObservationResultDto dto) throws DataFormatException {
-        PlannedObservationResult bo = new PlannedObservationResult();
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setPlannedActivity(fKeySetter(PlannedActivity.class, dto.getPlannedActivityIdentifier()));
-        bo.setResultCode(StConverter.convertToString(dto.getResultCode()));
-        bo.setResultCodeModifiedText(StConverter.convertToString(dto.getResultCodeModifiedText()));
-        bo.setResultDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getResultDateRange()));
-        bo.setResultDateRangeLow(IvlConverter.convertTs().convertLow(dto.getResultDateRange()));
-        bo.setResultIndicator(BlConverter.covertToBoolean(dto.getResultIndicator()));
-        bo.setResultText(StConverter.convertToString(dto.getResultText()));
-        bo.setTypeCode(StConverter.convertToString(dto.getTypeCode()));
-        return bo;
-    }
+ * @since Aug 29, 2009
+  */
+@Remote
+public interface SubmissionService
+        extends BaseAccrualStudyService<SubmissionDto> {
 }

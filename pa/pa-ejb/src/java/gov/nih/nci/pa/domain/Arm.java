@@ -82,7 +82,6 @@ import gov.nih.nci.pa.enums.ArmTypeCode;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,7 +90,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.validator.Length;
@@ -115,7 +113,6 @@ public class Arm extends AbstractStudyEntity {
     private String descriptionText;
     private ArmTypeCode typeCode;
     private Collection<PlannedActivity> interventions = new ArrayList<PlannedActivity>();
-    private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
 
     /**
      * @return the name
@@ -177,18 +174,5 @@ public class Arm extends AbstractStudyEntity {
      */
     public void setInterventions(Collection<PlannedActivity> interventions) {
         this.interventions = interventions;
-    }
-    /**
-     * @return the studySubjects
-     */
-    @OneToMany(mappedBy = "arm")
-    public List<StudySubject> getStudySubjects() {
-        return studySubjects;
-    }
-    /**
-     * @param studySubjects the studySubjects to set
-     */
-    public void setStudySubjects(List<StudySubject> studySubjects) {
-        this.studySubjects = studySubjects;
     }
 }

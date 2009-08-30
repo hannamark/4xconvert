@@ -105,7 +105,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class StudySite extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
 
-    
+
     private String localStudyProtocolIdentifier;
     private String reviewBoardApprovalNumber;
     private ReviewBoardApprovalStatusCode reviewBoardApprovalStatusCode;
@@ -116,9 +116,10 @@ public class StudySite extends OrganizationFunctionalRole {
     private OversightCommittee oversightCommittee;
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
     private List<StudySiteContact> studySiteContacts;
+    private List<StudySubject> studySubjects;
     private String reviewBoardOrganizationalAffiliation;
     private String programCodeText;
-   
+
     /**
      * @return the programCode
      */
@@ -130,7 +131,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @param programCode the programCode to set
      */
     public void setProgramCodeText(String programCode) {
-        this.programCodeText = programCode;
+        programCodeText = programCode;
     }
     /**
      *
@@ -262,6 +263,19 @@ public class StudySite extends OrganizationFunctionalRole {
     public void setStudySiteAccrualStatuses(
             List<StudySiteAccrualStatus> studySiteAccrualStatuses) {
         this.studySiteAccrualStatuses = studySiteAccrualStatuses;
+    }
+    /**
+     * @return the studySubjects
+     */
+    @OneToMany(mappedBy = "studySite")
+    public List<StudySubject> getStudySubjects() {
+        return studySubjects;
+    }
+    /**
+     * @param studySubjects the studySubjects to set
+     */
+    public void setStudySubjects(List<StudySubject> studySubjects) {
+        this.studySubjects = studySubjects;
     }
     /**
      * @return the studySiteContacts

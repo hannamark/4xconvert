@@ -91,7 +91,6 @@ import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NIHinstitute;
-import gov.nih.nci.pa.domain.ObservationResult;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
@@ -100,15 +99,10 @@ import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedAdministrativeActivity;
-import gov.nih.nci.pa.domain.PerformedObservation;
-import gov.nih.nci.pa.domain.PerformedObservationResult;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
-import gov.nih.nci.pa.domain.PlannedAdministrativeActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
-import gov.nih.nci.pa.domain.PlannedObservationResult;
-import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -132,6 +126,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.domain.Submission;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -155,17 +150,12 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         configuration = new AnnotationConfiguration().
 
         // Accrual classes
-        addAnnotatedClass(ObservationResult.class).
         addAnnotatedClass(Patient.class).
         addAnnotatedClass(PerformedActivity.class).
         addAnnotatedClass(PerformedAdministrativeActivity.class).
-        addAnnotatedClass(PerformedObservation.class).
-        addAnnotatedClass(PerformedObservationResult.class).
         addAnnotatedClass(PerformedSubjectMilestone.class).
-        addAnnotatedClass(PlannedAdministrativeActivity.class).
-        addAnnotatedClass(PlannedObservationResult.class).
-        addAnnotatedClass(PlannedStudySubjectMilestone.class).
         addAnnotatedClass(StudySubject.class).
+        addAnnotatedClass(Submission.class).
 
         // PA classes
         addAnnotatedClass(StudyProtocol.class).

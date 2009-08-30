@@ -107,7 +107,6 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
         dto.setCategoryCode(cdVal);
         dto.setIdentifier(iiVal);
         dto.setInformedConsentDate(tsVal);
-        dto.setReasonNotCompletedTypeOther(stVal);
         dto.setStudyProtocolIdentifier(iiVal);
         dto.setSubcategoryCode(cdVal);
         dto.setTextDescription(stVal);
@@ -119,7 +118,6 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
         assertTrue(cdTest(r.getCategoryCode()));
         assertTrue(iiTest(r.getIdentifier()));
         assertTrue(tsTest(r.getInformedConsentDate()));
-        assertTrue(stTest(r.getReasonNotCompletedTypeOther()));
         assertTrue(iiTest(r.getStudyProtocolIdentifier()));
         assertTrue(cdTest(r.getSubcategoryCode()));
         assertTrue(stTest(r.getTextDescription()));

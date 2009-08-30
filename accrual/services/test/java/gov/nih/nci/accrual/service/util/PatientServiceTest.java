@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,17 +76,37 @@
 *
 *
 */
-package gov.nih.nci.pa.domain;
 
-import javax.persistence.Entity;
+package gov.nih.nci.accrual.service.util;
+
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 29, 2009
  */
-@Entity
-public class PlannedStudySubjectMilestone extends PlannedAdministrativeActivity {
+public class PatientServiceTest extends AbstractServiceTest<PatientService> {
 
-    private static final long serialVersionUID = -3838394975439994194L;
+    @Override
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        bean = new PatientBean();
+    }
 
+    @Test
+    public void get() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void create() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void update() throws Exception {
+        assertTrue(true);
+    }
 }

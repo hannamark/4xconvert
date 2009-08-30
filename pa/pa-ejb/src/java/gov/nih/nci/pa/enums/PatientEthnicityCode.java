@@ -76,41 +76,77 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.pa.iso.util.IiConverter;
+package gov.nih.nci.pa.enums;
 
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 25, 2009
+ * @since Aug 28, 2009
  */
-public class SearchStudySiteServiceTest extends AbstractServiceTest {
-    SearchStudySiteService bean;
+public enum PatientEthnicityCode implements CodedEnum<String> {
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        bean = new SearchStudySiteBean();
-        super.setUp();
+    /** Hispanic. */
+    HISPANIC("Hispanic or Latino"),
+    /** Not Hispanic. */
+    NOT_HISPANIC("Not Hispanic or Latino"),
+    /** Not Reported. */
+    NOT_REPORTED("Not Reported"),
+    /** Unknown. */
+    UNKNOWN("Unknown");
+
+    private String code;
+    /**
+     *
+     * @param code
+     */
+    private PatientEthnicityCode(String code) {
+        this.code = code;
+        register(this);
+    }
+    /**
+     * @return code code
+     */
+    public String getCode() {
+        return code;
     }
 
-    @Test
-    public void search() throws Exception {
-        List<SearchStudySiteResultDto> rList = bean.search(
-                IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        assertEquals(1, rList.size());
+    /**
+     *@return String DisplayName
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-        rList = bean.search(BII);
-        assertEquals(0, rList.size());
+    /**
+     *
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     *
+     * @param code code
+     * @return PatientEthnicityCode
+     */
+    public static PatientEthnicityCode getByCode(String code) {
+        return getByClassAndCode(PatientEthnicityCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[]  getDisplayNames() {
+        PatientEthnicityCode[] l = PatientEthnicityCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
     }
 }

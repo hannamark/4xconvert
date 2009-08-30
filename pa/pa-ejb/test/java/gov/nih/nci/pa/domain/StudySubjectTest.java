@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -117,10 +118,10 @@ public class StudySubjectTest {
         TestSchema.addUpdObject(ss.getPatient());
         TestSchema.addUpdObject(ss);
         Serializable id = ss.getId();
-        ss.setPaymentMethodCode("new pm code");
+        ss.setPaymentMethodCode(PaymentMethodCode.MEDICAID_AND_MEDICARE);
         TestSchema.addUpdObject(ss);
         StudySubject result = (StudySubject) TestSchema.getSession().load(StudySubject.class, id);
-        assertEquals("new pm code", result.getPaymentMethodCode());
+        assertEquals(PaymentMethodCode.MEDICAID_AND_MEDICARE, result.getPaymentMethodCode());
     }
 
     @Test
@@ -145,16 +146,19 @@ public class StudySubjectTest {
 
     public static StudySubject createStudySubjectObj() {
         Patient patient = PatientTest.createPatientObj();
-        Arm arm = new Arm();
-        arm.setId(TestSchema.armIds.get(0));
+        StudySite ssite = new StudySite();
+        ssite.setId(TestSchema.studySiteIds.get(0));
         StudyProtocol sp = new StudyProtocol();
         sp.setId(TestSchema.studyProtocolIds.get(0));
+        Disease disease = new Disease();
+        disease.setId(TestSchema.diseaseIds.get(0));
         StudySubject ss = new StudySubject();
-        ss.setArm(arm);
+        ss.setStudySite(ssite);
         ss.setStudyProtocol(sp);
         ss.setPatient(patient);
+        ss.setDisease(disease);
         ss.setId(null);
-        ss.setPaymentMethodCode("payment method");
+        ss.setPaymentMethodCode(PaymentMethodCode.MILITARY);
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         ss.setStatusDateRangeHigh(new Timestamp(new Date().getTime()));

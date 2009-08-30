@@ -80,9 +80,9 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
-import gov.nih.nci.pa.domain.PerformedObservation;
-import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -123,10 +123,10 @@ public abstract class AbstractConverter <DTO extends BaseDTO, BO extends Abstrac
         T result = null;
         if (clazz.equals(StudyProtocol.class)) {
             result = (T) new StudyProtocol();
-        } else if (clazz.equals(PlannedActivity.class)) {
-            result = (T) new PlannedActivity();
-        } else if (clazz.equals(PerformedObservation.class)) {
-            result = (T) new PerformedObservation();
+        } else if (clazz.equals(StudySite.class)) {
+            result = (T) new StudySite();
+        } else if (clazz.equals(Patient.class)) {
+            result = (T) new Patient();
         }
         result.setId(IiConverter.convertToLong(pkey));
         return result;

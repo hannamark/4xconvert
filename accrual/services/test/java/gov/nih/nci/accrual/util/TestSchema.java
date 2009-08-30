@@ -76,15 +76,20 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,18 +104,29 @@ public class TestSchema {
     public static int inactiveStudyProtocolCount = 0;
     public static List<StudyProtocol> studyProtocols = new ArrayList<StudyProtocol>();
     public static List<StudySite> studySites = new ArrayList<StudySite>();
+    public static List<Person> people = new ArrayList<Person>();
+    public static List<Patient> patients = new ArrayList<Patient>();
 
-    private static boolean dataLoaded = false;
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
     /**
      *  Reset the schema.
      */
-    public static void reset() {
+    public static void reset() throws Exception {
         AccrualHibernateUtil.testHelper = testHelper;
-        if (!dataLoaded) {
-            primeData();
-        }
+        Session session = AccrualHibernateUtil.getHibernateHelper().getCurrentSession();
+        Connection connection = session.connection();
+        Statement statement = connection.createStatement();
+        patients.clear();
+        statement.executeUpdate("delete from patient");
+        people.clear();
+        statement.executeUpdate("delete from person");
+        studySites.clear();
+        statement.executeUpdate("delete from study_site");
+        studyProtocols.clear();
+        inactiveStudyProtocolCount = 0;
+        statement.executeUpdate("delete from study_protocol");
+        primeData();
     }
 
     /**
@@ -136,7 +152,7 @@ public class TestSchema {
     }
 
     public static void primeData() {
-
+        // StudyProtocol
         StudyProtocol sp = new StudyProtocol();
         sp.setOfficialTitle("Phase II study for Melanoma");
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
@@ -177,6 +193,7 @@ public class TestSchema {
         addUpdObject(sp);
         studyProtocols.add(sp);
 
+        // StudySite
         StudySite ss = new StudySite();
         ss.setLocalStudyProtocolIdentifier("Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
@@ -193,7 +210,34 @@ public class TestSchema {
         addUpdObject(ss);
         studySites.add(ss);
 
-        dataLoaded = true;
+        // Person
+        Person p = new Person();
+        p.setIdentifier("po id 01");
+        p.setStatusCode(EntityStatusCode.PENDING);
+        addUpdObject(p);
+        people.add(p);
+        p = new Person();
+        p.setIdentifier("po id 02");
+        p.setStatusCode(EntityStatusCode.PENDING);
+        addUpdObject(p);
+        people.add(p);
+        p = new Person();
+        p.setIdentifier("po id 03");
+        p.setStatusCode(EntityStatusCode.PENDING);
+        addUpdObject(p);
+        people.add(p);
+        p = new Person();
+        p.setIdentifier("po id 04");
+        p.setStatusCode(EntityStatusCode.PENDING);
+        addUpdObject(p);
+        people.add(p);
+        p = new Person();
+        p.setIdentifier("po id 05");
+        p.setStatusCode(EntityStatusCode.PENDING);
+        addUpdObject(p);
+        people.add(p);
+
+        // Patient
     }
 
 }

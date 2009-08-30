@@ -76,18 +76,61 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.dto.PlannedStudySubjectMilestoneDto;
+package gov.nih.nci.accrual.convert;
 
-import javax.ejb.Remote;
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.Submission;
+import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.zip.DataFormatException;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-@Remote
-public interface PlannedStudySubjectMilestoneService
-        extends BaseAccrualService<PlannedStudySubjectMilestoneDto> {
+public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submission> {
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubmissionDto convertFromDomainToDto(Submission bo) throws DataFormatException {
+        SubmissionDto dto = new SubmissionDto();
+        dto.setCutOffDate(TsConverter.convertToTs(bo.getCutOffDate()));
+        dto.setDescription(StConverter.convertToSt(bo.getDescription()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setLabel(StConverter.convertToSt(bo.getLabel()));
+        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
+        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(),
+                bo.getStatusDateRangeHigh()));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Submission convertFromDtoToDomain(SubmissionDto dto) throws DataFormatException {
+        Submission bo = new Submission();
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
+        bo.setCutOffDate(TsConverter.convertToTimestamp(dto.getCutOffDate()));
+        bo.setDescription(StConverter.convertToString(dto.getDescription()));
+        bo.setLabel(StConverter.convertToString(dto.getLabel()));
+        if (!PAUtil.isCdNull(dto.getStatusCode())) {
+            bo.setStatusCode(PendingCompletedCode.getByCode(dto.getStatusCode().getCode()));
+        }
+        bo.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dto.getStatusDateRange()));
+        bo.setStatusDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getStatusDateRange()));
+        return bo;
+    }
 }

@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,38 +76,76 @@
 *
 *
 */
-package gov.nih.nci.pa.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+package gov.nih.nci.accrual.service;
 
-import org.hibernate.validator.NotNull;
+import gov.nih.nci.accrual.convert.StudySubjectConverter;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 29, 2009
  */
-@Entity
-public class PerformedObservationResult extends ObservationResult {
-
-    private static final long serialVersionUID = -3662714539666300766L;
-
-    private PerformedObservation performedObservation;
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
+public class StudySubjectBean
+        extends AbstractBaseAccrualBean<StudySubjectDto, StudySubject, StudySubjectConverter>
+        implements StudySubjectService {
 
     /**
-     * @return the performedObservation
+     * {@inheritDoc}
      */
-    @ManyToOne
-    @JoinColumn(name = "performed_activity_identifier", updatable = false)
-    @NotNull
-    public PerformedObservation getPerformedObservation() {
-        return performedObservation;
-    }
-    /**
-     * @param performedObservation the performedObservation to set
-     */
-    public void setPerformedObservation(PerformedObservation performedObservation) {
-        this.performedObservation = performedObservation;
+    @SuppressWarnings("unchecked")
+    public List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called getByStudySite() with Ii == null.");
+        }
+        getLogger().info("Entering getByStudySite().  ");
+
+        Session session = null;
+        List<StudySubject> queryList = new ArrayList<StudySubject>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select ssup "
+                       + "from StudySubject ssub "
+                       + "join ssub.studySite ssite "
+                       + "where ssite.id = :studySiteId "
+                       + "order by ssup.id ";
+            getLogger().info("query StudySubject = " + hql + ".");
+            query = session.createQuery(hql);
+            query.setParameter("studySiteId", IiConverter.convertToLong(ii));
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
+        }
+        ArrayList<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
+        for (StudySubject bo : queryList) {
+            try {
+                resultList.add(convertFromDomainToDto(bo));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
+            }
+        }
+        getLogger().info("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
+        return resultList;
     }
 }

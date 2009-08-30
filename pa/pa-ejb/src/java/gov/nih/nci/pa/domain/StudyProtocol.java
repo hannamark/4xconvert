@@ -170,6 +170,8 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyMilestone> studyMilestones = new ArrayList<StudyMilestone>();
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
+    private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
+    private List<Submission> submissions = new ArrayList<Submission>();
 
 
 
@@ -858,7 +860,33 @@ public class StudyProtocol extends AbstractEntity {
     public void setProgramCodeText(String programCodeText) {
         this.programCodeText = programCodeText;
     }
-
-
+    /**
+     * @return the performedActivities
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<PerformedActivity> getPerformedActivities() {
+        return performedActivities;
+    }
+    /**
+     * @param performedActivities the performedActivities to set
+     */
+    public void setPerformedActivities(List<PerformedActivity> performedActivities) {
+        this.performedActivities = performedActivities;
+    }
+    /**
+     * @return the submissions
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<Submission> getSubmissions() {
+        return submissions;
+    }
+    /**
+     * @param submissions the submissions to set
+     */
+    public void setSubmissions(List<Submission> submissions) {
+        this.submissions = submissions;
+    }
 }
 

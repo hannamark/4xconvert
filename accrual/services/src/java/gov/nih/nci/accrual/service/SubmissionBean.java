@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,125 +76,24 @@
 *
 *
 */
-package gov.nih.nci.pa.domain;
 
-import java.sql.Timestamp;
+package gov.nih.nci.accrual.service;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import gov.nih.nci.accrual.convert.SubmissionConverter;
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.pa.domain.Submission;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 29, 2009
  */
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "observation_result_type", discriminatorType = DiscriminatorType.STRING)
-@Table(name = "observation_result")
-public class ObservationResult extends AbstractEntity {
-    private static final long serialVersionUID = 8503670314664361657L;
-
-    private String resultCode;
-    private String resultCodeModifiedText;
-    private Timestamp resultDateRangeLow;
-    private Timestamp resultDateRangeHigh;
-    private Boolean resultIndicator;
-    private String resultText;
-    private String typeCode;
-    /**
-     * @return the resultCode
-     */
-    public String getResultCode() {
-        return resultCode;
-    }
-    /**
-     * @param resultCode the resultCode to set
-     */
-    public void setResultCode(String resultCode) {
-        this.resultCode = resultCode;
-    }
-    /**
-     * @return the resultCodeModifiedText
-     */
-    @Column(name = "result_code_modified_text")
-    public String getResultCodeModifiedText() {
-        return resultCodeModifiedText;
-    }
-    /**
-     * @param resultCodeModifiedText the resultCodeModifiedText to set
-     */
-    public void setResultCodeModifiedText(String resultCodeModifiedText) {
-        this.resultCodeModifiedText = resultCodeModifiedText;
-    }
-    /**
-     * @return the resultDateRangeLow
-     */
-    @Column(name = "result_date_range_low")
-    public Timestamp getResultDateRangeLow() {
-        return resultDateRangeLow;
-    }
-    /**
-     * @param resultDateRangeLow the resultDateRangeLow to set
-     */
-    public void setResultDateRangeLow(Timestamp resultDateRangeLow) {
-        this.resultDateRangeLow = resultDateRangeLow;
-    }
-    /**
-     * @return the resultDateRangeHigh
-     */
-    @Column(name = "result_date_range_high")
-    public Timestamp getResultDateRangeHigh() {
-        return resultDateRangeHigh;
-    }
-    /**
-     * @param resultDateRangeHigh the resultDateRangeHigh to set
-     */
-    public void setResultDateRangeHigh(Timestamp resultDateRangeHigh) {
-        this.resultDateRangeHigh = resultDateRangeHigh;
-    }
-    /**
-     * @return the resultIndicator
-     */
-    @Column(name = "result_indicator")
-    public Boolean getResultIndicator() {
-        return resultIndicator;
-    }
-    /**
-     * @param resultIndicator the resultIndicator to set
-     */
-    public void setResultIndicator(Boolean resultIndicator) {
-        this.resultIndicator = resultIndicator;
-    }
-    /**
-     * @return the resultText
-     */
-    @Column(name = "result_text")
-    public String getResultText() {
-        return resultText;
-    }
-    /**
-     * @param resultText the resultText to set
-     */
-    public void setResultText(String resultText) {
-        this.resultText = resultText;
-    }
-    /**
-     * @return the typeCode
-     */
-    @Column(name = "type_code")
-    public String getTypeCode() {
-        return typeCode;
-    }
-    /**
-     * @param typeCode the typeCode to set
-     */
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
+public class SubmissionBean
+        extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
+        implements SubmissionService {
 }

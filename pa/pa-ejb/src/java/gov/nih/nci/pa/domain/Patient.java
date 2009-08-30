@@ -78,16 +78,20 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
@@ -99,23 +103,80 @@ import org.hibernate.validator.NotNull;
 public class Patient extends StructuralRole {
 
     private static final long serialVersionUID = 2013257396600913947L;
-
-    private Person person;
+    private PatientRaceCode raceCode;
+    private PatientGenderCode sexCode;
+    private PatientEthnicityCode ethnicCode;
+    private Timestamp birthDate;
+    private String personIdentifier;
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
+
     /**
-     * @return the person
+     * @return the raceCode
      */
-    @ManyToOne
-    @JoinColumn(name = "PERSON_IDENTIFIER", updatable = false)
-    @NotNull
-    public Person getPerson() {
-        return person;
+    @Column(name = "RACE_CODE")
+    @Enumerated(EnumType.STRING)
+    public PatientRaceCode getRaceCode() {
+        return raceCode;
     }
     /**
-     * @param person the person to set
+     * @param raceCode the raceCode to set
      */
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setRaceCode(PatientRaceCode raceCode) {
+        this.raceCode = raceCode;
+    }
+    /**
+     * @return the sexCode
+     */
+    @Column(name = "SEX_CODE")
+    @Enumerated(EnumType.STRING)
+    public PatientGenderCode getSexCode() {
+        return sexCode;
+    }
+    /**
+     * @param sexCode the sexCode to set
+     */
+    public void setSexCode(PatientGenderCode sexCode) {
+        this.sexCode = sexCode;
+    }
+    /**
+     * @return the ethnicCode
+     */
+    @Column(name = "ETHNIC_CODE")
+    @Enumerated(EnumType.STRING)
+    public PatientEthnicityCode getEthnicCode() {
+        return ethnicCode;
+    }
+    /**
+     * @param ethnicCode the ethnicCode to set
+     */
+    public void setEthnicCode(PatientEthnicityCode ethnicCode) {
+        this.ethnicCode = ethnicCode;
+    }
+    /**
+     * @return the birthDate
+     */
+    @Column(name = "BIRTH_DATE")
+    public Timestamp getBirthDate() {
+        return birthDate;
+    }
+    /**
+     * @param birthDate the birthDate to set
+     */
+    public void setBirthDate(Timestamp birthDate) {
+        this.birthDate = birthDate;
+    }
+    /**
+     * @return the personIdentifier
+     */
+    @Column(name = "PERSON_ASSIGNED_IDENTIFIER")
+    public String getPersonIdentifier() {
+        return personIdentifier;
+    }
+    /**
+     * @param personIdentifier the personIdentifier to set
+     */
+    public void setPersonIdentifier(String personIdentifier) {
+        this.personIdentifier = personIdentifier;
     }
     /**
      * @return the studySubjects

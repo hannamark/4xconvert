@@ -76,14 +76,76 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto;
+
+package gov.nih.nci.pa.enums;
+
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 28, 2009
  */
-public class PerformedObservationDto extends PerformedActivityDto {
+public enum PatientGenderCode implements CodedEnum<String> {
 
-    private static final long serialVersionUID = 7696939957267100214L;
+    /** Male. */
+    MALE("Male"),
+    /** Female. */
+    FEMALE("Female"),
+    /** Both. */
+    UNKNOWN("Unknown");
+
+    private String code;
+    /**
+     *
+     * @param code
+     */
+    private PatientGenderCode(String code) {
+        this.code = code;
+        register(this);
+    }
+    /**
+     * @return code code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     *@return String DisplayName
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     *
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     *
+     * @param code code
+     * @return PatientGenderCode
+     */
+    public static PatientGenderCode getByCode(String code) {
+        return getByClassAndCode(PatientGenderCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[]  getDisplayNames() {
+        PatientGenderCode[] l = PatientGenderCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
 
 }

@@ -76,24 +76,40 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.convert.PlannedObservationResultConverter;
-import gov.nih.nci.accrual.dto.PlannedObservationResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.pa.domain.PlannedObservationResult;
+package gov.nih.nci.accrual.convert;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.pa.domain.StudySubject;
 
+import org.junit.Test;
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 28, 2009
  */
-@Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class PlannedObservationResultBean
-        extends AbstractBaseAccrualBean<PlannedObservationResultDto
-                , PlannedObservationResult, PlannedObservationResultConverter>
-        implements PlannedObservationResultService {
+public class StudySubjectConverterTest extends AbstractConverterTest {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Test
+    public void conversionTest() throws Exception {
+        StudySubjectDto dto = new StudySubjectDto();
+        dto.setIdentifier(iiVal);
+        dto.setPatientIdentifier(iiVal);
+        dto.setPaymentMethodCode(cdVal);
+        dto.setStudyProtocolIdentifier(iiVal);
+        dto.setStudySiteIdentifier(iiVal);
+
+        StudySubject bo = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(dto);
+        StudySubjectDto r = Converters.get(StudySubjectConverter.class).convertFromDomainToDto(bo);
+
+        assertTrue(iiTest(r.getIdentifier()));
+        assertTrue(iiTest(r.getPatientIdentifier()));
+        assertTrue(cdTest(r.getPaymentMethodCode()));
+        assertTrue(iiTest(r.getStudyProtocolIdentifier()));
+        assertTrue(iiTest(r.getStudySiteIdentifier()));
+    }
 }

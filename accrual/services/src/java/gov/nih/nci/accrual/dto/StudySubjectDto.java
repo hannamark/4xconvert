@@ -76,25 +76,70 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.convert.PlannedStudySubjectMilestoneConverter;
-import gov.nih.nci.accrual.dto.PlannedStudySubjectMilestoneDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.pa.domain.PlannedStudySubjectMilestone;
+package gov.nih.nci.accrual.dto;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 28, 2009
  */
-@Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class PlannedStudySubjectMilestoneBean
-        extends AbstractBaseAccrualBean<PlannedStudySubjectMilestoneDto,
-                PlannedStudySubjectMilestone, PlannedStudySubjectMilestoneConverter>
-        implements PlannedStudySubjectMilestoneService {
+public class StudySubjectDto extends BaseDTO {
+    private static final long serialVersionUID = 2286849965392968341L;
 
+    private Ii patientIdentifier;
+    private Ii studyProtocolIdentifier;
+    private Ii studySiteIdentifier;
+    private Cd paymentMethodCode;
+    /**
+     * @return the patientIdentifier
+     */
+    public Ii getPatientIdentifier() {
+        return patientIdentifier;
+    }
+    /**
+     * @param patientIdentifier the patientIdentifier to set
+     */
+    public void setPatientIdentifier(Ii patientIdentifier) {
+        this.patientIdentifier = patientIdentifier;
+    }
+    /**
+     * @return the studyProtocolIdentifier
+     */
+    public Ii getStudyProtocolIdentifier() {
+        return studyProtocolIdentifier;
+    }
+    /**
+     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
+     */
+    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
+        this.studyProtocolIdentifier = studyProtocolIdentifier;
+    }
+    /**
+     * @return the studySiteIdentifier
+     */
+    public Ii getStudySiteIdentifier() {
+        return studySiteIdentifier;
+    }
+    /**
+     * @param studySiteIdentifier the studySiteIdentifier to set
+     */
+    public void setStudySiteIdentifier(Ii studySiteIdentifier) {
+        this.studySiteIdentifier = studySiteIdentifier;
+    }
+    /**
+     * @return the paymentMethodCode
+     */
+    public Cd getPaymentMethodCode() {
+        return paymentMethodCode;
+    }
+    /**
+     * @param paymentMethodCode the paymentMethodCode to set
+     */
+    public void setPaymentMethodCode(Cd paymentMethodCode) {
+        this.paymentMethodCode = paymentMethodCode;
+    }
 }

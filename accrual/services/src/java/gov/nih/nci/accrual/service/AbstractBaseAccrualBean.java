@@ -98,8 +98,8 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      */
     @SuppressWarnings(UNCHECKED)
     public DTO get(Ii ii) throws RemoteException {
-        if (ii == null || PAUtil.isIiNull(ii)) {
-            throw new RemoteException("Check the Ii value; null found.");
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called get() with Ii == null.");
         }
         BO bo = null;
         DTO resultDto = null;
@@ -129,8 +129,8 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      */
     @SuppressWarnings(UNCHECKED)
     public void delete(Ii ii) throws RemoteException {
-        if (ii == null || PAUtil.isIiNull(ii)) {
-            throw new RemoteException("Check the Ii value; null found.");
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called delete() with Ii == null.");
         }
         getLogger().info("Entering delete().  ");
         Session session = null;
@@ -145,6 +145,30 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
                     + IiConverter.convertToString(ii) + ".", hbe);
         }
         getLogger().info("Leaving delete().  ");
+    }
+
+    /**
+     * @param dto arm to create
+     * @return the created planned activity
+     * @throws RemoteException exception.
+     */
+    public DTO create(DTO dto) throws RemoteException {
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            throw new RemoteException("Update method should be used to modify existing.");
+        }
+        return createOrUpdate(dto);
+    }
+
+    /**
+     * @param dto arm to update
+     * @return the updated planned activity
+     * @throws RemoteException exception.
+     */
+    public DTO update(DTO dto) throws RemoteException {
+        if (PAUtil.isIiNull(dto.getIdentifier())) {
+            throw new RemoteException("Create method should be used to create new.");
+        }
+        return createOrUpdate(dto);
     }
 
     @SuppressWarnings(UNCHECKED)
@@ -181,29 +205,5 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
         }
         return resultDto;
-    }
-
-    /**
-     * @param dto arm to create
-     * @return the created planned activity
-     * @throws RemoteException exception.
-     */
-    public DTO create(DTO dto) throws RemoteException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Update method should be used to modify existing.");
-        }
-        return createOrUpdate(dto);
-    }
-
-    /**
-     * @param dto arm to update
-     * @return the updated planned activity
-     * @throws RemoteException exception.
-     */
-    public DTO update(DTO dto) throws RemoteException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to create new.");
-        }
-        return createOrUpdate(dto);
     }
 }

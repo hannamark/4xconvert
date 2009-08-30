@@ -89,14 +89,16 @@ import org.junit.Before;
  * @author Hugh Reinhart
  * @since 7/7/2009
  */
-public class AbstractServiceTest {
+public abstract class AbstractServiceTest<SERVICE_INTERFACE> {
 
     protected static final St BST = StConverter.convertToSt("ASLDKFJAaldfjks");
     protected static final Ii BII = IiConverter.convertToIi(-1L);
+    protected SERVICE_INTERFACE bean;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUpTestSchema() throws Exception {
         TestSchema.reset();
     }
 
+    public abstract void instantiateServiceBean() throws Exception;
 }

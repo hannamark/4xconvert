@@ -76,77 +76,84 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.util.SearchTrialBean;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+package gov.nih.nci.pa.enums;
 
-import java.rmi.RemoteException;
-
-import org.junit.Before;
-import org.junit.Test;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 25, 2009
+ * @since Aug 28, 2009
  */
-public class SearchTrialServiceTest extends AbstractServiceTest {
-    SearchTrialService bean;
+public enum PatientRaceCode implements CodedEnum<String> {
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        bean = new SearchTrialBean();
-        super.setUp();
+    /** American Indian or Alaska Native. */
+    AMERICAN_INDIAN("American Indian or Alaska Native"),
+    /** Asian. */
+    ASIAN("Asian"),
+    /** Black or African American. */
+    BLACK("Black or African American"),
+    /** Native Hawaiian or Other Pacific Islander. */
+    HAWAIIAN("Native Hawaiian or Other Pacific Islander"),
+    /** Not Reported. */
+    NOT_REPORTED("Not Reported"),
+    /** Unknown. */
+    UNKNOWN("Unknown"),
+    /** White. */
+    WHITE("White");
+
+    private final String code;
+    /**
+     *
+     * @param code
+     */
+    private PatientRaceCode(String code) {
+        this.code = code;
+        register(this);
+    }
+    /**
+     * @return code code
+     */
+    public String getCode() {
+        return code;
     }
 
-    @Test
-    public void search() throws Exception {
-        bean.search(new SearchTrialCriteriaDto());
-        assertEquals(TestSchema.studyProtocols.size() - TestSchema.inactiveStudyProtocolCount,
-                bean.search(new SearchTrialCriteriaDto()).size());
-
-        // get by assigned identifier
-        SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
-        crit.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocols.get(2).getIdentifier()));
-        assertEquals(1, bean.search(crit).size());
-        crit.setAssignedIdentifier(BST);
-        assertEquals(0, bean.search(crit).size());
-
-        // get by title
-        crit = new SearchTrialCriteriaDto();
-        crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
-        assertEquals(1, bean.search(crit).size());
-        crit.setOfficialTitle(BST);
-        assertEquals(0, bean.search(crit).size());
-
-        // get by title
-        crit = new SearchTrialCriteriaDto();
-        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
-        assertEquals(1, bean.search(crit).size());
-        crit.setLeadOrgTrialIdentifier(BST);
-        assertEquals(0, bean.search(crit).size());
+    /**
+     *@return String DisplayName
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
 
-    @Test
-    public void getTrialSummaryByStudyProtocolIi() throws Exception {
-        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        assertNotNull(result);
+    /**
+     *
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
 
-        try {
-            bean.getTrialSummaryByStudyProtocolIi(BII);
-            fail();
-        } catch (RemoteException e) {
-            // expected behavior
+    /**
+     *
+     * @param code code
+     * @return PatientRaceCode
+     */
+    public static PatientRaceCode getByCode(String code) {
+        return getByClassAndCode(PatientRaceCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[]  getDisplayNames() {
+        PatientRaceCode[] l = PatientRaceCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
         }
+        return a;
     }
 
 }

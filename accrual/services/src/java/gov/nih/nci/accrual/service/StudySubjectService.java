@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,38 +76,28 @@
 *
 *
 */
-package gov.nih.nci.pa.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+package gov.nih.nci.accrual.service;
 
-import org.hibernate.validator.NotNull;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.coppa.iso.Ii;
+
+import java.rmi.RemoteException;
+import java.util.List;
+
+import javax.ejb.Remote;
 
 /**
  * @author Hugh Reinhart
- * @since 08/12/2009
+ * @since Aug 29, 2009
  */
-@Entity
-public class PlannedObservationResult extends ObservationResult {
-
-    private static final long serialVersionUID = -1097115233546766008L;
-
-    private PlannedActivity plannedActivity;
-
+@Remote
+public interface StudySubjectService
+        extends BaseAccrualService<StudySubjectDto> {
     /**
-     * @return the plannedActivity
+     * @param ii study site index
+     * @return list of study subjects
+     * @throws RemoteException exception
      */
-    @ManyToOne
-    @JoinColumn(name = "planned_activity_identifier", updatable = false)
-    @NotNull
-    public PlannedActivity getPlannedActivity() {
-        return plannedActivity;
-    }
-    /**
-     * @param plannedActivity the plannedActivity to set
-     */
-    public void setPlannedActivity(PlannedActivity plannedActivity) {
-        this.plannedActivity = plannedActivity;
-    }
+    List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException;
 }

@@ -76,43 +76,38 @@
 *
 *
 */
-package gov.nih.nci.accrual.convert;
+package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.pa.domain.PerformedObservationResult;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since Aug 25, 2009
  */
-public class PerformedObservationResultConverterTest extends AbstractConverterTest {
+public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudySiteService> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    @Test
-    public void conversionTest() throws Exception {
-        PerformedObservationResultDto dto = new PerformedObservationResultDto();
-        dto.setIdentifier(iiVal);
-        dto.setPerformedActivityIdentifier(iiVal);
-        dto.setResultCode(stVal);
-        dto.setResultDateRange(ivlVal);
-        dto.setResultIndicator(blVal);
-        dto.setResultText(stVal);
-        dto.setTypeCode(stVal);
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        bean = new SearchStudySiteBean();
+    }
 
-        PerformedObservationResult bo = Converters.get(PerformedObservationResultConverter.class).convertFromDtoToDomain(dto);
-        PerformedObservationResultDto r = Converters.get(PerformedObservationResultConverter.class).convertFromDomainToDto(bo);
-        assertTrue(iiTest(r.getIdentifier()));
-        assertTrue(iiTest(r.getPerformedActivityIdentifier()));
-        assertTrue(stTest(r.getTypeCode()));
-        assertTrue(ivlTest(r.getResultDateRange()));
-        assertTrue(blTest(r.getResultIndicator()));
-        assertTrue(stTest(r.getResultText()));
-        assertTrue(stTest(r.getTypeCode()));
+    @Test
+    public void search() throws Exception {
+        List<SearchStudySiteResultDto> rList = bean.search(
+                IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        assertEquals(1, rList.size());
+
+        rList = bean.search(BII);
+        assertEquals(0, rList.size());
     }
 }

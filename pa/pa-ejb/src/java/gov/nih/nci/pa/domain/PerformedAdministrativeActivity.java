@@ -78,9 +78,6 @@
 */
 package gov.nih.nci.pa.domain;
 
-import java.sql.Timestamp;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
@@ -92,33 +89,4 @@ public class PerformedAdministrativeActivity extends PerformedActivity {
 
     private static final long serialVersionUID = 2944634020633053461L;
 
-    private Timestamp informedConsentDate;
-    private String reasonNotCompletedTypeOther;
-
-    /**
-     * @return the informedConsentDate
-     */
-    @Column(name = "informed_consent_dateR")
-    public Timestamp getInformedConsentDate() {
-        return informedConsentDate;
-    }
-    /**
-     * @param informedConsentDate the informedConsentDate to set
-     */
-    public void setInformedConsentDate(Timestamp informedConsentDate) {
-        this.informedConsentDate = informedConsentDate;
-    }
-    /**
-     * @return the reasonNotCompletedTypeOther
-     */
-    @Column(name = "reason_not_completed_type_other")
-    public String getReasonNotCompletedTypeOther() {
-        return reasonNotCompletedTypeOther;
-    }
-    /**
-     * @param reasonNotCompletedTypeOther the reasonNotCompletedTypeOther to set
-     */
-    public void setReasonNotCompletedTypeOther(String reasonNotCompletedTypeOther) {
-        this.reasonNotCompletedTypeOther = reasonNotCompletedTypeOther;
-    }
 }

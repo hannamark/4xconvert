@@ -76,24 +76,75 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.convert.PerformedObservationResultConverter;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.pa.domain.PerformedObservationResult;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import java.rmi.RemoteException;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 25, 2009
  */
-@Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class PerformedObservationResultBean
-        extends AbstractBaseAccrualBean<PerformedObservationResultDto,
-                PerformedObservationResult, PerformedObservationResultConverter>
-        implements PerformedObservationResultService {
+public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialService> {
+    SearchTrialService bean;
+
+    @Override
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        bean = new SearchTrialBean();
+    }
+
+    @Test
+    public void search() throws Exception {
+        bean.search(new SearchTrialCriteriaDto());
+        assertEquals(TestSchema.studyProtocols.size() - TestSchema.inactiveStudyProtocolCount,
+                bean.search(new SearchTrialCriteriaDto()).size());
+
+        // get by assigned identifier
+        SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
+        crit.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocols.get(2).getIdentifier()));
+        assertEquals(1, bean.search(crit).size());
+        crit.setAssignedIdentifier(BST);
+        assertEquals(0, bean.search(crit).size());
+
+        // get by title
+        crit = new SearchTrialCriteriaDto();
+        crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
+        assertEquals(1, bean.search(crit).size());
+        crit.setOfficialTitle(BST);
+        assertEquals(0, bean.search(crit).size());
+
+        // get by title
+        crit = new SearchTrialCriteriaDto();
+        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
+        assertEquals(1, bean.search(crit).size());
+        crit.setLeadOrgTrialIdentifier(BST);
+        assertEquals(0, bean.search(crit).size());
+    }
+
+    @Test
+    public void getTrialSummaryByStudyProtocolIi() throws Exception {
+        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        assertNotNull(result);
+
+        try {
+            bean.getTrialSummaryByStudyProtocolIi(BII);
+            fail();
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+    }
+
 }

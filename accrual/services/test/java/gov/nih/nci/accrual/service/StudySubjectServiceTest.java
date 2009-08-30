@@ -76,15 +76,40 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto;
 
+package gov.nih.nci.accrual.service;
+
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @since Aug 29, 2009
  */
-public class PlannedStudySubjectMilestoneDto extends PlannedAdministrativeActivityDto {
+public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectService> {
 
-    private static final long serialVersionUID = -6874550491488194847L;
+    @Override
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        bean = new StudySubjectBean();
+    }
 
+    @Test
+    public void get() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void create() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void update() throws Exception {
+        assertTrue(true);
+    }
+    @Test
+    public void getByStudySite() throws Exception {
+        assertTrue(true);
+    }
 }
