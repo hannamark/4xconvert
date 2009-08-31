@@ -79,7 +79,19 @@
 
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+
+import java.rmi.RemoteException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -98,18 +110,38 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
 
     @Test
     public void get() throws Exception {
-        assertTrue(true);
+        StudySubjectDto dto = bean.get(IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId()));
+        assertNotNull(dto);
+        try {
+            dto = bean.get(BII);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
     }
     @Test
     public void create() throws Exception {
-        assertTrue(true);
+        StudySubjectDto dto = new StudySubjectDto();
+        dto.setPatientIdentifier(IiConverter.convertToIi(TestSchema.patients.get(1).getId()));
+        dto.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MILITARY));
+        dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl("1/1/2000", null));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        dto.setStudySiteIdentifier(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
+        StudySubjectDto r = bean.create(dto);
+        assertNotNull(r);
     }
     @Test
     public void update() throws Exception {
-        assertTrue(true);
+        PaymentMethodCode newCode = PaymentMethodCode.MEDICARE_AND_PRIVATE;
+        StudySubjectDto dto = bean.get(IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId()));
+        assertFalse(newCode.equals(PaymentMethodCode.getByCode(dto.getPaymentMethodCode().getCode())));
+        dto.setPaymentMethodCode(CdConverter.convertToCd(newCode));
+        bean.update(dto);
+        assertTrue(newCode.equals(PaymentMethodCode.getByCode(dto.getPaymentMethodCode().getCode())));
     }
     @Test
     public void getByStudySite() throws Exception {
-        assertTrue(true);
+        List<StudySubjectDto> rList = bean.getByStudySite(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
+        assertTrue(0 < rList.size());
     }
 }

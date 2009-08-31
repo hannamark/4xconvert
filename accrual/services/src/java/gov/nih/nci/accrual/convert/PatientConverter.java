@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -103,10 +104,11 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
     @Override
     public PatientDto convertFromDomainToDto(Patient bo) throws DataFormatException {
         PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(bo.getBirthDate()));
+        dto.setBirthDate(TsConverter.convertToTs(AccrualUtil.removeDays(bo.getBirthDate())));
         dto.setEthnicCode(CdConverter.convertToCd(bo.getEthnicCode()));
         dto.setGenderCode(CdConverter.convertToCd(bo.getSexCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setRaceCode(CdConverter.convertToCd(bo.getRaceCode()));
         return dto;
     }
 
@@ -116,17 +118,17 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
     @Override
     public Patient convertFromDtoToDomain(PatientDto dto) throws DataFormatException {
         Patient bo = new Patient();
-        bo.setBirthDate(TsConverter.convertToTimestamp(dto.getBirthDate()));
+        bo.setBirthDate(AccrualUtil.removeDays(TsConverter.convertToTimestamp(dto.getBirthDate())));
         if (!PAUtil.isCdNull(dto.getEthnicCode())) {
             bo.setEthnicCode(PatientEthnicityCode.getByCode(dto.getEthnicCode().getCode()));
         }
         if (!PAUtil.isCdNull(dto.getGenderCode())) {
             bo.setSexCode(PatientGenderCode.getByCode(dto.getGenderCode().getCode()));
         }
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         if (!PAUtil.isCdNull(dto.getRaceCode())) {
             bo.setRaceCode(PatientRaceCode.getByCode(dto.getRaceCode().getCode()));
         }
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         return bo;
     }
 }

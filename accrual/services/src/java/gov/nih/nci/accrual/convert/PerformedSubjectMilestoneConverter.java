@@ -126,8 +126,10 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
     public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto)
             throws DataFormatException {
         PerformedSubjectMilestone bo = new PerformedSubjectMilestone();
-        bo.setActualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getActualDateRange()));
-        bo.setActualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getActualDateRange()));
+        if (dto.getActualDateRange() != null) {
+            bo.setActualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getActualDateRange()));
+            bo.setActualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getActualDateRange()));
+        }
         if (!PAUtil.isCdNull(dto.getCategoryCode())) {
             bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
         }

@@ -88,6 +88,6 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface PerformedSubjectMilestoneService
-        extends BaseAccrualService<PerformedSubjectMilestoneDto> {
+        extends BaseAccrualStudyService<PerformedSubjectMilestoneDto> {
 
 }

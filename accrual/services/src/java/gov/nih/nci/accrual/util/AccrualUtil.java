@@ -78,405 +78,44 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
  * @author Hugh Reinhart
  * @since 07/27/2009
  */
-@SuppressWarnings({  "PMD.TooManyMethods" })
 public class AccrualUtil {
     /**
-     * checks if Ii is null.
-     * @param ii ii
-     * @return boolean
+     * @param ts the incoming Timestamp
+     * @return Timestamp without time and with day of month set to 1
      */
-    public static boolean isIiNull(Ii ii) {
-        boolean isNull = false;
-        if (ii == null || ii.getExtension() == null) {
-            return true;
-        } else {
-            if (ii.getExtension().trim().length() == 0) {
-                isNull = true;
-            }
-        }
-        try {
-            Long.valueOf(ii.getExtension());
-        } catch (NumberFormatException nfe) {
-            // if cannot be converted, consider as null
-            isNull = true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if Cd is null.
-     * @param cd cd
-     * @return boolean
-     */
-    public static boolean isCdNull(Cd cd) {
-        boolean isNull = false;
-        if (cd == null || cd.getCode() == null) {
-            return true;
-        } else {
-            if (cd.getCode().trim().length() == 0) {
-                isNull = true;
-            }
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if St is null.
-     * @param st st
-     * @return boolean
-     */
-    public static boolean isStNull(St st) {
-        boolean isNull = false;
-        if (st == null || st.getValue() == null) {
-            return true;
-        } else {
-            if (st.getValue().trim().length() == 0) {
-                isNull = true;
-            }
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if Ts is null.
-     * @param ts Ts
-     * @return boolean
-     */
-    public static boolean isTsNull(Ts ts) {
-        boolean isNull = false;
-        if (ts == null || ts.getValue() == null) {
-            isNull = true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if Bl is null.
-     * @param bl Bl
-     * @return boolean
-     */
-    public static boolean isBlNull(Bl bl) {
-        boolean isNull = false;
-        if (bl == null || bl.getValue() == null) {
-            return true;
-        }
-        return isNull;
-    }
-
-    /**
-     * Private class used to decode and normalize date strings.
-     */
-    private static class ValidDateFormat {
-        String pattern;
-        int endIndex;
-        boolean lenient;
-
-        public ValidDateFormat(String pattern) {
-            this.pattern = pattern;
-            this.endIndex = pattern.length();
-            this.lenient = false;
-        }
-    }
-
-    /**
-     * Static ordered list of valid date format patterns.
-     */
-    private static ValidDateFormat[] dateFormats;
-    static {
-        dateFormats = new ValidDateFormat[] {
-                new ValidDateFormat("MM/dd/yyyy"),
-                new ValidDateFormat("yyyy-MM-dd HH:mm:ss"),
-                new ValidDateFormat("yyyy-MM-dd"),
-                new ValidDateFormat("yyyy/MM/dd"),
-                new ValidDateFormat("MM-dd-yyyy HH:mm:ss")
-        };
-    }
-
-    /**
-     * Convert an input string to a Date.
-     *
-     * @param inDate string to be normalized
-     * @return Date
-     */
-    @SuppressWarnings("PMD.EmptyCatchBlock")
-    private static Date dateStringToDate(String inDate) {
-        if (inDate == null) {
-            return null;
-        }
-
-        Date outDate = null;
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        for (ValidDateFormat fm : dateFormats) {
-            if (outDate != null) {
-                break;
-            }
-            sdf.applyPattern(fm.pattern);
-            sdf.setLenient(fm.lenient);
-            try {
-                int endIndex = inDate.trim().length() < fm.endIndex ? inDate.trim().length() : fm.endIndex;
-                outDate = sdf.parse(inDate.trim().substring(0, endIndex));
-            } catch (ParseException e) {
-                // outDate = null;
-            }
-        }
-        return outDate;
-    }
-    /**
-     * Convert an input string to a Date.
-     *
-     * @param inDate string to be normalized
-     * @return Date
-     */
-    private static Date dateStringToDateTime(String inDate) {
-        if (inDate == null) {
-            return null;
-        }
-        Date outDate = null;
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        for (ValidDateFormat fm : dateFormats) {
-            sdf.applyPattern(fm.pattern);
-            sdf.setLenient(false);
-            try {
-                int endIndex = inDate.trim().length() < fm.endIndex ? inDate.trim().length() : fm.endIndex;
-                String dateToParse = inDate.trim().substring(0, endIndex);
-                outDate = sdf.parse(dateToParse);
-                break;
-            } catch (ParseException e) {
-               continue; //best effort to try the other date format(s).
-            }
-        }
-        return outDate;
-    }
-
-    /**
-     *
-     * @param isoTs timestamp
-     * @param format data format
-     * @return String
-     */
-    public static String convertTsToFormarttedDate(Ts isoTs , String format) {
-        Timestamp ts = TsConverter.convertToTimestamp(isoTs);
+    public static Timestamp removeDays(Timestamp ts) {
         if (ts == null) {
-            return  null;
-        }
-        DateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
-        return  formatter.format(ts);
-    }
-
-    /**
-     * Convert an input string to a normalized date string.
-     * The output format is determined by the first element in
-     * the static dateFormats array.
-     *
-     * @param inDate string to be normalized
-     * @return normalized string
-     */
-    public static String normalizeDateString(String inDate) {
-        Date outDate = dateStringToDate(inDate);
-        if (outDate == null) {
             return null;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern(dateFormats[0].pattern);
-        return sdf.format(outDate);
-    }
-    /**
-     * Convert an input string to a normalized date string.
-     * The output format is determined by the first element in
-     * the static dateFormats array.
-     *
-     * @param inDate string to be normalized
-     * @return normalized string
-     */
-    public static String normalizeDateStringWithTime(String inDate) {
-        Date outDate = dateStringToDateTime(inDate);
-        if (outDate == null) {
-            return null;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern(dateFormats[1].pattern);
-        return sdf.format(outDate);
-    }
 
-    /**
-     * Convert an input string to a Timestamp.
-     *
-     * @param inDate string to be normalized
-     * @return Timestamp
-     */
-    public static Timestamp dateStringToTimestamp(String inDate) {
-        Date dt = dateStringToDate(inDate);
-        return dt == null ? null : new Timestamp(dt.getTime());
-    }
+        Date date = new Date(ts.getTime());
 
-    /**
-     * @return today's date as a string
-     */
-    public static String today() {
-        return normalizeDateString(new Timestamp(new Date().getTime()).toString());
-    }
+        // Get an instance of the Calendar.
+        Calendar calendar = Calendar.getInstance();
 
-    /**
-    * Returns whether the argument is null or has only whitespace characters
-    * within it. This method is more efficient than performing a trim() operation
-    * because no intermediate strings are created and we often don't need to
-    * iterate over the whole string.
-    *
-    * @param aString String
-    * @return boolean
-    */
-    public static boolean isEmpty(String aString) {
+        // Make sure the calendar will not perform automatic correction.
+        calendar.setLenient(false);
 
-        if (aString == null) {
-            return true;
-        }
+        // Set the time of the calendar to the given date.
+        calendar.setTime(date);
 
-        int length = aString.length();
+        // Remove the hours, minutes, seconds and milliseconds.
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        for (int i = 0; i < length; i++) {
-            if (Character.isWhitespace(aString.charAt(i))) {
-                continue;
-            }
-            return false;
-        }
-
-    return true;
-    }
-
-    /**
-     *
-     * @param aString aString
-     * @return boolean
-     */
-    public static boolean isNotEmpty(String aString) {
-        return !isEmpty(aString);
-    }
-
-    /**
-     * Method designed for string setters to concatenate rather then cause exceptions.
-     * @param value a string
-     * @param maxLength the maximum length allowed for the string
-     * @return null if empty, otherwise a string no longer than maxlegth
-     */
-    public static String stringSetter(String value, int maxLength) {
-        String ret = null;
-        if (isEmpty(value)) {
-            ret = null;
-        } else if (maxLength < 0) {
-            ret = value;
-        } else {
-        ret =  value.length() > maxLength ? value.substring(0, maxLength) : value;
-        }
-        return ret;
-    }
-
-    /**
-     * Util method to validate email addresses.
-     *
-     * @param email to check the string
-     * @return boolean whether email is valid or not
-     */
-    public static boolean isValidEmail(String email) {
-        String match = email;
-        if (match != null) {
-            match = match.trim();
-       }
-       Pattern p = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
-       Matcher m = p.matcher(match);
-       return  m.matches();
-    }
-
-    /**
-     * util method to trim a length.
-     * @param data String data
-     * @param len length to trim
-     * @return trimmed data
-     */
-    public static String trim(String data , int len) {
-        if (data == null) {
-            return null;
-        }
-        if (data.length() > len) {
-            return data.substring(0, len - 1) + "...";
-        } else {
-            return data;
-        }
-    }
-
-    /**
-     * @param data the input value which will be converted parameter used in search query
-     * @return not null sting with * converted to %
-     */
-    public static String wildcardCriteria(String data) {
-        String criteria = data;
-        if (criteria == null) {
-            criteria = "";
-        }
-        return criteria.replace('*', '%');
-    }
-    /**
-     * util method to find if the lenght is more than len parameter.
-     * @param st String data
-     * @param len length to trim
-     * @return trimmed data
-     */
-    public static boolean isGreatenThan(St st , int len) {
-        boolean ret = false;
-        String str = null;
-        if (st == null) {
-            ret = false;
-        }
-        str = StConverter.convertToString(st);
-        if (str == null) {
-            ret = false;
-        } else if (str.length() > len) {
-            ret = true;
-        }
-        return ret;
-    }
-
-    /**
-     * util method to find if the length is between min and max.
-     * @param st String data
-     * @param min minimum numbers of characters
-     * @param max maximim numbers of characters
-     * @return trimmed data
-     */
-    public static boolean isWithinRange(St st , int min , int max) {
-        boolean ret = false;
-        String str = null;
-        if (st == null) {
-            ret = true;
-        }
-        str = StConverter.convertToString(st);
-        if (str == null) {
-            ret = true;
-        } else if (str.length() >= min && str.length() <= max) {
-            ret = true;
-        }
-        return ret;
-    }
-
+        // Return the date again.
+        return new Timestamp(calendar.getTime().getTime());
+      }
 }

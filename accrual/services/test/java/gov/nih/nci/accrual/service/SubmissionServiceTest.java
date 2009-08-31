@@ -79,7 +79,21 @@
 
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -98,18 +112,38 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
 
     @Test
     public void get() throws Exception {
-        assertTrue(true);
+        SubmissionDto dto = bean.get(IiConverter.convertToIi(TestSchema.submissions.get(0).getId()));
+        assertNotNull(dto);
+        try {
+            dto = bean.get(BII);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
     }
     @Test
     public void create() throws Exception {
-        assertTrue(true);
+        SubmissionDto dto = new SubmissionDto();
+        dto.setCutOffDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/3/2009")));
+        dto.setDescription(StConverter.convertToSt("des123"));
+        dto.setLabel(StConverter.convertToSt("label"));
+        dto.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.PENDING));
+        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl("1/1/2000", null));
+        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        SubmissionDto r = bean.create(dto);
+        assertNotNull(r);
     }
     @Test
     public void update() throws Exception {
-        assertTrue(true);
+        String newLabel = "newLabel";
+        assertFalse(newLabel.equals(TestSchema.submissions.get(0).getLabel()));
+        SubmissionDto dto = bean.get(IiConverter.convertToIi(TestSchema.submissions.get(0).getId()));
+        dto.setLabel(StConverter.convertToSt(newLabel));
+        SubmissionDto r = bean.update(dto);
+        assertTrue(newLabel.equals(StConverter.convertToString(r.getLabel())));
     }
     @Test
     public void getByStudyProtocol() throws Exception {
-        assertTrue(true);
+        List<SubmissionDto> rList = bean.getByStudyProtocol(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        assertTrue(0 < rList.size());
     }
 }

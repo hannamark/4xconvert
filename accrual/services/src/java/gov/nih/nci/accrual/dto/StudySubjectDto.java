@@ -81,6 +81,8 @@ package gov.nih.nci.accrual.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
@@ -93,7 +95,10 @@ public class StudySubjectDto extends BaseDTO {
     private Ii patientIdentifier;
     private Ii studyProtocolIdentifier;
     private Ii studySiteIdentifier;
+    private Ii diseaseIdentifier;
     private Cd paymentMethodCode;
+    private Cd statusCode;
+    private Ivl<Ts> statusDateRange;
     /**
      * @return the patientIdentifier
      */
@@ -141,5 +146,41 @@ public class StudySubjectDto extends BaseDTO {
      */
     public void setPaymentMethodCode(Cd paymentMethodCode) {
         this.paymentMethodCode = paymentMethodCode;
+    }
+    /**
+     * @return the statusCode
+     */
+    public Cd getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(Cd statusCode) {
+        this.statusCode = statusCode;
+    }
+    /**
+     * @return the statusDateRange
+     */
+    public Ivl<Ts> getStatusDateRange() {
+        return statusDateRange;
+    }
+    /**
+     * @param statusDateRange the statusDateRange to set
+     */
+    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
+        this.statusDateRange = statusDateRange;
+    }
+    /**
+     * @return the diseaseIdentifier
+     */
+    public Ii getDiseaseIdentifier() {
+        return diseaseIdentifier;
+    }
+    /**
+     * @param diseaseIdentifier the diseaseIdentifier to set
+     */
+    public void setDiseaseIdentifier(Ii diseaseIdentifier) {
+        this.diseaseIdentifier = diseaseIdentifier;
     }
 }

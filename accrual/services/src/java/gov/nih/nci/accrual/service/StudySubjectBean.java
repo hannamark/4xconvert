@@ -125,11 +125,11 @@ public class StudySubjectBean
         try {
             session = AccrualHibernateUtil.getCurrentSession();
             Query query = null;
-            String hql = "select ssup "
+            String hql = "select ssub "
                        + "from StudySubject ssub "
                        + "join ssub.studySite ssite "
                        + "where ssite.id = :studySiteId "
-                       + "order by ssup.id ";
+                       + "order by ssub.id ";
             getLogger().info("query StudySubject = " + hql + ".");
             query = session.createQuery(hql);
             query.setParameter("studySiteId", IiConverter.convertToLong(ii));

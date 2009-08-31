@@ -84,10 +84,12 @@ import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.zip.DataFormatException;
 
@@ -165,6 +167,10 @@ public class PatientBean implements PatientService {
         Patient bo = null;
         try {
             bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
+            bo.setIdentifier("PO ID");
+            bo.setPersonIdentifier("PO PERSON ID");
+            bo.setStatusCode(StructuralRoleStatusCode.PENDING);
+            bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
         }

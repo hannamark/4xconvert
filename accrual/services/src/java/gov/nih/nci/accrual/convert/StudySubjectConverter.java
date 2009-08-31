@@ -80,13 +80,16 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
@@ -106,9 +109,14 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setPatientIdentifier(IiConverter.convertToIi(bo.getPatient().getId()));
         dto.setPaymentMethodCode(CdConverter.convertToCd(bo.getPaymentMethodCode()));
+        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
+        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(),
+                bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(
                 bo.getStudySite() == null ? null : bo.getStudySite().getId()));
+        dto.setDiseaseIdentifier(IiConverter.convertToIi(
+                bo.getDisease() == null ? null : bo.getDisease().getId()));
         return dto;
     }
 
@@ -123,8 +131,16 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         if (!PAUtil.isCdNull(dto.getPaymentMethodCode())) {
             bo.setPaymentMethodCode(PaymentMethodCode.getByCode(dto.getPaymentMethodCode().getCode()));
         }
+        if (!PAUtil.isCdNull(dto.getStatusCode())) {
+            bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
+        }
+        if (dto.getStatusDateRange() != null) {
+            bo.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dto.getStatusDateRange()));
+            bo.setStatusDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getStatusDateRange()));
+        }
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
         bo.setStudySite(fKeySetter(StudySite.class, dto.getStudySiteIdentifier()));
+        bo.setDisease(fKeySetter(Disease.class, dto.getDiseaseIdentifier()));
         return bo;
     }
 }

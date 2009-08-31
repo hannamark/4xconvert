@@ -129,8 +129,10 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
         if (!PAUtil.isCdNull(dto.getStatusCode())) {
             bo.setStatusCode(PendingCompletedCode.getByCode(dto.getStatusCode().getCode()));
         }
-        bo.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dto.getStatusDateRange()));
-        bo.setStatusDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getStatusDateRange()));
+        if (dto.getStatusDateRange() != null) {
+            bo.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dto.getStatusDateRange()));
+            bo.setStatusDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getStatusDateRange()));
+        }
         return bo;
     }
 }

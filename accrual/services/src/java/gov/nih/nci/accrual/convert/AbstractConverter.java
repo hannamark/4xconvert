@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -127,6 +128,8 @@ public abstract class AbstractConverter <DTO extends BaseDTO, BO extends Abstrac
             result = (T) new StudySite();
         } else if (clazz.equals(Patient.class)) {
             result = (T) new Patient();
+        } else if (clazz.equals(Disease.class)) {
+            result = (T) new Disease();
         }
         result.setId(IiConverter.convertToLong(pkey));
         return result;

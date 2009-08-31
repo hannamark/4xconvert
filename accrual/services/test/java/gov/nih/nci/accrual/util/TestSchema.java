@@ -76,15 +76,26 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -101,11 +112,15 @@ import org.hibernate.Transaction;
 * @since 08/07/2009
 */
 public class TestSchema {
-    public static int inactiveStudyProtocolCount = 0;
-    public static List<StudyProtocol> studyProtocols = new ArrayList<StudyProtocol>();
-    public static List<StudySite> studySites = new ArrayList<StudySite>();
-    public static List<Person> people = new ArrayList<Person>();
-    public static List<Patient> patients = new ArrayList<Patient>();
+    public static int inactiveStudyProtocolCount;
+    public static List<Disease> diseases;
+    public static List<StudyProtocol> studyProtocols;
+    public static List<Submission> submissions;
+    public static List<StudySite> studySites;
+    public static List<StudyDisease> studyDiseases;
+    public static List<Patient> patients;
+    public static List<StudySubject> studySubjects;
+    public static List<PerformedSubjectMilestone> performedSubjectMilestones;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -117,15 +132,14 @@ public class TestSchema {
         Session session = AccrualHibernateUtil.getHibernateHelper().getCurrentSession();
         Connection connection = session.connection();
         Statement statement = connection.createStatement();
-        patients.clear();
+        statement.executeUpdate("delete from performed_activity");
+        statement.executeUpdate("delete from study_disease");
+        statement.executeUpdate("delete from study_subject");
         statement.executeUpdate("delete from patient");
-        people.clear();
-        statement.executeUpdate("delete from person");
-        studySites.clear();
         statement.executeUpdate("delete from study_site");
-        studyProtocols.clear();
-        inactiveStudyProtocolCount = 0;
+        statement.executeUpdate("delete from submission");
         statement.executeUpdate("delete from study_protocol");
+        statement.executeUpdate("delete from disease");
         primeData();
     }
 
@@ -152,6 +166,16 @@ public class TestSchema {
     }
 
     public static void primeData() {
+        diseases = new ArrayList<Disease>();
+        studyProtocols = new ArrayList<StudyProtocol>();
+        submissions = new ArrayList<Submission>();
+        studySites = new ArrayList<StudySite>();
+        studyDiseases = new ArrayList<StudyDisease>();
+        patients = new ArrayList<Patient>();
+        studySubjects = new ArrayList<StudySubject>();
+        performedSubjectMilestones = new ArrayList<PerformedSubjectMilestone>();
+        inactiveStudyProtocolCount = 0;
+
         // StudyProtocol
         StudyProtocol sp = new StudyProtocol();
         sp.setOfficialTitle("Phase II study for Melanoma");
@@ -193,6 +217,29 @@ public class TestSchema {
         addUpdObject(sp);
         studyProtocols.add(sp);
 
+        // Disease
+        Disease disease = new Disease();
+        disease.setDiseaseCode("code");
+        disease.setMenuDisplayName("menu name");
+        disease.setNtTermIdentifier("NT term");
+        disease.setPreferredName("name");
+        disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        disease.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+        addUpdObject(disease);
+        diseases.add(disease);
+
+        // Submission
+        Submission sub = new Submission();
+        sub.setCutOffDate(PAUtil.dateStringToTimestamp("6/3/2009"));
+        sub.setDescription("description");
+        sub.setLabel("label");
+        sub.setStatusCode(PendingCompletedCode.COMPLETED);
+        sub.setStatusDateRangeHigh(null);
+        sub.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("7/15/2009"));
+        sub.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(sub);
+        submissions.add(sub);
+
         // StudySite
         StudySite ss = new StudySite();
         ss.setLocalStudyProtocolIdentifier("Local SP 001");
@@ -210,34 +257,94 @@ public class TestSchema {
         addUpdObject(ss);
         studySites.add(ss);
 
-        // Person
-        Person p = new Person();
-        p.setIdentifier("po id 01");
-        p.setStatusCode(EntityStatusCode.PENDING);
-        addUpdObject(p);
-        people.add(p);
-        p = new Person();
-        p.setIdentifier("po id 02");
-        p.setStatusCode(EntityStatusCode.PENDING);
-        addUpdObject(p);
-        people.add(p);
-        p = new Person();
-        p.setIdentifier("po id 03");
-        p.setStatusCode(EntityStatusCode.PENDING);
-        addUpdObject(p);
-        people.add(p);
-        p = new Person();
-        p.setIdentifier("po id 04");
-        p.setStatusCode(EntityStatusCode.PENDING);
-        addUpdObject(p);
-        people.add(p);
-        p = new Person();
-        p.setIdentifier("po id 05");
-        p.setStatusCode(EntityStatusCode.PENDING);
-        addUpdObject(p);
-        people.add(p);
+        // StudyDisease
+        StudyDisease sd = new StudyDisease();
+        sd.setDisease(diseases.get(0));
+        sd.setLeadDiseaseIndicator(true);
+        sd.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(sd);
+        studyDiseases.add(sd);
 
         // Patient
+        Patient p = new Patient();
+        p.setBirthDate(PAUtil.dateStringToTimestamp("7/11/1963"));
+        p.setEthnicCode(PatientEthnicityCode.HISPANIC);
+        p.setIdentifier("PO PATIENT ID 01");
+        p.setPersonIdentifier("PO PERSON ID 01");
+        p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN);
+        p.setSexCode(PatientGenderCode.FEMALE);
+        p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        addUpdObject(p);
+        patients.add(p);
+
+        p = new Patient();
+        p.setBirthDate(PAUtil.dateStringToTimestamp("5/10/1963"));
+        p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
+        p.setIdentifier("PO PATIENT ID 02");
+        p.setPersonIdentifier("PO PERSON ID 02");
+        p.setRaceCode(PatientRaceCode.WHITE);
+        p.setSexCode(PatientGenderCode.MALE);
+        p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        addUpdObject(p);
+        patients.add(p);
+
+        p = new Patient();
+        p.setBirthDate(PAUtil.dateStringToTimestamp("8/11/1963"));
+        p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
+        p.setIdentifier("PO PATIENT ID 03");
+        p.setPersonIdentifier("PO PERSON ID 03");
+        p.setRaceCode(PatientRaceCode.WHITE);
+        p.setSexCode(PatientGenderCode.FEMALE);
+        p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        addUpdObject(p);
+        patients.add(p);
+
+        p = new Patient();
+        p.setBirthDate(PAUtil.dateStringToTimestamp("1/3/1960"));
+        p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
+        p.setIdentifier("PO PATIENT ID 04");
+        p.setPersonIdentifier("PO PERSON ID 04");
+        p.setRaceCode(PatientRaceCode.NOT_REPORTED);
+        p.setSexCode(PatientGenderCode.MALE);
+        p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        addUpdObject(p);
+        patients.add(p);
+
+        p = new Patient();
+        p.setBirthDate(PAUtil.dateStringToTimestamp("9/7/1968"));
+        p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
+        p.setIdentifier("PO PATIENT ID 05");
+        p.setPersonIdentifier("PO PERSON ID 05");
+        p.setRaceCode(PatientRaceCode.UNKNOWN);
+        p.setSexCode(PatientGenderCode.FEMALE);
+        p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        addUpdObject(p);
+        patients.add(p);
+
+        // StudySubject
+        StudySubject subj = new StudySubject();
+        subj.setDisease(diseases.get(0));
+        subj.setPatient(patients.get(0));
+        subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        subj.setStudyProtocol(studyProtocols.get(0));
+        subj.setStudySite(studySites.get(0));
+        addUpdObject(subj);
+        studySubjects.add(subj);
+
+        // PerformedSubjectMilestone
+        PerformedSubjectMilestone m = new PerformedSubjectMilestone();
+        m.setCategoryCode(ActivityCategoryCode.OTHER);
+        m.setInformedConsentDate(PAUtil.dateStringToTimestamp("6/13/2009"));
+        m.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(m);
+        performedSubjectMilestones.add(m);
     }
 
 }

@@ -79,8 +79,22 @@
 
 package gov.nih.nci.accrual.service.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -99,14 +113,34 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
 
     @Test
     public void get() throws Exception {
-        assertTrue(true);
+        PatientDto  dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
+        assertNotNull(dto);
+        try {
+            dto = bean.get(BII);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
     }
     @Test
     public void create() throws Exception {
-        assertTrue(true);
+        PatientDto dto = new PatientDto();
+        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
+        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
+        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.BLACK));
+        PatientDto r = bean.create(dto);
+        assertNotNull(r);
+
+        // birth date must be only year and month
+        assertEquals(PAUtil.dateStringToTimestamp("7/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
     }
     @Test
     public void update() throws Exception {
-        assertTrue(true);
+        assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
+        PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
+        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.ASIAN));
+        PatientDto r = bean.update(dto);
+        assertTrue(PatientRaceCode.ASIAN.getCode().equals(r.getRaceCode().getCode()));
+
     }
 }

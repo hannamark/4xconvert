@@ -93,7 +93,7 @@ import javax.interceptor.Interceptors;
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 public class PerformedSubjectMilestoneBean
-        extends AbstractBaseAccrualBean<PerformedSubjectMilestoneDto,
+        extends AbstractBaseAccrualStudyBean<PerformedSubjectMilestoneDto,
                 PerformedSubjectMilestone, PerformedSubjectMilestoneConverter>
         implements PerformedSubjectMilestoneService {
 

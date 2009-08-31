@@ -94,6 +94,8 @@ public class PatientDto extends BaseDTO {
     private Cd genderCode;
     private Cd ethnicCode;
     private Ts birthDate;
+    private Cd statusCode;
+    private Ts statusDateRangeLow;
 
     /**
      * @return the raceCode
@@ -142,5 +144,29 @@ public class PatientDto extends BaseDTO {
      */
     public void setBirthDate(Ts birthDate) {
         this.birthDate = birthDate;
+    }
+    /**
+     * @return the statusCode
+     */
+    public Cd getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(Cd statusCode) {
+        this.statusCode = statusCode;
+    }
+    /**
+     * @return the statusDateRangeLow
+     */
+    public Ts getStatusDateRangeLow() {
+        return statusDateRangeLow;
+    }
+    /**
+     * @param statusDateRangeLow the statusDateRangeLow to set
+     */
+    public void setStatusDateRangeLow(Ts statusDateRangeLow) {
+        this.statusDateRangeLow = statusDateRangeLow;
     }
 }
