@@ -160,7 +160,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
             
          } catch (Exception e) {
                addActionError(e.getLocalizedMessage());
-             return ERROR;
+             return "ERROR";
          }
         
         return actionResult;

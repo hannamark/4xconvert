@@ -37,7 +37,7 @@ function handleAction(){
           </label>
          </td>
          <td class="value">
-            <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
+            <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
            </td>
       </tr> 
       <tr>     
@@ -47,7 +47,7 @@ function handleAction(){
           </label>
          </td>
          <td class="value">
-            <s:textfield id ="leadOrgTrialIdentifier" name="criteria.leadOrgTrialIdentifier" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
+            <s:textfield id ="leadOrgTrialIdentifier" name="criteria.leadOrgTrialIdentifier.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
            </td>
       </tr> 
             
@@ -58,7 +58,7 @@ function handleAction(){
                 </label>
                 </td>
                 <td colspan="4">
-                <s:textfield id ="officialTitle" name="criteria.officialTitle" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
+                <s:textfield id ="officialTitle" name="criteria.officialTitle.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
                 </td>
             </tr>
     
