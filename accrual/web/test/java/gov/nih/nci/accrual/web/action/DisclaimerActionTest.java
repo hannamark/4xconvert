@@ -77,20 +77,10 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpServletResponse;
 
 /**
  * @author Rajani Kumar
@@ -100,8 +90,7 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
 public class DisclaimerActionTest extends AbstractAccrualActionTest {
 
 	private static final String AR_SHOW_DISCLAIMER = "show_Disclaimer_Page";
-	//private static String AR_SUBMITTING_SITES = "publicWelcome";
-	
+		
 	DisclaimerAction action;
 
     @Before
@@ -118,27 +107,9 @@ public class DisclaimerActionTest extends AbstractAccrualActionTest {
     @Test
     public void acceptTest(){
         // user accepts the disclaimer and goes to home page
-      //  assertEquals(AR_SUBMITTING_SITES, action.accept());
-    	action.accept();
-    	//((MockHttpServletRequest) ServletActionContext.getRequest()).getSession().setAttribute("disclaimer", "accept");
-    	assertEquals("accept",ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
-    	action.setActionName("viewTrials.action");
-    	assertEquals("viewTrials.action",action.getActionName());
-    	try{
-    		((MockHttpServletRequest) ServletActionContext.getRequest()).getRequestDispatcher(action.getActionName())
-        .forward(((MockHttpServletRequest)ServletActionContext.getRequest()), ((MockHttpServletResponse)ServletActionContext.getResponse()));
-        }catch(ServletException e){
-    	   assertTrue(true);
-       }catch(IOException e){
-    	   assertTrue(true);
-       }
-    	    	
+        	action.accept();
+    	  	assertEquals("accept",ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
+    	
      }
     
-    @Test
-    public void actionNamePropertyTest(){
-        assertNull(action.getActionName());
-        action.setActionName("viewTrials.action");
-        assertNotNull(action.getActionName());
-    }
 }

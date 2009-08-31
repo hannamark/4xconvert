@@ -76,11 +76,6 @@
 */
 
 package gov.nih.nci.accrual.web.action;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -90,8 +85,7 @@ import org.apache.struts2.ServletActionContext;
 public class DisclaimerAction extends AbstractAccrualAction {
     
     private static final long serialVersionUID = 5729242514602833613L;
-    private String actionName;
-
+  
     /**
      * 
      * @return s
@@ -101,35 +95,13 @@ public class DisclaimerAction extends AbstractAccrualAction {
         return "show_Disclaimer_Page";
     }
     /**
-     * 
+     * @return s
      */
-    public void accept() {
+    public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute("disclaimer", "accept");
-      // return "publicWelcome";
-        if ("".equals(actionName)) {
-            actionName = "viewTrials.action";
-        }
-        try {
-            ServletActionContext.getRequest().getRequestDispatcher(actionName)
-                .forward(ServletActionContext.getRequest(), ServletActionContext.getResponse());
-        } catch (ServletException e) {
-            LOG.error(e.getMessage());
-        } catch (IOException e) {
-            LOG.error(e.getMessage());
-        }
+       return "viewTrials";
+       
     }
     
-    /**
-     * @return the actionName
-     */
-    public String getActionName() {
-        return actionName;
-    }
-    /**
-     * @param actionName the actionName to set
-     */
-    public void setActionName(String actionName) {
-        this.actionName = actionName;
-    }
-    
+     
 }

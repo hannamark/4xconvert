@@ -12,7 +12,10 @@
 
 <div class="summarybox">
            
-                            
+              <div>
+                    <c:out value="${sessionScope.trialSummary.assignedIdentifier.value}"/>:
+                    
+              </div>        
             <div class="float33_first">
                 <div class="row">
                     <span class="label"> <fmt:message key="accrual.trialSummary.lead.organization.trialID"/></span> 
@@ -28,6 +31,11 @@
             <div class="float33">
                 <div class="row">
                     <span class="label"><fmt:message key="accrual.trialSummary.principal.investigator"/></span> 
+                    <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator.value}"/></span>
+                </div>
+                
+                 <div class="row">
+                    <span class="label"><fmt:message key="accrual.trialSummary.participation.site"/></span> 
                     <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator.value}"/></span>
                 </div>
                
