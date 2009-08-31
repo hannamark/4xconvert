@@ -74,81 +74,58 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.accrual.web.decorator;
+package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.displaytag.decorator.TableDecorator;
-
+import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpSession;
 
 
 /**
  * @author Rajani Kumar
- * @since  Aug 13, 2009
+ * @since  Aug 31, 2009
  */
-public class AccrualDisplayTagDecorator extends TableDecorator {
-   
-    
-    /**
-     * 
-     * @return studyProtocolIdentifier as a String
-     */
-    public String getStudyProtocolIdentifier() {
-        Ii studyProtocolIdentifier = ((SearchTrialResultDto) this.getCurrentRowObject()).getStudyProtocolIdentifier();
-       
-        if (studyProtocolIdentifier != null) {
-            return IiConverter.convertToString(studyProtocolIdentifier);
-        } else {
-            return "";
-        }
+public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
+
+	private static final String AR_VIEW_ACCRUAL_SUBMISSIONS = "view_accrual_submissions";
+	
+	
+	AccrualSubmissionsAction action;
+
+    @Before
+    public void initAction() {
+        action = new AccrualSubmissionsAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+    	MockHttpSession session = new MockHttpSession();
+        session.setAttribute("disclaimer", "accept");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
     }
-   
-    
-    /**
-     * 
-     * @return assignedIdentifier as a String
-     */
-    public String getAssignedIdentifier() {
-        St assignedIdentifier = ((SearchTrialResultDto) this.getCurrentRowObject()).getAssignedIdentifier();
+
+    @Test
+    public void executeTest() {
        
-        if (assignedIdentifier != null) {
-            return StConverter.convertToString(assignedIdentifier);
-        } else {
-            return "";
-        }
+    	
+        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        assertNotNull(strDisclaimer);
+        assertEquals("accept", strDisclaimer);
+       // show participation site selection
+        assertEquals(AR_VIEW_ACCRUAL_SUBMISSIONS, action.execute());
+        
     }
     
-    /**
-     * 
-     * @return officialTitle as a String
-     */
-    public String getOfficialTitle() {
-        St officialTitle = ((SearchTrialResultDto) this.getCurrentRowObject()).getOfficialTitle();
-       
-        if (officialTitle != null) {
-            return StConverter.convertToString(officialTitle);
-        } else {
-            return "";
-        }
+        
+    @Test
+    public void studyProtocolIdPropertyTest(){
+     assertNull(action.getStudyProtocolId());
+     action.setStudyProtocolId("123");
+     assertNotNull(action.getStudyProtocolId());
     }
     
-    /**
-     * 
-     * @return studyStatusCode as a String
-     */
-    public String getStudyStatusCode() {
-        Cd studyStatusCode = ((SearchTrialResultDto) this.getCurrentRowObject()).getStudyStatusCode();
-       
-        if (studyStatusCode != null) {
-            return CdConverter.convertCdToString(studyStatusCode);
-        } else {
-            return "";
-        }
-    }
-}
+   }

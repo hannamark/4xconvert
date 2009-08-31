@@ -97,6 +97,13 @@
              <result name="ERROR">/error.jsp</result>
            
         </action>
+        
+        <action name="accrualSubmissions" class="gov.nih.nci.accrual.web.action.AccrualSubmissionsAction">
+           <interceptor-ref name="nci-commonsParams" />
+            <result name="view_accrual_submissions">/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
+             <result name="ERROR">/error.jsp</result>
+           
+        </action>
          
     </package>
     

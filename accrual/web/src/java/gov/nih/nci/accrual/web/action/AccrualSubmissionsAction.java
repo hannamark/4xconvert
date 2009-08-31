@@ -74,81 +74,84 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.accrual.web.decorator;
+package gov.nih.nci.accrual.web.action;
+
 
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-
-import org.displaytag.decorator.TableDecorator;
-
+import org.apache.struts2.ServletActionContext;
 
 
 /**
  * @author Rajani Kumar
- * @since  Aug 13, 2009
+ * @since  Aug 31, 2009
  */
-public class AccrualDisplayTagDecorator extends TableDecorator {
+public class AccrualSubmissionsAction extends AbstractAccrualAction {
    
+
+    private static final long serialVersionUID = -6859130106987908815L;
+    private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
+    private String studyProtocolId = null;
     
     /**
-     * 
-     * @return studyProtocolIdentifier as a String
+     * {@inheritDoc}
      */
-    public String getStudyProtocolIdentifier() {
-        Ii studyProtocolIdentifier = ((SearchTrialResultDto) this.getCurrentRowObject()).getStudyProtocolIdentifier();
-       
-        if (studyProtocolIdentifier != null) {
-            return IiConverter.convertToString(studyProtocolIdentifier);
-        } else {
-            return "";
+    @Override
+    public String execute() {
+        String actionResult = "view_accrual_submissions";
+      //check if users accepted the disclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            return "show_Disclaimer_Page";
         }
+        try {
+        
+        SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
+        studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+        Ii spid = IiConverter.convertToIi(studyProtocolId);
+        trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
+         // put an entry in the session
+          ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+           
+        } catch (Exception e) {
+              addActionError(e.getLocalizedMessage());
+           // return "ERROR";
+        }
+       
+       return actionResult;
     }
-   
-    
+        /**
+     * 
+     * @return studyProtocolId
+     */
+    public String getStudyProtocolId() {
+       return studyProtocolId;
+     }
+
     /**
      * 
-     * @return assignedIdentifier as a String
+     * @param studyProtocolId String
      */
-    public String getAssignedIdentifier() {
-        St assignedIdentifier = ((SearchTrialResultDto) this.getCurrentRowObject()).getAssignedIdentifier();
-       
-        if (assignedIdentifier != null) {
-            return StConverter.convertToString(assignedIdentifier);
-        } else {
-            return "";
-        }
+    public void setStudyProtocolId(String studyProtocolId) {
+      this.studyProtocolId = studyProtocolId;
     }
     
-    /**
-     * 
-     * @return officialTitle as a String
-     */
-    public String getOfficialTitle() {
-        St officialTitle = ((SearchTrialResultDto) this.getCurrentRowObject()).getOfficialTitle();
-       
-        if (officialTitle != null) {
-            return StConverter.convertToString(officialTitle);
-        } else {
-            return "";
-        }
-    }
-    
-    /**
-     * 
-     * @return studyStatusCode as a String
-     */
-    public String getStudyStatusCode() {
-        Cd studyStatusCode = ((SearchTrialResultDto) this.getCurrentRowObject()).getStudyStatusCode();
-       
-        if (studyStatusCode != null) {
-            return CdConverter.convertCdToString(studyStatusCode);
-        } else {
-            return "";
-        }
-    }
+     /**
+      * 
+      * @return trialSummary
+      */
+     public SearchTrialResultDto getTrialSummary() {
+       return trialSummary;
+      }
+
+     /**
+      * 
+      * @param trialSummary SearchTrialResultDto
+      */
+     public void setTrialSummary(SearchTrialResultDto trialSummary) {
+        this.trialSummary = trialSummary;
+      }
 }

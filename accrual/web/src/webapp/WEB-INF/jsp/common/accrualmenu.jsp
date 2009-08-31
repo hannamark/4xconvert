@@ -56,7 +56,7 @@
                                 
                  <li>Accrual Submission</li> 
                 <c:choose>
-                    <c:when test="${requestScope.topic == ''}">
+                    <c:when test="${requestScope.topic == 'list_accural_submissions'}">
                        <li><a href="" class="selected">View Previous Submission</a></li> 
                     </c:when>
                     <c:otherwise>
