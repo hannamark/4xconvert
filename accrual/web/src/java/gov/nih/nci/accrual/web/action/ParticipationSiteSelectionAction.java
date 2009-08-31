@@ -77,13 +77,15 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultWebDto;
+
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -76,7 +76,7 @@
 *
 *
 */
-package gov.nih.nci.accrual.dto.util;
+package gov.nih.nci.accrual.web.dto.util;
 
 /**
  * @author Rajani Kumar
@@ -85,7 +85,7 @@ package gov.nih.nci.accrual.dto.util;
 public class SearchStudySiteResultWebDto {
 
    
-    private static final long serialVersionUID = 9217852541654491265L;
+   
     private String studySiteIi;
     private String organizationName;
 
