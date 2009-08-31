@@ -80,6 +80,7 @@ import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.StudyDisease;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -97,6 +98,7 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.PendingCompletedCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Connection;
@@ -121,6 +123,7 @@ public class TestSchema {
     public static List<Patient> patients;
     public static List<StudySubject> studySubjects;
     public static List<PerformedSubjectMilestone> performedSubjectMilestones;
+    public static List<StudyOverallStatus> studyOverallStatuses;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -138,6 +141,7 @@ public class TestSchema {
         statement.executeUpdate("delete from patient");
         statement.executeUpdate("delete from study_site");
         statement.executeUpdate("delete from submission");
+        statement.executeUpdate("delete from study_overall_status");
         statement.executeUpdate("delete from study_protocol");
         statement.executeUpdate("delete from disease");
         primeData();
@@ -168,6 +172,7 @@ public class TestSchema {
     public static void primeData() {
         diseases = new ArrayList<Disease>();
         studyProtocols = new ArrayList<StudyProtocol>();
+        studyOverallStatuses = new ArrayList<StudyOverallStatus>();
         submissions = new ArrayList<Submission>();
         studySites = new ArrayList<StudySite>();
         studyDiseases = new ArrayList<StudyDisease>();
@@ -216,6 +221,20 @@ public class TestSchema {
         sp.setSubmissionNumber(Integer.valueOf(2));
         addUpdObject(sp);
         studyProtocols.add(sp);
+
+        // StudyOverallStatus
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStatusCode(StudyStatusCode.APPROVED);
+        sos.setStatusDate(PAUtil.dateStringToTimestamp("6/1/2009"));
+        sos.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(sos);
+        studyOverallStatuses.add(sos);
+        sos = new StudyOverallStatus();
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(PAUtil.dateStringToTimestamp("6/15/2009"));
+        sos.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(sos);
+        studyOverallStatuses.add(sos);
 
         // Disease
         Disease disease = new Disease();

@@ -80,15 +80,18 @@ package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -144,6 +147,19 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             fail();
         } catch (RemoteException e) {
             // expected behavior
+        }
+    }
+
+    @Test
+    public void getStudyOverallStatus() throws Exception {
+        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto());
+        for (SearchTrialResultDto r : rList) {
+            if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(0).getId())) {
+                assertEquals(StudyStatusCode.ACTIVE, StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));
+            }
+            if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(1).getId())) {
+                assertNull(StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));
+            }
         }
     }
 

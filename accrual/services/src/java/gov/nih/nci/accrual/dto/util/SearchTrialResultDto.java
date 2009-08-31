@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.dto.util;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 
@@ -96,6 +97,7 @@ public class SearchTrialResultDto implements Serializable {
     private St officialTitle;
     private St leadOrgName;
     private St principalInvestigator;
+    private Cd studyStatusCode;
 
     /**
      * @return the studyProtocolIdentifier
@@ -168,5 +170,17 @@ public class SearchTrialResultDto implements Serializable {
      */
     public void setPrincipalInvestigator(St principalInvestigator) {
         this.principalInvestigator = principalInvestigator;
+    }
+    /**
+     * @return the studyStatusCode
+     */
+    public Cd getStudyStatusCode() {
+        return studyStatusCode;
+    }
+    /**
+     * @param studyStatusCode the studyStatusCode to set
+     */
+    public void setStudyStatusCode(Cd studyStatusCode) {
+        this.studyStatusCode = studyStatusCode;
     }
 }

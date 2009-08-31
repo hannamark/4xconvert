@@ -87,6 +87,8 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -117,7 +119,8 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int SS_IDENTIFIER = 2;
     private static final int SP_TITLE_IDX = 3;
     private static final int SP_ID_IDX = 4;
-    private static final int PERSON_IDX = 5;
+    private static final int SOS_STATUS_IDX = 5;
+    private static final int PERSON_IDX = 6;
 
     /**
      * {@inheritDoc}
@@ -153,8 +156,10 @@ public class SearchTrialBean implements SearchTrialService {
             session = AccrualHibernateUtil.getCurrentSession();
             Query query = null;
             String hql =
-                " select sp.identifier, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, sp.id, per "
+                " select sp.identifier, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
+                + "      sp.id, sos.statusCode, per "
                 + "from StudyProtocol as sp "
+                + "left outer join sp.studyOverallStatuses as sos "
                 + "left outer join sp.studyContacts as sc "
                 + "left outer join sc.clinicalResearchStaff as hcp "
                 + "left outer join hcp.person as per "
@@ -165,7 +170,10 @@ public class SearchTrialBean implements SearchTrialService {
                 + "  and (ss.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "' "
                 + "       or ss.functionalCode is null) "
                 + "  and (sc.roleCode ='" + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' "
-                + "       or sc.roleCode is null) ";
+                + "       or sc.roleCode is null) "
+                + "  and (sos.id in (select max(id) from StudyOverallStatus as sos1 "
+                + "                where sos.studyProtocol = sos1.studyProtocol ) "
+                + "       or sos.id is null) ";
             query = session.createQuery(hql);
             List<Object> queryList = query.list();
             if (queryList.size() < 1) {
@@ -177,6 +185,7 @@ public class SearchTrialBean implements SearchTrialService {
             result.setLeadOrgTrialIdentifier(StConverter.convertToSt((String) qArr[SS_IDENTIFIER]));
             result.setOfficialTitle(StConverter.convertToSt((String) qArr[SP_TITLE_IDX]));
             result.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi((Long) qArr[SP_ID_IDX]));
+            result.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) qArr[SOS_STATUS_IDX]));
             Person person = (Person) qArr[PERSON_IDX];
             result.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
         } catch (HibernateException hbe) {
