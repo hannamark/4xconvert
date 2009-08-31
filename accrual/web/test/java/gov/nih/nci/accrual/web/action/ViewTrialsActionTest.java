@@ -92,7 +92,7 @@ import com.mockrunner.mock.web.MockHttpSession;
 
 public class ViewTrialsActionTest extends AbstractAccrualActionTest {
 
-	private static final String AR_LIST_TRIALS = "list_trials";
+	//private static final String AR_LIST_TRIALS = "list_trials";
 	private static final String AR_SEARCH_TRIALS = "search_trials";
     
 	
@@ -101,31 +101,29 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() {
         action = new ViewTrialsAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+    	MockHttpSession session = new MockHttpSession();
+        session.setAttribute("disclaimer", "accept");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
     }
 
     @Test
     public void executeTest() {
        
-    	MockHttpServletRequest request = new MockHttpServletRequest();
-    	MockHttpSession session = new MockHttpSession();
-        session.setAttribute("disclaimer", "accept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+    	
         String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         assertNotNull(strDisclaimer);
         assertEquals("accept", strDisclaimer);
     	// show list of trials
-        assertEquals(AR_LIST_TRIALS, action.execute());
+       // assertEquals(AR_LIST_TRIALS, action.execute());
+        assertEquals(AR_SEARCH_TRIALS, action.search());
     }
     
     @Test
     public void searchTest() {
        
-    	MockHttpServletRequest request = new MockHttpServletRequest();
-    	MockHttpSession session = new MockHttpSession();
-        session.setAttribute("disclaimer", "accept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+    	
         String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         assertNotNull(strDisclaimer);
         assertEquals("accept", strDisclaimer);
@@ -137,7 +135,8 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
     public void searchQueryTest() {
        
     	// show list of trials
-        assertEquals(AR_LIST_TRIALS, action.searchQuery());
+        //assertEquals(AR_LIST_TRIALS, action.searchQuery());
+    	assertEquals(AR_SEARCH_TRIALS, action.searchQuery());
     }
 
 }

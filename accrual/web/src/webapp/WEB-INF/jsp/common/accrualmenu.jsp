@@ -36,7 +36,7 @@
                 -->
                 
                  <c:choose>
-                    <c:when test="${requestScope.topic == 'list_trials'}">
+                    <c:when test="${requestScope.topic == 'search_trials'}">
                        <li><a href="viewTrials.action" class="selected">View Trials</a></li> 
                     </c:when>
                     <c:otherwise>

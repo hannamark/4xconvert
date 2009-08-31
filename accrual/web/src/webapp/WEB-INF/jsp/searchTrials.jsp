@@ -75,6 +75,14 @@ function handleAction(){
             </del>
          </div>
        </s:form>
+       
+       <div class="line"></div>
+         <c:if test="${listOfTrials != null}">                       
+               <c:set var="topic" scope="request" value="search_trials"/>   
+                <jsp:include page="/WEB-INF/jsp/listTrials.jsp">
+                    <jsp:param name="listOfTrials" value="listOfTrials" />        
+                </jsp:include>
+         </c:if>
          
 </body>
 </html>

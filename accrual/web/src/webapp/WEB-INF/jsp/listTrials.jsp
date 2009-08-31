@@ -1,18 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<head>
-    <title><fmt:message key="accrual.list.trials.page.title"/></title>   
-    <s:head/>
-<SCRIPT LANGUAGE="JavaScript">
 
-function viewParticipationSite(pId) {       
-    document.forms[0].action="participationSiteSelection.action?studyProtocolId="+pId;
-    document.forms[0].submit(); 
-}
-</SCRIPT>
-</head>
-<c:set var="topic" scope="request" value="list_trials"/> 
-<body>
- <s:form name="participationSiteSelection" action="participationSiteSelection">
 <h1><fmt:message key="accrual.list.trials.page.header"/></h1>
    <p>Click on the Protocol Number to select the Trial Participation Site.</p>
    
@@ -28,5 +15,3 @@ function viewParticipationSite(pId) {
        <display:column titleKey="accrual.list.trials.trialStatus"  sortable="true" headerClass="sortable"
          headerScope="col"/>
    </display:table>
-</body>
-</s:form>

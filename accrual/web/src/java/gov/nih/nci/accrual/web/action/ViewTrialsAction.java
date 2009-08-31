@@ -101,7 +101,8 @@ public class ViewTrialsAction extends AbstractAccrualAction {
      */
     @Override
     public String execute() {
-        String actionResult = "list_trials";
+       //String actionResult = "list_trials";
+        String actionResult = "search_trials";
       //check if users accepted the disclaimer if not show one
         String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
@@ -131,6 +132,16 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
             return "show_Disclaimer_Page";
         }
+        try {
+            SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
+            listOfTrials = new ArrayList<SearchTrialResultDto>();
+            listOfTrials = service.search(criteria);             
+            ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
+               
+            } catch (Exception e) {
+                  addActionError(e.getLocalizedMessage());
+                return "ERROR";
+            }
              
        return actionResult;
     }
@@ -139,7 +150,8 @@ public class ViewTrialsAction extends AbstractAccrualAction {
       * {@inheritDoc}
       */
        public String searchQuery() {
-         String actionResult = "list_trials";
+         //String actionResult = "list_trials";
+         String actionResult = "search_trials";
          try {
          SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
          listOfTrials = new ArrayList<SearchTrialResultDto>();
