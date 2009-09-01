@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -95,4 +99,20 @@ public interface ServiceLocatorAccInterface {
      * @return search study site service
      */
     SearchStudySiteService getSearchStudySiteService();
+    /**
+     * @return Patient correlation service
+     */
+    PatientService getPatientService();
+    /**
+     * @return Submission domain service
+     */
+    SubmissionService getSubmissionService();
+    /**
+     * @return StudySubject domain service
+     */
+    StudySubjectService getStudySubjectService();
+    /**
+     * @return PerformedSubjectMilestoneService domain service
+     */
+    PerformedSubjectMilestoneService getPerformedSubjectMilestoneService();
 }

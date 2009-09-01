@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.JNDIUtil;
@@ -100,5 +104,33 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      */
     public SearchTrialService getSearchTrialService() {
         return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PatientService getPatientService() {
+        return (PatientService) JNDIUtil.lookup("accrual/PatientBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
+        return (PerformedSubjectMilestoneService) JNDIUtil.lookup("accrual/PerformedSubjectMilestoneBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySubjectService getStudySubjectService() {
+        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SubmissionService getSubmissionService() {
+        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBean/remote");
     }
 }

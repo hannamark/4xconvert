@@ -76,6 +76,10 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -98,5 +102,33 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      */
     public SearchTrialService getSearchTrialService() {
         return searchTrial;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public PatientService getPatientService() {
+        // TODO Create mock service for web unit testing
+        return null;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
+        // TODO Create mock service for web unit testing
+        return null;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public StudySubjectService getStudySubjectService() {
+        // TODO Create mock service for web unit testing
+        return null;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public SubmissionService getSubmissionService() {
+        // TODO Create mock service for web unit testing
+        return null;
     }
 }
