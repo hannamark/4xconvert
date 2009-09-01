@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS planned_study_subject_milestone;  -- NO LONGER USED, USING 
 DROP TABLE IF EXISTS observation_result;  -- includes PlannedObservationResult and PerformedObservationResult
 DROP TABLE IF EXISTS performed_activity;  -- includes PerformedObservation, PerformedSubjectMilestone, and PerformedAdministrativeActivity
 DROP TABLE IF EXISTS submission;
+DROP TABLE IF EXISTS study_site_accrual_access;
 
 -- Table: patient
 CREATE TABLE patient (
@@ -53,7 +54,7 @@ ON DELETE CASCADE;
 
 ALTER TABLE study_subject ADD CONSTRAINT fk_study_subject_study_site
 FOREIGN KEY (study_site_identifier) REFERENCES study_site (identifier)
-ON DELETE RESTRICT;
+ON DELETE SET NULL;
 
 ALTER TABLE study_subject ADD CONSTRAINT fk_study_subject_disease
 FOREIGN KEY (disease_identifier) REFERENCES disease (identifier)
@@ -103,4 +104,26 @@ CREATE TABLE submission (
 ALTER TABLE submission ADD CONSTRAINT fk_submission_study_protocol
 FOREIGN KEY (study_protocol_identifier) REFERENCES study_protocol (identifier)
 ON DELETE CASCADE;
+
+
+--Table:  study_site_accrual_access
+CREATE TABLE study_site_accrual_access (
+    identifier SERIAL NOT NULL,
+    csm_user_id BIGINT NOT NULL,
+    study_site_identifier BIGINT NOT NULL,
+    request_details VARCHAR(10000),
+    status_code VARCHAR(200) NOT NULL,
+    date_last_created TIMESTAMP NOT NULL,
+    user_last_created VARCHAR(200),
+    date_last_updated TIMESTAMP NOT NULL,
+    user_last_updated VARCHAR(200),
+    PRIMARY KEY (identifier)
+)WITH (OIDS=FALSE);
+
+ALTER TABLE study_site_accrual_access ADD CONSTRAINT fk_study_site_accrual_access_study_site
+FOREIGN KEY (study_site_identifier) REFERENCES study_site (identifier)
+ON DELETE CASCADE;
+
+ALTER TABLE study_site_accrual_access ADD CONSTRAINT study_site_accrual_access_unique 
+UNIQUE (csm_user_id, study_site_identifier);
 
