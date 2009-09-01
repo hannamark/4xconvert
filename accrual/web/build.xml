@@ -13,9 +13,10 @@
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="web.report.dir" value="${software.dir}/target/accrual/reports/web"/>
-    <property name="web.build.finalName" value="viewer"/>
+    <property name="web.build.finalName" value="accrual"/>
     <property name="web.build.dir" value="${basedir}/target"/>
     <property name="web.build.outputDir" value="${web.build.dir}/classes"/>
+    <property name="web.build.webappDir" value="${web.build.dir}/webapp"/>
     <property name="web.build.srcDir" value="${basedir}/src/java"/>
     <property name="web.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="web.war" value="accrual.war"/>
@@ -125,8 +126,18 @@
                 <path refid="compile.classpath"/> 
             </classpath>
         </javac>
+        <fail unless="application.url" message="Property application.url not set.  Check build.properties file."/>
         <copy todir="${web.build.outputDir}">
             <fileset dir="${web.build.resourceDir}"/>
+        </copy>
+        <copy todir="${web.build.webappDir}">
+            <fileset dir="${basedir}/src/webapp" excludes = "**/login.jsp"/>
+        </copy>
+        <copy todir="${web.build.webappDir}">
+            <filterset>
+                <filter token="application.url" value="${application.url}"/>
+            </filterset>
+            <fileset dir="${basedir}/src/webapp" includes = "**/login.jsp"/>
         </copy>
     </target>
 
@@ -297,11 +308,11 @@
         </copy>
         <war destfile="${web.build.dir}/${web.war}" 
              compress="false" 
-             webxml="${basedir}/src/webapp/WEB-INF/web.xml">            
+             webxml="${web.build.webappDir}/WEB-INF/web.xml">
             <lib dir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${web.build.outputDir}"/>
-            <webinf dir="${basedir}/src/webapp/WEB-INF" excludes="web.xml"/>
-            <fileset dir="${basedir}/src/webapp"/>
+            <webinf dir="${web.build.webappDir}/WEB-INF" excludes="web.xml"/>
+            <fileset dir="${web.build.webappDir}"/>
         </war>
     </target>
 

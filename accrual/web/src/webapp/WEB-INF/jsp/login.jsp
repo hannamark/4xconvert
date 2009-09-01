@@ -3,11 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
+<c:url value="@application.url@/registerUser.action" var="createAccountUrl"/>
+<c:url value="@application.url@/registerUser.action?resetPassword=true" var="resetPasswordUrl"/>
 <body><h1>Login</h1>
 <c:set var="topic" scope="request" value="login"/> 
 <div class="box"> 
     <p style="margin:0; padding:0">Please log in to manage Accrual Submissions. 
-             If you do not have an account, you may <a title="To Create an Account" href="">create an account</a>. 
+             If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>. 
          </p>
     <form action="j_security_check" method="post" id="loginForm">
 
@@ -36,13 +38,13 @@
         <tr>
 			<td>&nbsp;</td>
 			<td>
-				<span class="small"><a title="To Reset Password" href="">(Forgot Your Password?)</a></span> 
+				<span class="small"><a title="To Reset Password" href="${resetPasswordUrl}">(Forgot Your Password?)</a></span> 
 			</td>
 			</tr>
 			<tr>
                 <td>&nbsp;</td>
                 <td>
-                    <span class="small"><a title="To Create an Account" href="">(Create an Account)</a></span> 
+                    <span class="small"><a title="To Create an Account" href="${createAccountUrl}">(Create an Account)</a></span> 
                 </td>
             </tr>   
     </table>
