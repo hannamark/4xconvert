@@ -76,13 +76,16 @@
 */
 package gov.nih.nci.accrual.web.decorator;
 
+import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import org.displaytag.decorator.TableDecorator;
 
@@ -147,6 +150,20 @@ public class AccrualDisplayTagDecorator extends TableDecorator {
        
         if (studyStatusCode != null) {
             return CdConverter.convertCdToString(studyStatusCode);
+        } else {
+            return "";
+        }
+    }
+    
+    /**
+     * 
+     * @return cutOffDate as a String
+     */
+    public String getCutOffDate() {
+         Ts cutOffDate = ((SubmissionDto) this.getCurrentRowObject()).getCutOffDate();
+       
+        if (cutOffDate != null) {
+            return TsConverter.convertToString(cutOffDate);
         } else {
             return "";
         }

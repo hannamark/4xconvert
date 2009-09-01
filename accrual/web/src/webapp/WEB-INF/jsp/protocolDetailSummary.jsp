@@ -12,9 +12,11 @@
 
 <div class="summarybox">
            
-              <div>
+              <div class="row">
+                 <span class="label">
                     <c:out value="${sessionScope.trialSummary.assignedIdentifier.value}"/>:
-                    
+                    <c:out value="${sessionScope.trialSummary.officialTitle.value}"/>
+                  </span>
               </div>        
             <div class="float33_first">
                 <div class="row">

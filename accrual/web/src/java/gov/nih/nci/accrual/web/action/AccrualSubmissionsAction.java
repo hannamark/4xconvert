@@ -77,11 +77,17 @@
 package gov.nih.nci.accrual.web.action;
 
 
+import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.struts2.ServletActionContext;
 
 
@@ -95,6 +101,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     private static final long serialVersionUID = -6859130106987908815L;
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
+    private List<SubmissionDto> listOfSubmissions = null;
     
     /**
      * {@inheritDoc}
@@ -115,8 +122,12 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
         trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
          // put an entry in the session
           ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-           
-        } catch (Exception e) {
+           SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
+              listOfSubmissions = new ArrayList<SubmissionDto>();
+              listOfSubmissions = service.getByStudyProtocol(spid);             
+              ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
+                 
+         } catch (Exception e) {
               addActionError(e.getLocalizedMessage());
            // return "ERROR";
         }
@@ -154,4 +165,16 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
      public void setTrialSummary(SearchTrialResultDto trialSummary) {
         this.trialSummary = trialSummary;
       }
+    /**
+      * @return the listOfSubmissions
+      */
+    public List<SubmissionDto> getListOfSubmissions() {
+       return listOfSubmissions;
+     }
+    /**
+      * @param listOfSubmissions the listOfSubmissions to set
+      */
+    public void setListOfSubmissions(List<SubmissionDto> listOfSubmissions) {
+       this.listOfSubmissions = listOfSubmissions;
+    }
 }
