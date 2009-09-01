@@ -85,6 +85,7 @@ import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,18 +130,18 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
           copyToWebDto(listOfSites);
         }
         
-       /* if (listOfSites != null)  {
+        if (listOfSites != null)  {
          ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
         } else {
         ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
-        }*/
+        }
         
-        if (listOfStudySites != null)  {
+      /*  if (listOfStudySites != null)  {
             ServletActionContext.getRequest().setAttribute("listOfSites", listOfStudySites);
            } else {
            ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultWebDto>());
            }
-      
+      */
        trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
         
      // put an entry in the session
@@ -160,7 +161,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
        listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
       for (SearchStudySiteResultDto site2 : listOfSites2) {
           webDto = new SearchStudySiteResultWebDto();  
-          webDto.setOrganizationName(site2.getOrganizationName().getValue());
+          webDto.setOrganizationName(StConverter.convertToString(site2.getOrganizationName()));
             listOfStudySites.add(webDto);
     
       }

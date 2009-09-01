@@ -18,7 +18,7 @@
          <td class="value">
                 
             <s:select id="organizationName" list="listOfSites" headerKey="" 
-             listValue="organizationName" headerValue="--Select--"  cssStyle="width:206px"/>
+             listValue="organizationName.value" headerValue="--Select--"  cssStyle="width:206px"/>
              
                 <s:iterator id="webDto" value="listOfSites" >  
                    Organization Name : <s:property value="organizationName.value"/>  

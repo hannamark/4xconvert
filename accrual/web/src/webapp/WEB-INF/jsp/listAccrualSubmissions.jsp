@@ -27,6 +27,12 @@
        <display:column titleKey="accrual.list.submissions.submissionDate" property="cutOffDate" sortable="true"
          href="accrualSubmissions.action" paramId="studyProtocolId" 
          paramProperty="studyProtocolIdentifier.extension" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.submissionDescription" property="description" sortable="true" 
+         headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.submissionStatus" property="statusCode" sortable="true" 
+       headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.submissionStatusDate" property="statusDateRange" sortable="true" 
+       headerClass="sortable" headerScope="col"/>
        
    </display:table>
    

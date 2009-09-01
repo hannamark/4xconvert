@@ -34,33 +34,25 @@ function submitForm(btnSelected){
 <tr>
 <td align="left">
 <br>
-<center><b><a>View Warning Notice for information on NIH Policies, Disclaimers, and Rules of Behavior</a> </b></center><br> 
+<center><b>NCI CLINICAL TRIALS REPORTING PROGRAM (CTRP) SYSTEM </b></center><br> 
 <hr>
-<br><br>
-This system is for the use of authorized users only. Individuals using this computer system
-without authority, or in excess of their authority, are subject to having all of their activities
-on this system monitored and recorded by system personnel. In the course of monitoring individuals
-improperly using this system, or in the course of system maintenance, the activities of authorized users
-may also be monitored. Anyone using this system expressly consents to such monitoring and is advised that
-if such monitoring reveals possible evidence of criminal activity, system personnel may provide the evidence of
-such monitoring to law enforcement officials. Although decisions concerning the applicability and
-implementation of the HIPAA Privacy Rule reside with the researcher and his/her institution, it is important
-to note that the CTRP Accrual reporting is permitted without patient authorization under several provisions of
-the HIPAA Privacy Rule. For example, CTRP disclosures are expressly permitted under section 164.512(b) for
-public health activities, which include reporting to the FDA, NIH, IND sponsors, and others.
-CTRP uses or disclosures may also be permitted for health oversight activities under section 164.512(d).<br>
+<p align="right">OMB#: 0925-0600 EXP. DATE: 01/31/2010 </p>
+<center><b>NOTIFICATION TO RESPONDENT OF ESTIMATED BURDEN </b></center><br><br>
+Public reporting burden for this collection of information is estimated to average on (1) to two (2) hours for this questionnaire, <br>
+including the time to review instructions, search existing data sources, gather and maintain the data needed, and complete and review 
+the collection of information.  An agency may not conduct or sponsor, and a person is not required to respond to, a collection of 
+information unless it displays a current, valid OMB control number.  Send comments regarding this burden estimate or any other aspect 
+of this collection of information, including suggestions for reducing the burden to <br>
+NIH, Project Clearance Branch, 6705 Rockledge Drive, MSC 7974, Bethesda, MD 20892-7974, ATTN: PRA (0925-0600).  <br>
 
-In addition, to assure security and safety of patient information, CTRP uses the latest encryption technology.
-All data collected through CTRP are stored on a server that is not accessible from the Internet. Once you have
-submitted data to the CTRP , the data can only be retrieved with a user ID and password. You should take every
-precaution necessary to keep the pass-code information confidential and to avoid distribution of CDS data to
-inappropriate individuals.<br>
+Do not return the completed form to this address.<br>
 <hr>
   
 </td>
 </tr>
 </table>
 </div>
+
 <s:hidden name="actionName" id="actionName"/>
  <div class="actionsrow">
  <del class="btnwrapper">
