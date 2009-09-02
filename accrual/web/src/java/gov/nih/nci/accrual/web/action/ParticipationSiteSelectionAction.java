@@ -78,6 +78,7 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 
+
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -85,8 +86,6 @@ import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,9 +128,14 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
             // put an entry in the session
         ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
         listOfSites = service.search(spid);
-        if (listOfSites != null) {
+        if (listOfSites != null)  {
+            ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
+           } else {
+        ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
+           }
+        /*if (listOfSites != null) {
           copyToWebDto(listOfSites);
-        }
+        }*/
        
         } catch (Exception e) {
               addActionError(e.getLocalizedMessage());
@@ -142,7 +146,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     }
     
     
-    private void copyToWebDto(List<SearchStudySiteResultDto> listOfSites2) {
+   /* private void copyToWebDto(List<SearchStudySiteResultDto> listOfSites2) {
        listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
       for (SearchStudySiteResultDto site2 : listOfSites2) {
          webDto = new SearchStudySiteResultWebDto();  
@@ -157,7 +161,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
          } else {
       ServletActionContext.getRequest().setAttribute("listOfStudySites", new ArrayList<SearchStudySiteResultWebDto>());
          }
-    }
+    }*/
     
     /**
      * 
