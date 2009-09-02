@@ -86,31 +86,31 @@ public class SearchStudySiteResultWebDto {
 
    
    
-    private String studySiteIi;
-    private String organizationName;
+    private String ssIi;
+    private String orgName;
 
     /**
-     * @return the studySiteIi
+     * @return the ssIi
      */
-    public String getStudySiteIi() {
-        return studySiteIi;
+    public String getSsIi() {
+        return ssIi;
     }
     /**
-     * @param studySiteIi the studySiteIi to set
+     * @param ssIi the ssIi to set
      */
-    public void setStudySiteIi(String studySiteIi) {
-        this.studySiteIi = studySiteIi;
+    public void setSsIi(String ssIi) {
+        this.ssIi = ssIi;
     }
     /**
-     * @return the organizationName
+     * @return the orgName
      */
-    public String getOrganizationName() {
-        return organizationName;
+    public String getOrgName() {
+        return orgName;
     }
     /**
-     * @param organizationName the organizationName to set
+     * @param orgName the orgName to set
      */
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 }

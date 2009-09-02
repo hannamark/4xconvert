@@ -17,13 +17,9 @@
          </td>
          <td class="value">
                 
-            <s:select id="organizationName" list="listOfSites" headerKey="" 
-             listValue="organizationName.value" headerValue="--Select--"  cssStyle="width:206px"/>
-             
-                <s:iterator id="webDto" value="listOfSites" >  
-                   Organization Name : <s:property value="organizationName.value"/>  
-                </s:iterator>  
-           
+            <s:select name="orgName" id="orgName" list="listOfStudySites" headerKey="" 
+             listValue="ssIi" headerValue="--Select--"  cssStyle="width:206px"/>
+          
          </td>
       </tr> 
     

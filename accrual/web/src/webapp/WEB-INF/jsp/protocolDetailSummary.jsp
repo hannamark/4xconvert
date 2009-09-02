@@ -36,10 +36,7 @@
                     <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator.value}"/></span>
                 </div>
                 
-                 <div class="row">
-                    <span class="label"><fmt:message key="accrual.trialSummary.participation.site"/></span> 
-                    <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator.value}"/></span>
-                </div>
+                
                
             </div>
                             

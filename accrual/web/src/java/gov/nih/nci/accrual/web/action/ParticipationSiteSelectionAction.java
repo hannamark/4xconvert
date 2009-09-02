@@ -104,7 +104,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     private List<SearchStudySiteResultDto> listOfSites = null;
     private SearchStudySiteResultDto site = new SearchStudySiteResultDto();
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
-    private SearchStudySiteResultWebDto webDto = new SearchStudySiteResultWebDto();
+    private SearchStudySiteResultWebDto webDto = null;
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
     
@@ -125,29 +125,14 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
         studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
         Ii spid = IiConverter.convertToIi(studyProtocolId);
+        trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
+            // put an entry in the session
+        ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
         listOfSites = service.search(spid);
         if (listOfSites != null) {
           copyToWebDto(listOfSites);
         }
-        
-        if (listOfSites != null)  {
-         ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
-        } else {
-        ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
-        }
-        
-      /*  if (listOfStudySites != null)  {
-            ServletActionContext.getRequest().setAttribute("listOfSites", listOfStudySites);
-           } else {
-           ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultWebDto>());
-           }
-      */
-       trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
-        
-     // put an entry in the session
-          ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-        
-           
+       
         } catch (Exception e) {
               addActionError(e.getLocalizedMessage());
            // return "ERROR";
@@ -160,11 +145,18 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     private void copyToWebDto(List<SearchStudySiteResultDto> listOfSites2) {
        listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
       for (SearchStudySiteResultDto site2 : listOfSites2) {
-          webDto = new SearchStudySiteResultWebDto();  
-          webDto.setOrganizationName(StConverter.convertToString(site2.getOrganizationName()));
+         webDto = new SearchStudySiteResultWebDto();  
+          webDto.setSsIi(IiConverter.convertToString(site2.getStudySiteIi()));
+          webDto.setOrgName(StConverter.convertToString(site2.getOrganizationName()));
             listOfStudySites.add(webDto);
     
       }
+      
+      if (listOfStudySites != null)  {
+          ServletActionContext.getRequest().setAttribute("listOfStudySites", listOfStudySites);
+         } else {
+      ServletActionContext.getRequest().setAttribute("listOfStudySites", new ArrayList<SearchStudySiteResultWebDto>());
+         }
     }
     
     /**
