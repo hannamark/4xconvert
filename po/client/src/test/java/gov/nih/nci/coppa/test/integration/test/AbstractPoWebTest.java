@@ -488,7 +488,6 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 selenium.type("postalAddressForm_address_postalCode", zip);
                 selenium.click("//a[@id='submitPostalAddressForm']/span/span");
                 selenium.selectFrame("relative=parent");
-                selenium.waitForPageToLoad("30000");
                 totalNumberOfAddressesAfterAdd--;
                 waitForElementById("postalAddress"+totalNumberOfAddressesAfterAdd, 10);
                 selenium.isTextPresent(street1);

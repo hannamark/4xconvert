@@ -90,6 +90,9 @@ public class RoleStatusChangeValidatorTest {
             public RoleStatus getStatus() {
                 return rs;
             }
+            public void setPlayer(CuratableEntity e) {
+                
+            }
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
         boolean expected = (rs == null) ? true : values.get(es).get(rs).booleanValue();
@@ -107,6 +110,9 @@ public class RoleStatusChangeValidatorTest {
             public RoleStatus getStatus() {
                 return rs;
             }
+            public void setScoper(Organization o) {
+                
+            }
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
         boolean expected = (rs == null) ? true : values.get(es).get(rs).booleanValue();
@@ -123,6 +129,9 @@ public class RoleStatusChangeValidatorTest {
             public RoleStatus getStatus() {
                 return null;
             }
+            public void setPlayer(CuratableEntity e) {
+                
+            }
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
         assertEquals(true, v.isValid(new Played()));
@@ -137,6 +146,9 @@ public class RoleStatusChangeValidatorTest {
             }
             public RoleStatus getStatus() {
                 return null;
+            }
+            public void setScoper(Organization o) {
+                
             }
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();

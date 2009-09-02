@@ -102,9 +102,8 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
-import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.AbstractCuratableServiceBean;
-import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
@@ -123,9 +122,7 @@ import java.util.Set;
 
 import javax.jms.JMSException;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -133,7 +130,7 @@ import org.junit.Test;
  *
  * @param <T> structural role under test
  */
-public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> extends AbstractBeanTest {
+public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> extends AbstractServiceBeanTest {
 
     ServiceLocator locator = new TestServiceLocator();
     protected Person basicPerson = null;
@@ -311,23 +308,6 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
             }
             assertEquals(RoleStatus.NULLIFIED, r.getStatus());
         }
-    }
-
-    @BeforeClass
-    public static void setUpJNDI() {
-        contextBuilder.bind("po/ResearchOrganizationServiceBean/local", EjbTestHelper.getResearchOrganizationServiceBean());
-        contextBuilder.bind("po/IdentifiedOrganizationServiceBean/local", EjbTestHelper.getIdentifiedOrganizationServiceBean());
-        contextBuilder.bind("po/IdentifiedPersonServiceBean/local", EjbTestHelper.getIdentifiedPersonServiceBean());
-        contextBuilder.bind("po/HealthCareProviderServiceBean/local", EjbTestHelper.getHealthCareProviderServiceBean());
-        contextBuilder.bind("po/HealthCareFacilityServiceBean/local", EjbTestHelper.getHealthCareFacilityServiceBean());
-        contextBuilder.bind("po/ClinicalResearchStaffServiceBean/local", EjbTestHelper.getClinicalResearchStaffServiceBean());
-        contextBuilder.bind("po/OrganizationalContactServiceBean/local", EjbTestHelper.getOrganizationalContactService());
-        contextBuilder.bind("po/OversightCommitteeServiceBean/local", EjbTestHelper.getOversightCommitteeServiceBean());
-    }
-
-    @AfterClass
-    public static void tearDownJNDI() {
-        contextBuilder.clear();
     }
 
     @Test

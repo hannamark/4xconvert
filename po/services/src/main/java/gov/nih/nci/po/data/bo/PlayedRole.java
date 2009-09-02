@@ -94,5 +94,10 @@ public interface PlayedRole <ENTITY extends CuratableEntity<?, ?>> {
      * @return the player.
      */
     ENTITY getPlayer();
+    
+    /**
+     * @param e the player
+     */
+    void setPlayer(ENTITY e);
 
 }

@@ -23,9 +23,10 @@ import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
  *
  * @author gax
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEntity<?, ?>>
         extends AbstractCuratableServiceBean<T> {
+
+    private static final String UNCHECKED = "unchecked";
 
     /**
      * property used in query.
@@ -46,17 +47,13 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
         super.curate(e);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private void cascadeStatusChange(T e) throws JMSException {
         if (e.getPriorEntityStatus() != e.getStatusCode()) {
             Session s = PoHibernateUtil.getCurrentSession();
             switch(e.getStatusCode()) {
                 case NULLIFIED:
-                    for (Correlation x : getAssociatedRoles(e, s)) {
-                        x.setStatus(RoleStatus.NULLIFIED);
-                        GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
-                        service.curate(x);
-                    }
+                    cascadeStatusChangeNullified(e, s);
                     break;
                 case INACTIVE:
                     for (Correlation x : getAssociatedRoles(e, s)) {
@@ -72,8 +69,27 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
         }
     }
 
-    @SuppressWarnings({ "PMD.AvoidThrowingRawExceptionTypes", "unchecked" })
-    private <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
+    /**
+     * @param e entity to cascade status changes to roles for when NULLIFIED
+     * @param s hibernate session
+     * @throws JMSException if a problem occurs while publishing announcements
+     */
+    @SuppressWarnings(UNCHECKED)
+    protected void cascadeStatusChangeNullified(T e, Session s) throws JMSException {
+        for (Correlation x : getAssociatedRoles(e, s)) {
+            x.setStatus(RoleStatus.NULLIFIED);
+            GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
+            service.curate(x);
+        }
+    }
+
+    /**
+     * @param <R> the type of {@link Correlation}
+     * @param roleType class type of <R>
+     * @return the Local service
+     */
+    @SuppressWarnings({ "PMD.AvoidThrowingRawExceptionTypes", UNCHECKED })
+    protected <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
         String className = CGLIBUtils.unEnhanceCBLIBClass(roleType).getSimpleName();
         String serviceName = String.format("po/%sServiceBean/local", className);
         return (GenericStructrualRoleServiceLocal<R>) JNDIUtil.lookup(serviceName);
@@ -88,7 +104,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
      * @param s the session to use for the query.
      * @return list of roles associated to the entity.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     protected <C extends Correlation> List<C> getAssociatedRoles(Long entityId, Class<C> type, String property,
             Session s) {
 

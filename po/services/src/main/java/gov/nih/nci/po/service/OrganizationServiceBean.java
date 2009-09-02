@@ -92,7 +92,9 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.ScopedRole;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -142,5 +144,60 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         l.addAll(getAssociatedRoles(o.getId(), IdentifiedPerson.class, SCOPER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), OrganizationalContact.class, SCOPER_ID, s));
         return l;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void cascadeStatusChangeNullified(Organization org, Session s) throws JMSException {
+        if (org.getDuplicateOf() == null) {
+            super.cascadeStatusChangeNullified(org, s);
+        } else {
+            mergeCorrelations(org, s);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void mergeCorrelations(Organization org, Session s) throws JMSException {
+        Organization dup = org.getDuplicateOf();
+        Set<Correlation> associatedRoles = getAssociatedRoles(org, s);
+        for (Correlation correlation : associatedRoles) {
+            GenericStructrualRoleServiceLocal service = null;
+            service = mergePlayedRoleCorrelation(org, dup, correlation); 
+            service = mergeScopedRoleCorrelation(org, dup, correlation);
+            if (service != null) {
+                /* 
+                 * the correlation could be played and scoped by the same organization therefore, we want to ensure
+                 * curate() is only invoked once
+                 */
+                service.curate(correlation);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private GenericStructrualRoleServiceLocal mergeScopedRoleCorrelation(Organization org, Organization dup,
+            Correlation correlation) {
+        if (correlation instanceof ScopedRole 
+                && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
+            ScopedRole sr = (ScopedRole) correlation;
+            sr.setScoper(dup);
+            return getServiceForRole(correlation.getClass());
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private GenericStructrualRoleServiceLocal mergePlayedRoleCorrelation(Organization org, Organization dup,
+            Correlation correlation) {
+        if (correlation instanceof PlayedRole 
+                && ((PlayedRole) correlation).getPlayer() instanceof Organization
+                && ((PlayedRole) correlation).getPlayer().getId().equals(org.getId())) {
+            PlayedRole pr = (PlayedRole) correlation;
+            pr.setPlayer(dup);
+            return getServiceForRole(correlation.getClass());
+        }
+        return null;
     }
 }

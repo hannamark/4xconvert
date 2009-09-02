@@ -93,5 +93,10 @@ public interface ScopedRole {
      * @return the scoper org.
      */
     Organization getScoper();
+    
+    /**
+     * @param o the org
+     */
+    void setScoper(Organization o);
 
 }

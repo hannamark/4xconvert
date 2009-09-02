@@ -11,7 +11,9 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.Date;
 import java.util.Random;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -109,4 +111,5 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
 
         PoHibernateUtil.getCurrentSession().flush();
     }
+
 }

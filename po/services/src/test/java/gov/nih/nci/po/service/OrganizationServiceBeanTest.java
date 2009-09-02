@@ -93,15 +93,20 @@ import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -122,14 +127,14 @@ import com.fiveamsolutions.nci.commons.audit.AuditType;
  *
  * @author Scott Miller
  */
-public class OrganizationServiceBeanTest extends AbstractBeanTest {
+public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
     private OrganizationServiceBean orgServiceBean;
 
     public OrganizationServiceBean getOrgServiceBean() {
         return orgServiceBean;
     }
-
+    
     @Before
     public void setUpData() {
         orgServiceBean = EjbTestHelper.getOrganizationServiceBean();
@@ -556,4 +561,83 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(status, result.getPriorEntityStatus());
         return result;
     }
+    
+    @Test
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrg() throws EntityValidationException, JMSException {
+        Organization o = getBasicOrganization();
+        Organization o2 = getBasicOrganization();
+        long id = createOrganization(o);
+        long id2 = createOrganization(o2);
+        o = getOrgServiceBean().getById(id);
+        // remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+        
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setPlayer(o);
+        hcf.setName("HCF Name");
+        HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
+        long hcfId = healthCareFacilityServiceBean.create(hcf);
+        hcf = healthCareFacilityServiceBean.getById(hcfId);
+        final OrganizationServiceBeanTest osbt = this;
+        PersonServiceBeanTest pst = new PersonServiceBeanTest(){
+            @Override
+            public Country getDefaultCountry() {
+                return osbt.getDefaultCountry();
+            }
+        };
+//        Don't load the data since duplicate entries would be created.
+//        pst.loadData();
+        pst.setUpData();
+        long perId = pst.createPerson();
+        PersonServiceBean personServiceBean = EjbTestHelper.getPersonServiceBean();
+        Person person = personServiceBean.getById(perId);
+        
+        
+        HealthCareProvider hcp = new HealthCareProvider();
+        hcp.setScoper(o);
+        hcp.setPlayer(person);
+        hcp.setScoper(o);
+        hcp.setEmail(new ArrayList<Email>());
+        hcp.getEmail().add(new Email("me@example.com"));
+        hcp.setPhone(new ArrayList<PhoneNumber>());
+        hcp.getPhone().add(new PhoneNumber("123-456-7890"));
+        hcp.setFax(new ArrayList<PhoneNumber>());
+        hcp.getFax().add(new PhoneNumber("098-765-4321"));
+        hcp.setTty(new ArrayList<PhoneNumber>());
+        hcp.getTty().add(new PhoneNumber("111-222-3333"));
+        hcp.setUrl(new ArrayList<URL>());
+        hcp.getUrl().add(new URL("http://www.example.com"));
+        Address mailingAddress = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
+        hcp.setPostalAddresses(new HashSet<Address>());
+        hcp.getPostalAddresses().add(mailingAddress);
+        hcp.setCertificateLicenseText("license text");
+        HealthCareProviderServiceBean hcpSB = EjbTestHelper.getHealthCareProviderServiceBean();
+        long hcpId = hcpSB.create(hcp);
+        hcp = hcpSB.getById(hcpId);
+
+        o.setStatusCode(EntityStatus.NULLIFIED);
+        o2 = getOrgServiceBean().getById(id2);
+        o.setDuplicateOf(o2);
+        getOrgServiceBean().curate(o);
+
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+
+        hcf = healthCareFacilityServiceBean.getById(hcfId);
+        assertEquals(o2.getId(), hcf.getPlayer().getId());
+        hcp = hcpSB.getById(hcpId);
+        assertEquals(o2.getId(), hcp.getScoper().getId());
+        
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
+    }
+    
 }
