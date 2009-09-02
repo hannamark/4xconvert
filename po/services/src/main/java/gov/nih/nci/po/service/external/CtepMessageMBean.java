@@ -110,7 +110,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
     private TopicConnection topicConnection;
     private TopicSession topicSession;
     private TopicSubscriber topicSubscriber;
-    private String topicConnectionFactoryName = 
+    private String topicConnectionFactoryName =
             CtepImportServiceBean.getConfig().getProperty("ctep.jms.topic.connection.factory.name");
     private String topicName = CtepImportServiceBean.getConfig().getProperty("ctep.jms.topic.name");;
     private String subscriptionName = CtepImportServiceBean.getConfig().getProperty("ctep.jms.subscription.name");
@@ -209,7 +209,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
     }
 
     /**
-     * Do the startup proecess w/o blocking the management call threads.
+     * Do the startup process w/o blocking the management call threads.
      */
     public void run() {
         try {

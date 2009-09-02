@@ -334,7 +334,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     @ValidIi
     @NotEmptyIiExtension
     @NotEmptyIiRoot
-    @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_EXACT)
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }
