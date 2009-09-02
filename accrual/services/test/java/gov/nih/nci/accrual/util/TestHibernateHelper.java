@@ -123,6 +123,7 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -204,6 +205,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(RegistryUser.class).
         addAnnotatedClass(StudyRelationship.class).
         addAnnotatedClass(StudyObjective.class).
+        addAnnotatedClass(StudySiteAccrualAccess.class).
 
         // hibernate properties
         setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").

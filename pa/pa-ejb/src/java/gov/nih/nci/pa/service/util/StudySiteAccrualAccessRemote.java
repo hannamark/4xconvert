@@ -76,66 +76,46 @@
 *
 *
 */
-package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+package gov.nih.nci.pa.service.util;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.service.PAException;
+
 import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 17, 2009
+ * @since Sep 2, 2009
  */
-@Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class SearchStudySiteBean implements SearchStudySiteService {
-
+public interface StudySiteAccrualAccessRemote {
     /**
-     * {@inheritDoc}
+     * @param access access
+     * @return access
+     * @throws PAException exception
      */
-    @SuppressWarnings("unchecked")
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException {
-        List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = " select ss.id, org.name "
-                + "from StudyProtocol as sp "
-                + "join sp.studySites as ss "
-                + "left outer join ss.healthCareFacility as ro "
-                + "left outer join ro.organization as org "
-                + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
-                + "  and ss.functionalCode ='" + StudySiteFunctionalCode.TREATING_SITE + "' ";
-            query = session.createQuery(hql);
-            List<Object> queryList = query.list();
-            for (Object qArr : queryList) {
-                Object[] site = (Object[]) qArr;
-                SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
-                dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
-                dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
-                result.add(dto);
-            }
-        } catch (HibernateException hbe) {
-            throw new RemoteException(
-                    "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
-        }
-        return result;
-    }
-
+    StudySiteAccrualAccess create(StudySiteAccrualAccess access) throws PAException;
+    /**
+     * @param accessId access pkey
+     * @return access
+     * @throws PAException exception
+     */
+    StudySiteAccrualAccess get(Long accessId) throws PAException;
+    /**
+     * @param access access
+     * @return access
+     * @throws PAException exception
+     */
+    StudySiteAccrualAccess update(StudySiteAccrualAccess access) throws PAException;
+    /**
+     * @param accessId access pkey
+     * @throws PAException exception
+     */
+    void delete(Long accessId) throws PAException;
+    /**
+     * @param studySiteId study site pkey
+     * @return list of access
+     * @throws PAException exception
+     */
+    List<StudySiteAccrualAccess> getByStudySite(Long studySiteId) throws PAException;
 }

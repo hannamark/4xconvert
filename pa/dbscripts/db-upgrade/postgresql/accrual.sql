@@ -113,6 +113,7 @@ CREATE TABLE study_site_accrual_access (
     study_site_identifier BIGINT NOT NULL,
     request_details VARCHAR(10000),
     status_code VARCHAR(200) NOT NULL,
+    status_date_range_low TIMESTAMP NOT NULL,
     date_last_created TIMESTAMP NOT NULL,
     user_last_created VARCHAR(200),
     date_last_updated TIMESTAMP NOT NULL,

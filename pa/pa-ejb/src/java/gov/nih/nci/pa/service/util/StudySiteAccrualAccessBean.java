@@ -76,21 +76,25 @@
 *
 *
 */
-package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+package gov.nih.nci.pa.service.util;
 
-import java.rmi.RemoteException;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
+
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -99,43 +103,138 @@ import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 17, 2009
+ * @since Sep 2, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class SearchStudySiteBean implements SearchStudySiteService {
+@Interceptors(HibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class StudySiteAccrualAccessBean implements StudySiteAccrualAccessRemote {
+
+    private SessionContext ejbContext;
+
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+        ejbContext = ctx;
+    }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException {
-        List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
+    public StudySiteAccrualAccess create(StudySiteAccrualAccess access) throws PAException {
+        if (!(access.getId() == null)) {
+            throw new PAException("Id is not null when calling StudySiteAccrualAccess.create().");
+        }
+        List<StudySiteAccrualAccess> aList = getAllByStudySite(access.getStudySite().getId(), false);
+        for (StudySiteAccrualAccess a : aList) {
+            if (a.getCsmUserId().equals(access.getCsmUserId())) {
+                access.setId(a.getId());
+                access.setUserLastCreated(a.getUserLastCreated());
+                access.setDateLastCreated(a.getDateLastCreated());
+            }
+        }
+
+        access.setStatusCode(ActiveInactiveCode.ACTIVE);
+        access.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        setAuditValues(access);
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = " select ss.id, org.name "
-                + "from StudyProtocol as sp "
-                + "join sp.studySites as ss "
-                + "left outer join ss.healthCareFacility as ro "
-                + "left outer join ro.organization as org "
-                + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
-                + "  and ss.functionalCode ='" + StudySiteFunctionalCode.TREATING_SITE + "' ";
-            query = session.createQuery(hql);
-            List<Object> queryList = query.list();
-            for (Object qArr : queryList) {
-                Object[] site = (Object[]) qArr;
-                SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
-                dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
-                dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
-                result.add(dto);
-            }
+            session = HibernateUtil.getCurrentSession();
+            session.saveOrUpdate(access);
         } catch (HibernateException hbe) {
-            throw new RemoteException(
-                    "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
+            throw new PAException(" Hibernate exception in StudySiteAccrualAccess.create().", hbe);
         }
-        return result;
+        return access;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(Long accessId) throws PAException {
+        Session session = null;
+        StudySiteAccrualAccess access = get(accessId);
+        access.setStatusCode(ActiveInactiveCode.INACTIVE);
+        setAuditValues(access);
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.saveOrUpdate(access);
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in StudySiteAccrualAccess.delete().", hbe);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteAccrualAccess get(Long accessId) throws PAException {
+        StudySiteAccrualAccess access = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            access = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, accessId);
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in StudySiteAccrualAccess.get().", hbe);
+        }
+        return access;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudySiteAccrualAccess> getByStudySite(Long studySiteId) throws PAException {
+        return getAllByStudySite(studySiteId, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteAccrualAccess update(StudySiteAccrualAccess access) throws PAException {
+        if (access.getId() == null) {
+            throw new PAException("Id is null when calling StudySiteAccrualAccess.update().");
+        }
+        StudySiteAccrualAccess bo = get(access.getId());
+        bo.setRequestDetails(access.getRequestDetails());
+        setAuditValues(bo);
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.saveOrUpdate(bo);
+        } catch (HibernateException hbe) {
+            throw new PAException(" Hibernate exception in StudySiteAccrualAccess.update().", hbe);
+        }
+        return access;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<StudySiteAccrualAccess> getAllByStudySite(Long studySiteId, boolean activeOnly) throws PAException {
+        Session session = null;
+        List<StudySiteAccrualAccess> queryList = new ArrayList<StudySiteAccrualAccess>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select ssaa "
+                       + "from StudySite ss "
+                       + "join ss.studySiteAccrualAccess ssaa "
+                       + "where ss.id = :studySiteId "
+                       + (activeOnly ? "  and ssaa.statusCode = '" + ActiveInactiveCode.ACTIVE + "' " : "")
+                       + "order by ssaa.id ";
+            query = session.createQuery(hql);
+            query.setParameter("studySiteId", studySiteId);
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in StudySiteAccrualAccess.getByStudySite().", hbe);
+        }
+        return queryList;
+    }
+
+    private void setAuditValues(StudySiteAccrualAccess access) {
+        if (access.getId() == null) {
+            access.setUserLastCreated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
+            access.setDateLastCreated(new Date());
+            access.setUserLastUpdated(null);
+            access.setDateLastUpdated(null);
+        } else {
+            access.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
+            access.setDateLastUpdated(new Date());
+        }
+    }
 }

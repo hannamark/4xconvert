@@ -76,66 +76,71 @@
 *
 *
 */
-package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+package gov.nih.nci.pa.domain;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 17, 2009
+ * @since Sep 2, 2009
  */
-@Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class SearchStudySiteBean implements SearchStudySiteService {
+@Entity
+@Table(name = "STUDY_SITE_ACCRUAL_ACCESS")
+public class StudySiteAccrualAccess extends AbstractEntityWithStatusCode<ActiveInactiveCode> {
+    private static final long serialVersionUID = 917387137764967830L;
 
+    private Long csmUserId;
+    private StudySite studySite;
+    private String requestDetails;
     /**
-     * {@inheritDoc}
+     * @return the csmUserId
      */
-    @SuppressWarnings("unchecked")
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException {
-        List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = " select ss.id, org.name "
-                + "from StudyProtocol as sp "
-                + "join sp.studySites as ss "
-                + "left outer join ss.healthCareFacility as ro "
-                + "left outer join ro.organization as org "
-                + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
-                + "  and ss.functionalCode ='" + StudySiteFunctionalCode.TREATING_SITE + "' ";
-            query = session.createQuery(hql);
-            List<Object> queryList = query.list();
-            for (Object qArr : queryList) {
-                Object[] site = (Object[]) qArr;
-                SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
-                dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
-                dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
-                result.add(dto);
-            }
-        } catch (HibernateException hbe) {
-            throw new RemoteException(
-                    "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
-        }
-        return result;
+    @Column(name = "CSM_USER_ID")
+    @NotNull
+    public Long getCsmUserId() {
+        return csmUserId;
     }
-
+    /**
+     * @param csmUserId the csmUserId to set
+     */
+    public void setCsmUserId(Long csmUserId) {
+        this.csmUserId = csmUserId;
+    }
+    /**
+     * @return the requestDetails
+     */
+    @Column(name = "REQUEST_DETAILS")
+    public String getRequestDetails() {
+        return requestDetails;
+    }
+    /**
+     * @param requestDetails the requestDetails to set
+     */
+    public void setRequestDetails(String requestDetails) {
+        this.requestDetails = requestDetails;
+    }
+    /**
+     * @return the studySite
+     */
+    @ManyToOne
+    @JoinColumn(name = "STUDY_SITE_IDENTIFIER", updatable = false)
+    @NotNull
+    public StudySite getStudySite() {
+        return studySite;
+    }
+    /**
+     * @param studySite the studySite to set
+     */
+    public void setStudySite(StudySite studySite) {
+        this.studySite = studySite;
+    }
 }

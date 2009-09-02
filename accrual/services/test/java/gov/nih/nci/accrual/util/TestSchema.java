@@ -77,6 +77,8 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.StudyDisease;
@@ -90,6 +92,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -103,7 +106,9 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -124,6 +129,8 @@ public class TestSchema {
     public static List<StudySubject> studySubjects;
     public static List<PerformedSubjectMilestone> performedSubjectMilestones;
     public static List<StudyOverallStatus> studyOverallStatuses;
+    public static List<HealthCareFacility> healthCareFacilities;
+    public static List<Organization> organizations;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -144,6 +151,8 @@ public class TestSchema {
         statement.executeUpdate("delete from study_overall_status");
         statement.executeUpdate("delete from study_protocol");
         statement.executeUpdate("delete from disease");
+        statement.executeUpdate("delete from healthcare_facility");
+        statement.executeUpdate("delete from organization");
         primeData();
     }
 
@@ -179,7 +188,31 @@ public class TestSchema {
         patients = new ArrayList<Patient>();
         studySubjects = new ArrayList<StudySubject>();
         performedSubjectMilestones = new ArrayList<PerformedSubjectMilestone>();
+        healthCareFacilities = new ArrayList<HealthCareFacility>();
+        organizations = new ArrayList<Organization>();
         inactiveStudyProtocolCount = 0;
+
+
+        // Organization
+        Organization org = new Organization();
+        org.setCity("city");
+        org.setCountryName("country name");
+        org.setIdentifier("po org id");
+        org.setName("orga name");
+        org.setPostalCode("12345");
+        org.setState("MD");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        addUpdObject(org);
+        organizations.add(org);
+
+        // HealthcareFacility
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setIdentifier("po hcf id");
+        hcf.setOrganization(organizations.get(0));
+        hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(hcf);
+        healthCareFacilities.add(hcf);
 
         // StudyProtocol
         StudyProtocol sp = new StudyProtocol();
@@ -264,6 +297,7 @@ public class TestSchema {
         ss.setLocalStudyProtocolIdentifier("Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(0));
         ss.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(ss);
         studySites.add(ss);

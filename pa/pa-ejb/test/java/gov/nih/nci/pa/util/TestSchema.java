@@ -135,6 +135,7 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -247,6 +248,7 @@ public class TestSchema {
             addAnnotatedClass(RegistryUser.class).
             addAnnotatedClass(StudyRelationship.class).
             addAnnotatedClass(StudyObjective.class).
+            addAnnotatedClass(StudySiteAccrualAccess.class).
 
             // Accrual classes
             addAnnotatedClass(Patient.class).
@@ -294,6 +296,7 @@ public class TestSchema {
                 Connection connection = session.connection();
                 try {
                     Statement statement = connection.createStatement();
+                    statement.executeUpdate("delete from study_site_accrual_access");
                     statement.executeUpdate("delete from study_subject");
                     statement.executeUpdate("delete from patient");
                     statement.executeUpdate("delete from STUDY_ONHOLD");

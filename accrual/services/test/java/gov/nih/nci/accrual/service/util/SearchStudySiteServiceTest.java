@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.util.List;
 
@@ -106,6 +107,7 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         List<SearchStudySiteResultDto> rList = bean.search(
                 IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertEquals(1, rList.size());
+        assertEquals(TestSchema.organizations.get(0).getName(), StConverter.convertToString(rList.get(0).getOrganizationName()));
 
         rList = bean.search(BII);
         assertEquals(0, rList.size());

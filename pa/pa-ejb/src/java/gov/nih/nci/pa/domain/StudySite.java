@@ -104,6 +104,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "STUDY_SITE")
 public class StudySite extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
+    private static final String MAPPED_BY_SS = "studySite";
 
 
     private String localStudyProtocolIdentifier;
@@ -115,6 +116,7 @@ public class StudySite extends OrganizationFunctionalRole {
     private ResearchOrganization researchOrganization;
     private OversightCommittee oversightCommittee;
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
+    private List<StudySiteAccrualAccess> studySiteAccrualAccess;
     private List<StudySiteContact> studySiteContacts;
     private List<StudySubject> studySubjects;
     private String reviewBoardOrganizationalAffiliation;
@@ -252,7 +254,7 @@ public class StudySite extends OrganizationFunctionalRole {
     /**
      * @return the studySiteAccrualStatuses
      */
-    @OneToMany(mappedBy = "studySite")
+    @OneToMany(mappedBy = MAPPED_BY_SS)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudySiteAccrualStatus> getStudySiteAccrualStatuses() {
         return studySiteAccrualStatuses;
@@ -265,9 +267,23 @@ public class StudySite extends OrganizationFunctionalRole {
         this.studySiteAccrualStatuses = studySiteAccrualStatuses;
     }
     /**
+     * @return the studySiteAccrualAccess
+     */
+    @OneToMany(mappedBy = MAPPED_BY_SS)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<StudySiteAccrualAccess> getStudySiteAccrualAccess() {
+        return studySiteAccrualAccess;
+    }
+    /**
+     * @param studySiteAccrualAccess the studySiteAccrualAccess to set
+     */
+    public void setStudySiteAccrualAccess(List<StudySiteAccrualAccess> studySiteAccrualAccess) {
+        this.studySiteAccrualAccess = studySiteAccrualAccess;
+    }
+    /**
      * @return the studySubjects
      */
-    @OneToMany(mappedBy = "studySite")
+    @OneToMany(mappedBy = MAPPED_BY_SS)
     public List<StudySubject> getStudySubjects() {
         return studySubjects;
     }
@@ -280,7 +296,7 @@ public class StudySite extends OrganizationFunctionalRole {
     /**
      * @return the studySiteContacts
      */
-    @OneToMany(mappedBy = "studySite")
+    @OneToMany(mappedBy = MAPPED_BY_SS)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudySiteContact> getStudySiteContacts() {
         return studySiteContacts;
