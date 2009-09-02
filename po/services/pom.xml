@@ -30,12 +30,12 @@
         <hbm2ddl.create.table>true</hbm2ddl.create.table>
         <jboss.home>target/jbossDeploy</jboss.home>
         <xsnapshot.version>1.1-beta4</xsnapshot.version>
-        <ctep.username>coppaUser</ctep.username>
-        <ctep.password>coppa1</ctep.password>
-        <ctep.url>ormi://156.40.130.87:12402/CES</ctep.url>
+        <ctep.username>coppauser20</ctep.username>
+        <ctep.password>coppa#2009</ctep.password>
+        <ctep.url>ormi://156.40.130.87:12401/CES20</ctep.url>
         <ctep.jms.subscription.name>JMSSUBSCRIBER</ctep.jms.subscription.name>
-        <ctep.jms.topic.connection.factory.name>java:comp/resource/BETAJMSRP/TopicConnectionFactories/TCF</ctep.jms.topic.connection.factory.name>
-        <ctep.jms.topic.name>java:comp/resource/BETAJMSRP/Topics/CES_OUT_TOPIC</ctep.jms.topic.name>
+        <ctep.jms.topic.connection.factory.name>java:comp/resource/JMSDBRP/TopicConnectionFactories/TCF</ctep.jms.topic.connection.factory.name>
+        <ctep.jms.topic.name>java:comp/resource/JMSDBRP/Topics/CES_OUT_TOPIC</ctep.jms.topic.name>
         <db-upgrade.run.dir>${pom.basedir}/src/main/db/db-upgrade</db-upgrade.run.dir>
         <db-install.run.dir>${pom.basedir}/src/main/db/db-install</db-install.run.dir>
     </properties>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>ctep-services</artifactId>
-            <version>1.0.3</version>
+            <version>2.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
