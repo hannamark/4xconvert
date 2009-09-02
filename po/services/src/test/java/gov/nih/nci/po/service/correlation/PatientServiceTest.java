@@ -80,126 +80,172 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.Correlation;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.HealthCareFacility;
-import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-import gov.nih.nci.po.data.bo.IdentifiedPerson;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationalContact;
-import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.PlayedRole;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiConverter.CorrelationIiConverter;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.PatientServiceLocal;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.PoIsoConstraintException;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 
-import org.hibernate.Session;
-
+import org.junit.Test;
 /**
+ * @author mshestopalov
  *
- * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<Organization> implements
-        OrganizationServiceLocal {
+public class PatientServiceTest extends AbstractPersonRoleServiceTest<Patient> {
 
     /**
      * {@inheritDoc}
-     * @throws JMSException
+     * @throws EntityValidationException
+     * @throws JMSException 
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long create(Organization org) throws EntityValidationException, JMSException {
-        org.setStatusCode(EntityStatus.PENDING);
-        return super.create(org);
+    Patient getSampleStructuralRole() throws EntityValidationException, JMSException {
+        Patient crs = new Patient();
+        createAndGetOrganization();
+        fillinPersonRoleFields(crs);
+        return crs;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Set<Correlation> getAssociatedRoles(Organization o, Session s) {
-        Set<Correlation> l = new HashSet<Correlation>();
-        // played roles
-        l.addAll(getAssociatedRoles(o.getId(), HealthCareFacility.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), IdentifiedOrganization.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), OversightCommittee.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), ResearchOrganization.class, PLAYER_ID, s));
-        // scoped roles
-        l.addAll(getAssociatedRoles(o.getId(), HealthCareProvider.class, SCOPER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), IdentifiedOrganization.class, SCOPER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), ClinicalResearchStaff.class, SCOPER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), IdentifiedPerson.class, SCOPER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), OrganizationalContact.class, SCOPER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), Patient.class, SCOPER_ID, s));
-        return l;
+    void verifyStructuralRole(Patient expected, Patient actual) {
+        // no real person in person role so no player to verify
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getEmail().size(), actual.getEmail().size());
+        assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
+        assertEquals(expected.getFax().size(), actual.getFax().size());
+        assertEquals(expected.getPhone().size(), actual.getPhone().size());
+        assertEquals(expected.getTty().size(), actual.getTty().size());
+        assertEquals(expected.getUrl().size(), actual.getUrl().size());
+        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.getPostalAddresses().size(), actual.getPostalAddresses().size());
+        
+        assertEquals(expected.getBirthDate(), actual.getBirthDate());
+        assertEquals(expected.getSexCode(), actual.getSexCode());
+        assertEquals(expected.getEthnicGroupCode(), actual.getEthnicGroupCode());
+        assertEquals(expected.getRaceCode(), actual.getRaceCode());
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Test
     @Override
-    protected void cascadeStatusChangeNullified(Organization org, Session s) throws JMSException {
-        if (org.getDuplicateOf() == null) {
-            super.cascadeStatusChangeNullified(org, s);
-        } else {
-            mergeCorrelations(org, s);
+    public void cascadePlayerStatusChange_Nullified() throws Exception {
+        //NOOP
+        // there is no real player for this structural role
+        // id for player returned is PT + structural id.
+    }
+    
+    @Test
+    @Override
+    public void cascadePlayerStatusChange_Inactive() throws Exception {
+        //NOOP
+        // there is no real player for this structural role
+        // id for player returned is PT + structural id.
+    }
+    
+    @Test
+    @Override
+    public void cascadeScoperStatusChange_Nullified() throws Exception {
+        
+        if (ScopedRole.class.isAssignableFrom(Patient.class)) {
+            Patient r = createSample();
+            assertEquals(RoleStatus.ACTIVE, r.getStatus());
+            basicOrganization.setStatusCode(EntityStatus.NULLIFIED);
+            locator.getOrganizationService().curate(basicOrganization);
+            assertEquals(RoleStatus.NULLIFIED, r.getStatus());
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void mergeCorrelations(Organization org, Session s) throws JMSException {
-        Organization dup = org.getDuplicateOf();
-        Set<Correlation> associatedRoles = getAssociatedRoles(org, s);
-        for (Correlation correlation : associatedRoles) {
-            GenericStructrualRoleServiceLocal service = null;
-            service = mergePlayedRoleCorrelation(org, dup, correlation); 
-            service = mergeScopedRoleCorrelation(org, dup, correlation);
-            if (service != null) {
-                /* 
-                 * the correlation could be played and scoped by the same organization therefore, we want to ensure
-                 * curate() is only invoked once
-                 */
-                service.curate(correlation);
-            }
+    @Test
+    @Override
+    public void cascadeScoperStatusChange_Inactive() throws Exception {
+        
+        if (PlayedRole.class.isAssignableFrom(Patient.class)) {
+            // make everything ACTIVE
+            Patient r = createSample();
+            
+            basicOrganization.setStatusCode(EntityStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(basicOrganization);
+            
+            r.setStatus(RoleStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(r);
+            PoHibernateUtil.getCurrentSession().flush();
+
+            
+            assertEquals(RoleStatus.ACTIVE, r.getStatus());
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private GenericStructrualRoleServiceLocal mergeScopedRoleCorrelation(Organization org, Organization dup,
-            Correlation correlation) {
-        if (correlation instanceof ScopedRole 
-                && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
-            ScopedRole sr = (ScopedRole) correlation;
-            sr.setScoper(dup);
-            return getServiceForRole(correlation.getClass());
+
+    @Test
+    public void testConvertToPatient() throws Exception {
+        Patient input = getSampleStructuralRole();
+        PatientServiceLocal s = (PatientServiceLocal) getService();
+        s.create(input);
+        
+        CorrelationIiConverter converter = new IiConverter.CorrelationIiConverter();
+
+        Class<Patient> returnClass = Patient.class;
+        Patient crs = converter.convert(returnClass, null);
+        assertEquals(null, crs);
+
+        Ii value = new Ii();
+        value.setNullFlavor(NullFlavor.NI);
+        crs = converter.convert(returnClass, value);
+        assertEquals(null, crs);
+
+        value = new Ii();
+        value.setExtension("" + input.getId());
+        try {
+            crs = converter.convert(returnClass, value);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            // expected
         }
-        return null;
+
+        value.setRoot(IdConverter.PATIENT_ROOT);
+        try {
+            crs = converter.convert(returnClass, value);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            // expected
+        }
+
+        value.setIdentifierName(IdConverter.PATIENT_IDENTIFIER_NAME);
+        crs = converter.convert(returnClass, value);
+        assertEquals(input.getId(), crs.getId());
     }
 
-    @SuppressWarnings("unchecked")
-    private GenericStructrualRoleServiceLocal mergePlayedRoleCorrelation(Organization org, Organization dup,
-            Correlation correlation) {
-        if (correlation instanceof PlayedRole 
-                && ((PlayedRole) correlation).getPlayer() instanceof Organization
-                && ((PlayedRole) correlation).getPlayer().getId().equals(org.getId())) {
-            PlayedRole pr = (PlayedRole) correlation;
-            pr.setPlayer(dup);
-            return getServiceForRole(correlation.getClass());
-        }
-        return null;
+    @Override
+    @Test
+    public void testUniqueConstraint() throws Exception {
+        //NOOP
+        // we have no real player.
+    }
+    
+    @Test
+    @Override
+    public void testGetByPlayerIds() throws Exception {
+        // NOOP
+        // there are no real player person ids. the DTO will return 
+        // fake ids that are PT + structural role id. The patient will 
+        // typically have a player role of null or a disregarded player role.
+        
     }
 }

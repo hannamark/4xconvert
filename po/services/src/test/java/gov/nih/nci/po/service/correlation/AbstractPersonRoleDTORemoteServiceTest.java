@@ -338,16 +338,9 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
                 assertEquals(2, results.size());
             }
         }
-
-        // search by status
-        searchCriteria.setPostalAddress(null);
-        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.PENDING));
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(2, results.size());
-        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.ACTIVE));
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
-
+        
+        searchByStatus(searchCriteria, results);
+        
         // search by telco
         searchCriteria.setStatus(null);
         searchCriteria.setTelecomAddress(new DSet<Tel>());
@@ -381,6 +374,17 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
 
         searchCriteria.getTelecomAddress().getItem().clear();
         testSearchOnSubClassSpecificFields(correlation1, id2, searchCriteria);
+    }
+    
+    protected void searchByStatus(T searchCriteria, List<T> results) {
+        // search by status
+        searchCriteria.setPostalAddress(null);
+        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.PENDING));
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(2, results.size());
+        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.ACTIVE));
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
     }
 
     abstract protected void testSearchOnSubClassSpecificFields(T correlation1, Ii id2, T searchCriteria)

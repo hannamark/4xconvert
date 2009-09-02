@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 
 import org.junit.Test;
@@ -146,7 +147,7 @@ public class PersistentObjectConverterTest {
     }
 
     /**
-     * Test converting an address.
+     * Test converting a person.
      */
     @Test
     public void testConvertPerson() {
@@ -160,6 +161,23 @@ public class PersistentObjectConverterTest {
         assertEquals(id.getExtension(), "10");
         assertEquals(id.getIdentifierName(), IdConverter.PERSON_IDENTIFIER_NAME);
         assertEquals(id.getRoot(), IdConverter.PERSON_ROOT);
+    }
+    
+    /**
+     * Test converting a patient person.
+     */
+    @Test
+    public void testConvertPatient() {
+        Patient p = new Patient();
+        p.setId(new Long(10));
+        Ii id = new PersistentObjectConverter.PersistentPatientConverter().convert(Ii.class, p);
+        assertEquals(id.getNullFlavor(), null);
+        assertTrue(id.getDisplayable());
+        assertEquals(id.getScope(), IdentifierScope.OBJ);
+        assertEquals(id.getReliability(), IdentifierReliability.ISS);
+        assertEquals("10", id.getExtension());
+        assertEquals(id.getIdentifierName(), IdConverter.PATIENT_IDENTIFIER_NAME);
+        assertEquals(id.getRoot(), IdConverter.PATIENT_ROOT);
     }
 
     /**

@@ -80,103 +80,101 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAl;
+import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpSta;
+import gov.nih.nci.coppa.iso.AdxpZip;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.Patient;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
+import gov.nih.nci.services.correlation.PatientDTO;
+
+import java.net.URISyntaxException;
+import java.util.List;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.Test;
 
 /**
- * @author Scott Miller
- *
+ * @author mshestopalov
  */
-public interface ServiceLocator {
+public class PatientDTOTest extends AbstractPersonRoleDTOTest {
 
     /**
-     * @return local service
+     * {@inheritDoc}
      */
-    GenericServiceLocal getGenericService();
+    @Override
+    protected AbstractPersonRole getExampleTestClass() {
+        Patient pat = new Patient();
+        fillInExamplePersonRoleFields(pat);
+        pat.setPlayer(new Person());
+        pat.getPlayer().setId(2L);
+        return pat;
+    }
 
     /**
-     * @return the org service
+     * {@inheritDoc}
      */
-    OrganizationServiceLocal getOrganizationService();
+    @Override
+    protected AbstractPersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
+        PatientDTO dto = new PatientDTO();
+        fillInPersonRoleDTOFields(dto, personId, orgId);
+        
+        Ii ii = new Ii();
+        ii.setExtension("" + 1L);
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot(IdConverter.PATIENT_ROOT);
+        ii.setIdentifierName(IdConverter.PATIENT_IDENTIFIER_NAME);
+        dto.setIdentifier(IiConverter.convertToDsetIi(ii));
+        return dto;
+    }
 
     /**
-     * @return the person service
+     * {@inheritDoc}
      */
-    PersonServiceLocal getPersonService();
+    @Override
+    protected void verifyTestClassDTOFields(AbstractPersonRole pr) {
+        // do nothing
+    }
 
     /**
-     * @return the PO country service
+     * {@inheritDoc}
      */
-    CountryServiceLocal getCountryService();
-
-    /**
-     * @return the Researh Org service
-     */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
-
-    /**
-     * @return the health care provider service.
-     */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
-
-    /**
-     * @return the service.
-     */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
+    @Override
+    protected void verifyTestClassFields(AbstractPersonRoleDTO dto) {
+        // check id
+        Ii expectedIi = new Ii();
+        expectedIi.setExtension("" + 1);
+        expectedIi.setDisplayable(true);
+        expectedIi.setScope(IdentifierScope.OBJ);
+        expectedIi.setReliability(IdentifierReliability.ISS);
+        expectedIi.setIdentifierName(IdConverter.PATIENT_IDENTIFIER_NAME);
+        expectedIi.setRoot(IdConverter.PATIENT_ROOT);
+        Ii actualIi = IiDsetConverter.convertToIi(((PatientDTO) dto).getIdentifier());
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
+    }
     
-    /**
-     * @return the service.
-     */
-    PatientServiceLocal getPatientService();
-
-    /**
-     * @return the health care facility service.
-     */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
-
-    /**
-     * @return the oversight committee service
-     */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
-
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
+    
 }

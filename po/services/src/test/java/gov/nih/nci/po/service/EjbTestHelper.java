@@ -102,6 +102,8 @@ import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceB
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceBean;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
@@ -173,6 +175,7 @@ public class EjbTestHelper {
         PersonEntityServiceBean personServiceBean = new PersonEntityServiceBean();
         personServiceBean.setPersonServiceBean(getPersonServiceBean());
         personServiceBean.setPersonCRServiceBean(getPersonCRServiceBean());
+        personServiceBean.setPatientServiceBean(getPatientServiceBean());
         return personServiceBean;
     }
 
@@ -204,6 +207,12 @@ public class EjbTestHelper {
         crsService.setCrsService(getClinicalResearchStaffServiceBean());
         crsService.setCrsCRService(getClinicalResearchStaffCRServiceBean());
         return (ClinicalResearchStaffCorrelationServiceRemote) wrapWithProxies(crsService);
+    }
+    
+    public static PatientCorrelationServiceRemote getPatientCorrelationServiceRemote() {
+        PatientCorrelationServiceBean patientService = new PatientCorrelationServiceBean();
+        patientService.setPatService(getPatientServiceBean());
+        return (PatientCorrelationServiceRemote) wrapWithProxies(patientService);
     }
 
     public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationServiceRemote() {
@@ -295,6 +304,12 @@ public class EjbTestHelper {
      */
     public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
         ClinicalResearchStaffServiceBean bean = new ClinicalResearchStaffServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
+    }
+    
+    public static PatientServiceLocal getPatientServiceBean() {
+        PatientServiceBean bean = new PatientServiceBean();
         bean.setPublisher(getMessageProducer());
         return bean;
     }

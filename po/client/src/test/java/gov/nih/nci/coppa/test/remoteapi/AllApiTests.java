@@ -19,6 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
         PersonEntityServiceSearchTest.class,
         PersonEntityServiceTest.class,
         ClinicalResearchStaffCorrelationServiceTest.class,
+        PatientCorrelationServiceTest.class,
         HealthCareFacilityCorrelationServiceTest.class,
         HealthCareProviderCorrelationServiceTest.class,
         IdentifiedOrganizationCorrelationServiceTest.class,

@@ -1,0 +1,32 @@
+create table PATIENT_fax (PATIENT_id int8 not null, fax_id int8 not null, idx int4 not null, primary key (PATIENT_id, idx), unique (fax_id));
+create table PATIENT_otheridentifier (PATIENT_id int8 not null, null_flavor varchar(255), displayable bool, extension varchar(255), identifier_name varchar(255), reliability varchar(255), root varchar(255), scope varchar(255));
+create table PATIENT_phone (PATIENT_id int8 not null, phone_id int8 not null, idx int4 not null, primary key (PATIENT_id, idx), unique (phone_id));
+create table PATIENT_tty (PATIENT_id int8 not null, tty_id int8 not null, idx int4 not null, primary key (PATIENT_id, idx), unique (tty_id));
+create table PATIENT_url (PATIENT_id int8 not null, url_id int8 not null, idx int4 not null, primary key (PATIENT_id, idx), unique (url_id));
+create table Patient (id int8 not null, statusDate timestamp, status varchar(255) not null, SEX varchar(255), birthDate timestamp, organization_id int8 not null, person_id int8, primary key (id));
+create table patient_address (patient_id int8 not null, address_id int8 not null, primary key (patient_id, address_id), unique (address_id));
+create table patient_email (patient_id int8 not null, email_id int8 not null, idx int4 not null, primary key (patient_id, idx), unique (email_id));
+create table patient_ethnicgroup (patient_id int8 not null, ETHNIC_GROUP varchar(255));
+create table patient_race (patient_id int8 not null, RACE varchar(255));
+
+alter table PATIENT_fax add constraint FAX_PATIENT_FK foreign key (fax_id) references PhoneNumber;
+alter table PATIENT_fax add constraint PATIENT_FAX_FK foreign key (PATIENT_id) references Patient;
+alter table PATIENT_otheridentifier add constraint PATIENT_OI_FK foreign key (PATIENT_id) references Patient;
+alter table PATIENT_phone add constraint PHONE_PATIENT_FK foreign key (phone_id) references PhoneNumber;
+alter table PATIENT_phone add constraint PATIENT_PHONE_FK foreign key (PATIENT_id) references Patient;
+alter table PATIENT_tty add constraint PATIENT_TTY_FK foreign key (PATIENT_id) references Patient;
+alter table PATIENT_tty add constraint TTY_PATIENT_FK foreign key (tty_id) references PhoneNumber;
+alter table PATIENT_url add constraint URL_PATIENT_FK foreign key (url_id) references URL;
+alter table PATIENT_url add constraint PATIENT_URL_FK foreign key (PATIENT_id) references Patient;
+alter table Patient add constraint personrole_org_fkey foreign key (organization_id) references Organization;
+alter table patient_address add constraint ADDRESS_PATIENT_FK foreign key (address_id) references Address;
+alter table patient_address add constraint PATIENT_ADDRESS_FK foreign key (patient_id) references Patient;
+alter table patient_email add constraint EMAIL_PATIENT_FK foreign key (email_id) references Email;
+alter table patient_email add constraint PATIENT_EMAIL_FK foreign key (patient_id) references Patient;
+alter table patient_ethnicgroup add constraint PATIENT_EG_FK foreign key (patient_id) references Patient;
+alter table patient_race add constraint PATIENT_RACE_FK foreign key (patient_id) references Patient;
+create index IX340C82E54F1093A7 on Patient (organization_id);
+create index IX340C82E5B7E0610D on Patient (birthDate);
+create index IX340C82E5CACDCFF2 on Patient (status);
+create index IX340C82E514046 on Patient (SEX);
+

@@ -15,6 +15,7 @@ public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
         contextBuilder.bind("po/ClinicalResearchStaffServiceBean/local", EjbTestHelper.getClinicalResearchStaffServiceBean());
         contextBuilder.bind("po/OrganizationalContactServiceBean/local", EjbTestHelper.getOrganizationalContactService());
         contextBuilder.bind("po/OversightCommitteeServiceBean/local", EjbTestHelper.getOversightCommitteeServiceBean());
+        contextBuilder.bind("po/PatientServiceBean/local", EjbTestHelper.getPatientServiceBean());
     }
 
     @AfterClass

@@ -90,6 +90,7 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
@@ -100,6 +101,7 @@ import gov.nih.nci.po.data.convert.IdConverter.IdentifiedPersonIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrganizationalContactIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PatientIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ResearchOrganizationIdConverter;
 
@@ -130,6 +132,7 @@ public class IdConverterRegistry {
         tmp.put(IdentifiedOrganization.class, new IdentifiedOrganizationIdConverter());
         tmp.put(IdentifiedPerson.class, new IdentifiedPersonIdConverter());
         tmp.put(OrganizationalContact.class, new OrganizationalContactIdConverter());
+        tmp.put(Patient.class, new PatientIdConverter());
         REGISTRY = Collections.unmodifiableMap(tmp);
     }
 

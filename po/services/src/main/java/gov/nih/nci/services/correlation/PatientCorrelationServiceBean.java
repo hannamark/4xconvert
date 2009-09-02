@@ -80,103 +80,195 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.services.correlation;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.AbstractPatient;
+import gov.nih.nci.po.data.bo.Patient;
+import gov.nih.nci.po.data.bo.PatientCR;
+import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiDsetConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PatientIdConverter;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
+import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.jms.JMSException;
+
+import org.jboss.annotation.security.SecurityDomain;
+
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 
 /**
- * @author Scott Miller
+ * Correlation service bean for Patient.
+ * @author mshestopalov
  *
  */
-public interface ServiceLocator {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
+@SecurityDomain("po")
+public class PatientCorrelationServiceBean
+    extends AbstractCorrelationServiceBean<Patient, PatientCR, PatientDTO>
+    implements PatientCorrelationServiceRemote {
+
+    private PatientServiceLocal patService;
 
     /**
-     * @return local service
+     * @param patService the patService to set
      */
-    GenericServiceLocal getGenericService();
+    @EJB
+    public void setPatService(PatientServiceLocal patService) {
+        this.patService = patService;
+    }
 
     /**
-     * @return the org service
+     * {@inheritDoc}
      */
-    OrganizationServiceLocal getOrganizationService();
+    @Override
+    IdConverter getIdConverter() {
+        return new PatientIdConverter();
+    }
 
     /**
-     * @return the person service
+     * {@inheritDoc}
      */
-    PersonServiceLocal getPersonService();
+    @Override
+    PatientServiceLocal getLocalService() {
+        return patService;
+    }
 
     /**
-     * @return the PO country service
+     * {@inheritDoc}
      */
-    CountryServiceLocal getCountryService();
+    @Override
+    void copyIntoAbstractModel(PatientDTO proposedState, PatientCR cr) {
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPatient.class);
+    }
 
     /**
-     * @return the Researh Org service
+     * {@inheritDoc}
      */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
+    @Override
+    GenericStructrualRoleCRServiceLocal<PatientCR> getLocalCRService() {
+        return null;
+    }
 
     /**
-     * @return the health care provider service.
+     * {@inheritDoc}
      */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
-
-    /**
-     * @return the service.
-     */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
+    @Override
+    PatientCR newCR(Patient t) {
+        return new PatientCR(t);
+    }
     
     /**
-     * @return the service.
+     * {@inheritDoc}
      */
-    PatientServiceLocal getPatientService();
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @Override
+    public void updateCorrelation(PatientDTO proposedState) throws EntityValidationException {
+        
+        Long pId = IiDsetConverter.convertToId(proposedState.getIdentifier());
+        // put back the player
+        proposedState.setPlayerIdentifier(null);
+        Patient target = (Patient) PoXsnapshotHelper.createModel(proposedState);
+        target.setId(pId);
+        
+        if (CdConverter.convertToRoleStatus(proposedState.getStatus()) != target.getStatus()) {
+            throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+        }
+        
+        try {
+            getLocalService().curate(target);
+        } catch (JMSException e) {
+            throw new IllegalArgumentException(e);
+        }
+        
+    }
 
     /**
-     * @return the health care facility service.
+     * {@inheritDoc}
      */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @Override
+    public void updateCorrelationStatus(Ii targetPat, Cd statusCode) throws EntityValidationException {
+        Long pId = IiConverter.convertToLong(targetPat);
+        Patient target = getLocalService().getById(pId);
+        target.setStatus(CdConverter.convertToRoleStatus(statusCode));
+        try {
+            getLocalService().curate(target);
+        } catch (JMSException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PatientDTO getCorrelation(Ii id) {
+        PatientDTO patDto = super.getCorrelation(id);
+        patDto.setPlayerIdentifier(createFakePersonIi(id));
+        return patDto;
+    }
+    
+    private Ii createFakePersonIi(Ii id) {
+        Ii playerIi = new Ii();
+        playerIi.setExtension("PT" + id.getExtension());
+        playerIi.setRoot(IdConverter.PERSON_ROOT);
+        playerIi.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
+        return playerIi;
+    }
 
     /**
-     * @return the oversight committee service
+     * {@inheritDoc}
      */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
-
+    @Override
+    public List<PatientDTO> getCorrelations(Ii[] ids) {
+        
+        List<PatientDTO> ps = super.getCorrelations(ids);
+        for (PatientDTO p : ps) {
+            p.setPlayerIdentifier(createFakePersonIi(IiDsetConverter.convertToIi(p.getIdentifier())));
+        }
+        return ps;
+    }
+    
     /**
-     * @return the service.
+     * {@inheritDoc}
      */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @Override
+    public List<PatientDTO> getCorrelationsByPlayerIds(Ii[] pids) {
+        
+        Set<Long> longIds = new HashSet<Long>();
+        for (Ii id : pids) {
+            if (id.getExtension() != null && id.getExtension().startsWith("PT")) {
+                long extId = Long.valueOf(id.getExtension().substring(2));
+                longIds.add(extId);
+            }
+        }
+        List<Patient> correlations = getLocalService().getByIds(longIds.toArray(new Long[longIds.size()]));
+        return PoXsnapshotHelper.createSnapshotList(correlations);
+    }
 
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
 
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
+    
 }

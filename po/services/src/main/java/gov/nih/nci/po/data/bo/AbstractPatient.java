@@ -80,103 +80,141 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
+
+import gov.nih.nci.po.util.PoRegistry;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 
 /**
- * @author Scott Miller
+ * Class that stores Patient information.
+ * @author mshestopalov
  *
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
+ *      class="gov.nih.nci.services.correlation.AbstractPatientDTO"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
+ *      serial-version-uid="1L"
  */
-public interface ServiceLocator {
-
-    /**
-     * @return local service
-     */
-    GenericServiceLocal getGenericService();
-
-    /**
-     * @return the org service
-     */
-    OrganizationServiceLocal getOrganizationService();
-
-    /**
-     * @return the person service
-     */
-    PersonServiceLocal getPersonService();
-
-    /**
-     * @return the PO country service
-     */
-    CountryServiceLocal getCountryService();
-
-    /**
-     * @return the Researh Org service
-     */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
-
-    /**
-     * @return the health care provider service.
-     */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
-
-    /**
-     * @return the service.
-     */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
+@MappedSuperclass
+@SuppressWarnings("PMD.UselessOverridingMethod")
+public abstract class AbstractPatient extends AbstractPersonRole implements Contactable {
+    private static final long serialVersionUID = 1L;
+   
+    private PersonSex sexCode;
+    private Set<PersonRace> raceCode = new HashSet<PersonRace>();
+    private Set<PersonEthnicGroup> ethnicGroupCode = new HashSet<PersonEthnicGroup>();
+    private Date birthDate;
     
     /**
-     * @return the service.
+     * @param newSexCode the sex of this person record
      */
-    PatientServiceLocal getPatientService();
+    public void setSexCode(PersonSex newSexCode) {
+        this.sexCode = newSexCode;
+    }
+    
+    /**
+     * @param newRaceCodes the races of this person record
+     */
+    public void setRaceCode(Set<PersonRace> newRaceCodes) {
+        this.raceCode = newRaceCodes;
+    }
+    
+    /**
+     * @param newEthnicCodes the ethnicity of this person record
+     */
+    public void setEthnicGroupCode(Set<PersonEthnicGroup> newEthnicCodes) {
+        this.ethnicGroupCode = newEthnicCodes;
+    }
+    
+    /**
+     * @param newBirthDate the birth date of this person record
+     */
+    public void setBirthDate(Date newBirthDate) {
+        this.birthDate = newBirthDate;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Enumerated(EnumType.STRING)
+    @CollectionOfElements
+    @JoinTable(
+            name = "patient_ethnicgroup",
+            joinColumns = @JoinColumn(name = "patient_id")
+    )
+    @ForeignKey(name = "PATIENT_EG_FK")
+    @Columns(columns = {
+            @Column(name = "ETHNIC_GROUP")
+    })
+    public Set<PersonEthnicGroup> getEthnicGroupCode() {
+        return this.ethnicGroupCode;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Enumerated(EnumType.STRING)
+    @CollectionOfElements
+    @JoinTable(
+            name = "patient_race",
+            joinColumns = @JoinColumn(name = "patient_id")
+    )
+    @ForeignKey(name = "PATIENT_RACE_FK")
+    @Columns(columns = {
+            @Column(name = "RACE")
+    })
+    public Set<PersonRace> getRaceCode() {
+        return this.raceCode;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SEX")
+    @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "sex")
+    public PersonSex getSexCode() {
+        return this.sexCode;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "birthDate")
+    public Date getBirthDate() {
+        return this.birthDate;
+    }
 
     /**
-     * @return the health care facility service.
+     * {@inheritDoc}
      */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
-
-    /**
-     * @return the oversight committee service
-     */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
-
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
+    @Override
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
+    public Person getPlayer() {
+        return super.getPlayer();
+    }
+    
 }

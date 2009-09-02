@@ -128,7 +128,7 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
             c.close();
     }
 
-    private void createMinimal() throws Exception {
+    protected void createMinimal() throws Exception {
         if (correlationId != null) {
             return; // test already run from another test case.
         }
@@ -171,7 +171,6 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         
         returnVals = getCorrelationService().getCorrelationsByPlayerIds(new Ii[1]);
         assertEquals(0, returnVals.size());
-    
    }
     
     @Test
@@ -244,6 +243,26 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
             assertNotNull(personId);
         }
         return personId;
+    }
+   
+    /**
+     * get correlation id.
+     * @return correlation id
+     */
+    protected Ii getCorrelationId() {
+       return this.correlationId;
+    }
+    
+    /**
+     * Get connection.
+     * @return connection.
+     */
+    protected Connection getConnection() {
+        return this.c;
+    }
+    
+    protected void createConnection() {
+        c = DataGeneratorUtil.getJDBCConnection();
     }
 }
 

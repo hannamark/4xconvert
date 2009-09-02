@@ -36,11 +36,19 @@
        <comment>Upgrade for PO-1199 - set of otherIdentifiers on correlations</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1199.sql"/>
     </changeSet>
-    <changeSet id="PO-1213" author="slustbader">
+    <changeSet id="PO-1213" author="mshestopalov">
        <comment>Upgrade for PO-1213 - adding person props sex, race, ethnic codes, birthdatw</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1213.sql"/>
     </changeSet>
-    <changeSet id="PO-1229" author="slustbader">
+    <changeSet id="PO-1213-2" author="mshestopalov">
+       <comment>Upgrade for PO-1213 - adding indexes for person bio fields</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1213-2.sql"/>
+    </changeSet>
+    <changeSet id="PO-1241" author="mshestopalov">
+       <comment>Upgrade for PO-1241 - adding patient role</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1241.sql"/>
+    </changeSet>
+	<changeSet id="PO-1229" author="slustbader">
        <comment>Upgrade for PO-1229 - add CTEP ID to structural role otherIdentifiers</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1229.sql"/>
     </changeSet>

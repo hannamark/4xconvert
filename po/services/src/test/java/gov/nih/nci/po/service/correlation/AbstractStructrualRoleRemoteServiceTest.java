@@ -209,8 +209,8 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
             Ii id1 = correlationService.createCorrelation(correlation1);
         }
         T sc = getEmptySearchCriteria();
-        sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.PENDING));
-
+        search2StatusChange(sc);
+        
         List<T> results;
         //verify walking forward with a page size of 1
         LimitOffset page = new LimitOffset(1,-1);
@@ -258,7 +258,6 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         page = new LimitOffset(max-3, 0);
         results = correlationService.search(sc, page);
         assertEquals(page.getLimit(), results.size());
-
     }
 
     @Test
@@ -322,4 +321,8 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     }
 
     protected abstract T getEmptySearchCriteria();
+    
+    protected void search2StatusChange(T sc) {
+        sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.PENDING));
+    }
 }

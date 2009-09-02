@@ -99,7 +99,17 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.po.data.bo.PersonEthnicGroup;
+import gov.nih.nci.po.data.bo.PersonRace;
+import gov.nih.nci.po.data.bo.PersonSex;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.EthnicGroupCodeConverter;
+import gov.nih.nci.po.data.convert.RaceCodeConverter;
+import gov.nih.nci.po.data.convert.SexCodeConverter;
+import gov.nih.nci.po.data.convert.TsConverter;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
@@ -123,9 +133,14 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
     private static final String DEFAULT_URL = "http://default.example.com";
     private static final String DEFAULT_EMAIL = "default@example.com";
     private Ii personId;
+    private Ii patientId;
 
     public Ii getPersonId() {
         return personId;
+    }
+    
+    public Ii getPatientId() {
+        return patientId;
     }
 
     @Test
@@ -157,6 +172,66 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             personId = getPersonService().createPerson(dto);
             assertNotNull(personId);
             assertNotNull(personId.getExtension());
+        } catch (EntityValidationException e) {
+            fail(e.getErrorMessages());
+        }
+    }
+    
+    @Test
+    public void createMinimalPatient() throws Exception {
+        if (patientId != null) {
+            return; // test already run from getPatientById.
+        }
+        try {
+            Ii orgId = null;
+            OrganizationEntityServiceTest test = new OrganizationEntityServiceTest();
+            test.init();
+            test.createMinimal();
+            orgId = test.getOrgId();
+            assertNotNull(orgId);
+           
+            PatientDTO patDto = new PatientDTO();
+            patDto.setScoperIdentifier(orgId);
+           
+            patDto.setTelecomAddress(new DSet<Tel>());
+            patDto.getTelecomAddress().setItem(new HashSet<Tel>());
+            
+            TelPhone ph1 = new TelPhone();
+            ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+            patDto.getTelecomAddress().getItem().add(ph1);
+            patientId = getPatientService().createCorrelation(patDto);
+            
+            assertNotNull(patientId);
+            assertNotNull(patientId.getExtension());
+            patientId.setExtension("PT" + patientId.getExtension());
+            
+            PersonDTO perDTO = getPersonService().getPerson(patientId);
+           
+            Ts ts = new Ts();
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            ts.setValue(sdf.parse("09/28/1980"));
+            perDTO.setBirthDate(ts);
+            
+            Cd sexCode = new Cd();
+            sexCode.setCode("MALE");
+            perDTO.setSexCode(sexCode);
+            
+            DSet<Cd> ethnic = new DSet<Cd>();
+            ethnic.setItem(new HashSet<Cd>());
+            Cd ethnicCode = new Cd();
+            ethnicCode.setCode("NOT_HISPANIC_OR_LATINO");
+            ethnic.getItem().add(ethnicCode);
+            perDTO.setEthnicGroupCode(ethnic);
+            
+            DSet<Cd> race = new DSet<Cd>();
+            race.setItem(new HashSet<Cd>());
+            Cd raceCode = new Cd();
+            raceCode.setCode("WHITE");
+            race.getItem().add(raceCode);
+            perDTO.setRaceCode(race);
+            
+            getPersonService().updatePerson(perDTO);
+            
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
@@ -244,6 +319,36 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         assertEquals(ENXP_GIV, next.getValue());
         assertEquals("pending", dto.getStatusCode().getCode());
     }
+    
+    @Test
+    public void getPatientById() throws Exception {
+        if (patientId == null) {
+            createMinimalPatient();
+        }
+        PersonDTO dto = getPersonService().getPerson(patientId);
+        assertNotNull(dto);
+        assertNotSame(patientId, dto.getIdentifier());
+        assertEquals(patientId.getExtension(), dto.getIdentifier().getExtension());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        // everything other than the status and 4 bio fields should be masked nullflavor
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, dto.getName().getNullFlavor());
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, dto.getPostalAddress().getNullFlavor());
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, ((Tel) dto.getTelecomAddress().getItem()
+                .iterator().next()).getNullFlavor());
+        assertEquals(RoleStatus.ACTIVE, CdConverter.convertToRoleStatus(dto.getStatusCode()));
+        
+        // 4 prop fields
+        assertEquals(getPatientId().getExtension(), dto.getIdentifier().getExtension());
+        assertEquals(sdf.parse("09/28/1980"), TsConverter.convertToDate(dto.getBirthDate()));
+        assertEquals(PersonSex.MALE, SexCodeConverter.convertToStatusEnum(dto.getSexCode()));
+        assertEquals(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO, 
+                EthnicGroupCodeConverter.convertToEthnicGroupEnum((Cd)dto.getEthnicGroupCode().getItem()
+                        .iterator().next()));
+        assertEquals(PersonRace.WHITE, 
+                RaceCodeConverter.convertToRaceEnum((Cd)dto.getRaceCode().getItem()
+                        .iterator().next()));
+    }
 
 
     @Test
@@ -268,6 +373,33 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         getPersonService().updatePerson(dto);
 
         rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension());
+        assertTrue(rs.next());
+        int count1 = rs.getInt(1);
+        rs.close();
+        assertEquals(count0 + 1, count1);
+    }
+    
+    @Test
+    public void updatePatient() throws Exception {
+        if (patientId == null) {
+            createMinimalPatient();
+        }
+
+        Connection c = DataGeneratorUtil.getJDBCConnection();
+        ResultSet rs = c.createStatement()
+            .executeQuery("select count(*) from patient_ethnicgroup where patient_id = " + patientId.getExtension().substring(2));
+        assertTrue(rs.next());
+        int count0 = rs.getInt(1);
+        rs.close();
+
+        PersonDTO dto = getPersonService().getPerson(patientId);
+        Cd eth = new Cd();
+        eth.setCode("UNKNOWN");
+        dto.getEthnicGroupCode().getItem().add(eth);
+        getPersonService().updatePerson(dto);
+
+        rs = c.createStatement()
+            .executeQuery("select count(*) from patient_ethnicgroup where patient_id = " + patientId.getExtension().substring(2));
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();

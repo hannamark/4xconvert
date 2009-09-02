@@ -95,6 +95,7 @@ import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
+import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
@@ -208,6 +209,13 @@ public class MockCountryServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public CtepImportService getCtepImportService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PatientServiceLocal getPatientService() {
         return null;
     }
 }

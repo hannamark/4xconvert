@@ -138,6 +138,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
             rtIName.put(IdConverter.ORGANIZATIONAL_CONTACT_ROOT, IdConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
             rtIName.put(IdConverter.OVERSIGHT_COMMITTEE_ROOT, IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
             rtIName.put(IdConverter.RESEARCH_ORG_ROOT, IdConverter.RESEARCH_ORG_IDENTIFIER_NAME);
+            rtIName.put(IdConverter.PATIENT_ROOT, IdConverter.PATIENT_IDENTIFIER_NAME);
         }
         /**
          * {@inheritDoc}
@@ -168,7 +169,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
             return (TO) PoRegistry.getGenericService().getPersistentObject((Class<PersistentObject>) returnClass, id);
         }
     }
-
+    
     /**
      * @param value an II used to identify PO entities.
      * @return a long suitable for a hibernate entity Id
@@ -187,6 +188,26 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         }
 
         return Long.valueOf(value.getExtension());
+    }
+    
+    /**
+     * @param value an II used to identify PO entities.
+     * @return a long suitable for a hibernate entity Id
+     */
+    public static Long convertPatientToLong(Ii value) {
+        if (value == null || value.getNullFlavor() != null) {
+            return null;
+        }
+
+        enforcePoIsoConstraints(value);
+
+        // todo https://jira.5amsolutions.com/browse/PO-411
+        String root = value.getRoot();
+        if (root == null) {
+            throw new IllegalArgumentException("root is required");
+        }
+        
+        return Long.valueOf(value.getExtension().substring(IdConverter.PATIENT_PREFIX.length()));
     }
 
     private static void enforcePoIsoConstraints(Ii value) {

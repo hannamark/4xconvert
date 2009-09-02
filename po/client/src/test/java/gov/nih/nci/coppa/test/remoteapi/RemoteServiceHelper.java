@@ -90,6 +90,7 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -111,6 +112,7 @@ public class RemoteServiceHelper {
 
     static final String HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareProviderCorrelationServiceBean/remote";
     static final String CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE = "po/ClinicalResearchStaffCorrelationServiceBean/remote";
+    static final String PATIENT_CORRELATION_BEAN_REMOTE = "po/PatientCorrelationServiceBean/remote";
     static final String HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareFacilityCorrelationServiceBean/remote";
     static final String OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE = "po/OversightCommitteeCorrelationServiceBean/remote";
     static final String RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE = "po/ResearchOrganizationCorrelationServiceBean/remote";
@@ -177,6 +179,11 @@ public class RemoteServiceHelper {
     public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()
             throws NamingException {
         return (ClinicalResearchStaffCorrelationServiceRemote) lookup(CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE);
+    }
+    
+    public static PatientCorrelationServiceRemote getPatientCorrelationService()
+        throws NamingException {
+        return (PatientCorrelationServiceRemote) lookup(PATIENT_CORRELATION_BEAN_REMOTE);
     }
 
     public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()

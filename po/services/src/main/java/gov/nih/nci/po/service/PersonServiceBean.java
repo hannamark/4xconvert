@@ -88,6 +88,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
+import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 
 import java.util.HashSet;
@@ -125,6 +126,7 @@ public class PersonServiceBean extends AbstractCuratableEntityServiceBean<Person
     protected Set<Correlation> getAssociatedRoles(Person p, Session s) {
         Set<Correlation> l = new HashSet<Correlation>();
         l.addAll(getAssociatedRoles(p.getId(), ClinicalResearchStaff.class, PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), Patient.class, PLAYER_ID, s)); 
         l.addAll(getAssociatedRoles(p.getId(), HealthCareProvider.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(p.getId(), IdentifiedPerson.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(p.getId(), OrganizationalContact.class, PLAYER_ID, s));

@@ -101,6 +101,10 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The base of all COPPA-related II roots.
      */
     public static final String BASE_ROOT = "2.16.840.1.113883.3.26.4";
+    /**
+     * The sfx of all COPPA-related structural role II roots.
+     */
+    public static final String STRUCTURAL_ROLE_SFX = ".4";
 
     /**
      * The identifier name for org ii's.
@@ -200,6 +204,20 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The ii root value.
      */
     public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    /**
+     * The identifier name for.
+     */
+    public static final String PATIENT_IDENTIFIER_NAME = "Patient identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String PATIENT_ROOT = BASE_ROOT + STRUCTURAL_ROLE_SFX + ".9";
+    
+    /**
+     * The Patient to Person prefix string.
+     */
+    public static final String PATIENT_PREFIX = "PT";
 
 
     /**
@@ -400,6 +418,23 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
             Ii iso = super.convertToIi(value);
             iso.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
             iso.setRoot(IdConverter.ORGANIZATIONAL_CONTACT_ROOT);
+            return iso;
+        }
+    }
+    
+    /**
+     * convert the id of an patient.
+     * @author mshestopalov
+     */
+    public static class PatientIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(PATIENT_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.PATIENT_ROOT);
             return iso;
         }
     }

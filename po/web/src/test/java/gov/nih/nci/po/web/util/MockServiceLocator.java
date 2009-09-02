@@ -105,6 +105,8 @@ import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceStub;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceStub;
+import gov.nih.nci.po.service.PatientServiceLocal;
+import gov.nih.nci.po.service.PatientServiceStub;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
@@ -128,6 +130,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final IdentifiedOrganizationServiceLocal ioService = new IdentifiedOrganizationServiceStub();
     private final IdentifiedPersonServiceLocal ipService = new IdentifiedPersonServiceStub();
     private final ClinicalResearchStaffServiceLocal crsService = new ClinicalResearchStaffServiceStub();
+    private final PatientServiceLocal patService = new PatientServiceStub();
     private final OrganizationalContactServiceLocal orgConService = new OrganizationalContactServiceStub();
     private final MockCtepImportService ctepImportService = new MockCtepImportService();
 
@@ -227,5 +230,12 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public CtepImportService getCtepImportService() {
         return ctepImportService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PatientServiceLocal getPatientService() {
+        return patService;
     }
 }

@@ -80,103 +80,92 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
+import java.util.Collections;
+import java.util.List;
+
+import gov.nih.nci.po.data.bo.Patient;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.util.PoHibernateUtil;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
- * @author Scott Miller
- *
+ * Service bean for Patient.
+ * @author mshestopalov
  */
-public interface ServiceLocator {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class PatientServiceBean extends AbstractCuratableServiceBean<Patient>
+    implements PatientServiceLocal {
 
     /**
-     * @return local service
+     * {@inheritDoc}
+     * @throws JMSException 
      */
-    GenericServiceLocal getGenericService();
+    @Override
+    public long create(Patient obj) throws EntityValidationException, JMSException {
+        obj.setStatus(RoleStatus.ACTIVE);
+        return super.createHelper(obj);
+    }
 
     /**
-     * @return the org service
+     * {@inheritDoc}
      */
-    OrganizationServiceLocal getOrganizationService();
-
-    /**
-     * @return the person service
-     */
-    PersonServiceLocal getPersonService();
-
-    /**
-     * @return the PO country service
-     */
-    CountryServiceLocal getCountryService();
-
-    /**
-     * @return the Researh Org service
-     */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
-
-    /**
-     * @return the health care provider service.
-     */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
-
-    /**
-     * @return the service.
-     */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
+    public int getHotRoleCount(Person per) {
+        final StringBuffer hql =
+            new StringBuffer("select count(distinct r) from " + Patient.class.getName()
+                    + " r where r.status = 'PENDING'");
+        Number n = (Number) PoHibernateUtil.getCurrentSession().createQuery(hql.toString()).uniqueResult();
+        return n.intValue();
+    }
     
     /**
-     * @return the service.
+     * {@inheritDoc}
      */
-    PatientServiceLocal getPatientService();
-
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void curate(Patient curatable) throws JMSException {
+        final Session s = PoHibernateUtil.getCurrentSession();
+        Patient object = curatable;
+        if (object.getId() != null) {
+            object = loadAndMerge(object, s);
+            s.update(object);
+        } else {
+            s.save(object);
+         
+        }
+    }
+    
     /**
-     * @return the health care facility service.
+     * {@inheritDoc}
      */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
+    @Override
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Patient> getByPlayerIds(Long[] pids) {
+        if (pids == null || pids.length == 0) {
+            return Collections.EMPTY_LIST;
+        }
 
-    /**
-     * @return the oversight committee service
-     */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
+        if (pids.length > MAX_IN_CLAUSE_SIZE) {
+            throw new IllegalArgumentException("getByPlayerIds can only search for " 
+                    + MAX_IN_CLAUSE_SIZE + " at once.");
+        }
 
-    /**
-     * @return the service.
-     */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
-
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
+        Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()
+                + " obj where obj.status != :roleStatus AND obj.id in (:ids_list)");
+        q.setParameter("roleStatus", RoleStatus.NULLIFIED);
+        q.setParameterList("ids_list", pids);
+        return q.list();
+    }
+     
 }

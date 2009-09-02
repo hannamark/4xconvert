@@ -22,21 +22,38 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
+import gov.nih.nci.po.data.bo.PersonEthnicGroup;
+import gov.nih.nci.po.data.bo.PersonRace;
+import gov.nih.nci.po.data.bo.PersonSex;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.AddressConverter;
+import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.DateConverter;
+import gov.nih.nci.po.data.convert.EthnicGroupCodeConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.RaceCodeConverter;
+import gov.nih.nci.po.data.convert.SexCodeConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.po.data.convert.TsConverter;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
+import gov.nih.nci.po.service.CountryTestUtil;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
+import gov.nih.nci.po.service.correlation.PatientRemoteServiceTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
@@ -44,6 +61,8 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +76,7 @@ import org.junit.Test;
 public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
     private PersonEntityServiceRemote remote;
+   // protected Ii orgId;
 
     /**
      * setup the service.
@@ -84,6 +104,32 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(per.getFirstName(), findValueByType(result.getName(), EntityNamePartType.GIV));
         assertEquals(per.getLastName(), findValueByType(result.getName(), EntityNamePartType.FAM));
     }
+    
+    @Test
+    public void getPatient() throws NullifiedEntityException, ParseException {
+        Patient pat = makePatient();
+        
+        Ii patIi = ISOUtils.ID_PERSON.convertToIi(pat.getId());
+        patIi.setExtension("PT" + patIi.getExtension());
+        PersonDTO result = remote.getPerson(patIi);
+        // everything other than the status and 4 bio fields should be masked nullflavor
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, result.getName().getNullFlavor());
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, result.getPostalAddress().getNullFlavor());
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, ((Tel) result.getTelecomAddress().getItem()
+                .iterator().next()).getNullFlavor());
+        assertEquals(RoleStatus.ACTIVE, CdConverter.convertToRoleStatus(result.getStatusCode()));
+        
+        // 4 prop fields
+        assertEquals(IdConverter.PATIENT_PREFIX + pat.getId(), result.getIdentifier().getExtension());
+        assertEquals(pat.getBirthDate(), TsConverter.convertToDate(result.getBirthDate()));
+        assertEquals(pat.getSexCode(), SexCodeConverter.convertToStatusEnum(result.getSexCode()));
+        assertEquals((PersonEthnicGroup)pat.getEthnicGroupCode().iterator().next(), 
+                EthnicGroupCodeConverter.convertToEthnicGroupEnum((Cd)result.getEthnicGroupCode().getItem()
+                        .iterator().next()));
+        assertEquals((PersonRace)pat.getRaceCode().iterator().next(), 
+                RaceCodeConverter.convertToRaceEnum((Cd)result.getRaceCode().getItem()
+                        .iterator().next()));
+    }
 
     private Person makePerson() {
         Person p = new Person();
@@ -96,6 +142,34 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         p.setPostalAddress(a);
         p.getEmail().add(new Email("abc@example.com"));
         p.getUrl().add(new URL("http://example.com"));
+        return p;
+    }
+    
+    private Patient makePatient() throws ParseException {
+        Patient p = new Patient();
+        p.setStatus(RoleStatus.ACTIVE);
+        
+        Address a = makeAddress();
+        p.getPostalAddresses().add(a);
+        p.getEmail().add(new Email("abc@example.com"));
+        p.getUrl().add(new URL("http://example.com"));
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
+        p.setBirthDate(sdf.parse("09/28/1980"));
+        p.setSexCode(PersonSex.MALE);
+        p.getEthnicGroupCode().add(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO);
+        p.getRaceCode().add(PersonRace.WHITE);
+        
+        Organization org = new Organization();
+        org.setName("test org");
+        org.setPostalAddress(makeAddress());
+        org.setStatusCode(EntityStatus.ACTIVE);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
+        PoHibernateUtil.getCurrentSession().save(org);
+
+        p.setScoper(org);
+        PoHibernateUtil.getCurrentSession().save(p);
         return p;
     }
 
@@ -324,6 +398,53 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals("another.email@example.com", cr.getEmail().get(0).getValue());
         assertEquals(EntityStatus.PENDING, cr.getStatusCode());
     }
+    
+    private long createPatient() throws Exception { 
+      
+        PatientRemoteServiceTest patCTest = new PatientRemoteServiceTest();
+        patCTest.setDefaultCountry(CountryTestUtil.save(new Country("Zcountry Zworld", "999", "ZZ", "ZZZ")));
+        patCTest.setUpData();
+        PatientDTO patDto = patCTest.getSampleDto();
+        
+        
+        Ii id = EjbTestHelper.getPatientCorrelationServiceRemote().createCorrelation(patDto);
+        assertNotNull(id);
+        assertNotNull(id.getExtension());
+        
+        Ii patIi = ISOUtils.ID_PERSON.convertToIi(Long.valueOf(id.getExtension()));
+        patIi.setExtension(IdConverter.PATIENT_PREFIX + patIi.getExtension());
+        PersonDTO result = remote.getPerson(patIi);
+        
+         
+        SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
+        result.setBirthDate(DateConverter.convertToTs(sdf.parse("09/28/1980")));
+        result.setSexCode(SexCodeConverter.convertToCd(PersonSex.MALE));
+        result.getEthnicGroupCode().getItem().add(EthnicGroupCodeConverter.convertToCd(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO));
+        result.getRaceCode().getItem().add(RaceCodeConverter.convertToCd(PersonRace.WHITE));
+        
+        remote.updatePerson(result);
+           
+        return Long.valueOf(id.getExtension());
+           
+    }
+    
+    @Test
+    public void updatePatient() throws Exception {
+        long id = this.createPatient();
+        
+        Patient p = (Patient) PoHibernateUtil.getCurrentSession().get(Patient.class, id);
+        Ii patIi = ISOUtils.ID_PERSON.convertToIi(id);
+        patIi.setExtension(IdConverter.PATIENT_PREFIX + patIi.getExtension());
+        PersonDTO result = remote.getPerson(patIi);
+        
+        Cd sexCode = new Cd();
+        sexCode.setCode("FEMALE");
+        result.setSexCode(sexCode);
+        remote.updatePerson(result);
+        
+        PersonDTO fresh = remote.getPerson(patIi);
+        assertEquals("female", fresh.getSexCode().getCode());
+    }
 
     @Test(expected=IllegalArgumentException.class)
     public void updatePersonChangeCtatus() throws EntityValidationException, NullifiedEntityException, JMSException {
@@ -405,4 +526,16 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         results = remote.search(sc, page);
         assertEquals(page.getLimit(), results.size());
     }
+    /*
+    public Ii getOrgId() throws Exception {
+        if (orgId == null) {
+            OrganizationEntityServiceTest test = new OrganizationEntityServiceTest();
+            test.init();
+            test.createMinimal();
+            orgId = test.getOrgId();
+            assertNotNull(orgId);
+        }
+        return orgId;
+    }
+    */
 }

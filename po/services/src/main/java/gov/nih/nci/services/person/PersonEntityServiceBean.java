@@ -82,19 +82,35 @@
  */
 package gov.nih.nci.services.person;
 
+import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.AbstractPerson;
+import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
+import gov.nih.nci.po.data.bo.PersonEthnicGroup;
+import gov.nih.nci.po.data.bo.PersonRace;
+import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.DateConverter;
+import gov.nih.nci.po.data.convert.EthnicGroupCodeConverter;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.RaceCodeConverter;
+import gov.nih.nci.po.data.convert.RoleStatusConverter;
+import gov.nih.nci.po.data.convert.SexCodeConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.po.data.convert.TsConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
@@ -104,8 +120,10 @@ import gov.nih.nci.services.Utils;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -130,10 +148,12 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 @Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, 
     NullifiedEntityInterceptor.class  })
 @SecurityDomain("po")
+@SuppressWarnings({"PMD.TooManyMethods" })
 public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 
     private static final Logger LOG = Logger.getLogger(PersonEntityServiceBean.class);
     private PersonServiceLocal perService;
+    private PatientServiceLocal patientService;
     private PersonCRServiceLocal perCRService;
     private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
     private static int maxResults = Utils.MAX_SEARCH_RESULTS;
@@ -153,6 +173,15 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     public void setPersonServiceBean(PersonServiceLocal svc) {
         this.perService = svc;
     }
+    
+    /**
+     * @param svc service, injected
+     */
+    @EJB
+    public void setPatientServiceBean(PatientServiceLocal svc) {
+        this.patientService = svc;
+    }
+    
     /**
      * @param svc service, injected
      */
@@ -167,6 +196,13 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     public PersonServiceLocal getPersonServiceBean() {
         return this.perService;
     }
+    
+    /**
+     * @return perService that was injected by container.
+     */
+    public PatientServiceLocal getPatientServiceBean() {
+        return this.patientService;
+    }
     /**
      * {@inheritDoc}
      * @throws NullifiedEntityException
@@ -174,8 +210,50 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public PersonDTO getPerson(Ii id) throws NullifiedEntityException {
-        Person perBO = perService.getById(IiConverter.convertToLong(id));
-        return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
+        if (isPatient(id)) {
+             long targetId = IiConverter.convertPatientToLong(id);
+             Patient patBO = patientService.getById(targetId);
+             return genPersonFromPatient(patBO, id);
+        } else {
+            Person perBO = perService.getById(IiConverter.convertToLong(id));
+            return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
+        }
+    }
+    
+    private PersonDTO genPersonFromPatient(Patient patBO, Ii id) {
+        PersonDTO pDto = new PersonDTO();
+        pDto.setBirthDate(DateConverter.convertToTs(patBO.getBirthDate()));
+        EthnicGroupCodeConverter.EnumConverter egc = new EthnicGroupCodeConverter.EnumConverter();
+        pDto.setEthnicGroupCode(egc.convert(DSet.class, patBO.getEthnicGroupCode()));
+        RaceCodeConverter.EnumConverter rc = new RaceCodeConverter.EnumConverter();
+        pDto.setRaceCode(rc.convert(DSet.class, patBO.getRaceCode()));
+        pDto.setSexCode(SexCodeConverter.convertToCd(patBO.getSexCode()));
+        
+        pDto.setIdentifier(id);
+        EnPn enPn = new EnPn();
+        enPn.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.MSK);
+        pDto.setName(enPn);
+        Ad ad = new Ad();
+        ad.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.MSK);
+        pDto.setPostalAddress(ad);
+        pDto.setStatusCode(RoleStatusConverter.convertToCd(patBO.getStatus()));
+        Tel tel = new Tel();
+        tel.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.MSK);
+        DSet<Tel> tels = new DSet<Tel>();
+        tels.setItem(new HashSet<Tel>());
+        tels.getItem().add(tel);
+        pDto.setTelecomAddress(tels);
+        
+        return pDto;
+    }
+    
+    private boolean isPatient(Ii id) {
+        if (id != null && id.getNullFlavor() == null 
+                && id.getExtension() != null && id.getExtension().startsWith(IdConverter.PATIENT_PREFIX)) {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -192,7 +270,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             throw new CurationException("Unable to publish the creation message.");
         }
     }
-
+  
     /**
      * {@inheritDoc}
      */
@@ -238,31 +316,71 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updatePerson(PersonDTO proposedState) throws EntityValidationException {
-        Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
-        Person target = perService.getById(pId);
-        PersonCR cr = new PersonCR(target);
-        proposedState.setIdentifier(null);
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPerson.class);
-        cr.setId(null);
-        if (cr.getStatusCode() != target.getStatusCode()) {
-            throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
+        if (isPatient(proposedState.getIdentifier())) {
+            updatePatient(proposedState);
+        } else {
+            Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
+            Person target = perService.getById(pId);
+            PersonCR cr = new PersonCR(target);
+            proposedState.setIdentifier(null);
+            PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPerson.class);
+            cr.setId(null);
+            if (cr.getStatusCode() != target.getStatusCode()) {
+                throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
+            }
+            perCRService.create(cr);
         }
-        perCRService.create(cr);
     }
-
+    
+    private void updatePatient(PersonDTO proposedState) {
+        long pid = IiConverter.convertPatientToLong(proposedState.getIdentifier());
+        Patient patBO = patientService.getById(pid);
+        // copy over fields from person dto to patient dto.
+        patBO.setBirthDate(TsConverter.convertToDate(proposedState.getBirthDate()));
+        patBO.setSexCode(SexCodeConverter.convertToStatusEnum(proposedState.getSexCode()));
+        EthnicGroupCodeConverter.DSetConverter egConv = new EthnicGroupCodeConverter.DSetConverter();
+        patBO.setEthnicGroupCode((Set<PersonEthnicGroup>) egConv
+                .convert(Set.class, proposedState.getEthnicGroupCode()));
+        RaceCodeConverter.DSetConverter rcConv = new RaceCodeConverter.DSetConverter();
+        patBO.setRaceCode((Set<PersonRace>) rcConv.convert(Set.class, proposedState.getRaceCode()));
+        
+        try {
+            patientService.curate(patBO);
+        } catch (JMSException jms) {
+            LOG.error("Problem is JMS, unable to complete requst to update patient data.", jms);
+            throw new IllegalArgumentException("JMS Exception during curation of patient", jms);
+        }
+    }
+    
+    private void updatePatientStatus(Ii targetIi, Cd statusCode) {
+        long pid = IiConverter.convertPatientToLong(targetIi);
+        Patient target = patientService.getById(pid);
+        target.setStatus(CdConverter.convertToRoleStatus(statusCode));
+        try {
+            patientService.curate(target);
+        } catch (JMSException e) {
+            LOG.error("Problem is JMS, unable to complete requst to update patient status.", e);
+            throw new IllegalArgumentException("JMS Exception during curation of patient status", e);
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updatePersonStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
-        Long pId = IiConverter.convertToLong(targetOrg);
-        Person target = perService.getById(pId);
-        // lazy way to clone with stripped hibernate IDs.
-        PersonDTO tmp = (PersonDTO) PoXsnapshotHelper.createSnapshot(target);
-        PersonCR cr = new PersonCR(target);
-        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractPerson.class);
-        cr.setId(null);
-        cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
-        perCRService.create(cr);
+        if (isPatient(targetOrg)) {
+            updatePatientStatus(targetOrg, statusCode);
+        } else {
+            Long pId = IiConverter.convertToLong(targetOrg);
+            Person target = perService.getById(pId);
+            // lazy way to clone with stripped hibernate IDs.
+            PersonDTO tmp = (PersonDTO) PoXsnapshotHelper.createSnapshot(target);
+            PersonCR cr = new PersonCR(target);
+            PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractPerson.class);
+            cr.setId(null);
+            cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
+            perCRService.create(cr);
+        }
     }
 }

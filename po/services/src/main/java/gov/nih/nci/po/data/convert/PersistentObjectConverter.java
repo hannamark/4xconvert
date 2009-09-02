@@ -206,6 +206,22 @@ public class PersistentObjectConverter extends AbstractXSnapshotConverter<Persis
         }
     }
     /**
+     * convert the Id of a {@link Patient}.
+     */
+    public static class PersistentPatientConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.PATIENT_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.PATIENT_ROOT);
+        }
+    }
+    
+    
+    
+    /**
      * convert the Id of a {@link HealthCareFacility}.
      */
     public static class PersistentHCFConverter extends PersistentObjectConverter {
