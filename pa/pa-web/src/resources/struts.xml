@@ -255,6 +255,10 @@
             <result name="edit">/WEB-INF/jsp/trialHistoryEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/trialHistory.jsp</result>
         </action>
+        <action name="manageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/manageAccrualAccessedit.jsp</result>
+            <result name="list">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
+        </action>
         <action name="ajaxGenericContact*" class="gov.nih.nci.pa.action.OrganizationGenericContactAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="display_org_genericcontacts">/WEB-INF/jsp/nodecorate/lookupByTitle.jsp</result>

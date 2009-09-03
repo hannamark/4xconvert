@@ -19,6 +19,7 @@
 					<li><a href="trialHistory.action" >Trial History</a></li>
 					<li><a href="milestone.action" >Trial Milestones</a></li>
                     <li><a href="onhold.action" >On-hold Information</a></li>
+                    <li><a href="manageAccrualAccess.action">Manage Accrual Access</a></li>
 				</ul>
 			</li>
 			<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
