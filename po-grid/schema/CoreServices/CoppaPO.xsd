@@ -189,6 +189,31 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    
+    <xs:element name="Patient">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A PatientDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="scoperIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="status" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
 
     <xs:element name="IdentifiedOrganization">
         <xs:complexType>
