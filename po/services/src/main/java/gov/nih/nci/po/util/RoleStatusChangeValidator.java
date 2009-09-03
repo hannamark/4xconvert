@@ -84,9 +84,7 @@ package gov.nih.nci.po.util;
 
 
 import gov.nih.nci.po.data.bo.CuratableRole;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.PlayedRole;
-import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
 
 import java.io.Serializable;
@@ -119,49 +117,13 @@ public class RoleStatusChangeValidator
             return false;
         }
         boolean scoperOk = !(value instanceof ScopedRole)
-                || isValidScoper((ScopedRole) value);
+                || RoleStatusChangeHelper.isValidScoper((ScopedRole) value);
         boolean playerOk = !(value instanceof PlayedRole)
-                || isValidPlayer((PlayedRole<?>) value);
+                || RoleStatusChangeHelper.isValidPlayer((PlayedRole<?>) value);
         return scoperOk && playerOk;
     }
 
-    private boolean isValidScoper(ScopedRole role) {
-        if (role.getScoper() == null) {
-            return true;
-        }
-        RoleStatus roleStatus = ((CuratableRole<?, ?>) role).getStatus();
-        return isValid(role.getScoper().getStatusCode(), roleStatus);
-    }
-
-    private boolean isValidPlayer(PlayedRole<?> role) {
-        if (role.getPlayer() == null) {
-            return true;
-        }
-        RoleStatus roleStatus = ((CuratableRole<?, ?>) role).getStatus();
-        return isValid(role.getPlayer().getStatusCode(), roleStatus);
-    }
-
-    private boolean isValid(EntityStatus entityStatus, RoleStatus roleStatus) {
-        if (roleStatus == null) {
-            return true;
-        }
-        switch (entityStatus) {
-            case INACTIVE:
-                return roleStatus == RoleStatus.SUSPENDED
-                    || roleStatus == RoleStatus.NULLIFIED
-                    || roleStatus == RoleStatus.PENDING;
-            case NULLIFIED:
-                return roleStatus == RoleStatus.NULLIFIED;
-            case PENDING:
-                return roleStatus == RoleStatus.PENDING
-                    || roleStatus == RoleStatus.NULLIFIED;
-            case ACTIVE:
-                return true;
-            default:
-                return false;
-        }
-    }
-
+    
     /**
      * {@inheritDoc}
      */

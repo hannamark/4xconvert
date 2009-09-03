@@ -117,6 +117,9 @@ public class PatientServiceTest extends AbstractPersonRoleServiceTest<Patient> {
     Patient getSampleStructuralRole() throws EntityValidationException, JMSException {
         Patient crs = new Patient();
         createAndGetOrganization();
+        // set org to active
+        basicOrganization.setStatusCode(EntityStatus.ACTIVE);
+        locator.getOrganizationService().curate(basicOrganization);
         fillinPersonRoleFields(crs);
         return crs;
     }

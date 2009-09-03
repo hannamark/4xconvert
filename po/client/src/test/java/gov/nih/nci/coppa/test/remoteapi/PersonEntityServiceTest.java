@@ -99,6 +99,7 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.PersonEthnicGroup;
 import gov.nih.nci.po.data.bo.PersonRace;
 import gov.nih.nci.po.data.bo.PersonSex;
@@ -107,14 +108,18 @@ import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.EthnicGroupCodeConverter;
 import gov.nih.nci.po.data.convert.RaceCodeConverter;
 import gov.nih.nci.po.data.convert.SexCodeConverter;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.TsConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.PatientDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -184,12 +189,26 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         }
         try {
             Ii orgId = null;
-            OrganizationEntityServiceTest test = new OrganizationEntityServiceTest();
-            test.init();
-            test.createMinimal();
-            orgId = test.getOrgId();
+            OrganizationDTO dto = new OrganizationDTO();
+            dto.setName(RemoteApiUtils.convertToEnOn("_"));
+            dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            dto.setTelecomAddress(telco);
+
+            TelEmail email = new TelEmail();
+            email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
+            dto.getTelecomAddress().getItem().add(email);
+
+            TelUrl url = new TelUrl();
+            url.setValue(new URI(DEFAULT_URL));
+            dto.getTelecomAddress().getItem().add(url);
+            
+            orgId = getOrgService().createOrganization(dto);
             assertNotNull(orgId);
-           
+            
+            updateOrgStatusToActive(Long.valueOf(orgId.getExtension()));
+            
             PatientDTO patDto = new PatientDTO();
             patDto.setScoperIdentifier(orgId);
            
@@ -199,6 +218,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             TelPhone ph1 = new TelPhone();
             ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
             patDto.getTelecomAddress().getItem().add(ph1);
+         
             patientId = getPatientService().createCorrelation(patDto);
             
             assertNotNull(patientId);
@@ -377,6 +397,14 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         int count1 = rs.getInt(1);
         rs.close();
         assertEquals(count0 + 1, count1);
+    }
+    
+    private void updateOrgStatusToActive(long id) throws SQLException {
+        Connection c = DataGeneratorUtil.getJDBCConnection();
+        PreparedStatement ps = c.prepareStatement("update organization set status = 'ACTIVE' where id = ?");
+        ps.setLong(1, id);
+        ps.execute();
+        ps.close();
     }
     
     @Test

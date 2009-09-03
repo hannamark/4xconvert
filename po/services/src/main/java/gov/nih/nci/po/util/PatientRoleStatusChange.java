@@ -80,133 +80,27 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.test.remoteapi;
+package gov.nih.nci.po.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelPhone;
-import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.PatientDTO;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.net.URI;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashSet;
+import org.hibernate.validator.ValidatorClass;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-public class PatientCorrelationServiceTest
-        extends CorrelationTestBase<PatientDTO, PatientCorrelationServiceRemote> {
-
-    public PatientCorrelationServiceTest() {
-        super("Patient");
-    }
-    
-    private void updateOrgStatusToActive(long id) throws SQLException {
-        Connection c = DataGeneratorUtil.getJDBCConnection();
-        PreparedStatement ps = c.prepareStatement("update organization set status = 'ACTIVE' where id = ?");
-        ps.setLong(1, id);
-        ps.execute();
-        ps.close();
-    }
-
-    @Override
-    protected PatientDTO makeCorrelation() throws Exception {
-        PatientDTO dto = new PatientDTO();
-        updateOrgStatusToActive(Long.valueOf(getOrgId().getExtension()));
-        dto.setScoperIdentifier(getOrgId());
-        dto.setTelecomAddress(new DSet<Tel>());
-        dto.getTelecomAddress().setItem(new HashSet<Tel>());
-        
-        TelPhone ph1 = new TelPhone();
-        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
-        dto.getTelecomAddress().getItem().add(ph1);
-        
-        return dto;
-    }
-
-    @Override
-    protected PatientCorrelationServiceRemote getCorrelationService() throws Exception {
-        return RemoteServiceHelper.getPatientCorrelationService();
-    }
-
-    @Override
-    protected void verifyCreated(PatientDTO dto) throws Exception {
-        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
-    }
-    
-    @Test
-    @Override
-    public void update() throws Exception {
-        
-       if (super.getCorrelationId() == null) {
-           super.createMinimal();
-       }
-       // add a phonenumber and see it updated
-        super.createConnection();
-        ResultSet rs = super.getConnection().createStatement()
-            .executeQuery("select count(*) from patient_phone where patient_id = " + getCorrelationId().getExtension());
-        assertTrue(rs.next());
-        int count0 = rs.getInt(1);
-        rs.close();
-
-        PatientDTO dto = getCorrelationService().getCorrelation(getCorrelationId());
-        TelPhone tel = new TelPhone();
-        tel.setValue(URI.create("tel:301-555-5555"));
-        
-        
-        dto.getTelecomAddress().getItem().add(tel);
-    
-        getCorrelationService().updateCorrelation(dto);
-        
-        rs = super.getConnection().createStatement()
-            .executeQuery("select count(*) from patient_phone where patient_id = " + getCorrelationId().getExtension());
-        assertTrue(rs.next());
-        int count1 = rs.getInt(1);
-        rs.close();
-        assertEquals(count0 + 1, count1);
-    }
-
-    @Test
-    @Override
-    public void updateStatus() throws Exception {
-        
-        if (super.getCorrelationId() == null) {
-            super.createMinimal();
-        }
-        Cd cd = new Cd();
-        cd.setCode("SUSPENDED");
-        
-        super.createConnection();
-        ResultSet rs = super.getConnection().createStatement()
-            .executeQuery("select status from Patient where id = " + getCorrelationId().getExtension());
-        assertTrue(rs.next());
-        String oldStatus = rs.getString(1);
-        rs.close();
-        assertEquals("ACTIVE", oldStatus);
-        getCorrelationService().updateCorrelationStatus(getCorrelationId(), cd);
-
-        rs = super.getConnection().createStatement()
-            .executeQuery("select status from Patient where id = " + getCorrelationId().getExtension());
-        assertTrue(rs.next());
-        String newStatus = rs.getString(1);
-        rs.close();
-        assertNotSame(oldStatus, newStatus);
-        assertEquals("SUSPENDED", newStatus);
-    }
-    
-    @Test
-    @Override
-    public void getByPlayerIds() throws Exception {
-        //NOOP
-   }
-    
+/**
+ * check the scoper entity status.
+ * @author mshestopalov
+ */
+@Documented
+@ValidatorClass(PatientRoleStatusChangeValidator.class)
+@Target({ ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PatientRoleStatusChange {
+    /**
+     * get the message.
+     */
+    String message() default "Role status not compatible with associated entity's status.";
 }

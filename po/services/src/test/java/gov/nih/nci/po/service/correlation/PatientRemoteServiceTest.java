@@ -136,6 +136,8 @@ public class PatientRemoteServiceTest
     public PatientDTO getSampleDto() throws Exception {
         PatientDTO dto = new PatientDTO();
         createAndSetOrganization();
+        basicOrganization.setStatusCode(EntityStatus.ACTIVE);
+        EjbTestHelper.getOrganizationServiceBean().curate(basicOrganization);
         fillInPersonRoleDate(dto);
         return dto;
     }
