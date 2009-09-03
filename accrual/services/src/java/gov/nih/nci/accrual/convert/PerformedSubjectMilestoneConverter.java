@@ -110,9 +110,9 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
         dto.setActualDateRange(IvlConverter.convertTs().convertToIvl(bo.getActualDateRangeLow(),
                 bo.getActualDateRangeHigh()));
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
-        dto.setIdentifier(IiConverter.converToActivityIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToActivityIi(bo.getId()));
         dto.setInformedConsentDate(TsConverter.convertToTs(bo.getInformedConsentDate()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
                 bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));

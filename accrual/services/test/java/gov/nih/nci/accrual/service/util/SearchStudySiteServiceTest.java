@@ -105,7 +105,7 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
     @Test
     public void search() throws Exception {
         List<SearchStudySiteResultDto> rList = bean.search(
-                IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertEquals(1, rList.size());
         assertEquals(TestSchema.organizations.get(0).getName(), StConverter.convertToString(rList.get(0).getOrganizationName()));
 

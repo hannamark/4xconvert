@@ -31,7 +31,7 @@
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="2.1-milestone1"  conf="compile->master"/>
+    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.0-SNAPSHOT"    conf="compile->master"/>
     <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone1"  conf="compile->master"/>
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>

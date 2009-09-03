@@ -125,7 +125,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         dto.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MILITARY));
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl("1/1/2000", null));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
         StudySubjectDto r = bean.create(dto);
         assertNotNull(r);

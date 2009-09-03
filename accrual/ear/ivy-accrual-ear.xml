@@ -10,7 +10,7 @@
     <!-- runtime -->
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           conf="runtime->master"/>
     <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.1"           conf="runtime->master"/>
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="2.1-milestone1"  conf="runtime->master"/>
+    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.0-SNAPSHOT"    conf="runtime->master"/>
     <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone1"  conf="runtime->master"/>
 
     <!-- container -->

@@ -136,7 +136,7 @@ public class SearchTrialBean implements SearchTrialService {
             query = session.createQuery(hql);
             List<Object> queryList = query.list();
             for (Object id : queryList) {
-                result.add(getTrialSummaryByStudyProtocolIi(IiConverter.converToStudyProtocolIi((Long) id)));
+                result.add(getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi((Long) id)));
             }
         } catch (HibernateException hbe) {
             throw new RemoteException(
@@ -184,7 +184,7 @@ public class SearchTrialBean implements SearchTrialService {
             result.setLeadOrgName(StConverter.convertToSt((String) qArr[ORG_NAME_IDX]));
             result.setLeadOrgTrialIdentifier(StConverter.convertToSt((String) qArr[SS_IDENTIFIER]));
             result.setOfficialTitle(StConverter.convertToSt((String) qArr[SP_TITLE_IDX]));
-            result.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi((Long) qArr[SP_ID_IDX]));
+            result.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi((Long) qArr[SP_ID_IDX]));
             result.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) qArr[SOS_STATUS_IDX]));
             Person person = (Person) qArr[PERSON_IDX];
             result.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));

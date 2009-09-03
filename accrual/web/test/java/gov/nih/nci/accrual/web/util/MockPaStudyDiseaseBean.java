@@ -121,13 +121,6 @@ public class MockPaStudyDiseaseBean implements StudyDiseaseServiceRemote {
         return dtos;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<StudyDiseaseDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     /**
      * {@inheritDoc}
@@ -168,4 +161,11 @@ public class MockPaStudyDiseaseBean implements StudyDiseaseServiceRemote {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public StudyDiseaseDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

@@ -122,14 +122,15 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySubject;
 
 import org.hibernate.Session;
@@ -222,6 +223,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(PAProperties.class).
         addAnnotatedClass(RegistryUser.class).
         addAnnotatedClass(StudyRelationship.class).
+        addAnnotatedClass(StudySiteAccrualAccess.class).
 
 
         // hibernate properties

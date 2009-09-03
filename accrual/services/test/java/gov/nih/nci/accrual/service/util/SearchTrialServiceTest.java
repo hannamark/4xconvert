@@ -139,7 +139,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void getTrialSummaryByStudyProtocolIi() throws Exception {
-        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertNotNull(result);
 
         try {

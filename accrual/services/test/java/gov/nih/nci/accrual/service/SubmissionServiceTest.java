@@ -128,7 +128,7 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
         dto.setLabel(StConverter.convertToSt("label"));
         dto.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.PENDING));
         dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl("1/1/2000", null));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         SubmissionDto r = bean.create(dto);
         assertNotNull(r);
     }
@@ -143,7 +143,7 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
     }
     @Test
     public void getByStudyProtocol() throws Exception {
-        List<SubmissionDto> rList = bean.getByStudyProtocol(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<SubmissionDto> rList = bean.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertTrue(0 < rList.size());
     }
 }

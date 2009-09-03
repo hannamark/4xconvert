@@ -111,7 +111,7 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(),
                 bo.getStatusDateRangeHigh()));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 

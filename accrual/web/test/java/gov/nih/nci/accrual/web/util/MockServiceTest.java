@@ -140,11 +140,11 @@ public class MockServiceTest {
     @Test
     public void searchStudySite() throws Exception {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
-        Ii crit = IiConverter.converToStudyProtocolIi(1L);
+        Ii crit = IiConverter.convertToStudyProtocolIi(1L);
         List<SearchStudySiteResultDto> r = service.search(crit);
         assertEquals(2, r.size());
 
-        crit = IiConverter.converToStudyProtocolIi(2L);
+        crit = IiConverter.convertToStudyProtocolIi(2L);
         r = service.search(crit);
         assertEquals(1, r.size());
     }
@@ -153,7 +153,7 @@ public class MockServiceTest {
     public void paServices() throws Exception {
         StudyDiseaseServiceRemote sds = PaServiceLocator.getInstance().getStudyDiseaseService();
         DiseaseServiceRemote ds = PaServiceLocator.getInstance().getDiseaseService();
-        List<StudyDiseaseDTO> sdList = sds.getByStudyProtocol(IiConverter.converToStudyProtocolIi(1L));
+        List<StudyDiseaseDTO> sdList = sds.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(1L));
         assertTrue(0 < sdList.size());
 
         DiseaseDTO d = ds.get(sdList.get(0).getDiseaseIdentifier());

@@ -23,7 +23,7 @@
         <java>iso-datatypes-1.2.4.jar</java>
     </module>
     <module>
-        <java>pa-ejb-client-2.1-milestone1.jar</java>
+        <java>pa-ejb-client-3.0-SNAPSHOT.jar</java>
     </module>
     <module>
         <java>po-services-client-3.0-milestone1.jar</java>

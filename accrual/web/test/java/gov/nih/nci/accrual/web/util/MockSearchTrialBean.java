@@ -103,7 +103,7 @@ public class MockSearchTrialBean implements SearchTrialService {
     static {
         dtos = new ArrayList<SearchTrialResultDto>();
         SearchTrialResultDto r = new SearchTrialResultDto();
-        r.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(1L));
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00001"));
         r.setLeadOrgName(StConverter.convertToSt("Duke"));
         r.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE 001"));
@@ -112,7 +112,7 @@ public class MockSearchTrialBean implements SearchTrialService {
         dtos.add(r);
 
         r = new SearchTrialResultDto();
-        r.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(2L));
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(2L));
         r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00002"));
         r.setLeadOrgName(StConverter.convertToSt("Wake Forest"));
         r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 001"));

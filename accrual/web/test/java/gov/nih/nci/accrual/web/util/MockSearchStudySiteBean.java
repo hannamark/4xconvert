@@ -113,14 +113,14 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
         i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
         i.setStudySiteIi(IiConverter.convertToIi(S1WAKE));
         l.add(i);
-        dtos.put(IiConverter.converToStudyProtocolIi(1L), l);
+        dtos.put(IiConverter.convertToStudyProtocolIi(1L), l);
 
         l = new ArrayList<SearchStudySiteResultDto>();
         i = new SearchStudySiteResultDto();
         i.setOrganizationName(StConverter.convertToSt("Wake Forest"));
         i.setStudySiteIi(IiConverter.convertToIi(S2WAKE));
         l.add(i);
-        dtos.put(IiConverter.converToStudyProtocolIi(2L), l);
+        dtos.put(IiConverter.convertToStudyProtocolIi(2L), l);
     }
 
     /**

@@ -122,7 +122,7 @@ public class PerformedSubjectMilestoneServiceTest
     public void create() throws Exception {
         PerformedSubjectMilestoneDto dto = new  PerformedSubjectMilestoneDto();
         dto.setInformedConsentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/7/2009")));
-        dto.setStudyProtocolIdentifier(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
 
         PerformedSubjectMilestoneDto r = bean.create(dto);
         assertNotNull(r);
@@ -138,7 +138,7 @@ public class PerformedSubjectMilestoneServiceTest
     }
     @Test
     public void getByStudyProtocol() throws Exception {
-        List<PerformedSubjectMilestoneDto> rList = bean.getByStudyProtocol(IiConverter.converToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedSubjectMilestoneDto> rList = bean.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertTrue(0 < rList.size());
     }
 }
