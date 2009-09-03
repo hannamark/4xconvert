@@ -25,8 +25,7 @@ public class CreatePersonTest extends AbstractPoWebTest {
         clickAndWaitSaveButton();
         assertEquals("", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
         assertEquals(SELECT_A_STATUS, selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
-        assertEquals(STATUS_MUST_BE_SET, selenium
-                .getText("//div[@id='wwerr_curateEntityForm.person.statusCode']/div"));
+        assertTrue(selenium.isTextPresent(STATUS_MUST_BE_SET));
         assertEquals("", selenium.getSelectedValue("curateEntityForm.person.postalAddress.country"));
         assertEquals(SELECT_A_COUNTRY, selenium.getSelectedLabel("curateEntityForm.person.postalAddress.country"));
         assertEquals(COUNTRY_MUST_BE_SET, selenium

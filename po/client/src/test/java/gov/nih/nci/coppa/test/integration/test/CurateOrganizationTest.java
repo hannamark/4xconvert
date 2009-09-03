@@ -208,7 +208,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         waitForTelecomFormsToLoad();
 
         // method exits on certain page
-        verifyEquals("PO: Persons and Organizations - Organization Details - Comparison", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Organization Details - Comparison", selenium.getTitle());
 
         return id;
     }
@@ -222,7 +222,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     private void saveAsActive(Ii id) {
         selenium.select("curateEntityForm.organization.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
-        verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
@@ -231,7 +231,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
         selenium.getConfirmation();
-        verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
@@ -240,7 +240,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
         selenium.getConfirmation();
-        verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 

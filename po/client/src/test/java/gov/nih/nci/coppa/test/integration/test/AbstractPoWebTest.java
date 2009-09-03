@@ -37,19 +37,19 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     protected void login(String username, String password) {
         selenium.open("/po-web");
-        verifyTrue(selenium.isTextPresent("Login"));
-        verifyTrue(selenium.isTextPresent("CONTACT US"));
+        assertTrue(selenium.isTextPresent("Login"));
+        assertTrue(selenium.isTextPresent("CONTACT US"));
         clickAndWait("link=Login");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
         clickAndWait("id=enableEnterSubmit");
-        verifyTrue(selenium.isElementPresent("link=Logout"));
-        verifyTrue(selenium.isElementPresent("id=EntityInboxOrganization"));
-        verifyTrue(selenium.isElementPresent("id=SearchOrganization"));
-        verifyTrue(selenium.isElementPresent("id=CreateOrganization"));
-        verifyTrue(selenium.isElementPresent("id=EntityInboxPerson"));
-        verifyTrue(selenium.isElementPresent("id=SearchPerson"));
-        verifyTrue(selenium.isElementPresent("id=CreatePerson"));
+        assertTrue(selenium.isElementPresent("link=Logout"));
+        assertTrue(selenium.isElementPresent("id=EntityInboxOrganization"));
+        assertTrue(selenium.isElementPresent("id=SearchOrganization"));
+        assertTrue(selenium.isElementPresent("id=CreateOrganization"));
+        assertTrue(selenium.isElementPresent("id=EntityInboxPerson"));
+        assertTrue(selenium.isElementPresent("id=SearchPerson"));
+        assertTrue(selenium.isElementPresent("id=CreatePerson"));
     }
 
     public void loginAsCurator() {
@@ -435,12 +435,12 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     protected void accessManageClinicalResearchStaffScreen() {
         clickAndWait("link=Manage Clinical Research Staff(s)");
-        verifyTrue(selenium.isTextPresent("Clinical Research Staff Information"));
+        assertTrue(selenium.isTextPresent("Clinical Research Staff Information"));
     }
 
     protected void accessManageHealthCareProviderScreen() {
         clickAndWait("link=Manage Health Care Provider(s)");
-        verifyTrue(selenium.isTextPresent("Health Care Provider Information"));
+        assertTrue(selenium.isTextPresent("Health Care Provider Information"));
     }
 
     protected void selectOrganizationScoper(String orgId, String orgName) {
@@ -454,13 +454,14 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         /* select record to use at duplicate */
         clickAndWaitButton("mark_as_dup_" + orgId);
         selenium.selectFrame("relative=parent");
-        verifyEquals(orgName + " (" + orgId + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
+        assertEquals(orgName + " (" + orgId + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
     }
 
-    /**Use this to add postal addresses using the popup
-     * Verifies values exists somewhere on the page after the popup save button is pressed.
-     * Unfortunately, we're unable to control the order the postalAdresses are display (backed by a HashSet)
-     * so, we can only do verify the existence of text on the page.
+    /**
+     * Use this to add postal addresses using the popup.
+     * Verifies values exist somewhere on the page after the popup save button is pressed.
+     * Unfortunately, we're unable to control the order the postalAdresses are displayed (backed by a HashSet),
+     * so we can only verify the existence of text on the page.
      *
      * *** SPECIFY UNIQUE VALUES ON THE PAGE
      */
@@ -527,7 +528,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected void savePersonAsActive(Ii id) {
         selenium.select("curateEntityForm.person.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
-        verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
 

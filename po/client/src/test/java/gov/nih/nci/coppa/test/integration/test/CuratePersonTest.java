@@ -212,7 +212,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         waitForTelecomFormsToLoad();
 
         // method exits on certain page
-        verifyEquals("PO: Persons and Organizations - Person Details - Comparison", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Person Details - Comparison", selenium.getTitle());
 
         return id;
     }
@@ -228,7 +228,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
         selenium.getConfirmation();
-        verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
 
@@ -237,7 +237,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
         selenium.getConfirmation();
-        verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
 
