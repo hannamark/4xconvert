@@ -78,6 +78,11 @@ public class TrialDTO {
     private String programcodenciselectedvalue;
     private String studyProtocolId;
     
+    private String fdaRegulatoryInformationIndicator;
+    private String section801Indicator;
+    private String delayedPostingIndicator;
+    private String dataMonitoringCommitteeAppointedIndicator;
+
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     /**
      * 
@@ -754,6 +759,56 @@ public class TrialDTO {
      */
     public void setSubmissionNumber(String submissionNumber) {
         this.submissionNumber = submissionNumber;
+    }
+    /**
+     * @return the fdaRegulatoryInformationIndicator
+     */
+    public String getFdaRegulatoryInformationIndicator() {
+        return fdaRegulatoryInformationIndicator;
+    }
+    /**
+     * @param fdaRegulatoryInformationIndicator the fdaRegulatoryInformationIndicator to set
+     */
+    public void setFdaRegulatoryInformationIndicator(
+            String fdaRegulatoryInformationIndicator) {
+        this.fdaRegulatoryInformationIndicator = fdaRegulatoryInformationIndicator;
+    }
+    /**
+     * @return the section801Indicator
+     */
+    public String getSection801Indicator() {
+        return section801Indicator;
+    }
+    /**
+     * @param section801Indicator the section801Indicator to set
+     */
+    public void setSection801Indicator(String section801Indicator) {
+        this.section801Indicator = section801Indicator;
+    }
+    /**
+     * @return the delayedPostingIndicator
+     */
+    public String getDelayedPostingIndicator() {
+        return delayedPostingIndicator;
+    }
+    /**
+     * @param delayedPostingIndicator the delayedPostingIndicator to set
+     */
+    public void setDelayedPostingIndicator(String delayedPostingIndicator) {
+        this.delayedPostingIndicator = delayedPostingIndicator;
+    }
+    /**
+     * @return the dataMonitoringCommitteeAppointedIndicator
+     */
+    public String getDataMonitoringCommitteeAppointedIndicator() {
+        return dataMonitoringCommitteeAppointedIndicator;
+    }
+    /**
+     * @param dataMonitoringCommitteeAppointedIndicator the dataMonitoringCommitteeAppointedIndicator to set
+     */
+    public void setDataMonitoringCommitteeAppointedIndicator(
+            String dataMonitoringCommitteeAppointedIndicator) {
+        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
     }
    
 }

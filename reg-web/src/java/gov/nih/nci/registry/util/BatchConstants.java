@@ -215,19 +215,31 @@ public class BatchConstants {
     /** */
     public static final int IND_EXPANED_ACCESS_STATUS = 101;
     /** */
-    public static final int PROTOCOL_DOC_FILE_NAME = 102;
+    public static final int OVERSIGHT_AUTHORITY_COUNTRY = 102;
     /** */
-    public static final int IRB_APPROVAL_DOC_FILE_NAME = 103;
+    public static final int OVERSIGHT_AUTHORITY_ORG_NAME = 103;
     /** */
-    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 104;
+    public static final int FDA_REGULATORY_INFORMATION_INDICATOR = 104;
     /** */
-    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 105;
+    public static final int SECTION_801_INDICATOR = 105;
     /** */
-    public static final int OTHER_TRIAL_DOC_FILE_NAME = 106;
+    public static final int DELAYED_POSTING_INDICATOR = 106;
     /** */
-    public static final int CHANGE_MEMO_DOC_FILE_NAME = 107;
+    public static final int DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR = 107;
     /** */
-    public static final int PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME = 108;
+    public static final int PROTOCOL_DOC_FILE_NAME = 108;
+    /** */
+    public static final int IRB_APPROVAL_DOC_FILE_NAME = 109;
+    /** */
+    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 110;
+    /** */
+    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 111;
+    /** */
+    public static final int OTHER_TRIAL_DOC_FILE_NAME = 112;
+    /** */
+    public static final int CHANGE_MEMO_DOC_FILE_NAME = 113;
+    /** */
+    public static final int PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME = 114;
     /** */
     public static final int COUNTRY_SIZE = 3;
     /** */

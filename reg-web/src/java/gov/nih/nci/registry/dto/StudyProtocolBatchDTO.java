@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.registry.dto;
 
-import org.hibernate.validator.Email;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.Pattern;
@@ -139,6 +138,12 @@ public class StudyProtocolBatchDTO {
     private String changeRequestDocFileName;
     private String protocolHighlightDocFileName;
     
+    private String oversightAuthorityCountry;
+    private String oversightOrgName;
+    private String fdaRegulatoryInformationIndicator;
+    private String section801Indicator;
+    private String delayedPostingIndicator;
+    private String dataMonitoringCommitteeAppointedIndicator;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private static final int ORG_NAME_MAX_LENGTH = 160;
     private static final int PCTL = 200;
@@ -183,7 +188,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgCity
      */
-    @NotEmpty(message = "Lead Organization's City is required.\n")
     public String getLeadOrgCity() {
         return leadOrgCity;
     }
@@ -198,7 +202,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgCountry
      */
-    @NotEmpty(message = "Lead Organization's Country is required.\n")    
     public String getLeadOrgCountry() {
         return leadOrgCountry;
     }
@@ -227,8 +230,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgEmail
      */
-    @Email(message = "Lead Organization's Email Address is invalid.\n")
-    @NotEmpty(message = "Lead Organization's Email is required.\n")
     public String getLeadOrgEmail() {
         return leadOrgEmail;
     }
@@ -259,7 +260,6 @@ public class StudyProtocolBatchDTO {
      */
     @org.hibernate.validator.Length(message = "Lead Organization's Name must be 160 characters max.\n", 
             max = ORG_NAME_MAX_LENGTH)
-    @NotEmpty(message = "Lead Organization's Name is required.\n")
     public String getLeadOrgName() {
         return leadOrgName;
     }
@@ -274,8 +274,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgPhone
      */
-    @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
-            message = "Lead Organization's Phone is invalid.\n")
     public String getLeadOrgPhone() {
         return leadOrgPhone;
     }
@@ -304,7 +302,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgStreetAddress
      */
-    @NotEmpty(message = "Lead Organization's Street Address is required.\n")
     public String getLeadOrgStreetAddress() {
         return leadOrgStreetAddress;
     }
@@ -361,7 +358,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgZip
      */
-    @NotEmpty(message = "Lead Organization's Street Zip is required.\n")
     public String getLeadOrgZip() {
         return leadOrgZip;
     }
@@ -376,7 +372,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the localProtocolIdentifier
      */
-    @NotEmpty(message = "Lead Organization Trial Identifier is required. ")    
     public String getLocalProtocolIdentifier() {
         return localProtocolIdentifier;
     }
@@ -491,7 +486,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piCity
      */
-    @NotEmpty(message = "Principal Investigator's City is required.\n")
     public String getPiCity() {
         return piCity;
     }
@@ -506,7 +500,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piCountry
      */
-    @NotEmpty(message = "Principal Investigator's Country is required.\n")
     public String getPiCountry() {
         return piCountry;
     }
@@ -521,8 +514,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piEmail
      */
-    @Email(message = "Principal Investigator's Email Address is invalid.\n")
-    @NotEmpty(message = "Principal Investigator's Email Address is required.\n")
     public String getPiEmail() {
         return piEmail;
     }
@@ -551,7 +542,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piFirstName
      */
-    @NotEmpty(message = "Principal Investigator's First Name is required.\n")
     public String getPiFirstName() {
         return piFirstName;
     }
@@ -566,7 +556,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piLastName
      */
-    @NotEmpty(message = "Principal Investigator's Last Name is required.\n")
     public String getPiLastName() {
         return piLastName;
     }
@@ -609,9 +598,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piPhone
      */
-    @NotEmpty(message = "Principal Investigator's Phone is required.\n")
-    @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
-            message = "Principal Investigator's Phone is invalid.\n")
     public String getPiPhone() {
         return piPhone;
     }
@@ -640,7 +626,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piStreetAddress
      */
-    @NotEmpty(message = "Principal Investigator's Street Address is required.\n")
     public String getPiStreetAddress() {
         return piStreetAddress;
     }
@@ -683,7 +668,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the piZip
      */
-    @NotEmpty(message = "Principal Investigator's Zip is required.\n")
     public String getPiZip() {
         return piZip;
     }
@@ -757,7 +741,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the responsibleParty
      */
-    @NotEmpty(message = "Responsible Party Not Provided.\n")
     public String getResponsibleParty() {
         return responsibleParty;
     }
@@ -772,7 +755,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorCity
      */
-    @NotEmpty(message = "Sponsor Organization's City is required.\n")
     public String getSponsorCity() {
         return sponsorCity;
     }
@@ -983,7 +965,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorCountry
      */
-    @NotEmpty(message = "Sponsor Organization's Country is required.\n")
     public String getSponsorCountry() {
         return sponsorCountry;
     }
@@ -1012,8 +993,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorEmail
      */
-    @Email(message = "Sponsor Organization's Email Address is invalid.\n")
-    @NotEmpty(message = "Sponsor Organization's Email Address is required.\n")
     public String getSponsorEmail() {
         return sponsorEmail;
     }
@@ -1042,8 +1021,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorOrgName
      */
-    @NotEmpty(message = "Sponsor Organization's Name is required.\n")
-    @Length(message = "Sponsor Organization's Name must be 160 characters max.\n", max = ORG_NAME_MAX_LENGTH)
     public String getSponsorOrgName() {
         return sponsorOrgName;
     }
@@ -1058,8 +1035,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorPhone
      */
-    @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
-            message = "Sponsor Organization's Phone is invalid.\n")
     public String getSponsorPhone() {
         return sponsorPhone;
     }
@@ -1088,7 +1063,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorStreetAddress
      */
-    @NotEmpty(message = "Sponsor Organization's Street Address is required.\n")
     public String getSponsorStreetAddress() {
         return sponsorStreetAddress;
     }
@@ -1131,7 +1105,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the sponsorZip
      */
-    @NotEmpty(message = "Sponsor Organization's Zip is required.\n")
     public String getSponsorZip() {
         return sponsorZip;
     }
@@ -1531,7 +1504,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the irbApprovalDocumentFileName
      */
-    @NotEmpty(message = "IRB Approval Document is required.\n")
     public String getIrbApprovalDocumentFileName() {
         return irbApprovalDocumentFileName;
     }
@@ -1576,7 +1548,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the protcolDocumentFileName
      */
-    @NotEmpty(message = "Protocol Document is required. \n")
     public String getProtcolDocumentFileName() {
         return protcolDocumentFileName;
     }
@@ -1622,7 +1593,7 @@ public class StudyProtocolBatchDTO {
      */
     @NotEmpty(message = "Submission Type is required.\n")
     @Length(max = 1, message = "Submission Type must be single characters max.\n")
-    @Pattern(regex = "^[A|O]$", message = "Submission Type can be A or O.\n")
+    @Pattern(regex = "^[A|O|U]$", message = "Submission Type can be A or O or U.\n")
     public String getSubmissionType() {
         return submissionType;
     }
@@ -1735,6 +1706,104 @@ public class StudyProtocolBatchDTO {
      */
     public void setSponsorContactType(String sponsorContactType) {
         this.sponsorContactType = sponsorContactType;
+    }
+
+    /**
+     * @return the oversightAuthorityCountry
+     */
+    @NotEmpty(message = "Oversight Authority Country is required. \n")
+    public String getOversightAuthorityCountry() {
+        return oversightAuthorityCountry;
+    }
+
+    /**
+     * @param oversightAuthorityCountry the oversightAuthorityCountry to set
+     */
+    public void setOversightAuthorityCountry(String oversightAuthorityCountry) {
+        this.oversightAuthorityCountry = oversightAuthorityCountry;
+    }
+
+    /**
+     * @return the oversightOrgName
+     */
+    @NotEmpty(message = "Oversight Authority Organization Name is required. \n")
+    public String getOversightOrgName() {
+        return oversightOrgName;
+    }
+
+    /**
+     * @param oversightOrgName the oversightOrgName to set
+     */
+    public void setOversightOrgName(String oversightOrgName) {
+        this.oversightOrgName = oversightOrgName;
+    }
+
+    /**
+     * @return the fdaRegulatoryInformationIndicator
+     */
+    @NotEmpty(message = "FDA Regulatory Information Indicator is required. \n")
+    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
+            message = "FDA Regulatory Information Indicator can be Yes or No.\n")
+    public String getFdaRegulatoryInformationIndicator() {
+        return fdaRegulatoryInformationIndicator;
+    }
+
+    /**
+     * @param fdaRegulatoryInformationIndicator the fdaRegulatoryInformationIndicator to set
+     */
+    public void setFdaRegulatoryInformationIndicator(
+            String fdaRegulatoryInformationIndicator) {
+        this.fdaRegulatoryInformationIndicator = fdaRegulatoryInformationIndicator;
+    }
+
+    /**
+     * @return the section801Indicator
+     */
+    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
+            message = "Section 801 Indicator can be Yes or No.\n")
+    public String getSection801Indicator() {
+        return section801Indicator;
+    }
+
+    /**
+     * @param section801Indicator the section801Indicator to set
+     */
+    public void setSection801Indicator(String section801Indicator) {
+        this.section801Indicator = section801Indicator;
+    }
+
+    /**
+     * @return the delayedPostingIndicator
+     */
+    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
+            message = "Delayed Posting Indicator can be Yes or No.\n")
+    public String getDelayedPostingIndicator() {
+        return delayedPostingIndicator;
+    }
+
+    /**
+     * @param delayedPostingIndicator the delayedPostingIndicator to set
+     */
+    public void setDelayedPostingIndicator(String delayedPostingIndicator) {
+        this.delayedPostingIndicator = delayedPostingIndicator;
+    }
+
+    /**
+     * @return the dataMonitoringCommitteeAppointedIndicator
+     */
+    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
+            message = "Data Monitoring Committee Appointed Indicator can be Yes or No.\n")
+    @NotEmpty (message = "Data Monitoring Committee Appointed Indicator is required. \n")
+    public String getDataMonitoringCommitteeAppointedIndicator() {
+        return dataMonitoringCommitteeAppointedIndicator;
+    }
+
+    /**
+     * @param dataMonitoringCommitteeAppointedIndicator the dataMonitoringCommitteeAppointedIndicator to set
+     */
+    public void setDataMonitoringCommitteeAppointedIndicator(
+            String dataMonitoringCommitteeAppointedIndicator) {
+        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
     }
     
 

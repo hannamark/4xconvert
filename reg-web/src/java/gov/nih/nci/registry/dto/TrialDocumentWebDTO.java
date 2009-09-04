@@ -17,7 +17,7 @@ public class TrialDocumentWebDTO {
     private String id;
     private String inactiveCommentText;
     private byte[] text;
-
+    private String studyProtocolId;
     
     /**
      * @param iso DocumentDTO object
@@ -108,6 +108,20 @@ public class TrialDocumentWebDTO {
         byte[] temp = text;
         this.text = temp;
 
+    }
+
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
     
 }

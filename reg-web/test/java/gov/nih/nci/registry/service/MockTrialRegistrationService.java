@@ -91,6 +91,25 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             List<StudySiteDTO> pgCdUpdatedList) throws PAException {
        
      }
+
+    public void update(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO, StudySiteDTO ssDto,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrgDTO,
+            PersonDTO principalInvestigatorDTO, OrganizationDTO sponsorOrgDTO,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studyParticipationContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudySiteDTO> collaborators,
+            List<StudySiteAccrualStatusDTO> participatingSites,
+            List<StudySiteDTO> pgCdUpdatedList) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
     
 
 }

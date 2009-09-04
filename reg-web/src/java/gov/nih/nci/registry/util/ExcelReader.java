@@ -269,6 +269,15 @@ public class ExcelReader {
         case BatchConstants.CHANGE_MEMO_DOC_FILE_NAME:batchDto.setChangeRequestDocFileName(cellValue); break;
         case BatchConstants.SPONSOR_CONTACT_TYPE:batchDto.setSponsorContactType(cellValue); break;
         case BatchConstants.SPONSOR_CONTACT_TITLE:batchDto.setResponsibleGenericContactName(cellValue); break;
+        case BatchConstants.OVERSIGHT_AUTHORITY_COUNTRY:batchDto.setOversightAuthorityCountry(cellValue); break;
+        case BatchConstants.OVERSIGHT_AUTHORITY_ORG_NAME:batchDto.setOversightOrgName(cellValue); break;
+        case BatchConstants.FDA_REGULATORY_INFORMATION_INDICATOR:batchDto.setFdaRegulatoryInformationIndicator(
+                cellValue); break;
+        case BatchConstants.SECTION_801_INDICATOR:batchDto.setSection801Indicator(cellValue); break;
+        case BatchConstants.DELAYED_POSTING_INDICATOR:batchDto.setDelayedPostingIndicator(cellValue); break;
+        case BatchConstants.DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR:
+                batchDto.setDataMonitoringCommitteeAppointedIndicator(cellValue); break;
+        
         default: throw new PAException(" Unknown coloumn #" + col + "to map ");
         }
         return batchDto;

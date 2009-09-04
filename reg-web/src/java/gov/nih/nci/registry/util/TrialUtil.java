@@ -70,6 +70,7 @@ public class TrialUtil {
     
     /** The Constant SPONSOR. */
     private static final String SPONSOR = "sponsor";
+    private static final String YES = "Yes";
     
     /** The Constant MAXF. */
     private static final int MAXF = 1024;
@@ -422,6 +423,18 @@ public class TrialUtil {
                 .getByCode(trialDTO.getCompletionDateType())));
         isoDto.setStudyProtocolType(StConverter.convertToSt(trialDTO.getTrialType()));
         isoDto.setProgramCodeText(StConverter.convertToSt(trialDTO.getProgramCodeText()));
+        boolean fdaRegIndicator = false;
+        if (trialDTO.getFdaRegulatoryInformationIndicator() != null 
+                && trialDTO.getFdaRegulatoryInformationIndicator().equalsIgnoreCase(YES)) {
+            fdaRegIndicator = true;
+        }
+        isoDto.setFdaRegulatedIndicator(BlConverter.convertToBl(fdaRegIndicator));
+        boolean section801Indicator = false;
+        if (trialDTO.getSection801Indicator() != null 
+                && trialDTO.getSection801Indicator().equalsIgnoreCase(YES)) {
+            section801Indicator = true;
+        }
+        isoDto.setSection801Indicator(BlConverter.convertToBl(section801Indicator));
         return isoDto;
     }
     
@@ -683,6 +696,12 @@ public class TrialUtil {
            isoDTO.setTypeCode(CdConverter.convertStringToCd(dto.getTypeCode()));
            isoDTO.setFileName(StConverter.convertToSt(dto.getFileName()));
            isoDTO.setText(EdConverter.convertToEd(dto.getText()));
+           if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
+               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));
+           }
+           if (PAUtil.isNotEmpty(dto.getId())) {
+               isoDTO.setIdentifier(IiConverter.convertToIi(dto.getId()));
+           }
            studyDocDTOList.add(isoDTO);
        }
        return studyDocDTOList;
@@ -803,12 +822,15 @@ public class TrialUtil {
            if (dto.getHolderType().equalsIgnoreCase("NCI")) {
                isoDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(dto.getProgramCode()));
            }
-           if (dto.getExpandedAccess().equalsIgnoreCase("Yes")) {
+           if (dto.getExpandedAccess().equalsIgnoreCase(YES)) {
                isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
            } else {
                isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
            }
            isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
+           if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
+               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));
+           }
            studyIndldeDTOList.add(isoDTO);
        }
        return studyIndldeDTOList;
@@ -842,7 +864,7 @@ public class TrialUtil {
            if (dto.getHolderType().equalsIgnoreCase("NCI")) {
                isoDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(dto.getProgramCode()));
            }
-           if (dto.getExpandedAccess().equalsIgnoreCase("Yes")) {
+           if (dto.getExpandedAccess().equalsIgnoreCase(YES)) {
                isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
            } else {
                isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
@@ -874,6 +896,9 @@ public class TrialUtil {
                                NciDivisionProgramCode.getByCode(dto.getNciDivisionProgramCode())));
            isoDTO.setNihInstitutionCode(CdConverter.convertStringToCd(dto.getNihInstitutionCode()));
            isoDTO.setSerialNumber(StConverter.convertToSt(dto.getSerialNumber()));
+           if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
+               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));
+           }
            grantsDTOList.add(isoDTO);
        }
        return grantsDTOList;

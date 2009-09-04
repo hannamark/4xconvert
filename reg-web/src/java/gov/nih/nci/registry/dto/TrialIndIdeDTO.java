@@ -23,7 +23,7 @@ public class TrialIndIdeDTO {
     private String programCode;
     private String number; //indIdeNumber
     private String indIde; //IndIdeTypeCode
-    
+    private String studyProtocolId;
     
     private String rowId;
     /**
@@ -166,6 +166,18 @@ public class TrialIndIdeDTO {
      */
     public void setHolderType(String holderType) {
         this.holderType = holderType;
+    }
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
     
 }

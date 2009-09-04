@@ -855,7 +855,10 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             sosDto = getOverallStatusForUpdate(util);
             //add the new irb doc
              DocumentDTO documentDTO = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
-                      
+             List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+             if (documentDTO != null) {
+                 documentDTOs.add(documentDTO);
+             }
            //summary4 info
             StudyResourcingDTO summary4studyResourcingDTO = RegistryServiceLocator.getStudyResourcingService()
                                               .getsummary4ReportedResource(studyProtocolIi); 
@@ -936,7 +939,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           updateId = studyProtocolIi; 
           //call the service to invoke the update method
           RegistryServiceLocator.getTrialRegistrationService().
-                        update(spDTO, sosDto, ssDto, studyIndldeDTOList, studyResourcingDTOs, documentDTO, leadOrgDTO,
+                        update(spDTO, sosDto, ssDto, studyIndldeDTOList, studyResourcingDTOs, documentDTOs, leadOrgDTO,
                                principalInvestigatorDTO, sponsorOrgDTO, studyContactDTO, studyParticipationContactDTO,
                                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
                               studyRegAuthDTO, collaboratorsDTOList, 

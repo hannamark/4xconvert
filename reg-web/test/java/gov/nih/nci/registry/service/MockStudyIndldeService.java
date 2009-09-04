@@ -99,4 +99,9 @@ public class MockStudyIndldeService implements StudyIndldeServiceRemote {
         return null;
     }
 
+    public void validate(StudyIndldeDTO studyIndldeDTO) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

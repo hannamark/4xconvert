@@ -91,4 +91,10 @@ public class MockStudyResourcingService implements StudyResourcingServiceRemote 
         return null;
     }
 
+    public void validate(StudyResourcingDTO studyResourcingDTO)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

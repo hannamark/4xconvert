@@ -21,7 +21,7 @@ public class TrialFundingWebDTO {
     private String rowId;
     private static final int SERIAL_NUM_MIN = 5;
     private static final int SERIAL_NUM_MAX  = 6;
-
+    private String studyProtocolId;
     /**
      * @param iso StudyResourcingDTO object
      */
@@ -126,6 +126,20 @@ public class TrialFundingWebDTO {
      */
     public void setRowId(String rowId) {
         this.rowId = rowId;
+    }
+
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 
 
