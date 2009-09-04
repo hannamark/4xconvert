@@ -1011,7 +1011,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param ssDto StudysiteDTO
      * @param studyIndldeDTOs list of Study Ind/ides
      * @param studyResourcingDTOs list of nih grants
-     * @param documentDTO IRB document
+     * @param documentDTOs List of documents IRB document
      * @param leadOrgDTO lead OrganizationDTO
      * @param principalInvestigatorDTO lead pi
      * @param sponsorOrgDTO sponsor Organization DTO
@@ -1034,7 +1034,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         StudySiteDTO ssDto,
         List<StudyIndldeDTO> studyIndldeDTOs ,
         List<StudyResourcingDTO> studyResourcingDTOs ,
-        DocumentDTO documentDTO ,
+        List<DocumentDTO> documentDTOs ,
         OrganizationDTO leadOrgDTO,
         PersonDTO principalInvestigatorDTO,
         OrganizationDTO sponsorOrgDTO,
@@ -1055,7 +1055,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     ssDto,
                     studyIndldeDTOs ,
                     studyResourcingDTOs ,
-                    documentDTO ,
+                    documentDTOs ,
                     leadOrgDTO ,
                     principalInvestigatorDTO,
                     sponsorOrgDTO,
@@ -1081,7 +1081,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           StudySiteDTO ssDto,
           List<StudyIndldeDTO> studyIndldeDTOs ,
           List<StudyResourcingDTO> studyResourcingDTOs ,
-          DocumentDTO documentDTO ,
+          List<DocumentDTO> documentDTOs ,
           OrganizationDTO leadOrgDTO ,
           PersonDTO principalInvestigatorDTO,
           OrganizationDTO sponsorOrgDTO,
@@ -1113,33 +1113,40 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       
       //update NCT identifier
       updateNCTIdentifier(ssDto);
+      if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) {
+          //create or update IndIdes
+          createUpdateIndIdes(studyIndldeDTOs);
+      }
+      if (studyResourcingDTOs != null && !studyResourcingDTOs.isEmpty()) {
+          //create or update grants/studyresourcing
+          createUpdateGrants(studyResourcingDTOs);
+      }
       
-      //create or update IndIdes
-      createUpdateIndIdes(studyIndldeDTOs);
-      
-      //create or update grants/studyresourcing
-      createUpdateGrants(studyResourcingDTOs);
-      
+      if (documentDTOs != null && !documentDTOs.isEmpty()) {
       //create or update the document
-      createUpdateDocument(documentDTO);
-      
+       createUpdateDocument(documentDTOs);
+      }
       //create or update studyContactDTO      
       //create or update StudySiteContactDTO
        createUpdateResponsibleParty(studyContactDTO, studyParticipationContactDTO, responsiblePartyContactIi,
                                   studyProtocolDTO, principalInvestigatorDTO, leadOrgDTO, sponsorOrgDTO);
       
-       // update summary4
-      updateSummary4ResourcingDTO(summary4organizationDTO , summary4studyResourcingDTO);
-      
+       //update summary4
+           updateSummary4ResourcingDTO(summary4organizationDTO , summary4studyResourcingDTO);
       //update collaborators
-      updateCollaborators(collaborators);
+      if (collaborators != null && !collaborators.isEmpty()) {
+          updateCollaborators(collaborators);
+      }
       
       //update participating sites
-      updateParticipatingSites(participatingSites);
+      if (participatingSites != null && !participatingSites.isEmpty()) {
+          updateParticipatingSites(participatingSites);
+      }
       
       //update studysitedtos with program code changes
-      updateStudySiteProgramCodeChanges(pgCdUpdatedList);
-      
+      if (pgCdUpdatedList != null && !pgCdUpdatedList.isEmpty()) {
+          updateStudySiteProgramCodeChanges(pgCdUpdatedList);
+      }
       //update Regulatory athority
       updateStudyRegAuth(studyRegAuthDTO);
       
@@ -1165,6 +1172,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       StringBuffer errorMsg = new StringBuffer();
       studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
       
+      String userCreated = StConverter.convertToString(
+              studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier()).getUserLastCreated());
+      if (!userCreated.equalsIgnoreCase(StConverter.convertToString(studyProtocolDTO.getUserLastCreated()))) {
+          errorMsg.append("Update to Trial can be submitted by the submitter of the original Trial.\n");
+      }
           //make sure DocumentWorkflowStatusCode is ACCEPTED +
           //!statusCode.equals(StudyStatusCode.DISAPPROVED)
           //get the documentWrkFlowstatus n status code
@@ -1409,17 +1421,21 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
   
   private void createUpdateGrants(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
       for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
-          if (PAUtil.isIiNull(studyResourcingDTO.getIdentifier())) {
-              studyResourcingService.createStudyResourcing(studyResourcingDTO);
-          } else {
-              studyResourcingService.updateStudyResourcing(studyResourcingDTO);
-          }
+              if (PAUtil.isIiNull(studyResourcingDTO.getIdentifier())) {
+                  studyResourcingService.createStudyResourcing(studyResourcingDTO);
+              } else {
+                  studyResourcingService.updateStudyResourcing(studyResourcingDTO);
+              }
        }
    } 
   
-  private void createUpdateDocument(DocumentDTO documentDTO) throws PAException {
-       if (documentDTO != null) {
-          documentService.update(documentDTO);
+  private void createUpdateDocument(List<DocumentDTO> documentDTOs) throws PAException {
+      for (DocumentDTO documentDTO : documentDTOs) {
+          if (PAUtil.isIiNull(documentDTO.getIdentifier())) {
+              documentService.create(documentDTO);
+          } else {
+              documentService.update(documentDTO);
+          }
        }
     } 
   private void updateCollaborators(List<StudySiteDTO> collaborators) throws PAException {

@@ -92,5 +92,10 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface StudyIndldeServiceRemote  extends StudyPaService<StudyIndldeDTO> {
-
+    /**
+     * 
+     * @param studyIndldeDTO dto
+     * @throws PAException e
+     */
+    void validate(StudyIndldeDTO studyIndldeDTO) throws PAException;
 }

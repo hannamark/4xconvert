@@ -213,7 +213,7 @@ public interface TrialRegistrationServiceRemote {
      * @param ssDto StudySiteDTO
      * @param studyIndldeDTOs list of Study Ind/ides
      * @param studyResourcingDTOs list of nih grants
-     * @param documentDTO IRB document
+     * @param documentDTOs List of documents IRB and Participating doc
      * @param leadOrgDTO lead organization
      * @param principalInvestigatorDTO lead pi
      * @param sponsorOrgDTO sponsor Organization DTO
@@ -236,7 +236,7 @@ public interface TrialRegistrationServiceRemote {
         StudySiteDTO ssDto,
         List<StudyIndldeDTO> studyIndldeDTOs ,
         List<StudyResourcingDTO> studyResourcingDTOs ,
-        DocumentDTO documentDTO ,
+        List<DocumentDTO> documentDTOs ,
         OrganizationDTO leadOrgDTO ,
         PersonDTO principalInvestigatorDTO, 
         OrganizationDTO sponsorOrgDTO,

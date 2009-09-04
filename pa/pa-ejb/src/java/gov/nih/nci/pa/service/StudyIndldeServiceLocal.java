@@ -92,5 +92,10 @@ import javax.ejb.Local;
  */
 @Local
 public interface StudyIndldeServiceLocal extends StudyPaService<StudyIndldeDTO> {
-
+    /**
+     * 
+     * @param studyIndldeDTO dto
+     * @throws PAException e
+     */
+    void validate(StudyIndldeDTO studyIndldeDTO) throws PAException;
 }

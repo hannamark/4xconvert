@@ -71,4 +71,10 @@ public class MockRegulatoryInformationService implements
         return null;
     }
 
+    public Long getRegulatoryAuthorityId(String authorityName,
+            String countryIdentifier) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

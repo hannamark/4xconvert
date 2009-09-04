@@ -155,5 +155,12 @@ public interface RegulatoryInformationServiceRemote  {
       * @throws PAException on error
       */
      Country getRegulatoryAuthorityCountry(Long id)  throws PAException;
-
+     /**
+      * 
+      * @param authorityName n
+      * @param countryIdentifier id
+      * @return id
+      * @throws PAException e
+      */
+     Long getRegulatoryAuthorityId(String authorityName, String countryIdentifier) throws PAException;
 }

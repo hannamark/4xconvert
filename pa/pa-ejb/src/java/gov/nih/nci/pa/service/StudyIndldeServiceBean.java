@@ -149,4 +149,13 @@ implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {
           }
       }
   }
+    /**
+     * @param studyIndldeDTO dto
+     * @throws PAException e
+     */
+    public void validate(StudyIndldeDTO studyIndldeDTO) throws PAException {
+    // TODO Auto-generated method stub
+        enforceNoDuplicate(studyIndldeDTO);
+    }
 }
+

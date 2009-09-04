@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -222,6 +223,12 @@ public class StudyResourcingServiceBean
               throw new PAException("Serial number should have numbers from [0-9]");
           }
         }
+        if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+                && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+                    .equals(Boolean.FALSE)) {
+                enforceNoDuplicate(studyResourcingDTO);
+        }
+
         try {
             session = HibernateUtil.getCurrentSession();
 
@@ -277,10 +284,9 @@ public class StudyResourcingServiceBean
             LOG.error(" studyResourcingDTO should not be null ");
             throw new PAException(" studyResourcingDTO should not be null ");
         }
-        if (studyResourcingDTO.getSummary4ReportedResourceIndicator() != null 
-                && studyResourcingDTO.getSummary4ReportedResourceIndicator().getValue() != null 
-                && studyResourcingDTO.getSummary4ReportedResourceIndicator().getValue().equals(Boolean.FALSE)) {
-                
+        if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+                && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+                    .equals(Boolean.FALSE)) {
                 enforceNoDuplicate(studyResourcingDTO);
         }
         
@@ -508,4 +514,14 @@ public class StudyResourcingServiceBean
         }
         return isValid;
       }
+    /**
+     * @param studyResourcingDTO dto
+     * @return 
+     * @throws PAException e
+     */
+    public void validate(StudyResourcingDTO studyResourcingDTO)
+            throws PAException {
+        enforceNoDuplicate(studyResourcingDTO);
+    }
+    
 }

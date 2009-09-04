@@ -134,5 +134,11 @@ public interface StudyResourcingService {
      * @throws PAException PAException
      */
     Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO) throws PAException;
+    /**
+     * 
+     * @param studyResourcingDTO dto to validate
+     * @throws PAException e
+     */
+    void validate(StudyResourcingDTO studyResourcingDTO) throws PAException;
 
 }
