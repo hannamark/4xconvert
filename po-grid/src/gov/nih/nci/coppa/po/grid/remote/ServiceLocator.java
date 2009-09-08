@@ -9,6 +9,7 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -99,4 +100,11 @@ public interface ServiceLocator {
      * @throws NamingException on error looking up the service
      */
     OrganizationalContactCorrelationServiceRemote getOrganizationalContactService() throws NamingException;
+    
+    /**
+     * Gets the PatientService.
+     * @return PatientService
+     * @throws NamingException on error looking up the service
+     */
+    PatientCorrelationServiceRemote getPatientService() throws NamingException;
 }

@@ -95,6 +95,11 @@ public abstract class HealthCareFacilityImplBase {
 		return (gov.nih.nci.coppa.services.structuralroles.researchorganization.service.globus.resource.ResearchOrganizationResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.structuralroles.patient.service.globus.resource.PatientResourceHome getPatientResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("patientHome");
+		return (gov.nih.nci.coppa.services.structuralroles.patient.service.globus.resource.PatientResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

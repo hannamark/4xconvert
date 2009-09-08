@@ -17,6 +17,8 @@ import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceR
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -62,6 +64,8 @@ public final class JNDIServiceLocator implements ServiceLocator {
             values.put(OversightCommitteeDTO.class, getInstance().getClass().getMethod("getOversightCommitteeService"));
             values.put(OrganizationalContactDTO.class, getInstance().getClass().getMethod(
                     "getOrganizationalContactService"));
+            values.put(PatientDTO.class, getInstance().getClass().getMethod(
+                "getPatientService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -187,6 +191,15 @@ public final class JNDIServiceLocator implements ServiceLocator {
     public OrganizationalContactCorrelationServiceRemote getOrganizationalContactService() throws NamingException {
         OrganizationalContactCorrelationServiceRemote object = (OrganizationalContactCorrelationServiceRemote)
             lookup("po/OrganizationalContactCorrelationServiceBean/remote");
+        return object;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public PatientCorrelationServiceRemote getPatientService() throws NamingException {
+        PatientCorrelationServiceRemote object = (PatientCorrelationServiceRemote)
+            lookup("po/PatientCorrelationServiceBean/remote");
         return object;
     }
 
