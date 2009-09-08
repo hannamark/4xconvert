@@ -198,7 +198,7 @@ public final class Ivl<T extends Qty> extends QSet<T> implements Cloneable {
             return true;
         }
 
-        if (!(o instanceof Ivl)) {
+        if (!(o instanceof Ivl<?>)) {
             return false;
         }
 

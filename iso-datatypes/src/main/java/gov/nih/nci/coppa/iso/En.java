@@ -89,7 +89,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.list.PredicatedList;
 
 /**
- * Represents the iso datatype.
+ * Represents the En ISO datatype.
  * @author lpower
  */
 public class En extends Any implements Cloneable {
@@ -109,16 +109,15 @@ public class En extends Any implements Cloneable {
     /**
      * @param partRestriction a filter for disallowed values
      */
-    @SuppressWarnings("unchecked")
     protected En(Predicate partRestriction) {
         this();
         this.partRestriction = partRestriction;
     }
-    
+
     /**
      * @return the part
      */
-    @SuppressWarnings("unchecked")    
+    @SuppressWarnings("unchecked")
     public List<Enxp> getPart() {
         if (part == null) {
             if (partRestriction != null) {
@@ -159,9 +158,8 @@ public class En extends Any implements Cloneable {
     public int hashCode() {
         if (!this.getPart().isEmpty()) {
             return this.getPart().hashCode();
-        } else {
-            return super.hashCode();
         }
+        return super.hashCode();
     }
 
     /**

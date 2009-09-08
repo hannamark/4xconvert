@@ -150,9 +150,8 @@ public final class Ad extends Any implements Cloneable {
     public int hashCode() {
         if (this.getPart() != null) {
             return this.getPart().hashCode();
-        } else {
-            return super.hashCode();
         }
+        return super.hashCode();
     }
 
     /**

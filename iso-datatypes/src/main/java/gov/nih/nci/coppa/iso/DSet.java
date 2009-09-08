@@ -123,7 +123,7 @@ public final class DSet<T extends Any> implements Serializable, Cloneable {
             return true;
         }
 
-        if (!(obj instanceof DSet)) {
+        if (!(obj instanceof DSet<?>)) {
             return false;
         }
 
@@ -150,9 +150,8 @@ public final class DSet<T extends Any> implements Serializable, Cloneable {
     public int hashCode() {
         if (this.getItem() != null) {
             return this.getItem().hashCode();
-        } else {
-            return super.hashCode();
         }
+        return super.hashCode();
     }
 
     /**

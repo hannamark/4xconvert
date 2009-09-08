@@ -124,7 +124,7 @@ public abstract class QSet<T extends Qty> extends Any implements Cloneable {
             return true;
         }
 
-        if (!(obj instanceof QSet)) {
+        if (!(obj instanceof QSet<?>)) {
             return false;
         }
 

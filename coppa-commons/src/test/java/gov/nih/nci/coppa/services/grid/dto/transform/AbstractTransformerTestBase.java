@@ -189,9 +189,8 @@ public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO
         } catch (InvocationTargetException ex) {
             if (ex.getTargetException() instanceof Error) {
                 throw (Error) ex.getTargetException();
-            } else {
-                throw new RuntimeException(make.getName(), ex.getTargetException());
             }
+            throw new RuntimeException(make.getName(), ex.getTargetException());
         } catch (Exception ex) {
             throw new RuntimeException(make.getName(), ex);
         }
@@ -216,9 +215,8 @@ public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO
         } catch (InvocationTargetException ex) {
             if (ex.getTargetException() instanceof Error) {
                 throw (Error) ex.getTargetException();
-            } else {
-                throw new RuntimeException(make.getName(), ex.getTargetException());
             }
+            throw new RuntimeException(make.getName(), ex.getTargetException());
         } catch (Exception ex) {
             throw new RuntimeException(make.getName(), ex);
         }
@@ -243,9 +241,8 @@ public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO
         } catch (InvocationTargetException ex) {
             if (ex.getTargetException() instanceof Error) {
                 throw (Error) ex.getTargetException();
-            } else {
-                throw new RuntimeException(make.getName(), ex.getTargetException());
             }
+            throw new RuntimeException(make.getName(), ex.getTargetException());
         } catch (Exception ex) {
             throw new RuntimeException(make.getName(), ex);
         }
