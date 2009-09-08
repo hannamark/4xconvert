@@ -30,6 +30,9 @@
 
 1.2 Development Environment Setup
 
+  * Install maven (if needed)
+    PO is not compatible with maven 2.1.0+, so you'll need to use 2.0.10 or earlier.
+
   * Install JBoss
     Download JEMS installer
     Install this version of JBoss to C:\dev\app_servers\jboss-4.0.5.GA  (If you choose another location your profiles.xml file will need to be modified)
