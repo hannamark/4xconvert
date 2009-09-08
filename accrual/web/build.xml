@@ -108,7 +108,7 @@
     <!-- ====================================================================== -->
 
     <target name="compile"  depends="pre-clean" description="Compiles the subproject">
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
         <mkdir dir="${web.build.outputDir}"/>
         <javac destdir="${web.build.outputDir}" 
                nowarn="false" 
@@ -391,7 +391,7 @@
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
         <for param="toDir">
             <path>
-                <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*accrual.ear-contents/accrual-exp.war"/>
+                <dirset dir="${jboss.deploy.dir}/../tmp/deploy" includes="tmp*accrual.ear-contents/accrual-exp.war"/>
             </path>
             <sequential>
                 <copy todir="@{toDir}">

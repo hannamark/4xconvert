@@ -115,7 +115,7 @@
     <!-- ====================================================================== -->
 
     <target name="compile" depends="pre-clean, get-domain" description="Compiles the subproject">
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
         <mkdir dir="${services.build.outputDir}"/>
         <javac destdir="${services.build.outputDir}" 
                nowarn="false" 

@@ -4,35 +4,47 @@
 <!-- Master ant script for Accrual application                                  -->
 <!-- ========================================================================== -->
 
-<project name="viewer" default="deploy-notest" basedir=".">
+<project name="accrual" default="deploy-notest" basedir=".">
+
     <property file="${basedir}/build.properties"/>
     <property name="resource.dir" value="${basedir}/resources"/>
     <property name="software.dir" value="${basedir}/.."/>
 
-    <property name="earDir" value="${basedir}/ear"/>
-    <property name="earEar" value="${earDir}/target/accrual.ear"/>
-    <property name="webDir" value="${basedir}/web"/>
-    <property name="webWar" value="${webDir}/target/accrual.war"/>
-    <property name="servicesDir" value="${basedir}/services"/>
-    <property name="servicesJar" value="${servicesDir}/target/accrual-services.jar"/>
+    <property name="ear.dir" value="${basedir}/ear"/>
+    <property name="ear.ear" value="${ear.dir}/target/accrual.ear"/>
+    <property name="ear.build.file" value="build.xml"/>
+    <property name="ear.clean.target" value="pre-clean"/>
+    <property name="ear.build.target" value="ear"/>
+    <property name="web.dir" value="${basedir}/web"/>
+    <property name="web.war" value="${web.dir}/target/accrual.war"/>
+    <property name="web.build.file" value="build.xml"/>
+    <property name="web.clean.target" value="pre-clean"/>
+    <property name="web.build.target" value="war-notest"/>
+    <property name="services.dir" value="${basedir}/services"/>
+    <property name="services.jar" value="${services.dir}/target/accrual-services.jar"/>
+    <property name="services.build.file" value="build.xml"/>
+    <property name="services.clean.target" value="pre-clean"/>
+    <property name="services.build.target" value="jar-notest"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+    
+    <available file="${accrual-ear.build.dir}" type="dir" property="accrual-ear.build.present" />
 
     <!-- ====================================================================== -->
     <!-- Package targets                                                        -->
     <!-- ====================================================================== -->
 
     <target name="package">
-        <ant target="jar" dir="${servicesDir}"/>
-        <ant target="war" dir="${webDir}"/>
-        <ant target="ear" dir="${earDir}"/>
+        <ant target="jar" dir="${services.dir}"/>
+        <ant target="war" dir="${web.dir}"/>
+        <ant target="ear" dir="${ear.dir}"/>
     </target>
 
     <target name="package-notest-noivy">
-        <ant target="jar-notest-noivy" dir="${servicesDir}"/>
-        <ant target="war-notest-noivy" dir="${webDir}"/>
-        <ant target="ear" dir="${earDir}"/>
+        <ant target="jar-notest-noivy" dir="${services.dir}"/>
+        <ant target="war-notest-noivy" dir="${web.dir}"/>
+        <ant target="ear" dir="${ear.dir}"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -46,12 +58,12 @@
         <echo message="Build completed at ${now}" />
     </target>
 
-    <target name="deploy-ear">
-        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
-        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-        <available file="${earEar}" property="earEarPresent"/>
+    <target name="deploy-ear" depends="build-notest">
+        <available file="${jboss.deploy.dir}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.dir} not available."/>
+        <available file="${ear.ear}" property="earEarPresent"/>
         <fail unless="earEarPresent" message="Ear file not found."/>
-        <copy todir="${jboss.deploy.directory}" file="${earEar}"/>
+        <copy todir="${jboss.deploy.dir}" file="${ear.ear}"/>
     </target>
     
     <target name="deploy" depends="package, deploy-ear, echoTime" 
@@ -60,7 +72,6 @@
     <target name="deploy-notest" depends="package-notest-noivy, deploy-ear, echoTime" 
             description="Build and deploy without testing or getting dependencies.">
     </target>
-
 
     <!-- ====================================================================== -->
     <!-- Ivy targets                                                            -->
@@ -77,15 +88,15 @@
     </target>
 
     <target name="ivy-get" depends="ivy-init"> 
-        <ant target="ivy-get" dir="${webDir}"/>
-        <ant target="ivy-get" dir="${servicesDir}"/>
-        <ant target="ivy-get" dir="${earDir}"/>
+        <ant target="ivy-get" dir="${web.dir}"/>
+        <ant target="ivy-get" dir="${services.dir}"/>
+        <ant target="ivy-get" dir="${ear.dir}"/>
     </target>
     
     <target name="ivy-clean" description="Delete jars.">
-        <ant target="ivy-clean" dir="${webDir}"/>
-        <ant target="ivy-clean" dir="${servicesDir}"/>
-        <ant target="ivy-clean" dir="${earDir}"/>
+        <ant target="ivy-clean" dir="${web.dir}"/>
+        <ant target="ivy-clean" dir="${services.dir}"/>
+        <ant target="ivy-clean" dir="${ear.dir}"/>
     </target>
 
 
@@ -94,7 +105,81 @@
     <!-- ====================================================================== -->
         
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
-        <ant target="copy-jsp" dir="${webDir}"/>
+        <ant target="copy-jsp" dir="${web.dir}"/>
     </target> 
+    
+    <!-- ====================================================================== -->
+    <!-- Build the jar, war and ear                                             -->
+    <!-- ====================================================================== -->
+    
+    <target name="accrual-services-jar">
+        <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
+            dir="${services.dir}" >
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+
+            <target name="${services.build.target}"/>
+        </ant>
+    </target>
+    
+    <target name="accrual-web-war" depends="accrual-services-jar">
+        <ant inheritAll="false" inheritRefs="false" antfile="${web.build.file}"
+            dir="${web.dir}" >
+            <property name="application.url" location="${application.url}" />
+            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+
+            <target name="${web.build.target}"/>
+        </ant>
+    </target>
+    
+    <target name="accrual-ear-ear" depends="accrual-web-war">
+        <ant inheritAll="false" inheritRefs="false" antfile="${ear.build.file}"
+            dir="${ear.dir}" >
+            <property name="jdbc.driver" value="${jdbc.driver}" />
+            <property name="csm.jdbc.url" value="${database.url}" />
+            <property name="csm.db.username" value="${database.user}"/>
+            <property name="csm.db.password" value="${database.password}"/>
+            <property name="accrual.jdbc.url" value="${database.url}" />
+            <property name="accrual.db.username" value="${database.user}"/>
+            <property name="accrual.db.password" value="${database.password}"/>
+
+            <target name="${ear.build.target}"/>
+        </ant>
+    </target>
+    
+    <target name="accrual-dist" depends="accrual-ear-ear" if="accrual-ear.build.present">
+        <copy todir="${accrual-ear.build.dir}" file="${ear.ear}"/>
+    </target>
+    
+    <target name="build-notest" description="Build the ear, jar and war" depends="accrual-dist">
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Clean the ear, services and web subprojects                            -->
+    <!-- ====================================================================== -->
+    
+    <target name="accrual-web-clean">
+        <ant inheritAll="false" inheritRefs="false" antfile="${web.build.file}"
+            dir="${web.dir}" >
+            <target name="${web.clean.target}"/>
+        </ant>
+    </target>
+    
+    <target name="accrual-services-clean">
+        <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
+            dir="${services.dir}" >
+            <target name="${services.clean.target}"/>
+        </ant>
+    </target>
+    
+    <target name="accrual-ear-clean">
+        <ant inheritAll="false" inheritRefs="false" antfile="${ear.build.file}"
+            dir="${ear.dir}" >
+            <target name="${ear.clean.target}"/>
+        </ant>
+    </target>
+
+    <target name="clean" description="Clean the ear, jar and war" depends="accrual-web-clean, accrual-services-clean, accrual-ear-clean">
+    </target>
 
 </project>
