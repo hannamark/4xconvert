@@ -132,7 +132,7 @@ public class Tel extends Any implements Cloneable {
      * @return true if allowedSchemes is null or if it contains scheme.
      */
     protected static boolean isAllowed(String scheme, List<String> allowedSchemes) {
-        return allowedSchemes == null || allowedSchemes.contains(scheme.toLowerCase());
+        return allowedSchemes == null || allowedSchemes.contains(scheme);
     }
 
     /**
