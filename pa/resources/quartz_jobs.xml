@@ -1,0 +1,48 @@
+<quartz xmlns="http://www.quartzscheduler.org/ns/quartz"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.quartzscheduler.org/ns/quartz http://www.quartzscheduler.org/ns/quartz/job_scheduling_data_1_5.xsd"
+               version="1.1">
+<job>
+    <job-detail>
+        <name>milestoneJob</name>
+        <group>DEFAULT</group>
+        <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+        <volatility>false</volatility>  
+        <durability>false</durability>  
+        <recover>false</recover>  
+        <job-data-map allows-transient-data="true">
+            <entry>
+                <key>ejb</key>
+                <value>pa/StudyMilestoneTasksServiceBean/local</value>
+            </entry>
+            <entry>
+                <key>interfaceName</key>
+                <value>gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal</value>
+            </entry>
+            <entry>
+                <key>method</key>
+                <value>performTask</value>
+            </entry>
+            <entry>
+                <key>java.naming.factory.initial</key>
+                <value>org.jnp.interfaces.NamingContextFactory</value>
+            </entry>        
+            <entry>
+                <key>java.naming.provider.url</key>
+                <value>jnp://localhost:@jboss.server.jndi.port@</value>
+            </entry>
+        </job-data-map>
+    </job-detail>  
+    <trigger>  
+        <cron>  
+            <name>milestoneTrigger</name>  
+            <group>DailyTriggerGroup</group>  
+            <description>Daily milestone Trigger</description> 
+            <job-name>milestoneJob</job-name>  
+            <job-group>DEFAULT</job-group>  
+            <start-time>2009-08-04T11:15:00</start-time> 
+            <cron-expression>0 0 21 ? * *</cron-expression> 
+        </cron>  
+    </trigger>  
+</job>
+</quartz> 

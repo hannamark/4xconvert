@@ -38,6 +38,7 @@
     <property name="ivy.def.file" location="ivy-pa-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
+	<property name="jboss.server.jndi.port" value="1099" />
     
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -139,6 +140,13 @@
                 <path refid="compile.classpath"/> 
             </classpath>
         </javac>
+    	<copy file="${pa.resourceDir}/quartz_jobs.xml" 
+    	      tofile="${pa-web.build.resourceDir.0}/quartz_jobs.xml"
+    	      overwrite="true">
+    	   <filterset>
+    	        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+    	   </filterset>
+    	</copy>
         <copy todir="${pa-web.build.outputDir}">
             <filterset>
                 <filter token="po.server.name" value="${po.server.name}"/>
