@@ -1,9 +1,6 @@
-DROP TABLE IF EXISTS epoch;  -- out of scope for 3.0 
-DROP TABLE IF EXISTS study_subject;  -- includes Subject
+DROP TABLE IF EXISTS study_subject;
 DROP TABLE IF EXISTS patient;
-DROP TABLE IF EXISTS planned_study_subject_milestone;  -- NO LONGER USED, USING InheritanceType.SINGLE_TABLE
-DROP TABLE IF EXISTS observation_result;  -- includes PlannedObservationResult and PerformedObservationResult
-DROP TABLE IF EXISTS performed_activity;  -- includes PerformedObservation, PerformedSubjectMilestone, and PerformedAdministrativeActivity
+DROP TABLE IF EXISTS performed_activity;
 DROP TABLE IF EXISTS submission;
 DROP TABLE IF EXISTS study_site_accrual_access;
 
@@ -114,9 +111,9 @@ CREATE TABLE study_site_accrual_access (
     request_details VARCHAR(10000),
     status_code VARCHAR(200) NOT NULL,
     status_date_range_low TIMESTAMP NOT NULL,
-    date_last_created TIMESTAMP NOT NULL,
+    date_last_created TIMESTAMP,
     user_last_created VARCHAR(200),
-    date_last_updated TIMESTAMP NOT NULL,
+    date_last_updated TIMESTAMP,
     user_last_updated VARCHAR(200),
     PRIMARY KEY (identifier)
 )WITH (OIDS=FALSE);

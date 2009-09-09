@@ -108,7 +108,7 @@
             <comment>execute registry_userColumnAdd.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/registry_userColumnAdd.sql"/>
     </changeSet>
-	<changeSet id="26" author="Vrushali">
+    <changeSet id="26" author="Vrushali">
             <comment>execute StudyProtocolAddPrgCodeTxtCol.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/StudyProtocolAddPrgCodeTxtCol.sql"/>
     </changeSet>
@@ -124,24 +124,28 @@
             <comment>execute studyObjective.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyObjective.sql"/>
     </changeSet>
-	<changeSet id="30" author="Vrushali">
-		<comment>execute pa-18746.sql</comment>
-		<sqlFile path="@db-upgrade.run.dir@/2.2/pa-18746.sql"/>
-	</changeSet>
-	<changeSet id="31" author="Naveen">
-		<comment>execute pa_dev_22858.sql</comment>
-		<sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_22858.sql"/>
-	</changeSet>
-	<changeSet id="32" author="Vrushali">
-		<comment>execute pa_dev_22963.sql</comment>
-		<sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_22963.sql"/>
-	</changeSet>
-	<changeSet id="33" author="Anu">
+    <changeSet id="30" author="Vrushali">
+        <comment>execute pa-18746.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/2.2/pa-18746.sql"/>
+    </changeSet>
+    <changeSet id="31" author="Naveen">
+        <comment>execute pa_dev_22858.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_22858.sql"/>
+    </changeSet>
+    <changeSet id="32" author="Vrushali">
+        <comment>execute pa_dev_22963.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_22963.sql"/>
+    </changeSet>
+    <changeSet id="33" author="Anu">
         <comment>execute pa_dev_20666.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_20666.sql"/>
     </changeSet>
     <changeSet id="34" author="Anu">
         <comment>execute pa_dev_23041.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_23041.sql"/>
+    </changeSet>
+    <changeSet id="35" author="Hugh">
+        <comment>execute accrual_dev_23105.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.0/accrual_dev_23105.sql"/>
     </changeSet>
 </databaseChangeLog>
