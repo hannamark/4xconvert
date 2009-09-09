@@ -110,6 +110,7 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
@@ -162,30 +163,39 @@ public class IrbAction extends ActionSupport implements Preparable {
 
     /**
      * @return action
-     * @throws Exception exception
      */
     @Override
-    public String execute() throws Exception {
-        loadForm();
+    public String execute() {
+        try {
+            loadForm();
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        } catch (NullifiedEntityException e) {
+            addActionError("Board status has been set to nullified, Please select another Board.");
+        }
         return SUCCESS;
     }
     
     /**
      * @return action
-     * @throws Exception exception
      */
-    public String fromPO() throws Exception {
+    public String fromPO() {
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
-        loadOrg(orgId);
+        try {
+            loadOrg(orgId);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        } catch (NullifiedEntityException e) {
+            addActionError(e.getMessage());
+        }
         return SUCCESS;
     }
     
 
     /**
      * @return action
-     * @throws Exception exception
      */
-    public String save() throws Exception {
+    public String save() {
         businessRules();
         if (hasActionErrors()) {
             return SUCCESS;
@@ -199,12 +209,13 @@ public class IrbAction extends ActionSupport implements Preparable {
                     || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.equals(getApprovalStatusEnum())) {
                 saveSubmissionRequired();
             }
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-             return SUCCESS;
-        }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         loadForm();
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        } catch (NullifiedEntityException e) {
+            addActionError(e.getMessage());
+        }
         return SUCCESS;
     }
     
@@ -320,7 +331,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         this.newOrgName = newOrgName;
     }
 
-    private void businessRules() throws PAException {
+    private void businessRules() {
         if (PAUtil.isEmpty(getApprovalStatus())) {
             addActionError("Must select an approval status.  ");
         }
@@ -359,7 +370,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         
     }
 
-    private void saveSubmissionNotRequired() throws Exception {
+    private void saveSubmissionNotRequired() throws PAException {
         StudyProtocolDTO dto = sProtService.getStudyProtocol(spIdIi);
         dto.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(false));
         sProtService.updateStudyProtocol(dto);
@@ -373,7 +384,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         }
     }
 
-    private void saveSubmissionRequired() throws Exception {
+    private void saveSubmissionRequired() throws PAException  {
         Ii sPartToUpdate = this.getStudySiteToUpdate();
         String poOrgId = getCt().getId();
         if (PAUtil.isEmpty(poOrgId)) {
@@ -413,7 +424,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         }
     
     
-    private Ii getStudySiteToUpdate() throws Exception {
+    private Ii getStudySiteToUpdate() throws PAException {
         Ii sPartToUpdate = null;
         List<StudySiteDTO> spList = sPartService.getByStudyProtocol(spIdIi);
             for (StudySiteDTO sp : spList) {
@@ -428,7 +439,7 @@ public class IrbAction extends ActionSupport implements Preparable {
 
    
 
-    private void loadForm() throws Exception {
+    private void loadForm() throws PAException, NullifiedEntityException  {
         StudyProtocolDTO study = sProtService.getStudyProtocol(spIdIi);
         Boolean b = BlConverter.covertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
         if (b == null || !b) {
@@ -469,7 +480,7 @@ public class IrbAction extends ActionSupport implements Preparable {
         }
     }
 
-    private void loadOrg(String poOrgId) throws Exception {
+    private void loadOrg(String poOrgId) throws NullifiedEntityException, PAException {
         if (PAUtil.isEmpty(poOrgId)) {
               ct = new ContactWebDTO();
             return;
