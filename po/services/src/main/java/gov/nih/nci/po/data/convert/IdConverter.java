@@ -218,8 +218,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The Patient to Person prefix string.
      */
     public static final String PATIENT_PREFIX = "PT";
-
-
+     
     /**
      * {@inheritDoc}
      */

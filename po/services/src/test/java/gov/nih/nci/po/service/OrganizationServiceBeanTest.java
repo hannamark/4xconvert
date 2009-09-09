@@ -88,6 +88,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -99,7 +100,10 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -301,6 +305,101 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(new Long(orgId), orgs.get(0).getId());
         
         MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
+    }
+    
+    @Test
+    public void testOrgWithCtepRolesStatusChange() throws EntityValidationException, JMSException {
+        Country country = new Country("testorg", "996", "IJ", "IJI");
+        PoHibernateUtil.getCurrentSession().save(country);
+        // create org
+        Organization org = new Organization();
+        org.setName("test");
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        org.setPostalAddress(mailingAddress);
+        org.setStatusCode(EntityStatus.PENDING);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
+
+        long orgId = orgServiceBean.create(org);
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        Organization retrievedOrg = orgServiceBean.getById(orgId);
+        // create ctep hcf
+        HealthCareFacility hcf = new HealthCareFacility();
+        Address mailingAddress2 = new Address("test", "test", "test", "test", country);
+        hcf.getPostalAddresses().add(mailingAddress2);
+        hcf.setStatus(RoleStatus.PENDING);
+        hcf.getEmail().add(new Email("foo@example.com"));
+        hcf.getUrl().add(new URL("http://example.com"));
+        hcf.setPlayer(retrievedOrg);
+        Ii ctepIi = new Ii();
+        ctepIi.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepIi.setIdentifierName("name");
+        ctepIi.setExtension("CTEP");
+        hcf.getOtherIdentifiers().add(ctepIi);
+        
+        long hcfId = EjbTestHelper.getHealthCareFacilityServiceBean().create(hcf);
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
+        
+        // create non-ctep hcf
+        
+        HealthCareFacility hcfNotCtep = new HealthCareFacility();
+        Address mailingAddress3 = new Address("test", "test", "test", "test", country);
+        hcfNotCtep.getPostalAddresses().add(mailingAddress3);
+        hcfNotCtep.setStatus(RoleStatus.PENDING);
+        hcfNotCtep.getEmail().add(new Email("foo@example.com"));
+        hcfNotCtep.getUrl().add(new URL("http://example.com"));
+        hcfNotCtep.setPlayer(retrievedOrg);
+        
+        long hcfNotCtepId = EjbTestHelper.getHealthCareFacilityServiceBean().create(hcfNotCtep);
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // create ctep ro
+        ResearchOrganization ro = new ResearchOrganization();
+        Address mailingAddress4 = new Address("test", "test", "test", "test", country);
+        ro.getPostalAddresses().add(mailingAddress4);
+        ro.setStatus(RoleStatus.PENDING);
+        ro.getEmail().add(new Email("foo@example.com"));
+        ro.getUrl().add(new URL("http://example.com"));
+        ro.setPlayer(retrievedOrg);
+        Ii ctepRoIi = new Ii();
+        ctepRoIi.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepRoIi.setIdentifierName("ro id name");
+        ctepRoIi.setExtension("CTEP");
+        ro.getOtherIdentifiers().add(ctepRoIi);
+        
+        long roId = EjbTestHelper.getResearchOrganizationServiceBean().create(ro);
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        Organization freshOrg = orgServiceBean.getById(orgId);
+        assertEquals(2, freshOrg.getHealthCareFacilities().size());
+        assertEquals(1, freshOrg.getResearchOrganizations().size());
+        
+        freshOrg.setStatusCode(EntityStatus.ACTIVE);
+        orgServiceBean.curate(freshOrg);
+   
+        MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), false);
+        
+        // check that hcf1 is ACTIVE
+        HealthCareFacility hcf1 = EjbTestHelper.getHealthCareFacilityServiceBean().getById(hcfId);
+        assertEquals(RoleStatus.ACTIVE, hcf1.getStatus());
+        // check that hcf2 is still PENDING
+        HealthCareFacility hcf2 = EjbTestHelper.getHealthCareFacilityServiceBean().getById(hcfNotCtepId);
+        assertEquals(RoleStatus.PENDING, hcf2.getStatus());
+        // check that ro1 is ACTIVE
+        ResearchOrganization ro1 = EjbTestHelper.getResearchOrganizationServiceBean().getById(roId);
+        assertEquals(RoleStatus.ACTIVE, ro1.getStatus());
+        
     }
 
     @SuppressWarnings("unchecked")

@@ -95,7 +95,9 @@ import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -116,6 +118,7 @@ import org.hibernate.Session;
 public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<Organization> implements
         OrganizationServiceLocal {
 
+    private static final String UNCHECKED = "unchecked";
     /**
      * {@inheritDoc}
      * @throws JMSException
@@ -160,7 +163,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private void mergeCorrelations(Organization org, Session s) throws JMSException {
         Organization dup = org.getDuplicateOf();
         Set<Correlation> associatedRoles = getAssociatedRoles(org, s);
@@ -178,7 +181,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private GenericStructrualRoleServiceLocal mergeScopedRoleCorrelation(Organization org, Organization dup,
             Correlation correlation) {
         if (correlation instanceof ScopedRole 
@@ -190,7 +193,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private GenericStructrualRoleServiceLocal mergePlayedRoleCorrelation(Organization org, Organization dup,
             Correlation correlation) {
         if (correlation instanceof PlayedRole 
@@ -202,4 +205,21 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings(UNCHECKED)
+    protected void activateCtepRoles(Organization e) throws JMSException {
+        Session  s = PoHibernateUtil.getCurrentSession();
+        for (Correlation x : getAssociatedRoles(e, s)) {
+            if (x.getStatus() == RoleStatus.PENDING && isCtepRole(x)) {
+                x.setStatus(RoleStatus.ACTIVE);
+                GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
+                service.curate(x);
+            }
+        }
+    }
+    
 }

@@ -133,5 +133,14 @@ public class PersonServiceBean extends AbstractCuratableEntityServiceBean<Person
         return l;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void activateCtepRoles(Person e) {
+        //NOOP - currently we do not do anything with 
+        // ctep associated roles for person.
+    }
+
 
 }

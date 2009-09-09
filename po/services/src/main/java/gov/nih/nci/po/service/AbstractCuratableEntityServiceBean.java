@@ -1,8 +1,11 @@
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -45,9 +48,12 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
     public void curate(T e) throws JMSException {
         cascadeStatusChange(e);
         super.curate(e);
+        
+        if (e.getPriorEntityStatus() != e.getStatusCode() && e.getStatusCode() == EntityStatus.ACTIVE) {
+            activateCtepRoles(e);
+        }
     }
 
-    @SuppressWarnings(UNCHECKED)
     private void cascadeStatusChange(T e) throws JMSException {
         if (e.getPriorEntityStatus() != e.getStatusCode()) {
             Session s = PoHibernateUtil.getCurrentSession();
@@ -56,19 +62,45 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
                     cascadeStatusChangeNullified(e, s);
                     break;
                 case INACTIVE:
-                    for (Correlation x : getAssociatedRoles(e, s)) {
-                        if (x.getStatus() == RoleStatus.ACTIVE) {
-                            x.setStatus(RoleStatus.SUSPENDED);
-                            GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
-                            service.curate(x);
-                        }
-                    }
+                    suspendCorrelations(e, s);
                     break;
                 default:
             }
         }
     }
-
+    
+    @SuppressWarnings(UNCHECKED)
+    private void suspendCorrelations(T e, Session s) throws JMSException {
+        for (Correlation x : getAssociatedRoles(e, s)) {
+            if (x.getStatus() == RoleStatus.ACTIVE) {
+                x.setStatus(RoleStatus.SUSPENDED);
+                GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
+                service.curate(x);
+            }
+        }
+    }
+    
+    /**
+     * Activate any pending CTEP roles associated with the given entity.
+     * @param e entity checking associations.
+     * @throws JMSException thrown when updating.
+     */
+    protected abstract void activateCtepRoles(T e) throws JMSException;
+    
+    /**
+     * Check if structural role is from owned by ctep.
+     * @param x structural role.
+     * @return boolean.
+     */
+    protected boolean isCtepRole(Correlation x) {
+        for (Ii ii : x.getOtherIdentifiers()) {
+            if (CtepOrganizationImporter.CTEP_ORG_ROOT.equals(ii.getRoot())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * @param e entity to cascade status changes to roles for when NULLIFIED
      * @param s hibernate session
