@@ -157,7 +157,10 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
                 && loginUser.equalsIgnoreCase(userCreated)
-                && (!(statusCode.equals(StudyStatusCode.DISAPPROVED)))) {
+                && (!(statusCode.equals(StudyStatusCode.DISAPPROVED) 
+                      || statusCode.equals(StudyStatusCode.WITHDRAWN) 
+                      || statusCode.equals(StudyStatusCode.COMPLETE) 
+                      || statusCode.equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)))) {
             return "Update";
         } else  {
             return "";
