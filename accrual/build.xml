@@ -34,6 +34,12 @@
     <property name="lib.dir" value="${target.dir}/lib"/>
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
     
+    <fail unless="database.user" message="Missing required property database.user"/>
+    <fail unless="database.password" message="Missing required property database.password"/>
+    <fail unless="database.url" message="Missing required property database.url"/>
+    <fail unless="hibernate.dialect" message="Missing required property hibernate.dialect"/>
+    <fail unless="jdbc.driver" message="Missing required property database.driver"/>
+
     <available file="${accrual-ear.build.dir}" type="dir" property="accrual-ear.build.present" />
 
     <path id="ivy.classpath">

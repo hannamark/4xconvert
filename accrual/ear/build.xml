@@ -23,7 +23,9 @@
     <property name="ivy.def.file" location="ivy-accrual-ear.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
-
+    <fail unless="csm.db.username" message="Missing required property csm.db.username."/>
+    <fail unless="csm.db.password" message="Missing required property csm.db.password."/>
+    
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
