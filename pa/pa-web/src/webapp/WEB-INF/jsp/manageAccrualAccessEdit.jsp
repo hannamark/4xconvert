@@ -117,7 +117,7 @@
                             <s:select id="studySiteId" headerKey="" headerValue="--Select--" name="access.studySiteId" 
                                     list="#siteValues" onchange="loadSiteRecruitmentStatusDiv();"/>
                         </s:if><s:else>
-                            <s:textfield name="access.siteName" cssStyle="width:200px;float:left" readonly="true" cssClass="readonly"/>
+                            <s:textfield name="access.siteName" cssStyle="width:400px;float:left" readonly="true" cssClass="readonly"/>
                         </s:else>
                       </td>
                   </tr>
