@@ -89,6 +89,7 @@ import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
@@ -336,10 +337,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                 persistedRo.setStatus(RoleStatus.NULLIFIED);
                 LOG.warn("Nullifying research organization role during import, curator must have added new data.");
             } else {
-                // really only type code can change from ctep, but since funding mech is related, we will
-                // clear it out as well
                 persistedRo.setFundingMechanism(ro.getFundingMechanism());
                 persistedRo.setTypeCode(ro.getTypeCode());
+                copyCtepRoleToExistingRole(ro, persistedRo);
                 ctepDataSaved = true;
             }
             this.roService.curate(persistedRo);
@@ -362,6 +362,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             // also, no need to reset the player, because as it is already linked to the persistent object
             // it is set correctly
             HealthCareFacility persistedHcf = org.getHealthCareFacilities().iterator().next();
+            copyCtepRoleToExistingRole(hcf, persistedHcf);
             persistedHcf.setStatus(RoleStatus.ACTIVE);
             this.hcfService.curate(persistedHcf);
         }
@@ -402,6 +403,27 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             change = true;
         }
         org.setStatusCode(EntityStatus.ACTIVE);
+        return change;
+    }
+
+    private boolean copyCtepRoleToExistingRole(AbstractEnhancedOrganizationRole ctepRole,
+            AbstractEnhancedOrganizationRole role) {
+        boolean change = false;
+        if (!StringUtils.equals(role.getName(), ctepRole.getName())) {
+            role.setName(ctepRole.getName());
+            change = true;
+        }
+        // we should really check if the sets of addresses are different, but there's no quick way to do that, so
+        // deferring to PO-1197
+        role.getPostalAddresses().clear();
+        role.getPostalAddresses().addAll(ctepRole.getPostalAddresses());
+        change = true;
+
+        if (!areEmailListsEqual(role.getEmail(), ctepRole.getEmail())) {
+            role.getEmail().clear();
+            role.getEmail().addAll(ctepRole.getEmail());
+            change = true;
+        }
         return change;
     }
 

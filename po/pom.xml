@@ -58,7 +58,7 @@
 
     <ciManagement>
         <system>Hudson</system>
-        <url>http://nci-millersc-1.nci.nih.gov:8090/</url>
+        <url>http://cbvapp-c1005.nci.nih.gov:48080/hudson/</url>
         <notifiers>
             <notifier>
                 <type>mail</type>
