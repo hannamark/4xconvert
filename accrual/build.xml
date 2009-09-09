@@ -4,7 +4,7 @@
 <!-- Master ant script for Accrual application                                  -->
 <!-- ========================================================================== -->
 
-<project name="accrual" default="deploy-notest" basedir=".">
+<project name="accrual" default="deploy-notest" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property file="${basedir}/build.properties"/>
     <property name="resource.dir" value="${basedir}/resources"/>
@@ -26,10 +26,36 @@
     <property name="services.clean.target" value="pre-clean"/>
     <property name="services.build.target" value="jar-notest"/>
 
-    <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
+    <property name="target.dir" location="${software.dir}/target/accrual" />
+    <property name="bda-utils.dir" location="${target.dir}/bda-utils" />
+    <property name="bda-download.dir" location="${resource.dir}/bda-download" />
+
+    <property name="ivy.settings.file" location="${resource.dir}/ivysettings.xml" />
+    <property name="lib.dir" value="${target.dir}/lib"/>
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
     
     <available file="${accrual-ear.build.dir}" type="dir" property="accrual-ear.build.present" />
+
+    <path id="ivy.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <property name="bda-download.file" value="bda-ivy-build.xml"/>
+
+    <ant inheritAll="false" inheritRefs="false"
+        antfile="${bda-download.file}"
+        target="retrieve-bda"
+        dir="${bda-download.dir}"
+        >
+        <property name="bda.version" value="${bda.version}" />
+        <property name="bda-utils.dir" location="${bda-utils.dir}" />
+        <property name="lib.dir" location="${lib.dir}" />
+        <property name="software.dir" location="${software.dir}" />
+    </ant>
+
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
     <!-- ====================================================================== -->
     <!-- Package targets                                                        -->
@@ -66,7 +92,7 @@
         <copy todir="${jboss.deploy.dir}" file="${ear.ear}"/>
     </target>
     
-    <target name="deploy" depends="package, deploy-ear, echoTime" 
+    <target name="deploy" depends="accrual-ear-ear, deploy-ear, echoTime" 
             description="Build test and deploy."/>
             
     <target name="deploy-notest" depends="package-notest-noivy, deploy-ear, echoTime" 
