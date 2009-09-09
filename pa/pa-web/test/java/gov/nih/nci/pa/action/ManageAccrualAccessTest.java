@@ -78,77 +78,97 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.test.util.MockPoServiceLocator;
-import gov.nih.nci.pa.test.util.MockServiceLocator;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.service.MockStudySiteService;
+import gov.nih.nci.service.util.MockStudySiteAccrualAccessService;
 
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts2.ServletActionContext;
-import org.junit.After;
 import org.junit.Before;
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.opensymphony.xwork2.ActionContext;
+import org.junit.Test;
 
 /**
- * @author hreinhart
- *
+ * @author Hugh Reinhart
+ * @since Sep 8, 2009
  */
-public abstract class AbstractPaActionTest {
+public class ManageAccrualAccessTest extends AbstractPaActionTest {
+    Long testCsmUserId = MockStudySiteAccrualAccessService.csmUsers.get(0).getUserId();
+    Long testStudySiteId = MockStudySiteService.list.get(2).getId();
+    String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
+    String testRequestDetails = "test request details";
+    ManageAccrualAccessAction act;
 
-
-    protected StudyProtocolQueryDTO protocolSessionBean;
-
-    /**
-     * Set up services.
-     */
     @Before
-    public void setUpServices() {
-        PaRegistry.getInstance().setServiceLocator(new MockServiceLocator());
-        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+    public void prepare() throws Exception {
+        MockStudySiteAccrualAccessService.list.clear();
+        act = new ManageAccrualAccessAction();
+        act.prepare();
     }
 
-
-    /**
-     * Initialize the mock request.
-     */
-    @Before
-    public void initMockRequest() {
-        protocolSessionBean = new StudyProtocolQueryDTO();
-        protocolSessionBean.setStudyProtocolId(1L);
-
-        HttpSession sess = new MockHttpSession();
-        sess.setAttribute(Constants.TRIAL_SUMMARY, protocolSessionBean);
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(sess);
-        ServletActionContext.setRequest(request);
+    @Test
+    public void listAccrualAccess() throws Exception {
+        // select from menu
+        assertEquals(AbstractListEditAction.AR_LIST, act.execute());
+        assertEquals(0, act.getAccessList().size());
     }
 
-    /**
-     * Clean out the action context to ensure one test does not impact another.
-     */
-    @After
-    public void cleanUpActionContext() {
-        ActionContext.setContext(null);
+    @Test
+    public void addAccrualAccess() throws Exception {
+        listAccrualAccess();
+
+        // click Add button fails because dwf is not eligible for accrual
+        assertFalse(DocumentWorkflowStatusCode.ABSTRACTED.isEligibleForAccrual());
+        protocolSessionBean.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+        assertEquals(AbstractListEditAction.AR_LIST, act.create());
+        assertTrue(act.hasActionErrors());
+        act.clearErrorsAndMessages();
+
+        // click Add button
+        assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.isEligibleForAccrual());
+        protocolSessionBean.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
+        assertEquals(AbstractListEditAction.AR_EDIT, act.create());
+        assertFalse(act.hasActionErrors());
+
+        // fill in data
+        act.getAccess().setCsmUserId(testCsmUserId);
+        act.getAccess().setStudySiteId(testStudySiteId);
+        act.getAccess().setStatus(testStatusCode);
+        act.getAccess().setRequestDetails(testRequestDetails);
+        assertEquals(AbstractListEditAction.AR_LIST, act.add());
+        assertFalse(act.hasActionErrors());
+        assertEquals(1, act.getAccessList().size());
+        StudySiteAccrualAccessDTO dto = act.getAccessList().get(0);
+        assertEquals(testCsmUserId, dto.getCsmUserId());
+        assertEquals(testStudySiteId, dto.getStudySiteId());
+        assertEquals(testStatusCode, dto.getStatus());
+        assertEquals(testRequestDetails, dto.getRequestDetails());
     }
 
-    /**
-     * @return MockHttpServletRequest
-     */
-    protected MockHttpServletRequest getRequest() {
-        return (MockHttpServletRequest) ServletActionContext.getRequest();
+    @Test
+    public void updateAccrualAccess() throws Exception {
+        addAccrualAccess();
+
+        // click Edit button
+        act.selectedRowIdentifier = String.valueOf(act.getAccessList().get(0).getId());
+        assertEquals(AbstractListEditAction.AR_EDIT, act.edit());
+        assertFalse(act.hasActionErrors());
+
+        // fill in data
+        String newStatusCode = ActiveInactiveCode.INACTIVE.getCode();
+        String newRequestDetails = "new r. details";
+        act.getAccess().setStatus(newStatusCode);
+        act.getAccess().setRequestDetails(newRequestDetails);
+        assertEquals(AbstractListEditAction.AR_LIST, act.update());
+        assertFalse(act.hasActionErrors());
+        assertEquals(1, act.getAccessList().size());
+        StudySiteAccrualAccessDTO dto = act.getAccessList().get(0);
+        assertEquals(testCsmUserId, dto.getCsmUserId());
+        assertEquals(testStudySiteId, dto.getStudySiteId());
+        assertEquals(newStatusCode, dto.getStatus());
+        assertEquals(newRequestDetails, dto.getRequestDetails());
     }
 
-    /**
-     * @return MockHttpSession
-     */
-    protected MockHttpSession getSession() {
-        return (MockHttpSession) ServletActionContext.getRequest().getSession();
-    }
 }

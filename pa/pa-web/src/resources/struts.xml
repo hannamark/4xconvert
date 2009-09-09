@@ -256,8 +256,11 @@
             <result name="list">/WEB-INF/jsp/trialHistory.jsp</result>
         </action>
         <action name="manageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="{1}">
-            <result name="edit">/WEB-INF/jsp/manageAccrualAccessedit.jsp</result>
+            <result name="edit">/WEB-INF/jsp/manageAccrualAccessEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
+        </action>
+        <action name="ajaxManageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="load{1}">
+            <result>/WEB-INF/jsp/nodecorate/manageAccrualAccess{1}.jsp</result>
         </action>
         <action name="ajaxGenericContact*" class="gov.nih.nci.pa.action.OrganizationGenericContactAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>

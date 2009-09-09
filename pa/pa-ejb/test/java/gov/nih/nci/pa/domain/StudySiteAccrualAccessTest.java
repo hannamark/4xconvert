@@ -76,79 +76,52 @@
 *
 *
 */
-package gov.nih.nci.pa.action;
 
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.test.util.MockPoServiceLocator;
-import gov.nih.nci.pa.test.util.MockServiceLocator;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
+package gov.nih.nci.pa.domain;
 
-import javax.servlet.http.HttpSession;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.util.TestSchema;
 
-import org.apache.struts2.ServletActionContext;
-import org.junit.After;
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.junit.Before;
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.opensymphony.xwork2.ActionContext;
+import org.junit.Test;
 
 /**
- * @author hreinhart
- *
+ * @author Hugh Reinhart
+ * @since Sep 2, 2009
  */
-public abstract class AbstractPaActionTest {
-
-
-    protected StudyProtocolQueryDTO protocolSessionBean;
-
-    /**
-     * Set up services.
-     */
+public class StudySiteAccrualAccessTest {
     @Before
-    public void setUpServices() {
-        PaRegistry.getInstance().setServiceLocator(new MockServiceLocator());
-        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+    public void setUp() throws Exception {
+        TestSchema.reset1();
+        TestSchema.primeData();
     }
 
-
-    /**
-     * Initialize the mock request.
-     */
-    @Before
-    public void initMockRequest() {
-        protocolSessionBean = new StudyProtocolQueryDTO();
-        protocolSessionBean.setStudyProtocolId(1L);
-
-        HttpSession sess = new MockHttpSession();
-        sess.setAttribute(Constants.TRIAL_SUMMARY, protocolSessionBean);
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(sess);
-        ServletActionContext.setRequest(request);
+    @Test
+    public void create() throws Exception {
+        StudySite ss = new StudySite();
+        ss.setId(TestSchema.studySiteIds.get(0));
+        StudySiteAccrualAccess ssaa = createStudySiteAccrualAccessObj(ss);
+        assertNull(ssaa.getId());
+        TestSchema.addUpdObject(ssaa);
+        assertNotNull(ssaa.getId());
     }
 
-    /**
-     * Clean out the action context to ensure one test does not impact another.
-     */
-    @After
-    public void cleanUpActionContext() {
-        ActionContext.setContext(null);
-    }
-
-    /**
-     * @return MockHttpServletRequest
-     */
-    protected MockHttpServletRequest getRequest() {
-        return (MockHttpServletRequest) ServletActionContext.getRequest();
-    }
-
-    /**
-     * @return MockHttpSession
-     */
-    protected MockHttpSession getSession() {
-        return (MockHttpSession) ServletActionContext.getRequest().getSession();
+    public static StudySiteAccrualAccess createStudySiteAccrualAccessObj(StudySite ss) {
+        StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
+        ssaa.setCsmUserId(1L);
+        ssaa.setRequestDetails("request details");
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setStudySite(ss);
+        ssaa.setUserLastCreated("userLastCreated");
+        ssaa.setDateLastCreated(new Timestamp(new Date().getTime()));
+        ssaa.setUserLastUpdated("userLastUpdated");
+        ssaa.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        return ssaa;
     }
 }

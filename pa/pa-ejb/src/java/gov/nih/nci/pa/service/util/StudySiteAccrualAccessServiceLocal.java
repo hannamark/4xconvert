@@ -76,79 +76,55 @@
 *
 *
 */
-package gov.nih.nci.pa.action;
 
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.test.util.MockPoServiceLocator;
-import gov.nih.nci.pa.test.util.MockServiceLocator;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
+package gov.nih.nci.pa.service.util;
 
-import javax.servlet.http.HttpSession;
+import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
-import org.apache.struts2.ServletActionContext;
-import org.junit.After;
-import org.junit.Before;
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.opensymphony.xwork2.ActionContext;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * @author hreinhart
- *
+ * @author Hugh Reinhart
+ * @since Sep 2, 2009
  */
-public abstract class AbstractPaActionTest {
-
-
-    protected StudyProtocolQueryDTO protocolSessionBean;
-
+public interface StudySiteAccrualAccessServiceLocal {
     /**
-     * Set up services.
+     * @return submitter csm accounts
+     * @throws PAException exception
      */
-    @Before
-    public void setUpServices() {
-        PaRegistry.getInstance().setServiceLocator(new MockServiceLocator());
-        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-    }
-
-
+    Set<User> getSubmitters() throws PAException;
     /**
-     * Initialize the mock request.
+     * @param studyProtocolId protocol id
+     * @return list of treating sites
+     * @throws PAException exception
      */
-    @Before
-    public void initMockRequest() {
-        protocolSessionBean = new StudyProtocolQueryDTO();
-        protocolSessionBean.setStudyProtocolId(1L);
-
-        HttpSession sess = new MockHttpSession();
-        sess.setAttribute(Constants.TRIAL_SUMMARY, protocolSessionBean);
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(sess);
-        ServletActionContext.setRequest(request);
-    }
-
+    Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException;
     /**
-     * Clean out the action context to ensure one test does not impact another.
+     * @param access access
+     * @return access
+     * @throws PAException exception
      */
-    @After
-    public void cleanUpActionContext() {
-        ActionContext.setContext(null);
-    }
-
+    StudySiteAccrualAccessDTO create(StudySiteAccrualAccessDTO access) throws PAException;
     /**
-     * @return MockHttpServletRequest
+     * @param accessId access primary key
+     * @return access
+     * @throws PAException exception
      */
-    protected MockHttpServletRequest getRequest() {
-        return (MockHttpServletRequest) ServletActionContext.getRequest();
-    }
-
+    StudySiteAccrualAccessDTO get(Long accessId) throws PAException;
     /**
-     * @return MockHttpSession
+     * @param access access
+     * @return access
+     * @throws PAException exception
      */
-    protected MockHttpSession getSession() {
-        return (MockHttpSession) ServletActionContext.getRequest().getSession();
-    }
+    StudySiteAccrualAccessDTO update(StudySiteAccrualAccessDTO access) throws PAException;
+    /**
+     * @param studyProtocolId study site pkey
+     * @return list of access
+     * @throws PAException exception
+     */
+    List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException;
 }

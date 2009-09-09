@@ -77,164 +77,133 @@
 *
 */
 
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since Sep 2, 2009
+ * @since Sep 4, 2009
  */
-@Stateless
-@Interceptors(HibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudySiteAccrualAccessBean implements StudySiteAccrualAccessRemote {
+public class StudySiteAccrualAccessDTO extends StudySiteAccrualAccess {
 
-    private SessionContext ejbContext;
+    private static final long serialVersionUID = 4841029286019951978L;
 
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
-    }
+    // keys
+    private Long studySiteId;
 
-    /**
-     * {@inheritDoc}
-     */
-    public StudySiteAccrualAccess create(StudySiteAccrualAccess access) throws PAException {
-        if (!(access.getId() == null)) {
-            throw new PAException("Id is not null when calling StudySiteAccrualAccess.create().");
-        }
-        List<StudySiteAccrualAccess> aList = getAllByStudySite(access.getStudySite().getId(), false);
-        for (StudySiteAccrualAccess a : aList) {
-            if (a.getCsmUserId().equals(access.getCsmUserId())) {
-                access.setId(a.getId());
-                access.setUserLastCreated(a.getUserLastCreated());
-                access.setDateLastCreated(a.getDateLastCreated());
-            }
-        }
-
-        access.setStatusCode(ActiveInactiveCode.ACTIVE);
-        access.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        setAuditValues(access);
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.saveOrUpdate(access);
-        } catch (HibernateException hbe) {
-            throw new PAException(" Hibernate exception in StudySiteAccrualAccess.create().", hbe);
-        }
-        return access;
-    }
+    // for display
+    private String userName;
+    private String email;
+    private String phone;
+    private String siteName;
+    private String siteRecruitmentStatus;
 
     /**
-     * {@inheritDoc}
+     * @return domain object
      */
-    public void delete(Long accessId) throws PAException {
-        Session session = null;
-        StudySiteAccrualAccess access = get(accessId);
-        access.setStatusCode(ActiveInactiveCode.INACTIVE);
-        setAuditValues(access);
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.saveOrUpdate(access);
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.delete().", hbe);
+    public StudySiteAccrualAccess getDomainObject() {
+        StudySiteAccrualAccess bo = new StudySiteAccrualAccess();
+        bo.setCsmUserId(getCsmUserId());
+        bo.setDateLastCreated(getDateLastCreated());
+        bo.setDateLastUpdated(getDateLastUpdated());
+        bo.setId(getId());
+        bo.setRequestDetails(getRequestDetails());
+        bo.setStatusCode(getStatusCode());
+        bo.setStatusDateRangeLow(getStatusDateRangeLow());
+        if (getStudySiteId() != null) {
+            StudySite studySite = new StudySite();
+            studySite.setId(getStudySiteId());
+            bo.setStudySite(studySite);
         }
+        bo.setUserLastCreated(getUserLastCreated());
+        bo.setUserLastUpdated(getUserLastUpdated());
+        return bo;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the studySiteId
      */
-    public StudySiteAccrualAccess get(Long accessId) throws PAException {
-        StudySiteAccrualAccess access = null;
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            access = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, accessId);
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.get().", hbe);
-        }
-        return access;
+    public Long getStudySiteId() {
+        return studySiteId;
     }
-
     /**
-     * {@inheritDoc}
+     * @param studySiteId the studySiteId to set
      */
-    public List<StudySiteAccrualAccess> getByStudySite(Long studySiteId) throws PAException {
-        return getAllByStudySite(studySiteId, true);
+    public void setStudySiteId(Long studySiteId) {
+        this.studySiteId = studySiteId;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the userName
      */
-    public StudySiteAccrualAccess update(StudySiteAccrualAccess access) throws PAException {
-        if (access.getId() == null) {
-            throw new PAException("Id is null when calling StudySiteAccrualAccess.update().");
-        }
-        StudySiteAccrualAccess bo = get(access.getId());
-        bo.setRequestDetails(access.getRequestDetails());
-        setAuditValues(bo);
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.saveOrUpdate(bo);
-        } catch (HibernateException hbe) {
-            throw new PAException(" Hibernate exception in StudySiteAccrualAccess.update().", hbe);
-        }
-        return access;
+    public String getUserName() {
+        return userName;
     }
-
-    @SuppressWarnings("unchecked")
-    private List<StudySiteAccrualAccess> getAllByStudySite(Long studySiteId, boolean activeOnly) throws PAException {
-        Session session = null;
-        List<StudySiteAccrualAccess> queryList = new ArrayList<StudySiteAccrualAccess>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select ssaa "
-                       + "from StudySite ss "
-                       + "join ss.studySiteAccrualAccess ssaa "
-                       + "where ss.id = :studySiteId "
-                       + (activeOnly ? "  and ssaa.statusCode = '" + ActiveInactiveCode.ACTIVE + "' " : "")
-                       + "order by ssaa.id ";
-            query = session.createQuery(hql);
-            query.setParameter("studySiteId", studySiteId);
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.getByStudySite().", hbe);
-        }
-        return queryList;
+    /**
+     * @param userName the userName to set
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
-
-    private void setAuditValues(StudySiteAccrualAccess access) {
-        if (access.getId() == null) {
-            access.setUserLastCreated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
-            access.setDateLastCreated(new Date());
-            access.setUserLastUpdated(null);
-            access.setDateLastUpdated(null);
-        } else {
-            access.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
-            access.setDateLastUpdated(new Date());
-        }
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    /**
+     * @return the phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    /**
+     * @return the siteName
+     */
+    public String getSiteName() {
+        return siteName;
+    }
+    /**
+     * @param siteName the siteName to set
+     */
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
+    }
+    /**
+     * @return the siteRecruitmentStatus
+     */
+    public String getSiteRecruitmentStatus() {
+        return siteRecruitmentStatus;
+    }
+    /**
+     * @param siteRecruitmentStatus the siteRecruitmentStatus to set
+     */
+    public void setSiteRecruitmentStatus(String siteRecruitmentStatus) {
+        this.siteRecruitmentStatus = siteRecruitmentStatus;
+    }
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return getStatusCode().getCode();
+    }
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        setStatusCode(ActiveInactiveCode.getByCode(status));
     }
 }

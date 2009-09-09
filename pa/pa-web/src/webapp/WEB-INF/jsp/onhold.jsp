@@ -63,7 +63,7 @@ function handleEdit(rowId){
         <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Accepted'}">
             <li><a href="milestone.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
         </c:if>    
-        <li><a href="generalTrialDesignquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li> 
+        <li><a href="manageAccrualAccess.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li> 
     </ul>
     </del></div>
 </s:form></div>

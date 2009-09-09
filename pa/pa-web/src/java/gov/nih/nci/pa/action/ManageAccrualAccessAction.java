@@ -78,7 +78,22 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
+import gov.nih.nci.security.authorization.domainobjects.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.struts2.ServletActionContext;
 
 /**
  * @author Hugh Reinhart
@@ -88,13 +103,69 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
 
     private static final long serialVersionUID = -4655853779195760379L;
 
+    private List<StudySiteAccrualAccessDTO> accessList;
+    private StudySiteAccrualAccessDTO access;
+    private Map<Long, User> csmUsers = null;
+    private Map<Long, String> csmUserNames = null;
+    private Map<Long, String> sites = null;
+    private String email;
+    private String phone;
+    private String siteRecruitmentStatus;
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String create() throws PAException {
+        if (!spDTO.getDocumentWorkflowStatusCode().isEligibleForAccrual()) {
+            addActionError("An abstraction must be verified before users can be authorized to submit accruals.");
+            return super.execute();
+        }
+        return super.create();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String add() throws PAException {
+        try {
+            accrualAccessSvc.create(access);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return AR_EDIT;
+        }
+        return super.add();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String update() throws PAException {
+        try {
+            accrualAccessSvc.update(access);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return AR_EDIT;
+        }
+        return super.update();
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void loadEditForm() throws PAException {
-        // TODO Auto-generated method stub
-
+        if (CA_EDIT.equals(getCurrentAction())) {
+            setAccess(accrualAccessSvc.get(Long.valueOf(getSelectedRowIdentifier())));
+            setEmail(getAccess().getEmail());
+            setPhone(getAccess().getPhone());
+            setSiteRecruitmentStatus(getAccess().getSiteRecruitmentStatus());
+        } else {
+            setAccess(new StudySiteAccrualAccessDTO());
+        }
     }
 
     /**
@@ -102,8 +173,176 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     @Override
     protected void loadListForm() throws PAException {
-        // TODO Auto-generated method stub
-
+        setAccessList(accrualAccessSvc.getByStudyProtocol(spDTO.getStudyProtocolId()));
     }
 
+    /**
+     * @return action result
+     * @throws PAException exception
+     */
+    public String loadEmail() throws PAException {
+        Long csmUserId;
+        try {
+            csmUserId = Long.valueOf(ServletActionContext.getRequest().getParameter("csmUserId"));
+        } catch (NumberFormatException e) {
+            csmUserId = null;
+        }
+        User user = getCsmUsers().get(csmUserId);
+        setEmail(user == null ? null : user.getLoginName());
+        return SUCCESS;
+    }
+
+    /**
+     * @return action result
+     * @throws PAException exception
+     */
+    public String loadPhone() throws PAException {
+        Long csmUserId;
+        try {
+            csmUserId = Long.valueOf(ServletActionContext.getRequest().getParameter("csmUserId"));
+        } catch (NumberFormatException e) {
+            csmUserId = null;
+        }
+        User user = getCsmUsers().get(csmUserId);
+        setPhone(user == null ? null : user.getPhoneNumber());
+        return SUCCESS;
+    }
+
+    /**
+     * @return action result
+     * @throws PAException exception
+     */
+    public String loadSiteRecruitmentStatus() throws PAException {
+        Long studySiteId;
+        try {
+            studySiteId = Long.valueOf(ServletActionContext.getRequest().getParameter("studySiteId"));
+        } catch (NumberFormatException e) {
+            studySiteId = null;
+        }
+        StudySiteAccrualStatusDTO iso = accrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(
+                IiConverter.converToStudySiteIi(studySiteId));
+        setSiteRecruitmentStatus(iso == null ? null : CdConverter.convertCdToString(iso.getStatusCode()));
+        return SUCCESS;
+    }
+
+    /**
+     * @return the accessList
+     */
+    public List<StudySiteAccrualAccessDTO> getAccessList() {
+        return accessList;
+    }
+
+    /**
+     * @param accessList the accessList to set
+     */
+    public void setAccessList(List<StudySiteAccrualAccessDTO> accessList) {
+        this.accessList = accessList;
+    }
+
+    /**
+     * @return the access
+     */
+    public StudySiteAccrualAccessDTO getAccess() {
+        return access;
+    }
+
+    /**
+     * @param access the access to set
+     */
+    public void setAccess(StudySiteAccrualAccessDTO access) {
+        this.access = access;
+    }
+
+    /**
+     * @return the sites
+     * @throws PAException exception
+     */
+    public Map<Long, String> getSites() throws PAException {
+        if (sites == null) {
+            sites = accrualAccessSvc.getTreatingSites(spDTO.getStudyProtocolId());
+        }
+        return sites;
+    }
+
+    /**
+     * @return the csmUsers
+     */
+    public Map<Long, User> getCsmUsers() {
+        if (csmUsers == null) {
+            try {
+                csmUsers = new HashMap<Long, User>();
+                csmUserNames = new HashMap<Long, String>();
+                Set<User> uSet = accrualAccessSvc.getSubmitters();
+                for (User u : uSet) {
+                    csmUsers.put(u.getUserId(), u);
+                    csmUserNames.put(u.getUserId(), StudySiteAccrualAccessServiceBean.getFullName(u));
+                }
+                // sort csmUserNames
+                List<Long> mapKeys = new ArrayList<Long>(csmUserNames.keySet());
+                List<String> mapValues = new ArrayList<String>(csmUserNames.values());
+                csmUserNames.clear();
+                TreeSet<String> sortedSet = new TreeSet<String>(mapValues);
+                Object[] sortedArray = sortedSet.toArray();
+                int size = sortedArray.length;
+                for (int i = 0; i < size; i++) {
+                    csmUserNames.put(mapKeys.get(mapValues.indexOf(sortedArray[i])), (String) sortedArray[i]);
+                }
+            } catch (PAException e) {
+                addActionError("Error getting csm users.");
+            }
+        }
+        return csmUsers;
+    }
+
+    /**
+     * @return the csmUserNames
+     */
+    public Map<Long, String> getCsmUserNames() {
+        if (csmUserNames == null) {
+            getCsmUsers();
+        }
+        return csmUserNames;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * @return the siteRecruitmentStatus
+     */
+    public String getSiteRecruitmentStatus() {
+        return siteRecruitmentStatus;
+    }
+
+    /**
+     * @param siteRecruitmentStatus the siteRecruitmentStatus to set
+     */
+    public void setSiteRecruitmentStatus(String siteRecruitmentStatus) {
+        this.siteRecruitmentStatus = siteRecruitmentStatus;
+    }
 }
