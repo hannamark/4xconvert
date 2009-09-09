@@ -9,6 +9,6 @@ accrual.db.password=pauser
 accrual.jdbc.url=jdbc:postgresql://localhost:5432/ctods_pa
 jdbc.driver=org.postgresql.Driver
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-jboss.deploy.directory=C:/jboss/jboss-4.0.5.GA/server/default/deploy
+jboss.deploy.dir=C:/jboss/jboss-4.0.5.GA/server/default/deploy
 # the url for the registry app., used to link to account creation, password reset
 application.url=http://localhost:11299/registry

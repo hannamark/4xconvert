@@ -26,7 +26,7 @@
         <java>pa-ejb-client-3.0-SNAPSHOT.jar</java>
     </module>
     <module>
-        <java>po-services-client-3.0-milestone1.jar</java>
+        <java>po-services-client-3.0-milestone2.jar</java>
     </module>
     <security-role><role-name>Submitter</role-name></security-role>
     <security-role><role-name>AccrualAdmin</role-name></security-role>

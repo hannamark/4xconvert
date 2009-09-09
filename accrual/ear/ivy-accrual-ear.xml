@@ -8,10 +8,10 @@
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           conf="runtime->master"/>
-    <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.1"           conf="runtime->master"/>
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.0-SNAPSHOT"    conf="runtime->master"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone1"  conf="runtime->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           force="true" conf="runtime->master"/>
+    <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.1"           force="true" conf="runtime->master"/>
+    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.0-SNAPSHOT"    force="true" conf="runtime->master"/>
+    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone2"  force="true" conf="runtime->master"/>
 
     <!-- container -->
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="container->master"/>
