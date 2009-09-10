@@ -141,7 +141,7 @@
             </classpath>
         </javac>
     	<copy file="${pa.resourceDir}/quartz_jobs.xml" 
-    	      tofile="${pa-web.build.resourceDir.0}/quartz_jobs.xml"
+    	      todir="${pa-web.build.outputDir}"
     	      overwrite="true">
     	   <filterset>
     	        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
