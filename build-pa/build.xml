@@ -79,6 +79,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="reg-web.base.dir" location="${software.dir}/reg-web"/>
     <property name="viewer-services.base.dir" location="${software.dir}/viewer/services"/>
     <property name="viewer-web.base.dir" location="${software.dir}/viewer/web"/>
+    <property name="accrual-ear.base.dir" location="${software.dir}/accrual"/>
 
     <!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
     <property name="pa-ear.build.file" value="build.xml"/>
@@ -87,10 +88,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="reg-web.build.file" value="build.xml"/>
     <property name="viewer-services.build.file" value="build.xml"/>
     <property name="viewer-web.build.file" value="build.xml"/>
+    <property name="accrual-ear.build.file" value="build.xml"/>
 
     <!-- The target name that should be called from the sub-project build file -->
     <property name="pa-clean.build.target" value="clean"/>
     <property name="viewer-clean.build.target" value="pre-clean"/>
+    <property name="accrual-clean.build.target" value="clean"/>
     <property name="pa-ivy-clean.build.target" value="ivy-clean"/>
     <property name="pa-ear.build.target" value="package"/>
     <property name="pa-ejb.build.target" value="package-notest"/>
@@ -98,9 +101,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="reg-web.build.target" value="package-notest"/>
     <property name="viewer-services.build.target" value="jar-notest"/>
     <property name="viewer-web.build.target" value="war-notest"/>
+    <property name="accrual-ear.build.target" value="build-notest"/>
+    <property name="accrual-ear.deploy.target" value="deploy-ear"/>
+    <property name="accrual.po.jnp.url" value="jnp://${jboss.server.hostname}:${po.port.number}" />
+    <property name="accrual.pa.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
+    <property name="accrual.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
 
     <!-- Distribution Structure properties, used to copy files into the distribution area.
-            Use project.propertie relative dir names becasue they are used by install also-->
+            Use project.properties relative dir names becasue they are used by install also-->
     <property name="dist.exploded.dir" location="${dist.dir}/exploded" />
     <property name="pa-ear.dist.dir" location="${dist.exploded.dir}/${pa-ear.dist.relative.dir}" />
     <property name="pa-ejb.dist.dir" location="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
@@ -148,7 +156,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="grand.rpt.dir" value="${common.dir}/grand"/>
 
     <!-- Hot deploy variables -->
-    <property name="jboss.deploy.dir"  value="${jboss.home}/server/${jboss.server.name}/deploy"/>
+    <property name="jboss.hot.deploy.dir"  value="${jboss.home}/server/${jboss.server.name}/deploy"/>
     <property name="pa-ear.file.name"  value="pa.ear"/>
     <property name="pa-web.src.dir" value="${pa-web.base.dir}/src/webapp"/>
     <property name="reg-web.src.dir" value="${reg-web.base.dir}/src/webapp"/>
@@ -337,6 +345,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 </if>
             </else>
         </if>
+        <property name="jboss.deploy.dir" location="${local.jboss.home}/server/${jboss.server.name}/deploy"/>
       <echoproperties prefix="env"/>
     </target>
 
@@ -360,7 +369,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         clean,
         init,
         build:pa-ear,
-        build:pa-grid
+        build:pa-grid,
+        build:accrual-ear
         "/>
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
@@ -368,13 +378,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
             <property name="exclude.viewer" value="${exclude.viewer}"/>
+            <property name="exclude.accrual" value="${exclude.accrual}"/>
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
-            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
@@ -382,7 +393,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
-            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="po.topic.serverName" value="${po.topic.serverName}"/>
             <property name="po.topic.port" value="${po.topic.port}"/>
             <property name="po.topic.userName" value="${po.topic.userName}"/>
@@ -395,16 +406,37 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
+    <!-- Build accrual.ear -->
+    <target name="build:accrual-ear" depends="init" unless="exclude.accrual">
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
+            dir="${accrual-ear.base.dir}" >
+            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
+            <property name="accrual-ear.build.dir" location="${pa-ear.dist.dir}" />
+            <property name="application.url" location="${application.url}" />
+            <property name="database.url" value="${database.url}" />
+            <property name="database.user" value="${database.user}" />
+            <property name="database.password" value="${database.password}" />
+            <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
+            <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
+            <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
+
+            <target name="${accrual-clean.build.target}"/>
+            <target name="${accrual-ear.build.target}"/>
+        </ant>
+    </target>
+
     <target name="build:pa-web" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
             dir="${pa-web.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
-            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
@@ -412,7 +444,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
-            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="po.topic.serverName" value="${po.topic.serverName}"/>
             <property name="po.topic.port" value="${po.topic.port}"/>
             <property name="po.topic.userName" value="${po.topic.userName}"/>
@@ -431,10 +463,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
-            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
@@ -442,7 +474,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
-            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="po.topic.serverName" value="${po.topic.serverName}"/>
             <property name="po.topic.port" value="${po.topic.port}"/>
             <property name="po.topic.userName" value="${po.topic.userName}"/>
@@ -461,10 +493,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
-            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
             <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
@@ -472,7 +504,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.port.number" value="${po.port.number}"/>
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
-            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="po.topic.serverName" value="${po.topic.serverName}"/>
             <property name="po.topic.port" value="${po.topic.port}"/>
             <property name="po.topic.userName" value="${po.topic.userName}"/>
@@ -488,7 +520,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="build:viewer-services" depends="init" unless="exclude.viewer">
         <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
             dir="${viewer-services.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
 
             <target name="${viewer-clean.build.target}"/>
             <target name="${viewer-services.build.target}"/>
@@ -498,7 +530,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="build:viewer-web" depends="init" unless="exclude.viewer">
         <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
             dir="${viewer-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
 
             <target name="${viewer-clean.build.target}"/>
             <target name="${viewer-web.build.target}"/>
@@ -751,7 +783,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             remoteSshHost="${pagrid.ssh.server.hostname}"
             remoteSshPort="${pagrid.ssh.port}"
             remoteSshKeyfile="${pagrid.ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${install.target}" />
+            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true ${install.target}" />
     </target>
 
     <!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
@@ -827,7 +859,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             remoteSshHost="${pagrid.ssh.server.hostname}"
             remoteSshPort="${pagrid.ssh.port}"
             remoteSshKeyfile="${pagrid.ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${upgrade.target}" />
+            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true ${upgrade.target}" />
     </target>
     <target name="usage" description="Explains how to use this build script">
         <echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
@@ -886,7 +918,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
             target="test-dynamic-analysis"
             dir="${pa-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="db.username" value="${database.user}"/>
@@ -901,7 +933,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
             target="test-dynamic-analysis"
             dir="${reg-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
             <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
@@ -913,7 +945,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             target="test-dynamic-analysis"
             dir="${pa-ejb.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="db.username" value="${database.user}"/>
@@ -939,7 +971,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
             target="test-static-analysis"
             dir="${pa-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
         </ant>
     </target>
 
@@ -947,7 +979,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
             target="test-static-analysis"
             dir="${reg-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
         </ant>
     </target>
 
@@ -955,7 +987,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             target="test-static-analysis"
             dir="${pa-ejb.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/${jboss.server.name}/deploy" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
         </ant>
     </target>
 
@@ -1065,14 +1097,23 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             />
     </target>
 
-    <target name="deploy:hot" depends="build:all" description="Hot deploys the deployment artifact">
-        <copy file="${pa-ear.dist.dir}/${pa-ear.file.name}" todir="${jboss.deploy.dir}" />
+    <target name="deploy:hot:accrual" unless="exclude.accrual">
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
+            dir="${accrual-ear.base.dir}" >
+            <property name="jboss.deploy.dir" location="${jboss.hot.deploy.dir}" />
+
+            <target name="${accrual-ear.deploy.target}"/>
+        </ant>
+    </target>
+        
+    <target name="deploy:hot" depends="build:all, deploy:hot:accrual" description="Hot deploys the deployment artifact">
+        <copy file="${pa-ear.dist.dir}/${pa-ear.file.name}" todir="${jboss.hot.deploy.dir}" />
     </target>
 
     <target name="deploy:hot:jsp" description="Copies all current JSP code to the deployed application for quick update">
         <for param="toDir">
             <path>
-                <dirset dir="${jboss.deploy.dir}/../tmp/deploy" includes="tmp*${pa-ear.file.name}*" />
+                <dirset dir="${jboss.hot.deploy.dir}/../tmp/deploy" includes="tmp*${pa-ear.file.name}*" />
             </path>
             <sequential>
                 <copy todir="@{toDir}/pa-web-exp.war/">

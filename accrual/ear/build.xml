@@ -22,9 +22,6 @@
     <property name="ivy.def.file" location="ivy-accrual-ear.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
-    <fail unless="csm.db.username" message="Missing required property csm.db.username."/>
-    <fail unless="csm.db.password" message="Missing required property csm.db.password."/>
-    
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
@@ -74,15 +71,19 @@
         <copy todir="${ear.build.dir}/${ear.build.finalName}">
             <fileset dir="${lib.dir}/ear/runtime"/>
         </copy>
+
+        <fail unless="database.url" message="Missing required property database.url."/>
+        <fail unless="database.user" message="Missing required property database.user."/>
+        <fail unless="database.password" message="Missing required property database.password."/>
         <copy todir="${ear.build.dir}/${ear.build.finalName}">
             <filterset>
                 <filter token="jdbc.driver" value="${jdbc.driver}"/>
-                <filter token="csm.jdbc.url" value="${csm.jdbc.url}"/>
-                <filter token="csm.db.username" value="${csm.db.username}"/>
-                <filter token="csm.db.password" value="${csm.db.password}"/>
-                <filter token="accrual.jdbc.url" value="${accrual.jdbc.url}"/>
-                <filter token="accrual.db.username" value="${accrual.db.username}"/>
-                <filter token="accrual.db.password" value="${accrual.db.password}"/>
+                <filter token="csm.jdbc.url" value="${database.url}"/>
+                <filter token="csm.db.username" value="${database.user}"/>
+                <filter token="csm.db.password" value="${database.password}"/>
+                <filter token="accrual.jdbc.url" value="${database.url}"/>
+                <filter token="accrual.db.username" value="${database.user}"/>
+                <filter token="accrual.db.password" value="${database.password}"/>
             </filterset>
             <fileset dir="${ear.resource.dir}" 
                      includes="**/*" 
