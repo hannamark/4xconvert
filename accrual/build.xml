@@ -7,6 +7,7 @@
 <project name="accrual" default="deploy-notest" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property file="${basedir}/build.properties"/>
+    <property file="${basedir}/../build-pa/project.properties" />
     <property name="common.dir" value="${basedir}/../build-pa/common"/>
     <property name="software.dir" value="${basedir}/.."/>
 
