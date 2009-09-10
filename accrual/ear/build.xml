@@ -75,6 +75,7 @@
         <fail unless="database.url" message="Missing required property database.url."/>
         <fail unless="database.user" message="Missing required property database.user."/>
         <fail unless="database.password" message="Missing required property database.password."/>
+        <fail unless="jdbc.driver" message="Missing required property jdbc.driver."/>
         <copy todir="${ear.build.dir}/${ear.build.finalName}">
             <filterset>
                 <filter token="jdbc.driver" value="${jdbc.driver}"/>
