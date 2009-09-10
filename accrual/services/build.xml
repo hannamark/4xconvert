@@ -7,6 +7,7 @@
 <project name="accrual.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
+    <property name="common.dir" value="${basedir}/../../build-pa/common"/>
     <property name="resource.dir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
     <property name="checkstyleFile" value="${resource.dir}/accrualCheckstyle.xml"/>
@@ -24,7 +25,6 @@
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
     <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
 
-    <property name="common.dir" value="${resource.dir}"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />

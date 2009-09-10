@@ -7,7 +7,7 @@
 <project name="accrual" default="deploy-notest" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property file="${basedir}/build.properties"/>
-    <property name="resource.dir" value="${basedir}/resources"/>
+    <property name="common.dir" value="${basedir}/../build-pa/common"/>
     <property name="software.dir" value="${basedir}/.."/>
 
     <property name="ear.dir" value="${basedir}/ear"/>
@@ -28,12 +28,12 @@
 
     <property name="target.dir" location="${software.dir}/target/accrual" />
     <property name="bda-utils.dir" location="${target.dir}/bda-utils" />
-    <property name="bda-download.dir" location="${resource.dir}/bda-download" />
+    <property name="bda-download.dir" location="${common.dir}/bda-download" />
 
-    <property name="ivy.settings.file" location="${resource.dir}/ivysettings.xml" />
+    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="lib.dir" value="${target.dir}/lib"/>
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-    
+
     <fail unless="database.user" message="Missing required property database.user"/>
     <fail unless="database.password" message="Missing required property database.password"/>
     <fail unless="database.url" message="Missing required property database.url"/>
@@ -113,7 +113,7 @@
         <mkdir dir="${local.repo.dir}"/>
         <mkdir dir="${lib.dir}"/>
         <copy todir="${lib.dir}" overwrite="false">
-          <fileset dir="${resource.dir}/bda-download">
+          <fileset dir="${common.dir}/bda-download">
             <include name="*.jar"/>
           </fileset>
         </copy>

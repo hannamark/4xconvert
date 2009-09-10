@@ -7,7 +7,7 @@
 <project name="accrual.ear" default="ear" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
-    <property name="resource.dir" value="${basedir}/../resources"/>
+    <property name="common.dir" value="${basedir}/../../build-pa/common"/>
 
     <property name="ear.resource.dir" value="${software.dir}/accrual/ear/src/resources"/>
     <property name="ear.build.dir" value="${software.dir}/accrual/ear/target"/>
@@ -16,7 +16,6 @@
     <property name="web.package" value="${software.dir}/accrual/web/target/accrual.war"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
-    <property name="common.dir" value="${resource.dir}"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
