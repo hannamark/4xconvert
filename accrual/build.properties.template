@@ -1,3 +1,5 @@
+# notask=-notest-noivy
+# notask=-notest
 jboss.server.hostname=localhost
 jboss.server.jndi.port=11299
 po.port.number=21499

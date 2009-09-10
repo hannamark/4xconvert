@@ -20,12 +20,12 @@
     <property name="web.war" value="${web.dir}/target/accrual.war"/>
     <property name="web.build.file" value="build.xml"/>
     <property name="web.clean.target" value="pre-clean"/>
-    <property name="web.build.target" value="war-notest"/>
+    <property name="web.build.target" value="war"/>
     <property name="services.dir" value="${basedir}/services"/>
     <property name="services.jar" value="${services.dir}/target/accrual-services.jar"/>
     <property name="services.build.file" value="build.xml"/>
     <property name="services.clean.target" value="pre-clean"/>
-    <property name="services.build.target" value="jar-notest"/>
+    <property name="services.build.target" value="jar"/>
 
     <property name="target.dir" location="${software.dir}/target/accrual" />
     <property name="bda-utils.dir" location="${target.dir}/bda-utils" />
@@ -59,33 +59,29 @@
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
     <!-- ====================================================================== -->
-    <!-- Package targets                                                        -->
-    <!-- ====================================================================== -->
-
-    <target name="package">
-        <ant target="jar" dir="${services.dir}"/>
-        <ant target="war" dir="${web.dir}"/>
-        <ant target="ear" dir="${ear.dir}"/>
-    </target>
-
-    <target name="package-notest-noivy">
-        <ant target="jar-notest-noivy" dir="${services.dir}"/>
-        <ant target="war-notest-noivy" dir="${web.dir}"/>
-        <ant target="ear" dir="${ear.dir}"/>
-    </target>
-
-    <!-- ====================================================================== -->
     <!-- Deploy targets                                                         -->
     <!-- ====================================================================== -->
-
+    
+    <target name="set-full">
+        <property name="notask" value="" />
+    </target>
+    
+    <target name="set-notask">
+        <property name="notask" value="-notest" />
+    </target>
+    
     <target name="echoTime">
         <tstamp>
             <format property="now" pattern="yyyy MMMM dd HH:mm:ss" locale="en"/>
         </tstamp>
         <echo message="Build completed at ${now}" />
     </target>
+    
+    <target name="accrual-dist" depends="accrual-ear-ear" if="accrual-ear.build.present">
+        <copy todir="${accrual-ear.build.dir}" file="${ear.ear}"/>
+    </target>
 
-    <target name="deploy-ear" depends="build-notest">
+    <target name="deploy-ear" depends="accrual-dist">
         <available file="${jboss.deploy.dir}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.dir} not available."/>
         <available file="${ear.ear}" property="earEarPresent"/>
@@ -93,10 +89,13 @@
         <copy todir="${jboss.deploy.dir}" file="${ear.ear}"/>
     </target>
     
-    <target name="deploy" depends="accrual-ear-ear, deploy-ear, echoTime" 
+    <target name="build-notest" description="Build the ear, jar and war" depends="set-notask, accrual-dist">
+    </target>
+    
+    <target name="deploy" depends="set-full, deploy-ear, echoTime" 
             description="Build test and deploy."/>
             
-    <target name="deploy-notest" depends="package-notest-noivy, deploy-ear, echoTime" 
+    <target name="deploy-notest" depends="set-notask, deploy-ear, echoTime" 
             description="Build and deploy without testing or getting dependencies.">
     </target>
 
@@ -146,7 +145,7 @@
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
 
-            <target name="${services.build.target}"/>
+            <target name="${services.build.target}${notask}"/>
         </ant>
     </target>
     
@@ -156,7 +155,7 @@
             <property name="application.url" location="${application.url}" />
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
 
-            <target name="${web.build.target}"/>
+            <target name="${web.build.target}${notask}"/>
         </ant>
     </target>
     
@@ -178,13 +177,6 @@
 
             <target name="${ear.build.target}"/>
         </ant>
-    </target>
-    
-    <target name="accrual-dist" depends="accrual-ear-ear" if="accrual-ear.build.present">
-        <copy todir="${accrual-ear.build.dir}" file="${ear.ear}"/>
-    </target>
-    
-    <target name="build-notest" description="Build the ear, jar and war" depends="accrual-dist">
     </target>
 
     <!-- ====================================================================== -->
