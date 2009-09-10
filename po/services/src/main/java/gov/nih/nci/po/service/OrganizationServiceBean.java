@@ -188,6 +188,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
             ScopedRole sr = (ScopedRole) correlation;
             sr.setScoper(dup);
+            activateRoleStatusByDupStatus(dup, correlation);
             return getServiceForRole(correlation.getClass());
         }
         return null;
@@ -201,9 +202,18 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 && ((PlayedRole) correlation).getPlayer().getId().equals(org.getId())) {
             PlayedRole pr = (PlayedRole) correlation;
             pr.setPlayer(dup);
+            activateRoleStatusByDupStatus(dup, correlation);
             return getServiceForRole(correlation.getClass());
         }
         return null;
+    }
+    
+    private void activateRoleStatusByDupStatus(Organization dup, Correlation correlation) {
+        if (dup.getStatusCode() == EntityStatus.ACTIVE 
+                && correlation.getStatus() == RoleStatus.PENDING 
+                && isCtepRole(correlation)) {
+            correlation.setStatus(RoleStatus.ACTIVE);
+        }
     }
 
     /**

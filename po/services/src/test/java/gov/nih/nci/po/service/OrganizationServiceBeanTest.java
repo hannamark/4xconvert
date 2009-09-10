@@ -739,4 +739,54 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
     
+    @Test
+    public void curateToNullifiedWithDuplicateOfAndPointCtepRolesToDuplicateActiveOrg() throws EntityValidationException, JMSException {
+        Organization o = getBasicOrganization();
+        Organization o2 = getBasicOrganization();
+        long id = createOrganization(o);
+        long id2 = createOrganization(o2);
+        o = getOrgServiceBean().getById(id);
+        // remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+        
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setPlayer(o);
+        hcf.setName("HCF Name");
+        Ii ctepIi = new Ii();
+        ctepIi.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepIi.setIdentifierName("name");
+        ctepIi.setExtension("CTEP");
+        hcf.getOtherIdentifiers().add(ctepIi);
+        HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
+        long hcfId = healthCareFacilityServiceBean.create(hcf);
+        hcf = healthCareFacilityServiceBean.getById(hcfId);
+        assertEquals(hcf.getStatus(), RoleStatus.PENDING);
+        
+        // switch o2 status to active
+        o2.setStatusCode(EntityStatus.ACTIVE);
+        getOrgServiceBean().curate(o2);
+     
+        o.setStatusCode(EntityStatus.NULLIFIED);
+        o2 = getOrgServiceBean().getById(id2);
+        o.setDuplicateOf(o2);
+        getOrgServiceBean().curate(o);
+               
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+
+        hcf = healthCareFacilityServiceBean.getById(hcfId);
+        assertEquals(o2.getId(), hcf.getPlayer().getId());
+        assertEquals(o2.getStatusCode(), EntityStatus.ACTIVE);
+        assertEquals(hcf.getStatus(), RoleStatus.ACTIVE);
+    }
+    
 }
