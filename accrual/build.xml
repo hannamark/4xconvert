@@ -35,12 +35,6 @@
     <property name="lib.dir" value="${target.dir}/lib"/>
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
-    <fail unless="database.user" message="Missing required property database.user"/>
-    <fail unless="database.password" message="Missing required property database.password"/>
-    <fail unless="database.url" message="Missing required property database.url"/>
-    <fail unless="hibernate.dialect" message="Missing required property hibernate.dialect"/>
-    <fail unless="jdbc.driver" message="Missing required property database.driver"/>
-
     <available file="${accrual-ear.build.dir}" type="dir" property="accrual-ear.build.present" />
 
     <path id="ivy.classpath">
@@ -146,6 +140,7 @@
     <!-- ====================================================================== -->
     
     <target name="accrual-services-jar">
+        <fail unless="hibernate.dialect" message="Missing required property hibernate.dialect"/>
         <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
             dir="${services.dir}" >
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
@@ -166,6 +161,11 @@
     </target>
     
     <target name="accrual-ear-ear" depends="accrual-web-war">
+        <fail unless="database.user" message="Missing required property database.user"/>
+        <fail unless="database.password" message="Missing required property database.password"/>
+        <fail unless="database.url" message="Missing required property database.url"/>
+        <fail unless="jdbc.driver" message="Missing required property database.driver"/>
+
         <ant inheritAll="false" inheritRefs="false" antfile="${ear.build.file}"
             dir="${ear.dir}" >
             <property name="jdbc.driver" value="${jdbc.driver}" />
