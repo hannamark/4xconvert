@@ -29,5 +29,4 @@
         <java>po-services-client-3.0-milestone2.jar</java>
     </module>
     <security-role><role-name>Submitter</role-name></security-role>
-    <security-role><role-name>AccrualAdmin</role-name></security-role>
 </application>

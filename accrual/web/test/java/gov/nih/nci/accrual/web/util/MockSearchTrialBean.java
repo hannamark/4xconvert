@@ -159,4 +159,12 @@ public class MockSearchTrialBean implements SearchTrialService {
         }
         return result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Ii> getAuthorizedTrials(St user) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

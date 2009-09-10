@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -136,6 +137,13 @@ public class SearchStudySiteBean implements SearchStudySiteService {
                     "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Ii> getAuthorizedSites(St user) {
+        return null;
     }
 
 }

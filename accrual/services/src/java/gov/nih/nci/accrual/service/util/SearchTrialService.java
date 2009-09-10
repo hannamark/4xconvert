@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -105,4 +106,9 @@ public interface SearchTrialService {
      * @throws RemoteException on error
      */
     SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException;
+    /**
+     * @param user user
+     * @return list of StudyProtocol Ii's for which the user is authorized to submit accruals
+     */
+    List<Ii> getAuthorizedTrials(St user);
 }

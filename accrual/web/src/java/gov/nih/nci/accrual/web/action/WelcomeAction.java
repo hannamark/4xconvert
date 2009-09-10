@@ -93,14 +93,9 @@ public class WelcomeAction extends AbstractAccrualAction {
     @Override
     public String execute() {
         String actionResult = "logout";
-        if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_ADMINISTRATOR)) {
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_ADMINISTRATOR);
-            actionResult =  "adminWelcome";
-        } else if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_PUBLIC)) {
+        if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_PUBLIC)) {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_PUBLIC);
-            //actionResult = "publicWelcome";
             actionResult = "show_Disclaimer_Page";
         }
         return actionResult;

@@ -92,7 +92,6 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
 public class WelcomeActionTest extends AbstractAccrualActionTest {
 
     private final static String AR_LOGOUT = "logout";
-    private final static String AR_ACCRUAL_ADMIN = "adminWelcome";
     //private static String AR_SUBMITTING_SITES = "publicWelcome";
     private final static String AR_SUBMITTING_SITES = "show_Disclaimer_Page";
 
@@ -101,13 +100,6 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() {
         action = new WelcomeAction();
-    }
-
-    @Test
-    public void administratorRoleTest() {
-        ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_ADMINISTRATOR, true);
-        assertEquals(AR_ACCRUAL_ADMIN, action.execute());
-        assertEquals(AccrualConstants.ROLE_ADMINISTRATOR, ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
     }
 
     @Test

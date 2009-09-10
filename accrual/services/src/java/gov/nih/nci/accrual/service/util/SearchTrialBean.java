@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -193,6 +194,13 @@ public class SearchTrialBean implements SearchTrialService {
                     "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Ii> getAuthorizedTrials(St user) {
+        return null;
     }
 
     private String generateStudyProtocolQuery(SearchTrialCriteriaDto criteria) throws RemoteException {

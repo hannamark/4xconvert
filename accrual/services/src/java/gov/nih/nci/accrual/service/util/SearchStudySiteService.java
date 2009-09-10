@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -98,4 +99,10 @@ public interface SearchStudySiteService {
      * @throws RemoteException exception
      */
     List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException;
+
+    /**
+     * @param user user
+     * @return list of StudySite Ii's for which the user is authorized to submit accruals
+     */
+    List<Ii> getAuthorizedSites(St user);
 }

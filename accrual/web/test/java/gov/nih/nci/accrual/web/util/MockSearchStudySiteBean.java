@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.util;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -128,5 +129,13 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
      */
     public List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException {
         return dtos.get(studyProtocolIi);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Ii> getAuthorizedSites(St user) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

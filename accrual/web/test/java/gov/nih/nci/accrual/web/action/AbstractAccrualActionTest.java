@@ -133,7 +133,7 @@ public class AbstractAccrualActionTest {
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
 
-        setRole(AccrualConstants.ROLE_ADMINISTRATOR);
+        setRole(AccrualConstants.ROLE_PUBLIC);
     }
 
     /**

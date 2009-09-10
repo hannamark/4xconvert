@@ -58,17 +58,12 @@
     </package>
     <package name="public" namespace="/public" extends="default">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
-        	<result name="show_Disclaimer_Page" type="redirectAction">
-        		<param name="namespace">../protected</param>
+            <result name="show_Disclaimer_Page" type="redirectAction">
+                <param name="namespace">../protected</param>
                 <param name="actionName">disClaimerAction</param>
-        	</result>
-           
+            </result>
+
         </action>
-        <action name="sample*" class="gov.nih.nci.accrual.web.action.SampleAction"  method="{1}">
-            <result>/WEB-INF/jsp/sample.jsp</result> 
-        </action>
-        
-        
     </package>
         
     <package name="protected" namespace="/protected" extends="public">
