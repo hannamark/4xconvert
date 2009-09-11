@@ -196,6 +196,43 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         rs.close();
         assertEquals(count0 + 3, count1);
     }
+    
+    @Test(expected = javax.ejb.EJBException.class)
+    public void updateWithNoIdentifier() throws Exception {
+        if (correlationId == null) {
+            createMinimal();
+        }
+        
+        DTO dto = getCorrelationService().getCorrelation(correlationId);
+        dto.getIdentifier().getItem().clear();
+        getCorrelationService().updateCorrelation(dto);
+    }
+     
+    @Test(expected = javax.ejb.EJBException.class)
+    public void updateWithWrongIdentifier() throws Exception {
+        if (correlationId == null) {
+            createMinimal();
+        }
+        
+        DTO dto = getCorrelationService().getCorrelation(correlationId);
+        dto.getIdentifier().getItem().clear();
+        Ii wrongId = new Ii();
+        wrongId.setExtension("999");
+        dto.getIdentifier().getItem().add(wrongId);
+        getCorrelationService().updateCorrelation(dto);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateStatusWithWrongIdentifier() throws Exception {
+        Cd cd = new Cd();
+        cd.setCode("suspended"); // maps to SUSPENDED
+        
+        Ii wrongId = new Ii();
+        wrongId.setExtension("999");
+        
+        getCorrelationService().updateCorrelationStatus(wrongId, cd);
+    }
+    
 
     @Test
     public void updateStatus() throws Exception {

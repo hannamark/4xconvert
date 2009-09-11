@@ -185,21 +185,24 @@ public class PatientCorrelationServiceBean
     public void updateCorrelation(PatientDTO proposedState) throws EntityValidationException {
         
         Long pId = IiDsetConverter.convertToId(proposedState.getIdentifier());
-        // put back the player
-        proposedState.setPlayerIdentifier(null);
-        Patient target = (Patient) PoXsnapshotHelper.createModel(proposedState);
-        target.setId(pId);
-        
-        if (CdConverter.convertToRoleStatus(proposedState.getStatus()) != target.getStatus()) {
-            throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+        if (pId != null) {
+            // put back the player
+            proposedState.setPlayerIdentifier(null);
+            Patient target = (Patient) PoXsnapshotHelper.createModel(proposedState);
+            target.setId(pId);
+            
+            if (CdConverter.convertToRoleStatus(proposedState.getStatus()) != target.getStatus()) {
+                throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+            }
+            
+            try {
+                getLocalService().curate(target);
+            } catch (JMSException e) {
+                throw new IllegalArgumentException(e);
+            }
+        } else {
+            throw new IllegalArgumentException("Correlation could not be found with provided identifier.");
         }
-        
-        try {
-            getLocalService().curate(target);
-        } catch (JMSException e) {
-            throw new IllegalArgumentException(e);
-        }
-        
     }
 
     /**
@@ -209,12 +212,20 @@ public class PatientCorrelationServiceBean
     @Override
     public void updateCorrelationStatus(Ii targetPat, Cd statusCode) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(targetPat);
-        Patient target = getLocalService().getById(pId);
-        target.setStatus(CdConverter.convertToRoleStatus(statusCode));
-        try {
-            getLocalService().curate(target);
-        } catch (JMSException e) {
-            throw new IllegalArgumentException(e);
+        if (pId != null) {
+            Patient target = getLocalService().getById(pId);
+            if (target != null) {
+                target.setStatus(CdConverter.convertToRoleStatus(statusCode));
+                try {
+                    getLocalService().curate(target);
+                } catch (JMSException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            } else {
+                throw new IllegalArgumentException("Correlation could not be found with provided identifier.");
+            }
+        } else {
+            throw new IllegalArgumentException("Correlation to be updated did not contain an identifier.");
         }
     }
     
@@ -224,7 +235,9 @@ public class PatientCorrelationServiceBean
     @Override
     public PatientDTO getCorrelation(Ii id) {
         PatientDTO patDto = super.getCorrelation(id);
-        patDto.setPlayerIdentifier(createFakePersonIi(id));
+        if (patDto != null) {
+            patDto.setPlayerIdentifier(createFakePersonIi(id));
+        }
         return patDto;
     }
     

@@ -276,14 +276,22 @@ public abstract class AbstractCorrelationServiceBean
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateCorrelation(DTO proposedState) throws EntityValidationException {
         Long pId = IiDsetConverter.convertToId(proposedState.getIdentifier());
-        T target = getLocalService().getById(pId);
-        CR cr = newCR(target);
-        copyIntoAbstractModel(proposedState, cr);
-        cr.setId(null);
-        if (cr.getStatus() != target.getStatus()) {
-            throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+        if (pId != null) {
+            T target = getLocalService().getById(pId);
+            if (target != null) {
+                CR cr = newCR(target);
+                copyIntoAbstractModel(proposedState, cr);
+                cr.setId(null);
+                if (cr.getStatus() != target.getStatus()) {
+                    throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+                }
+                getLocalCRService().create(cr);
+            } else {
+                throw new IllegalArgumentException("Correlation could not be found with provided identifier.");
+            }
+        } else {
+            throw new IllegalArgumentException("Correlation to be updated did not contain an identifier.");
         }
-        getLocalCRService().create(cr);
     }
 
     /**
@@ -294,14 +302,23 @@ public abstract class AbstractCorrelationServiceBean
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateCorrelationStatus(Ii targetHCP, Cd statusCode) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(targetHCP);
-        T target = getLocalService().getById(pId);
-        // lazy way to clone with stripped hibernate IDs.
-        DTO tmp = (DTO) PoXsnapshotHelper.createSnapshot(target);
-        CR cr = newCR(target);
-        copyIntoAbstractModel(tmp, cr);
-        cr.setId(null);
-        cr.setStatus(CdConverter.convertToRoleStatus(statusCode));
-        getLocalCRService().create(cr);
+        if (pId != null) {
+            T target = getLocalService().getById(pId);
+            if (target != null) {
+
+                // lazy way to clone with stripped hibernate IDs.
+                DTO tmp = (DTO) PoXsnapshotHelper.createSnapshot(target);
+                CR cr = newCR(target);
+                copyIntoAbstractModel(tmp, cr);
+                cr.setId(null);
+                cr.setStatus(CdConverter.convertToRoleStatus(statusCode));
+                getLocalCRService().create(cr);
+            } else {
+                throw new IllegalArgumentException("Correlation could not be found with provided identifier.");
+            }
+        } else {
+            throw new IllegalArgumentException("Correlation to be updated did not contain an identifier.");
+        }    
     }
 
     abstract CR newCR(T t);

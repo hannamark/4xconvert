@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
@@ -208,5 +209,17 @@ public class PatientCorrelationServiceTest
     public void getByPlayerIds() throws Exception {
         //NOOP
    }
+     
+   @Test(expected = javax.ejb.EJBException.class)
+   @Override
+   public void updateStatusWithWrongIdentifier() throws Exception {
+        Cd cd = new Cd();
+        cd.setCode("suspended"); // maps to SUSPENDED
+        
+        Ii wrongId = new Ii();
+        wrongId.setExtension("999");
+        
+        getCorrelationService().updateCorrelationStatus(wrongId, cd);
+   } 
     
 }

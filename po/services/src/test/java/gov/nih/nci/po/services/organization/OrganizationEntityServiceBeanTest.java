@@ -30,6 +30,7 @@ import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.ISOUtils;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
@@ -353,6 +354,43 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         OrganizationCR cr = l.get(0);
         assertEquals(cr.getStatusCode(), EntityStatus.INACTIVE);
     }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateWithNoIdentifier() throws Exception {
+        long id = super.createOrganization();
+        OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
+        
+        dto.setIdentifier(null);
+        remote.updateOrganization(dto);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateWithWrongIdentifier() throws Exception {
+        long id = super.createOrganization();
+        OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
+        
+        Ii wrongId = new Ii();
+        wrongId.setRoot(IdConverter.ORG_ROOT);
+        wrongId.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        wrongId.setExtension("999");
+        dto.setIdentifier(wrongId);
+        remote.updateOrganization(dto);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateStatusWithWrongIdentifier() throws Exception {
+
+        Cd cd = new Cd();
+        cd.setCode("suspended"); // maps to SUSPENDED
+        
+        Ii wrongId = new Ii();
+        wrongId.setRoot(IdConverter.ORG_ROOT);
+        wrongId.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        wrongId.setExtension("999");
+        
+        remote.updateOrganizationStatus(wrongId, cd);
+    }
+    
     public static EnOn convertToEnOn(String value) {
         EnOn iso = new EnOn();
         if (value == null) {

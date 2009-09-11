@@ -526,16 +526,40 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         results = remote.search(sc, page);
         assertEquals(page.getLimit(), results.size());
     }
-    /*
-    public Ii getOrgId() throws Exception {
-        if (orgId == null) {
-            OrganizationEntityServiceTest test = new OrganizationEntityServiceTest();
-            test.init();
-            test.createMinimal();
-            orgId = test.getOrgId();
-            assertNotNull(orgId);
-        }
-        return orgId;
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateWithNoIdentifier() throws Exception {
+        long id = super.createPerson();
+        PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
+        
+        dto.setIdentifier(null);
+        remote.updatePerson(dto);
     }
-    */
+     
+    @Test(expected = IllegalArgumentException.class)
+    public void updateWithWrongIdentifier() throws Exception {
+        long id = super.createPerson();
+        PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
+        
+        Ii wrongId = new Ii();
+        wrongId.setRoot(IdConverter.PERSON_ROOT);
+        wrongId.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
+        wrongId.setExtension("999");
+        dto.setIdentifier(wrongId);
+        remote.updatePerson(dto);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateStatusWithWrongIdentifier() throws Exception {
+
+        Cd cd = new Cd();
+        cd.setCode("suspended"); // maps to SUSPENDED
+        
+        Ii wrongId = new Ii();
+        wrongId.setRoot(IdConverter.PERSON_ROOT);
+        wrongId.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
+        wrongId.setExtension("999");
+        
+        remote.updatePersonStatus(wrongId, cd);
+    }
 }

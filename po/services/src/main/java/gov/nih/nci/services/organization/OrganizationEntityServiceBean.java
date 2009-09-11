@@ -244,16 +244,26 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(proposedState.getIdentifier());
-        Organization target = orgService.getById(oId);
-        OrganizationCR cr = new OrganizationCR(target);
-        proposedState.setIdentifier(null);
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOrganization.class);
-        cr.setId(null);
-        if (cr.getStatusCode() != target.getStatusCode()) {
-            throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
+        if (oId != null) {
+            Organization target = orgService.getById(oId);
+            if (target != null) {
+                OrganizationCR cr = new OrganizationCR(target);
+                proposedState.setIdentifier(null);
+                PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOrganization.class);
+                cr.setId(null);
+                if (cr.getStatusCode() != target.getStatusCode()) {
+                    throw new IllegalArgumentException(
+                            "use updateOrganizationStatus() to update the statusCode property");
+                }
+                cr.setStatusCode(target.getStatusCode());
+                orgCRService.create(cr);
+            } else {
+                throw new IllegalArgumentException("Organization could not be found with provided identifier.");
+            }
+        } else {
+            throw new IllegalArgumentException("Organization to be updated did not contain an identifier.");
         }
-        cr.setStatusCode(target.getStatusCode());
-        orgCRService.create(cr);
+                
     }
 
     /**
@@ -262,14 +272,22 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(targetOrg);
-        Organization target = orgService.getById(oId);
-        // lazy way to clone with stripped hibernate IDs.
-        OrganizationDTO tmp = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(target);
-        OrganizationCR cr = new OrganizationCR(target);
-        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractOrganization.class);
-        cr.setId(null);
-        cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
-        orgCRService.create(cr);
+        if (oId != null) {
+            Organization target = orgService.getById(oId);
+            if (target != null) {
+                // lazy way to clone with stripped hibernate IDs.
+                OrganizationDTO tmp = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(target);
+                OrganizationCR cr = new OrganizationCR(target);
+                PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractOrganization.class);
+                cr.setId(null);
+                cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
+                orgCRService.create(cr);
+            } else {
+                throw new IllegalArgumentException("Organization could not be found with provided identifier.");
+            }
+        } else {
+            throw new IllegalArgumentException("Organization to be updated did not contain an identifier.");
+        }    
     }
 
 }

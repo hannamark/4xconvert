@@ -320,47 +320,64 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             updatePatient(proposedState);
         } else {
             Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
-            Person target = perService.getById(pId);
-            PersonCR cr = new PersonCR(target);
-            proposedState.setIdentifier(null);
-            PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPerson.class);
-            cr.setId(null);
-            if (cr.getStatusCode() != target.getStatusCode()) {
-                throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
+            if (pId != null) {
+                Person target = perService.getById(pId);
+                if (target != null) {
+                    PersonCR cr = new PersonCR(target);
+                    proposedState.setIdentifier(null);
+                    PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPerson.class);
+                    cr.setId(null);
+                    if (cr.getStatusCode() != target.getStatusCode()) {
+                        throw new IllegalArgumentException(
+                                "use updateOrganizationStatus() to update the statusCode property");
+                    }
+                    perCRService.create(cr);
+                } else {
+                    throw new IllegalArgumentException("Person could not be found with provided identifier.");
+                }
+            } else {
+                throw new IllegalArgumentException("Person to be updated did not contain an identifier.");
             }
-            perCRService.create(cr);
         }
     }
     
     private void updatePatient(PersonDTO proposedState) {
         long pid = IiConverter.convertPatientToLong(proposedState.getIdentifier());
         Patient patBO = patientService.getById(pid);
-        // copy over fields from person dto to patient dto.
-        patBO.setBirthDate(TsConverter.convertToDate(proposedState.getBirthDate()));
-        patBO.setSexCode(SexCodeConverter.convertToStatusEnum(proposedState.getSexCode()));
-        EthnicGroupCodeConverter.DSetConverter egConv = new EthnicGroupCodeConverter.DSetConverter();
-        patBO.setEthnicGroupCode((Set<PersonEthnicGroup>) egConv
-                .convert(Set.class, proposedState.getEthnicGroupCode()));
-        RaceCodeConverter.DSetConverter rcConv = new RaceCodeConverter.DSetConverter();
-        patBO.setRaceCode((Set<PersonRace>) rcConv.convert(Set.class, proposedState.getRaceCode()));
-        
-        try {
-            patientService.curate(patBO);
-        } catch (JMSException jms) {
-            LOG.error("Problem is JMS, unable to complete requst to update patient data.", jms);
-            throw new IllegalArgumentException("JMS Exception during curation of patient", jms);
+        if (patBO != null) {
+            // copy over fields from person dto to patient dto.
+            patBO.setBirthDate(TsConverter.convertToDate(proposedState.getBirthDate()));
+            patBO.setSexCode(SexCodeConverter.convertToStatusEnum(proposedState.getSexCode()));
+            EthnicGroupCodeConverter.DSetConverter egConv = new EthnicGroupCodeConverter.DSetConverter();
+            patBO.setEthnicGroupCode((Set<PersonEthnicGroup>) egConv
+                    .convert(Set.class, proposedState.getEthnicGroupCode()));
+            RaceCodeConverter.DSetConverter rcConv = new RaceCodeConverter.DSetConverter();
+            patBO.setRaceCode((Set<PersonRace>) rcConv.convert(Set.class, proposedState.getRaceCode()));
+            
+            try {
+                patientService.curate(patBO);
+            } catch (JMSException jms) {
+                LOG.error("Problem is JMS, unable to complete requst to update patient data.", jms);
+                throw new IllegalArgumentException("JMS Exception during curation of patient", jms);
+            }
+        } else {
+            throw new IllegalArgumentException("Patient could not be found with provided identifier.");
         }
     }
     
     private void updatePatientStatus(Ii targetIi, Cd statusCode) {
         long pid = IiConverter.convertPatientToLong(targetIi);
         Patient target = patientService.getById(pid);
-        target.setStatus(CdConverter.convertToRoleStatus(statusCode));
-        try {
-            patientService.curate(target);
-        } catch (JMSException e) {
-            LOG.error("Problem is JMS, unable to complete requst to update patient status.", e);
-            throw new IllegalArgumentException("JMS Exception during curation of patient status", e);
+        if (target != null) {
+            target.setStatus(CdConverter.convertToRoleStatus(statusCode));
+            try {
+                patientService.curate(target);
+            } catch (JMSException e) {
+                LOG.error("Problem is JMS, unable to complete requst to update patient status.", e);
+                throw new IllegalArgumentException("JMS Exception during curation of patient status", e);
+            }
+        } else {
+            throw new IllegalArgumentException("Patient could not be found with provided identifier.");
         }
     }
     
@@ -373,14 +390,22 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             updatePatientStatus(targetOrg, statusCode);
         } else {
             Long pId = IiConverter.convertToLong(targetOrg);
-            Person target = perService.getById(pId);
-            // lazy way to clone with stripped hibernate IDs.
-            PersonDTO tmp = (PersonDTO) PoXsnapshotHelper.createSnapshot(target);
-            PersonCR cr = new PersonCR(target);
-            PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractPerson.class);
-            cr.setId(null);
-            cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
-            perCRService.create(cr);
+            if (pId != null) {
+                Person target = perService.getById(pId);
+                if (target != null) { 
+                    // lazy way to clone with stripped hibernate IDs.
+                    PersonDTO tmp = (PersonDTO) PoXsnapshotHelper.createSnapshot(target);
+                    PersonCR cr = new PersonCR(target);
+                    PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractPerson.class);
+                    cr.setId(null);
+                    cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
+                    perCRService.create(cr);
+                } else {
+                    throw new IllegalArgumentException("Person could not be found with provided identifier.");
+                }
+            } else {
+                throw new IllegalArgumentException("Person to be updated did not contain an identifier.");
+            }
         }
     }
 }
