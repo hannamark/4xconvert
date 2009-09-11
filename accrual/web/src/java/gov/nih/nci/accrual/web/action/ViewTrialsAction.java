@@ -93,50 +93,23 @@ import org.apache.struts2.ServletActionContext;
  */
 
 public class ViewTrialsAction extends AbstractAccrualAction {
-   
 
-   private static final long serialVersionUID = 7699464509053550016L;
-   private SearchTrialCriteriaDto criteria = new SearchTrialCriteriaDto();
-   private List<SearchTrialResultDto> listOfTrials = null;
-   
 
-   /**
-     * {@inheritDoc}
-     */
-    
-	@SuppressWarnings("unchecked")
-	@Override
-    public String execute() {
-       //String actionResult = "list_trials";
-        String actionResult = "search_trials";
-      //check if users accepted the disclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
-            return "show_Disclaimer_Page";
-        }
-        try {
-        SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-        List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-                                        getAttribute("authorizedTrialIds");
-        listOfTrials = new ArrayList<SearchTrialResultDto>();
-        listOfTrials = service.search(criteria,authorizedTrialIds);             
-        ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
-           
-        } catch (Exception e) {
-              addActionError(e.getLocalizedMessage());
-            return "ERROR";
-        }
-       
-       return actionResult;
-    }
-    
+    private static final long serialVersionUID = 7699464509053550016L;
+    private SearchTrialCriteriaDto criteria = new SearchTrialCriteriaDto();
+    private List<SearchTrialResultDto> listOfTrials = null;
+
+
     /**
      * {@inheritDoc}
      */
-     @SuppressWarnings("unchecked")
-	public String search() {
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public String execute() {
+        //String actionResult = "list_trials";
         String actionResult = "search_trials";
-      //check if users accepted the disclaimer if not show one
+        //check if users accepted the disclaimer if not show one
         String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
             return "show_Disclaimer_Page";
@@ -144,61 +117,88 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
             List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-                                           getAttribute("authorizedTrialIds");
+            getAttribute("authorizedTrialIds");
             listOfTrials = new ArrayList<SearchTrialResultDto>();
-            listOfTrials = service.search(criteria,authorizedTrialIds);             
+            listOfTrials = service.search(criteria, authorizedTrialIds);
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
-               
-            } catch (Exception e) {
-                  addActionError(e.getLocalizedMessage());
-                return "ERROR";
-            }
-             
-       return actionResult;
-    }
-     
-     /**
-      * {@inheritDoc}
-      */
-       @SuppressWarnings("unchecked")
-	public String searchQuery() {
-         //String actionResult = "list_trials";
-         String actionResult = "search_trials";
-         try {
-         SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-         List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-                                        getAttribute("authorizedTrialIds");
-         listOfTrials = new ArrayList<SearchTrialResultDto>();
-         listOfTrials = service.search(criteria,authorizedTrialIds);
-         ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
-            
-         } catch (Exception e) {
-               addActionError(e.getLocalizedMessage());
-             return "ERROR";
-         }
-        
+
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return "ERROR";
+        }
+
         return actionResult;
-     }
-    
+    }
+
     /**
-     * 
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public String search() {
+        String actionResult = "search_trials";
+        //check if users accepted the disclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            return "show_Disclaimer_Page";
+        }
+        try {
+            SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
+            List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
+            getAttribute("authorizedTrialIds");
+            listOfTrials = new ArrayList<SearchTrialResultDto>();
+            listOfTrials = service.search(criteria, authorizedTrialIds);
+            ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
+
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return "ERROR";
+        }
+
+        return actionResult;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public String searchQuery() {
+        //String actionResult = "list_trials";
+        String actionResult = "search_trials";
+        try {
+            SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
+            List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
+            getAttribute("authorizedTrialIds");
+            listOfTrials = new ArrayList<SearchTrialResultDto>();
+            listOfTrials = service.search(criteria, authorizedTrialIds);
+            ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
+
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return "ERROR";
+        }
+
+        return actionResult;
+    }
+
+    /**
+     *
      * @return listOfTrials
      */
     public List<SearchTrialResultDto> getListOfTrials() {
-         return listOfTrials;
+        return listOfTrials;
     }
     /**
-     * 
+     *
      * @return criteria
      */
     public SearchTrialCriteriaDto getCriteria() {
-          return criteria;
+        return criteria;
     }
     /**
-     * 
+     *
      * @param criteria SearchTrialCriteriaDto
      */
     public void setCriteria(SearchTrialCriteriaDto criteria) {
-          this.criteria = criteria;
+        this.criteria = criteria;
     }
 }

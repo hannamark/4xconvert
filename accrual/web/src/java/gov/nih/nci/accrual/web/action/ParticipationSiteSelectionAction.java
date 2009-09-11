@@ -77,8 +77,6 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-
-
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -86,6 +84,7 @@ import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,7 +96,7 @@ import org.apache.struts2.ServletActionContext;
  * @since  Aug 20, 2009
  */
 public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
-   
+
 
     private static final long serialVersionUID = 2140334334691287118L;
     private List<SearchStudySiteResultDto> listOfSites = null;
@@ -106,12 +105,12 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     private SearchStudySiteResultWebDto webDto = null;
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
-    
+
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public String execute() {
         String actionResult = "participation_site_selection";
       //check if users accepted the disclaimer if not show one
@@ -125,12 +124,12 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         List<Ii> authorizedStudySiteIds = (List<Ii>) ServletActionContext.getRequest().getSession()
                                               .getAttribute("authorizedStudySiteIds");
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
-        studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+        studyProtocolId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         Ii spid = IiConverter.convertToIi(studyProtocolId);
         trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
             // put an entry in the session
         ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-        listOfSites = service.search(spid,authorizedStudySiteIds);
+        listOfSites = service.search(spid, authorizedStudySiteIds);
         if (listOfSites != null)  {
             ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
            } else {
@@ -139,57 +138,57 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         /*if (listOfSites != null) {
           copyToWebDto(listOfSites);
         }*/
-       
+
         } catch (Exception e) {
               addActionError(e.getLocalizedMessage());
            // return "ERROR";
         }
-       
+
        return actionResult;
     }
-    
-    
+
+
    /* private void copyToWebDto(List<SearchStudySiteResultDto> listOfSites2) {
        listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
       for (SearchStudySiteResultDto site2 : listOfSites2) {
-         webDto = new SearchStudySiteResultWebDto();  
+         webDto = new SearchStudySiteResultWebDto();
           webDto.setSsIi(IiConverter.convertToString(site2.getStudySiteIi()));
           webDto.setOrgName(StConverter.convertToString(site2.getOrganizationName()));
             listOfStudySites.add(webDto);
-    
+
       }
-      
+
       if (listOfStudySites != null)  {
           ServletActionContext.getRequest().setAttribute("listOfStudySites", listOfStudySites);
          } else {
       ServletActionContext.getRequest().setAttribute("listOfStudySites", new ArrayList<SearchStudySiteResultWebDto>());
          }
     }*/
-    
+
     /**
-     * 
+     *
      * @return listOfSites
      */
     public List<SearchStudySiteResultDto> getListOfSites() {
          return listOfSites;
     }
-    
+
     /**
-     * 
+     *
      * @param listOfSites List
      */
     public void setListOfSites(List<SearchStudySiteResultDto> listOfSites) {
          this.listOfSites = listOfSites;
     }
     /**
-     * 
+     *
      * @return listOfStudySites
      */
     public List<SearchStudySiteResultWebDto> getListOfStudySites() {
       return listOfStudySites;
     }
     /**
-     * 
+     *
      * @param listOfStudySites List
      */
 
@@ -198,7 +197,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         this.listOfStudySites = listOfStudySites;
     }
     /**
-     * 
+     *
      * @return studyProtocolId
      */
     public String getStudyProtocolId() {
@@ -206,14 +205,14 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
      }
 
     /**
-     * 
+     *
      * @param studyProtocolId String
      */
     public void setStudyProtocolId(String studyProtocolId) {
       this.studyProtocolId = studyProtocolId;
     }
     /**
-     * 
+     *
      * @return site
      */
     public SearchStudySiteResultDto getSite() {
@@ -221,14 +220,14 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     }
 
     /**
-     * 
+     *
      * @param site SearchStudySiteResultDto
      */
      public void setSite(SearchStudySiteResultDto site) {
         this.site = site;
      }
      /**
-      * 
+      *
       * @return webDto
       */
      public SearchStudySiteResultWebDto getWebDto() {
@@ -236,7 +235,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
      }
 
      /**
-      * 
+      *
       * @param webDto SearchStudySiteResultWebDto
       */
      public void setWebDto(SearchStudySiteResultWebDto webDto) {
@@ -244,7 +243,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
      }
 
      /**
-      * 
+      *
       * @return trialSummary
       */
      public SearchTrialResultDto getTrialSummary() {
@@ -252,7 +251,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
       }
 
      /**
-      * 
+      *
       * @param trialSummary SearchTrialResultDto
       */
      public void setTrialSummary(SearchTrialResultDto trialSummary) {

@@ -98,7 +98,7 @@ public abstract class AbstractServiceTest<SERVICE_INTERFACE> {
     @Before
     public void setUpTestSchema() throws Exception {
         TestSchema.reset();
-    }
+   }
 
     public abstract void instantiateServiceBean() throws Exception;
 }

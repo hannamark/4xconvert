@@ -95,14 +95,16 @@ import javax.ejb.Remote;
 public interface SearchStudySiteService {
     /**
      * @param studyProtocolIi ii for selected study
+     * @param authorizedStudySiteIds list of authorized study sites
      * @return list of study sites for which the user is authorized to enter accruals
      * @throws RemoteException exception
      */
-    List<SearchStudySiteResultDto> search(Ii studyProtocolIi,List<Ii> authorizedStudySiteIds) throws RemoteException;
+    List<SearchStudySiteResultDto> search(Ii studyProtocolIi, List<Ii> authorizedStudySiteIds) throws RemoteException;
 
     /**
      * @param user user
      * @return list of StudySite Ii's for which the user is authorized to submit accruals
+     * @throws RemoteException exception
      */
-    List<Ii> getAuthorizedSites(St user);
+    List<Ii> getAuthorizedSites(St user) throws RemoteException;
 }

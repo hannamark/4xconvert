@@ -30,5 +30,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jboss-ejb3x-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/compile/displaytag-1.2.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/security-4.0.1.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

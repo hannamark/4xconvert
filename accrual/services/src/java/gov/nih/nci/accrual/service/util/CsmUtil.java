@@ -76,92 +76,22 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.service.AbstractServiceTest;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
-import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
+import java.rmi.RemoteException;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 25, 2009
+ * @since Sep 11, 2009
  */
-public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudySiteService> {
-
-    @Override
-    @Before
-    public void instantiateServiceBean() throws Exception {
-        AccrualCsmUtil.csmUtil = new MockCsmUtil();
-        bean = new SearchStudySiteBean();
-    }
-
-    @Test
-    public void search() throws Exception {
-        // first user can access all three sites
-        St lName1 = StConverter.convertToSt(MockCsmUtil.users.get(0).getLoginName());
-        List<Ii> authIis1 = bean.getAuthorizedSites(lName1);
-
-        // second user can only access 1 site
-        St lName2 = StConverter.convertToSt(MockCsmUtil.users.get(1).getLoginName());
-        List<Ii> authIis2 = bean.getAuthorizedSites(lName2);
-
-        // first trial has 2 accrual sites
-        List<SearchStudySiteResultDto> rList = bean.search(
-                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()),authIis1);
-        assertEquals(2, rList.size());
-        // second user can only access one of them
-        rList = bean.search(
-                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()),authIis2);
-        assertEquals(1, rList.size());
-
-        // second trial has 1 accrual site (first organization)
-        rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), authIis1);
-        assertEquals(1, rList.size());
-        assertEquals(TestSchema.organizations.get(0).getName(), StConverter.convertToString(rList.get(0).getOrganizationName()));
-        // second user can't access it
-        rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), authIis2);
-        assertEquals(0, rList.size());
-
-        rList = bean.search(BII, new ArrayList<Ii>());
-        assertEquals(0, rList.size());
-    }
-
-
-    @Test
-    public void getAuthorizedTrials() throws Exception {
-        // first user can access all three sites
-        St lName1 = StConverter.convertToSt(MockCsmUtil.users.get(0).getLoginName());
-        List<Ii> authIis = bean.getAuthorizedSites(lName1);
-        assertEquals(3, authIis.size());
-
-        // second user can only access 1 site
-        St lName2 = StConverter.convertToSt(MockCsmUtil.users.get(1).getLoginName());
-        authIis = bean.getAuthorizedSites(lName2);
-        assertEquals(1, authIis.size());
-
-        // third user has no access privileges
-        St lName3 = StConverter.convertToSt(MockCsmUtil.users.get(2).getLoginName());
-        authIis = bean.getAuthorizedSites(lName3);
-        assertEquals(0, authIis.size());
-
-        // if access are are inactive none should be returned
-        for (StudySiteAccrualAccess ssaa : TestSchema.studySiteAccrualAccess) {
-            ssaa.setStatusCode(ActiveInactiveCode.INACTIVE);
-            TestSchema.addUpdObject(ssaa);
-        }
-        authIis = bean.getAuthorizedSites(lName1);
-        assertEquals(0, authIis.size());  }
+public interface CsmUtil {
+    /**
+     * @param loginName login name
+     * @return csm user object
+     * @throws RemoteException exception
+     */
+    User getCSMUser(String loginName) throws RemoteException;
 }

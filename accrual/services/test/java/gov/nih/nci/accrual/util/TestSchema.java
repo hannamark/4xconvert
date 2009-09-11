@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -85,10 +86,12 @@ import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -119,7 +122,6 @@ import org.hibernate.Transaction;
 * @since 08/07/2009
 */
 public class TestSchema {
-    public static int inactiveStudyProtocolCount;
     public static List<Disease> diseases;
     public static List<StudyProtocol> studyProtocols;
     public static List<Submission> submissions;
@@ -131,6 +133,7 @@ public class TestSchema {
     public static List<StudyOverallStatus> studyOverallStatuses;
     public static List<HealthCareFacility> healthCareFacilities;
     public static List<Organization> organizations;
+    public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -190,8 +193,7 @@ public class TestSchema {
         performedSubjectMilestones = new ArrayList<PerformedSubjectMilestone>();
         healthCareFacilities = new ArrayList<HealthCareFacility>();
         organizations = new ArrayList<Organization>();
-        inactiveStudyProtocolCount = 0;
-
+        studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
 
         // Organization
         Organization org = new Organization();
@@ -205,10 +207,29 @@ public class TestSchema {
         addUpdObject(org);
         organizations.add(org);
 
+        org = new Organization();
+        org.setCity("city2");
+        org.setCountryName("country name2");
+        org.setIdentifier("po org id2");
+        org.setName("orga name2");
+        org.setPostalCode("22345");
+        org.setState("MD");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        addUpdObject(org);
+        organizations.add(org);
+
         // HealthcareFacility
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setIdentifier("po hcf id");
         hcf.setOrganization(organizations.get(0));
+        hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(hcf);
+        healthCareFacilities.add(hcf);
+
+        hcf = new HealthCareFacility();
+        hcf.setIdentifier("po hcf id1");
+        hcf.setOrganization(organizations.get(1));
         hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         addUpdObject(hcf);
@@ -240,7 +261,6 @@ public class TestSchema {
         sp.setSubmissionNumber(Integer.valueOf(1));
         addUpdObject(sp);
         studyProtocols.add(sp);
-        inactiveStudyProtocolCount++;
 
         sp = new StudyProtocol();
         sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
@@ -262,6 +282,7 @@ public class TestSchema {
         sos.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(sos);
         studyOverallStatuses.add(sos);
+
         sos = new StudyOverallStatus();
         sos.setStatusCode(StudyStatusCode.ACTIVE);
         sos.setStatusDate(PAUtil.dateStringToTimestamp("6/15/2009"));
@@ -294,7 +315,15 @@ public class TestSchema {
 
         // StudySite
         StudySite ss = new StudySite();
-        ss.setLocalStudyProtocolIdentifier("Local SP 001");
+        ss.setLocalStudyProtocolIdentifier("T1 Local SP 001");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(ss);
+        studySites.add(ss);
+
+        ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("T1 Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
         ss.setHealthCareFacility(healthCareFacilities.get(0));
@@ -303,12 +332,63 @@ public class TestSchema {
         studySites.add(ss);
 
         ss = new StudySite();
-        ss.setLocalStudyProtocolIdentifier("Local SP 001");
+        ss.setLocalStudyProtocolIdentifier("T1 Local SP 002");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(1));
         ss.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(ss);
         studySites.add(ss);
+
+        ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("T2 Local SP 001");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setStudyProtocol(studyProtocols.get(1));
+        addUpdObject(ss);
+        studySites.add(ss);
+
+        ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("T2 Local SP 001");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(0));
+        ss.setStudyProtocol(studyProtocols.get(1));
+        addUpdObject(ss);
+        studySites.add(ss);
+
+        // StudySiteAccrualAccess
+        StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
+        ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ssaa.setStudySite(studySites.get(1));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
+
+        ssaa = new StudySiteAccrualAccess();
+        ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ssaa.setStudySite(studySites.get(2));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
+
+        ssaa = new StudySiteAccrualAccess();
+        ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ssaa.setStudySite(studySites.get(4));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
+
+        ssaa = new StudySiteAccrualAccess();
+        ssaa.setCsmUserId(MockCsmUtil.users.get(1).getUserId());
+        ssaa.setStudySite(studySites.get(1));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
 
         // StudyDisease
         StudyDisease sd = new StudyDisease();

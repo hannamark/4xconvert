@@ -83,13 +83,18 @@ import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -97,44 +102,53 @@ import javax.interceptor.Interceptors;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 /**
  * @author Hugh Reinhart
  * @since Aug 17, 2009
  */
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class SearchStudySiteBean implements SearchStudySiteService {
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi,List<Ii> authorizedStudySiteIds) throws RemoteException {
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, List<Ii> authorizedStudySiteIds)
+            throws RemoteException {
         List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = " select ss.id, org.name "
-                + "from StudyProtocol as sp "
-                + "join sp.studySites as ss "
-                + "left outer join ss.healthCareFacility as ro "
-                + "left outer join ro.organization as org "
-                + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
-                + "  and ss.functionalCode ='" + StudySiteFunctionalCode.TREATING_SITE + "' ";
-            query = session.createQuery(hql);
-            List<Object> queryList = query.list();
-            for (Object qArr : queryList) {
-                Object[] site = (Object[]) qArr;
-                SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
-                dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
-                dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
-                result.add(dto);
+        if (!PAUtil.isIiNull(studyProtocolIi) && authorizedStudySiteIds != null) {
+            Session session = null;
+            try {
+                session = AccrualHibernateUtil.getCurrentSession();
+                Query query = null;
+                String hql = "select ss.id, org.name "
+                    + "from StudyProtocol as sp "
+                    + "join sp.studySites as ss "
+                    + "left outer join ss.healthCareFacility as ro "
+                    + "left outer join ro.organization as org "
+                    + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
+                    + "  and ss.functionalCode ='" + StudySiteFunctionalCode.TREATING_SITE + "' ";
+                query = session.createQuery(hql);
+                List<Object> queryList = query.list();
+                Set<Long> authIds = new HashSet<Long>();
+                for (Ii ii : authorizedStudySiteIds) {
+                    authIds.add(IiConverter.convertToLong(ii));
+                }
+                for (Object qArr : queryList) {
+                    Object[] site = (Object[]) qArr;
+                    if (authIds.contains(site[0])) {
+                        SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
+                        dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
+                        dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
+                        result.add(dto);
+                    }
+                }
+            } catch (HibernateException hbe) {
+                throw new RemoteException(
+                        "Hibernate exception in SearchStudySiteBean.getTrialSummaryByStudyProtocolIi().", hbe);
             }
-        } catch (HibernateException hbe) {
-            throw new RemoteException(
-                    "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
         }
         return result;
     }
@@ -142,8 +156,30 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     /**
      * {@inheritDoc}
      */
-    public List<Ii> getAuthorizedSites(St user) {
-        return null;
+    @SuppressWarnings("unchecked")
+    public List<Ii> getAuthorizedSites(St user) throws RemoteException {
+        User csmUser = AccrualCsmUtil.getInstance().getCSMUser(StConverter.convertToString(user));
+        List<Ii> result = new ArrayList<Ii>();
+
+        Session session = null;
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select distinct ss.id "
+                + "from StudySiteAccrualAccess ssaa "
+                + "join ssaa.studySite ss "
+                + "where ssaa.csmUserId = :csmUserId "
+                + "  and ssaa.statusCode = '" + ActiveInactiveCode.ACTIVE.getName() + "' ";
+            query = session.createQuery(hql);
+            query.setParameter("csmUserId", csmUser.getUserId());
+            List<Long> queryList = query.list();
+            for (Long qObj : queryList) {
+                result.add(IiConverter.converToStudySiteIi(qObj));
+            }
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in SearchStudySiteBean.getAuthorizedTrials().", hbe);
+        }
+        return result;
     }
 
 }
