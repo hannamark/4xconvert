@@ -84,6 +84,11 @@ function loadSponsorDiv() {
     document.getElementById("trialDTO.sponsorIdentifier").value = orgid;
     document.getElementById('trialDTO.sponsorName').value = chosenname;
     document.getElementById('lookupbtn4RP').disabled = "";
+    document.getElementById('trialDTO.responsiblePersonIdentifier').value = '';
+    document.getElementById('trialDTO.responsibleGenericContactName').value = '';//unset the responsible personname
+    document.getElementById("trialDTO.contactEmail").value = '';//unset the responsible personname
+    document.getElementById("trialDTO.contactPhone").value = ''; //unset the responsible personname   
+    document.getElementById('trialDTO.responsiblePersonName').value = ''; // unset the responsible personname
     respartOrgid = orgid;
 }
 function createOrgContactDiv() {
@@ -170,8 +175,7 @@ function addGrant(){
     if (isSerialEmpty == false && isNaN(serialNumber)){
         isValidGrant = false;
         alertMessage=alertMessage+ "\n Serial Number must be numeric";
-    }
-    if (isSerialEmpty == false && serialNumber != null){
+    } else if (isSerialEmpty == false && serialNumber != null){
         var numericExpression = /^[0-9]+$/;
          if(!numericExpression.test(serialNumber)){
          isValidGrant = false;

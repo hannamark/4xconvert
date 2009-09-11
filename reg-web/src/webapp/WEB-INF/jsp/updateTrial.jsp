@@ -167,8 +167,7 @@ function addGrant(){
     if (isSerialEmpty == false && isNaN(serialNumber)){
         isValidGrant = false;
         alertMessage=alertMessage+ "\n Serial Number must be numeric";
-    }
-    if (isSerialEmpty == false && serialNumber != null){
+    } else if (isSerialEmpty == false && serialNumber != null){
         var numericExpression = /^[0-9]+$/;
          if(!numericExpression.test(serialNumber)){
          isValidGrant = false;
