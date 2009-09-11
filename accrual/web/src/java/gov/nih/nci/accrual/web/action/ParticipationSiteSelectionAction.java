@@ -81,6 +81,7 @@ import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -122,7 +123,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
         List<Ii> authorizedStudySiteIds = (List<Ii>) ServletActionContext.getRequest().getSession()
-                                              .getAttribute("authorizedStudySiteIds");
+                .getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_SITES);
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
         studyProtocolId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         Ii spid = IiConverter.convertToIi(studyProtocolId);

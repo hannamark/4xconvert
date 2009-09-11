@@ -79,6 +79,7 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 
@@ -117,7 +118,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
             List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-            getAttribute("authorizedTrialIds");
+                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDIES);
             listOfTrials = new ArrayList<SearchTrialResultDto>();
             listOfTrials = service.search(criteria, authorizedTrialIds);
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
@@ -143,8 +144,8 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         }
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-            List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-            getAttribute("authorizedTrialIds");
+            List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().
+                    getSession().getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDIES);
             listOfTrials = new ArrayList<SearchTrialResultDto>();
             listOfTrials = service.search(criteria, authorizedTrialIds);
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
@@ -167,7 +168,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
             List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-            getAttribute("authorizedTrialIds");
+                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDIES);
             listOfTrials = new ArrayList<SearchTrialResultDto>();
             listOfTrials = service.search(criteria, authorizedTrialIds);
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
