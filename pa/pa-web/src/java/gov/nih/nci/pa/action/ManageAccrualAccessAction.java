@@ -220,7 +220,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             studySiteId = null;
         }
         StudySiteAccrualStatusDTO iso = accrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(
-                IiConverter.converToStudySiteIi(studySiteId));
+                IiConverter.convertToStudySiteIi(studySiteId));
         setSiteRecruitmentStatus(iso == null ? null : CdConverter.convertCdToString(iso.getStatusCode()));
         return SUCCESS;
     }

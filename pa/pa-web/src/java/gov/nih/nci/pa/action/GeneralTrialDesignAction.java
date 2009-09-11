@@ -603,8 +603,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
             }
 
         }
-
     }
+
     private void createSponorContact(Ii studyProtocolIi) throws  PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
         String phone = gtdDTO.getContactPhone().trim();

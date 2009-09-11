@@ -93,6 +93,7 @@ import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hreinhart
@@ -240,10 +241,10 @@ public class MockStudySiteService implements gov.nih.nci.pa.service.StudySiteSer
         return null;
     }
 
-    public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+    public Map<Ii,Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
             throws PAException {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {

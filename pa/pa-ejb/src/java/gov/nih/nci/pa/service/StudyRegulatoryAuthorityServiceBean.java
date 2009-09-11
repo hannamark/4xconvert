@@ -114,7 +114,8 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
 public class StudyRegulatoryAuthorityServiceBean extends 
-AbstractStudyIsoService<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority, StudyRegulatoryAuthorityConverter>
+    AbstractCurrentStudyIsoService<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority, 
+    StudyRegulatoryAuthorityConverter>
 implements StudyRegulatoryAuthorityServiceRemote , StudyRegulatoryAuthorityServiceLocal {
     
     private static final Logger LOG = Logger.getLogger(StudyRegulatoryAuthorityServiceBean.class);

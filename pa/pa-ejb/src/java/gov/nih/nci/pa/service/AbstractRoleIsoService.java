@@ -160,14 +160,12 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
                     appended = true;
                 }
                 if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
-
                     StudySiteContactDTO spcDTO = (StudySiteContactDTO) crit;
                     criteria.append("spart.roleCode = '"
                         + StudySiteContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
                     appended = true;
                 }
                 if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
-
                     StudySiteDTO spcDTO = (StudySiteDTO) crit;
                     criteria.append("spart.functionalCode = '"
                             + StudySiteFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
@@ -289,6 +287,4 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         }
         return returnStatusCode;
     }
-    
-
 }

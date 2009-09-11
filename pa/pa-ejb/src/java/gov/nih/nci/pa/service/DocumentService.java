@@ -90,7 +90,7 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface DocumentService {
+public interface DocumentService extends StudyPaService <DocumentDTO> {
     
 
     /**
@@ -100,31 +100,5 @@ public interface DocumentService {
      */
     List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException;
     
-    /**
-     * @param docDTO DocumentDTO 
-     * @return DocumentDTO
-     * @throws PAException PAException
-     */
-    DocumentDTO create(DocumentDTO docDTO) throws PAException;
-    
-    /**
-     * @param id Ii 
-     * @return DocumentDTO
-     * @throws PAException PAException
-     */
-    DocumentDTO get(Ii id) throws PAException;
-
-    /**
-     * @param docDTO DocumentDTO 
-     * @return DocumentDTO
-     * @throws PAException PAException
-     */
-    DocumentDTO update(DocumentDTO docDTO) throws PAException;
-
-    /**
-     * @param docDTO DocumentDTO 
-     * @throws PAException PAException
-     */
-    void delete(DocumentDTO docDTO) throws PAException; 
 
 }

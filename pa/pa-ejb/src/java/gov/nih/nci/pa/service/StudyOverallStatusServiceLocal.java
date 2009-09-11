@@ -91,7 +91,7 @@ import javax.ejb.Local;
  * copyright holder, NCI.
  */
 @Local
-public interface StudyOverallStatusServiceLocal extends StudyPaService<StudyOverallStatusDTO> {
+public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<StudyOverallStatusDTO> {
     /**
      * 
      * @param statusDto dto

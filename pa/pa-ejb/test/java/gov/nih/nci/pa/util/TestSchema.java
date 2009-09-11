@@ -98,6 +98,7 @@ import gov.nih.nci.pa.domain.HealthCareProviderTest;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.MappingIdentifier;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -248,8 +249,8 @@ public class TestSchema {
             addAnnotatedClass(RegistryUser.class).
             addAnnotatedClass(StudyRelationship.class).
             addAnnotatedClass(StudyObjective.class).
+            addAnnotatedClass(MappingIdentifier.class).
             addAnnotatedClass(StudySiteAccrualAccess.class).
-
             // Accrual classes
             addAnnotatedClass(Patient.class).
             addAnnotatedClass(PerformedActivity.class).

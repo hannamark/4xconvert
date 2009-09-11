@@ -156,7 +156,7 @@ public class StudyResourcingTest {
 
         if (queryList.size() > 0) {
             studyResourcing = queryList.get(0);
-            StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
+            new StudyResourcingConverter().convertFromDomainToDto(studyResourcing);
 
         }
 

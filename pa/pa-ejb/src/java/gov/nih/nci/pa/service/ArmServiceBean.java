@@ -78,10 +78,12 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.iso.convert.ArmConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -89,8 +91,13 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -113,6 +120,10 @@ import org.hibernate.Session;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter>
         implements ArmServiceRemote , ArmServiceLocal {
+    
+    @EJB
+    PlannedActivityServiceLocal plannedActivityService = null;
+    
     /**
      * @param ii index of planned activity
      * @return list of arms associated w/planned activity
@@ -187,4 +198,47 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
         businessRules(dto);
         return super.update(dto);
     }
+    
+    /**
+     * creates a new record of arm and arm intervetions by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @param armMap map of ii
+     * @return map 
+     * @throws PAException on error
+     */
+    public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi , Map<Ii, Ii> armMap) throws PAException {
+        List<ArmDTO> armDtos = getByStudyProtocol(fromStudyProtocolIi);
+        Map<Ii, Ii> map = new HashMap<Ii, Ii>();
+        for (ArmDTO armDto : armDtos) {
+            Ii fromIi = armDto.getIdentifier();
+            armDto.setInterventions(getAssociatedInterventions(armDto.getIdentifier() , armMap));
+            armDto.setIdentifier(null);
+            armDto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            Ii toIi = create(armDto).getIdentifier();
+            map.put(fromIi, toIi);
+        }
+        return map;
+    }
+    
+    private DSet<Ii> getAssociatedInterventions(Ii armIi , Map<Ii , Ii> armMap) throws PAException {
+        List<PlannedActivityDTO> dtos = null;
+        Set<Ii> iiSet = new HashSet<Ii>();
+        boolean armIntFound = false;
+        dtos = plannedActivityService.getByArm(armIi);
+        for (PlannedActivityDTO paDto : dtos) {
+            Ii value = PAUtil.containsIi(armMap, paDto.getIdentifier());
+            if (value != null) {
+                armIntFound = true;
+                iiSet.add(value);
+            }
+        }
+        DSet<Ii> interventions = null;
+        if (armIntFound) {
+            interventions = new DSet<Ii>();
+            interventions.setItem(iiSet);
+        }
+        return interventions;
+    }
+    
 }

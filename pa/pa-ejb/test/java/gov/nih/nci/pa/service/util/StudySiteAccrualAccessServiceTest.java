@@ -195,7 +195,7 @@ public class StudySiteAccrualAccessServiceTest {
     public void createOnlyForAccruingSites() throws Exception {
         assertFalse(RecruitmentStatusCode.WITHDRAWN.isEligibleForAccrual());
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-        dto.setStudySiteIi(IiConverter.converToStudySiteIi(ssId));
+        dto.setStudySiteIi(IiConverter.convertToStudySiteIi(ssId));
         dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.WITHDRAWN));
         dto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         statusBean.createStudySiteAccrualStatus(dto);

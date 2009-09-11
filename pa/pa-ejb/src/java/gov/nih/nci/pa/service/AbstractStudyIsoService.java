@@ -81,14 +81,20 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.MappingIdentifier;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -156,32 +162,46 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
      * creates a new record of studyprotocol by changing to new studyprotocol identifier.
      * @param fromStudyProtocolIi from where the study protocol objects to be copied  
      * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @return map 
      * @throws PAException on error
      */
-    public void copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+    public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
         List<DTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
+        Map<Ii , Ii> map = new HashMap<Ii , Ii>();
+        Session session = HibernateUtil.getCurrentSession(); 
+        Ii from = null;
+        Ii to = new Ii();
         for (DTO dto : dtos) {
+            from = dto.getIdentifier();
+            to = new Ii();
+            to.setIdentifierName(from.getIdentifierName());
+            to.setRoot(from.getRoot());
             dto.setIdentifier(null);
             dto.setStudyProtocolIdentifier(toStudyProtocolIi);
-            create(dto);
+            BO bo = convertFromDtoToDomain(dto);
+            session.save(bo);
+            to.setExtension(bo.getId().toString());
+            map.put(from, to);
         }
+        createMappingIdentifier(map , toStudyProtocolIi);
+        return map;
     }
-    
-   /**
-     * Gets the current by study protocol.
-     * 
-     * @param studyProtocolIi the study protocol ii
-     * 
-     * @return the current by study protocol
-     * 
-     * @throws PAException the PA exception
-     */
-    public DTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
-        List<DTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
-        DTO result = null;
-        if (!dtoList.isEmpty()) {
-            result = dtoList.get(dtoList.size() - 1);
+ 
+    private void createMappingIdentifier(Map<Ii, Ii> map, Ii studyProtocolIi) {
+        Session session = HibernateUtil.getCurrentSession(); 
+        Ii value = null;
+        MappingIdentifier mi = null;
+        for (Ii key : map.keySet()) {
+           value = map.get(key);
+           mi = new MappingIdentifier();
+           mi.setFromIdentifier(IiConverter.convertToLong(key));
+           mi.setToIdentifier(IiConverter.convertToLong(value));
+           mi.setDateLastCreated(new Timestamp((new Date()).getTime()));
+           StudyProtocol sp = new StudyProtocol();
+           sp.setId(IiConverter.convertToLong(studyProtocolIi));
+           mi.setStudyProtocol(sp);
+           session.save(mi);
         }
-        return result;
+
     }
 }

@@ -130,7 +130,7 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyMilestoneServiceBean
-        extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
+        extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
         implements StudyMilestoneServiceRemote, StudyMilestoneServicelocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyMilestoneServiceBean.class);

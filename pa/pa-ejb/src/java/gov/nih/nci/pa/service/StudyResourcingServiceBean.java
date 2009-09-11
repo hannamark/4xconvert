@@ -119,15 +119,16 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
-@SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals",
-  "PMD.CyclomaticComplexity" })
+@SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals", "PMD.CyclomaticComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyResourcingServiceBean
+
+public class StudyResourcingServiceBean extends AbstractStudyIsoService
+    <StudyResourcingDTO, StudyResourcing, StudyResourcingConverter>
             implements StudyResourcingServiceRemote, StudyResourcingServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyResourcingServiceBean.class);
-
+    private static StudyResourcingConverter  src = new StudyResourcingConverter();
     private SessionContext ejbContext;
 
     @Resource
@@ -185,7 +186,7 @@ public class StudyResourcingServiceBean
 
         if (!queryList.isEmpty()) {
             studyResourcing = queryList.get(0);
-            studyResourcingDTO = StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
+            studyResourcingDTO = src.convertFromDomainToDto(studyResourcing);
 
         }
         session.flush();
@@ -259,7 +260,7 @@ public class StudyResourcingServiceBean
             studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
             session.update(studyResourcing);
             session.flush();
-            studyResourcingRetDTO = StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
+            studyResourcingRetDTO = src.convertFromDomainToDto(studyResourcing);
 
         } catch (HibernateException hbe) {
             session.flush();
@@ -302,7 +303,7 @@ public class StudyResourcingServiceBean
               throw new PAException("Serial number should have numbers from [0-9]");
           }
         }
-        StudyResourcing studyResourcing = StudyResourcingConverter.convertFromDTOToDomain(studyResourcingDTO);
+        StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         studyResourcing.setDateLastCreated(now);
         if (ejbContext != null) {
@@ -325,7 +326,7 @@ public class StudyResourcingServiceBean
             throw new PAException(" Hibernate exception while createStudyResourcing " , hbe);
         }
         LOG.debug("Leaving createStudyResourcing ");
-        return StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
+        return src.convertFromDomainToDto(studyResourcing);
     }
 
     /**
@@ -372,7 +373,7 @@ public class StudyResourcingServiceBean
 
         ArrayList<StudyResourcingDTO> resultList = new ArrayList<StudyResourcingDTO>();
         for (StudyResourcing bo : queryList) {
-            resultList.add(StudyResourcingConverter.convertFromDomainToDTO(bo));
+            resultList.add(src.convertFromDomainToDto(bo));
         }
         session.flush();
         LOG.info("Leaving getstudyResourceByStudyProtocol");
@@ -387,46 +388,7 @@ public class StudyResourcingServiceBean
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi)
             throws PAException {
-        if (PAUtil.isIiNull(studyResourceIi)) {
-            LOG.error(" studyProtocol Identifer should not be null ");
-            throw new PAException(" studyProtocol Identifer should not be null ");
-        }
-        LOG.info("Entering getStudyResourceByID");
-        Session session = null;
-        StudyResourcingDTO studyResourcingDTO = null;
-        StudyResourcing studyResourcing = null;
-        List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-
-            Query query = null;
-
-            // step 1: form the hql
-            String hql = " select sr "
-                       + " from StudyResourcing sr "
-                       + " where sr.id = " + IiConverter.convertToLong(studyResourceIi);
-
-           LOG.info(" query getStudyResourceByID = " + hql);
-
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-
-
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving getStudyResourceByID" , hbe);
-            session.flush();
-            throw new PAException(" Hibernate exception while retrieving getStudyResourceByID "  , hbe);
-        }
-
-        if (!queryList.isEmpty()) {
-            studyResourcing = queryList.get(0);
-            studyResourcingDTO = StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
-
-        }
-        session.flush();
-        LOG.info("Leaving getStudyResourceByID");
-        return studyResourcingDTO;
+        return get(studyResourceIi);
     }
     /**
      *

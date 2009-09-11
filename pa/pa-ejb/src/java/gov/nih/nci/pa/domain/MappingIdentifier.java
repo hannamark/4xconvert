@@ -76,64 +76,71 @@
 * 
 * 
 */
-package gov.nih.nci.pa.util;
+package gov.nih.nci.pa.domain;
+
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 /**
- * @author Bala Nair
- * @since 03/23/2009
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Anupama Sharma
+ * @since 09/10/2009
  */
-public class PAConstants {
-    
-    /** Comma character. */
-    public static final String COMMA = ",";
-    
-    /** Whitespace. */
-    public static final String WHITESPACE = " ";
-    
-    /** Organization Type- Lead Organization. */
-    public static final String LEAD_ORGANIZATION = "Lead Organization";
-    
-    /** Organization Type- Participating Site. */
-    public static final String PARTICIPATING_SITE = "Participating Site";
+@Entity
+@Table(name = "MAPPING_IDENTIFIER")
+public class MappingIdentifier extends AbstractStudyEntity {
+  private static final long serialVersionUID = 1234509870L;
 
-    /** Email. **/
-    public static final String EMAIL = "EMAIL";
-
-    /** PHONE. **/
-    public static final String PHONE = "PHONE";
-
-    /**
-     * The maxmium number of search results to be returned for a remote service method.
-     */
-    public static final int MAX_SEARCH_RESULTS = 500;
-    
-    /** SYNONYM. **/
-    public static final String SYNONYM = "Synonym";
-    
-    /** ABBREVIATION. **/
-    public static final String ABBREVIATION = "Abbreviation";
-    
-    /** US_BRAND_NAME. **/
-    public static final String US_BRAND_NAME = "US Brand Name";
-    
-    /** FOREIGN_BRAND_NAME. **/
-    public static final String FOREIGN_BRAND_NAME = "Foreign Brand Name";
- 
-    /** CODE_NAME. **/
-    public static final String CODE_NAME = "Code Name";
-    
-    /** irb. **/
-    public static final String IRB_CODE = "Institutional Review Board (IRB)";
-    
-    /** Pa Internal. **/
-    public static final String PA_INTERNAL = "PA-InternalIdentifier";
-    
-    /** yes. */
-    public static final String YES = "Yes";
-    /** no. */
-    public static final String NO = "No";
-    
+  private String identifierName;
+  private Long toIdentifier;
+  private Long fromIdentifier;
+  
+  
+  /**
+   * @return identifierName
+   */
+  @Column(name = "IDENTIFIER_NAME")
+  @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
+  public String getIdentifierName() {
+    return identifierName;
+  }
+  /**
+   * @param identifierName identifierName
+   */
+  public void setIdentifierName(String identifierName) {
+    this.identifierName = identifierName;
+  }
+  /**
+   * @return fromIdentifier
+   */
+  @Column(name = "FROM_IDENTIFIER")
+  @NotNull
+  public Long getFromIdentifier() {
+    return fromIdentifier;
+  }
+  /**
+   * @param fromIdentifier fromIdentifier
+   */
+  public void setFromIdentifier(Long fromIdentifier) {
+    this.fromIdentifier = fromIdentifier;
+  }
+  /**
+   * @return toIdentifier
+   */
+  @Column(name = "TO_IDENTIFIER")
+  @NotNull
+  public Long getToIdentifier() {
+    return toIdentifier;
+  }
+  /**
+   * @param toIdentifier toIdentifier
+   */
+  public void setToIdentifier(Long toIdentifier) {
+    this.toIdentifier = toIdentifier;
+  }
 }

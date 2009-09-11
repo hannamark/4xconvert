@@ -97,13 +97,14 @@ import java.util.Date;
  * copyright holder, NCI.
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
-public class DocumentConverter {
+public class DocumentConverter extends AbstractConverter<DocumentDTO, Document> {
 
     /**
      * @param doc Document
      * @return DocumentDTO
      */
-    public static DocumentDTO convertFromDomainToDTO(Document doc) {
+    @Override
+    public  DocumentDTO convertFromDomainToDto(Document doc) {
         DocumentDTO docDTO = new DocumentDTO();
         docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
@@ -117,9 +118,9 @@ public class DocumentConverter {
      * @param docDTO DocumentDTO
      * @return Document
      */
-    public static Document convertFromDTOToDomain(DocumentDTO docDTO) {
+    @Override
+    public  Document convertFromDtoToDomain(DocumentDTO docDTO) {
         Document doc = new Document();
-
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIdentifier()));
         doc.setDateLastUpdated(new Date());

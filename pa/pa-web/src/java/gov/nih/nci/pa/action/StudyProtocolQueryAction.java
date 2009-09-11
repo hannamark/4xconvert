@@ -223,7 +223,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(studyProtocolId));
+                    Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode())); 
             

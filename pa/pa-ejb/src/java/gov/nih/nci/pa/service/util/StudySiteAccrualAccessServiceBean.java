@@ -300,7 +300,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
             }
         }
         StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(
-                IiConverter.converToStudySiteIi(bo.getStudySite().getId()));
+                IiConverter.convertToStudySiteIi(bo.getStudySite().getId()));
         StudySiteAccrualAccessDTO result = new StudySiteAccrualAccessDTO();
         result.setCsmUserId(bo.getCsmUserId());
         result.setDateLastCreated(bo.getDateLastCreated());
@@ -331,7 +331,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
 
     private void validateElibibleForCreate(StudySiteAccrualAccessDTO access) throws PAException {
         StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(
-                IiConverter.converToStudySiteIi(access.getStudySiteId()));
+                IiConverter.convertToStudySiteIi(access.getStudySiteId()));
         RecruitmentStatusCode recruitmentStatus = null;
         if (ssas != null) {
             recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());

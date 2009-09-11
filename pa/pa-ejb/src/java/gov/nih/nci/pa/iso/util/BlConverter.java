@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.pa.util.PAConstants;
 
 
 /**
@@ -160,18 +161,21 @@ public class BlConverter {
         return bl.getValue().toString();
     }
     
-//    /**
-//     * 
-//     * @param bool boolean
-//     * @return Bl 
-//     */
-//    public static String translateCodeForDisplay(Boolean bool) {
-//        if (bool) {
-//            return "
-//        } else {
-//            
-//        }
-//        return "";
-//    }
-  
+
+    /**
+     * This method returns YES/NO depending upon the boolean value.
+     * @param bl BL
+     * @return string Yes/No
+     */
+    public static String convertBLToString(Bl bl) {
+        if (bl == null) {
+            return null;
+        }
+        Boolean b = bl.getValue();
+        if (b != null && b.booleanValue()) {
+            return PAConstants.YES;
+        } else {
+            return PAConstants.NO;
+        }
+    }  
 }

@@ -129,7 +129,7 @@ public class StudySiteConverterTest {
   public void convertFromDTOToDomain() throws Exception {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudySiteDTO dto = new StudySiteDTO();
-    dto.setIdentifier(IiConverter.converToStudySiteIi((Long) null));
+    dto.setIdentifier(IiConverter.convertToStudySiteIi((Long) null));
     dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Ecog1"));
     dto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));

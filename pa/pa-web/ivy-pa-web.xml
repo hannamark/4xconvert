@@ -63,7 +63,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"       	  conf="compile->master"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone1"  conf="compile->master"/>
+    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone2"  conf="compile->master"/>
     <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"           conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
 

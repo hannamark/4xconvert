@@ -131,7 +131,7 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
             dto.setOversightCommitteeIi(IiConverter.convertToPoOversightCommitteeIi(
                     bo.getOversightCommittee().getIdentifier()));
         }
-        dto.setIdentifier(IiConverter.converToStudySiteIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToStudySiteIi(bo.getId()));
         dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(bo.getLocalStudyProtocolIdentifier()));
         dto.setReviewBoardApprovalDate(TsConverter.convertToTs(bo.getReviewBoardApprovalDate()));
         dto.setReviewBoardApprovalNumber(StConverter.convertToSt(bo.getReviewBoardApprovalNumber()));

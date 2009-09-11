@@ -98,14 +98,14 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * copyright holder, NCI.
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
-public class StudyResourcingConverter {
+public class StudyResourcingConverter  extends AbstractConverter<StudyResourcingDTO, StudyResourcing> {
 
     /**
      *
      * @param studyResourcing sr
      * @return InterventionalStudyProtocolDTO InterventionalStudyProtocolDTO
      */
-    public static StudyResourcingDTO convertFromDomainToDTO(StudyResourcing studyResourcing) {
+    public StudyResourcingDTO convertFromDomainToDto(StudyResourcing studyResourcing) {
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
         srDTO.setIdentifier(IiConverter.convertToStudyResourcingIi(studyResourcing.getId()));
         if (studyResourcing.getOrganizationIdentifier() != null) {
@@ -130,7 +130,7 @@ public class StudyResourcingConverter {
      * @param studyResourcingDTO studyResourcingDTO
      * @return StudyResourcing
      */
-    public static StudyResourcing convertFromDTOToDomain(StudyResourcingDTO studyResourcingDTO) {
+    public StudyResourcing convertFromDtoToDomain(StudyResourcingDTO studyResourcingDTO) {
         StudyResourcing studyResourcing = new StudyResourcing();
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));

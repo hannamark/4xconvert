@@ -8,7 +8,6 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -18,6 +17,7 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali
@@ -37,9 +37,10 @@ public class MockStudyMilestoneService implements StudyMilestoneServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
      */
-    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
+    public Map<Ii, Ii>  copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
         // TODO Auto-generated method stub
+        return null;
 
     }
 

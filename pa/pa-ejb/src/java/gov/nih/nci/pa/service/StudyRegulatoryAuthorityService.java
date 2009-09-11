@@ -86,7 +86,7 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
  * @since 03/28/2009
  */
 
-public interface StudyRegulatoryAuthorityService extends StudyPaService<StudyRegulatoryAuthorityDTO> {
+public interface StudyRegulatoryAuthorityService extends StudyCurrentPaService<StudyRegulatoryAuthorityDTO> {
 
     /**
      * 

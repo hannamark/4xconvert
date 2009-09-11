@@ -83,9 +83,15 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -93,6 +99,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
@@ -107,8 +115,11 @@ import java.util.regex.Pattern;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({  "PMD.TooManyMethods" })
+@SuppressWarnings({  "PMD.TooManyMethods" , "PMD.ExcessiveClassLength" })
 public class PAUtil {
+
+    private static final int MAXF = 1024;
+    
     /**
      * checks if Ii is null.
      * @param ii ii
@@ -123,15 +134,43 @@ public class PAUtil {
                 isNull = true;
             }
         }
-//        try {
-//            Long.valueOf(ii.getExtension());
-//        } catch (NumberFormatException nfe) {
-//            // if cannot be converted, consider as null
-//            isNull = true;
-//        }
         return isNull;
     }
 
+    /**
+     * 
+     * @param ii ii to validate
+     * @return boolean
+     */
+    public static boolean isIiNotNull(Ii ii) {
+        return !isIiNull(ii);
+        
+    }
+    /**
+     * 
+     * @param toValidate ii to validate
+     * @param source source of the ii to validate
+     * @return boolean
+     * @throws PAException on invalid ii
+     */
+    public static boolean isValidIi(Ii toValidate , Ii source) throws PAException {
+        boolean isValid = true;
+        StringBuffer sb = new StringBuffer();
+        if (isIiNull(toValidate)) {
+            sb.append("Ii is null");
+        }
+        if (source.getIdentifierName().equals(toValidate.getIdentifierName())) {
+            sb.append(" Identifier Name does not match for " + source.getIdentifierName() 
+                    +  ", Exptected is " + source.getIdentifierName());
+        }
+        if (source.getRoot().equals(toValidate.getRoot())) {
+            sb.append(" Root does not match for " + source.getIdentifierName() + ", Exptected is " + source.getRoot());
+        }
+        if (sb.length() > 0) {
+            throw new PAException(sb.toString());
+        }
+        return isValid;
+    }
     /**
      * checks if Cd is null.
      * @param cd cd
@@ -530,4 +569,98 @@ public class PAUtil {
         return strMsg;
     }
 
+    /**
+     * loops through the map and returns the identifier of the ii.
+     * @param map map of iis
+     * @param key key
+     * @return matching ii
+     */
+    public static Ii containsIi(Map<Ii, Ii> map , Ii key) {
+        Ii value = null;
+        if (map == null || key == null) {
+            return value;
+        }
+        for (Ii tmp : map.keySet()) {
+            if (tmp.getExtension().equals(key.getExtension())) {
+                value = tmp;
+            }
+        }
+        return value;
+    }
+    /**
+     * 
+     * @param <TYPE> any base object extending BaseDTO
+     * @param list list of objects
+     * @return <TYPE> any base object extending BaseDTO
+     */
+    public static <TYPE extends BaseDTO> TYPE getFirstObj(List<? extends BaseDTO> list) {
+        TYPE type = null;
+        if (list != null) {
+             type =  (TYPE) list.get(0);
+        }
+        return type;
+        
+    }
+    
+
+
+    /**
+     * Read an input stream in its entirety into a byte array.
+     * @param inputStream is
+     * @return byte[]
+     * @throws IOException on error
+     */
+    public static byte[] readInputStream(InputStream inputStream) throws IOException {
+
+        int bufSize = MAXF * MAXF;
+        byte[] content;
+
+        List<byte[]> parts = new LinkedList<byte[]>();
+        InputStream in = new BufferedInputStream(inputStream);
+
+        byte[] readBuffer = new byte[bufSize];
+        byte[] part = null;
+        int bytesRead = 0;
+
+        // read everyting into a list of byte arrays
+        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
+            part = new byte[bytesRead];
+            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
+            parts.add(part);
+        }
+
+        // calculate the total size
+        int totalSize = 0;
+        for (byte[] partBuffer : parts) {
+            totalSize += partBuffer.length;
+        }
+
+        // allocate the array
+        content = new byte[totalSize];
+        int offset = 0;
+        for (byte[] partBuffer : parts) {
+            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
+            offset += partBuffer.length;
+        }
+
+        return content;
+    }
+
+    /**
+     * 
+     * @param documentIdentifier document identifier
+     * @param fileName name of the file
+     * @param nciIdentifier nci identifier
+     * @return the file path
+     * @throws PAException on error
+     */
+    public static String getDocumentFilePath(Long documentIdentifier , String fileName , String nciIdentifier) 
+    throws PAException {
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StringBuffer sb  = new StringBuffer(folderPath);
+        sb.append(File.separator).append(nciIdentifier).
+                append(File.separator).append(documentIdentifier).append('-').append(fileName);
+        return sb.toString();
+        
+    }    
 }

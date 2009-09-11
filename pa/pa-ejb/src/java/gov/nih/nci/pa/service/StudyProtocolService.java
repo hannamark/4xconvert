@@ -78,7 +78,11 @@
 */
 package gov.nih.nci.pa.service;
 
+import java.util.List;
+
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -163,5 +167,20 @@ public interface StudyProtocolService {
      * @throws PAException on any error
      */
     void deleteStudyProtocol(Ii ii) throws PAException;
+    
+    /**
+     * This method is an extension of the existing search method. The key difference being the support for paginated
+     * results (similar to SQL LIMIT OFFSET queries).
+     * @see #search(StudyProtocolDTO) for general search behavior
+     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
+     * @param dto the dto 
+     * @param pagingParams the settings for control pagination of results
+     * @return the study protocol 
+     * @throws PAException the PA exception
+     * @throws TooManyResultsException when the system's limit is exceeded
+     */
+    List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) 
+        throws PAException, TooManyResultsException;
+    
 
 }

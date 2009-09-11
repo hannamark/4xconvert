@@ -92,7 +92,7 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface StudyOverallStatusServiceRemote extends  StudyPaService<StudyOverallStatusDTO> {
+public interface StudyOverallStatusServiceRemote extends  StudyCurrentPaService<StudyOverallStatusDTO> {
     /**
      * 
      * @param statusDto dto

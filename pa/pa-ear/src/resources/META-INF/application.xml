@@ -24,7 +24,7 @@
         <ejb>pa-ejb.jar</ejb>
     </module>
     <module>
-        <java>po-services-client-3.0-milestone1.jar</java>
+        <java>po-services-client-3.0-milestone2.jar</java>
     </module>
     <module>
         <java>xsnapshot-1.1-beta2.jar</java>

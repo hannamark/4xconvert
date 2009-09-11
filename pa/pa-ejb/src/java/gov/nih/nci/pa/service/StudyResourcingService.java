@@ -90,7 +90,7 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface StudyResourcingService {
+public interface StudyResourcingService extends StudyPaService<StudyResourcingDTO> {
     
     
     /**

@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hugh Reinhart
@@ -102,15 +103,9 @@ public interface StudyPaService<DTO> extends BasePaService<DTO> {
      * creates a new record of studyprotocol by changing to new studyprotocol identifier.
      * @param fromStudyProtocolIi from where the study protocol objects to be copied  
      * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @return map 
      * @throws PAException on error
      */
-    void copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
+    Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
  
-    /**
-     * Gets the current by study protocol. 
-     * @param studyProtocolIi the study protocol ii 
-     * @return the current by study protocol 
-     * @throws PAException the PA exception
-     */
-   DTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException; 
 }

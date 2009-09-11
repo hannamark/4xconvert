@@ -210,7 +210,7 @@ public interface TrialRegistrationServiceRemote {
      *
      * @param studyProtocolDTO StudyProtocolDTO
      * @param overallStatusDTO OverallStatusDTO
-     * @param ssDto StudySiteDTO
+     * @param studySiteDto StudySiteDTO
      * @param studyIndldeDTOs list of Study Ind/ides
      * @param studyResourcingDTOs list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
@@ -233,7 +233,7 @@ public interface TrialRegistrationServiceRemote {
    void update(
         StudyProtocolDTO studyProtocolDTO ,
         StudyOverallStatusDTO overallStatusDTO ,
-        StudySiteDTO ssDto,
+        StudySiteDTO studySiteDto,
         List<StudyIndldeDTO> studyIndldeDTOs ,
         List<StudyResourcingDTO> studyResourcingDTOs ,
         List<DocumentDTO> documentDTOs ,

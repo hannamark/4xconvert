@@ -118,7 +118,7 @@ public class StudyRelationship extends AbstractEntity {
     /** The source study protocol id. (toStudyProtocolIdentifier studyProtocolIdentifier*/
     private StudyProtocol sourceStudyProtocol;
     
-    /** The target study protocol id. parent identifier*/
+    /** The target study protocol id. parent identifier from*/
     private StudyProtocol targetStudyProtocol;
     
         

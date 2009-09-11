@@ -120,7 +120,7 @@ import org.hibernate.Session;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyOverallStatusServiceBean
-extends AbstractStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
+extends AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
         implements StudyOverallStatusServiceRemote, StudyOverallStatusServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyOverallStatusServiceBean.class);

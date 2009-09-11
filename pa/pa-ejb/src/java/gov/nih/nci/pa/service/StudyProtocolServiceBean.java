@@ -142,6 +142,8 @@ import org.hibernate.criterion.Example;
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
     private static final int FIVE_5 = 5;
+    private static final String CREATE = "Create";
+    private static final String UPDATE = "Update";
     @EJB
     StudyRelationshipServiceLocal studyRelationshipService = null;
     @EJB
@@ -208,7 +210,6 @@ import org.hibernate.criterion.Example;
 
         StudyProtocolDTO  spDTO = null;
         Session session = null;
-        Timestamp now = new Timestamp((new Date()).getTime());
 
         try {
             session = HibernateUtil.getCurrentSession();
@@ -216,11 +217,7 @@ import org.hibernate.criterion.Example;
                     Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
             StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
-
-            if (ejbContext != null) {
-            sp.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
-            sp.setDateLastUpdated(now);
+            setDefaultValues(sp, spDTO, session, UPDATE);
             session.update(sp);
             spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
         }  catch (HibernateException hbe) {
@@ -315,33 +312,15 @@ import org.hibernate.criterion.Example;
             }
 
         }
-        Timestamp now = new Timestamp((new Date()).getTime());
         InterventionalStudyProtocolDTO  ispRetDTO = null;
-        Session session = null;
-
-        try {
-            session = HibernateUtil.getCurrentSession();
-
-            InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
-            session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
-
-            InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.
-            convertFromDTOToDomain(ispDTO);
-            if (ejbContext != null) {
-            upd.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
-            upd.setDateLastUpdated(now);
-            isp = upd;
-            session.merge(isp);
-            session.flush();
-
-            ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while updating InterventionalStudyProtocol for id = "
-                    + ispDTO.getIdentifier().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = "
-                    + ispDTO.getIdentifier().getExtension() , hbe);
-        }
+        Session session = HibernateUtil.getCurrentSession();
+        InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
+        session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
+        InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
+        setDefaultValues(upd , ispDTO , session , UPDATE);
+        isp = upd;
+        session.merge(isp);
+        ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
         return ispRetDTO;
 
     }
@@ -368,23 +347,9 @@ import org.hibernate.criterion.Example;
         LOG.debug("Entering createInterventionalStudyProtocol");
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
                 convertFromDTOToDomain(ispDTO);
-        Session session = null;
-
-        try {
-            session = HibernateUtil.getCurrentSession();
-            setDefaultValues(isp , ispDTO , session);
-            session.save(isp);
-            LOG.info("Creating isp for id = " + isp.getId());
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while creating InterventionalStudyProtocol for id = "
-                    + ispDTO.getIdentifier().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = "
-                    + ispDTO.getIdentifier().getExtension() , hbe);
-        } finally {
-            session.flush();
-        }
-        //createDocumentWorkFlowStatus(isp);
-        LOG.debug("Leaving createInterventionalStudyProtocol");
+        Session session = HibernateUtil.getCurrentSession();
+        setDefaultValues(isp , ispDTO , session , CREATE);
+        session.save(isp);
         return IiConverter.convertToStudyProtocolIi(isp.getId());
 
     }
@@ -444,7 +409,6 @@ import org.hibernate.criterion.Example;
 
         }
         enForceBusinessRules(ospDTO);
-        Timestamp now = new Timestamp((new Date()).getTime());
         ObservationalStudyProtocolDTO  ospRetDTO = null;
         Session session = null;
 
@@ -452,17 +416,9 @@ import org.hibernate.criterion.Example;
             session = HibernateUtil.getCurrentSession();
             ObservationalStudyProtocol osp = (ObservationalStudyProtocol)
             session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
-
-            ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.
-            convertFromDTOToDomain(ospDTO);
-            if (ejbContext != null) {
-                upd.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
-            upd.setDateLastUpdated(now);
-
-
+            ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
+            setDefaultValues(osp, ospDTO, session, UPDATE);
             osp = upd;
-
             session.merge(osp);
             session.flush();
             ospRetDTO =  ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
@@ -501,7 +457,7 @@ import org.hibernate.criterion.Example;
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            setDefaultValues(osp, ospDTO, session);
+            setDefaultValues(osp, ospDTO, session , CREATE);
             session.save(osp);
             LOG.info("Creating osp for id = " + osp.getId());
         }  catch (HibernateException hbe) {
@@ -557,7 +513,7 @@ import org.hibernate.criterion.Example;
                 resultList = docService.getDocumentsByStudyProtocol(targetSpIi);
                 for (DocumentDTO docDTO : resultList) {
                     if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.TSR.getCode())) {
-                        docService.delete(docDTO);                        
+                        docService.delete(docDTO.getIdentifier());                        
                     }
                 }
             }
@@ -598,9 +554,16 @@ import org.hibernate.criterion.Example;
 
     private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         boolean dateRulesApply = false;
-        if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+        
+        ActStatusCode ascStatusCode = null;
+        if (!PAUtil.isCdNull(studyProtocolDTO.getStatusCode())) {
+            ascStatusCode  = ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode());
+        } 
+        if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier()) &&  ascStatusCode != null 
+                && ascStatusCode.equals(ActStatusCode.ACTIVE)) {
             dateRulesApply = true;
-        } else {
+        } 
+        if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
                     getStudyProtocol(studyProtocolDTO.getIdentifier()));
             StudyProtocol newBo = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
@@ -673,24 +636,18 @@ import org.hibernate.criterion.Example;
         }
     }
 
-    private void setDefaultValues(StudyProtocol sp , StudyProtocolDTO spDTO , Session session) {
-        sp.setStatusCode(ActStatusCode.ACTIVE);
+    private void setDefaultValues(StudyProtocol sp , StudyProtocolDTO spDTO , Session session , String operation) {
+        if (sp.getStatusCode() != null) {
+            sp.setStatusCode(ActStatusCode.ACTIVE);
+        }
         sp.setStatusDate(new Timestamp((new Date()).getTime()));
-
-        if (sp.getIdentifier() == null) {
-            // this is a first submission
-            sp.setIdentifier(generateNciIdentifier(session));
-            sp.setSubmissionNumber(Integer.valueOf(1));
-        } else {
-            // this is an amendment, so generate only submission number and maintain the nci identifier
-            sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
-        }
-        if (ejbContext != null) {
-            sp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
-        }
-        sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
-        if (spDTO.getUserLastCreated() != null) {
+        sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
+        sp.setIdentifier(generateNciIdentifier(session));
+        if (ejbContext != null && CREATE.equals(operation)) {
             sp.setUserLastCreated(spDTO.getUserLastCreated().getValue());
+            sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
+        } else if (ejbContext != null && CREATE.equals(operation)) {
+            sp.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
         }
     }
 

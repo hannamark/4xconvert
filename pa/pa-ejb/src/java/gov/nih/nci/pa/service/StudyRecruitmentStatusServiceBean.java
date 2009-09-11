@@ -105,7 +105,8 @@ import org.apache.log4j.Logger;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyRecruitmentStatusServiceBean
-extends AbstractStudyIsoService<StudyRecruitmentStatusDTO, StudyRecruitmentStatus, StudyRecruitmentStatusConverter>
+extends AbstractCurrentStudyIsoService<StudyRecruitmentStatusDTO, 
+    StudyRecruitmentStatus, StudyRecruitmentStatusConverter>
         implements StudyRecruitmentStatusServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyRecruitmentStatusServiceBean.class);

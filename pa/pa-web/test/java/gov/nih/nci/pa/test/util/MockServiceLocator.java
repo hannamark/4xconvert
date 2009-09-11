@@ -104,12 +104,14 @@ import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceBean;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -127,6 +129,7 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
+import gov.nih.nci.service.MockOrganizationCorrelationService;
 import gov.nih.nci.service.MockPAHealthCareProviderService;
 import gov.nih.nci.service.MockPlannedActivityService;
 import gov.nih.nci.service.MockProtocolQueryService;
@@ -179,6 +182,9 @@ public class MockServiceLocator implements ServiceLocator {
     private final StratumGroupServiceRemote stratumGroupService = new StratumGroupServiceBean();
     private final StudyMilestoneTasksServiceLocal studyMilestoneTasksService = new StudyMilestoneTasksServiceBean();
     private final StudySiteAccrualAccessServiceLocal studySiteAccrualAccessService = new MockStudySiteAccrualAccessService();
+    private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
+//    private final StudyRecruitmentStatusServiceRemote studyRecruitmentStatusService = new MockStudyRecruitmentSta
+
     /**
      * @return mock service
      */
@@ -480,5 +486,14 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return studySiteAccrualAccessService;
+    }
+
+    public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
+        return organizationCorrelationService;
+    }
+
+    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -320,7 +320,7 @@ ServletResponseAware {
                      IiConverter.convertToIi(id));
              docDTO.setInactiveCommentText(StConverter.convertToSt(
                      trialDocumentWebDTO.getInactiveCommentText()));
-             PaRegistry.getDocumentService().delete(docDTO);
+             PaRegistry.getDocumentService().delete(docDTO.getIdentifier());
 
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);

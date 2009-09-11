@@ -111,7 +111,7 @@ import org.hibernate.Session;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DocumentWorkflowStatusServiceBean extends
-    AbstractStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus, DocumentWorkflowStatusConverter>
+    AbstractCurrentStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus, DocumentWorkflowStatusConverter>
     implements DocumentWorkflowStatusServiceRemote, DocumentWorkflowStatusServiceLocal {
 
     /**

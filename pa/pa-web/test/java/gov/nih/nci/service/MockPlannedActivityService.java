@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -337,9 +338,10 @@ public class MockPlannedActivityService implements PlannedActivityServiceRemote 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
      */
-    public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
             throws PAException {
         // TODO Auto-generated method stub
+        return null;
         
     }
     

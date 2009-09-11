@@ -719,7 +719,7 @@ public class IiConverter {
      * @param id the id
      * @return the ii
      */
-    public static Ii converToStudySiteIi(Long id) {
+    public static Ii convertToStudySiteIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_SITE_IDENTIFIER_NAME);
         ii.setRoot(STUDY_SITE_ROOT);
@@ -855,4 +855,5 @@ public class IiConverter {
         ii.setRoot(COUNTRY_ROOT);
         return ii;
     }
+
 }

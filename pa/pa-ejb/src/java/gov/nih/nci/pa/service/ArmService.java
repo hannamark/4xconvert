@@ -81,6 +81,7 @@
 package gov.nih.nci.pa.service;
 
 import java.util.List;
+import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -100,5 +101,15 @@ public interface ArmService extends StudyPaService<ArmDTO> {
      * @throws PAException exception
      */
     List<ArmDTO> getByPlannedActivity(Ii ii) throws PAException;
+    
+    /**
+     * creates a new record of arm and arm intervetions by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @param armMap map if iis
+     * @return map 
+     * @throws PAException on error
+     */
+     Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi , Map<Ii, Ii> armMap) throws PAException;    
 
 }

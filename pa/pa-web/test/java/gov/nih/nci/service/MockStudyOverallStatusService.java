@@ -93,6 +93,7 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hreinhart
@@ -190,9 +191,10 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
         
     }
 
-    public void copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+    public Map<Ii, Ii>  copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
             throws PAException {
         // TODO Auto-generated method stub
+        return null;
         
     }
 

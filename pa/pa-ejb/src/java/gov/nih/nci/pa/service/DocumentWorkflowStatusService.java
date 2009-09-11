@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface DocumentWorkflowStatusService extends StudyPaService<DocumentWorkflowStatusDTO> {
+public interface DocumentWorkflowStatusService extends StudyCurrentPaService<DocumentWorkflowStatusDTO> {
     
     
 

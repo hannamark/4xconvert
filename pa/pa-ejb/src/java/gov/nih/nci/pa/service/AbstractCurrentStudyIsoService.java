@@ -76,64 +76,41 @@
 * 
 * 
 */
-package gov.nih.nci.pa.util;
+
+package gov.nih.nci.pa.service;
+
+import java.util.List;
+
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.iso.convert.AbstractConverter;
+import gov.nih.nci.pa.iso.dto.StudyDTO;
 
 /**
- * @author Bala Nair
- * @since 03/23/2009
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * 
+ * @author NAmiruddin
+ *
+ * @param <DTO> dto
+ * @param <BO> bo
+ * @param <CONVERTER> converter
  */
-public class PAConstants {
+public class AbstractCurrentStudyIsoService <DTO extends StudyDTO, BO extends AbstractEntity, 
+    CONVERTER extends AbstractConverter<DTO, BO>>  extends AbstractStudyIsoService <DTO, BO, CONVERTER> {
     
-    /** Comma character. */
-    public static final String COMMA = ",";
-    
-    /** Whitespace. */
-    public static final String WHITESPACE = " ";
-    
-    /** Organization Type- Lead Organization. */
-    public static final String LEAD_ORGANIZATION = "Lead Organization";
-    
-    /** Organization Type- Participating Site. */
-    public static final String PARTICIPATING_SITE = "Participating Site";
-
-    /** Email. **/
-    public static final String EMAIL = "EMAIL";
-
-    /** PHONE. **/
-    public static final String PHONE = "PHONE";
-
     /**
-     * The maxmium number of search results to be returned for a remote service method.
+     * Gets the current by study protocol.
+     * @param studyProtocolIi the study protocol ii
+     * @return the current by study protocol
+     * @throws PAException the PA exception
      */
-    public static final int MAX_SEARCH_RESULTS = 500;
+    public DTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        List<DTO> dtoList = super.getByStudyProtocol(studyProtocolIi);
+        DTO result = null;
+        if (!dtoList.isEmpty()) {
+            result = dtoList.get(dtoList.size() - 1);
+        }
+        return result;
+    }
     
-    /** SYNONYM. **/
-    public static final String SYNONYM = "Synonym";
-    
-    /** ABBREVIATION. **/
-    public static final String ABBREVIATION = "Abbreviation";
-    
-    /** US_BRAND_NAME. **/
-    public static final String US_BRAND_NAME = "US Brand Name";
-    
-    /** FOREIGN_BRAND_NAME. **/
-    public static final String FOREIGN_BRAND_NAME = "Foreign Brand Name";
- 
-    /** CODE_NAME. **/
-    public static final String CODE_NAME = "Code Name";
-    
-    /** irb. **/
-    public static final String IRB_CODE = "Institutional Review Board (IRB)";
-    
-    /** Pa Internal. **/
-    public static final String PA_INTERNAL = "PA-InternalIdentifier";
-    
-    /** yes. */
-    public static final String YES = "Yes";
-    /** no. */
-    public static final String NO = "No";
-    
+
 }

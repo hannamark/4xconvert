@@ -91,7 +91,7 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface StudyRecruitmentStatusServiceRemote extends StudyPaService<StudyRecruitmentStatusDTO> {
+public interface StudyRecruitmentStatusServiceRemote extends StudyCurrentPaService<StudyRecruitmentStatusDTO> {
     
     
 }

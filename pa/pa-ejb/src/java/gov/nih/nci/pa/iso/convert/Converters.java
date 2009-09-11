@@ -120,8 +120,9 @@ public class Converters {
     private static StudyObjectiveConverter studyObjectiveConverter = new StudyObjectiveConverter();
     private static RegulatoryAuthorityConverter regulatoryAuthorityConverter =
         new RegulatoryAuthorityConverter();
-
-    /**
+    private static DocumentConverter documentConverter =   new DocumentConverter();
+    private static StudyResourcingConverter studyResourcingConverter =   new StudyResourcingConverter();
+/**
      * @param clazz class
      * @param <TYPE> the converter type to get
      * @return converter
@@ -198,6 +199,13 @@ public class Converters {
         if (clazz.equals(RegulatoryAuthorityConverter.class)) {
             return (TYPE) regulatoryAuthorityConverter;
         }
+        if (clazz.equals(DocumentConverter.class)) {
+            return (TYPE) documentConverter;
+        }
+        if (clazz.equals(StudyResourcingConverter.class)) {
+            return (TYPE) studyResourcingConverter;
+        }
+
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }
 }

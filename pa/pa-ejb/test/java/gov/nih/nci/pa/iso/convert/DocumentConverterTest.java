@@ -110,8 +110,8 @@ private Session sess;
         bo.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
         bo.setFileName("Protocol_Document.doc");
         bo.setStudyProtocol(sp);
-
-        DocumentDTO dto = DocumentConverter.convertFromDomainToDTO(bo);
+        DocumentConverter dc = new DocumentConverter();
+        DocumentDTO dto = dc.convertFromDomainToDto(bo);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getTypeCode().getCode(), dto.getTypeCode().getCode());
         assertEquals(bo.getFileName(), dto.getFileName().getValue());
@@ -127,7 +127,7 @@ private Session sess;
         dto.setFileName(StConverter.convertToSt("IRB_Approval_Document.doc"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
-        Document bo = DocumentConverter.convertFromDTOToDomain(dto);
+        Document bo = new DocumentConverter().convertFromDtoToDomain(dto);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getTypeCode().getCode(), dto.getTypeCode().getCode());
         assertEquals(bo.getFileName(), dto.getFileName().getValue());

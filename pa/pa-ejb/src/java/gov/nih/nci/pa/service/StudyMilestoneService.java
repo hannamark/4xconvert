@@ -87,6 +87,6 @@ import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface StudyMilestoneService extends StudyPaService<StudyMilestoneDTO> {
+public interface StudyMilestoneService extends StudyCurrentPaService<StudyMilestoneDTO> {
 
 }

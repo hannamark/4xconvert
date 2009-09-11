@@ -78,13 +78,18 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.StudySiteAccrualStatusConverter;
+import gov.nih.nci.pa.iso.convert.StudySiteContactConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -95,8 +100,11 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -118,6 +126,12 @@ public class StudySiteServiceBean
         extends AbstractRoleIsoService<StudySiteDTO, StudySite, StudySiteConverter>
         implements StudySiteServiceRemote, StudySiteServiceLocal {
 
+    @EJB
+    StudySiteContactServiceLocal studySiteContactService = null;
+    @EJB
+    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
+    
+    
     /**
      * @param dto StudySiteDTO
      * @return StudySiteDTO
@@ -146,6 +160,58 @@ public class StudySiteServiceBean
         return resultDto;
     }
 
+    /**
+     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @return map 
+     * @throws PAException on error
+     */
+    public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+        List<StudySiteDTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
+        Map<Ii , Ii> map = new HashMap<Ii , Ii>();
+        List<StudySiteContactDTO> spcDtos = null;
+        List<StudySiteAccrualStatusDTO> accDtos = null;
+        Session session = HibernateUtil.getCurrentSession();
+        StudySite bo = null;
+        Ii from = null;
+        Ii to = null;
+        StudySiteContactConverter ssc = new StudySiteContactConverter();
+
+        for (StudySiteDTO dto : dtos) {
+            from = dto.getIdentifier();
+            to = new Ii();
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            bo = convertFromDtoToDomain(dto);
+            session.save(bo);
+            to.setIdentifierName(from.getIdentifierName());
+            to.setRoot(from.getRoot());
+            to.setExtension(bo.getId().toString());
+            if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {
+                // create study contact
+                spcDtos = studySiteContactService.getByStudySite(from);
+                for (StudySiteContactDTO spcDto : spcDtos) {
+                    spcDto.setIdentifier(null);
+                    spcDto.setStudySiteIi(to);
+                    spcDto.setStudyProtocolIdentifier(toStudyProtocolIi);
+                    session.save(ssc.convertFromDtoToDomain(spcDto));
+                }
+                // create study accrual status
+                accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(from);
+                for (StudySiteAccrualStatusDTO accDto : accDtos) {
+                    accDto.setIdentifier(null);
+                    accDto.setStudySiteIi(to);
+                    session.save(StudySiteAccrualStatusConverter.convertFromDtoToDomain(accDto));
+                }
+                
+                
+            }
+            
+            map.put(from, to);
+        }
+        return map;
+    }
     
     @SuppressWarnings("PMD.NPathComplexity")
     private StudySiteDTO businessRules(StudySiteDTO dto) throws PAException {

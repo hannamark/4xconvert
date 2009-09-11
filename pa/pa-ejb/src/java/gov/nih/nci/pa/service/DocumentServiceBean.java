@@ -93,16 +93,14 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -126,11 +124,11 @@ import org.hibernate.Session;
 @SuppressWarnings({"PMD.CyclomaticComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class DocumentServiceBean
+public class DocumentServiceBean extends 
+    AbstractStudyIsoService<DocumentDTO, Document, DocumentConverter>
                 implements DocumentServiceRemote, DocumentServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(DocumentServiceBean.class);
-    private static final int MAXF = 1024;
     private static final String MSG = "docDTO should not be null";
 
     private SessionContext ejbContext;
@@ -182,7 +180,7 @@ public class DocumentServiceBean
 
         ArrayList<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
         for (Document bo : queryList) {
-            resultList.add(DocumentConverter.convertFromDomainToDTO(bo));
+            resultList.add(new DocumentConverter().convertFromDomainToDto(bo));
         }
         session.flush();
         LOG.info("Leaving getDocumentsByStudyProtocol");
@@ -194,15 +192,14 @@ public class DocumentServiceBean
      * @return DocumentDTO
      * @throws PAException PAException
      */
+    @Override
     public DocumentDTO create(DocumentDTO docDTO)
     throws PAException {
-        if (docDTO == null) {
-            throw new PAException(MSG);
-        }
         LOG.debug("Entering createTrialDocument ");
+        validate(docDTO);
         enforceDuplicateDocument(docDTO);
         Session session = null;
-        Document doc = DocumentConverter.convertFromDTOToDomain(docDTO);
+        Document doc = new DocumentConverter().convertFromDtoToDomain(docDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         doc.setDateLastCreated(now);
         doc.setDateLastUpdated(now);
@@ -238,6 +235,7 @@ public class DocumentServiceBean
      */
     @SuppressWarnings({"PMD" })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @Override
     public DocumentDTO get(Ii id) throws PAException {
 
         LOG.info("Entering getTrialDocumentById");
@@ -269,8 +267,9 @@ public class DocumentServiceBean
         }
 
         if (!queryList.isEmpty()) {
+            DocumentConverter dc = new DocumentConverter();
             doc = queryList.get(0);
-            docDTO = DocumentConverter.convertFromDomainToDTO(doc);
+            docDTO = dc.convertFromDomainToDto(doc);
             try {
                 StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
                 StudyProtocolServiceBean spBean = new StudyProtocolServiceBean();
@@ -278,7 +277,7 @@ public class DocumentServiceBean
                 sb.append(File.separator).append(spDTO.getAssignedIdentifier().getExtension()).append(File.separator).
                     append(docDTO.getIdentifier().getExtension()).append('-').append(doc.getFileName());
                 File downloadFile = new File(sb.toString());
-                docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(downloadFile))));
+                docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
             
             } catch (FileNotFoundException fe) {
                throw new PAException(" File Not found " + fe.getLocalizedMessage(), fe);
@@ -298,13 +297,10 @@ public class DocumentServiceBean
      * @return DocumentDTO
      * @throws PAException PAException
      */
+    @Override
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
 
-        if (docDTO == null) {
-            LOG.error(MSG);
-            throw new PAException(MSG);
-        }
-        LOG.debug("Entering updateTrialDocument ");
+        validate(docDTO);
         DocumentDTO docRetDTO = null;
         try {
             docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
@@ -322,38 +318,72 @@ public class DocumentServiceBean
 
     /**
      *
-     * @param docDTO DocumentDTO
+     * @param  documentIi documentIi
      * @throws PAException PAException
      */
     @SuppressWarnings("unchecked")
-    public void delete(DocumentDTO docDTO) throws PAException {
+    @Override
+    public void delete(Ii documentIi) throws PAException {
 
-       if (docDTO == null) {
+       if (PAUtil.isIiNull(documentIi)) {
             throw new PAException(MSG);
         }
-        
+        DocumentDTO docDTO = get(documentIi);
         checkTypeCodesForDelete(docDTO);
         LOG.debug("Entering deleteTrialDocumentByID ");
         updateObjectToInActive(docDTO);
         LOG.debug("Leaving deleteTrialDocumentByID ");
     }
+    
+    
+    /**
+     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
+     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
+     * @param toStudyProtocolIi to where the study protocol objects to be copied
+     * @return map 
+     * @throws PAException on error
+     */
+    @Override
+    public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+        Map<Ii, Ii> map = super.copy(fromStudyProtocolIi, toStudyProtocolIi);
+        List<DocumentDTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
+        Session session = HibernateUtil.getCurrentSession();
+        String fromName = null;
+        String toName = null;
+        StudyProtocolServiceBean spBean = new StudyProtocolServiceBean();
+        String nciIdentifier = spBean.getStudyProtocol(fromStudyProtocolIi).getAssignedIdentifier().getExtension();
+        
+        for (DocumentDTO dto : dtos) {
+            Document doc = (Document) session.load(Document.class, IiConverter.convertToLong(dto.getIdentifier()));
+            Ii toIi = PAUtil.containsIi(map, dto.getIdentifier());
+            if (toIi != null) {
+                // rename the file
+                fromName = PAUtil.getDocumentFilePath(doc.getId(), doc.getFileName() , nciIdentifier);
+                toName = PAUtil.getDocumentFilePath(Long.valueOf(toIi.getExtension()), doc.getFileName(),
+                        nciIdentifier);
+                File fromFile = new File(fromName);
+                File toFile = new File(toName);
+                boolean success = fromFile.renameTo(toFile);
+                if (!success) {
+                    throw new PAException("Unable to rename the file from " + fromName + " to " + toName);
+                }
+
+            }
+            session.delete(doc);
+        }
+        return map;
+    }    
     private void updateObjectToInActive(DocumentDTO docDTO) throws PAException {
         Session session = null;
         Document doc = null;
-        List<Document> queryList = new ArrayList<Document>();
         try {
             session = HibernateUtil.getCurrentSession();
 
-            Query query = null;
-
             // step 1: form the hql
-            String hql = " select d"
-                       + " from Document d"
+            String hql = " select d from Document d"
                        + " where d.id = " + IiConverter.convertToLong(docDTO.getIdentifier());
             // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-            doc = queryList.get(0);
+            doc = (Document) session.createQuery(hql).list().get(0);
             // set the values from paramter
             doc.setActiveIndicator(false);
             doc.setInactiveCommentText(StConverter.convertToString(
@@ -369,6 +399,13 @@ public class DocumentServiceBean
             LOG.error(" Hibernate exception while retrieving deleteTrialDocumentByID" , hbe);
             throw new PAException(" Hibernate exception while retrieving deleteTrialDocumentByID "  , hbe);
         }
+    }
+    
+    private void validate(DocumentDTO docDto) throws PAException {
+        if (docDto == null) {
+            throw new PAException("Document DTO is null. ");
+        }
+        PAUtil.isValidIi(docDto.getStudyProtocolIdentifier() , IiConverter.convertToDocumentIi(null));
     }
     /**
      * @param docDTO DocumentDTO
@@ -401,19 +438,16 @@ public class DocumentServiceBean
    
     /**
      * Check type codes for delete.
-     * 
      * @param docDTO the doc dto
-     * 
      * @return the boolean
-     * 
      * @throws PAException the PA exception
      */
     private void checkTypeCodesForDelete(DocumentDTO docDTO) throws PAException {
-            if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode()) 
-                    || docDTO.getTypeCode().getCode().equals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode()) 
-                    || docDTO.getTypeCode().getCode().equals(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode())) {
-                    throw new PAException("Document with selected type cannot be deleted. ");
-            }
+        if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode()) 
+                || docDTO.getTypeCode().getCode().equals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode()) 
+                || docDTO.getTypeCode().getCode().equals(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode())) {
+                throw new PAException("Document with selected type cannot be deleted. ");
+        }
     }
 
 
@@ -454,40 +488,6 @@ public class DocumentServiceBean
         }
     }
     
-    /** Read an input stream in its entirety into a byte array. */
-    private static byte[] readInputStream(InputStream inputStream) throws IOException {
 
-        int bufSize = MAXF * MAXF;
-        byte[] content;
-
-        List<byte[]> parts = new LinkedList<byte[]>();
-        InputStream in = new BufferedInputStream(inputStream);
-
-        byte[] readBuffer = new byte[bufSize];
-        byte[] part = null;
-        int bytesRead = 0;
-
-        // read everyting into a list of byte arrays
-        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
-            part = new byte[bytesRead];
-            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
-            parts.add(part);
-        }
-
-        // calculate the total size
-        int totalSize = 0;
-        for (byte[] partBuffer : parts) {
-            totalSize += partBuffer.length;
-        }
-
-        // allocate the array
-        content = new byte[totalSize];
-        int offset = 0;
-        for (byte[] partBuffer : parts) {
-            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
-            offset += partBuffer.length;
-        }
-
-        return content;
-    }
+    
 }

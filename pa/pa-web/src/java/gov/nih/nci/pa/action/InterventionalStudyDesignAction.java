@@ -345,7 +345,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
-            List<StudyOutcomeMeasureDTO> isoList = PaRegistry.getOutcomeMeasurService().
+            List<StudyOutcomeMeasureDTO> isoList = PaRegistry.getStudyOutcomeMeasurService().
             getByStudyProtocol(studyProtocolIi);
             if (!(isoList.isEmpty())) {
                 outcomeList = new ArrayList<ISDesignDetailsWebDTO>();
@@ -388,7 +388,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
-            PaRegistry.getOutcomeMeasurService().create(sgDTO);
+            PaRegistry.getStudyOutcomeMeasurService().create(sgDTO);
             outcomeQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
             return OUTCOME;
@@ -403,7 +403,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
     public String outcomeedit() {
         try {
             StudyOutcomeMeasureDTO  sgDTO =
-                PaRegistry.getOutcomeMeasurService().get(IiConverter.convertToIi(id));
+                PaRegistry.getStudyOutcomeMeasurService().get(IiConverter.convertToIi(id));
             webDTO = setOutcomeMeasureDTO(sgDTO);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -431,7 +431,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
-            PaRegistry.getOutcomeMeasurService().update(sgDTO);
+            PaRegistry.getStudyOutcomeMeasurService().update(sgDTO);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             outcomeQuery();
         } catch (Exception e) {
@@ -489,7 +489,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
     public String outcomedelete()  {
 
         try {
-            PaRegistry.getOutcomeMeasurService().delete(IiConverter.convertToIi(id));
+            PaRegistry.getStudyOutcomeMeasurService().delete(IiConverter.convertToIi(id));
             outcomeQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         } catch (Exception e) {

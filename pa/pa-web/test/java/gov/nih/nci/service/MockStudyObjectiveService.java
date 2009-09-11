@@ -5,6 +5,7 @@ package gov.nih.nci.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
@@ -20,9 +21,10 @@ public class MockStudyObjectiveService implements StudyObjectiveServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
      */
-    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
+    public Map<Ii, Ii>  copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
         // TODO Auto-generated method stub
+        return null;
 
     }
 
