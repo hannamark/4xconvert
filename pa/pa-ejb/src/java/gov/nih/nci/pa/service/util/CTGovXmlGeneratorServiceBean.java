@@ -112,7 +112,6 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -128,7 +127,6 @@ import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
-import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
@@ -188,7 +186,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -282,8 +279,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final String EMAIL = "email";
     private static final String NA = "N/A";
     private static final String TAB = "     ";
-    private static final String DASH = "- ";
-    private static final String NEW_LINE = "\n";
+    private static final String DASH = "- ";    
   
     private static Map<String , String> nv = new HashMap<String, String>();
     /**
@@ -324,7 +320,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createSponsors(spDTO.getIdentifier() , doc , root);
             createOversightInfo(spDTO , doc , root);
             createTextBlock("brief_summary", spDTO.getPublicDescription(), PAAttributeMaxLen.LEN_MIN_1 , doc, root);
-            createObjective(spDTO, doc , root);
+            //createObjective(spDTO, doc , root);
+            createCdataBlock("detailed_description" , 
+                                 spDTO.getScientificDescription() , PAAttributeMaxLen.LEN_32000 , doc , root);
             createOverallStatus(spDTO, doc, root);
            //createElement("expanded_access_status", convertBLToString(spDTO.getExpandedAccessIndicator()), doc , root);
             if (spDTO.getExpandedAccessIndicator() != null && spDTO.getExpandedAccessIndicator().getValue() != null) {
@@ -1201,7 +1199,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
         }
     }
-    private void createObjective(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
+   /* private void createObjective(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
         List<StudyObjectiveDTO> studyObjList = studyObjectiveService.getByStudyProtocol(spDTO.getIdentifier());
         StringBuffer objectiveData = new StringBuffer();
         for (StudyObjectiveDTO dto : studyObjList) {
@@ -1286,7 +1284,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         PAAttributeMaxLen.LEN_15000 , doc, root);
          }     
 
-    }
+    }*/
 
     private static void createCdataBlock(final String elementName ,  final St data , int maxLen ,
             Document doc , Element root)

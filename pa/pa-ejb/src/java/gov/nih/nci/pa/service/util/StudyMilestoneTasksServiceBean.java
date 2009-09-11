@@ -153,7 +153,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.
                                                        search(studyMilestoneDTO, limit);
         
-        LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
+        LOG.info("The Search results returned" + studyMilestoneDTOList.size());
         
         if (studyMilestoneDTOList != null && !studyMilestoneDTOList.isEmpty()) {
       
@@ -182,7 +182,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                }
             } 
           }
-          LOG.debug("Done with the task.");
+          LOG.info("Done with the task.");
        } catch (TooManyResultsException e) {
          LOG.error("Too Many Results Exception" + e.getLocalizedMessage());  
          throw new PAException("ToomanyReusltsException occured");

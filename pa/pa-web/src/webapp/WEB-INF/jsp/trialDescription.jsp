@@ -74,6 +74,21 @@
         <tr>
         <th colspan="2"><fmt:message key="trial.detailedDescription"/></th>
         </tr>
+     <tr>
+        <td class="label">
+           <label for="scientificDescription">
+                    <fmt:message key="trial.scientificDescription"/>
+           </label>
+         </td>
+         <td class="value">
+        <s:textarea name="outline" cssStyle="width:606px" rows="10"/> (Max 32000 chars)
+        <span class="formErrorMsg"> 
+                <s:fielderror>
+                    <s:param>outline</s:param>
+                </s:fielderror>                            
+            </span> 
+        </td>
+    </tr>
         <tr>
         <td class="label">
            <label for="primary">
@@ -81,7 +96,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea name="primary" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
+        <s:textarea readonly="true"  name="primary" cssStyle="width:606px" rows="2" cssClass="readonly"/> (Max 2000 chars)
             <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>primary</s:param>
@@ -96,7 +111,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea name="secondary" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
+        <s:textarea readonly="true"  name="secondary" cssStyle="width:606px" rows="2" cssClass="readonly"/> (Max 2000 chars)
         <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>secondary</s:param>
@@ -107,11 +122,11 @@
         <tr>
         <td class="label">
            <label for="ternary">
-                    <fmt:message key="trial.ternary"/>
+                    <fmt:message key="trial.ternary" />
            </label>
          </td>
          <td class="value">
-        <s:textarea name="ternary" cssStyle="width:606px" rows="4"/> (Max 2000 chars)
+        <s:textarea readonly="true"  name="ternary" cssStyle="width:606px" rows="2" cssClass="readonly"/> (Max 2000 chars)
         <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>ternary</s:param>
@@ -119,21 +134,7 @@
             </span>
         </td>
     </tr>
-     <tr>
-        <td class="label">
-           <label for="scientificDescription">
-                    <fmt:message key="trial.scientificDescription"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textarea name="outline" cssStyle="width:606px" rows="4"/> (Max 12000 chars)
-        <span class="formErrorMsg"> 
-                <s:fielderror>
-                    <s:param>outline</s:param>
-                </s:fielderror>                            
-            </span> 
-        </td>
-    </tr>
+
     </table>
    
 <div class="actionsrow">

@@ -97,7 +97,6 @@ import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -110,7 +109,6 @@ import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
-import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -124,7 +122,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
@@ -1179,8 +1176,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     html.append(BR).append(appendData("Acronym", getInfo(studyProtocolDto.getAcronym(), true), true, true));
     html.append(BR)
         .append(appendData("Brief Summary", getInfo(studyProtocolDto.getPublicDescription(), true), true, true));
-    html.append(BR).append(appendData("Detailed Description", 
-                getInfo(getObjectiveData(studyProtocolDto).toString(), true), true, true));
+    html.append(BR).append(appendBoldData("Detailed Description: ")); 
+    html.append(getScientificDescription(studyProtocolDto.getScientificDescription())); 
     html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
     html.append(BR).append(appendData("Reporting Dataset Method", 
                 getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
@@ -1579,89 +1576,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           return NO;
       }
   }
-  private StringBuffer  getObjectiveData(StudyProtocolDTO studyProtocolDto) throws PAException {
-      StringBuffer htmldata = new StringBuffer();
-      List<StudyObjectiveDTO> studyObjList = studyObjectiveService.getByStudyProtocol(studyProtocolDto.getIdentifier());
-      StringBuffer objectiveData = new StringBuffer();
-      for (StudyObjectiveDTO dto : studyObjList) {
-          if (!StConverter.convertToString(dto.getDescription()).trim().equals("")) {
-              if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
-                  objectiveData.append(BR);
-                  objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.PRIMARY.getCode()));
-                  objectiveData.append(BR);
-                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()).trim(),
-                      ".");
-                  while (stoken.hasMoreElements()) {
-                      objectiveData.append(UL_B);
-                      objectiveData.append(LI_B);
-                      objectiveData.append(stoken.nextElement().toString().trim());
-                      objectiveData.append(LI_E);
-                      objectiveData.append(UL_E);
-                  }
-              }
-              if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
-                  objectiveData.append(BR);
-                  objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.SECONDARY.getCode()));
-                  objectiveData.append(BR);
-                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()).trim(),
-                      ".");
-                  while (stoken.hasMoreElements()) {
-                      objectiveData.append(UL_B);
-                      objectiveData.append(LI_B);
-                      objectiveData.append(stoken.nextElement().toString().trim());
-                      objectiveData.append(LI_E);
-                      objectiveData.append(UL_E);
-                  }
-              }
-              if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
-                  objectiveData.append(BR);
-                  objectiveData.append(NBSP).append(appendBoldData(StudyObjectiveTypeCode.TERNARY.getCode()));
-                  objectiveData.append(BR);
-                  StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()).trim(),
-                      ".");
-                  while (stoken.hasMoreElements()) {
-                      objectiveData.append(UL_B);
-                      objectiveData.append(LI_B);
-                      objectiveData.append(stoken.nextElement().toString().trim());
-                      objectiveData.append(LI_E);
-                      objectiveData.append(UL_E);
-                  }
-              }
-              
-          }   
-      }
-      if (studyProtocolDto.getScientificDescription() != null 
-              && studyProtocolDto.getScientificDescription().getValue() != null) {
-          objectiveData.append(BR);
-          objectiveData.append(NBSP).append(appendBoldData("Outline:"));
-          objectiveData.append(BR);
-          StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(
-                  studyProtocolDto.getScientificDescription()).trim(), ".");
-          while (stoken.hasMoreElements()) {
-           objectiveData.append(UL_B);
-           objectiveData.append(LI_B);
-           objectiveData.append(stoken.nextElement().toString().trim());
-           objectiveData.append(LI_E);
-           objectiveData.append(UL_E);
-         }
-          
-      }
-      Integer projectedAcc = IvlConverter.convertInt().convertLow(studyProtocolDto.getTargetAccrualNumber());
-      if (projectedAcc != null) {
-          objectiveData.append(BR);
-          objectiveData.append(NBSP).append(appendBoldData("Projected Accrual:"));
-          objectiveData.append(UL_B);
-          objectiveData.append(LI_B);
-          objectiveData.append(projectedAcc);
-          objectiveData.append(UL_E);
-          objectiveData.append(LI_E);
-      }
-      if (objectiveData.length() > 1) {
-          htmldata.append(BR).append(BR);
-          htmldata.append(NBSP).append(appendBoldData("Objectives:"));
-          htmldata.append(objectiveData);
-      }
-      return htmldata;
-  }
+  
+  private StringBuffer getScientificDescription(St scientificDescription) {
+    StringBuffer sbuff = new StringBuffer();
+      if (!PAUtil.isStNull(scientificDescription)) {
+        String data = scientificDescription.getValue();
+        StringTokenizer stokens = new StringTokenizer(data , "\n");
+        while (stokens.hasMoreTokens()) {
+         sbuff.append(stokens.nextToken()).append(BR);
+        }
+    }
+    return sbuff;
+ }
   
 }

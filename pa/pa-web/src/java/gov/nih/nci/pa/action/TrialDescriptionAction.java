@@ -113,13 +113,12 @@ public class TrialDescriptionAction extends ActionSupport {
     private static final long serialVersionUID = -263739685830642951L;
     private static final int PUBLIC_TITLE = 300;
     private static final int PUBLIC_DESCRIPTION = 5000;
-    private static final int OUTLINE_LEN = 12000;
     private static final String RESULT = "edit";
 
 
 
     private static final String MAX_LEN = "2000";
-    private static final String MAX_LEN_OUTLINE = "12000";
+    private static final String MAX_LEN_OUTLINE = "32000";
     private String trialBriefTitle;
     private String trialBriefSummary;
     private String outline;
@@ -195,7 +194,7 @@ public class TrialDescriptionAction extends ActionSupport {
         spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefTitle(), PUBLIC_TITLE)));
         spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefSummary()
                    , PUBLIC_DESCRIPTION)));
-        spDTO.setScientificDescription(StConverter.convertToSt(PAUtil.stringSetter(getOutline() , OUTLINE_LEN)));
+        spDTO.setScientificDescription(StConverter.convertToSt(getOutline()));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
     private void getStudyObjectiveFromDB(Ii studyProtocolIi) throws PAException {
@@ -298,7 +297,7 @@ public class TrialDescriptionAction extends ActionSupport {
     /**
      * @return the outline
      */
-    @StringLengthFieldValidator(message = "Outline must be 12000 characters max", maxLength = MAX_LEN_OUTLINE)
+    @StringLengthFieldValidator(message = "Outline must be 32000 characters max", maxLength = MAX_LEN_OUTLINE)
     public String getOutline() {
         return outline;
     }
