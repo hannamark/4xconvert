@@ -76,7 +76,14 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import java.util.List;
+
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -96,6 +103,20 @@ public class WelcomeAction extends AbstractAccrualAction {
         if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_PUBLIC)) {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_PUBLIC);
+            
+        ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER,
+        		ServletActionContext.getRequest().getRemoteUser());
+        SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
+        SearchStudySiteService studySiteService = AccrualServiceLocator.getInstance().getSearchStudySiteService();
+        
+        List<Ii> authorizedTrialIds = service.getAuthorizedTrials(StConverter.convertToSt
+        		                       (ServletActionContext.getRequest().getRemoteUser()));
+        ServletActionContext.getRequest().getSession().setAttribute("authorizedTrialIds",authorizedTrialIds);
+        
+        List<Ii> authorizedStudySiteIds = studySiteService.getAuthorizedSites(StConverter.convertToSt
+        		                        (ServletActionContext.getRequest().getRemoteUser()));
+        ServletActionContext.getRequest().getSession().setAttribute("authorizedStudySiteIds",authorizedStudySiteIds);
+        
             actionResult = "show_Disclaimer_Page";
         }
         return actionResult;

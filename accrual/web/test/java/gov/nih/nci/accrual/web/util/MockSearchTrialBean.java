@@ -124,7 +124,8 @@ public class MockSearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria) throws RemoteException {
+    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,List<Ii> authorizedTrialIds)
+                                     throws RemoteException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
         for (SearchTrialResultDto dto : dtos) {
             if (contains(dto.getAssignedIdentifier(), criteria.getAssignedIdentifier())

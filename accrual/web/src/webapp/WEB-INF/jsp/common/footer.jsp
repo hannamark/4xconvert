@@ -1,7 +1,7 @@
 <div id="footerwrapper">
 	<div id="footernav">
 		<div id="footer">						
-			<a href="/registry/contact.action">CONTACT US</a>
+			<a href="/accrual/contact.action">CONTACT US</a>
 			<a href="http://www.nih.gov/about/privacy.htm" target="_blank">PRIVACY NOTICE</a>
 			<a href="http://www.nih.gov/about/disclaim.htm" target="_blank">DISCLAIMER</a>
 			<a href="http://www3.cancer.gov/accessibility/nci508.htm" target="_blank">ACCESSIBILITY</a>

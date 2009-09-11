@@ -98,7 +98,7 @@ public interface SearchStudySiteService {
      * @return list of study sites for which the user is authorized to enter accruals
      * @throws RemoteException exception
      */
-    List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException;
+    List<SearchStudySiteResultDto> search(Ii studyProtocolIi,List<Ii> authorizedStudySiteIds) throws RemoteException;
 
     /**
      * @param user user

@@ -110,7 +110,8 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     /**
      * {@inheritDoc}
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public String execute() {
         String actionResult = "participation_site_selection";
       //check if users accepted the disclaimer if not show one
@@ -121,13 +122,15 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         try {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
+        List<Ii> authorizedStudySiteIds = (List<Ii>) ServletActionContext.getRequest().getSession()
+                                              .getAttribute("authorizedStudySiteIds");
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
         studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
         Ii spid = IiConverter.convertToIi(studyProtocolId);
         trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
             // put an entry in the session
         ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-        listOfSites = service.search(spid);
+        listOfSites = service.search(spid,authorizedStudySiteIds);
         if (listOfSites != null)  {
             ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
            } else {

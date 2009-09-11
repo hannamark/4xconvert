@@ -110,7 +110,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi) throws RemoteException {
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi,List<Ii> authorizedStudySiteIds) throws RemoteException {
         List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
         Session session = null;
         try {

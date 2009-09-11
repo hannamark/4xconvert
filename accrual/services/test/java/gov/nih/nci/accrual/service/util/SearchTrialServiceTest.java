@@ -86,11 +86,13 @@ import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -111,30 +113,30 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void search() throws Exception {
-        bean.search(new SearchTrialCriteriaDto());
+        bean.search(new SearchTrialCriteriaDto(),new ArrayList<Ii>());
         assertEquals(TestSchema.studyProtocols.size() - TestSchema.inactiveStudyProtocolCount,
-                bean.search(new SearchTrialCriteriaDto()).size());
+                bean.search(new SearchTrialCriteriaDto(),new ArrayList<Ii>()).size());
 
         // get by assigned identifier
         SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
         crit.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocols.get(2).getIdentifier()));
-        assertEquals(1, bean.search(crit).size());
+        assertEquals(1, bean.search(crit,new ArrayList<Ii>()).size());
         crit.setAssignedIdentifier(BST);
-        assertEquals(0, bean.search(crit).size());
+        assertEquals(0, bean.search(crit,new ArrayList<Ii>()).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
-        assertEquals(1, bean.search(crit).size());
+        assertEquals(1, bean.search(crit,new ArrayList<Ii>()).size());
         crit.setOfficialTitle(BST);
-        assertEquals(0, bean.search(crit).size());
+        assertEquals(0, bean.search(crit,new ArrayList<Ii>()).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
-        assertEquals(1, bean.search(crit).size());
+        assertEquals(1, bean.search(crit,new ArrayList<Ii>()).size());
         crit.setLeadOrgTrialIdentifier(BST);
-        assertEquals(0, bean.search(crit).size());
+        assertEquals(0, bean.search(crit,new ArrayList<Ii>()).size());
     }
 
     @Test
@@ -152,7 +154,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void getStudyOverallStatus() throws Exception {
-        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto());
+        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto(),new ArrayList<Ii>());
         for (SearchTrialResultDto r : rList) {
             if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(0).getId())) {
                 assertEquals(StudyStatusCode.ACTIVE, StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));

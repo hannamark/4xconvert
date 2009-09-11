@@ -127,7 +127,7 @@ public class SearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria) throws RemoteException {
+    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,List<Ii> authorizedTrialIds) throws RemoteException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
         Session session = null;
         try {
@@ -200,6 +200,8 @@ public class SearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     public List<Ii> getAuthorizedTrials(St user) {
+    	
+    	//StudySiteAccrualAccess
         return null;
     }
 

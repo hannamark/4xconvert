@@ -55,6 +55,10 @@
             <result>/WEB-INF/jsp/accrualHome.jsp</result>
         </action>
         
+         <action name="contact">
+           <result>/WEB-INF/jsp/accrualContact.jsp</result>
+        </action> 
+        
     </package>
     <package name="public" namespace="/public" extends="default">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">

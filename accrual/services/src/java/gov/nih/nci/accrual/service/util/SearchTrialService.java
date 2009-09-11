@@ -99,7 +99,7 @@ public interface SearchTrialService {
      * @return list of trials fitting the criteria for which the user is authorized to submit accruals
      * @throws RemoteException exception
      */
-    List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria) throws RemoteException;
+    List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,List<Ii> authorizedTrialIds) throws RemoteException;
     /**
      * @param studyProtocolIi protocol id
      * @return ProtocolQueryResultDto

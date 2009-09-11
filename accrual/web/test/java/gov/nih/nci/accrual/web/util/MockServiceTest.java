@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -115,25 +116,26 @@ public class MockServiceTest {
     public void searchTrial() throws Exception {
         // get all
         SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
+        List<Ii> authorizedTrialIds = new ArrayList<Ii>();
         SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-        List<SearchTrialResultDto> r = service.search(crit);
+        List<SearchTrialResultDto> r = service.search(crit,authorizedTrialIds);
         assertEquals(MockSearchTrialBean.dtos.size(), r.size());
 
         // get by lead org id
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE"));
-        r = service.search(crit);
+        r = service.search(crit,authorizedTrialIds);
         assertEquals(1, r.size());
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("K"));
-        r = service.search(crit);
+        r = service.search(crit,authorizedTrialIds);
         assertEquals(2, r.size());
 
         // get by title
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(""));
         crit.setOfficialTitle(StConverter.convertToSt("Phase IV"));
-        r = service.search(crit);
+        r = service.search(crit,authorizedTrialIds);
         assertEquals(1, r.size());
         crit.setOfficialTitle(StConverter.convertToSt("Phase III"));
-        r = service.search(crit);
+        r = service.search(crit,authorizedTrialIds);
         assertTrue(r.isEmpty());
     }
 
@@ -141,11 +143,12 @@ public class MockServiceTest {
     public void searchStudySite() throws Exception {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         Ii crit = IiConverter.convertToStudyProtocolIi(1L);
-        List<SearchStudySiteResultDto> r = service.search(crit);
+        List<Ii> authorizedStudySiteIds = new ArrayList<Ii>();
+        List<SearchStudySiteResultDto> r = service.search(crit,authorizedStudySiteIds);
         assertEquals(2, r.size());
 
         crit = IiConverter.convertToStudyProtocolIi(2L);
-        r = service.search(crit);
+        r = service.search(crit,authorizedStudySiteIds);
         assertEquals(1, r.size());
     }
 
