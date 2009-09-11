@@ -39,6 +39,12 @@ function loadLeadPersDiv() {
 }
 function loadSponsorDiv() {		
     var url = 'ajaxTrialValidationdisplaySelectedSponsor.action?orgId='+orgid;
+    document.getElementById('gtdDTO.responsiblePersonIdentifier').value = '';
+    document.getElementById('gtdDTO.responsibleGenericContactName').value = '';//unset the responsible personname
+    document.getElementById("gtdDTO.contactEmail").value = '';//unset the responsible personname
+    document.getElementById("gtdDTO.contactPhone").value = ''; //unset the responsible personname   
+    document.getElementById('gtdDTO.responsiblePersonName').value = ''; // unset the responsible personname
+        
     var div = document.getElementById('loadSponsorField');   
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
     callAjax(url, div);
