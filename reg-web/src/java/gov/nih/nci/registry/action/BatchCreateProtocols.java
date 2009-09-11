@@ -564,8 +564,8 @@ public class BatchCreateProtocols {
                 trialDTO.setIdentifier(listofDto.get(0).getStudyProtocolId().toString());
             }
             
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
             studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
             studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
                 amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                     documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
