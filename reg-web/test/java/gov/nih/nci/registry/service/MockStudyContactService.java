@@ -5,6 +5,7 @@ package gov.nih.nci.registry.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -37,8 +38,9 @@ public class MockStudyContactService extends MockAbstractRoleIsoService implemen
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
      */
-    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
+				return null;
         // TODO Auto-generated method stub
 
     }

@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali
@@ -38,8 +39,9 @@ public class MockStudyIndldeService implements StudyIndldeServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
      */
-    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
+				return null;
         // TODO Auto-generated method stub
 
     }

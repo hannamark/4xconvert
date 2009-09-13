@@ -5,6 +5,7 @@ package gov.nih.nci.registry.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -96,5 +97,37 @@ public class MockStudyResourcingService implements StudyResourcingServiceRemote 
         // TODO Auto-generated method stub
         
     }
+
+	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<StudyResourcingDTO> getByStudyProtocol(Ii ii)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void delete(Ii ii) throws PAException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public StudyResourcingDTO get(Ii ii) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

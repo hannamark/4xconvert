@@ -5,6 +5,7 @@ package gov.nih.nci.registry.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -75,4 +76,24 @@ public class MockDocumentService implements DocumentServiceRemote {
         return null;
     }
 
+	/* (non-Javadoc)
+	 * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+	 */
+	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<DocumentDTO> getByStudyProtocol(Ii ii) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void delete(Ii ii) throws PAException {
+		// TODO Auto-generated method stub
+		
+	}
+
+   
 }
