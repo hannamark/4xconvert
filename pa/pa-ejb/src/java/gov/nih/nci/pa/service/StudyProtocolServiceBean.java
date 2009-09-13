@@ -644,11 +644,10 @@ import org.hibernate.criterion.Example;
         sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
         sp.setIdentifier(generateNciIdentifier(session));
         if (ejbContext != null && CREATE.equals(operation)) {
-            sp.setUserLastCreated(spDTO.getUserLastCreated().getValue());
+            sp.setUserLastCreated(spDTO.getUserLastCreated() != null ? spDTO.getUserLastCreated().getValue()
+                                                                     : ejbContext.getCallerPrincipal().getName());
             sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
-        } else if (ejbContext != null && CREATE.equals(operation)) {
-            sp.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-        }
+        } 
     }
 
     private Integer generateSubmissionNumber(String identifier , Session session) {

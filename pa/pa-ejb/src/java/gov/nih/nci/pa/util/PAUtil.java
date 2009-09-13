@@ -595,7 +595,7 @@ public class PAUtil {
      */
     public static <TYPE extends BaseDTO> TYPE getFirstObj(List<? extends BaseDTO> list) {
         TYPE type = null;
-        if (list != null) {
+        if (list != null && !list.isEmpty()) {
              type =  (TYPE) list.get(0);
         }
         return type;
