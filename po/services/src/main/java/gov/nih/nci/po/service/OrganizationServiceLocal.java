@@ -83,9 +83,11 @@
 
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Local;
 import javax.jms.JMSException;
@@ -130,5 +132,17 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @throws JMSException if problem occurred publishing the announcement message for updates.
      */
     void curate(Organization curatedOrg) throws JMSException;
+    
+    /**
+     * @param o Organization to find associated played roles
+     * @return associated played roles
+     */
+    Set<Correlation> getAssociatedPlayedRoles(Organization o);
+    
+    /**
+     * @param o Organization to find associated scoped roles
+     * @return associated scoped roles
+     */
+    Set<Correlation> getAssociatedScopedRoles(Organization o); 
 
 }

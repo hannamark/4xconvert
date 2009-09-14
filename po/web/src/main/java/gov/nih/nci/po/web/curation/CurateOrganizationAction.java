@@ -3,6 +3,7 @@ package gov.nih.nci.po.web.curation;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.service.CurateEntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
@@ -15,10 +16,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.ejb.EJBException;
 import javax.jms.JMSException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.time.FastDateFormat;
+import org.hibernate.exception.ExceptionUtils;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
@@ -92,18 +95,33 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      * @return success
      * @throws JMSException if an error occurred while publishing the announcement
      */
-    @Validations(customValidators = {
-                @CustomValidator(type = "hibernate",
-                    fieldName = "organization"
-                )
-            })
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization") })
     public String curate() throws JMSException {
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
         // set organization.duplicateOf.id directly, so we're setting it manually
         if (duplicateOf != null && duplicateOf.getId() != null) {
             getOrganization().setDuplicateOf(duplicateOf);
         }
-        PoRegistry.getOrganizationService().curate(getOrganization());
+
+        try {
+            PoRegistry.getOrganizationService().curate(getOrganization());
+        } catch (EJBException e) {
+            /*
+             * we are catching the EJBExcetion and then interrogating it for the root cause and if the root cause is
+             * what we expect then we'll throw the root cause. Next, our custom result exception-mapping within our
+             * action mapping will ultimately redirects to our curateError.jsp page. NOTE: We are redirecting and
+             * passing the organization and duplicateOf as request params to ensure that a separate HB Session is used
+             * since the current HB Session is dirty and has validation errors within it. Also, we know that doing so 
+             * will abandon any changes made by the user to the Organization but, is of little concern in this case 
+             * because the Organization was being NULLIFIED.
+             */
+            Throwable rootCause = ExceptionUtils.getRootCause(e);
+            if (rootCause instanceof CurateEntityValidationException) {
+                throw (CurateEntityValidationException) rootCause;
+            }
+            throw e;
+        }
+
         ActionHelper.saveMessage(getText("organization.curate.success"));
         return SUCCESS;
     }
@@ -123,7 +141,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     }
 
     /**
-     *
+     * 
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -131,7 +149,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     }
 
     /**
-     *
+     * 
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
@@ -182,8 +200,8 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      * @return number of role that need the curator's attention.
      */
     public int getHotHealthCareFacilityCount() {
-        HealthCareFacilityServiceLocal service  = PoRegistry.getInstance()
-                .getServiceLocator().getHealthCareFacilityService();
+        HealthCareFacilityServiceLocal service = PoRegistry.getInstance().getServiceLocator()
+                .getHealthCareFacilityService();
         return service.getHotRoleCount(organization);
     }
 
@@ -191,8 +209,8 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      * @return number of role that need the curator's attention.
      */
     public int getHotResearchOrganizationCount() {
-        ResearchOrganizationServiceLocal service  = PoRegistry.getInstance()
-                .getServiceLocator().getResearchOrganizationService();
+        ResearchOrganizationServiceLocal service = PoRegistry.getInstance().getServiceLocator()
+                .getResearchOrganizationService();
         return service.getHotRoleCount(organization);
     }
 
@@ -200,8 +218,8 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      * @return number of role that need the curator's attention.
      */
     public int getHotIdentifiedOrganizationCount() {
-        IdentifiedOrganizationServiceLocal service  = PoRegistry.getInstance()
-                .getServiceLocator().getIdentifiedOrganizationService();
+        IdentifiedOrganizationServiceLocal service = PoRegistry.getInstance().getServiceLocator()
+                .getIdentifiedOrganizationService();
         return service.getHotRoleCount(organization);
     }
 
@@ -209,20 +227,19 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      * @return number of role that need the curator's attention.
      */
     public int getHotOversightCommitteeCount() {
-        OversightCommitteeServiceLocal service  = PoRegistry.getInstance()
-                .getServiceLocator().getOversightCommitteeService();
+        OversightCommitteeServiceLocal service = PoRegistry.getInstance().getServiceLocator()
+                .getOversightCommitteeService();
         return service.getHotRoleCount(organization);
     }
-    
+
     /**
      * @return number of role that need the curator's attention.
      */
     public int getHotOrganizationalContactCount() {
-        OrganizationalContactServiceLocal service  = PoRegistry.getInstance()
-                .getServiceLocator().getOrganizationalContactService();
+        OrganizationalContactServiceLocal service = PoRegistry.getInstance().getServiceLocator()
+                .getOrganizationalContactService();
         return service.getScoperHotRoleCount(organization);
     }
-
 
     /**
      * @return the duplicateOf
@@ -237,5 +254,4 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     public void setDuplicateOf(Organization duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
-
 }

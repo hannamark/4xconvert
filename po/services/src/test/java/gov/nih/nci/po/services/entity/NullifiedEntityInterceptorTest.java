@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
@@ -106,6 +107,7 @@ import gov.nih.nci.services.person.PersonEntityServiceBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
 
@@ -350,6 +352,14 @@ public class NullifiedEntityInterceptorTest {
 
         public List<Organization> search(SearchCriteria<Organization> criteria,
                 PageSortParams<Organization> pageSortParams) {
+            return null;
+        }
+
+        public Set<Correlation> getAssociatedPlayedRoles(Organization o) {
+            return null;
+        }
+
+        public Set<Correlation> getAssociatedScopedRoles(Organization o) {
             return null;
         }
     }

@@ -82,10 +82,12 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
@@ -145,6 +147,14 @@ public class MockOrganizationService implements OrganizationServiceLocal {
 
     public void curate(Organization curatedOrg) {
 
+    }
+
+    public Set<Correlation> getAssociatedPlayedRoles(Organization o) {
+        return null;
+    }
+
+    public Set<Correlation> getAssociatedScopedRoles(Organization o) {
+        return null;
     }
 
 }

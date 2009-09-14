@@ -99,7 +99,11 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -110,18 +114,17 @@ import javax.jms.JMSException;
 import org.hibernate.Session;
 
 /**
- *
+ * 
  * @author gax
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<Organization> implements
         OrganizationServiceLocal {
-
     private static final String UNCHECKED = "unchecked";
+
     /**
      * {@inheritDoc}
-     * @throws JMSException
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -137,11 +140,43 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     protected Set<Correlation> getAssociatedRoles(Organization o, Session s) {
         Set<Correlation> l = new HashSet<Correlation>();
         // played roles
+        l.addAll(getAssociatedPlayedRoles(o, s));
+        // scoped roles
+        l.addAll(getAssociatedScopedRoles(o, s));
+        return l;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Correlation> getAssociatedPlayedRoles(Organization o) {
+        return getAssociatedPlayedRoles(o, PoHibernateUtil.getCurrentSession());
+    }
+
+    private Set<Correlation> getAssociatedPlayedRoles(Organization o, Session s) {
+        Set<Correlation> l = new HashSet<Correlation>();
+        if (o == null) {
+            return l;
+        }
         l.addAll(getAssociatedRoles(o.getId(), HealthCareFacility.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), IdentifiedOrganization.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), OversightCommittee.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), ResearchOrganization.class, PLAYER_ID, s));
-        // scoped roles
+        return l;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Correlation> getAssociatedScopedRoles(Organization o) {
+        return getAssociatedScopedRoles(o, PoHibernateUtil.getCurrentSession());
+    }
+
+    private Set<Correlation> getAssociatedScopedRoles(Organization o, Session s) {
+        Set<Correlation> l = new HashSet<Correlation>();
+        if (o == null) {
+            return l;
+        }
         l.addAll(getAssociatedRoles(o.getId(), HealthCareProvider.class, SCOPER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), IdentifiedOrganization.class, SCOPER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), ClinicalResearchStaff.class, SCOPER_ID, s));
@@ -150,7 +185,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         l.addAll(getAssociatedRoles(o.getId(), Patient.class, SCOPER_ID, s));
         return l;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -167,50 +202,89 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     private void mergeCorrelations(Organization org, Session s) throws JMSException {
         Organization dup = org.getDuplicateOf();
         Set<Correlation> associatedRoles = getAssociatedRoles(org, s);
+        List<Correlation> changes = new ArrayList<Correlation>();
         for (Correlation correlation : associatedRoles) {
-            GenericStructrualRoleServiceLocal service = null;
-            service = mergePlayedRoleCorrelation(org, dup, correlation); 
-            service = mergeScopedRoleCorrelation(org, dup, correlation);
-            if (service != null) {
-                /* 
-                 * the correlation could be played and scoped by the same organization therefore, we want to ensure
-                 * curate() is only invoked once
-                 */
-                service.curate(correlation);
+            boolean mergedPlayed = mergePlayedRoleCorrelation(org, dup, correlation);
+            boolean mergedScoped = mergeScopedRoleCorrelation(org, dup, correlation);
+            /* DO NOT INLINE OTHERWISE BOOLEAN SHORT-CIRCUITING WILL ABORT NEEDED MERGE LOGIC */
+            if (mergedPlayed || mergedScoped) {
+                changes.add(correlation);
             }
+        }
+        Map<String, String[]> errorMsgs = validateMergedCorrelations(changes);
+        if (!errorMsgs.isEmpty()) {
+            throw new CurateEntityValidationException(errorMsgs);
+        }
+        curateMergedCorrelations(changes);
+    }
+
+    private Map<String, String[]> validateMergedCorrelations(List<Correlation> changes) {
+        Map<String, String[]> errorMsgs = new HashMap<String, String[]>();
+        for (Correlation correlation : changes) {
+            errorMsgs.putAll(validateCorrelation(correlation));
+        }
+        return errorMsgs;
+    }
+
+    /**
+     * @param correlation to validate
+     * @return Map of correlation's class name (class:id[:property-path]) to error messages for that class
+     */
+    private Map<String, String[]> validateCorrelation(Correlation correlation) {
+        GenericStructrualRoleServiceLocal serviceForRole = getServiceForRole(correlation.getClass());
+        // validate()'s behavior ensures that all keys are unique
+        Map<String, String[]> correlationErrorMsgs = serviceForRole.validate(correlation);
+
+        // Map of correlation's class name (class:id[:property-path]) to error messages for that object
+        Map<String, String[]> errorMsgs = new HashMap<String, String[]>();
+        for (String msgKey : correlationErrorMsgs.keySet()) {
+            /*
+             * re-key the correlation's error messages to understand which correlation encountered errors
+             */
+            StringBuffer key = new StringBuffer();
+            key.append(correlation.getClass().getName());
+            key.append(':');
+            key.append(correlation.getId());
+            if (msgKey != null) { 
+                key.append(':').append(msgKey);
+            }
+            errorMsgs.put(key.toString(), correlationErrorMsgs.get(msgKey));
+        }
+        return errorMsgs;
+    }
+
+    private void curateMergedCorrelations(List<Correlation> changes) throws JMSException {
+        for (Correlation correlation : changes) {
+            GenericStructrualRoleServiceLocal serviceForRole = getServiceForRole(correlation.getClass());
+            serviceForRole.curate(correlation);
         }
     }
 
     @SuppressWarnings(UNCHECKED)
-    private GenericStructrualRoleServiceLocal mergeScopedRoleCorrelation(Organization org, Organization dup,
-            Correlation correlation) {
-        if (correlation instanceof ScopedRole 
-                && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
+    private boolean mergeScopedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
+        if (correlation instanceof ScopedRole && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
             ScopedRole sr = (ScopedRole) correlation;
             sr.setScoper(dup);
             activateRoleStatusByDupStatus(dup, correlation);
-            return getServiceForRole(correlation.getClass());
+            return true;
         }
-        return null;
+        return false;
     }
 
     @SuppressWarnings(UNCHECKED)
-    private GenericStructrualRoleServiceLocal mergePlayedRoleCorrelation(Organization org, Organization dup,
-            Correlation correlation) {
-        if (correlation instanceof PlayedRole 
-                && ((PlayedRole) correlation).getPlayer() instanceof Organization
+    private boolean mergePlayedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
+        if (correlation instanceof PlayedRole && ((PlayedRole) correlation).getPlayer() instanceof Organization
                 && ((PlayedRole) correlation).getPlayer().getId().equals(org.getId())) {
-            PlayedRole pr = (PlayedRole) correlation;
+            PlayedRole<Organization> pr = (PlayedRole<Organization>) correlation;
             pr.setPlayer(dup);
             activateRoleStatusByDupStatus(dup, correlation);
-            return getServiceForRole(correlation.getClass());
+            return true;
         }
-        return null;
+        return false;
     }
-    
+
     private void activateRoleStatusByDupStatus(Organization dup, Correlation correlation) {
-        if (dup.getStatusCode() == EntityStatus.ACTIVE 
-                && correlation.getStatus() == RoleStatus.PENDING 
+        if (dup.getStatusCode() == EntityStatus.ACTIVE && correlation.getStatus() == RoleStatus.PENDING
                 && isCtepRole(correlation)) {
             correlation.setStatus(RoleStatus.ACTIVE);
         }
@@ -222,7 +296,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     @Override
     @SuppressWarnings(UNCHECKED)
     protected void activateCtepRoles(Organization e) throws JMSException {
-        Session  s = PoHibernateUtil.getCurrentSession();
+        Session s = PoHibernateUtil.getCurrentSession();
         for (Correlation x : getAssociatedRoles(e, s)) {
             if (x.getStatus() == RoleStatus.PENDING && isCtepRole(x)) {
                 x.setStatus(RoleStatus.ACTIVE);
@@ -231,5 +305,5 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             }
         }
     }
-    
+
 }

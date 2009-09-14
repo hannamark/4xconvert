@@ -127,6 +127,14 @@ public class EntityValidationException extends Exception {
      * @return error messages
      */
     public String getErrorMessages() {
+        return getFormattedErrorMsgs(errors);
+    }
+
+    /**
+     * @param errors to parse
+     * @return the formatted error messages as string
+     */
+    public static String getFormattedErrorMsgs(Map<String, String[]> errors) {
         StringBuffer b = new StringBuffer();
         if (errors != null) {
             TreeSet<String> orderedKeys = new TreeSet<String>(errors.keySet());

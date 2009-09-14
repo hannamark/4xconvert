@@ -5,5 +5,8 @@
 <%@ attribute name="style" required="true" type="java.lang.String"%>
 <%@ attribute name="text" required="true" type="java.lang.String"%>
 <%@ attribute name="id" required="false" type="java.lang.String" description="DOM element ID for the anchor, usefull for tests and scripts"%>
+<%@ attribute name="target" required="false" type="java.lang.String"%>
+
 <c:set var="idHtml" value="id='${id}'"/>
-<li><a href="${href}" onclick="${onclick} this.blur();" class="btn" ${empty id ? "" : idHtml}><span class="btn_img"><span class="${style}">${text}</span></span></a></li>
+<c:set var="targetHtml" value="target='${target}'"/>
+<li><a href="${href}" onclick="${onclick} this.blur();" class="btn" ${empty id ? "" : idHtml} ${empty target ? "" : targetHtml}><span class="btn_img"><span class="${style}">${text}</span></span></a></li>

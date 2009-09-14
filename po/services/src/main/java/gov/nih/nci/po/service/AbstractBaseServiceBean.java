@@ -228,7 +228,8 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
      /**
       *
       * @param entity the entity to validate
-      * @return return validation error messages per invalid field path.
+      * @return return validation error messages per invalid field path when key in map is 'null' 
+      *     the error messages apply to the type/class  
       * @see PoHibernateUtil.validate(entity)
       */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)

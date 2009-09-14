@@ -330,15 +330,26 @@
         </action>
 
         <!-- Organization -> Edit/Curate -->
+        <action name="organization/curate/curate/error" class="gov.nih.nci.po.web.curation.CurateEntityValidationAction" method="execute">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/curate/organization/curateError.jsp</result>
+        </action>
         <action name="organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <exception-mapping result="curateError" exception="gov.nih.nci.po.service.CurateEntityValidationException"/>
             <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
+            <result name="curateError" type="redirectAction">
+                <param name="namespace">/protected</param>
+                <param name="actionName">organization/curate/curate/error</param>
+                <param name="organization.id">${organization.id}</param>
+                <param name="duplicateOf.id">${duplicateOf.id}</param>
+            </result>
             <result name="input">/WEB-INF/jsp/curate/organization/{1}.jsp</result>
             <result name="success" type="redirectAction">
                 <param name="namespace">/protected</param>
                 <param name="actionName">curate/search/listOrgs</param>
             </result>
-        </action>        
+        </action>
         <action name="ajax/organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/organization/crInfo.jsp</result>

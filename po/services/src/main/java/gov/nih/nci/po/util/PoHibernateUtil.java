@@ -100,18 +100,18 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
  */
 public class PoHibernateUtil {
     private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(null);
-    private static final HibernateHelper HIBERNATE_HELPER = new HibernateHelper(null, null, 
-            new CompositeInterceptor(new CurationStatusInterceptor(), AUDIT_LOG_INTERCEPTOR));
+    private static final HibernateHelper HIBERNATE_HELPER = new HibernateHelper(null, null, new CompositeInterceptor(
+            new CurationStatusInterceptor(), AUDIT_LOG_INTERCEPTOR));
     static {
         AUDIT_LOG_INTERCEPTOR.setHibernateHelper(HIBERNATE_HELPER);
     }
-
 
     private static final Map<Class<?>, ClassValidator<?>> CLASS_VALIDATOR_MAP =
         new HashMap<Class<?>, ClassValidator<?>>();
 
     /**
      * Get the hibernate helper.
+     * 
      * @return the helper.
      */
     public static HibernateHelper getHibernateHelper() {
@@ -120,6 +120,7 @@ public class PoHibernateUtil {
 
     /**
      * Get the current session.
+     * 
      * @return the session.
      */
     public static Session getCurrentSession() {
@@ -138,7 +139,8 @@ public class PoHibernateUtil {
 
     /**
      * @param entity the entity to validate
-     * @return a map of validation messages keyed by the property path.
+     * @return a map of validation messages keyed by the property path. The keys represent the field/property validation
+     *         errors however, when key is null it means the validation is a type/class validation error
      */
     public static Map<String, String[]> validate(PersistentObject entity) {
         Map<String, List<String>> messageMap = new HashMap<String, List<String>>();
