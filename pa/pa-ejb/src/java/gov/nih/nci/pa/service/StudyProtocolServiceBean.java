@@ -637,7 +637,7 @@ import org.hibernate.criterion.Example;
     }
 
     private void setDefaultValues(StudyProtocol sp , StudyProtocolDTO spDTO , Session session , String operation) {
-        if (sp.getStatusCode() != null) {
+        if (sp.getStatusCode() == null) {
             sp.setStatusCode(ActStatusCode.ACTIVE);
         }
         sp.setStatusDate(new Timestamp((new Date()).getTime()));
@@ -655,8 +655,6 @@ import org.hibernate.criterion.Example;
             + "sp.identifier = '" + identifier + "' ";
         Integer maxValue = (Integer) session.createQuery(query).list().get(0);
         return (maxValue == null ? 1 : maxValue + 1);
-
-
     }
 
     /**
