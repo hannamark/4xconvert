@@ -76,97 +76,40 @@
 *
 *
 */
+package gov.nih.nci.accrual.web.decorator;
 
-package gov.nih.nci.accrual.dto;
-
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.accrual.dto.AbstractStudyDto;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.IiConverter;
+
+import org.displaytag.decorator.TableDecorator;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 28, 2009
+ * @since Sep 14, 2009
+ * @param <DTO> the service DTO to be displayed
  */
-public class StudySubjectDto extends AbstractStudyDto {
-    private static final long serialVersionUID = 2286849965392968341L;
+public abstract class AbstractStudyDecorator<DTO extends AbstractStudyDto> extends TableDecorator {
 
-    private Ii patientIdentifier;
-    private Ii studySiteIdentifier;
-    private Ii diseaseIdentifier;
-    private Cd paymentMethodCode;
-    private Cd statusCode;
-    private Ivl<Ts> statusDateRange;
     /**
-     * @return the patientIdentifier
-     */
-    public Ii getPatientIdentifier() {
-        return patientIdentifier;
-    }
+    *
+    * @return identifier as a String
+    */
+   @SuppressWarnings("unchecked")
+   public String getIdentifier() {
+       Ii identifier = ((DTO) this.getCurrentRowObject()).getIdentifier();
+       return identifier == null ? "" : IiConverter.convertToString(identifier);
+   }
+
+
     /**
-     * @param patientIdentifier the patientIdentifier to set
+     *
+     * @return studyProtocolIdentifier as a String
      */
-    public void setPatientIdentifier(Ii patientIdentifier) {
-        this.patientIdentifier = patientIdentifier;
+    @SuppressWarnings("unchecked")
+    public String getStudyProtocolIdentifier() {
+        Ii studyProtocolIdentifier = ((DTO) this.getCurrentRowObject()).getStudyProtocolIdentifier();
+        return studyProtocolIdentifier == null ? "" : IiConverter.convertToString(studyProtocolIdentifier);
     }
-    /**
-     * @return the studySiteIdentifier
-     */
-    public Ii getStudySiteIdentifier() {
-        return studySiteIdentifier;
-    }
-    /**
-     * @param studySiteIdentifier the studySiteIdentifier to set
-     */
-    public void setStudySiteIdentifier(Ii studySiteIdentifier) {
-        this.studySiteIdentifier = studySiteIdentifier;
-    }
-    /**
-     * @return the paymentMethodCode
-     */
-    public Cd getPaymentMethodCode() {
-        return paymentMethodCode;
-    }
-    /**
-     * @param paymentMethodCode the paymentMethodCode to set
-     */
-    public void setPaymentMethodCode(Cd paymentMethodCode) {
-        this.paymentMethodCode = paymentMethodCode;
-    }
-    /**
-     * @return the statusCode
-     */
-    public Cd getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(Cd statusCode) {
-        this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRange
-     */
-    public Ivl<Ts> getStatusDateRange() {
-        return statusDateRange;
-    }
-    /**
-     * @param statusDateRange the statusDateRange to set
-     */
-    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
-        this.statusDateRange = statusDateRange;
-    }
-    /**
-     * @return the diseaseIdentifier
-     */
-    public Ii getDiseaseIdentifier() {
-        return diseaseIdentifier;
-    }
-    /**
-     * @param diseaseIdentifier the diseaseIdentifier to set
-     */
-    public void setDiseaseIdentifier(Ii diseaseIdentifier) {
-        this.diseaseIdentifier = diseaseIdentifier;
-    }
+
 }

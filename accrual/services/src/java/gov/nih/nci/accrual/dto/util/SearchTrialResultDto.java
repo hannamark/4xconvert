@@ -78,20 +78,17 @@
 */
 package gov.nih.nci.accrual.dto.util;
 
+import gov.nih.nci.accrual.dto.AbstractStudyDto;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-
-import java.io.Serializable;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 17, 2009
  */
-public class SearchTrialResultDto implements Serializable {
+public class SearchTrialResultDto extends AbstractStudyDto {
     private static final long serialVersionUID = -2671070053559012519L;
 
-    private Ii studyProtocolIdentifier;
     private St assignedIdentifier;
     private St leadOrgTrialIdentifier;
     private St officialTitle;
@@ -99,18 +96,6 @@ public class SearchTrialResultDto implements Serializable {
     private St principalInvestigator;
     private Cd studyStatusCode;
 
-    /**
-     * @return the studyProtocolIdentifier
-     */
-    public Ii getStudyProtocolIdentifier() {
-        return studyProtocolIdentifier;
-    }
-    /**
-     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
-     */
-    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
-        this.studyProtocolIdentifier = studyProtocolIdentifier;
-    }
     /**
      * @return the assignedIdentifier
      */

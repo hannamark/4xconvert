@@ -76,97 +76,31 @@
 *
 *
 */
-
 package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 28, 2009
+ * @since Sep 14, 2009
  */
-public class StudySubjectDto extends AbstractStudyDto {
-    private static final long serialVersionUID = 2286849965392968341L;
+public class AbstractStudyDto extends BaseDTO {
 
-    private Ii patientIdentifier;
-    private Ii studySiteIdentifier;
-    private Ii diseaseIdentifier;
-    private Cd paymentMethodCode;
-    private Cd statusCode;
-    private Ivl<Ts> statusDateRange;
+    private static final long serialVersionUID = -4675842483128804922L;
+
+    private Ii studyProtocolIdentifier;
+
     /**
-     * @return the patientIdentifier
+     * @return the studyProtocolIdentifier
      */
-    public Ii getPatientIdentifier() {
-        return patientIdentifier;
+    public Ii getStudyProtocolIdentifier() {
+        return studyProtocolIdentifier;
     }
     /**
-     * @param patientIdentifier the patientIdentifier to set
+     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
      */
-    public void setPatientIdentifier(Ii patientIdentifier) {
-        this.patientIdentifier = patientIdentifier;
-    }
-    /**
-     * @return the studySiteIdentifier
-     */
-    public Ii getStudySiteIdentifier() {
-        return studySiteIdentifier;
-    }
-    /**
-     * @param studySiteIdentifier the studySiteIdentifier to set
-     */
-    public void setStudySiteIdentifier(Ii studySiteIdentifier) {
-        this.studySiteIdentifier = studySiteIdentifier;
-    }
-    /**
-     * @return the paymentMethodCode
-     */
-    public Cd getPaymentMethodCode() {
-        return paymentMethodCode;
-    }
-    /**
-     * @param paymentMethodCode the paymentMethodCode to set
-     */
-    public void setPaymentMethodCode(Cd paymentMethodCode) {
-        this.paymentMethodCode = paymentMethodCode;
-    }
-    /**
-     * @return the statusCode
-     */
-    public Cd getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(Cd statusCode) {
-        this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRange
-     */
-    public Ivl<Ts> getStatusDateRange() {
-        return statusDateRange;
-    }
-    /**
-     * @param statusDateRange the statusDateRange to set
-     */
-    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
-        this.statusDateRange = statusDateRange;
-    }
-    /**
-     * @return the diseaseIdentifier
-     */
-    public Ii getDiseaseIdentifier() {
-        return diseaseIdentifier;
-    }
-    /**
-     * @param diseaseIdentifier the diseaseIdentifier to set
-     */
-    public void setDiseaseIdentifier(Ii diseaseIdentifier) {
-        this.diseaseIdentifier = diseaseIdentifier;
+    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
+        this.studyProtocolIdentifier = studyProtocolIdentifier;
     }
 }

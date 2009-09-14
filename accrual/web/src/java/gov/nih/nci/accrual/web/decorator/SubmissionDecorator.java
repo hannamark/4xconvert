@@ -76,97 +76,73 @@
 *
 *
 */
+package gov.nih.nci.accrual.web.decorator;
 
-package gov.nih.nci.accrual.dto;
-
+import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.sql.Timestamp;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 28, 2009
+ * @since Sep 14, 2009
  */
-public class StudySubjectDto extends AbstractStudyDto {
-    private static final long serialVersionUID = 2286849965392968341L;
+public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
 
-    private Ii patientIdentifier;
-    private Ii studySiteIdentifier;
-    private Ii diseaseIdentifier;
-    private Cd paymentMethodCode;
-    private Cd statusCode;
-    private Ivl<Ts> statusDateRange;
     /**
-     * @return the patientIdentifier
+     * @return cutOffDate as a String
      */
-    public Ii getPatientIdentifier() {
-        return patientIdentifier;
+    public String getCutOffDate() {
+        Ts cutOffDate = ((SubmissionDto) this.getCurrentRowObject()).getCutOffDate();
+        return cutOffDate == null ? "" : TsConverter.convertToString(cutOffDate);
     }
+
     /**
-     * @param patientIdentifier the patientIdentifier to set
+     * @return label as a string
      */
-    public void setPatientIdentifier(Ii patientIdentifier) {
-        this.patientIdentifier = patientIdentifier;
+    public String getLabel() {
+        St label = ((SubmissionDto) this.getCurrentRowObject()).getLabel();
+        return label == null ? "" : StConverter.convertToString(label);
     }
+
     /**
-     * @return the studySiteIdentifier
+     * @return description as a string
      */
-    public Ii getStudySiteIdentifier() {
-        return studySiteIdentifier;
+    public String getDescription() {
+        St description = ((SubmissionDto) this.getCurrentRowObject()).getDescription();
+        return description == null ?  "" : StConverter.convertToString(description);
     }
+
     /**
-     * @param studySiteIdentifier the studySiteIdentifier to set
+     * @return createdDate as a string
      */
-    public void setStudySiteIdentifier(Ii studySiteIdentifier) {
-        this.studySiteIdentifier = studySiteIdentifier;
+    public String getCreatedDate() {
+        Timestamp createdDate = IvlConverter.convertTs().convertLow(
+                ((SubmissionDto) this.getCurrentRowObject()).getStatusDateRange());
+        return createdDate == null ? "" : PAUtil.normalizeDateString(createdDate.toString());
     }
+
     /**
-     * @return the paymentMethodCode
+     * @return submittedDate as a string
      */
-    public Cd getPaymentMethodCode() {
-        return paymentMethodCode;
+    public String getSubmittedDate() {
+        Timestamp submittedDate = IvlConverter.convertTs().convertHigh(
+                ((SubmissionDto) this.getCurrentRowObject()).getStatusDateRange());
+        return submittedDate == null ? "" : PAUtil.normalizeDateString(submittedDate.toString());
     }
+
     /**
-     * @param paymentMethodCode the paymentMethodCode to set
+     * @return status as a string
      */
-    public void setPaymentMethodCode(Cd paymentMethodCode) {
-        this.paymentMethodCode = paymentMethodCode;
-    }
-    /**
-     * @return the statusCode
-     */
-    public Cd getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(Cd statusCode) {
-        this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRange
-     */
-    public Ivl<Ts> getStatusDateRange() {
-        return statusDateRange;
-    }
-    /**
-     * @param statusDateRange the statusDateRange to set
-     */
-    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
-        this.statusDateRange = statusDateRange;
-    }
-    /**
-     * @return the diseaseIdentifier
-     */
-    public Ii getDiseaseIdentifier() {
-        return diseaseIdentifier;
-    }
-    /**
-     * @param diseaseIdentifier the diseaseIdentifier to set
-     */
-    public void setDiseaseIdentifier(Ii diseaseIdentifier) {
-        this.diseaseIdentifier = diseaseIdentifier;
+    public String getStatus() {
+        Cd status = ((SubmissionDto) this.getCurrentRowObject()).getStatusCode();
+        return PAUtil.isCdNull(status) ? "" : CdConverter.convertCdToString(status);
     }
 }

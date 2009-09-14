@@ -80,39 +80,24 @@
 package gov.nih.nci.accrual.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 
 /**
  * @author Hugh Reinhart
  * @since Aug 29, 2009
  */
-public class SubmissionDto extends BaseDTO {
+public class SubmissionDto extends AbstractStudyDto {
     private static final long serialVersionUID = 5221603553357385670L;
 
-    private Ii studyProtocolIdentifier;
     private Ts cutOffDate;
     private St description;
     private St label;
     private Cd statusCode;
     private Ivl<Ts> statusDateRange;
 
-    /**
-     * @return the studyProtocolIdentifier
-     */
-    public Ii getStudyProtocolIdentifier() {
-        return studyProtocolIdentifier;
-    }
-    /**
-     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
-     */
-    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
-        this.studyProtocolIdentifier = studyProtocolIdentifier;
-    }
     /**
      * @return the cutOffDate
      */

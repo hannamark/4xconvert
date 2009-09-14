@@ -76,18 +76,11 @@
 */
 package gov.nih.nci.accrual.web.decorator;
 
-import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-
-import org.displaytag.decorator.TableDecorator;
 
 
 
@@ -95,75 +88,46 @@ import org.displaytag.decorator.TableDecorator;
  * @author Rajani Kumar
  * @since  Aug 13, 2009
  */
-public class AccrualDisplayTagDecorator extends TableDecorator {
-   
-    
+public class SearchTrialResultDecorator extends AbstractStudyDecorator<SearchTrialResultDto> {
+
+
     /**
-     * 
-     * @return studyProtocolIdentifier as a String
-     */
-    public String getStudyProtocolIdentifier() {
-        Ii studyProtocolIdentifier = ((SearchTrialResultDto) this.getCurrentRowObject()).getStudyProtocolIdentifier();
-       
-        if (studyProtocolIdentifier != null) {
-            return IiConverter.convertToString(studyProtocolIdentifier);
-        } else {
-            return "";
-        }
-    }
-   
-    
-    /**
-     * 
+     *
      * @return assignedIdentifier as a String
      */
     public String getAssignedIdentifier() {
         St assignedIdentifier = ((SearchTrialResultDto) this.getCurrentRowObject()).getAssignedIdentifier();
-       
+
         if (assignedIdentifier != null) {
             return StConverter.convertToString(assignedIdentifier);
         } else {
             return "";
         }
     }
-    
+
     /**
-     * 
+     *
      * @return officialTitle as a String
      */
     public String getOfficialTitle() {
         St officialTitle = ((SearchTrialResultDto) this.getCurrentRowObject()).getOfficialTitle();
-       
+
         if (officialTitle != null) {
             return StConverter.convertToString(officialTitle);
         } else {
             return "";
         }
     }
-    
+
     /**
-     * 
+     *
      * @return studyStatusCode as a String
      */
     public String getStudyStatusCode() {
         Cd studyStatusCode = ((SearchTrialResultDto) this.getCurrentRowObject()).getStudyStatusCode();
-       
+
         if (studyStatusCode != null) {
             return CdConverter.convertCdToString(studyStatusCode);
-        } else {
-            return "";
-        }
-    }
-    
-    /**
-     * 
-     * @return cutOffDate as a String
-     */
-    public String getCutOffDate() {
-         Ts cutOffDate = ((SubmissionDto) this.getCurrentRowObject()).getCutOffDate();
-       
-        if (cutOffDate != null) {
-            return TsConverter.convertToString(cutOffDate);
         } else {
             return "";
         }

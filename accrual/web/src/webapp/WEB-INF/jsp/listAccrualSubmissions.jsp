@@ -21,19 +21,28 @@
    <p>Click on the submission dates to view the details of the previous submissions.</p>
    
     <display:table class="data" summary="This table contains list of Accrual Submissions.
-    Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.AccrualDisplayTagDecorator"
+    Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SubmissionDecorator"
       sort="list" pagesize="10" id="row" name="listOfSubmissions" requestURI="accrualSubmissions.action" export="false"> 
    
-       <display:column titleKey="accrual.list.submissions.submissionDate" property="cutOffDate" sortable="true"
-         href="accrualSubmissions.action" paramId="studyProtocolId" 
-         paramProperty="studyProtocolIdentifier.extension" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.submissionDescription" property="description" sortable="true" 
+       <display:column titleKey="accrual.list.submissions.label" property="label" sortable="true" 
          headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.submissionStatus" property="statusCode" sortable="true" 
-       headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.submissionStatusDate" property="statusDateRange" sortable="true" 
-       headerClass="sortable" headerScope="col"/>
-       
+       <display:column titleKey="accrual.list.submissions.description" property="description" sortable="true" 
+         headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.cutOffDate" property="cutOffDate" sortable="true" 
+         headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.createdDate" property="createdDate" sortable="true" 
+         headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.submittedDate" property="submittedDate" sortable="true"
+         href="accrualSubmissions.action" paramId="submissionId" 
+         paramProperty="identifier" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true" 
+         headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.submit" headerClass="centeredsmall" class="action">
+                <s:a href="#" onclick="callHandleSubmit(%{#attr.row.identifier})">
+                    <img src="<%=request.getContextPath()%>/images/ico_upload.gif"
+                        alt="Submit" width="16" height="16" />
+                </s:a>
+       </display:column>
    </display:table>
    
 </body>

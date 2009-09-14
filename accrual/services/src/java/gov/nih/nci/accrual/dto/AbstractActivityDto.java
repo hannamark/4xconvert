@@ -79,22 +79,19 @@
 package gov.nih.nci.accrual.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-public class AbstractActivityDto extends BaseDTO {
+public class AbstractActivityDto extends AbstractStudyDto {
 
     private static final long serialVersionUID = 8158123295607300375L;
 
     private Cd categoryCode;
     private Cd subcategoryCode;
     private St textDescription;
-    private Ii studyProtocolIdentifier;
 
     /**
      * @return the categoryCode
@@ -131,17 +128,5 @@ public class AbstractActivityDto extends BaseDTO {
      */
     public void setTextDescription(St textDescription) {
         this.textDescription = textDescription;
-    }
-    /**
-     * @return the studyProtocolIdentifier
-     */
-    public Ii getStudyProtocolIdentifier() {
-        return studyProtocolIdentifier;
-    }
-    /**
-     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
-     */
-    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
-        this.studyProtocolIdentifier = studyProtocolIdentifier;
     }
 }
