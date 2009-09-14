@@ -99,10 +99,10 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.data.convert.EnConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
-import gov.nih.nci.po.data.convert.StConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.TelDSetConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
@@ -165,7 +165,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         ii.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         dto.setIdentifier(IiConverter.convertToDsetIi(ii));
 
-        dto.setName(StringConverter.convertToSt("my name"));
+        dto.setName(StringConverter.convertToEnOn("my name"));
 
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
@@ -227,7 +227,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
         Ii actualIi = IiDsetConverter.convertToIi(hcf.getIdentifier());
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
 
-        assertEquals("my name", StConverter.convertToString(hcf.getName()));
+        assertEquals("my name", new EnConverter().convertToString(hcf.getName()));
         HealthCareFacility tmp = new HealthCareFacility();
         TelDSetConverter.convertToContactList(hcf.getTelecomAddress(), tmp);
         assertEquals("me@example.com", tmp.getEmail().get(0).getValue());

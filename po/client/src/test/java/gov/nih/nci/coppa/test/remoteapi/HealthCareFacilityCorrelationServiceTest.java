@@ -111,7 +111,7 @@ public class HealthCareFacilityCorrelationServiceTest
         super.orgId = null;
         dto.setPlayerIdentifier(getOrgId());
         
-        dto.setName(RemoteApiUtils.convertToSt("my name"));
+        dto.setName(RemoteApiUtils.convertToEnOn("my name"));
         
         DSet<Ad> addys = new DSet<Ad>();
         Set<Ad> set = new ListOrderedSet();
@@ -136,6 +136,6 @@ public class HealthCareFacilityCorrelationServiceTest
     @Override
     protected void verifyCreated(HealthCareFacilityDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
-        Assert.assertEquals("my name", dto.getName().getValue());
+        Assert.assertEquals("my name", dto.getName().getPart().get(0).getValue());
     }
 }

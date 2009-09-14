@@ -7,7 +7,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENONTransformerTest;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import org.iso._21090.II;
@@ -67,7 +67,7 @@ public class ResearchOrganizationTransformerTest extends
         dto.setStatus(new CDTransformerTest().makeDtoSimple());
         dto.setFundingMechanism(new CDTransformerTest().makeDtoSimple());
         dto.setTypeCode(new CDTransformerTest().makeDtoSimple());
-        dto.setName(new STTransformerTest().makeDtoSimple());
+        dto.setName(new ENONTransformerTest().makeDtoSimple());
         dto.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
         dto.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
         return dto;
@@ -96,7 +96,7 @@ public class ResearchOrganizationTransformerTest extends
         xml.setStatus(new CDTransformerTest().makeXmlSimple());
         xml.setFundingMechanism(new CDTransformerTest().makeXmlSimple());
         xml.setTypeCode(new CDTransformerTest().makeXmlSimple());
-        xml.setName(new STTransformerTest().makeXmlSimple());
+        xml.setName(new ENONTransformerTest().makeXmlSimple());
         xml.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
         xml.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
         return xml;
@@ -112,7 +112,7 @@ public class ResearchOrganizationTransformerTest extends
         new CDTransformerTest().verifyDtoSimple(x.getStatus());
         new CDTransformerTest().verifyDtoSimple(x.getTypeCode());
         new CDTransformerTest().verifyDtoSimple(x.getFundingMechanism());
-        assertEquals(x.getName().getValue(), new STTransformerTest().makeDtoSimple().getValue());
+        new ENONTransformerTest().verifyDtoSimple(x.getName());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class ResearchOrganizationTransformerTest extends
         new CDTransformerTest().verifyXmlSimple(x.getStatus());
         new CDTransformerTest().verifyXmlSimple(x.getTypeCode());
         new CDTransformerTest().verifyXmlSimple(x.getFundingMechanism());
-        assertEquals(x.getName().getValue(), new STTransformerTest().makeDtoSimple().getValue());
+        new ENONTransformerTest().verifyXmlSimple(x.getName());
         assertEquals(x.getTelecomAddress().getFlavorId(), new DSETTelTransformerTest().makeXmlSimple().getFlavorId());
         assertEquals(x.getPostalAddress().getFlavorId(), new DSETADTransformerTest().makeXmlSimple().getFlavorId());
     }

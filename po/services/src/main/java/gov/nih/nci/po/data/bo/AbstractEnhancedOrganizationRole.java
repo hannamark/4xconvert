@@ -35,9 +35,9 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
 
     /**
      * @return the name
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
     @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)

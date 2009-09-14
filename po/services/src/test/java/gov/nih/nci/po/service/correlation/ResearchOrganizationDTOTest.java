@@ -104,6 +104,7 @@ import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
+import gov.nih.nci.po.data.convert.EnConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
@@ -185,7 +186,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         dto.setFundingMechanism(fm);
 
 
-        dto.setName(StringConverter.convertToSt("my name"));
+        dto.setName(StringConverter.convertToEnOn("my name"));
 
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
@@ -252,7 +253,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         Ii actualIi = IiDsetConverter.convertToIi(((ResearchOrganizationDTO) dto).getIdentifier());
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
 
-        assertEquals("my name", StConverter.convertToString(ro.getName()));
+        assertEquals("my name", new EnConverter().convertToString(ro.getName()));
         HealthCareFacility tmp = new HealthCareFacility();
         TelDSetConverter.convertToContactList(ro.getTelecomAddress(), tmp);
         assertEquals("me@example.com", tmp.getEmail().get(0).getValue());

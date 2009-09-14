@@ -10,8 +10,8 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 /**
@@ -44,7 +44,7 @@ public final class ResearchOrganizationTransformer
        d.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
        d.setFundingMechanism(CDTransformer.INSTANCE.toDto(input.getFundingMechanism()));
        d.setTypeCode(CDTransformer.INSTANCE.toDto(input.getTypeCode()));
-       d.setName(STTransformer.INSTANCE.toDto(input.getName()));
+       d.setName(ENTransformer.ENON_INSTANCE.toDto(input.getName()));
        d.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
        d.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
       return d;
@@ -63,7 +63,7 @@ public final class ResearchOrganizationTransformer
         d.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         d.setFundingMechanism(CDTransformer.INSTANCE.toXml(input.getFundingMechanism()));
         d.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
-        d.setName(STTransformer.INSTANCE.toXml(input.getName()));
+        d.setName(ENTransformer.ENON_INSTANCE.toXml(input.getName()));
         d.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
         d.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         return d;

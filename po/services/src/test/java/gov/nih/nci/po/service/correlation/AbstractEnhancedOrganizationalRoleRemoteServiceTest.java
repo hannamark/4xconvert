@@ -52,7 +52,7 @@ public abstract
         ii.setRoot(IdConverter.ORG_ROOT);
         dto.setPlayerIdentifier(ii);
 
-        dto.setName(StringConverter.convertToSt("my name"));
+        dto.setName(StringConverter.convertToEnOn("my name"));
 
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());

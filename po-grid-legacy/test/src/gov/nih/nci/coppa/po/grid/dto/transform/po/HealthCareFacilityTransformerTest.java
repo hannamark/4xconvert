@@ -1,20 +1,18 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.HashSet;
-
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.HealthCareFacility;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareFacilityTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENONTransformerTest;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+
+import java.util.HashSet;
 
 import org.iso._21090.II;
 
@@ -60,7 +58,7 @@ public class HealthCareFacilityTransformerTest
 	    hcf_dto.setIdentifier(dsetii);
 	    hcf_dto.setPlayerIdentifier(player);
 		hcf_dto.setStatus(new CDTransformerTest().makeDtoSimple());
-		hcf_dto.setName(new STTransformerTest().makeDtoSimple());
+		hcf_dto.setName(new ENONTransformerTest().makeDtoSimple());
 		hcf_dto.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
 		hcf_dto.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
 		return hcf_dto;
@@ -81,7 +79,7 @@ public class HealthCareFacilityTransformerTest
 		hcf_xml.setIdentifier(id);
 		hcf_xml.setPlayerIdentifier(player);
 		hcf_xml.setStatus(new CDTransformerTest().makeXmlSimple());
-		hcf_xml.setName(new STTransformerTest().makeXmlSimple());
+		hcf_xml.setName(new ENONTransformerTest().makeXmlSimple());
         hcf_xml.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
         hcf_xml.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
 		return hcf_xml;
@@ -93,7 +91,7 @@ public class HealthCareFacilityTransformerTest
 		assertEquals(identifier.getExtension(), "123");
 		assertEquals(identifier.getIdentifierName(),HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
 		assertEquals(x.getStatus().getCode(), new CDTransformerTest().makeDtoSimple().getCode());
-		assertEquals(x.getName().getValue(), new STTransformerTest().makeDtoSimple().getValue());
+		new ENONTransformerTest().verifyDtoSimple(x.getName());
 	}
 
 	@Override
@@ -101,7 +99,7 @@ public class HealthCareFacilityTransformerTest
 		assertEquals(x.getIdentifier().getExtension(), "123");
 		assertEquals(x.getIdentifier().getIdentifierName(),HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
 		assertEquals(x.getStatus().getCode(), new CDTransformerTest().makeDtoSimple().getCode());		
-		assertEquals(x.getName().getValue(), new STTransformerTest().makeDtoSimple().getValue());
+		new ENONTransformerTest().verifyXmlSimple(x.getName());
         assertEquals(x.getTelecomAddress().getFlavorId(), new DSETTelTransformerTest().makeXmlSimple().getFlavorId());
         assertEquals(x.getPostalAddress().getFlavorId(), new DSETADTransformerTest().makeXmlSimple().getFlavorId());
 	}

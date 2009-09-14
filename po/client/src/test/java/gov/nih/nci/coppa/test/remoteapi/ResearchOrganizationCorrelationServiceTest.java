@@ -117,7 +117,7 @@ public class ResearchOrganizationCorrelationServiceTest
         type.setCode("CCR");
         dto.setTypeCode(type);
 
-        dto.setName(RemoteApiUtils.convertToSt("my name"));
+        dto.setName(RemoteApiUtils.convertToEnOn("my name"));
 
         DSet<Ad> addys = new DSet<Ad>();
         Set<Ad> set = new ListOrderedSet();
@@ -145,6 +145,6 @@ public class ResearchOrganizationCorrelationServiceTest
         Assert.assertEquals("P30", dto.getFundingMechanism().getCode());
         Assert.assertEquals("CCR", dto.getTypeCode().getCode());
 
-        Assert.assertEquals("my name", dto.getName().getValue());
+        Assert.assertEquals("my name", dto.getName().getPart().get(0).getValue());
     }
 }

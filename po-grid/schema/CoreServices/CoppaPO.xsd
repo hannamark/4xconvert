@@ -156,7 +156,7 @@
                             type="ISO:DSET_AD" />
                         <xs:element name="telecomAddress"
                             type="ISO:DSET_TEL" />
-                        <xs:element name="name" type="ISO:ST"/>
+                        <xs:element name="name" type="ISO:EN.ON"/>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
@@ -326,7 +326,7 @@
                             type="ISO:DSET_AD" />
                         <xs:element name="telecomAddress"
                             type="ISO:DSET_TEL" />
-                        <xs:element name="name" type="ISO:ST"/>
+                        <xs:element name="name" type="ISO:EN.ON"/>
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

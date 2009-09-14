@@ -93,7 +93,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
         Id id = new Id();
         id.setRoot(RESEARCH_ORG_ROOT);
         id.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
-        id.setExtension("6059");
+        id.setExtension("6812");
         ResearchOrganization result = client.getById(id);
         ClientUtils.handleResult(result);
         for (II ii : result.getIdentifier().getItem()) {
